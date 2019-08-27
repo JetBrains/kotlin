@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
+import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
@@ -28,10 +32,14 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.load.java.getJvmMethodNameIfSpecial
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.forceSingleValueParameterBoxing
+import org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -39,10 +47,9 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class MethodSignatureMapper(context: JvmBackendContext) {
+class MethodSignatureMapper(private val context: JvmBackendContext) {
     private val typeMapper: IrTypeMapper = context.typeMapper
     private val typeSystem: IrTypeSystemContext = typeMapper.typeSystem
-    private val kotlinTypeMapper: KotlinTypeMapper = context.state.typeMapper
 
     fun mapAsmMethod(function: IrFunction): Method =
         mapSignatureSkipGeneric(function).asmMethod
@@ -57,8 +64,57 @@ class MethodSignatureMapper(context: JvmBackendContext) {
         return sw.makeJavaGenericSignature()
     }
 
-    fun mapFunctionName(irFunction: IrFunction): String =
-        kotlinTypeMapper.mapFunctionName(irFunction.descriptor, OwnerKind.IMPLEMENTATION)
+    fun mapFunctionName(function: IrFunction): String {
+        if (function.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
+            val platformName = function.getJvmNameFromAnnotation()
+            if (platformName != null) return platformName
+        }
+
+        val nameForSpecialFunction = getJvmMethodNameIfSpecial(function.descriptor)
+        if (nameForSpecialFunction != null) return nameForSpecialFunction
+
+        val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+        if (property != null) {
+            val propertyName = property.name.asString()
+            if (property.parent.let { it is IrClass && it.isAnnotationClass }) return propertyName
+
+            val accessorName = if (function.isPropertyGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
+            return mangleMemberNameIfRequired(accessorName, function)
+        }
+
+        return mangleMemberNameIfRequired(function.name.asString(), function)
+    }
+
+    private fun mangleMemberNameIfRequired(name: String, function: IrFunction): String {
+        val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
+
+        if (function.isTopLevel) {
+            if (Visibilities.isPrivate(function.visibility) && newName != "<clinit>" &&
+                function.parentAsClass.attributeOwnerId in context.multifileFacadeForPart
+            ) {
+                return "$newName$${function.parentAsClass.name.asString()}"
+            }
+            return newName
+        }
+
+        return if (function !is IrConstructor && function.visibility == Visibilities.INTERNAL && !function.isPublishedApi()) {
+            KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, getModuleName(function))
+        } else newName
+    }
+
+    private fun getModuleName(function: IrFunction): String =
+        // TODO: get rid of descriptors here
+        (if (function is IrLazyFunctionBase)
+            getJvmModuleNameForDeserializedDescriptor(function.descriptor)
+        else null) ?: context.state.moduleName
+
+    private fun IrDeclaration.getJvmNameFromAnnotation(): String? {
+        val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*>
+        return const?.value as? String
+    }
+
+    private fun IrFunction.isPublishedApi(): Boolean =
+        propertyIfAccessor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
 
     fun mapAnnotationParameterName(field: IrField): String =
         mapFunctionName(field.correspondingPropertySymbol!!.owner.getter ?: error("No getter for annotation property: ${field.render()}"))
@@ -257,7 +313,7 @@ class MethodSignatureMapper(context: JvmBackendContext) {
     private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         val overriddenSpecialBuiltinFunction = callee.descriptor.original.getOverriddenBuiltinReflectingJvmDescriptor()
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
-            return kotlinTypeMapper.mapSignatureSkipGeneric(overriddenSpecialBuiltinFunction.original, OwnerKind.IMPLEMENTATION)
+            return context.state.typeMapper.mapSignatureSkipGeneric(overriddenSpecialBuiltinFunction.original, OwnerKind.IMPLEMENTATION)
         }
 
         return null

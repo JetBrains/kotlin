@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // FILE: 1.kt
+
 package test
 
 class AbstractTreeNode<T>(val value: T, val parent: AbstractTreeNode<T>?)
