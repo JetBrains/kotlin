@@ -1,0 +1,22 @@
+package
+
+public fun </*0*/ K, /*1*/ T> addElementToSlice(/*0*/ slice: Inv2<K, kotlin.collections.MutableCollection<T>>, /*1*/ key: K, /*2*/ element: T): kotlin.Unit
+public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
+
+public open class Inv2</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> {
+    public constructor Inv2</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class JavaSet {
+    public constructor JavaSet()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> get(/*0*/ slice: Inv2<K!, V!>!, /*1*/ key: K!): V!
+    public open fun </*0*/ E : kotlin.Any!> newIdentityHashSet(): kotlin.collections.(Mutable)Set<E!>!
+}

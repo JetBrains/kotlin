@@ -23,6 +23,7 @@ class PostponedArgumentsAnalyzer(
 ) {
     interface Context : TypeSystemInferenceExtensionContext {
         fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): TypeSubstitutorMarker
+        fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker
         fun bindingStubsForPostponedVariables(): Map<TypeVariableMarker, StubTypeMarker>
 
         // type can be proper if it not contains not fixed type variables

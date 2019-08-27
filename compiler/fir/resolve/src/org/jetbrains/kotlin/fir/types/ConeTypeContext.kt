@@ -498,8 +498,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 }
 
-class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession) :
-    AbstractTypeCheckerContext(), ConeTypeContext {
+class ConeTypeCheckerContext(
+    override val isErrorTypeEqualsToAnything: Boolean,
+    override val isStubTypeEqualsToAnything: Boolean,
+    override val session: FirSession
+) : AbstractTypeCheckerContext(), ConeTypeContext {
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
         if (type.argumentsCount() == 0) return SupertypesPolicy.LowerIfFlexible
         require(type is ConeKotlinType)
@@ -539,10 +542,13 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = this is ConeKotlinType && this is ConeTypeVariableType
 
-    override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext =
+    override fun newBaseTypeCheckerContext(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean
+    ): AbstractTypeCheckerContext =
         if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything)
             this
         else
-            ConeTypeCheckerContext(errorTypesEqualToAnything, session)
+            ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)
 
 }

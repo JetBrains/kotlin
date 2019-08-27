@@ -63,7 +63,10 @@ interface TypeSystemTypeFactoryContext {
 
 
 interface TypeCheckerProviderContext {
-    fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext
+    fun newBaseTypeCheckerContext(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean
+    ): AbstractTypeCheckerContext
 }
 
 interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeFactoryContext, TypeCheckerProviderContext {
@@ -74,9 +77,12 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
     val isErrorTypeAllowed: Boolean
 
     fun KotlinTypeMarker.anySuperTypeConstructor(predicate: (TypeConstructorMarker) -> Boolean) =
-        newBaseTypeCheckerContext(false).anySupertype(lowerBoundIfFlexible(), {
-            predicate(it.typeConstructor())
-        }, { AbstractTypeCheckerContext.SupertypesPolicy.LowerIfFlexible })
+        newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
+            .anySupertype(
+                lowerBoundIfFlexible(),
+                { predicate(it.typeConstructor()) },
+                { AbstractTypeCheckerContext.SupertypesPolicy.LowerIfFlexible }
+            )
 
     fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean
 

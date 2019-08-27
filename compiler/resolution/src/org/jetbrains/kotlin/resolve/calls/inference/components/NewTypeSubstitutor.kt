@@ -73,29 +73,26 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
                         "and class: ${type::class.java.canonicalName}. type.toString() = $type"
             }
             val capturedType = if (type is DefinitelyNotNullType) type.original as NewCapturedType else type as NewCapturedType
-            val lower = capturedType.lowerType?.let { substitute(it, keepAnnotation, runCapturedChecks = false) }
-            if (lower != null && capturedType.lowerType is StubType) {
-                return NewCapturedType(
-                    capturedType.captureStatus,
-                    NewCapturedTypeConstructor(TypeProjectionImpl(typeConstructor.projection.projectionKind, lower)),
-                    lower
-                )
-            }
 
-            if (lower != null) throw IllegalStateException(
-                "Illegal type substitutor: $this, " +
-                        "because for captured type '$type' lower type approximation should be null, but it is: '$lower'," +
-                        "original lower type: '${capturedType.lowerType}"
-            )
+            val innerType = capturedType.lowerType ?: capturedType.constructor.projection.type.unwrap()
+            val substitutedInnerType = substitute(innerType, keepAnnotation, runCapturedChecks = false)
+
+            if (substitutedInnerType != null) {
+                if (innerType is StubType || substitutedInnerType is StubType) {
+                    return NewCapturedType(
+                        capturedType.captureStatus,
+                        NewCapturedTypeConstructor(TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType)),
+                        lowerType = if (capturedType.lowerType != null) substitutedInnerType else null
+                    )
+                } else {
+                    throwExceptionAboutInvalidCapturedSubstitution(capturedType, innerType, substitutedInnerType)
+                }
+            }
 
             if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                 typeConstructor.supertypes.forEach { supertype ->
                     substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
-                        throw IllegalStateException(
-                            "Illegal type substitutor: $this, " +
-                                    "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
-                                    "original supertype: '$supertype'"
-                        )
+                        throwExceptionAboutInvalidCapturedSubstitution(capturedType, supertype, it)
                     }
                 }
             }
@@ -129,6 +126,18 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
 
         return replacement
     }
+
+    private fun throwExceptionAboutInvalidCapturedSubstitution(
+        capturedType: SimpleType,
+        innerType: UnwrappedType,
+        substitutedInnerType: UnwrappedType
+    ): Nothing =
+        throw IllegalStateException(
+            "Illegal type substitutor: $this, " +
+                    "because for captured type '$capturedType' supertype approximation should be null, but it is: '$innerType'," +
+                    "original supertype: '$substitutedInnerType'"
+        )
+
 
     private fun substituteParametrizedType(
         type: SimpleType,

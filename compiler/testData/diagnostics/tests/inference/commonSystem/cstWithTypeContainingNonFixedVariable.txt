@@ -1,0 +1,23 @@
+package
+
+public fun </*0*/ T> select(/*0*/ x: T, /*1*/ y: T): T
+public fun testCaptured(/*0*/ cSub: SubInv<out kotlin.Number>, /*1*/ cInv: Inv<out kotlin.Number>): kotlin.Unit
+public fun testCapturedVariable(): kotlin.Unit
+public fun testNested(): kotlin.Unit
+public fun testNullability(): kotlin.Unit
+public fun testSimple(): kotlin.Unit
+public fun testVariableWithBound(): kotlin.Unit
+
+public open class Inv</*0*/ K> {
+    public constructor Inv</*0*/ K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class SubInv</*0*/ V> : Inv<V> {
+    public constructor SubInv</*0*/ V>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

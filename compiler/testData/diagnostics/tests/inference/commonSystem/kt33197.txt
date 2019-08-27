@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ T> emptyList(): kotlin.collections.List<T>
+public fun </*0*/ T> mutableListOf(): kotlin.collections.MutableList<T>
+public fun test(/*0*/ condition: kotlin.Boolean): kotlin.Unit

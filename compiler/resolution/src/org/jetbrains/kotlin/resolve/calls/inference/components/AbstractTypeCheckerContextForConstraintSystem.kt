@@ -18,6 +18,9 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
     override val isErrorTypeEqualsToAnything: Boolean
         get() = true
 
+    override val isStubTypeEqualsToAnything: Boolean
+        get() = true
+
     abstract fun isMyTypeVariable(type: SimpleTypeMarker): Boolean
 
     // super and sub type isSingleClassifierType

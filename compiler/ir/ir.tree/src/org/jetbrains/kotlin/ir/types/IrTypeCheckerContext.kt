@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
@@ -31,13 +29,16 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
 
     override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker) = super.isEqualTypeConstructors(a, b)
 
-    override val isErrorTypeEqualsToAnything = false
+    override val isErrorTypeEqualsToAnything get() = false
+    override val isStubTypeEqualsToAnything get() = false
+
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = false
 
-    override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext {
-        return IrTypeCheckerContext(irBuiltIns)
-    }
+    override fun newBaseTypeCheckerContext(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean
+    ): AbstractTypeCheckerContext = IrTypeCheckerContext(irBuiltIns)
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
 

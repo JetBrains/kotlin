@@ -12,7 +12,7 @@ object ConeNullabilityChecker {
     fun isSubtypeOfAny(context: ConeTypeContext, type: ConeKotlinType): Boolean {
         val actualType = with(context) { type.lowerBoundIfFlexible() }
         return with(AbstractNullabilityChecker) {
-            context.newBaseTypeCheckerContext(false)
+            context.newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
                 .hasNotNullSupertype(actualType, AbstractTypeCheckerContext.SupertypesPolicy.LowerIfFlexible)
         }
     }

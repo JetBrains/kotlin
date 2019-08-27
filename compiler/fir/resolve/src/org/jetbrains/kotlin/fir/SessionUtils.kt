@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.fir.types.ConeTypeContext
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 
 private class SessionBasedTypeContext(override val session: FirSession) : ConeTypeContext {
-    override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext {
-        return ConeTypeCheckerContext(errorTypesEqualToAnything, session)
+    override fun newBaseTypeCheckerContext(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean
+    ): AbstractTypeCheckerContext {
+        return ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)
     }
 }
 

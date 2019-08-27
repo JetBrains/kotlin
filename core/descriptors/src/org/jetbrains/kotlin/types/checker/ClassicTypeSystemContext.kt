@@ -321,8 +321,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
 
-    override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext {
-        return ClassicTypeCheckerContext(errorTypesEqualToAnything)
+    override fun newBaseTypeCheckerContext(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean
+    ): AbstractTypeCheckerContext {
+        return ClassicTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything)
     }
 
     override fun nullableNothingType(): SimpleTypeMarker {

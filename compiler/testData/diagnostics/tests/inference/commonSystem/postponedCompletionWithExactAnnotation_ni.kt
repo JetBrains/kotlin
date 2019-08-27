@@ -11,13 +11,13 @@ fun <K> elvisExact(x: K?, y: K): @kotlin.internal.Exact K = y
 fun <T : Number> materialize(): T? = null
 
 fun test(nullableSample: ISample, any: Any) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("ISample")!>elvisSimple(
+    <!DEBUG_INFO_EXPRESSION_TYPE("ISample?")!>elvisSimple(
         nullableSample,
         <!DEBUG_INFO_EXPRESSION_TYPE("{ISample & Number}?")!>materialize()<!>
     )<!>
 
     elvisSimple(
-        <!DEBUG_INFO_EXPRESSION_TYPE("ISample")!>elvisSimple(nullableSample, materialize())<!>,
+        <!DEBUG_INFO_EXPRESSION_TYPE("ISample?")!>elvisSimple(nullableSample, materialize())<!>,
         any
     )
 

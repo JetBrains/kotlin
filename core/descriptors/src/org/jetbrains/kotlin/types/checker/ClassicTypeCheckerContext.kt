@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 open class ClassicTypeCheckerContext(
     val errorTypeEqualsToAnything: Boolean,
+    val stubTypeEqualsToAnything: Boolean = true,
     val allowedTypeVariable: Boolean = true,
     val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default
 ) : ClassicTypeSystemContext, AbstractTypeCheckerContext() {
@@ -42,6 +43,9 @@ open class ClassicTypeCheckerContext(
 
     override val isErrorTypeEqualsToAnything: Boolean
         get() = errorTypeEqualsToAnything
+
+    override val isStubTypeEqualsToAnything: Boolean
+        get() = stubTypeEqualsToAnything
 
     override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean {
         require(a is TypeConstructor, a::errorMessage)

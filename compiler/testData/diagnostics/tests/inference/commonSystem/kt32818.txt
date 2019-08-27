@@ -1,0 +1,4 @@
+package
+
+public val value: kotlin.Int
+public fun </*0*/ T : kotlin.Any> nullable(): T?

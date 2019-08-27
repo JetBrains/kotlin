@@ -307,6 +307,11 @@ class NewConstraintSystemImpl(
         return storage.buildCurrentSubstitutor(this, additionalBindings)
     }
 
+    override fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker {
+        checkState(State.BUILDING, State.COMPLETION)
+        return storage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(this)
+    }
+
     override fun bindingStubsForPostponedVariables(): Map<TypeVariableMarker, StubTypeMarker> {
         checkState(State.BUILDING, State.COMPLETION)
         // TODO: SUB

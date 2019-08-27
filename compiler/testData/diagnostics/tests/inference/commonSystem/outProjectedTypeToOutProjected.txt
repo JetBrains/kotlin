@@ -1,0 +1,12 @@
+package
+
+public fun </*0*/ V> outToOut(/*0*/ x: Inv<out V>): Inv<out V>
+public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
+public fun test(/*0*/ invOutAny: Inv<out kotlin.Any>, /*1*/ invAny: Inv<kotlin.Any>): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
