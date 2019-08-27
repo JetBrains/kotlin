@@ -99,7 +99,6 @@
       <option name="problems">
         <list>
           <Problem reference="com.intellij.util.JdomKt#element" reason="Removed in 191" />
-          <Problem reference="com.intellij.util.AstLoadingFilter" reason="Absent in 181. Almost all methods were renamed in 183. Use org.jetbrains.kotlin.util.AstLoadingFilter instead." />
           <Problem reference="com.intellij.codeInspection.reference.RefFile#getPsiElement" reason="Absent in 182. Use psiFile extension instead." />
           <Problem reference="com.intellij.execution.JavaRunConfigurationExtensionManager#getInstance" reason="Can't be used in Kotlin, because method was replaced with property after J2K in 183. Use JavaRunConfigurationExtensionManagerUtil instead." />
           <Problem reference="org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler#addSpace" reason="Method was replaced with outher methods in 182. Use addSpaceEx instead." />
@@ -267,7 +266,7 @@
       <option name="ignoreAnonymousClassMethods" value="false" />
     </inspection_tool>
     <inspection_tool class="MissingRecentApi" enabled="true" level="ERROR" enabled_by_default="true">
-      <option name="sinceBuildString" value="182.0" />
+      <option name="sinceBuildString" value="183.3284" />
       <option name="untilBuildString" value="192.SNAPSHOT" />
     </inspection_tool>
     <inspection_tool class="MisspelledCompareTo" enabled="true" level="WARNING" enabled_by_default="true" />

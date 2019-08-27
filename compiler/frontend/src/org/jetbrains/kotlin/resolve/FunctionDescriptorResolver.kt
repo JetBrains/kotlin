@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiElement
+import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
@@ -68,7 +69,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
-import org.jetbrains.kotlin.util.AstLoadingFilter
 import java.util.*
 
 class FunctionDescriptorResolver(
