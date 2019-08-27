@@ -2,9 +2,7 @@
 package com.intellij.completion.ml.common
 
 import com.intellij.codeInsight.lookup.Lookup
-import com.intellij.codeInsight.completion.ml.BinaryValue
 import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
-import com.intellij.codeInsight.completion.ml.FloatValue
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.util.TextRange
@@ -21,10 +19,10 @@ class CommonLocationFeatures : ContextFeatureProvider {
     val linePrefix = editor.document.getText(TextRange(lineStartOffset, caretOffset))
 
     return mapOf(
-      "line_num" to FloatValue.of(logicalPosition.line),
-      "col_num" to FloatValue.of(logicalPosition.column),
-      "is_in_line_beginning" to BinaryValue.of(StringUtil.isEmptyOrSpaces(linePrefix)),
-      "indent_level" to FloatValue.of(LocationFeaturesUtil.indentLevel(linePrefix, EditorUtil.getTabSize(editor)))
+      "line_num" to MLFeatureValue.float(logicalPosition.line),
+      "col_num" to MLFeatureValue.float(logicalPosition.column),
+      "indent_level" to MLFeatureValue.float(LocationFeaturesUtil.indentLevel(linePrefix, EditorUtil.getTabSize(editor))),
+      "is_in_line_beginning" to MLFeatureValue.binary(StringUtil.isEmptyOrSpaces(linePrefix))
     )
   }
 }
