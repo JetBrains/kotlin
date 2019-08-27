@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
 import javax.swing.Icon
 
-// BUNCH: 182
 // BUNCH: as35
 // BUNCH: as34
 // BUNCH: 191
