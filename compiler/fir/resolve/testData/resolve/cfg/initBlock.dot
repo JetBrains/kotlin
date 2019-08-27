@@ -1,0 +1,16 @@
+digraph initBlock_kt {
+subgraph <init> {
+  0 [shape=box label="Enter function <init>"];
+  1 [shape=box label="Exit function <init>"];
+
+  0 -> {1};
+}
+
+subgraph <init> {
+  2 [shape=box label="Enter function <init>"];
+  3 [shape=box label="Exit function <init>"];
+
+  2 -> {3};
+}
+
+}

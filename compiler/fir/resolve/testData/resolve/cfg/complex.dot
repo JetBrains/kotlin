@@ -14,7 +14,7 @@ subgraph fetchPluginReleaseDate {
   11 [shape=box label="Access variable <Unresolved name: HttpRequests>#"];
   12 [shape=box label="Access variable R|<local>/url|"];
   13 [shape=box label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|)"];
-  14 [shape=box label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <implicit> {
+  14 [shape=box label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
     GsonBuilder#().create#().fromJson#(it#.inputStream#.reader#(), <getClass>(Array#<R|class error: Symbol not found, for `PluginDTO`|>()).java#)
 }
 )"];

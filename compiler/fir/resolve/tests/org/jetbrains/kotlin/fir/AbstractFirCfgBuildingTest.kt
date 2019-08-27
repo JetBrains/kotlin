@@ -31,7 +31,7 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
         firFiles.first().accept(FirControlFlowGraphRenderVisitor(simpleBuilder, dotBuilder), null)
 
         val dotCfgDump = dotBuilder.toString()
-        val dotExpectedPath = path.replace(".kt", ".cfg.dot")
+        val dotExpectedPath = path.replace(".kt", ".dot")
         KotlinTestUtils.assertEqualsToFile(File(dotExpectedPath), dotCfgDump)
     }
 
