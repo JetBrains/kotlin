@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import com.intellij.codeInsight.unwrap.RangeSplitter
 import com.intellij.codeInsight.unwrap.UnwrapHandler
 import com.intellij.ide.IdeBundle
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.java.JavaLanguage
@@ -95,6 +96,8 @@ import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
 import kotlin.math.min
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 import org.jetbrains.kotlin.idea.core.util.getLineCount as newGetLineCount
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory as newToPsiDirectory
@@ -1042,4 +1045,18 @@ fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? {
 )
 fun VirtualFile.toPsiFile(project: Project): PsiFile? {
     return newToPsiFile(project)
+}
+
+internal class ConfigurationBooleanProperty(private val id: String, private val defaultValue: Boolean) :
+    ReadWriteProperty<Any?, Boolean>
+{
+    override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) {
+        if (!ApplicationManager.getApplication().isUnitTestMode) {
+            PropertiesComponent.getInstance().setValue(id, value, defaultValue)
+        }
+    }
+
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>) =
+        !ApplicationManager.getApplication().isUnitTestMode &&
+                PropertiesComponent.getInstance().getBoolean(id, defaultValue)
 }

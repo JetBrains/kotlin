@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.keymap.KeymapUtil
@@ -24,7 +23,6 @@ import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
-import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.ui.RecentsManager
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton
@@ -33,6 +31,7 @@ import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.core.util.onTextChange
+import org.jetbrains.kotlin.idea.refactoring.ConfigurationBooleanProperty
 import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -49,12 +48,13 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     companion object {
         private const val RECENT_KEYS = "MoveFile.RECENT_KEYS"
         private const val MOVE_FILES_OPEN_IN_EDITOR = "MoveFile.OpenInEditor"
+        private const val MOVE_FILES_SEARCH_REFERENCES = "MoveFile.SearchReferences"
         private const val HELP_ID = "refactoring.moveFile"
     }
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
     private val targetDirectoryField = TextFieldWithHistoryWithBrowseButton()
-    private val searchReferencesCb = NonFocusableCheckBox("Search r${UIUtil.MNEMONIC}eferences").apply { isSelected = true }
+    private val searchReferencesCb = NonFocusableCheckBox("Search r${UIUtil.MNEMONIC}eferences")
     private val openInEditorCb = NonFocusableCheckBox("Open moved files in editor")
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
 
@@ -89,7 +89,8 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         targetDirectoryField.setTextFieldPreferredWidth(CopyFilesOrDirectoriesDialog.MAX_PATH_LENGTH)
         Disposer.register(disposable, targetDirectoryField)
 
-        openInEditorCb.isSelected = isOpenInEditor()
+        openInEditorCb.isSelected = isOpenInEditor
+        searchReferencesCb.isSelected = isSearchReferences
 
         val shortcutText = KeymapUtil.getFirstKeyboardShortcutText(ActionManager.getInstance().getAction(IdeActions.ACTION_CODE_COMPLETION))
         return FormBuilder.createFormBuilder()
@@ -138,10 +139,9 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         }
     }
 
-    private fun isOpenInEditor(): Boolean {
-        if (ApplicationManager.getApplication().isUnitTestMode) return false
-        return PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, false)
-    }
+    private var isOpenInEditor by ConfigurationBooleanProperty(MOVE_FILES_OPEN_IN_EDITOR, defaultValue = false)
+
+    private var isSearchReferences by ConfigurationBooleanProperty(MOVE_FILES_SEARCH_REFERENCES, defaultValue = true)
 
     private fun validateOKButton() {
         isOKActionEnabled = targetDirectoryField.childComponent.text.isNotEmpty()
@@ -192,7 +192,9 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             processor.run()
         }
 
-        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected, false)
+        isOpenInEditor = openInEditorCb.isSelected
+        isSearchReferences = searchReferencesCb.isSelected
+
         RecentsManager.getInstance(project).registerRecentEntry(RECENT_KEYS, targetDirectoryField.childComponent.text)
 
         close(OK_EXIT_CODE, true)
