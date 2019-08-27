@@ -42,6 +42,14 @@ class FirDelegatedConstructorCallImpl(
         return this
     }
 
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        return this
+    }
+
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        return this
+    }
+
     override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(psi)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}

@@ -13,5 +13,5 @@ FILE: objects.kt
         ^use Q|A|
     }
     public final fun bar(): R|A| {
-        ^bar Q|A|.R|/A.foo|()
+        ^bar D|Q|A||.R|/A.foo|()
     }

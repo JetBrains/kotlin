@@ -10,5 +10,5 @@ FILE: simple.kt
 
     }
     public final fun test(s: R|Simple|): R|kotlin/Unit| {
-        lval result: R|kotlin/String| = R|<local>/s|.R|/Simple.invoke|()
+        lval result: R|kotlin/String| = D|R|<local>/s||.R|/Simple.invoke|()
     }

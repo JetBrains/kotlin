@@ -15,7 +15,7 @@ FILE: companionExtension.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            R|/My.Companion.foo|()
+            E|this@R|/My||.R|/My.Companion.foo|()
         }
 
     }

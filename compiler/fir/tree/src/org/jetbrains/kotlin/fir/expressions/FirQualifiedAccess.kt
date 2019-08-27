@@ -20,6 +20,10 @@ interface FirQualifiedAccess : FirResolvable {
 
     fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
+    fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+
+    fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitQualifiedAccess(this, data)
 

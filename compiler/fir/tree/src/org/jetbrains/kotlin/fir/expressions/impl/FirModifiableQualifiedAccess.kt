@@ -20,6 +20,14 @@ interface FirModifiableQualifiedAccess<C : FirReference> : FirQualifiedAccess {
 
     override var explicitReceiver: FirExpression?
 
+    override var dispatchReceiver: FirExpression
+        get() = super.dispatchReceiver
+        set(_) {}
+
+    override var extensionReceiver: FirExpression
+        get() = super.extensionReceiver
+        set(_) {}
+
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
         calleeReference = calleeReference.transformSingle(transformer, data)
         return this
@@ -27,6 +35,16 @@ interface FirModifiableQualifiedAccess<C : FirReference> : FirQualifiedAccess {
 
     override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         return this
     }
 }

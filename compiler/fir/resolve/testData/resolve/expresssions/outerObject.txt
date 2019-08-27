@@ -19,7 +19,7 @@ FILE: outerObject.kt
                 public get(): R|kotlin/Int|
 
             public final fun test(): R|kotlin/Unit| {
-                R|/Outer.foo|()
+                E|this@R|/Outer.Nested||.R|/Outer.foo|()
             }
 
         }

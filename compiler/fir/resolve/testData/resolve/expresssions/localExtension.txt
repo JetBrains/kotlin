@@ -8,7 +8,7 @@ FILE: localExtension.kt
             local final fun R|Foo|.bar(): R|kotlin/Unit| {
             }
 
-            R|<local>/bar|()
+            E|this@R|/Foo||.R|<local>/bar|()
         }
 
     }

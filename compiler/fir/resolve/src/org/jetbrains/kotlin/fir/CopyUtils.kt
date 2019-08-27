@@ -26,6 +26,8 @@ fun FirFunctionCall.copy(
     arguments: List<FirExpression> = this.arguments,
     calleeReference: FirNamedReference = this.calleeReference,
     explicitReceiver: FirExpression? = this.explicitReceiver,
+    dispatchReceiver: FirExpression = this.dispatchReceiver,
+    extensionReceiver: FirExpression = this.extensionReceiver,
     psi: PsiElement? = this.psi,
     safe: Boolean = this.safe,
     typeArguments: List<FirTypeProjection> = this.typeArguments,
@@ -36,6 +38,8 @@ fun FirFunctionCall.copy(
         this.arguments.addAll(arguments)
         this.calleeReference = calleeReference
         this.explicitReceiver = explicitReceiver
+        this.dispatchReceiver = dispatchReceiver
+        this.extensionReceiver = extensionReceiver
         this.typeArguments.addAll(typeArguments)
         this.typeRef = resultType
     }

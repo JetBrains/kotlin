@@ -19,5 +19,5 @@ FILE: generics.kt
 
     }
     public final fun f(list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
-        R|/C.C|().R|/Base.f|<R|kotlin/Int|>(R|<local>/list|)
+        D|R|/C.C|()|.R|/Base.f|<R|kotlin/Int|>(R|<local>/list|)
     }

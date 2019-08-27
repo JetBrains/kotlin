@@ -35,8 +35,8 @@ FILE: simple.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            R|/B.foo|()
-            R|/B.bar|()
+            D|this@R|/B||.R|/B.foo|()
+            D|this@R|/B||.R|/B.bar|()
             <Inapplicable(PARAMETER_MAPPING_ERROR): [/B.buz, /A.buz]>#()
         }
 

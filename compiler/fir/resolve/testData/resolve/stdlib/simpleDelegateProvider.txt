@@ -8,7 +8,7 @@ FILE: simpleDelegateProvider.kt
             public get(): R|kotlin/String|
 
         public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/Any?|): R|kotlin/String| {
-            ^getValue R|/Delegate.value|
+            ^getValue D|this@R|/Delegate||.R|/Delegate.value|
         }
 
     }
@@ -21,11 +21,11 @@ FILE: simpleDelegateProvider.kt
             public get(): R|kotlin/String|
 
         public final operator fun provideDelegate(thisRef: R|kotlin/Any?|, property: R|kotlin/Any?|): R|Delegate| {
-            ^provideDelegate R|/Delegate.Delegate|(R|/DelegateProvider.value|)
+            ^provideDelegate R|/Delegate.Delegate|(D|this@R|/DelegateProvider||.R|/DelegateProvider.value|)
         }
 
     }
-    public final val testTopLevel: R|kotlin/String|by R|/DelegateProvider.DelegateProvider|(String(OK)).R|/DelegateProvider.provideDelegate|(Null(null), ::R|/testTopLevel|)
+    public final val testTopLevel: R|kotlin/String|by D|R|/DelegateProvider.DelegateProvider|(String(OK))|.R|/DelegateProvider.provideDelegate|(Null(null), ::R|/testTopLevel|)
         public get(): R|kotlin/String| {
-            ^ D|/testTopLevel|.R|/Delegate.getValue|(Null(null), ::R|/testTopLevel|)
+            ^ D|D|/testTopLevel||.R|/Delegate.getValue|(Null(null), ::R|/testTopLevel|)
         }

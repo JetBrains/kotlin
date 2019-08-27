@@ -14,7 +14,7 @@ FILE: explicitReceiver.kt
         }
 
         public final fun bar(): R|Foo| {
-            ^bar R|/Foo.x|.R|/Foo.invoke|()
+            ^bar D|R|/Foo.x||.R|/Foo.invoke|()
         }
 
     }
@@ -34,7 +34,7 @@ FILE: explicitReceiver.kt
         }
 
         public final fun baz(): R|kotlin/Unit| {
-            R|/Bar.x|()
+            D|this@R|/Bar||.R|/Bar.x|()
         }
 
     }

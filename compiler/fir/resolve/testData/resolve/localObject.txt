@@ -1,6 +1,6 @@
 FILE: localObject.kt
     public final fun <T> run(block: R|kotlin/Function0<T>|): R|T| {
-        ^run R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()
+        ^run D|R|<local>/block||.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()
     }
     public abstract interface Foo : R|kotlin/Any| {
         public abstract fun foo(): R|kotlin/Int|
@@ -14,7 +14,7 @@ FILE: localObject.kt
                 }
 
                 public final override fun foo(): R|kotlin/Int| {
-                    ^foo R|<local>/x|.R|kotlin/Int.plus|(Int(1))
+                    ^foo D|R|<local>/x||.R|kotlin/Int.plus|(Int(1))
                 }
 
             }
@@ -40,7 +40,7 @@ FILE: localObject.kt
                     }
 
                     public final override fun foo(): R|kotlin/Int| {
-                        ^foo R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
+                        ^foo D|D|this@R|/TestProperty||.R|/TestProperty.intConst||.R|kotlin/Int.plus|(Int(1))
                     }
 
                 }
@@ -56,7 +56,7 @@ FILE: localObject.kt
                     }
 
                     public final override fun foo(): R|kotlin/Int| {
-                        ^foo R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
+                        ^foo D|D|this@R|/TestProperty||.R|/TestProperty.intConst||.R|kotlin/Int.plus|(Int(1))
                     }
 
                 }
@@ -71,7 +71,7 @@ FILE: localObject.kt
                 }
 
                 public final override fun foo(): R|kotlin/Int| {
-                    ^foo R|/TestProperty.x|.R|kotlin/Int.plus|(Int(1))
+                    ^foo D|D|this@R|/TestProperty||.R|/TestProperty.x||.R|kotlin/Int.plus|(Int(1))
                 }
 
             }

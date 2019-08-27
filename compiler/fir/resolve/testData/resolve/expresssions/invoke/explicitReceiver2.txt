@@ -24,7 +24,7 @@ FILE: explicitReceiver2.kt
             public get(): R|Bar|
 
         public final fun bar(): R|Foo| {
-            ^bar R|/Foo.x|.R|/Bar.invoke|()
+            ^bar D|R|/Foo.x||.R|/Bar.invoke|()
         }
 
     }

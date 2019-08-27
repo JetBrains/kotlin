@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
-import org.jetbrains.kotlin.fir.references.FirBackingFieldReferenceImpl
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.transformers.*
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
@@ -125,6 +125,8 @@ class FirCallResolver(
         val resultFunctionCall = if (candidate != null && candidate.callInfo != info) {
             functionCall.copy(
                 explicitReceiver = candidate.callInfo.explicitReceiver,
+                dispatchReceiver = candidate.dispatchReceiverExpression(),
+                extensionReceiver = candidate.extensionReceiverExpression(),
                 arguments = candidate.callInfo.arguments,
                 safe = candidate.callInfo.isSafeCall
             )
@@ -200,7 +202,12 @@ class FirCallResolver(
         }
 
         @Suppress("UNCHECKED_CAST")
-        val resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference) as T
+        var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference) as T
+        if (candidates.size == 1) {
+            val candidate = candidates.single()
+            resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression()) as T
+            resultExpression = resultExpression.transformExtensionReceiver(StoreReceiver, candidate.extensionReceiverExpression()) as T
+        }
         if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)
         return resultExpression
     }

@@ -5,15 +5,15 @@ FILE: arrayFirstOrNull.kt
 
     }
     public final fun goo(g: R|G|): R|kotlin/Unit| {
-        lval x: R|G?| = R|<local>/g|.R|/G.a|.R|/firstOrNullX|<R|G|>()
+        lval x: R|G?| = E|D|R|<local>/g||.R|/G.a||.R|/firstOrNullX|<R|G|>()
     }
     public final fun <T> R|kotlin/Array<out T>|.firstOrNullX(): R|T?| {
         ^firstOrNullX when () {
-            R|kotlin/collections/isEmpty|<R|T|>() ->  {
+            E|this@R|/firstOrNullX||.R|kotlin/collections/isEmpty|<R|T|>() ->  {
                 Null(null)
             }
             else ->  {
-                this@R|/firstOrNullX|.R|FakeOverride<kotlin/Array.get: R|T|>|(Int(0))
+                D|this@R|/firstOrNullX||.R|FakeOverride<kotlin/Array.get: R|T|>|(Int(0))
             }
         }
 
