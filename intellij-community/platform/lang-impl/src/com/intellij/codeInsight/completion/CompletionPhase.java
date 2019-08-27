@@ -126,6 +126,8 @@ public abstract class CompletionPhase implements Disposable {
             return null;
           }
 
+          loadContributorsOutsideEdt(completionEditor, file);
+
           return completionEditor;
         })
         .withDocumentsCommitted(project)
@@ -147,6 +149,10 @@ public abstract class CompletionPhase implements Disposable {
             CompletionServiceImpl.setCompletionPhase(NoCompletion);
           }
         }));
+    }
+
+    private static void loadContributorsOutsideEdt(Editor editor, PsiFile file) {
+      CompletionContributor.forLanguage(PsiUtilCore.getLanguageAtOffset(file, editor.getCaretModel().getOffset()));
     }
 
     private static boolean shouldSkipAutoPopup(Editor editor, PsiFile psiFile) {
