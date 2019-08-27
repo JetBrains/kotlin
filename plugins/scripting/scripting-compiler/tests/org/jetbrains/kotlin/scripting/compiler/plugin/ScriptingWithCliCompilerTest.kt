@@ -23,6 +23,11 @@ class ScriptingWithCliCompilerTest {
     fun testResultValue() {
         runWithK2JVMCompiler("$TEST_DATA_DIR/integration/intResult.kts", listOf("10"))
     }
+
+    @Test
+    fun testStandardScriptWithDeps() {
+        runWithK2JVMCompiler("$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", listOf("Hello from standard kts!"))
+    }
 }
 
 fun runWithK2JVMCompiler(
