@@ -59,8 +59,5 @@ class FirJavaClass internal constructor(
         return this
     }
 
-    override fun setCallbackOnSupertypesComputed(callback: () -> Unit) =
-        error("Supertypes computation should happen just before the instance is published")
-
     override var supertypesComputationStatus = FirClassLikeDeclaration.SupertypesComputationStatus.NOT_COMPUTED
 }

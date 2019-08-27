@@ -54,15 +54,7 @@ class FirEnumEntryImpl(
     override fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSupertypes)
-        callbackOnSupertypesComputed?.invoke()
-        callbackOnSupertypesComputed = null
         return this
-    }
-
-    private var callbackOnSupertypesComputed: (() -> Unit)? = null
-
-    override fun setCallbackOnSupertypesComputed(callback: () -> Unit) {
-        callbackOnSupertypesComputed = callback
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
