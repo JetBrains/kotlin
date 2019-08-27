@@ -66,7 +66,7 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
       data.addLanguage(Language.findLanguageByID(language));
     }
     final InspectionEP extension = tool.getExtension();
-    final PluginInfo info = extension != null ? PluginInfoDetectorKt.getPluginInfoById(extension.getPluginId()) : null;
+    final PluginInfo info = extension != null ? PluginInfoDetectorKt.getPluginInfoById(extension.getPluginDescriptor().getPluginId()) : null;
     if (info != null) {
       data.addPluginInfo(info);
     }

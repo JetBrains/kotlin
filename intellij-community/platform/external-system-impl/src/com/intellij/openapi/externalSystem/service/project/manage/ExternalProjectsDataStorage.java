@@ -121,8 +121,12 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   }
 
   private boolean hasLinkedExternalProjects() {
-    return ExternalSystemApiUtil.getAllManagers().stream()
-      .anyMatch(manager -> !manager.getSettingsProvider().fun(myProject).getLinkedProjectsSettings().isEmpty());
+    for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemManager.EP_NAME.getIterable()) {
+      if (!manager.getSettingsProvider().fun(myProject).getLinkedProjectsSettings().isEmpty()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private void markDirtyAllExternalProjects() {
@@ -280,7 +284,7 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   }
 
   private void mergeLocalSettings() {
-    for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemApiUtil.getAllManagers()) {
+    for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemManager.EP_NAME.getIterable()) {
       final ProjectSystemId systemId = manager.getSystemId();
 
       AbstractExternalSystemLocalSettings<?> settings = manager.getLocalSettingsProvider().fun(myProject);

@@ -72,7 +72,7 @@ public class InspectionNodeInfo extends JPanel {
     String descriptionText = toolWrapper.loadDescription();
     if (descriptionText == null) {
       InspectionEP extension = toolWrapper.getExtension();
-      LOG.error(new PluginException("Inspection #" + toolWrapper.getShortName() + " has no description", extension != null ? extension.getPluginId() : null));
+      LOG.error(new PluginException("Inspection #" + toolWrapper.getShortName() + " has no description", extension != null ? extension.getPluginDescriptor().getPluginId() : null));
     }
     final String toolDescription =
       stripUIRefsFromInspectionDescription(StringUtil.notNullize(descriptionText));

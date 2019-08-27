@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.editor.fonts;
 
 import com.intellij.application.options.editor.EditorOptionsPanel;
@@ -22,22 +8,19 @@ import com.intellij.openapi.editor.colors.FontPreferences;
 import com.intellij.openapi.editor.colors.impl.AppEditorFontOptions;
 import com.intellij.openapi.editor.colors.impl.EditorColorsManagerImpl;
 import com.intellij.openapi.options.Configurable.NoScroll;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.LazyInstance;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class AppEditorFontConfigurable implements SearchableConfigurable, NoScroll {
-
+public final class AppEditorFontConfigurable implements SearchableConfigurable, NoScroll {
   public static final String ID = "editor.preferences.fonts.default";
   private final LazyInstance<AppEditorFontPanel> myFontPanelInstance = new LazyInstance<AppEditorFontPanel>() {
     @Override
-    protected Class<AppEditorFontPanel> getInstanceClass() throws ClassNotFoundException {
+    protected Class<AppEditorFontPanel> getInstanceClass() {
       return AppEditorFontPanel.class;
     }
   };
@@ -48,7 +31,7 @@ public class AppEditorFontConfigurable implements SearchableConfigurable, NoScro
     return ID;
   }
 
-  @Nullable
+  @NotNull
   @Override
   public JComponent createComponent() {
     return getFontPanel().getComponent();
@@ -61,7 +44,7 @@ public class AppEditorFontConfigurable implements SearchableConfigurable, NoScro
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     FontPreferences fontPreferences = getUIFontPreferences();
     fontPreferences.copyTo(getStoredPreferences());
     EditorFontCache.getInstance().reset();
@@ -103,7 +86,7 @@ public class AppEditorFontConfigurable implements SearchableConfigurable, NoScro
     }
   }
 
-  @Nullable
+  @NotNull
   @Override
   public String getHelpTopic() {
     return "reference.settingsdialog.IDE.editor.colors";

@@ -925,7 +925,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
 
       try {
         InspectionEP extension = toolWrapper.getExtension();
-        ClassLoader classLoader = extension != null ? extension.getLoaderForClass() : getClass().getClassLoader();
+        ClassLoader classLoader = extension == null ? getClass().getClassLoader() : extension.getLoaderForClass();
         Constructor<?> constructor = Class.forName(presentationClass, true, classLoader)
                                           .getConstructor(InspectionToolWrapper.class, GlobalInspectionContextImpl.class);
         presentation = (InspectionToolPresentation)constructor.newInstance(toolWrapper, this);

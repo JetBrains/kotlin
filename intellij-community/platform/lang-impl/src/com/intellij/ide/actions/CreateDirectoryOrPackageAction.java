@@ -206,7 +206,7 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
 
     VirtualFile vDir = directory.getVirtualFile();
     for (CreateDirectoryCompletionContributorEP ep : EP.getIterable()) {
-      CreateDirectoryCompletionContributor contributor = ep.getImplementationClass();
+      CreateDirectoryCompletionContributor contributor = ep.getInstance();
       for (CreateDirectoryCompletionContributor.Variant variant : contributor.getVariants(directory)) {
         String relativePath = FileUtil.toSystemIndependentName(variant.path);
 

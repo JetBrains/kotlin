@@ -2,8 +2,8 @@
 package org.jetbrains.plugins.gradle.settings;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager;
@@ -13,6 +13,7 @@ import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListen
 import com.intellij.openapi.project.ExternalStorageConfigurationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Key;
 import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,17 +30,18 @@ import java.util.TreeSet;
 @State(name = "GradleSettings", storages = @Storage("gradle.xml"))
 public class GradleSettings extends AbstractExternalSystemSettings<GradleSettings, GradleProjectSettings, GradleSettingsListener>
   implements PersistentStateComponent<GradleSettings.MyState> {
-
-  private final GradleSystemSettings mySystemSettings;
+  private static final Key<GradleSettings> BUG_WORKAROUND_KEY = Key.create("GradleSettings https://youtrack.jetbrains.com/issue/IDEA-220429");
 
   public GradleSettings(@NotNull Project project) {
     super(GradleSettingsListener.TOPIC, project);
-    mySystemSettings = GradleSystemSettings.getInstance();
+
+    project.putUserData(BUG_WORKAROUND_KEY, this);
   }
 
   @NotNull
   public static GradleSettings getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, GradleSettings.class);
+    GradleSettings settings = BUG_WORKAROUND_KEY.get(project);
+    return settings == null ? project.getService(GradleSettings.class) : settings;
   }
 
   @Override
@@ -68,7 +70,11 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
   public void loadState(@NotNull MyState state) {
     super.loadState(state);
 
-    GradleSettingsMigration migration = getProject().getComponent(GradleSettingsMigration.class);
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      return;
+    }
+
+    GradleSettingsMigration migration = getProject().getService(GradleSettingsMigration.class);
 
     // When we are opening pre 2019.2 project, we need to import project defaults from the workspace
     // The migration flag is saved to a separate component to preserve backward and forward compatibility.
@@ -76,7 +82,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
       migration.setMigrationVersion(1);
 
       GradleSettingsMigration.LegacyDefaultGradleProjectSettings.MyState legacyProjectDefaults
-        = getProject().getComponent(GradleSettingsMigration.LegacyDefaultGradleProjectSettings.class).getState();
+        = getProject().getService(GradleSettingsMigration.LegacyDefaultGradleProjectSettings.class).getState();
       if (legacyProjectDefaults != null) {
         for (GradleProjectSettings each : getLinkedProjectsSettings()) {
           if (each.getDirectDelegatedBuild() == null) each.setDelegatedBuild(legacyProjectDefaults.delegatedBuild);
@@ -94,36 +100,36 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
    */
   @Nullable
   public String getServiceDirectoryPath() {
-    return mySystemSettings.getServiceDirectoryPath();
+    return GradleSystemSettings.getInstance().getServiceDirectoryPath();
   }
 
   public void setServiceDirectoryPath(@Nullable String newPath) {
-    String myServiceDirectoryPath = mySystemSettings.getServiceDirectoryPath();
+    String myServiceDirectoryPath = GradleSystemSettings.getInstance().getServiceDirectoryPath();
     if (!Comparing.equal(myServiceDirectoryPath, newPath)) {
-      mySystemSettings.setServiceDirectoryPath(newPath);
+      GradleSystemSettings.getInstance().setServiceDirectoryPath(newPath);
       getPublisher().onServiceDirectoryPathChange(myServiceDirectoryPath, newPath);
     }
   }
 
   @Nullable
   public String getGradleVmOptions() {
-    return mySystemSettings.getGradleVmOptions();
+    return GradleSystemSettings.getInstance().getGradleVmOptions();
   }
 
   public void setGradleVmOptions(@Nullable String gradleVmOptions) {
-    String myGradleVmOptions = mySystemSettings.getGradleVmOptions();
+    String myGradleVmOptions = GradleSystemSettings.getInstance().getGradleVmOptions();
     if (!Comparing.equal(myGradleVmOptions, gradleVmOptions)) {
-      mySystemSettings.setGradleVmOptions(gradleVmOptions);
+      GradleSystemSettings.getInstance().setGradleVmOptions(gradleVmOptions);
       getPublisher().onGradleVmOptionsChange(myGradleVmOptions, gradleVmOptions);
     }
   }
 
   public boolean isOfflineWork() {
-    return mySystemSettings.isOfflineWork();
+    return GradleSystemSettings.getInstance().isOfflineWork();
   }
 
   public void setOfflineWork(boolean isOfflineWork) {
-    mySystemSettings.setOfflineWork(isOfflineWork);
+    GradleSystemSettings.getInstance().setOfflineWork(isOfflineWork);
   }
 
   public boolean getStoreProjectFilesExternally() {

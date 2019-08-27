@@ -465,7 +465,7 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
 
 
     Map<String, String> toSubstitute = new HashMap<>();
-    for (ExternalSystemManager<?, ?, ?, ?, ?> manager: ExternalSystemApiUtil.getAllManagers()) {
+    for (ExternalSystemManager<?, ?, ?, ?, ?> manager: ExternalSystemManager.EP_NAME.getIterable()) {
       final Collection<ExternalProjectInfo> projectsData =
         ProjectDataManager.getInstance().getExternalProjectsData(myProject, manager.getSystemId());
       for (ExternalProjectInfo projectInfo: projectsData) {

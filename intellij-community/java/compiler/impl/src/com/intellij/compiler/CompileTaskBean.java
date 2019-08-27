@@ -5,7 +5,6 @@ import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.extensions.AbstractExtensionPointBean;
 import com.intellij.openapi.extensions.ProjectExtensionPointName;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ExtensionInstantiator;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +34,7 @@ public final class CompileTaskBean extends AbstractExtensionPointBean {
         result = myInstance;
         if (result == null) {
           //noinspection NonPrivateFieldAccessedInSynchronizedContext
-          result = ExtensionInstantiator.instantiateWithPicoContainerOnlyIfNeeded(myImplementation, project.getPicoContainer(), myPluginDescriptor);
+          result = project.instantiateExtensionWithPicoContainerOnlyIfNeeded(myImplementation, myPluginDescriptor);
           myInstance = result;
         }
       }

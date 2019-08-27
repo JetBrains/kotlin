@@ -2,6 +2,8 @@
 package com.intellij.semantic;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionNotApplicableException;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.LowMemoryWatcher;
 import com.intellij.openapi.util.RecursionGuard;
@@ -11,7 +13,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ConcurrencyUtil;
-import com.intellij.util.ExtensionInstantiator;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -31,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author peter
  */
 @SuppressWarnings({"unchecked"})
-public class SemServiceImpl extends SemService {
+public final class SemServiceImpl extends SemService {
   private static final Logger LOG = Logger.getInstance(SemServiceImpl.class);
 
   private final AtomicReference<ConcurrentMap<PsiElement, SemCacheChunk>> myCache = new AtomicReference<>();
@@ -92,9 +93,13 @@ public class SemServiceImpl extends SemService {
     for (SemContributorEP contributor : SemContributor.EP_NAME.getExtensionList()) {
       SemContributor semContributor;
       try {
-        semContributor = ExtensionInstantiator.instantiateWithPicoContainerOnlyIfNeeded(contributor.implementation,
-                                                                                        myProject.getPicoContainer(),
-                                                                                        contributor.getPluginDescriptor());
+        semContributor = myProject.instantiateExtensionWithPicoContainerOnlyIfNeeded(contributor.implementation, contributor.getPluginDescriptor());
+      }
+      catch (ProcessCanceledException e) {
+        throw e;
+      }
+      catch (ExtensionNotApplicableException e) {
+        continue;
       }
       catch (Exception e) {
         LOG.error(e);
@@ -176,7 +181,7 @@ public class SemServiceImpl extends SemService {
 
     List<T> singleList = null;
     LinkedHashSet<T> result = null;
-    List<SemKey> inheritors = key.getInheritors();
+    List<SemKey<?>> inheritors = key.getInheritors();
     //noinspection ForLoopReplaceableByForEach
     for (int i = 0; i < inheritors.size(); i++) {
       List<T> cached = (List<T>)chunk.getSemElements(inheritors.get(i));

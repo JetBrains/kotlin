@@ -19,7 +19,6 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.InvalidDataException
-import com.intellij.openapi.util.JDOMExternalizable
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -28,11 +27,11 @@ import com.intellij.util.ArrayUtilRt
 import com.intellij.util.SmartList
 import com.intellij.util.SystemProperties
 import com.intellij.util.ThreeState
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.util.messages.MessageBus
 import com.intellij.util.xmlb.XmlSerializerUtil
-import gnu.trove.THashMap
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -77,7 +76,7 @@ internal fun setRoamableComponentSaveThreshold(thresholdInSeconds: Int) {
 
 @ApiStatus.Internal
 abstract class ComponentStoreImpl : IComponentStore {
-  private val components = Collections.synchronizedMap(THashMap<String, ComponentInfo>())
+  private val components = ContainerUtil.newConcurrentMap<String, ComponentInfo>()
 
   open val project: Project?
     get() = null
@@ -111,9 +110,9 @@ abstract class ComponentStoreImpl : IComponentStore {
   }
 
   override fun unloadComponent(component: Any) {
-    val name = when (component) {
+    @Suppress("DEPRECATION") val name = when (component) {
       is PersistentStateComponent<*> -> getStateSpec(component).name
-      is JDOMExternalizable -> ComponentManagerImpl.getComponentName(component)
+      is com.intellij.openapi.util.JDOMExternalizable -> ComponentManagerImpl.getComponentName(component)
       else -> null
     }
     name?.let { removeComponent(it) }
@@ -350,9 +349,14 @@ abstract class ComponentStoreImpl : IComponentStore {
   private fun doAddComponent(name: String, component: Any, stateSpec: State?, serviceDescriptor: ServiceDescriptor?): ComponentInfo {
     val newInfo = createComponentInfo(component, stateSpec, serviceDescriptor)
     val existing = components.put(name, newInfo)
+
+    if (name == "GradleSettings") {
+      LOG.info("hi")
+    }
+
     if (existing != null && existing.component !== component) {
       components.put(name, existing)
-      LOG.error("Conflicting component name '$name': ${existing.component.javaClass} and ${component.javaClass}")
+      LOG.error("Conflicting component name '$name': ${existing.component.javaClass} and ${component.javaClass} (componentManager=${storageManager.componentManager})")
       return existing
     }
     return newInfo

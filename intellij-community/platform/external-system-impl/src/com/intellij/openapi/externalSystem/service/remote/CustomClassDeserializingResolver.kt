@@ -1,12 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.remote
 
+import com.intellij.openapi.externalSystem.ExternalSystemManager
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataService
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import java.io.InputStream
 import java.io.ObjectInputStream
 import java.io.ObjectStreamClass
@@ -26,8 +26,8 @@ class CustomClassDeserializingResolver<S : ExternalSystemExecutionSettings>(
                                   isPreviewMode: Boolean,
                                   settings: S?): DataNode<ProjectData>? {
     val rawData = rawResolverDelegate.resolveProjectInfo(id, projectPath, isPreviewMode, settings) ?: return null
-    val managerClassLoaders = (ExternalSystemApiUtil.getAllManagers().asSequence()
-        + ProjectDataService.EP_NAME.extensions.asSequence())
+    val managerClassLoaders = (ExternalSystemManager.EP_NAME.iterable.asSequence()
+                               + ProjectDataService.EP_NAME.extensions.asSequence())
       .map { it.javaClass.classLoader }
       .toSet()
 

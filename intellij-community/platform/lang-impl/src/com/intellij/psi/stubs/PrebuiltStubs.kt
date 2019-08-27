@@ -13,7 +13,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.indexing.FileBasedIndexExtension
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.ID
-import com.intellij.util.io.*
+import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.DataInputOutputUtil
+import com.intellij.util.io.KeyDescriptor
+import com.intellij.util.io.PersistentHashMap
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
 import java.io.DataInput
@@ -65,7 +68,7 @@ open class HashCodeExternalizers : DataExternalizer<HashCode> {
 
 class FullStubExternalizer : SerializedStubTreeDataExternalizer()
 
-val FILE_LOCAL_STUB_FORWARD_INDEX_EXTERNALIZER: StubForwardIndexExternalizer<*>  = FileLocalStubForwardIndexExternalizer()
+val FILE_LOCAL_STUB_FORWARD_INDEX_EXTERNALIZER: StubForwardIndexExternalizer<*> = FileLocalStubForwardIndexExternalizer()
 
 private class FileLocalStubForwardIndexExternalizer : StubForwardIndexExternalizer<FileLocalStringEnumerator>() {
   override fun createStubIndexKeySerializationState(out: DataOutput,
@@ -110,11 +113,13 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
   }
 
   override fun openIndexStorage(indexesRoot: File): PersistentHashMap<HashCode, SerializedStubTree>? {
-    val versionFileText = Files.readAllLines(indexesRoot.toPath().resolve("$indexName.version"))
+    val formatFile = indexesRoot.toPath().resolve("$indexName.version")
+    val versionFileText = Files.readAllLines(formatFile)
     if (versionFileText.size != 2) {
-      LOG.error("Invalid version file format: \"$versionFileText\"")
+      LOG.warn("Invalid version file format: \"$versionFileText\" (file=$formatFile)")
       return null
     }
+
     val stubSerializationVersion = versionFileText[0]
     val currentSerializationVersion = StringUtilRt.parseInt(stubSerializationVersion, 0)
     val expected = FileBasedIndexExtension.EXTENSION_POINT_NAME.findExtension(StubUpdatingIndex::class.java)!!.version

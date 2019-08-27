@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 /*
  * @author max
@@ -145,7 +145,7 @@ public class LineMarkersPass extends TextEditorHighlightingPass {
 
   @NotNull
   public static List<LineMarkerProvider> getMarkerProviders(@NotNull Language language, @NotNull final Project project) {
-    List<LineMarkerProvider> forLanguage = LineMarkerProviders.INSTANCE.allForLanguageOrAny(language);
+    List<LineMarkerProvider> forLanguage = LineMarkerProviders.getInstance().allForLanguageOrAny(language);
     List<LineMarkerProvider> providers = DumbService.getInstance(project).filterByDumbAwareness(forLanguage);
     final LineMarkerSettings settings = LineMarkerSettings.getSettings();
     return ContainerUtil.filter(providers, provider -> !(provider instanceof LineMarkerProviderDescriptor)

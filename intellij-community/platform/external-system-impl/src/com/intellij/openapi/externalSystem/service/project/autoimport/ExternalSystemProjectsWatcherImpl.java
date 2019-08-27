@@ -62,7 +62,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static com.intellij.util.ui.update.MergingUpdateQueue.ANY_COMPONENT;
 
@@ -854,11 +853,13 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
 
   @NotNull
   private List<Pair<ExternalSystemManager, ExternalProjectSettings>> findLinkedProjectsSettings() {
-    return ExternalSystemApiUtil.getAllManagers().stream()
-      .flatMap(
-        manager -> manager.getSettingsProvider().fun(myProject).getLinkedProjectsSettings().stream()
-          .map(settings -> Pair.create((ExternalSystemManager)manager, (ExternalProjectSettings)settings)))
-      .collect(Collectors.toList());
+    List<Pair<ExternalSystemManager, ExternalProjectSettings>> list = new ArrayList<>();
+    for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemManager.EP_NAME.getIterable()) {
+      for (ExternalProjectSettings settings : manager.getSettingsProvider().fun(myProject).getLinkedProjectsSettings()) {
+        list.add(Pair.create(manager, settings));
+      }
+    }
+    return list;
   }
 
   @Nullable

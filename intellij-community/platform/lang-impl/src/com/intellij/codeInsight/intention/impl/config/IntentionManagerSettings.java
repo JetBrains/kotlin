@@ -58,7 +58,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
         descriptionDirectoryName = instance.getDescriptionDirectoryName();
       }
       try {
-        registerMetaData(new IntentionActionMetaData(instance, extension.getMetadataClassLoader(), categories, descriptionDirectoryName));
+        registerMetaData(new IntentionActionMetaData(instance, extension.getLoaderForClass(), categories, descriptionDirectoryName));
       }
       catch (ExtensionNotApplicableException ignore) {
       }
