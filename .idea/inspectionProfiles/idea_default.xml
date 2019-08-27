@@ -99,7 +99,6 @@
       <option name="problems">
         <list>
           <Problem reference="com.intellij.util.JdomKt#element" reason="Removed in 191" />
-          <Problem reference="com.intellij.codeInspection.reference.RefFile#getPsiElement" reason="Absent in 182. Use psiFile extension instead." />
           <Problem reference="com.intellij.execution.JavaRunConfigurationExtensionManager#getInstance" reason="Can't be used in Kotlin, because method was replaced with property after J2K in 183. Use JavaRunConfigurationExtensionManagerUtil instead." />
           <Problem reference="org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler#addSpace" reason="Method was replaced with outher methods in 182. Use addSpaceEx instead." />
           <Problem reference="com.intellij.execution.configurations.RunConfigurationBase" reason="Generalized in 183. Use RunConfigurationBaseAny instead in signatures." />
