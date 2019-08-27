@@ -54,7 +54,7 @@ import java.util.function.BooleanSupplier;
  * @author Roman Chernyatchik
  */
 public class ExecutionHelper {
-  private static final Logger LOG = Logger.getInstance(ExecutionHelper.class.getName());
+  private static final Logger LOG = Logger.getInstance(ExecutionHelper.class);
 
   private ExecutionHelper() {
   }
@@ -76,6 +76,25 @@ public class ExecutionHelper {
     if (ApplicationManager.getApplication().isUnitTestMode() && !errors.isEmpty()) {
       throw new RuntimeException(errors.get(0));
     }
+
+    errors.forEach(it -> {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Got error: ", it);
+      }
+      else {
+        LOG.warn("Got error: " + it.getMessage());
+      }
+    });
+
+    warnings.forEach(it -> {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Got warning: ", it);
+      }
+      else {
+        LOG.warn("Got warning: " + it.getMessage());
+      }
+    });
+
     ApplicationManager.getApplication().invokeLater(() -> {
       if (myProject.isDisposed()) return;
       if (errors.isEmpty() && warnings.isEmpty()) {
