@@ -24,6 +24,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.DocumentUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,7 +87,8 @@ public class JoinLinesHandler extends EditorActionHandler {
       if (doc.getLineStartOffset(endLine) == caret.getSelectionEnd()) endLine--;
     }
 
-    // joining lines, several times if selection is multiline
+    if (endLine >= doc.getLineCount()) return;
+
     int lineCount = endLine - startLine;
     int line = startLine;
 
@@ -101,7 +103,7 @@ public class JoinLinesHandler extends EditorActionHandler {
   private static class JoinLineProcessor {
     private final @NotNull DocumentEx myDoc;
     private final @NotNull PsiFile myFile;
-    private final int myLine;
+    private int myLine;
     private final @NotNull PsiDocumentManager myManager;
     private final @NotNull CodeStyleManager myStyleManager;
     private final @NotNull ProgressIndicator myIndicator;
@@ -154,8 +156,10 @@ public class JoinLinesHandler extends EditorActionHandler {
         if (lastNonSpaceOffset > myDoc.getLineStartOffset(line)) {
           PsiComment comment = getCommentElement(myFile.findElementAt(lastNonSpaceOffset - 1));
           if (comment != null) {
-            int nextStart = StringUtil.skipWhitespaceForward(text, myDoc.getLineStartOffset(line + 1));
-            if (getCommentElement(myFile.findElementAt(nextStart)) == null) {
+            int nextStart = CharArrayUtil.shiftForward(text, myDoc.getLineStartOffset(line + 1), " \t\n");
+            if (nextStart < text.length() &&
+                myDoc.getLineNumber(nextStart) <= myLine + lineCount &&
+                getCommentElement(myFile.findElementAt(nextStart)) == null) {
               endComments.add(comment);
             }
           }
@@ -192,9 +196,11 @@ public class JoinLinesHandler extends EditorActionHandler {
         int start = limits.getStartOffset();
         int end = limits.getEndOffset();
         int rc = CANNOT_JOIN;
+        JoinRawLinesHandlerDelegate rawJoiner = null;
         for (JoinLinesHandlerDelegate delegate : list) {
           if (delegate instanceof JoinRawLinesHandlerDelegate) {
-            rc = ((JoinRawLinesHandlerDelegate)delegate).tryJoinRawLines(myDoc, myFile, start, end);
+            rawJoiner = (JoinRawLinesHandlerDelegate)delegate;
+            rc = rawJoiner.tryJoinRawLines(myDoc, myFile, start, end);
             if (rc != CANNOT_JOIN) {
               myCaretRestoreOffset = checkOffset(rc, delegate, myDoc);
               break;
@@ -209,8 +215,18 @@ public class JoinLinesHandler extends EditorActionHandler {
           myManager.doPostponedOperationsAndUnblockDocument(myDoc);
           myManager.commitDocument(myDoc);
           int afterLines = myDoc.getLineCount();
-          // Single Join two lines procedure could join more than two (e.g. if it removes braces)
-          count += Math.max(beforeLines - afterLines, 1);
+          if (afterLines > beforeLines) {
+            LOG.error("Raw joiner increased number of lines: " + rawJoiner + " (" + rawJoiner.getClass() + ")");
+          }
+          if (afterLines >= beforeLines && myLine == startLine) {
+            // if number of lines is the same, continue processing from the next line
+            myLine++;
+            startLine++;
+            count++;
+          } else {
+            // Single Join two lines procedure could join more than two (e.g. if it removes braces)
+            count += Math.max(beforeLines - afterLines, 1);
+          }
           beforeLines = afterLines;
           text = myDoc.getCharsSequence();
         }
@@ -297,7 +313,7 @@ public class JoinLinesHandler extends EditorActionHandler {
         RangeMarker marker = markers.get(i);
         if (!marker.isValid()) continue;
         int end = StringUtil.skipWhitespaceForward(text, marker.getStartOffset());
-        int spacesToCreate = myStyleManager.getSpacing(myFile, end);
+        int spacesToCreate = text.charAt(end) == '\n' ? 0 : myStyleManager.getSpacing(myFile, end);
         spacesToAdd[i] = spacesToCreate < 0 ? 1 : spacesToCreate;
       }
       DocumentUtil.executeInBulk(myDoc, size > 100, () -> {
