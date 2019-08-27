@@ -106,7 +106,6 @@
           <Problem reference="com.intellij.execution.configurations.ModuleBasedConfiguration" reason="Generalized in 183. Use ModuleBasedConfigurationElement instead." />
           <Problem reference="com.intellij.psi.codeStyle.CodeStyleSettingsProvider" reason="Additional method is introduced in 183 instead of deprecated one. Use CodeStyleSettingsProviderCompat instead." />
           <Problem reference="com.intellij.openapi.ui.popup.PopupChooserBuilder#PopupChooserBuilder(javax.swing.JList)" reason="Generified in 182. Use PopupChooserBuilderWrapper instead." />
-          <Problem reference="com.intellij.openapi.editor.event.EditorFactoryListener" reason="Default implementations were added in 183. Use EditorFactoryListenerWrapper for inheritance instead." />
           <Problem reference="com.intellij.openapi.diagnostic.LoggerKt#debugOrInfoIfTestMode" reason="Absent in 182." />
           <Problem reference="com.intellij.psi.search.PsiSearchHelper.SERVICE" reason="Deprecated since 182. Use psiSearchHelperInstance() instead." />
           <Problem reference="org.jetbrains.kotlin.idea.reporter.ITNReporterCompat#submit" reason="parentComponent is nullable in AS" />
