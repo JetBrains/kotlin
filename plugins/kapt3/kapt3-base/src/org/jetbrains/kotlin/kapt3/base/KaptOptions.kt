@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import java.io.File
 import java.nio.file.Files
 
+private const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
+
 class KaptOptions(
     val projectBaseDir: File?,
     val compileClasspath: List<File>,
@@ -79,6 +81,11 @@ class KaptOptions(
                 mode, detectMemoryLeaks
             )
         }
+    }
+
+    fun getKotlinGeneratedSourcesDirectory(): File? {
+        val value = processingOptions[KAPT_KOTLIN_GENERATED_OPTION_NAME] ?: return null
+        return File(value).takeIf { it.exists() }
     }
 }
 

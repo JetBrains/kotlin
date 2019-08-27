@@ -73,6 +73,9 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
                 }
                 deleteAndCreate(options.sourcesOutputDir)
                 deleteAndCreate(options.classesOutputDir)
+                options.getKotlinGeneratedSourcesDirectory()?.let {
+                    deleteAndCreate(it)
+                }
             }
         } else {
             sourcesToReprocess = SourcesToReprocess.FullRebuild
