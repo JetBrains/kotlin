@@ -21,11 +21,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.DocumentUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,7 +86,6 @@ public class JoinLinesHandler extends EditorActionHandler {
       if (doc.getLineStartOffset(endLine) == caret.getSelectionEnd()) endLine--;
     }
 
-    final int startReformatOffset = CharArrayUtil.shiftBackward(doc.getCharsSequence(), doc.getLineEndOffset(startLine), " \t");
     // joining lines, several times if selection is multiline
     int lineCount = endLine - startLine;
     int line = startLine;
@@ -96,24 +93,25 @@ public class JoinLinesHandler extends EditorActionHandler {
     ((ApplicationImpl)ApplicationManager.getApplication()).runWriteActionWithCancellableProgressInDispatchThread(
       "Join Lines", project, null, indicator -> {
         indicator.setIndeterminate(false);
-        CodeEditUtil.setNodeReformatStrategy(node -> node.getTextRange().getStartOffset() >= startReformatOffset);
-        JoinLineProcessor processor = new JoinLineProcessor(doc, psiFile, line);
-        processor.process(editor, caret, lineCount, indicator);
+        JoinLineProcessor processor = new JoinLineProcessor(doc, psiFile, line, indicator);
+        processor.process(editor, caret, lineCount);
       });
   }
 
   private static class JoinLineProcessor {
-    private final DocumentEx myDoc;
-    private final PsiFile myFile;
+    private final @NotNull DocumentEx myDoc;
+    private final @NotNull PsiFile myFile;
     private final int myLine;
-    private final PsiDocumentManager myManager;
-    private final CodeStyleManager myStyleManager;
+    private final @NotNull PsiDocumentManager myManager;
+    private final @NotNull CodeStyleManager myStyleManager;
+    private final @NotNull ProgressIndicator myIndicator;
     int myCaretRestoreOffset = CANNOT_JOIN;
 
-    JoinLineProcessor(DocumentEx doc, PsiFile file, int line) {
+    JoinLineProcessor(@NotNull DocumentEx doc, @NotNull PsiFile file, int line, @NotNull ProgressIndicator indicator) {
       myDoc = doc;
       myFile = file;
       myLine = line;
+      myIndicator = indicator;
       Project project = file.getProject();
       myManager = PsiDocumentManager.getInstance(project);
       myStyleManager = CodeStyleManager.getInstance(project);
@@ -121,33 +119,35 @@ public class JoinLinesHandler extends EditorActionHandler {
 
     void process(@NotNull Editor editor,
                  @NotNull Caret caret,
-                 int lineCount,
-                 ProgressIndicator indicator) {
+                 int lineCount) {
+      myStyleManager.performActionWithFormatterDisabled((Runnable)() -> doProcess(lineCount));
+      positionCaret(editor, caret);
+    }
+
+    private void doProcess(int lineCount) {
       List<RangeMarker> markers = new ArrayList<>();
       try {
-        indicator.setText2("Converting end-of-line comments");
+        myIndicator.setText2("Converting end-of-line comments");
         convertEndComments(lineCount);
-        ProgressManager.checkCanceled();
-        indicator.setText2("Removing line-breaks");
-        int newCount = processRawJoiners(lineCount, indicator);
-        DocumentUtil.executeInBulk(myDoc, true, () -> removeLineBreaks(newCount, indicator, markers));
-        indicator.setText2("Postprocessing");
-        List<RangeMarker> unprocessed = processNonRawJoiners(markers, indicator);
-        indicator.setText2("Adjusting white-space");
-        adjustWhiteSpace(unprocessed, indicator);
+        myIndicator.setText2("Removing line-breaks");
+        int newCount = processRawJoiners(lineCount);
+        DocumentUtil.executeInBulk(myDoc, newCount > 100, () -> removeLineBreaks(newCount, markers));
+        myIndicator.setText2("Postprocessing");
+        List<RangeMarker> unprocessed = processNonRawJoiners(markers);
+        myIndicator.setText2("Adjusting white-space");
+        adjustWhiteSpace(unprocessed);
       }
       finally {
         markers.forEach(RangeMarker::dispose);
-        CodeEditUtil.setNodeReformatStrategy(null);
       }
-
-      positionCaret(editor, caret);
     }
 
     private void convertEndComments(int lineCount) {
       List<PsiComment> endComments = new ArrayList<>();
       CharSequence text = myDoc.getCharsSequence();
       for (int i = 0; i < lineCount; i++) {
+        myIndicator.checkCanceled();
+        myIndicator.setFraction(0.05 * i / lineCount);
         int line = myLine + i;
         int lineEnd = myDoc.getLineEndOffset(line);
         int lastNonSpaceOffset = StringUtil.skipWhitespaceBackward(text, lineEnd);
@@ -162,9 +162,11 @@ public class JoinLinesHandler extends EditorActionHandler {
         }
       }
       boolean changed = false;
-      for (PsiComment comment : endComments) {
+      for (int i = 0; i < endComments.size(); i++) {
+        myIndicator.checkCanceled();
+        myIndicator.setFraction(0.05 + 0.05 * i / endComments.size());
+        PsiComment comment = endComments.get(i);
         changed |= tryConvertEndOfLineComment(comment);
-        ProgressManager.checkCanceled();
       }
       if (changed) {
         myManager.doPostponedOperationsAndUnblockDocument(myDoc);
@@ -173,18 +175,17 @@ public class JoinLinesHandler extends EditorActionHandler {
 
     /**
      * @param lineCount number of lines to process
-     * @param indicator progress indicator
      * @return number of unprocessed lines
      */
-    private int processRawJoiners(int lineCount, ProgressIndicator indicator) {
+    private int processRawJoiners(int lineCount) {
       int count = 0;
       int startLine = myLine;
       List<JoinLinesHandlerDelegate> list = JoinLinesHandlerDelegate.EP_NAME.getExtensionList();
       int beforeLines = myDoc.getLineCount();
       CharSequence text = myDoc.getCharsSequence();
       while (count < lineCount) {
-        indicator.checkCanceled();
-        indicator.setFraction(0.1 + 0.2 * count / lineCount);
+        myIndicator.checkCanceled();
+        myIndicator.setFraction(0.1 + 0.2 * count / lineCount);
         JoinLinesOffsets offsets = new JoinLinesOffsets(myDoc, startLine);
 
         TextRange limits = findStartAndEnd(text, offsets.lastNonSpaceOffsetInStartLine, offsets.firstNonSpaceOffsetInNextLine);
@@ -217,14 +218,13 @@ public class JoinLinesHandler extends EditorActionHandler {
       return startLine - myLine;
     }
 
-    private void removeLineBreaks(int lineCount, ProgressIndicator indicator, List<RangeMarker> markers) {
+    private void removeLineBreaks(int lineCount, List<RangeMarker> markers) {
       for (int i = 0; i < lineCount; i++) {
-        indicator.checkCanceled();
-        indicator.setFraction(0.3 + 0.2 * i / lineCount);
+        myIndicator.checkCanceled();
+        myIndicator.setFraction(0.3 + 0.2 * i / lineCount);
 
         JoinLinesOffsets offsets = new JoinLinesOffsets(myDoc, myLine);
 
-        // remove indents and newline, run non-raw joiners
         if (offsets.lastNonSpaceOffsetInStartLine == myDoc.getLineStartOffset(myLine)) {
           myDoc.deleteString(myDoc.getLineStartOffset(myLine), offsets.firstNonSpaceOffsetInNextLine);
 
@@ -247,11 +247,11 @@ public class JoinLinesHandler extends EditorActionHandler {
       myManager.commitDocument(myDoc);
     }
 
-    private List<RangeMarker> processNonRawJoiners(List<RangeMarker> markers, ProgressIndicator indicator) {
+    private List<RangeMarker> processNonRawJoiners(List<RangeMarker> markers) {
       List<RangeMarker> unprocessed = new ArrayList<>();
       for (int i = 0; i < markers.size(); i++) {
-        indicator.checkCanceled();
-        indicator.setFraction(0.5 + 0.2 * i / markers.size());
+        myIndicator.checkCanceled();
+        myIndicator.setFraction(0.5 + 0.2 * i / markers.size());
         RangeMarker marker = markers.get(i);
         if (!marker.isValid()) continue;
         Runnable doProcess = () -> {
@@ -259,8 +259,7 @@ public class JoinLinesHandler extends EditorActionHandler {
             unprocessed.add(marker);
           }
         };
-        ProgressManager.getInstance().executeNonCancelableSection(
-          () -> myStyleManager.performActionWithFormatterDisabled(doProcess));
+        ProgressManager.getInstance().executeNonCancelableSection(doProcess);
       }
       return unprocessed;
     }
@@ -287,24 +286,24 @@ public class JoinLinesHandler extends EditorActionHandler {
       return false;
     }
 
-    private void adjustWhiteSpace(List<RangeMarker> markers, ProgressIndicator indicator) {
+    private void adjustWhiteSpace(List<RangeMarker> markers) {
       int size = markers.size();
       int[] spacesToAdd = new int[size];
       Arrays.fill(spacesToAdd, -1);
       CharSequence text = myDoc.getCharsSequence();
       for (int i = 0; i < size; i++) {
-        indicator.checkCanceled();
-        indicator.setFraction(0.7 + 0.25 * i / size);
+        myIndicator.checkCanceled();
+        myIndicator.setFraction(0.7 + 0.25 * i / size);
         RangeMarker marker = markers.get(i);
         if (!marker.isValid()) continue;
         int end = StringUtil.skipWhitespaceForward(text, marker.getStartOffset());
         int spacesToCreate = myStyleManager.getSpacing(myFile, end);
         spacesToAdd[i] = spacesToCreate < 0 ? 1 : spacesToCreate;
       }
-      DocumentUtil.executeInBulk(myDoc, true, () -> {
+      DocumentUtil.executeInBulk(myDoc, size > 100, () -> {
         for (int i = 0; i < size; i++) {
-          indicator.checkCanceled();
-          indicator.setFraction(0.95 + 0.05 * i / size);
+          myIndicator.checkCanceled();
+          myIndicator.setFraction(0.95 + 0.05 * i / size);
           RangeMarker marker = markers.get(i);
           if (!marker.isValid()) continue;
           CharSequence docText = myDoc.getCharsSequence();
