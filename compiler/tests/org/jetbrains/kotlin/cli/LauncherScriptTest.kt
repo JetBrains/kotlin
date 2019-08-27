@@ -79,12 +79,12 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
-    fun testKotlincJvmSimpleScript() {
+    fun testKotlincJvmScriptWithClassPathFromSysProp() {
         runProcess(
             "kotlinc-jvm",
             "-script",
-            "$testDataDirectory/helloWorld.kts",
-            expectedStdout = "Hello!\n"
+            "$testDataDirectory/classPathPropTest.kts",
+            expectedStdout = "kotlin-compiler.jar\n"
         )
     }
 
@@ -102,7 +102,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlin",
             "-cp", listOf(tmpdir.path, kotlinTestJar.path).joinToString(File.pathSeparator),
             "ContextClassLoaderTester",
-            expectedStdout = "ok\n"
+            expectedStdout = "${kotlinTestJar.name}\n"
         )
     }
 
