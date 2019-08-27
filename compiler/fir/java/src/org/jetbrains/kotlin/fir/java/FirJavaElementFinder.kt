@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverTransformer
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -94,13 +96,15 @@ class FirJavaElementFinder(
             firClass.typeParameters.map { Pair(it.name.asString(), arrayOf(CommonClassNames.JAVA_LANG_OBJECT)) }
         )
 
-        if (firClass.superTypeRefs.any { it !is FirResolvedTypeRef }) {
-            firClass.setCallbackOnSupertypesComputed {
-                stub.addSupertypesReferencesLists(firClass, session)
+        if (firClass.supertypesComputationStatus != FirClassLikeDeclaration.SupertypesComputationStatus.COMPUTED) {
+            val firForSuperClassFile = firProvider.getFirClassifierContainerFile(classId)
+            FirSupertypeResolverTransformer().apply {
+                initFromFile(firForSuperClassFile)
+                transformRegularClass(firClass, null)
             }
-        } else {
-            stub.addSupertypesReferencesLists(firClass, session)
         }
+
+        stub.addSupertypesReferencesLists(firClass, session)
 
         for (nestedClass in firClass.declarations.filterIsInstance<FirRegularClass>()) {
             buildStub(nestedClass, stub)
@@ -133,6 +137,7 @@ private fun FirRegularClass.packFlags(): Int {
 }
 
 private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(firRegularClass: FirRegularClass, session: FirSession) {
+    if (firRegularClass.supertypesComputationStatus == FirClassLikeDeclaration.SupertypesComputationStatus.COMPUTING) return
     require(firRegularClass.superTypeRefs.all { it is FirResolvedTypeRef }) {
         "Supertypes for light class $qualifiedName are being added too early"
     }

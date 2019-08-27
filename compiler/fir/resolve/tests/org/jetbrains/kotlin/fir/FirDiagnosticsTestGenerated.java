@@ -46,6 +46,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/KJKComplexHierarchy.kt");
         }
 
+        @TestMetadata("KJKComplexHierarchyNestedLoop.kt")
+        public void testKJKComplexHierarchyNestedLoop() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/KJKComplexHierarchyNestedLoop.kt");
+        }
+
         @TestMetadata("KJKComplexHierarchyWithNested.kt")
         public void testKJKComplexHierarchyWithNested() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/KJKComplexHierarchyWithNested.kt");
