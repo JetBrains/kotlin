@@ -34,10 +34,10 @@ import com.jetbrains.cidr.execution.testing.CidrLauncher
 import java.io.OutputStream
 
 class AndroidCommandLineState(
-    private val configuration: MobileRunConfiguration,
+    configuration: MobileRunConfiguration,
     environment: ExecutionEnvironment
 ) : CidrCommandLineState(environment, FakeLauncher()) {
-    private val project get() = configuration.project
+    private val project = configuration.project
     private val device = environment.executionTarget as AndroidDevice
     private val apk = configuration.getProductBundle(environment)
 
