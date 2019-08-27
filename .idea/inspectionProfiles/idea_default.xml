@@ -101,7 +101,6 @@
           <Problem reference="com.intellij.util.JdomKt#element" reason="Removed in 191" />
           <Problem reference="com.intellij.execution.JavaRunConfigurationExtensionManager#getInstance" reason="Can't be used in Kotlin, because method was replaced with property after J2K in 183. Use JavaRunConfigurationExtensionManagerUtil instead." />
           <Problem reference="org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler#addSpace" reason="Method was replaced with outher methods in 182. Use addSpaceEx instead." />
-          <Problem reference="com.intellij.psi.codeStyle.CodeStyleSettingsProvider" reason="Additional method is introduced in 183 instead of deprecated one. Use CodeStyleSettingsProviderCompat instead." />
           <Problem reference="com.intellij.openapi.ui.popup.PopupChooserBuilder#PopupChooserBuilder(javax.swing.JList)" reason="Generified in 182. Use PopupChooserBuilderWrapper instead." />
           <Problem reference="com.intellij.openapi.diagnostic.LoggerKt#debugOrInfoIfTestMode" reason="Absent in 182." />
           <Problem reference="com.intellij.psi.search.PsiSearchHelper.SERVICE" reason="Deprecated since 182. Use psiSearchHelperInstance() instead." />

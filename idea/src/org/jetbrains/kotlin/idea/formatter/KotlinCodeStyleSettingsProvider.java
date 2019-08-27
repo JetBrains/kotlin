@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
 
-public class KotlinCodeStyleSettingsProvider extends CodeStyleSettingsProviderCompat {
+public class KotlinCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
     @Override
     public String getConfigurableDisplayName() {
