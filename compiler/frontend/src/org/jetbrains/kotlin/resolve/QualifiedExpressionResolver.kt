@@ -431,7 +431,7 @@ class QualifiedExpressionResolver {
         position: QualifierPosition
     ): DeclarationDescriptor? {
         val (packageOrClassDescriptor, endIndex) =
-                resolveToPackageOrClassPrefix(path, moduleDescriptor, trace, shouldBeVisibleFrom, scopeForFirstPart, position)
+            resolveToPackageOrClassPrefix(path, moduleDescriptor, trace, shouldBeVisibleFrom, scopeForFirstPart, position)
 
         if (endIndex != path.size) {
             return null
@@ -471,13 +471,13 @@ class QualifiedExpressionResolver {
         }
 
         val (prefixDescriptor, nextIndexAfterPrefix) =
-                if (classifierDescriptor != null)
-                    Pair(classifierDescriptor, 1)
-                else
-                    moduleDescriptor.quickResolveToPackage(path, trace, position)
+            if (classifierDescriptor != null)
+                Pair(classifierDescriptor, 1)
+            else
+                moduleDescriptor.quickResolveToPackage(path, trace, position)
 
         var currentDescriptor: DeclarationDescriptor? = prefixDescriptor
-        for (qualifierPartIndex in nextIndexAfterPrefix..path.size - 1) {
+        for (qualifierPartIndex in nextIndexAfterPrefix until path.size) {
             val qualifierPart = path[qualifierPartIndex]
 
             val nextPackageOrClassDescriptor =
