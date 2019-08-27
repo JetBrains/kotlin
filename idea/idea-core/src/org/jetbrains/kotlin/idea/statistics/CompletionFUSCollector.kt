@@ -35,7 +35,7 @@ object CompletionFUSCollector {
     )
 
     fun log(completionStatsData: CompletionStatsData?) {
-        if (completionStatsData == null) return
+        if (completionStatsData?.fileType == null) return
 
         val data = mutableMapOf<String, String>()
         data[FileTypeAttribute] = completionStatsData.fileType.toString()
