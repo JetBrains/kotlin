@@ -3,14 +3,13 @@ package com.intellij.completion.ml
 
 import com.intellij.codeInsight.completion.CompletionLocation
 import com.intellij.codeInsight.completion.CompletionWeigher
-import com.intellij.codeInsight.completion.ml.ContextFeatures
 import com.intellij.codeInsight.completion.ml.ElementFeatureProvider
 import com.intellij.codeInsight.lookup.LookupElement
 
 class MLCompletionWeigher : CompletionWeigher() {
   override fun weigh(element: LookupElement, location: CompletionLocation): Comparable<Nothing>? {
     val psiFile = location.completionParameters.originalFile
-    val contextFeatures = ContextFeatures.extract(psiFile)
+    val contextFeatures = ContextFeaturesStorage.extract(psiFile)
     val result = mutableMapOf<String, Any>()
     for (provider in ElementFeatureProvider.forLanguage(psiFile.language)) {
       val name = provider.name

@@ -4,7 +4,7 @@ package com.intellij.stats.completion
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
-import com.intellij.codeInsight.completion.ml.ContextFeatures
+import com.intellij.completion.ml.ContextFeaturesStorage
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.completion.tracker.PositionTrackingListener
@@ -107,8 +107,8 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
         }
       }
 
-      ContextFeatures.setContextFeatures(file, result)
-      Disposer.register(lookup, Disposable { ContextFeatures.clear(file) })
+      ContextFeaturesStorage.setContextFeatures(file, result)
+      Disposer.register(lookup, Disposable { ContextFeaturesStorage.clear(file) })
       lookupStorage.contextFactors = result.mapValues { it.value.toString() }
     }
   }
