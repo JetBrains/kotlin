@@ -12,9 +12,13 @@ import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 
 internal class OverriddenFunctionInfo(
@@ -74,6 +78,63 @@ internal class OverriddenFunctionInfo(
         var result = function.hashCode()
         result = 31 * result + overriddenFunction.hashCode()
         return result
+    }
+}
+
+internal class ClassGlobalHierarchyInfo(val classIdLo: Int, val classIdHi: Int) {
+    companion object {
+        val DUMMY = ClassGlobalHierarchyInfo(0, 0)
+    }
+}
+
+internal class GlobalHierarchyAnalysis(val context: Context) {
+    fun run() {
+        /*
+         * Here's the explanation of what's happening here:
+         * Given a tree we can traverse it with the DFS and save for each vertex two times:
+         * the enter time (the first time we saw this vertex) and the exit time (the last time we saw it).
+         * It turns out that if we assign then for each vertex the interval (enterTime, exitTime),
+         * then the following claim holds for any two vertices v and w:
+         * ----- v is ancestor of w iff interval(v) contains interval(w) ------
+         * Now apply this idea to the classes hierarchy tree and we'll get a fast type check.
+         *
+         * And one more observation: for each pair of intervals they either don't intersect or
+         * one contains the other. With that in mind, we can save in a type info only one end of an interval.
+         */
+        val root = context.irBuiltIns.anyClass.owner
+        val immediateInheritors = mutableMapOf<IrClass, MutableList<IrClass>>()
+        val allClasses = mutableListOf<IrClass>()
+        context.irModule!!.acceptVoid(object: IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                if (declaration.isInterface)
+                    context.getLayoutBuilder(declaration).hierarchyInfo = ClassGlobalHierarchyInfo(0, 0)
+                else {
+                    allClasses += declaration
+                    if (declaration != root) {
+                        val superClass = declaration.getSuperClassNotAny() ?: root
+                        val inheritors = immediateInheritors.getOrPut(superClass) { mutableListOf() }
+                        inheritors.add(declaration)
+                    }
+                }
+                super.visitClass(declaration)
+            }
+        })
+        var time = 0
+
+        fun dfs(irClass: IrClass) {
+            ++time
+            // Make the Any's interval's left border -1 in order to correctly generate classes for ObjC blocks.
+            val enterTime = if (irClass == root) -1 else time
+            immediateInheritors[irClass]?.forEach { dfs(it) }
+            val exitTime = time
+            context.getLayoutBuilder(irClass).hierarchyInfo = ClassGlobalHierarchyInfo(enterTime, exitTime)
+        }
+
+        dfs(root)
     }
 }
 
@@ -217,6 +278,8 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
 
         result
     }
+
+    lateinit var hierarchyInfo: ClassGlobalHierarchyInfo
 
     /**
      * Fields declared in the class.

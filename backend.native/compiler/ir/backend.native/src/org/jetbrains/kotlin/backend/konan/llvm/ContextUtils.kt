@@ -434,7 +434,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val leaveFrameFunction = importModelSpecificRtFunction("LeaveFrame")
     val lookupOpenMethodFunction = importRtFunction("LookupOpenMethod")
     val isInstanceFunction = importRtFunction("IsInstance")
-    val checkInstanceFunction = importRtFunction("CheckInstance")
+    val isInstanceOfClassFastFunction = importRtFunction("IsInstanceOfClassFast")
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")

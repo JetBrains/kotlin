@@ -225,6 +225,8 @@ internal class KonanSymbols(
 
     override val ThrowTypeCastException = internalFunction("ThrowTypeCastException")
 
+    val throwClassCastException = internalFunction("ThrowClassCastException")
+
     val throwInvalidReceiverTypeException = internalFunction("ThrowInvalidReceiverTypeException")
     val throwIllegalStateException = internalFunction("ThrowIllegalStateException")
 

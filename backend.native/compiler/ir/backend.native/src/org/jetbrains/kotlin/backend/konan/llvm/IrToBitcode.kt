@@ -1271,28 +1271,27 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.log{"evaluateCast                   : ${ir2string(value)}"}
         val dstClass = value.typeOperand.getClass()!!
 
-        val srcArg = evaluateExpression(value.argument)                         // Evaluate src expression.
+        val srcArg = evaluateExpression(value.argument)
         assert(srcArg.type == codegen.kObjHeaderPtr)
 
-        if (dstClass.defaultType.isObjCObjectType()) {
-            with(functionGenerationContext) {
-                ifThen(not(genInstanceOf(srcArg, dstClass))) {
+        with(functionGenerationContext) {
+            ifThen(not(genInstanceOf(srcArg, dstClass))) {
+                if (dstClass.defaultType.isObjCObjectType()) {
                     callDirect(
                             context.ir.symbols.ThrowTypeCastException.owner,
                             emptyList(),
                             Lifetime.GLOBAL
                     )
+                } else {
+                    val dstTypeInfo = functionGenerationContext.bitcast(kInt8Ptr, codegen.typeInfoValue(dstClass))
+                    callDirect(
+                            context.ir.symbols.throwClassCastException.owner,
+                            listOf(srcArg, dstTypeInfo),
+                            Lifetime.GLOBAL
+                    )
                 }
             }
-            return srcArg
         }
-        // Note: the code above would actually work for any classes.
-        // However, the code generated below is shorter. Consider it to be a specialization.
-
-        val dstTypeInfo   = codegen.typeInfoValue(dstClass)                       // Get TypeInfo for dst type.
-        val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, srcArg)             // Cast src to ObjInfoPtr.
-        val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
-        call(context.llvm.checkInstanceFunction, args)                                 // Check if dst is subclass of src.
         return srcArg
     }
 
@@ -1322,7 +1321,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         } else {
             // E.g. when generating type operation with reified type parameter in the original body of inline function.
             kTrue
-            // TODO: these code should be unreachable, however [BridgesBuilding] generates IR with such type checks.
+            // TODO: this code should be unreachable, however [BridgesBuilding] generates IR with such type checks.
         }
         functionGenerationContext.br(bbExit)
         val bbInstanceOfResult = functionGenerationContext.currentBlock
@@ -1340,11 +1339,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return genInstanceOfObjC(obj, dstClass)
         }
 
-        val dstTypeInfo   = codegen.typeInfoValue(dstClass)                            // Get TypeInfo for dst type.
-        val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, obj)                // Cast src to ObjInfoPtr.
-        val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
-
-        return call(context.llvm.isInstanceFunction, args)                       // Check if dst is subclass of src.
+        val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, obj)
+        return if (context.shouldOptimize() && !dstClass.isInterface) {
+            val dstHierarchyInfo = context.getLayoutBuilder(dstClass).hierarchyInfo
+            call(context.llvm.isInstanceOfClassFastFunction,
+                    listOf(srcObjInfoPtr, Int32(dstHierarchyInfo.classIdLo).llvm, Int32(dstHierarchyInfo.classIdHi).llvm))
+        } else {
+            val dstTypeInfo = codegen.typeInfoValue(dstClass)
+            call(context.llvm.isInstanceFunction, listOf(srcObjInfoPtr, dstTypeInfo))
+        }
     }
 
     private fun genInstanceOfObjC(obj: LLVMValueRef, dstClass: IrClass): LLVMValueRef {

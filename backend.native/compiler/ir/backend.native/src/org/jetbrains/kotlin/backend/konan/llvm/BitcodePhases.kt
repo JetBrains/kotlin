@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
@@ -37,7 +38,11 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
 internal val RTTIPhase = makeKonanModuleOpPhase(
         name = "RTTI",
         description = "RTTI generation",
-        op = { context, irModule -> irModule.acceptVoid(RTTIGeneratorVisitor(context)) }
+        op = { context, irModule ->
+            if (context.shouldOptimize())
+                GlobalHierarchyAnalysis(context).run()
+            irModule.acceptVoid(RTTIGeneratorVisitor(context))
+        }
 )
 
 internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(
