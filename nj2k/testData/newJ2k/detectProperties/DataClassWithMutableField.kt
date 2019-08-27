@@ -1,12 +1,7 @@
-class Test(count: Int) {
-    var count: Int
-        private set
+class Test(var count: Int) {
 
     fun inc() {
         this.count++
     }
 
-    init {
-        this.count = count
-    }
 }

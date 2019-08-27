@@ -1526,6 +1526,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/detectProperties/kt-31700.java");
         }
 
+        @TestMetadata("kt-32253.java")
+        public void testKt_32253() throws Exception {
+            runTest("nj2k/testData/newJ2k/detectProperties/kt-32253.java");
+        }
+
         @TestMetadata("Overrides.java")
         public void testOverrides() throws Exception {
             runTest("nj2k/testData/newJ2k/detectProperties/Overrides.java");

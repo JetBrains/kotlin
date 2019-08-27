@@ -1,12 +1,10 @@
-internal class CtorComment {
-    var myA: String
+internal class CtorComment
+/**
+ * This constructor is especially useful
+ */
+{
+    var myA = "str"
 
-    /**
-     * This constructor is especially useful
-     */
-    init {
-        myA = "str"
-    }
 }
 
 internal class CtorComment2

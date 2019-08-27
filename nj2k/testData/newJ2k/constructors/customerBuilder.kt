@@ -1,12 +1,16 @@
 package org.test.customer
 
-internal class Customer(val firstName: String, val lastName: String) {
+internal class Customer(first: String, last: String) {
+    val firstName: String
+    val lastName: String
 
     private fun doSmthBefore() {}
     private fun doSmthAfter() {}
 
     init {
         doSmthBefore()
+        firstName = first
+        lastName = last
         doSmthAfter()
     }
 }
@@ -31,7 +35,10 @@ internal class CustomerBuilder {
 
 object User {
     fun main() {
-        val customer = CustomerBuilder().WithFirstName("Homer").WithLastName("Simpson").Build()
+        val customer = CustomerBuilder()
+                .WithFirstName("Homer")
+                .WithLastName("Simpson")
+                .Build()
         println(customer.firstName)
         println(customer.lastName)
     }
