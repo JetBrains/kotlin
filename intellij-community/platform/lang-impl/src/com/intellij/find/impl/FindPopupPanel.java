@@ -125,7 +125,6 @@ public class FindPopupPanel extends JBPanel implements FindUI {
   private ActionToolbarImpl myScopeSelectionToolbar;
   private ComboBox<String> myFileMaskField;
   private ActionButton myFilterContextButton;
-  private ActionButton myTabResultsButton;
   private ActionButton myPinButton;
   private JButton myOKButton;
   private JButton myReplaceAllButton;
@@ -513,17 +512,20 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     ToggleAction pinAction = new MyPinAction();
     myPinButton = new ActionButton(pinAction, pinAction.getTemplatePresentation(), ActionPlaces.UNKNOWN, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
 
+    DefaultActionGroup tabOptionsGroup = new DefaultActionGroup() {{
+      Presentation presentation = getTemplatePresentation();
+      presentation.setText(FindBundle.message("find.popup.show.tab.options"));
+      presentation.setIcon(AllIcons.General.GearPlain);
+      setPopup(true);
+      setShortcutSet(CustomShortcutSet.fromString("alt ctrl DOWN"));
+      add(new MySkipTabWithOneUsageAction());
+      add(new MyOpenResultsInNewTabAction());
+    }};
+    ActionButton tabOptionsButton = new ActionButton(
+      tabOptionsGroup, tabOptionsGroup.getTemplatePresentation(), ActionPlaces.UNKNOWN, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE
+    );
+    DumbAwareAction.create(event -> tabOptionsButton.click()).registerCustomShortcutSet(tabOptionsGroup.getShortcutSet(), this);
 
-    DefaultActionGroup tabResultsContextGroup = new DefaultActionGroup();
-    tabResultsContextGroup.add(new MySkipTabWithOneUsageAction());
-    tabResultsContextGroup.add(new MyOpenResultsInNewTabAction());
-    tabResultsContextGroup.setPopup(true);
-    Presentation tabSettingsPresentation = new Presentation();
-    tabSettingsPresentation.setIcon(AllIcons.General.GearPlain);
-    myTabResultsButton =
-      new ActionButton(tabResultsContextGroup, tabSettingsPresentation, ActionPlaces.UNKNOWN, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
-    DumbAwareAction.create(event -> myTabResultsButton.click())
-                   .registerCustomShortcutSet(CustomShortcutSet.fromString("alt ctrl DOWN"), this);
     myOKButton = new JButton(FindBundle.message("find.popup.find.button"));
     myReplaceAllButton = new JButton(FindBundle.message("find.popup.replace.all.button"));
     myReplaceSelectedButton = new JButton(FindBundle.message("find.popup.replace.selected.button", 0));
@@ -743,7 +745,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     scrollPane.setBorder(JBUI.Borders.empty());
     splitter.setFirstComponent(scrollPane);
     JPanel bottomPanel = new JPanel(new MigLayout("flowx, ins 4 4 0 4, fillx, hidemode 3, gap 0"));
-    bottomPanel.add(myTabResultsButton);
+    bottomPanel.add(tabOptionsButton);
     myOKHintLabel = new JBLabel("");
     myOKHintLabel.setEnabled(false);
     myNavigationHintLabel = new JBLabel("");
