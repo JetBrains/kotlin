@@ -14,6 +14,23 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
+
+/*
+ * For comfort viewing dumps of control flow graph you can setup external tool in IDEA that opens .dot files
+ *
+ * Example of config for `xdot` viewer:
+ *
+ * File -> Settings -> External tools -> Add
+ *
+ * Name: XDot
+ * Program: xdot
+ * Arguments: $FileNameWithoutExtension$.dot
+ * Working directory: $FileDir$
+ * Disable "Open console for tool output"
+ *
+ * After that you can run action `XDot` in editor with source of test (or with cfg dump)
+ *   and it will opens xdot with dump for that test
+ */
 abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
     override val configurationKind: ConfigurationKind
         get() = ConfigurationKind.ALL
