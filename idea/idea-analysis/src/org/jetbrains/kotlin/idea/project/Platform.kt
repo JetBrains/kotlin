@@ -214,6 +214,7 @@ private fun MutableMap<AnalysisFlag<*>, Any>.initIDESpecificAnalysisSettings(pro
     if (KotlinMultiplatformAnalysisModeComponent.getMode(project) == KotlinMultiplatformAnalysisModeComponent.Mode.COMPOSITE) {
         put(AnalysisFlags.useTypeRefinement, true)
     }
+    put(AnalysisFlags.ideMode, true)
 }
 
 val Module.platform: TargetPlatform?
