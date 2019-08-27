@@ -215,6 +215,9 @@ projectTest(taskName = "performanceTest") {
 
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+        project.findProperty("cacheRedirectorEnabled")?.let {
+            systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
+        }
     }
 }
 

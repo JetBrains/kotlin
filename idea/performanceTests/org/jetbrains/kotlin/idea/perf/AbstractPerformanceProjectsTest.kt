@@ -285,11 +285,15 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
 
         GradleProjectOpenProcessor.openGradleProject(project, null, Paths.get(projectPath))
 
+        val gradleArguments = System.getProperty("kotlin.test.gradle.import.arguments")
         ExternalSystemUtil.refreshProjects(
             ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
                 .forceWhenUptodate()
                 .useDefaultCallback()
                 .use(ProgressExecutionMode.MODAL_SYNC)
+                .also {
+                    gradleArguments?.run(it::withArguments)
+                }
         )
 
         dispatchAllInvocationEvents()
