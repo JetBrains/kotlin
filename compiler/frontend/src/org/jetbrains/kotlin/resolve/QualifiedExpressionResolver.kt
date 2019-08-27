@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.impl.source.DummyHolder
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
@@ -43,7 +45,7 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.isWithoutValueArguments
 
-class QualifiedExpressionResolver {
+class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSettings) {
     fun resolvePackageHeader(
         packageDirective: KtPackageDirective,
         module: ModuleDescriptor,
@@ -440,6 +442,9 @@ class QualifiedExpressionResolver {
         return packageOrClassDescriptor
     }
 
+    private fun resolveInIDEMode(path: List<QualifierPart>): Boolean =
+        languageVersionSettings.getFlag(AnalysisFlags.ideMode) && path.size > 1 && path.first().name.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+
     private fun resolveToPackageOrClassPrefix(
         path: List<QualifierPart>,
         moduleDescriptor: ModuleDescriptor,
@@ -449,6 +454,18 @@ class QualifiedExpressionResolver {
         position: QualifierPosition,
         isValue: ((KtSimpleNameExpression) -> Boolean)? = null
     ): Pair<DeclarationDescriptor?, Int> {
+        if (resolveInIDEMode(path)) {
+            return resolveToPackageOrClassPrefix(
+                path.subList(1, path.size),
+                moduleDescriptor,
+                trace,
+                shouldBeVisibleFrom,
+                scopeForFirstPart = null,
+                position = position,
+                isValue = null
+            ).let { it.first to it.second + 1 }
+        }
+
         if (path.isEmpty()) {
             return Pair(moduleDescriptor.getPackage(FqName.ROOT), 0)
         }
@@ -758,6 +775,26 @@ class QualifiedExpressionResolver {
         trace.record(BindingContext.QUALIFIER, qualifier.expression, qualifier)
 
         return qualifier
+    }
+
+    companion object {
+        /**
+         *  Shouldn't be visible to users.
+         *  Used as prefix for [FqName] from non-root to avoid conflicts when resolving in IDE.
+         *  E.g.:
+         *  ---------
+         *  package a
+         *
+         *  class A
+         *
+         *  fun test(a: Any) {
+         *      a.A() // invalid code -> incorrect import/completion/etc.
+         *      _Qfadj4tPV.a.A() // OK
+         *  }
+         *  ---------
+         */
+        const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE = "_Qfadj4tPV"
+        const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE_WITH_DOT = "$ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE."
     }
 }
 
