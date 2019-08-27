@@ -91,16 +91,6 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
                 }
             }
         }
-
-        override fun itemSelected(event: LookupEvent) {
-            // BUNCH: 182
-            // Has default implementation since 183
-        }
-
-        override fun currentItemChanged(event: LookupEvent) {
-            // BUNCH: 182
-            // Has default implementation since 183
-        }
     }
 
     override fun initComponent() {
