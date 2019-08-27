@@ -246,4 +246,113 @@ subgraph test_4 {
   111 -> {112};
 }
 
+subgraph test_5 {
+  113 [shape=box label="Enter function test_5"];
+  114 [shape=box label="Enter block"];
+  115 [shape=box label="Enter when"];
+  116 [shape=box label="Enter when branch condition "];
+  117 [shape=box label="Enter ||"];
+  118 [shape=box label="Access variable R|<local>/x|"];
+  119 [shape=box label="Const: Null(null)"];
+  120 [shape=box label="Operator !="];
+  121 [shape=box label="Exit left part of ||"];
+  122 [shape=box label="Const: Boolean(false)"];
+  123 [shape=box label="Exit ||"];
+  124 [shape=box label="Exit when branch condition"];
+  125 [shape=box label="Enter block"];
+  126 [shape=box label="Access variable R|<local>/x|"];
+  127 [shape=box label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+  128 [shape=box label="Exit block"];
+  129 [shape=box label="Exit when branch result"];
+  130 [shape=box label="Enter when branch condition else"];
+  131 [shape=box label="Exit when branch condition"];
+  132 [shape=box label="Enter block"];
+  133 [shape=box label="Exit block"];
+  134 [shape=box label="Exit when branch result"];
+  135 [shape=box label="Exit when"];
+  136 [shape=box label="Exit block"];
+  137 [shape=box label="Exit function test_5"];
+
+  113 -> {114};
+  114 -> {115};
+  115 -> {116};
+  116 -> {117};
+  117 -> {118};
+  118 -> {119};
+  119 -> {120};
+  120 -> {123 121};
+  121 -> {122};
+  122 -> {123};
+  123 -> {124};
+  124 -> {125 130};
+  125 -> {126};
+  126 -> {127};
+  127 -> {128};
+  128 -> {129};
+  129 -> {135};
+  130 -> {131};
+  131 -> {132};
+  132 -> {133};
+  133 -> {134};
+  134 -> {135};
+  135 -> {136};
+  136 -> {137};
+}
+
+subgraph test_6 {
+  138 [shape=box label="Enter function test_6"];
+  139 [shape=box label="Enter block"];
+  140 [shape=box label="Enter when"];
+  141 [shape=box label="Enter when branch condition "];
+  142 [shape=box label="Enter ||"];
+  143 [shape=box label="Const: Boolean(false)"];
+  144 [shape=box label="Exit left part of ||"];
+  145 [shape=box label="Access variable R|<local>/x|"];
+  146 [shape=box label="Const: Null(null)"];
+  147 [shape=box label="Operator !="];
+  148 [shape=box label="Stub[DEAD]"];
+  149 [shape=box label="Exit ||"];
+  150 [shape=box label="Exit when branch condition"];
+  151 [shape=box label="Enter block"];
+  152 [shape=box label="Access variable R|<local>/x|"];
+  153 [shape=box label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+  154 [shape=box label="Exit block"];
+  155 [shape=box label="Exit when branch result"];
+  156 [shape=box label="Enter when branch condition else"];
+  157 [shape=box label="Exit when branch condition"];
+  158 [shape=box label="Enter block"];
+  159 [shape=box label="Exit block"];
+  160 [shape=box label="Exit when branch result"];
+  161 [shape=box label="Exit when"];
+  162 [shape=box label="Exit block"];
+  163 [shape=box label="Exit function test_6"];
+
+  138 -> {139};
+  139 -> {140};
+  140 -> {141};
+  141 -> {142};
+  142 -> {143};
+  143 -> {144};
+  143 -> {148} [style=dotted];
+  144 -> {145};
+  145 -> {146};
+  146 -> {147};
+  147 -> {149};
+  148 -> {149} [style=dotted];
+  149 -> {150};
+  150 -> {151 156};
+  151 -> {152};
+  152 -> {153};
+  153 -> {154};
+  154 -> {155};
+  155 -> {161};
+  156 -> {157};
+  157 -> {158};
+  158 -> {159};
+  159 -> {160};
+  160 -> {161};
+  161 -> {162};
+  162 -> {163};
+}
+
 }

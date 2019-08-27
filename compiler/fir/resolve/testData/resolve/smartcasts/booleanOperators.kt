@@ -38,3 +38,15 @@ fun test_4(x: Any) {
     }
     x.length
 }
+
+fun test_5(x: A?) {
+    if (x != null || false) {
+        x.foo()
+    }
+}
+
+fun test_6(x: A?) {
+    if (false || x != null) {
+        x.foo()
+    }
+}

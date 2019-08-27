@@ -56,3 +56,23 @@ FILE: booleanOperators.kt
 
         R|<local>/x|.<Unresolved name: length>#
     }
+    public final fun test_5(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/x|, Null(null)) || Boolean(false) ->  {
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_6(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            Boolean(false) || !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+            }
+            else ->  {
+            }
+        }
+
+    }

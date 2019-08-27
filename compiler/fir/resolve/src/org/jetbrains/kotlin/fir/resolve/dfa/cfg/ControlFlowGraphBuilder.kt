@@ -301,13 +301,18 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
 
     fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression) {
         assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.AND)
-        addEdge(lastNode, binaryAndExitNodes.top())
+        addEdge(lastNode, binaryAndExitNodes.top(), propagateDeadness = false, isDead = lastNode.booleanConstValue == true)
     }
 
     fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression): BinaryAndExitNode {
         levelCounter--
         assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.AND)
-        return binaryAndExitNodes.pop().also { addNewSimpleNode(it) }
+        return binaryAndExitNodes.pop().also {
+            val rightNode = lastNodes.pop()
+            addEdge(rightNode, it, propagateDeadness = false, isDead = it.leftOperandNode.booleanConstValue == false)
+            it.isDead = it.previousNodes.all { it.isDead }
+            lastNodes.push(it)
+        }
     }
 
     fun enterBinaryOr(binaryLogicExpression: FirBinaryLogicExpression): BinaryOrEnterNode {
@@ -322,9 +327,10 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         levelCounter--
         assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.OR)
         val previousNode = lastNodes.pop()
-        addEdge(previousNode, binaryOrExitNodes.top())
+        val leftBooleanValue = previousNode.booleanConstValue
+        addEdge(previousNode, binaryOrExitNodes.top(), isDead = leftBooleanValue == false)
         return createBinaryOrExitLeftOperandNode(binaryLogicExpression).also {
-            addEdge(previousNode, it)
+            addEdge(previousNode, it, isDead = leftBooleanValue == true)
             lastNodes.push(it)
             levelCounter++
         }
@@ -334,10 +340,14 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.OR)
         levelCounter--
         return binaryOrExitNodes.pop().also {
-            addEdge(lastNodes.pop(), it)
+            val rightNode = lastNodes.pop()
+            addEdge(rightNode, it, propagateDeadness = false)
+            it.isDead = it.previousNodes.all { it.isDead }
             lastNodes.push(it)
         }
     }
+
+    private val CFGNode<*>.booleanConstValue: Boolean? get() = (fir as? FirConstExpression<*>)?.value as? Boolean?
 
     // ----------------------------------- Try-catch-finally -----------------------------------
 
@@ -525,7 +535,17 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         return oldNode
     }
 
-    private fun addEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean = true) {
+    private fun addDeadEdge(from: CFGNode<*>, to: CFGNode<*>) {
+        val stub = createStubNode()
+        addEdge(from, stub)
+        addEdge(stub, to)
+    }
+
+    private fun addEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean = true, isDead: Boolean = false) {
+        if (isDead) {
+            addDeadEdge(from, to)
+            return
+        }
         if (propagateDeadness && from.isDead) {
             to.isDead = true
         }

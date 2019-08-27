@@ -36,6 +36,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
             runTest("compiler/fir/resolve/testData/resolve/cfg/binaryOperations.kt");
         }
 
+        @TestMetadata("booleanOperatorsWithConsts.kt")
+        public void testBooleanOperatorsWithConsts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/booleanOperatorsWithConsts.kt");
+        }
+
         @TestMetadata("complex.kt")
         public void testComplex() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/complex.kt");
