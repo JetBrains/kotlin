@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.PlatformIcons;
 
@@ -35,9 +36,7 @@ public interface KotlinIcons {
     Icon OBJECT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/objectKotlin." + IconExtensionChooser.iconExtension());
     Icon INTERFACE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/interfaceKotlin." + IconExtensionChooser.iconExtension());
     Icon ANNOTATION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/annotationKotlin." + IconExtensionChooser.iconExtension());
-    // BUNCH: 182
-    //todo: Use AllIcons.nodes instead (actually the same icon)
-    Icon FUNCTION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/function." + IconExtensionChooser.iconExtension());
+    Icon FUNCTION = AllIcons.Nodes.Function;
     Icon EXTENSION_FUNCTION = PlatformIcons.FUNCTION_ICON;
     Icon ABSTRACT_EXTENSION_FUNCTION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/abstract_extension_function." + IconExtensionChooser.iconExtension());
     Icon LAMBDA = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/lambda." + IconExtensionChooser.iconExtension());
