@@ -69,23 +69,25 @@ class JavaSymbolProvider(
         scopeSession: ScopeSession
     ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
-        return buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
+        return buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, mutableSetOf())
     }
 
     private fun buildJavaEnhancementScope(
         useSiteSession: FirSession,
         symbol: FirClassSymbol,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
+        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassEnhancementScope {
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
-            JavaClassEnhancementScope(useSiteSession, buildJavaUseSiteScope(symbol.fir, useSiteSession, scopeSession))
+            JavaClassEnhancementScope(useSiteSession, buildJavaUseSiteScope(symbol.fir, useSiteSession, scopeSession, visitedSymbols))
         }
     }
 
     private fun buildJavaUseSiteScope(
         regularClass: FirRegularClass,
         useSiteSession: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
+        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassUseSiteScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = scopeSession.getOrBuild(regularClass.symbol, DECLARED) { declaredMemberScope(regularClass) }
@@ -94,9 +96,9 @@ class JavaSymbolProvider(
                     .mapNotNull { useSiteSuperType ->
                         if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                         val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                        if (symbol is FirClassSymbol) {
+                        if (symbol is FirClassSymbol && visitedSymbols.add(symbol)) {
                             // We need JavaClassEnhancementScope here to have already enhanced signatures from supertypes
-                            val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
+                            val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
                             useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, scope, scopeSession)
                         } else {
                             null
