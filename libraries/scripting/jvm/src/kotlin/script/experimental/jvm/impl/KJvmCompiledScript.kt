@@ -154,10 +154,10 @@ private fun CompiledScript<*>.makeClassLoaderFromDependencies(baseClassLoader: C
                 (dep as? JvmDependency)?.classpath?.asSequence()?.map { it.toURI().toURL() } ?: emptySequence()
             }
             ?: emptySequence()
-    }.distinct()
+    }.distinct().toList()
     // TODO: previous dependencies and classloaders should be taken into account here
-    return if (dependencies.none()) baseClassLoader
-    else URLClassLoader(dependencies.toList().toTypedArray(), baseClassLoader)
+    return if (dependencies.isEmpty()) baseClassLoader
+    else URLClassLoader(dependencies.toTypedArray(), baseClassLoader)
 }
 
 const val KOTLIN_SCRIPT_METADATA_PATH = "META-INF/kotlin/script"

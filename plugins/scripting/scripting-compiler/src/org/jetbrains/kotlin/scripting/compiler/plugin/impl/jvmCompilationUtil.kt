@@ -89,7 +89,7 @@ internal fun getScriptKtFile(
     val scriptText = getMergedScriptText(script, scriptCompilationConfiguration)
     val virtualFile = ScriptLightVirtualFile(
         script.scriptFileName(script, scriptCompilationConfiguration),
-        (script as? FileBasedScriptSource)?.file?.path,
+        (script as? FileBasedScriptSource)?.file?.path, // TODO: should be absolute path here
         scriptText
     )
     val ktFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
