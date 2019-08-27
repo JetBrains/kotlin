@@ -119,6 +119,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/equalsAndIdentity.kt");
         }
 
+        @TestMetadata("equalsToBoolean.kt")
+        public void testEqualsToBoolean() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/equalsToBoolean.kt");
+        }
+
         @TestMetadata("inPlaceLambdas.kt")
         public void testInPlaceLambdas() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/inPlaceLambdas.kt");

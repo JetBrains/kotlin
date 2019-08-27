@@ -184,9 +184,9 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
                     when {
                         leftConst?.kind == IrConstKind.Null -> processEqNull(node, rightOperand, operation)
                         rightConst?.kind == IrConstKind.Null -> processEqNull(node, leftOperand, operation)
+                        leftConst != null -> processEqWithConst(node, rightOperand, leftConst, operation)
+                        rightConst != null -> processEqWithConst(node, leftOperand, rightConst, operation)
                         operation != FirOperation.EQ && operation != FirOperation.IDENTITY -> return
-                        leftConst != null -> processEqWithConst(node, rightOperand)
-                        rightConst != null -> processEqWithConst(node, leftOperand)
                         else -> processEq(node, leftOperand, rightOperand, operation)
                     }
                 }
@@ -196,19 +196,41 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
         }
     }
 
-    private fun processEqWithConst(node: OperatorCallNode, operand: FirExpression) {
-        val operandVariables = getRealVariablesForSafeCallChain(operand).takeIf { it.isNotEmpty() } ?: return
+    private fun processEqWithConst(node: OperatorCallNode, operand: FirExpression, const: FirConstExpression<*>, operation: FirOperation) {
+        val isEq = when (operation) {
+            FirOperation.EQ, FirOperation.IDENTITY -> true
+            FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> false
+            else -> return
+        }
+
         val expressionVariable = getVariable(node.fir)
         var flow = node.flow
-        operandVariables.forEach { operandVariable ->
-            flow = flow.addNotApprovedFact(
-                expressionVariable, UnapprovedFirDataFlowInfo(
-                    eq(True),
-                    operandVariable,
-                    FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
+
+        // not null for comparisons with constants
+        getRealVariablesForSafeCallChain(operand).takeIf { it.isNotEmpty() }?.let { operandVariables ->
+            operandVariables.forEach { operandVariable ->
+                flow = flow.addNotApprovedFact(
+                    expressionVariable, UnapprovedFirDataFlowInfo(
+                        eq(isEq.toConditionValue()),
+                        operandVariable,
+                        FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
+                    )
                 )
-            )
+            }
         }
+
+        // propagating facts for (... == true) and (... == false)
+        variableStorage[operand]?.let { operandVariable ->
+            if (const.kind != IrConstKind.Boolean) return@let
+
+            val constValue = (const.value as Boolean)
+            val shouldInvert = isEq xor constValue
+
+            flow.notApprovedFacts[operandVariable].forEach { info ->
+                flow = flow.addNotApprovedFact(expressionVariable, info.let { if (shouldInvert) it.invert() else it })
+            }
+        }
+
         node.flow = flow
     }
 
@@ -217,8 +239,8 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
         val rightType = rightOperand.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
         when {
             leftType.isMarkedNullable && rightType.isMarkedNullable -> return
-            leftType.isMarkedNullable -> processEqWithConst(node, leftOperand)
-            rightType.isMarkedNullable -> processEqWithConst(node, rightOperand)
+            leftType.isMarkedNullable -> processEqNull(node, leftOperand, FirOperation.NOT_EQ)
+            rightType.isMarkedNullable -> processEqNull(node, rightOperand, FirOperation.NOT_EQ)
         }
         // TODO: process EQUALITY
     }

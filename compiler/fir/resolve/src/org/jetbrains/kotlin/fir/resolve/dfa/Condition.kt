@@ -19,6 +19,8 @@ enum class ConditionValue(val token: String) {
     }
 }
 
+fun Boolean.toConditionValue(): ConditionValue = if (this) ConditionValue.True else ConditionValue.False
+
 enum class ConditionOperator(val token: String) {
     Eq("=="), NotEq("!=");
 
