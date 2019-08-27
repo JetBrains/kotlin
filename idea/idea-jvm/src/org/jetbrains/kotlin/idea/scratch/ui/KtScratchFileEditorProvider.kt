@@ -9,7 +9,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.diff.tools.util.BaseSyncScrollable
 import com.intellij.diff.tools.util.SyncScrollSupport.TwosideSyncScrollSupport
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionToolbar
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiManager
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.*
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -134,6 +135,27 @@ class KtScratchFileEditorWithPreview private constructor(
 
     fun clearOutputHandlers() {
         commonPreviewOutputHandler.clear(scratchFile)
+    }
+
+    override fun createViewActionGroup(): ActionGroup {
+        return DefaultActionGroup(showEditorAction, showEditorAndPreviewAction)
+    }
+
+    /**
+     * For simple actions, [Presentation.getText] is shown in the tooltip in the [ActionToolbar], and [Presentation.getDescription] is shown
+     * in the bottom tool panel. But when action implements [com.intellij.openapi.actionSystem.ex.CustomComponentAction], its tooltip is
+     * controlled only by its [javax.swing.JComponent.setToolTipText] method.
+     *
+     * That's why we set long and descriptive [Presentation.getText], but short [Presentation.getDescription].
+     */
+    override fun getShowEditorAction(): ToggleAction = super.getShowEditorAction().apply {
+        templatePresentation.text = KotlinBundle.message("scratch.inlay.output.mode")
+        templatePresentation.description = KotlinBundle.message("scratch.inlay.output.mode.description")
+    }
+
+    override fun getShowEditorAndPreviewAction(): ToggleAction = super.getShowEditorAndPreviewAction().apply {
+        templatePresentation.text = KotlinBundle.message("scratch.side.panel.output.mode")
+        templatePresentation.description = KotlinBundle.message("scratch.side.panel.output.mode.description")
     }
 
     override fun setLayout(newLayout: Layout) {

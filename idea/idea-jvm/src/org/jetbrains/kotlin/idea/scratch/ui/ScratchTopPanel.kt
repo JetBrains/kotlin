@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
+import org.jetbrains.kotlin.idea.scratch.ScratchFileAutoRunner
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction
@@ -80,6 +81,9 @@ class ScratchTopPanel(val scratchFile: ScratchFile) {
         override fun update(e: AnActionEvent) {
             super.update(e)
             e.presentation.isVisible = scratchFile.module != null
+            e.presentation.description = scratchFile.module?.let { selectedModule ->
+                KotlinBundle.message("scratch.make.before.run.checkbox.description", selectedModule.name)
+            }
         }
 
         override fun isSelected(e: AnActionEvent): Boolean {
@@ -91,7 +95,10 @@ class ScratchTopPanel(val scratchFile: ScratchFile) {
         }
     }
 
-    private inner class IsInteractiveCheckboxAction : SmallBorderCheckboxAction(KotlinBundle.message("scratch.is.interactive.checkbox")) {
+    private inner class IsInteractiveCheckboxAction : SmallBorderCheckboxAction(
+        text = KotlinBundle.message("scratch.is.interactive.checkbox"),
+        description = KotlinBundle.message("scratch.is.interactive.checkbox.description", ScratchFileAutoRunner.AUTO_RUN_DELAY_IN_SECONDS)
+    ) {
         override fun isSelected(e: AnActionEvent): Boolean {
             return scratchFile.options.isInteractiveMode
         }
@@ -101,7 +108,10 @@ class ScratchTopPanel(val scratchFile: ScratchFile) {
         }
     }
 
-    private inner class IsReplCheckboxAction : SmallBorderCheckboxAction(KotlinBundle.message("scratch.is.repl.checkbox")) {
+    private inner class IsReplCheckboxAction : SmallBorderCheckboxAction(
+        text = KotlinBundle.message("scratch.is.repl.checkbox"),
+        description = KotlinBundle.message("scratch.is.repl.checkbox.description")
+    ) {
         override fun isSelected(e: AnActionEvent): Boolean {
             return scratchFile.options.isRepl
         }

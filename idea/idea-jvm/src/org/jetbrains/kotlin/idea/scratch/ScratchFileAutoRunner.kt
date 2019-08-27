@@ -34,7 +34,7 @@ class ScratchFileAutoRunner(private val project: Project) : DocumentListener {
 
         private fun getInstance(project: Project) = ServiceManager.getService(project, ScratchFileAutoRunner::class.java)
 
-        private const val auto_run_delay = 2000
+        const val AUTO_RUN_DELAY_IN_SECONDS = 2
     }
 
     private val myAlarm = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
@@ -68,7 +68,7 @@ class ScratchFileAutoRunner(private val project: Project) : DocumentListener {
                         RunScratchAction.doAction(scratchFile, true)
                     }
                 }
-            }, auto_run_delay, true
+            }, AUTO_RUN_DELAY_IN_SECONDS * 1000, true
         )
     }
 
