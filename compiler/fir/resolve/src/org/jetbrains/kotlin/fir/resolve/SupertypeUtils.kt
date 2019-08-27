@@ -27,7 +27,7 @@ fun lookupSuperTypes(
     useSiteSession: FirSession
 ): List<ConeClassLikeType> {
     return mutableListOf<ConeClassLikeType>().also {
-        klass.symbol.collectSuperTypes(it, deep, lookupInterfaces, useSiteSession)
+        klass.symbol.collectSuperTypes(it, mutableSetOf(), deep, lookupInterfaces, useSiteSession)
     }
 }
 
@@ -110,10 +110,12 @@ private tailrec fun ConeClassLikeType.computePartialExpansion(useSiteSession: Fi
 
 private fun ConeClassifierSymbol.collectSuperTypes(
     list: MutableList<ConeClassLikeType>,
+    visitedSymbols: MutableSet<ConeClassifierSymbol>,
     deep: Boolean,
     lookupInterfaces: Boolean,
     useSiteSession: FirSession
 ) {
+    if (!visitedSymbols.add(this)) return
     when (this) {
         is FirClassSymbol -> {
             val superClassTypes =
@@ -125,13 +127,19 @@ private fun ConeClassifierSymbol.collectSuperTypes(
             if (deep)
                 superClassTypes.forEach {
                     if (it !is ConeClassErrorType) {
-                        it.lookupTag.toSymbol(useSiteSession)?.collectSuperTypes(list, deep, lookupInterfaces, useSiteSession)
+                        it.lookupTag.toSymbol(useSiteSession)?.collectSuperTypes(
+                            list,
+                            visitedSymbols,
+                            deep,
+                            lookupInterfaces,
+                            useSiteSession
+                        )
                     }
                 }
         }
         is FirTypeAliasSymbol -> {
             val expansion = fir.expandedConeType?.computePartialExpansion(useSiteSession) ?: return
-            expansion.lookupTag.toSymbol(useSiteSession)?.collectSuperTypes(list, deep, lookupInterfaces, useSiteSession)
+            expansion.lookupTag.toSymbol(useSiteSession)?.collectSuperTypes(list, visitedSymbols, deep, lookupInterfaces, useSiteSession)
         }
         else -> error("?!id:1")
     }
