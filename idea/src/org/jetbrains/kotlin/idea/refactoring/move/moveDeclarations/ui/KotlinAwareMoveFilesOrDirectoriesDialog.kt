@@ -24,7 +24,6 @@ import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
-import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.ui.RecentsManager
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton
@@ -49,7 +48,17 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     companion object {
         private const val RECENT_KEYS = "MoveFile.RECENT_KEYS"
         private const val MOVE_FILES_OPEN_IN_EDITOR = "MoveFile.OpenInEditor"
+        private const val MOVE_FILES_SEARCH_REFERENCES = "MoveFile.SearchReferences"
         private const val HELP_ID = "refactoring.moveFile"
+
+        private fun setConfigurationValue(id: String, value: Boolean, defaultValue: Boolean) {
+            if (!ApplicationManager.getApplication().isUnitTestMode) {
+                PropertiesComponent.getInstance().setValue(id, value, defaultValue)
+            }
+        }
+
+        private fun getConfigurationValue(id: String, defaultValue: Boolean) =
+            !ApplicationManager.getApplication().isUnitTestMode && PropertiesComponent.getInstance().getBoolean(id, defaultValue)
     }
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
@@ -89,7 +98,8 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         targetDirectoryField.setTextFieldPreferredWidth(CopyFilesOrDirectoriesDialog.MAX_PATH_LENGTH)
         Disposer.register(disposable, targetDirectoryField)
 
-        openInEditorCb.isSelected = isOpenInEditor()
+        openInEditorCb.isSelected = getConfigurationValue(id = MOVE_FILES_OPEN_IN_EDITOR, defaultValue = false)
+        searchReferencesCb.isSelected = getConfigurationValue(id = MOVE_FILES_SEARCH_REFERENCES, defaultValue = true)
 
         val shortcutText = KeymapUtil.getFirstKeyboardShortcutText(ActionManager.getInstance().getAction(IdeActions.ACTION_CODE_COMPLETION))
         return FormBuilder.createFormBuilder()
@@ -136,11 +146,6 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             isSelected = singleFile == null || singleFile.packageMatchesDirectoryOrImplicit()
             text = "Update package directive (Kotlin files)"
         }
-    }
-
-    private fun isOpenInEditor(): Boolean {
-        if (ApplicationManager.getApplication().isUnitTestMode) return false
-        return PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, false)
     }
 
     private fun validateOKButton() {
@@ -192,9 +197,11 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             processor.run()
         }
 
-        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected, false)
+        setConfigurationValue(id = MOVE_FILES_OPEN_IN_EDITOR, value = openInEditorCb.isSelected, defaultValue = false)
+        setConfigurationValue(id = MOVE_FILES_SEARCH_REFERENCES, value = searchReferencesCb.isSelected, defaultValue = true)
+
         RecentsManager.getInstance(project).registerRecentEntry(RECENT_KEYS, targetDirectoryField.childComponent.text)
 
-        close(OK_EXIT_CODE, true)
+        close(OK_EXIT_CODE, /* isOk = */ true)
     }
 }
