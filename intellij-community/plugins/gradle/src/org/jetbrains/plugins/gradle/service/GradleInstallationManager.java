@@ -568,7 +568,7 @@ public class GradleInstallationManager {
     if (distributionType == DistributionType.LOCAL) {
       String gradleVersion = getGradleVersion(settings.getGradleHome());
       if (gradleVersion != null) {
-        version = GradleVersion.version(gradleVersion);
+        version = getGradleVersionSafe(gradleVersion);
       }
     }
     else if (distributionType == DistributionType.BUNDLED) {
@@ -581,7 +581,7 @@ public class GradleInstallationManager {
       if (gradleHome != null) {
         String gradleVersion = getGradleVersion(settings.getGradleHome());
         if (gradleVersion != null) {
-          version = GradleVersion.version(gradleVersion);
+          version = getGradleVersionSafe(gradleVersion);
         }
       }
       if (version == null && wrapperConfiguration != null) {
@@ -592,12 +592,24 @@ public class GradleInstallationManager {
             int i = s.lastIndexOf('-');
             if (i > 0) {
               String gradleVersion = s.substring(0, i);
-              version = GradleVersion.version(gradleVersion);
+              version = getGradleVersionSafe(gradleVersion);
             }
           }
         }
       }
     }
     return version;
+  }
+
+  @Nullable
+  private static GradleVersion getGradleVersionSafe(String gradleVersion) {
+    try {
+      return GradleVersion.version(gradleVersion);
+    }
+    catch (IllegalArgumentException e) {
+      // GradleVersion.version(gradleVersion) might throw exception for custom Gradle versions
+      // https://youtrack.jetbrains.com/issue/IDEA-216892
+      return null;
+    }
   }
 }
