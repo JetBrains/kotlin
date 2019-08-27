@@ -74,7 +74,7 @@
 
     <preloadingActivity implementation="com.intellij.stats.sender.SenderPreloadingActivity"/>
 
-    <contextFeatures language="" implementationClass="com.intellij.completion.ml.common.CommonLocationFeatures"/>
+    <completion.ml.contextFeatures language="" implementationClass="com.intellij.completion.ml.common.CommonLocationFeatures"/>
   </extensions>
 
   <application-components>
