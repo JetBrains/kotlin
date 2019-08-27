@@ -896,10 +896,7 @@ class ExpressionsConverter(
      */
     private fun convertThisExpression(thisExpression: LighterASTNode): FirQualifiedAccessExpression {
         val label: String? = thisExpression.getLabelName()
-
-        return FirQualifiedAccessExpressionImpl(null).apply {
-            calleeReference = FirExplicitThisReference(null, label)
-        }
+        return FirThisReceiverExpressionImpl(null, FirExplicitThisReference(null, label))
     }
 
     /**

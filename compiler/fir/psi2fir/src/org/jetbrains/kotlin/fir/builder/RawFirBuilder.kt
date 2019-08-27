@@ -1182,9 +1182,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitThisExpression(expression: KtThisExpression, data: Unit): FirElement {
             val labelName = expression.getLabelName()
-            return FirQualifiedAccessExpressionImpl(expression).apply {
-                calleeReference = FirExplicitThisReference(expression, labelName)
-            }
+            return FirThisReceiverExpressionImpl(expression, FirExplicitThisReference(expression, labelName))
         }
 
         override fun visitSuperExpression(expression: KtSuperExpression, data: Unit): FirElement {
