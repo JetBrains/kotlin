@@ -4,7 +4,7 @@ package com.intellij.psi.impl.source.tree.injected;
 import com.intellij.lang.injection.ConcatenationAwareInjector;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.extensions.ProjectExtensionPointName;
@@ -26,13 +26,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author cdr
- */
+@Service
 public final class ConcatenationInjectorManager extends SimpleModificationTracker {
   public static final ProjectExtensionPointName<ConcatenationAwareInjector> CONCATENATION_INJECTOR_EP_NAME = new ProjectExtensionPointName<>("com.intellij.concatenationAwareInjector");
 
-  public ConcatenationInjectorManager(@NotNull Project project, @NotNull PsiManagerEx psiManagerEx) {
+  public ConcatenationInjectorManager(@NotNull Project project) {
     CONCATENATION_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointListener<ConcatenationAwareInjector>() {
       @Override
       public void extensionAdded(@NotNull ConcatenationAwareInjector injector, @NotNull PluginDescriptor pluginDescriptor) {
@@ -45,11 +43,11 @@ public final class ConcatenationInjectorManager extends SimpleModificationTracke
       }
     }, true, project);
     // clear caches even on non-physical changes
-    psiManagerEx.registerRunnableToRunOnAnyChange(this::incModificationCount);
+    PsiManagerEx.getInstanceEx(project).registerRunnableToRunOnAnyChange(this::incModificationCount);
   }
 
-  public static ConcatenationInjectorManager getInstance(final Project project) {
-    return ServiceManager.getService(project, ConcatenationInjectorManager.class);
+  public static ConcatenationInjectorManager getInstance(@NotNull Project project) {
+    return project.getService(ConcatenationInjectorManager.class);
   }
 
   private static InjectionResult doCompute(@NotNull PsiFile containingFile,
@@ -73,15 +71,18 @@ public final class ConcatenationInjectorManager extends SimpleModificationTracke
   private static final Key<Integer> NO_CONCAT_INJECTION_TIMESTAMP = Key.create("NO_CONCAT_INJECTION_TIMESTAMP");
 
   public abstract static class BaseConcatenation2InjectorAdapter implements MultiHostInjector {
-    private final ConcatenationInjectorManager myManager;
+    private final Project myProject;
 
     public BaseConcatenation2InjectorAdapter(@NotNull Project project) {
-      myManager = getInstance(project);
+      myProject = project;
     }
 
     @Override
     public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-      if (myManager.myConcatenationInjectors.isEmpty()) return;
+      ConcatenationInjectorManager manager = getInstance(myProject);
+      if (manager.myConcatenationInjectors.isEmpty()) {
+        return;
+      }
 
       final PsiFile containingFile = ((InjectionRegistrarImpl)registrar).getHostPsiFile();
       Project project = containingFile.getProject();
@@ -108,14 +109,14 @@ public final class ConcatenationInjectorManager extends SimpleModificationTracke
         ((InjectionRegistrarImpl)registrar).addToResults(result);
 
         if (data == null) {
-          CachedValueProvider.Result<InjectionResult> cachedResult = CachedValueProvider.Result.create(result, myManager);
+          CachedValueProvider.Result<InjectionResult> cachedResult = CachedValueProvider.Result.create(result, manager);
           data = CachedValuesManager.getManager(project).createParameterizedCachedValue(
             context1 -> {
               PsiFile containingFile1 = context1.getContainingFile();
               Project project1 = containingFile1.getProject();
               Pair<PsiElement, PsiElement[]> pair1 = computeAnchorAndOperands(context1);
               InjectionResult result1 = pair1.second.length == 0 ? null : doCompute(containingFile1, project1, pair1.first, pair1.second);
-              return result1 == null ? null : CachedValueProvider.Result.create(result1, myManager);
+              return result1 == null ? null : CachedValueProvider.Result.create(result1, manager);
             }, false);
           ((PsiParameterizedCachedValue<InjectionResult, PsiElement>)data).setValue(cachedResult);
 
@@ -138,6 +139,7 @@ public final class ConcatenationInjectorManager extends SimpleModificationTracke
   }
 
   private final List<ConcatenationAwareInjector> myConcatenationInjectors = ContainerUtil.createLockFreeCopyOnWriteList();
+
   public void registerConcatenationInjector(@NotNull ConcatenationAwareInjector injector) {
     myConcatenationInjectors.add(injector);
     concatenationInjectorsChanged();
