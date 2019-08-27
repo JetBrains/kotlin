@@ -25,6 +25,12 @@ interface FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> :
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super<FirMemberDeclaration>.acceptChildren(visitor, data)
     }
+
+    enum class SupertypesComputationStatus {
+        NOT_COMPUTED, COMPUTING, COMPUTED
+    }
+
+    var supertypesComputationStatus: SupertypesComputationStatus
 }
 
 fun ConeClassifierSymbol.toFirClassLike(): FirClassLikeDeclaration<*>? =

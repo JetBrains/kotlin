@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -60,4 +61,6 @@ class FirJavaClass internal constructor(
 
     override fun setCallbackOnSupertypesComputed(callback: () -> Unit) =
         error("Supertypes computation should happen just before the instance is published")
+
+    override var supertypesComputationStatus = FirClassLikeDeclaration.SupertypesComputationStatus.NOT_COMPUTED
 }

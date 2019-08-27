@@ -27,4 +27,6 @@ abstract class FirEnumEntry(
         typeRef.accept(visitor, data)
         super<FirRegularClass>.acceptChildren(visitor, data)
     }
+
+    override var supertypesComputationStatus = FirClassLikeDeclaration.SupertypesComputationStatus.NOT_COMPUTED
 }

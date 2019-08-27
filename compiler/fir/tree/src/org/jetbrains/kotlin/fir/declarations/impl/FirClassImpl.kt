@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -84,4 +85,6 @@ open class FirClassImpl(
     override fun setCallbackOnSupertypesComputed(callback: () -> Unit) {
         callbackOnSupertypesComputed = callback
     }
+
+    override var supertypesComputationStatus = FirClassLikeDeclaration.SupertypesComputationStatus.NOT_COMPUTED
 }
