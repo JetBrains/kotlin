@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -12,6 +13,10 @@ interface FirQualifiedAccess : FirResolvable {
     val safe: Boolean get() = false
 
     val explicitReceiver: FirExpression? get() = null
+
+    val dispatchReceiver: FirExpression get() = FirNoReceiverExpression
+
+    val extensionReceiver: FirExpression get() = FirNoReceiverExpression
 
     fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
@@ -21,6 +26,8 @@ interface FirQualifiedAccess : FirResolvable {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         calleeReference.accept(visitor, data)
         explicitReceiver?.accept(visitor, data)
+        dispatchReceiver.accept(visitor, data)
+        extensionReceiver.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }
 

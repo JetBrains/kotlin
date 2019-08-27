@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
-import org.jetbrains.kotlin.fir.expressions.impl.FirLoopJump
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -827,13 +824,29 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
         val explicitReceiver = qualifiedAccess.explicitReceiver
+        val dispatchReceiver = qualifiedAccess.dispatchReceiver
+        val extensionReceiver = qualifiedAccess.extensionReceiver
+        if (dispatchReceiver !is FirNoReceiverExpression) {
+            print("D|")
+            dispatchReceiver.accept(this)
+            print("|")
+        }
+        if (extensionReceiver !is FirNoReceiverExpression) {
+            print("E|")
+            extensionReceiver.accept(this)
+            print("|")
+        }
         if (explicitReceiver != null) {
-            explicitReceiver.accept(this)
+            if (explicitReceiver !== dispatchReceiver && explicitReceiver !== extensionReceiver) {
+                explicitReceiver.accept(this)
+            }
             if (qualifiedAccess.safe) {
                 print("?.")
             } else {
                 print(".")
             }
+        } else if (dispatchReceiver !is FirNoReceiverExpression || extensionReceiver !is FirNoReceiverExpression) {
+            print(".")
         }
     }
 

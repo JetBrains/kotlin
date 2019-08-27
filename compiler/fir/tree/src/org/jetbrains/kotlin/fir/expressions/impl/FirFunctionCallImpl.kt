@@ -23,10 +23,17 @@ class FirFunctionCallImpl(
 
     override var explicitReceiver: FirExpression? = null
 
+    override var dispatchReceiver: FirExpression = FirNoReceiverExpression
+
+    override var extensionReceiver: FirExpression = FirNoReceiverExpression
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         typeArguments.transformInplace(transformer, data)
         calleeReference = calleeReference.transformSingle(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
+        dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
+        extensionReceiver = extensionReceiver.transformSingle(transformer, data)
+
         return super<FirFunctionCall>.transformChildren(transformer, data)
     }
 
