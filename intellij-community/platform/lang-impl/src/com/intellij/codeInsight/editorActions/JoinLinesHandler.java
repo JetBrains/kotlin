@@ -2,10 +2,15 @@
 
 package com.intellij.codeInsight.editorActions;
 
+import com.intellij.application.options.CodeStyle;
+import com.intellij.formatting.FormatterEx;
+import com.intellij.formatting.FormattingModel;
+import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.CodeDocumentationAwareCommenter;
 import com.intellij.lang.Commenter;
 import com.intellij.lang.LanguageCommenters;
+import com.intellij.lang.LanguageFormatting;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,6 +26,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.DocumentUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -304,18 +310,8 @@ public class JoinLinesHandler extends EditorActionHandler {
 
     private void adjustWhiteSpace(List<RangeMarker> markers) {
       int size = markers.size();
-      int[] spacesToAdd = new int[size];
-      Arrays.fill(spacesToAdd, -1);
-      CharSequence text = myDoc.getCharsSequence();
-      for (int i = 0; i < size; i++) {
-        myIndicator.checkCanceled();
-        myIndicator.setFraction(0.7 + 0.25 * i / size);
-        RangeMarker marker = markers.get(i);
-        if (!marker.isValid()) continue;
-        int end = StringUtil.skipWhitespaceForward(text, marker.getStartOffset());
-        int spacesToCreate = text.charAt(end) == '\n' ? 0 : myStyleManager.getSpacing(myFile, end);
-        spacesToAdd[i] = spacesToCreate < 0 ? 1 : spacesToCreate;
-      }
+      if (size == 0) return;
+      int[] spacesToAdd = getSpacesToAdd(markers);
       DocumentUtil.executeInBulk(myDoc, size > 100, () -> {
         for (int i = 0; i < size; i++) {
           myIndicator.checkCanceled();
@@ -334,6 +330,28 @@ public class JoinLinesHandler extends EditorActionHandler {
         }
       });
       myManager.commitDocument(myDoc);
+    }
+
+    private int[] getSpacesToAdd(List<RangeMarker> markers) {
+      int size = markers.size();
+      int[] spacesToAdd = new int[size];
+      Arrays.fill(spacesToAdd, -1);
+      CharSequence text = myDoc.getCharsSequence();
+      FormattingModelBuilder builder = LanguageFormatting.INSTANCE.forContext(myFile);
+      CodeStyleSettings settings = CodeStyle.getSettings(myFile);
+      FormattingModel model = builder == null ? null : builder.createModel(myFile, settings);
+      FormatterEx formatter = FormatterEx.getInstance();
+      for (int i = 0; i < size; i++) {
+        myIndicator.checkCanceled();
+        myIndicator.setFraction(0.7 + 0.25 * i / size);
+        RangeMarker marker = markers.get(i);
+        if (!marker.isValid()) continue;
+        int end = StringUtil.skipWhitespaceForward(text, marker.getStartOffset());
+        int spacesToCreate = text.charAt(end) == '\n' ? 0 :
+                             model == null ? 1 : formatter.getSpacingForBlockAtOffset(model, end);
+        spacesToAdd[i] = spacesToCreate < 0 ? 1 : spacesToCreate;
+      }
+      return spacesToAdd;
     }
 
     private void positionCaret(Editor editor, Caret caret) {
