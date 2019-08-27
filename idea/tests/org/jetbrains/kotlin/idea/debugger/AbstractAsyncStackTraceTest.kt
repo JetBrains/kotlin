@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.debugger.engine.AsyncStackTraceProvider
 import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.process.ProcessOutputTypes
@@ -31,9 +32,7 @@ import java.lang.reflect.Modifier
 abstract class AbstractAsyncStackTraceTest : KotlinDebuggerTestBase() {
     private companion object {
         const val MARGIN = "    "
-
-        // Absent in 182, should be AsyncStackTraceProvider.EP.name
-        const val ASYNC_STACKTRACE_EP_NAME = "com.intellij.debugger.asyncStackTraceProvider"
+        val ASYNC_STACKTRACE_EP_NAME = AsyncStackTraceProvider.EP.name
     }
 
     protected fun doTest(path: String) {

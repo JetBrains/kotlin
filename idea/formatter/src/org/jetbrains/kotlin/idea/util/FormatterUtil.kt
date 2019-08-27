@@ -9,7 +9,7 @@ import com.intellij.formatting.ASTBlock
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 
 /*
- * ASTBlock is nullable since 182, this extension was introduced to minimize changes between bunches
+ * ASTBlock.node is nullable, this extension was introduced to minimize changes
  */
 fun ASTBlock.requireNode() = node ?: error("ASTBlock.getNode() returned null")
 

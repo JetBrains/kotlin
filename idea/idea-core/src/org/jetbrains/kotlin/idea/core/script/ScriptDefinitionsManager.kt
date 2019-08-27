@@ -212,15 +212,6 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         return emptyList()
     }
 
-    @Suppress("unused") // used in the 182/as33 bunches
-    fun getDefinitionsBy(source: ScriptDefinitionsSource): List<ScriptDefinition> = lock.write {
-        if (definitions == null) return emptyList() // not loaded yet
-
-        if (source !in definitionsBySource) error("Unknown source: ${source::class.java.name}")
-
-        return definitionsBySource[source] ?: emptyList()
-    }
-
     companion object {
         fun getInstance(project: Project): ScriptDefinitionsManager =
             ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager

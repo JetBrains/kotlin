@@ -117,8 +117,7 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
         return myFixture.getEditor();
     }
 
-    //@Override since 183
-    //add `@Override` when BUNCH: 182 is dropped
+    @Override
     public boolean isSingleParameterInfo() {
         return false;
     }
