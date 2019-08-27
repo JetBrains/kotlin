@@ -3,6 +3,8 @@ package com.intellij.completion.ml
 
 import com.intellij.codeInsight.completion.CompletionLocation
 import com.intellij.codeInsight.completion.CompletionWeigher
+import com.intellij.codeInsight.completion.ml.ContextFeatures
+import com.intellij.codeInsight.completion.ml.ElementFeatureProvider
 import com.intellij.codeInsight.lookup.LookupElement
 
 class MLCompletionWeigher : CompletionWeigher() {

@@ -19,15 +19,6 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.platform</depends>
 
-  <extensionPoints>
-    <extensionPoint name="contextFeatures" beanClass="com.intellij.lang.LanguageExtensionPoint">
-      <with attribute="implementationClass" implements="com.intellij.completion.ml.ContextFeatureProvider"/>
-    </extensionPoint>
-    <extensionPoint name="elementFeatures" beanClass="com.intellij.lang.LanguageExtensionPoint">
-      <with attribute="implementationClass" implements="com.intellij.completion.ml.ElementFeatureProvider"/>
-    </extensionPoint>
-  </extensionPoints>
-
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.intellij.completion.settings.CompletionMLRankingSettings"/>
 
@@ -82,9 +73,7 @@
                  description="Use inside single session factors"/>
 
     <preloadingActivity implementation="com.intellij.stats.sender.SenderPreloadingActivity"/>
-  </extensions>
 
-  <extensions defaultExtensionNs="com.intellij.stats.completion">
     <contextFeatures language="" implementationClass="com.intellij.completion.ml.common.CommonLocationFeatures"/>
   </extensions>
 

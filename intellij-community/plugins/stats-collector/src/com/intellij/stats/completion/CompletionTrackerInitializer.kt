@@ -3,9 +3,9 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.completion.ml.ContextFeatureProvider
-import com.intellij.completion.ml.ContextFeatures
-import com.intellij.completion.ml.MLFeatureValue
+import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
+import com.intellij.codeInsight.completion.ml.ContextFeatures
+import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.completion.tracker.PositionTrackingListener
 import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
