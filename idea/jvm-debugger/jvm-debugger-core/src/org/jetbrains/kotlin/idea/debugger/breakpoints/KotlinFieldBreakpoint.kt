@@ -360,11 +360,6 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    // BUNCH: 182
-    override fun getInvalidIcon(isMuted: Boolean): Icon {
-        return AllIcons.Debugger.Db_invalid_breakpoint
-    }
-
     override fun getVerifiedIcon(isMuted: Boolean): Icon {
         return when {
             isMuted -> AllIcons.Debugger.Db_muted_field_breakpoint
