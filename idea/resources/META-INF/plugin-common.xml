@@ -149,6 +149,9 @@
         <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
                 text="Throw cached PCE"/>
 
+        <action id="MultiplatformCompositeAnalysisToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.MultiplatformCompositeAnalysisToggleAction"
+                text="Toggle Composite Analysis"/>
+
         <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
                 text="Copy Current File As Diagnostic Test"/>
 
