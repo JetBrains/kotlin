@@ -532,16 +532,6 @@ public class IrWriteSignatureTestGenerated extends AbstractIrWriteSignatureTest 
             runTest("compiler/testData/writeSignature/inlineClasses/genericInlineClassBasedOnGenericType.kt");
         }
 
-        @TestMetadata("genericInlineClassWithDefaultTypeParameter.kt")
-        public void testGenericInlineClassWithDefaultTypeParameter() throws Exception {
-            runTest("compiler/testData/writeSignature/inlineClasses/genericInlineClassWithDefaultTypeParameter.kt");
-        }
-
-        @TestMetadata("genericInlineClassWithNotNullTypeParameter.kt")
-        public void testGenericInlineClassWithNotNullTypeParameter() throws Exception {
-            runTest("compiler/testData/writeSignature/inlineClasses/genericInlineClassWithNotNullTypeParameter.kt");
-        }
-
         @TestMetadata("genericMethodInsideClass.kt")
         public void testGenericMethodInsideClass() throws Exception {
             runTest("compiler/testData/writeSignature/inlineClasses/genericMethodInsideClass.kt");
