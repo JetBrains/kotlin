@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 // TODO: Handle withIndex()
-// TODO: Handle Strings/CharSequences
 // TODO: Handle UIntProgression, ULongProgression
 
 /** Represents a progression type in the Kotlin stdlib. */
@@ -135,12 +134,15 @@ internal class ProgressionHeaderInfo(
     )
 }
 
-/** Information about a for-loop over an array. The internal induction variable used is an Int. */
-internal class ArrayHeaderInfo(
+/**
+ * Information about a for-loop over an object with an indexed get method (such as arrays or character sequences).
+ * The internal induction variable used is an Int.
+ */
+internal class IndexedGetHeaderInfo(
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
-    val arrayVariable: IrVariable
+    val objectVariable: IrVariable
 ) : HeaderInfo(
     ProgressionType.INT_PROGRESSION,
     first,
@@ -220,7 +222,8 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
 
     private val expressionHandlers = listOf(
         ArrayIterationHandler(context),
-        DefaultProgressionHandler(context)
+        DefaultProgressionHandler(context),
+        CharSequenceIterationHandler(context)
     )
 
     override fun visitElement(element: IrElement, data: Nothing?): HeaderInfo? = null

@@ -89,6 +89,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
 
+    val charSequence = getClass(Name.identifier("CharSequence"), "kotlin")
+
     val primitiveIteratorsByType = PrimitiveType.values().associate { type ->
         val iteratorClass = getClass(Name.identifier(type.typeName.asString() + "Iterator"), "kotlin", "collections")
         type to iteratorClass

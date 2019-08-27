@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -22,6 +23,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * Contains the loop and expression to replace the old loop.
@@ -196,8 +200,8 @@ internal class ProgressionLoopHeader(
         }
 }
 
-internal class ArrayLoopHeader(
-    override val headerInfo: ArrayHeaderInfo,
+internal class IndexedGetLoopHeader(
+    override val headerInfo: IndexedGetHeaderInfo,
     inductionVariable: IrVariable,
     last: IrVariable,
     step: IrVariable
@@ -205,15 +209,15 @@ internal class ArrayLoopHeader(
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         // inductionVar = loopVar[inductionVariable]
-        val arrayGetFun = headerInfo.arrayVariable.type.getClass()!!.functions.first { it.name.asString() == "get" }
-        irCall(arrayGetFun).apply {
-            dispatchReceiver = irGet(headerInfo.arrayVariable)
+        val indexedGetFun = headerInfo.objectVariable.type.getClass()!!.functions.first { it.name.asString() == "get" }
+        irCall(indexedGetFun).apply {
+            dispatchReceiver = irGet(headerInfo.objectVariable)
             putValueArgument(0, irGet(inductionVariable))
         }
     }
 
     override val declarations: List<IrStatement>
-        get() = listOf(headerInfo.arrayVariable, inductionVariable, last, step)
+        get() = listOf(headerInfo.objectVariable, inductionVariable, last, step)
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {
         // Loop is lowered into something like:
@@ -261,8 +265,29 @@ internal class HeaderProcessor(
         }
 
         // Get the iterable expression, e.g., `someIterable` in the following loop variable declaration:
+        //
         //   val it = someIterable.iterator()
-        val iterable = (variable.initializer as? IrCall)?.dispatchReceiver
+        //
+        // If the `iterator` method is an extension method, make sure that we are calling a known extension
+        // method in the library such as `kotlin.text.StringsKt.iterator` with no value arguments. Other
+        // extension methods could return user-defined iterators.
+        val iterable = (variable.initializer as? IrCall)?.let {
+            val extensionReceiver = it.extensionReceiver
+            if (extensionReceiver != null) {
+                val function = it.symbol.owner
+                if (it.valueArgumentsCount == 0
+                    && function.isTopLevel
+                    && function.getPackageFragment()?.fqName == FqName("kotlin.text")
+                    && function.name == OperatorNameConventions.ITERATOR) {
+                    extensionReceiver
+                } else {
+                    null
+                }
+            } else {
+                it.dispatchReceiver
+            }
+        }
+
         // Collect loop information from the iterable expression.
         val headerInfo = iterable?.accept(headerInfoBuilder, null)
             ?: return null  // If the iterable is not supported.
@@ -316,7 +341,7 @@ internal class HeaderProcessor(
                 )
 
                 return when (headerInfo) {
-                    is ArrayHeaderInfo -> ArrayLoopHeader(
+                    is IndexedGetHeaderInfo -> IndexedGetLoopHeader(
                         headerInfo,
                         inductionVariable,
                         lastValue,
