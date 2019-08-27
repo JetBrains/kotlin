@@ -202,7 +202,8 @@ class RingLauncher : Launcher() {
                     "Calls.returnBoxUnboxFolding" to BenchmarkEntryWithInit.create(::CallsBenchmark, { returnBoxUnboxFolding() }),
                     "Calls.parameterBoxUnboxFolding" to BenchmarkEntryWithInit.create(::CallsBenchmark, { parameterBoxUnboxFolding() }),
                     "CoordinatesSolver.solve" to BenchmarkEntryWithInit.create(::CoordinatesSolverBenchmark, { solve() }),
-                    "GraphSolver.solve" to BenchmarkEntryWithInit.create(::GraphSolverBenchmark, { solve() })
+                    "GraphSolver.solve" to BenchmarkEntryWithInit.create(::GraphSolverBenchmark, { solve() }),
+                    "Casts.classCast" to BenchmarkEntryWithInit.create(::CastsBenchmark, { classCast() })
             )
     )
 }
