@@ -20,7 +20,9 @@ import com.intellij.execution.CommonJavaRunConfigurationParameters
 import com.intellij.execution.ExternalizablePath
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.JavaRunConfigurationModule
+import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.configurations.RefactoringListenerProvider
+import org.jdom.Element
 
 @Suppress("PropertyName", "MemberVisibilityCanBePrivate")
 @Deprecated("Will be dropped in 1.2.20. Use KotlinRunConfiguration instead.")
@@ -29,7 +31,7 @@ abstract class JetRunConfiguration(
     runConfigurationModule: JavaRunConfigurationModule,
     factory: ConfigurationFactory
 ) :
-    ModuleBasedConfigurationElement<JavaRunConfigurationModule>(name, runConfigurationModule, factory),
+    ModuleBasedConfiguration<JavaRunConfigurationModule, Element>(name, runConfigurationModule, factory),
     CommonJavaRunConfigurationParameters,
     RefactoringListenerProvider {
 
