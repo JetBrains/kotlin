@@ -808,7 +808,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitThisReference(thisReference: FirThisReference) {
         print("this")
         val labelName = thisReference.labelName
-        val symbol = thisReference.candidateOwner
+        val symbol = thisReference.boundSymbol
         when {
             symbol != null -> print("@R|${symbol.render()}|")
             labelName != null -> print("@$labelName#")

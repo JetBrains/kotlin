@@ -203,7 +203,7 @@ open class FirBodyResolveTransformer(
                 val implicitReceivers =
                     if (labelName == null) implicitReceiverPerLabel.values() else implicitReceiverPerLabel[Name.identifier(labelName)]
                 val implicitReceiver = implicitReceivers.lastOrNull()
-                callee.candidateOwner = implicitReceiver?.boundSymbol
+                callee.boundSymbol = implicitReceiver?.boundSymbol
                 qualifiedAccessExpression.resultType = FirResolvedTypeRefImpl(
                     null, implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName"),
                     emptyList()

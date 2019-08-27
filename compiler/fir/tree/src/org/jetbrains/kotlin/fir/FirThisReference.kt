@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 interface FirThisReference : FirReference {
     val labelName: String?
 
-    val candidateOwner: AbstractFirBasedSymbol<*>? get() = null
+    val boundSymbol: AbstractFirBasedSymbol<*>? get() = null
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitThisReference(this, data)

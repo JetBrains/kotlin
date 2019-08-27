@@ -11,5 +11,5 @@ import org.jetbrains.kotlin.fir.FirThisReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
 class FirExplicitThisReference(psi: PsiElement?, override val labelName: String?) : FirAbstractElement(psi), FirThisReference {
-    override var candidateOwner: AbstractFirBasedSymbol<*>? = null
+    override var boundSymbol: AbstractFirBasedSymbol<*>? = null
 }

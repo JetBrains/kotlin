@@ -105,9 +105,9 @@ fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbo
     return when (this) {
         is FirResolvedCallableReference -> coneSymbol.toSymbol(declarationStorage)
         is FirThisReference -> {
-            when (val ownerSymbol = candidateOwner?.toSymbol(declarationStorage)) {
-                is IrClassSymbol -> ownerSymbol.owner.thisReceiver?.symbol
-                is IrFunctionSymbol -> ownerSymbol.owner.extensionReceiverParameter?.symbol
+            when (val boundSymbol = boundSymbol?.toSymbol(declarationStorage)) {
+                is IrClassSymbol -> boundSymbol.owner.thisReceiver?.symbol
+                is IrFunctionSymbol -> boundSymbol.owner.extensionReceiverParameter?.symbol
                 else -> null
             }
         }
