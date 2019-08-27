@@ -20,12 +20,10 @@ import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
+import com.intellij.psi.impl.source.PsiClassImpl
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.CompositeElement
-import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl
-import com.intellij.psi.impl.source.tree.java.PsiLabeledStatementImpl
-import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
-import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
+import com.intellij.psi.impl.source.tree.java.*
 import com.intellij.psi.infos.MethodCandidateInfo
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.tree.IElementType
@@ -620,7 +618,7 @@ class JavaToJKTreeBuilder constructor(
                 classKind(),
                 typeParameterList?.toJK() ?: JKTypeParameterList(),
                 createClassBody(),
-                annotationList(this),
+                annotationList(this).first,
                 otherModifiers(),
                 visibility(),
                 modality()
@@ -719,11 +717,12 @@ class JavaToJKTreeBuilder constructor(
             visibility(referenceSearcher) { ast, psi -> ast.withFormattingFrom(psi) }
 
         fun PsiField.toJK(): JKField {
+            val (annotationList, typeUseAnnotationList) = annotationList(this)
             return JKField(
-                JKTypeElement(type.toJK()).withFormattingFrom(typeElement),
+                JKTypeElement(type.toJK(), typeUseAnnotationList).withFormattingFrom(typeElement),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
-                annotationList(this),
+                annotationList,
                 otherModifiers(),
                 visibility(),
                 modality(),
@@ -735,18 +734,28 @@ class JavaToJKTreeBuilder constructor(
             }
         }
 
-        fun <T : PsiModifierListOwner> T.annotationList(docCommentOwner: PsiDocCommentOwner?): JKAnnotationList {
+        fun <T : PsiModifierListOwner> T.annotationList(docCommentOwner: PsiDocCommentOwner?): Pair<JKAnnotationList, JKAnnotationList> {
             val deprecatedAnnotation = docCommentOwner?.docComment?.deprecatedAnnotation()
-            val plainAnnotations = annotations.mapNotNull { annotation ->
+            val (plainAnnotations, typeUseAnnotations) = annotations.mapNotNull { annotation ->
                 when {
                     annotation !is PsiAnnotation -> null
                     annotation.qualifiedName == DEPRECATED_ANNOTAION_FQ_NAME && deprecatedAnnotation != null -> null
                     else -> annotation.toJK()
                 }
-            }
-            return JKAnnotationList(plainAnnotations + listOfNotNull(deprecatedAnnotation))
+            }.partition { !it.isTypeUseTargetAnnotation() }
+            return JKAnnotationList(plainAnnotations + listOfNotNull(deprecatedAnnotation)) to JKAnnotationList(typeUseAnnotations)
         }
 
+        private fun JKAnnotation.isTypeUseTargetAnnotation(): Boolean {
+            val annotationClass = (this as? JKAnnotation)?.classSymbol?.target as? PsiClassImpl ?: return false
+            return annotationClass.annotations.any {
+                if (it.qualifiedName != "java.lang.annotation.Target") return@any false
+                val value = (it.attributes.singleOrNull() as? PsiNameValuePair)?.value
+                val reference = (value as? PsiReferenceExpression)
+                    ?: (value as? PsiArrayInitializerMemberValueImpl)?.initializers?.singleOrNull() as? PsiReferenceExpression
+                reference?.referenceName == "TYPE_USE"
+            }
+        }
 
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotation(
@@ -810,16 +819,18 @@ class JavaToJKTreeBuilder constructor(
 
 
         fun PsiMethod.toJK(): JKMethod {
+            val (annotationList, typeUseAnnotationList) = annotationList(this)
             return JKMethodImpl(
                 JKTypeElement(
                     returnType?.toJK()
                         ?: JKJavaVoidType.takeIf { isConstructor }
-                        ?: JKNoType),
+                        ?: JKNoType,
+                    typeUseAnnotationList),
                 nameIdentifier.toJK(),
                 parameterList.parameters.map { it.toJK().withLineBreaksFrom(it) },
                 body?.toJK() ?: JKBodyStub,
                 typeParameterList?.toJK() ?: JKTypeParameterList(),
-                annotationList(this),
+                annotationList,
                 throwsList.referencedTypes.map { JKTypeElement(it.toJK()) },
                 otherModifiers(),
                 visibility(),
@@ -837,15 +848,16 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiParameter.toJK(): JKParameter {
+            val (annotationList, typeUseAnnotationList) = annotationList(null)
             val rawType = type.toJK()
             val type =
-                if (isVarArgs && rawType is JKJavaArrayType) JKTypeElement(rawType.type)
-                else rawType.asTypeElement()
+                if (isVarArgs && rawType is JKJavaArrayType) JKTypeElement(rawType.type, typeUseAnnotationList)
+                else rawType.asTypeElement(typeUseAnnotationList)
             return JKParameter(
                 type,
                 nameIdentifier.toJK(),
                 isVarArgs,
-                annotationList = annotationList(null)
+                annotationList = annotationList
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
@@ -862,22 +874,24 @@ class JavaToJKTreeBuilder constructor(
                 }
 
 
-        fun PsiLocalVariable.toJK(): JKLocalVariable =
-            JKLocalVariable(
-                JKTypeElement(type.toJK()).withFormattingFrom(typeElement),
+        fun PsiLocalVariable.toJK(): JKLocalVariable {
+            val (annotationList, typeUseAnnotationList) = annotationList(null)
+            return JKLocalVariable(
+                JKTypeElement(type.toJK(), typeUseAnnotationList).withFormattingFrom(typeElement),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 JKMutabilityModifierElement(
                     if (hasModifierProperty(PsiModifier.FINAL)) Mutability.IMMUTABLE
                     else Mutability.UNKNOWN
                 ),
-                annotationList(null)
+                annotationList
             ).also { i ->
                 symbolProvider.provideUniverseSymbol(this, i)
                 i.psi = this
             }.also {
                 it.withFormattingFrom(this)
             }
+        }
 
         fun PsiStatement?.toJK(): JKStatement {
             return when (this) {

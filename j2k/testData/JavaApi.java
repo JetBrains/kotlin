@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import kotlinApi.KotlinClassWithProperties;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
 public @interface Anon1 {
     String[] value();
@@ -127,4 +129,16 @@ public class JavaClass {
 
 public @interface SpecialExternal {
     String[] names(); //array is used
+}
+
+@Target(ElementType.TYPE_USE)
+public @interface TypeUseAnon1 {
+}
+
+@Target({ElementType.TYPE_USE})
+public @interface TypeUseAnon2 {
+}
+
+@Target({ElementType.TYPE_USE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+public @interface TypeUseAnon3 {
 }

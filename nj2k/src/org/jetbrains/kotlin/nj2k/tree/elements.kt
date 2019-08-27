@@ -27,8 +27,9 @@ class JKFile(
     var declarationList by children(declarationList)
 }
 
-class JKTypeElement(var type: JKType) : JKTreeElement() {
+class JKTypeElement(var type: JKType, annotationList: JKAnnotationList = JKAnnotationList()) : JKTreeElement(), JKAnnotationListOwner {
     override fun accept(visitor: JKVisitor) = visitor.visitTypeElement(this)
+    override var annotationList: JKAnnotationList by child(annotationList)
 }
 
 abstract class JKBlock : JKTreeElement() {

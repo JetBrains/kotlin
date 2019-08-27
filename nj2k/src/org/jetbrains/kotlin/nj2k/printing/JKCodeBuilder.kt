@@ -599,6 +599,7 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         override fun visitTypeElementRaw(typeElement: JKTypeElement) {
+            typeElement.annotationList.accept(this)
             printer.renderType(typeElement.type, typeElement)
         }
 
