@@ -57,11 +57,10 @@ class IrSourceCompilerForInline(
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
             //TODO: support nested inline calls
-            val signature = codegen.methodSignatureMapper.mapSignatureSkipGeneric(codegen.irFunction)
             return InlineCallSiteInfo(
                 codegen.classCodegen.type.internalName,
-                signature.asmMethod.name,
-                signature.asmMethod.descriptor,
+                codegen.signature.asmMethod.name,
+                codegen.signature.asmMethod.descriptor,
                 //compilationContextFunctionDescriptor.isInlineOrInsideInline()
                 false,
                 compilationContextFunctionDescriptor.isSuspend
@@ -132,7 +131,8 @@ class IrSourceCompilerForInline(
 
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
-            codegen.irFunction, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen, codegen.isInlineLambda
+            codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
+            codegen.isInlineLambda
         ).also {
             it.finallyDepth = curFinallyDepth
         }

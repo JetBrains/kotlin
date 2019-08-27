@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -75,7 +74,7 @@ private val propertiesPhase = makeIrFilePhase<JvmBackendContext>(
             val baseName =
                 if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
                     property.getter?.let { getter ->
-                        context.methodSignatureMapper.mapFunctionName(getter, OwnerKind.IMPLEMENTATION)
+                        context.methodSignatureMapper.mapFunctionName(getter)
                     } ?: JvmAbi.getterName(property.name.asString())
                 } else {
                     property.name.asString()

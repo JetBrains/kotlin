@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
@@ -44,7 +43,7 @@ open class FunctionCodegen(
         }
 
     private fun doGenerate(): JvmMethodGenericSignature {
-        val signature = classCodegen.methodSignatureMapper.mapSignatureWithGeneric(irFunction, OwnerKind.IMPLEMENTATION)
+        val signature = classCodegen.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
 
         val flags = calculateMethodFlags(irFunction.isStatic)
         var methodVisitor = createMethod(flags, signature)
@@ -90,7 +89,7 @@ open class FunctionCodegen(
                 )
                 else -> methodVisitor
             }
-            ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
+            ExpressionCodegen(irFunction, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
             methodVisitor.visitMaxs(-1, -1)
             continuationClassBuilder?.done()
         }

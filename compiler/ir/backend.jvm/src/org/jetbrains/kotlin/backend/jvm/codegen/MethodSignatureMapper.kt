@@ -35,8 +35,8 @@ class MethodSignatureMapper(context: JvmBackendContext) {
     fun mapFieldSignature(irField: IrField): String? =
         kotlinTypeMapper.mapFieldSignature(irField.type.toKotlinType(), irField.descriptor)
 
-    fun mapFunctionName(irFunction: IrFunction, ownerKind: OwnerKind?): String =
-        kotlinTypeMapper.mapFunctionName(irFunction.descriptor, ownerKind)
+    fun mapFunctionName(irFunction: IrFunction): String =
+        kotlinTypeMapper.mapFunctionName(irFunction.descriptor, OwnerKind.IMPLEMENTATION)
 
     fun mapAnnotationParameterName(field: IrField): String =
         kotlinTypeMapper.mapAnnotationParameterName(field.descriptor)
@@ -47,11 +47,11 @@ class MethodSignatureMapper(context: JvmBackendContext) {
     fun mapReturnType(irFunction: IrFunction): Type =
         kotlinTypeMapper.mapReturnType(irFunction.descriptor)
 
-    fun mapSignatureSkipGeneric(f: IrFunction, kind: OwnerKind = OwnerKind.IMPLEMENTATION): JvmMethodSignature =
-        kotlinTypeMapper.mapSignatureSkipGeneric(f.descriptor, kind)
+    fun mapSignatureSkipGeneric(f: IrFunction): JvmMethodSignature =
+        kotlinTypeMapper.mapSignatureSkipGeneric(f.descriptor, OwnerKind.IMPLEMENTATION)
 
-    fun mapSignatureWithGeneric(f: IrFunction, kind: OwnerKind): JvmMethodGenericSignature =
-        kotlinTypeMapper.mapSignatureWithGeneric(f.descriptor, kind)
+    fun mapSignatureWithGeneric(f: IrFunction): JvmMethodGenericSignature =
+        kotlinTypeMapper.mapSignatureWithGeneric(f.descriptor, OwnerKind.IMPLEMENTATION)
 
     fun mapToCallableMethod(expression: IrFunctionAccessExpression): IrCallableMethod {
         val callee = expression.symbol.owner
