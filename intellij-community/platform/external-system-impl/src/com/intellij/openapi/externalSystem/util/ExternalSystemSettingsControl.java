@@ -90,9 +90,6 @@ public interface ExternalSystemSettingsControl<S> {
    */
   void showUi(boolean show);
 
-  /**
-   * @return
-   */
   @Nullable
   default String getHelpId() {
     return null;
