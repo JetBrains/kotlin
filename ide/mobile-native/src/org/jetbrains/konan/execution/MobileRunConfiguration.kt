@@ -57,7 +57,7 @@ class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, na
 
     override fun writeExternal(element: Element) {
         super.writeExternal(element)
-        if (_executableData != null) _executableData!!.writeExternal(element)
+        _executableData?.writeExternal(element)
     }
 
     override fun readExternal(element: Element) {
