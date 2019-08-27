@@ -75,12 +75,8 @@ public class JarFromModulesTemplate extends ArtifactTemplate {
     if (mainClassName != null && !mainClassName.isEmpty() || !extractLibrariesToJar) {
       final VirtualFile directory;
       try {
-        directory = ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<VirtualFile, IOException>() {
-          @Override
-          public VirtualFile compute() throws IOException {
-            return VfsUtil.createDirectoryIfMissing(directoryForManifest);
-          }
-        });
+        directory = ApplicationManager.getApplication().runWriteAction(
+          (ThrowableComputable<VirtualFile, IOException>)() -> VfsUtil.createDirectoryIfMissing(directoryForManifest));
       }
       catch (IOException e) {
         LOG.info(e);

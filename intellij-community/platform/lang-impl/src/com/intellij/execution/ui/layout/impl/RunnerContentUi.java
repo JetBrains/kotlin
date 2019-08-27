@@ -699,16 +699,13 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
         }
         updateTabsUI(false);
         fireContentClosed(content);
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            if (Disposer.isDisposed(content)) {
-              AnAction[] actions = myViewActions.getChildren(null);
-              for (AnAction action : actions) {
-                if (action instanceof RestoreViewAction && ((RestoreViewAction)action).getContent() == content) {
-                  myViewActions.remove(action);
-                  break;
-                }
+        ApplicationManager.getApplication().invokeLater(() -> {
+          if (Disposer.isDisposed(content)) {
+            AnAction[] actions = myViewActions.getChildren(null);
+            for (AnAction action : actions) {
+              if (action instanceof RestoreViewAction && ((RestoreViewAction)action).getContent() == content) {
+                myViewActions.remove(action);
+                break;
               }
             }
           }

@@ -19,7 +19,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.*;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiUtilCore;
@@ -225,12 +224,7 @@ public class ReformatCodeAction extends AnAction implements DumbAware {
       return;
 
     final Condition<CharSequence> patternCondition = getFileTypeMaskPattern(fileTypeMask);
-    processor.addFileFilter(new VirtualFileFilter() {
-        @Override
-        public boolean accept(@NotNull VirtualFile file) {
-          return patternCondition.value(file.getNameSequence());
-        }
-      });
+    processor.addFileFilter(file -> patternCondition.value(file.getNameSequence()));
   }
 
   private static Condition<CharSequence> getFileTypeMaskPattern(@Nullable String mask) {

@@ -187,16 +187,13 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
       }
     });
 
-    getShortcutsManager().addListener(new ExternalSystemShortcutsManager.Listener() {
-      @Override
-      public void shortcutsUpdated() {
-        scheduleTasksUpdate();
+    getShortcutsManager().addListener(() -> {
+      scheduleTasksUpdate();
 
-        scheduleStructureRequest(() -> {
-          assert myStructure != null;
-          myStructure.updateNodes(RunConfigurationNode.class);
-        });
-      }
+      scheduleStructureRequest(() -> {
+        assert myStructure != null;
+        myStructure.updateNodes(RunConfigurationNode.class);
+      });
     });
 
     getTaskActivator().addListener(new ExternalSystemTaskActivator.Listener() {
