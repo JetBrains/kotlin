@@ -95,10 +95,10 @@ abstract class ControlFlowGraphNodeBuilder {
     protected fun createWhenBranchResultExitNode(fir: FirWhenBranch): WhenBranchResultExitNode =
         WhenBranchResultExitNode(graph, fir, levelCounter)
 
-    protected fun createLoopConditionExitNode(fir: FirLoop): LoopConditionExitNode =
+    protected fun createLoopConditionExitNode(fir: FirExpression): LoopConditionExitNode =
         LoopConditionExitNode(graph, fir, levelCounter)
 
-    protected fun createLoopConditionEnterNode(fir: FirLoop): LoopConditionEnterNode =
+    protected fun createLoopConditionEnterNode(fir: FirExpression): LoopConditionEnterNode =
         LoopConditionEnterNode(graph, fir, levelCounter)
 
     protected fun createLoopBlockEnterNode(fir: FirLoop): LoopBlockEnterNode =

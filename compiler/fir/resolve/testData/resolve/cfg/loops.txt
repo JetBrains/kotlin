@@ -23,3 +23,59 @@ FILE: loops.kt
 
         (R|<local>/x| is R|kotlin/String|)
     }
+    public final fun testWhileTrue(): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            Int(1)
+        }
+
+        Int(1)
+    }
+    public final fun testWhileTrueWithBreak(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            when () {
+                R|<local>/b| ->  {
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+        }
+
+        Int(1)
+    }
+    public final fun testWhileFalse(): R|kotlin/Unit| {
+        while(Boolean(false)) {
+            Int(1)
+        }
+
+        Int(1)
+    }
+    public final fun testDoWhileTrue(): R|kotlin/Unit| {
+        do {
+            Int(1)
+        }
+        while(Boolean(true))
+        Int(1)
+    }
+    public final fun testDoWhileTrueWithBreak(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        do {
+            when () {
+                R|<local>/b| ->  {
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+        }
+        while(Boolean(true))
+        Int(1)
+    }
+    public final fun testDoWhileFalse(): R|kotlin/Unit| {
+        do {
+            Int(1)
+        }
+        while(Boolean(false))
+        Int(1)
+    }

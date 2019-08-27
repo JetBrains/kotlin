@@ -74,8 +74,8 @@ class WhenBranchResultExitNode(owner: ControlFlowGraph, override val fir: FirWhe
 class LoopEnterNode(owner: ControlFlowGraph, override val fir: FirLoop, level: Int) : CFGNode<FirLoop>(owner, level)
 class LoopBlockEnterNode(owner: ControlFlowGraph, override val fir: FirLoop, level: Int) : CFGNode<FirLoop>(owner, level)
 class LoopBlockExitNode(owner: ControlFlowGraph, override val fir: FirLoop, level: Int) : CFGNode<FirLoop>(owner, level)
-class LoopConditionEnterNode(owner: ControlFlowGraph, override val fir: FirLoop, level: Int) : CFGNode<FirLoop>(owner, level)
-class LoopConditionExitNode(owner: ControlFlowGraph, override val fir: FirLoop, level: Int) : CFGNode<FirLoop>(owner, level)
+class LoopConditionEnterNode(owner: ControlFlowGraph, override val fir: FirExpression, level: Int) : CFGNode<FirExpression>(owner, level)
+class LoopConditionExitNode(owner: ControlFlowGraph, override val fir: FirExpression, level: Int) : CFGNode<FirExpression>(owner, level)
 class LoopExitNode(owner: ControlFlowGraph, override val fir: FirLoop, level: Int) : CFGNode<FirLoop>(owner, level)
 
 // ----------------------------------- Try-catch-finally -----------------------------------

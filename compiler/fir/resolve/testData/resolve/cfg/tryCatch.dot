@@ -151,29 +151,31 @@ subgraph test_3 {
   101 [shape=box label="Variable declaration: lval y: R|kotlin/Int|"];
   102 [shape=box label="Exit block"];
   103 [shape=box label="Exit loop block"];
-  104 [shape=box label="Exit whileloop"];
-  105 [shape=box label="Const: Int(3)"];
-  106 [shape=box label="Variable declaration: lval z: R|kotlin/Int|"];
-  107 [shape=box label="Exit block"];
-  108 [shape=box label="Exit function test_3"];
+  104 [shape=box label="Stub[DEAD]"];
+  105 [shape=box label="Exit whileloop"];
+  106 [shape=box label="Const: Int(3)"];
+  107 [shape=box label="Variable declaration: lval z: R|kotlin/Int|"];
+  108 [shape=box label="Exit block"];
+  109 [shape=box label="Exit function test_3"];
 
   41 -> {42};
   42 -> {43};
   43 -> {44};
   44 -> {45};
   45 -> {46};
-  46 -> {104 47};
+  46 -> {47};
+  46 -> {104} [style=dotted];
   47 -> {48};
   48 -> {49};
   49 -> {50};
-  50 -> {108 93 87 51};
+  50 -> {109 93 87 51};
   51 -> {52};
   52 -> {53};
   53 -> {54};
   54 -> {55};
   55 -> {56 61};
   56 -> {57};
-  57 -> {108};
+  57 -> {109};
   57 -> {58} [style=dotted];
   58 -> {59} [style=dotted];
   59 -> {60} [style=dotted];
@@ -192,7 +194,7 @@ subgraph test_3 {
   72 -> {73};
   73 -> {74 79};
   74 -> {75};
-  75 -> {104};
+  75 -> {105};
   75 -> {76} [style=dotted];
   76 -> {77} [style=dotted];
   77 -> {78} [style=dotted];
@@ -205,16 +207,15 @@ subgraph test_3 {
   84 -> {85};
   85 -> {86};
   86 -> {99};
-  87 -> {108 88};
+  87 -> {109 88};
   88 -> {89};
-  89 -> {104};
+  89 -> {105};
   89 -> {90} [style=dotted];
   90 -> {91} [style=dotted];
   91 -> {92} [style=dotted];
   92 -> {99} [style=dotted];
-  93 -> {108 94};
+  93 -> {109 94};
   94 -> {95};
-  95 -> {44};
   95 -> {96} [style=dotted];
   96 -> {97} [style=dotted];
   97 -> {98} [style=dotted];
@@ -224,10 +225,11 @@ subgraph test_3 {
   101 -> {102};
   102 -> {103};
   103 -> {44};
-  104 -> {105};
+  104 -> {105} [style=dotted];
   105 -> {106};
   106 -> {107};
   107 -> {108};
+  108 -> {109};
 }
 
 }

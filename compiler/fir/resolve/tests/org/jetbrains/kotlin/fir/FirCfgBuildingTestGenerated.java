@@ -119,6 +119,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/elvis.kt");
         }
 
+        @TestMetadata("endlessLoops.kt")
+        public void testEndlessLoops() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/endlessLoops.kt");
+        }
+
         @TestMetadata("equalsAndIdentity.kt")
         public void testEqualsAndIdentity() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/equalsAndIdentity.kt");

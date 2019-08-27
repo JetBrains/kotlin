@@ -26,7 +26,7 @@ fun test_3(x: Int?) {
 
 fun test_4(x: Int?) {
     do {
-        x as int
+        x as Int
         break
     } while (true)
     x.inc()

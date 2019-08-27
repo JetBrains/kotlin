@@ -138,4 +138,278 @@ subgraph testFor {
   63 -> {64};
 }
 
+subgraph testWhileTrue {
+  65 [shape=box label="Enter function testWhileTrue"];
+  66 [shape=box label="Enter block"];
+  67 [shape=box label="Enter while loop"];
+  68 [shape=box label="Enter loop condition"];
+  69 [shape=box label="Const: Boolean(true)"];
+  70 [shape=box label="Exit loop condition"];
+  71 [shape=box label="Enter loop block"];
+  72 [shape=box label="Enter block"];
+  73 [shape=box label="Const: Int(1)"];
+  74 [shape=box label="Exit block"];
+  75 [shape=box label="Exit loop block"];
+  76 [shape=box label="Stub[DEAD]"];
+  77 [shape=box label="Exit whileloop[DEAD]"];
+  78 [shape=box label="Const: Int(1)[DEAD]"];
+  79 [shape=box label="Exit block[DEAD]"];
+  80 [shape=box label="Exit function testWhileTrue[DEAD]"];
+
+  65 -> {66};
+  66 -> {67};
+  67 -> {68};
+  68 -> {69};
+  69 -> {70};
+  70 -> {71};
+  70 -> {76} [style=dotted];
+  71 -> {72};
+  72 -> {73};
+  73 -> {74};
+  74 -> {75};
+  75 -> {68};
+  76 -> {77} [style=dotted];
+  77 -> {78} [style=dotted];
+  78 -> {79} [style=dotted];
+  79 -> {80} [style=dotted];
+}
+
+subgraph testWhileTrueWithBreak {
+  81 [shape=box label="Enter function testWhileTrueWithBreak"];
+  82 [shape=box label="Enter block"];
+  83 [shape=box label="Enter while loop"];
+  84 [shape=box label="Enter loop condition"];
+  85 [shape=box label="Const: Boolean(true)"];
+  86 [shape=box label="Exit loop condition"];
+  87 [shape=box label="Enter loop block"];
+  88 [shape=box label="Enter block"];
+  89 [shape=box label="Enter when"];
+  90 [shape=box label="Enter when branch condition "];
+  91 [shape=box label="Access variable R|<local>/b|"];
+  92 [shape=box label="Exit when branch condition"];
+  93 [shape=box label="Enter block"];
+  94 [shape=box label="Jump: break@@@[Boolean(true)] "];
+  95 [shape=box label="Stub[DEAD]"];
+  96 [shape=box label="Exit block[DEAD]"];
+  97 [shape=box label="Exit when branch result[DEAD]"];
+  98 [shape=box label="Enter when branch condition else"];
+  99 [shape=box label="Exit when branch condition"];
+  100 [shape=box label="Enter block"];
+  101 [shape=box label="Exit block"];
+  102 [shape=box label="Exit when branch result"];
+  103 [shape=box label="Exit when"];
+  104 [shape=box label="Exit block"];
+  105 [shape=box label="Exit loop block"];
+  106 [shape=box label="Stub[DEAD]"];
+  107 [shape=box label="Exit whileloop"];
+  108 [shape=box label="Const: Int(1)"];
+  109 [shape=box label="Exit block"];
+  110 [shape=box label="Exit function testWhileTrueWithBreak"];
+
+  81 -> {82};
+  82 -> {83};
+  83 -> {84};
+  84 -> {85};
+  85 -> {86};
+  86 -> {87};
+  86 -> {106} [style=dotted];
+  87 -> {88};
+  88 -> {89};
+  89 -> {90};
+  90 -> {91};
+  91 -> {92};
+  92 -> {93 98};
+  93 -> {94};
+  94 -> {107};
+  94 -> {95} [style=dotted];
+  95 -> {96} [style=dotted];
+  96 -> {97} [style=dotted];
+  97 -> {103} [style=dotted];
+  98 -> {99};
+  99 -> {100};
+  100 -> {101};
+  101 -> {102};
+  102 -> {103};
+  103 -> {104};
+  104 -> {105};
+  105 -> {84};
+  106 -> {107} [style=dotted];
+  107 -> {108};
+  108 -> {109};
+  109 -> {110};
+}
+
+subgraph testWhileFalse {
+  111 [shape=box label="Enter function testWhileFalse"];
+  112 [shape=box label="Enter block"];
+  113 [shape=box label="Enter while loop"];
+  114 [shape=box label="Enter loop condition"];
+  115 [shape=box label="Const: Boolean(false)"];
+  116 [shape=box label="Exit loop condition"];
+  117 [shape=box label="Stub[DEAD]"];
+  118 [shape=box label="Enter loop block[DEAD]"];
+  119 [shape=box label="Enter block[DEAD]"];
+  120 [shape=box label="Const: Int(1)[DEAD]"];
+  121 [shape=box label="Exit block[DEAD]"];
+  122 [shape=box label="Exit loop block[DEAD]"];
+  123 [shape=box label="Exit whileloop"];
+  124 [shape=box label="Const: Int(1)"];
+  125 [shape=box label="Exit block"];
+  126 [shape=box label="Exit function testWhileFalse"];
+
+  111 -> {112};
+  112 -> {113};
+  113 -> {114};
+  114 -> {115};
+  115 -> {116};
+  116 -> {123};
+  116 -> {117} [style=dotted];
+  117 -> {118} [style=dotted];
+  118 -> {119} [style=dotted];
+  119 -> {120} [style=dotted];
+  120 -> {121} [style=dotted];
+  121 -> {122} [style=dotted];
+  122 -> {114} [style=dotted];
+  123 -> {124};
+  124 -> {125};
+  125 -> {126};
+}
+
+subgraph testDoWhileTrue {
+  127 [shape=box label="Enter function testDoWhileTrue"];
+  128 [shape=box label="Enter block"];
+  129 [shape=box label="Enter do-while loop"];
+  130 [shape=box label="Enter loop block"];
+  131 [shape=box label="Enter block"];
+  132 [shape=box label="Const: Int(1)"];
+  133 [shape=box label="Exit block"];
+  134 [shape=box label="Exit loop block"];
+  135 [shape=box label="Enter loop condition"];
+  136 [shape=box label="Const: Boolean(true)"];
+  137 [shape=box label="Exit loop condition"];
+  138 [shape=box label="Stub[DEAD]"];
+  139 [shape=box label="Exit do-whileloop[DEAD]"];
+  140 [shape=box label="Const: Int(1)[DEAD]"];
+  141 [shape=box label="Exit block[DEAD]"];
+  142 [shape=box label="Exit function testDoWhileTrue[DEAD]"];
+
+  127 -> {128};
+  128 -> {129};
+  129 -> {130};
+  130 -> {131};
+  131 -> {132};
+  132 -> {133};
+  133 -> {134};
+  134 -> {135};
+  135 -> {136};
+  136 -> {137};
+  137 -> {130};
+  137 -> {138} [style=dotted];
+  138 -> {139} [style=dotted];
+  139 -> {140} [style=dotted];
+  140 -> {141} [style=dotted];
+  141 -> {142} [style=dotted];
+}
+
+subgraph testDoWhileTrueWithBreak {
+  143 [shape=box label="Enter function testDoWhileTrueWithBreak"];
+  144 [shape=box label="Enter block"];
+  145 [shape=box label="Enter do-while loop"];
+  146 [shape=box label="Enter loop block"];
+  147 [shape=box label="Enter block"];
+  148 [shape=box label="Enter when"];
+  149 [shape=box label="Enter when branch condition "];
+  150 [shape=box label="Access variable R|<local>/b|"];
+  151 [shape=box label="Exit when branch condition"];
+  152 [shape=box label="Enter block"];
+  153 [shape=box label="Jump: break@@@[Boolean(true)] "];
+  154 [shape=box label="Stub[DEAD]"];
+  155 [shape=box label="Exit block[DEAD]"];
+  156 [shape=box label="Exit when branch result[DEAD]"];
+  157 [shape=box label="Enter when branch condition else"];
+  158 [shape=box label="Exit when branch condition"];
+  159 [shape=box label="Enter block"];
+  160 [shape=box label="Exit block"];
+  161 [shape=box label="Exit when branch result"];
+  162 [shape=box label="Exit when"];
+  163 [shape=box label="Exit block"];
+  164 [shape=box label="Exit loop block"];
+  165 [shape=box label="Enter loop condition"];
+  166 [shape=box label="Const: Boolean(true)"];
+  167 [shape=box label="Exit loop condition"];
+  168 [shape=box label="Stub[DEAD]"];
+  169 [shape=box label="Exit do-whileloop"];
+  170 [shape=box label="Const: Int(1)"];
+  171 [shape=box label="Exit block"];
+  172 [shape=box label="Exit function testDoWhileTrueWithBreak"];
+
+  143 -> {144};
+  144 -> {145};
+  145 -> {146};
+  146 -> {147};
+  147 -> {148};
+  148 -> {149};
+  149 -> {150};
+  150 -> {151};
+  151 -> {152 157};
+  152 -> {153};
+  153 -> {169};
+  153 -> {154} [style=dotted];
+  154 -> {155} [style=dotted];
+  155 -> {156} [style=dotted];
+  156 -> {162} [style=dotted];
+  157 -> {158};
+  158 -> {159};
+  159 -> {160};
+  160 -> {161};
+  161 -> {162};
+  162 -> {163};
+  163 -> {164};
+  164 -> {165};
+  165 -> {166};
+  166 -> {167};
+  167 -> {146};
+  167 -> {168} [style=dotted];
+  168 -> {169} [style=dotted];
+  169 -> {170};
+  170 -> {171};
+  171 -> {172};
+}
+
+subgraph testDoWhileFalse {
+  173 [shape=box label="Enter function testDoWhileFalse"];
+  174 [shape=box label="Enter block"];
+  175 [shape=box label="Enter do-while loop"];
+  176 [shape=box label="Enter loop block"];
+  177 [shape=box label="Enter block"];
+  178 [shape=box label="Const: Int(1)"];
+  179 [shape=box label="Exit block"];
+  180 [shape=box label="Exit loop block"];
+  181 [shape=box label="Enter loop condition"];
+  182 [shape=box label="Const: Boolean(false)"];
+  183 [shape=box label="Exit loop condition"];
+  184 [shape=box label="Exit do-whileloop"];
+  185 [shape=box label="Const: Int(1)"];
+  186 [shape=box label="Exit block"];
+  187 [shape=box label="Exit function testDoWhileFalse"];
+  188 [shape=box label="Stub[DEAD]"];
+
+  173 -> {174};
+  174 -> {175};
+  175 -> {176};
+  176 -> {177};
+  177 -> {178};
+  178 -> {179};
+  179 -> {180};
+  180 -> {181};
+  181 -> {182};
+  182 -> {183};
+  183 -> {184};
+  183 -> {188} [style=dotted];
+  184 -> {185};
+  185 -> {186};
+  186 -> {187};
+  188 -> {176} [style=dotted];
+}
+
 }

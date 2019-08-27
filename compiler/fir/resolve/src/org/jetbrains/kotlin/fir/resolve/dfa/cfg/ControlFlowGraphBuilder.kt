@@ -217,7 +217,7 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         addNewSimpleNode(createLoopEnterNode(loop))
         loopExitNodes.push(createLoopExitNode(loop))
         levelCounter++
-        val node = createLoopConditionEnterNode(loop)
+        val node = createLoopConditionEnterNode(loop.condition)
         levelCounter++
         addNewSimpleNode(node)
         // put conditional node twice so we can refer it after exit from loop block
@@ -228,11 +228,12 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
 
     fun exitWhileLoopCondition(loop: FirLoop): LoopConditionExitNode {
         levelCounter--
-        val conditionExitNode = createLoopConditionExitNode(loop)
+        val conditionExitNode = createLoopConditionExitNode(loop.condition)
         addNewSimpleNode(conditionExitNode)
-        // TODO: here we can check that condition is always true
-        addEdge(conditionExitNode, loopExitNodes.top())
-        addNewSimpleNode(createLoopBlockEnterNode(loop))
+        val conditionConstBooleanValue = conditionExitNode.booleanConstValue
+        addEdge(conditionExitNode, loopExitNodes.top(), isDead = conditionConstBooleanValue == true)
+        val loopBlockEnterNode = createLoopBlockEnterNode(loop)
+        addNewSimpleNode(loopBlockEnterNode, conditionConstBooleanValue == false)
         levelCounter++
         return conditionExitNode
     }
@@ -272,7 +273,7 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
     fun enterDoWhileLoopCondition(loop: FirLoop): Pair<LoopBlockExitNode, LoopConditionEnterNode> {
         levelCounter--
         val blockExitNode = createLoopBlockExitNode(loop).also { addNewSimpleNode(it) }
-        val conditionEnterNode = createLoopConditionEnterNode(loop).also { addNewSimpleNode(it) }
+        val conditionEnterNode = createLoopConditionEnterNode(loop.condition).also { addNewSimpleNode(it) }
         levelCounter++
         return blockExitNode to conditionEnterNode
     }
@@ -280,14 +281,14 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
     fun exitDoWhileLoop(loop: FirLoop): LoopExitNode {
         loopEnterNodes.pop()
         levelCounter--
-        val conditionExitNode = createLoopConditionExitNode(loop)
-        // TODO: here we can check that condition is always false
+        val conditionExitNode = createLoopConditionExitNode(loop.condition)
+        val conditionBooleanValue = conditionExitNode.booleanConstValue
         addEdge(lastNodes.pop(), conditionExitNode)
         val blockEnterNode = lastNodes.pop()
         require(blockEnterNode is LoopBlockEnterNode)
-        addEdge(conditionExitNode, blockEnterNode, propagateDeadness = false)
+        addEdge(conditionExitNode, blockEnterNode, propagateDeadness = false, isDead = conditionBooleanValue == false)
         val loopExit = loopExitNodes.pop()
-        addEdge(conditionExitNode, loopExit, propagateDeadness = false)
+        addEdge(conditionExitNode, loopExit, propagateDeadness = false, isDead = conditionBooleanValue == true)
         loopExit.markAsDeadIfNecessary()
         lastNodes.push(loopExit)
         levelCounter--
@@ -531,22 +532,22 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         lastNodes.push(stub)
     }
 
-    private fun addNewSimpleNode(newNode: CFGNode<*>): CFGNode<*> {
+    private fun addNewSimpleNode(newNode: CFGNode<*>, isDead: Boolean = false): CFGNode<*> {
         val oldNode = lastNodes.pop()
-        addEdge(oldNode, newNode)
+        addEdge(oldNode, newNode, isDead = isDead)
         lastNodes.push(newNode)
         return oldNode
     }
 
-    private fun addDeadEdge(from: CFGNode<*>, to: CFGNode<*>) {
+    private fun addDeadEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean) {
         val stub = createStubNode()
         addEdge(from, stub)
-        addEdge(stub, to)
+        addEdge(stub, to, propagateDeadness = propagateDeadness)
     }
 
     private fun addEdge(from: CFGNode<*>, to: CFGNode<*>, propagateDeadness: Boolean = true, isDead: Boolean = false) {
         if (isDead) {
-            addDeadEdge(from, to)
+            addDeadEdge(from, to, propagateDeadness)
             return
         }
         if (propagateDeadness && from.isDead) {

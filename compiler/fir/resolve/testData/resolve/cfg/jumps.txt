@@ -29,13 +29,13 @@ FILE: jumps.kt
             break@@@[Boolean(true)]
         }
 
-        R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/x|.R|kotlin/Int.inc|()
     }
     public final fun test_4(x: R|kotlin/Int?|): R|kotlin/Unit| {
         do {
-            (R|<local>/x| as R|class error: Symbol not found, for `int`|)
+            (R|<local>/x| as R|kotlin/Int|)
             break@@@[Boolean(true)]
         }
         while(Boolean(true))
-        R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        R|<local>/x|.R|kotlin/Int.inc|()
     }

@@ -18,3 +18,50 @@ fun testFor(x: Any?) {
     }
     x is String
 }
+
+fun testWhileTrue() {
+    while (true) {
+        1
+    }
+    1
+}
+
+fun testWhileTrueWithBreak(b: Boolean) {
+    while (true) {
+        if (b) {
+            break
+        }
+    }
+    1
+}
+
+
+fun testWhileFalse() {
+    while (false) {
+        1
+    }
+    1
+}
+
+fun testDoWhileTrue() {
+    do {
+        1
+    } while (true)
+    1
+}
+
+fun testDoWhileTrueWithBreak(b: Boolean) {
+    do {
+        if (b) {
+            break
+        }
+    } while (true)
+    1
+}
+
+fun testDoWhileFalse() {
+    do {
+        1
+    } while (false)
+    1
+}
