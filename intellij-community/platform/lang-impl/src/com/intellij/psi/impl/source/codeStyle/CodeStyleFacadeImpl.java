@@ -72,7 +72,6 @@ public class CodeStyleFacadeImpl extends CodeStyleFacade {
     if (indent == LineIndentProvider.DO_NOT_ADJUST) {
       return allowDocCommit ? null : indent;
     }
-    //noinspection deprecation
     return indent != null ? indent : (allowDocCommit ? getLineIndent(editor.getDocument(), offset) : null);
   }
 
