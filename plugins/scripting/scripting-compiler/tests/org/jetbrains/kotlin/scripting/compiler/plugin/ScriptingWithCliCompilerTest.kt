@@ -5,13 +5,9 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import java.io.File
-import junit.framework.Assert.*
-import org.jetbrains.kotlin.cli.common.CLITool
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import junit.framework.Assert
 import org.junit.Test
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
+import java.io.File
 
 class ScriptingWithCliCompilerTest {
 
@@ -25,57 +21,25 @@ class ScriptingWithCliCompilerTest {
     }
 
     @Test
+    fun testResultValueViaKotlinc() {
+        runWithKotlinc("$TEST_DATA_DIR/integration/intResult.kts", listOf("10"))
+    }
+
+    @Test
     fun testStandardScriptWithDeps() {
         runWithK2JVMCompiler("$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", listOf("Hello from standard kts!"))
     }
-}
 
-fun runWithK2JVMCompiler(
-    scriptPath: String,
-    expectedOutPatterns: List<String> = emptyList(),
-    expectedExitCode: Int = 0
-) {
-    val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
-    assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
-
-    val (out, err, ret) = captureOutErrRet {
-        CLITool.doMainNoExit(
-            K2JVMCompiler(),
-            arrayOf("-kotlin-home", "dist/kotlinc", "-cp", mainKtsJar.absolutePath, "-script", scriptPath)
+    @Test
+    fun testStandardScriptWithDepsViaKotlinc() {
+        runWithKotlinc(
+            "$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", listOf("Hello from standard kts!"),
+            classpath = listOf(
+                File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
+                    Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
+                }
+            )
         )
     }
-    try {
-        val outLines = out.lines()
-        assertEquals(expectedOutPatterns.size, outLines.size)
-        for ((expectedPattern, actualLine) in expectedOutPatterns.zip(outLines)) {
-            assertTrue(
-                "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
-                Regex(expectedPattern).matches(actualLine)
-            )
-        }
-        assertEquals(expectedExitCode, ret.code)
-    } catch (e: Throwable) {
-        println("OUT:\n$out")
-        println("ERR:\n$err")
-        throw e
-    }
 }
 
-
-internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
-    val outStream = ByteArrayOutputStream()
-    val errStream = ByteArrayOutputStream()
-    val prevOut = System.out
-    val prevErr = System.err
-    System.setOut(PrintStream(outStream))
-    System.setErr(PrintStream(errStream))
-    val ret = try {
-        body()
-    } finally {
-        System.out.flush()
-        System.err.flush()
-        System.setOut(prevOut)
-        System.setErr(prevErr)
-    }
-    return Triple(outStream.toString().trim(), errStream.toString().trim(), ret)
-}
