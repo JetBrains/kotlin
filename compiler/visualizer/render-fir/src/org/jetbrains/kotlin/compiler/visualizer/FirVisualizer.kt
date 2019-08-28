@@ -22,30 +22,15 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
-class FirVisualizer(private val firFile: FirFile) : BaseRenderer {
-    private val annotations = mutableSetOf<Annotator.AnnotationInfo>()
-
-    private val unnecessaryData = mapOf(
-        "kotlin/" to ""
-    )
-
-    private fun addAnnotation(annotationText: String, element: PsiElement?, deleteDuplicate: Boolean = false) {
-        if (element == null) return
-        annotations.removeIf { it.range.startOffset == element.textRange.startOffset && deleteDuplicate }
-
-        var textWithOutUnnecessaryData = annotationText
-        for ((key, value) in unnecessaryData) {
-            textWithOutUnnecessaryData = textWithOutUnnecessaryData.replace(key, value)
-        }
-        if (textWithOutUnnecessaryData != element.text && textWithOutUnnecessaryData.isNotEmpty()) {
-            annotations.add(Annotator.AnnotationInfo(textWithOutUnnecessaryData, element.textRange))
-        }
+class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
+    override fun addAnnotation(annotationText: String, element: PsiElement?, deleteDuplicate: Boolean) {
+        super.addAnnotation(annotationText, element, false)
     }
 
     override fun render(): String {
         val map = mutableMapOf<PsiElement, MutableList<FirElement>>().apply { Psi2FirMapper(this).visitFile(firFile) }
         map.keys.firstOrNull { it is KtFile }?.accept(PsiVisitor(map))
-        return Annotator.annotate(firFile.psi!!.text, annotations).joinToString("\n")
+        return Annotator.annotate(firFile.psi!!.text, getAnnotations()).joinToString("\n")
     }
 
     inner class PsiVisitor(private val map: Map<PsiElement, MutableList<FirElement>>) : KtVisitorVoid() {
