@@ -233,12 +233,14 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
   @NotNull
   protected String[] getIdeModuleGroup(String moduleName, IdeaModule gradleModule) {
-    String[] moduleGroup;
     final String gradlePath = gradleModule.getGradleProject().getPath();
     final String rootName = gradleModule.getProject().getName();
-    final boolean isRootModule = StringUtil.isEmpty(gradlePath) || ":".equals(gradlePath);
-    moduleGroup = isRootModule ? new String[]{moduleName} : (rootName + gradlePath).split(":");
-    return moduleGroup;
+    if (StringUtil.isEmpty(gradlePath) || ":".equals(gradlePath)) {
+      return rootName.equals(moduleName) ? new String[]{moduleName} : new String[]{rootName, moduleName};
+    }
+    else {
+      return (rootName + gradlePath).split(":");
+    }
   }
 
   @Nullable

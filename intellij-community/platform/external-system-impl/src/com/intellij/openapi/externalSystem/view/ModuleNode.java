@@ -106,7 +106,7 @@ public class ModuleNode extends ExternalSystemNode<ModuleData> {
       }
       ProjectNode parentProject = findParent(ProjectNode.class);
       if (parentProject != null) {
-        return StringUtil.equals(parentProject.getIdeGrouping(), getIdeParentGrouping());
+        return StringUtil.equals(parentProject.getName(), getIdeParentGrouping());
       }
     }
     return super.isVisible();
