@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import java.awt.datatransfer.StringSelection
 
 abstract class CopyPathProvider : DumbAwareAction() {
@@ -27,14 +28,13 @@ abstract class CopyPathProvider : DumbAwareAction() {
 
     val dataContext = e.dataContext
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
-
-    val qualifiedName = getQualifiedName(getEventProject(e), getElementsToCopy(editor, dataContext), editor)
-    if (qualifiedName == null) {
-      e.presentation.isEnabledAndVisible = false
+    val project = e.project
+    if (project != null && getQualifiedName(project, getElementsToCopy(editor, dataContext), editor) != null) {
+      e.presentation.isEnabledAndVisible = true
       return
     }
-    e.presentation.isEnabledAndVisible = true
-    e.presentation.putClientProperty(CopyReferencePopup.COPY_REFERENCE_KEY, qualifiedName)
+
+    e.presentation.isEnabledAndVisible = false
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -43,7 +43,7 @@ abstract class CopyPathProvider : DumbAwareAction() {
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
 
     val elements = getElementsToCopy(editor, dataContext)
-    val copy = project?.let { getQualifiedName(it, elements, editor) }
+    val copy = project?.let { editor?.let { it1 -> getQualifiedName(it, elements, it1) } }
 
     CopyPasteManager.getInstance().setContents(StringSelection(copy))
     setStatusBarText(project, IdeBundle.message("message.path.to.fqn.has.been.copied", copy))
@@ -51,25 +51,27 @@ abstract class CopyPathProvider : DumbAwareAction() {
     CopyReferenceUtil.highlight(editor, project, elements)
   }
 
-  open fun getQualifiedName(project: Project?, elements: List<PsiElement>, editor: Editor?): String? {
+  open fun getQualifiedName(project: Project, elements: List<PsiElement>, editor: Editor?): String? {
     if (elements.isEmpty()) {
       return getPathToElement(project, editor?.document?.let { FileDocumentManager.getInstance().getFile(it) }, editor)
     }
 
     val refs = elements.map { element ->
-      project?.let { getPathToElement(it, element.containingFile.virtualFile ?: return@map null, editor) } ?: return@map null
+      val virtualFile = if (element is PsiFileSystemItem) element.virtualFile else element.containingFile.virtualFile
+
+      getPathToElement(project, virtualFile ?: return@map null, editor) ?: return@map null
     }.filterNotNull()
 
     return if (refs.isNotEmpty()) refs.joinToString("\n") else null
   }
 
-  open fun getPathToElement(project: Project?, virtualFile: VirtualFile?, editor: Editor?): String? {
+  open fun getPathToElement(project: Project, virtualFile: VirtualFile?, editor: Editor?): String? {
     return null
   }
 }
 
 class CopyAbsolutePathProvider : CopyPathProvider() {
-  override fun getPathToElement(project: Project?,
+  override fun getPathToElement(project: Project,
                                 virtualFile: VirtualFile?,
                                 editor: Editor?): String? {
     return virtualFile?.presentableUrl
@@ -77,45 +79,39 @@ class CopyAbsolutePathProvider : CopyPathProvider() {
 }
 
 class CopyContentRootPathProvider : CopyPathProvider() {
-  override fun getPathToElement(project: Project?,
+  override fun getPathToElement(project: Project,
                                 virtualFile: VirtualFile?,
                                 editor: Editor?): String? {
     return if (virtualFile == null) null
-    else project?.let {
-      ProjectFileIndex.getInstance(project).getModuleForFile(virtualFile, false)?.let {
-        ModuleRootManager.getInstance(it).contentRoots.mapNotNull { root -> VfsUtilCore.getRelativePath(virtualFile, root) }.singleOrNull()
-      }
+    else ProjectFileIndex.getInstance(project).getModuleForFile(virtualFile, false)?.let {
+      ModuleRootManager.getInstance(it).contentRoots.mapNotNull { root -> VfsUtilCore.getRelativePath(virtualFile, root) }.singleOrNull()
     }
   }
 }
 
 class CopyFileWithLineNumberPathProvider : CopyPathProvider() {
-  override fun getPathToElement(project: Project?,
+  override fun getPathToElement(project: Project,
                                 virtualFile: VirtualFile?,
                                 editor: Editor?): String? {
     return if (virtualFile == null) null
-    else project?.let {
-      editor?.let {
-        CopyReferenceUtil.getVirtualFileFqn(virtualFile, project) + ":" + (editor.caretModel.logicalPosition.line + 1)
-      }
-    }
+    else editor?.let { CopyReferenceUtil.getVirtualFileFqn(virtualFile, project) + ":" + (editor.caretModel.logicalPosition.line + 1) }
   }
 }
 
 class CopySourceRootPathProvider : CopyPathProvider() {
-  override fun getPathToElement(project: Project?,
+  override fun getPathToElement(project: Project,
                                 virtualFile: VirtualFile?,
                                 editor: Editor?): String? {
     return if (virtualFile == null) null
-    else project?.let {
+    else project.let {
       VfsUtilCore.getRelativePath(virtualFile, ProjectFileIndex.getInstance(project).getSourceRootForFile(virtualFile) ?: return null)
     }
   }
 }
 
 class CopyTBXReferenceProvider : CopyPathProvider() {
-  override fun getQualifiedName(project: Project?,
+  override fun getQualifiedName(project: Project,
                                 elements: List<PsiElement>,
                                 editor: Editor?): String? =
-    project?.let { CopyTBXReferenceAction.createJetbrainsLink(project, elements, editor) }
+    CopyTBXReferenceAction.createJetbrainsLink(project, elements, editor)
 }

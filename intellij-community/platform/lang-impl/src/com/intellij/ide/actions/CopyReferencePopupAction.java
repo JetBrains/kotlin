@@ -32,7 +32,6 @@ class CopyReferencePopupAction extends DumbAwareAction {
     presentation.setEnabled(enabled);
     presentation.setVisible(!ActionPlaces.isPopupPlace(e.getPlace()) || enabled);
     presentation.setText(elements.size() > 1 ? "References" : "Reference");
-    presentation.putClientProperty(CopyReferencePopup.COPY_REFERENCE_KEY, doElementsCopy(getElementsToCopy(editor, dataContext), editor));
   }
 
   @Override
@@ -54,7 +53,7 @@ class CopyReferencePopupAction extends DumbAwareAction {
     }
   }
 
-  static String doElementsCopy(@NotNull List<? extends PsiElement> elements, @Nullable Editor editor) {
+  public static String doElementsCopy(@NotNull List<? extends PsiElement> elements, @Nullable Editor editor) {
     if (elements.isEmpty()) return null;
 
     return StreamEx.of(elements).map(element -> elementToFqn(element, editor)).filter(fqn -> fqn != null).joining("\n");
