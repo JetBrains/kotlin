@@ -4,6 +4,8 @@ package org.jetbrains.plugins.gradle.util
 import com.intellij.mock.MockVirtualFile
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.gradle.util.GradleVersion
+import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -59,5 +61,17 @@ class GradleUtilTest: UsefulTestCase() {
 
     assertTrue("gradle groovy script should be selectable", chooserDescriptor.isFileSelectable(MockVirtualFile("build.gradle")))
     assertTrue("gradle kotlin script should be selectable", chooserDescriptor.isFileSelectable(MockVirtualFile("build.gradle.kts")))
+  }
+
+  @Test
+  fun `test parsing Gradle distribution version`() {
+    assertNull(GradleInstallationManager.parseDistributionVersion(""));
+    assertNull(GradleInstallationManager.parseDistributionVersion("abc"));
+    assertNull(GradleInstallationManager.parseDistributionVersion("gradle"));
+
+    assertEquals(GradleVersion.version("5.2.1"), GradleInstallationManager.parseDistributionVersion("abc/gradle-5.2.1-bin.zip"));
+    assertEquals(GradleVersion.version("5.2.1"), GradleInstallationManager.parseDistributionVersion("abc/nebula-gradle-5.2.1-bin.zip"));
+
+    assertNull(GradleInstallationManager.parseDistributionVersion("abc/gradle-unexpected-bin.zip"));
   }
 }

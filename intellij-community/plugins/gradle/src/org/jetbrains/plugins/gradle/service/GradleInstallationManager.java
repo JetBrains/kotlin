@@ -586,19 +586,29 @@ public class GradleInstallationManager {
       }
       if (version == null && wrapperConfiguration != null) {
         URI uri = wrapperConfiguration.getDistribution();
-        if (uri != null && uri.getRawPath() != null) {
-          String s = StringUtil.substringAfterLast(uri.getRawPath(), "/gradle-");
-          if (s != null) {
-            int i = s.lastIndexOf('-');
-            if (i > 0) {
-              String gradleVersion = s.substring(0, i);
-              version = getGradleVersionSafe(gradleVersion);
-            }
+        if (uri != null) {
+          String path = uri.getRawPath();
+          if (path != null) {
+            version = parseDistributionVersion(path);
           }
         }
       }
     }
     return version;
+  }
+
+  @Nullable
+  public static GradleVersion parseDistributionVersion(@NotNull String path) {
+    path = StringUtil.substringAfterLast(path, "/");
+    if (path == null) return null;
+
+    path = StringUtil.substringAfterLast(path, "gradle-");
+    if (path == null) return null;
+
+    int i = path.lastIndexOf('-');
+    if (i <= 0) return null;
+
+    return  getGradleVersionSafe(path.substring(0, i));
   }
 
   @Nullable
