@@ -6,12 +6,10 @@
 package org.jetbrains.konan.execution
 
 import com.android.ddmlib.*
+import com.android.ddmlib.logcat.LogCatListener
 import com.android.ddmlib.logcat.LogCatMessage
 import com.android.ddmlib.logcat.LogCatReceiverTask
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
-import com.intellij.execution.process.ProcessHandler
-import com.intellij.execution.process.ProcessOutputType
+import com.intellij.execution.process.*
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.konan.MobileBundle
@@ -65,21 +63,46 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
         override fun deviceDisconnected(device: IDevice?) {}
     }
 
+    private val logCatListener = object : LogCatListener {
+        // While the app is starting messages from it might arrive without `appName`
+        // so we defer processing these messages until we know the app's pid
+        var fromUnknownApp: MutableList<LogCatMessage>? = ArrayList()
+
+        fun dispatchUnknownIfNeeded(pid: Int) {
+            (fromUnknownApp ?: return)
+                .forEach {
+                    if (it.pid == pid) {
+                        notify(it)
+                    }
+                }
+            fromUnknownApp = null
+        }
+
+        fun notify(message: LogCatMessage) {
+            notifyTextAvailable(
+                "${message.logLevel.priorityLetter}/${message.tag}: ${message.message}\n",
+                if (message.logLevel >= Log.LogLevel.ERROR) ProcessOutputType.STDERR
+                else ProcessOutputType.STDOUT
+            )
+        }
+
+        override fun log(messages: List<LogCatMessage>) {
+            messages.forEach {
+                if (it.appName == appId) {
+                    dispatchUnknownIfNeeded(it.pid)
+                    notify(it)
+                } else if (it.appName == "?") {
+                    fromUnknownApp?.add(it)
+                }
+            }
+        }
+    }
+
     fun prepareForLaunch() {
         AndroidDebugBridge.addClientChangeListener(clientListener)
         AndroidDebugBridge.addDeviceChangeListener(deviceListener)
 
-        logCatTask.addLogCatListener { messages: List<LogCatMessage> ->
-            messages
-                .filter { it.appName == appId }
-                .forEach {
-                    notifyTextAvailable(
-                        "${it.logLevel.priorityLetter}/${it.tag}: ${it.message}\n",
-                        if (it.logLevel >= Log.LogLevel.ERROR) ProcessOutputType.STDERR
-                        else ProcessOutputType.STDOUT
-                    )
-                }
-        }
+        logCatTask.addLogCatListener(logCatListener)
         AppExecutorUtil.getAppExecutorService().execute(logCatTask)
 
         addProcessListener(object : ProcessAdapter() {
