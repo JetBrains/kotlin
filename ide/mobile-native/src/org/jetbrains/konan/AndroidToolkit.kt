@@ -12,6 +12,7 @@ import java.io.File
 
 object AndroidToolkit {
     val home: File? = EnvironmentUtil.getValue("ANDROID_SDK_ROOT")?.let { File(it) }
+        ?: File(System.getProperty("user.home"), "Library/Android/sdk")
     val adb: File? = home?.let { File(File(it, "platform-tools"), "adb".exe) }
     val buildTools: File? = home?.let { home ->
         File(home, "build-tools").listFiles()?.maxBy {
