@@ -3124,6 +3124,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testOptimizedMultifileClassFacadeMethods() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/multifileClasses/optimizedMultifileClassFacadeMethods.kt");
         }
+
+        @TestMetadata("privateFunctionName.kt")
+        public void testPrivateFunctionName() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/multifileClasses/privateFunctionName.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/notNullAssertions")
