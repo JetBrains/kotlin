@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
+private typealias Stack = MutableList<Pair<String, MutableList<String>>>
+
 class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
     override fun addAnnotation(annotationText: String, element: PsiElement?, deleteDuplicate: Boolean) {
         super.addAnnotation(annotationText, element, false)
@@ -39,9 +41,15 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(firFile), this) }
 
-        private fun List<Pair<String, MutableList<String>>>.addName(name: String) = this.last().second.add(name)
-        private fun List<Pair<String, MutableList<String>>>.addName(name: Name) = this.addName(name.asString())
-        private fun List<Pair<String, MutableList<String>>>.getPathByName(name: String): String {
+        private fun Stack.push(
+            levelName: String,
+            defaultValues: MutableList<String> = mutableListOf()
+        ) = this.add(levelName to defaultValues)
+
+        private fun Stack.pop() = this.removeAt(this.size - 1)
+        private fun Stack.addName(name: String) = this.last().second.add(name)
+        private fun Stack.addName(name: Name) = this.addName(name.asString())
+        private fun Stack.getPathByName(name: String): String {
             for ((reversedIndex, names) in this.asReversed().map { it.second }.withIndex()) {
                 if (names.contains(name)) {
                     return this.filterIndexed { index, _ -> index < this.size - reversedIndex && index > 0 }
@@ -108,14 +116,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     //add to init values from last block
                     //because when we are out of primary constructor information about properties will be removed
                     //is used in ClassInitializer block and in SuperTypeCallEntry
-                    stack += "<init>" to stack.last().second
+                    stack.push("<init>", stack.last().second)
                     element.acceptChildren(this)
-                    stack.removeAt(stack.size - 1)
+                    stack.pop()
                 }
                 is KtClassOrObject -> {
-                    stack += (element.name ?: "<no name provided>") to mutableListOf()
+                    stack.push((element.name ?: "<no name provided>"))
                     element.acceptChildren(this)
-                    stack.removeAt(stack.size - 1)
+                    stack.pop()
                 }
                 else -> element.acceptChildren(this)
             }
@@ -134,13 +142,13 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitNamedFunction(function: KtNamedFunction) {
-            stack += (function.name ?: "<no name provided>") to mutableListOf()
+            stack.push((function.name ?: "<no name provided>"))
             if (function.equalsToken != null) {
                 function.bodyExpression!!.firstOfTypeWithRender<FirExpression>(function.equalsToken) { this.typeRef }
                     ?: function.firstOfTypeWithRender<FirTypedDeclaration>(function.equalsToken) { this.returnTypeRef }
             }
             super.visitNamedFunction(function)
-            stack.removeAt(stack.size - 1)
+            stack.pop()
         }
 
         private fun renderVariableType(variable: KtVariableDeclaration) {
@@ -232,17 +240,27 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
             val firLabel = lambdaExpression.firstOfType<FirLabel>()
 
-            stack += "<anonymous>" to mutableListOf()
+            stack.push("<anonymous>")
             //firLabel?.let { addAnnotation("${it.name}@$innerLambdaCount", lambdaExpression) }
             //innerLambdaCount++
             super.visitLambdaExpression(lambdaExpression)
             //innerLambdaCount--
-            stack.removeAt(stack.size - 1)
+            stack.pop()
         }
 
         override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
             //this method explicitly accept children and prevent default fallback to other fir element
             expression.acceptChildren(this)
+        }
+
+        override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+            if (accessor.isSetter) {
+                stack.push("<set-${accessor.property.nameAsSafeName}>", mutableListOf())
+                super.visitPropertyAccessor(accessor)
+                stack.pop()
+            } else {
+                super.visitPropertyAccessor(accessor)
+            }
         }
 
         override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
