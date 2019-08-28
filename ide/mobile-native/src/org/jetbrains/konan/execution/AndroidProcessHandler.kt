@@ -105,6 +105,7 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
         val receiver = CollectingOutputReceiver()
         raw.executeShellCommand("am force-stop $appId", receiver)
         log.debug("Destroyed process with output: ${receiver.output}")
+        processClient?.kill()
         notifyProcessTerminated(0)
     }
 
