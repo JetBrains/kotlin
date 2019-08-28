@@ -1,5 +1,7 @@
 interface A {
     fun foo()
+
+    fun bool(): Boolean
 }
 
 interface B : A {
@@ -47,6 +49,12 @@ fun test_5(x: A?) {
 
 fun test_6(x: A?) {
     if (false || x != null) {
+        x.foo()
+    }
+}
+
+fun test_7(x: Any) {
+    if (x is A && x.bool()) {
         x.foo()
     }
 }

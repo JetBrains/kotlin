@@ -133,6 +133,7 @@ fun CFGNode<*>.render(): String =
                 is TryExpressionExitNode -> "Try expression exit"
 
                 is BinaryAndEnterNode -> "Enter &&"
+                is BinaryAndExitLeftOperandNode -> "Exit left part of &&"
                 is BinaryAndExitNode -> "Exit &&"
                 is BinaryOrEnterNode -> "Enter ||"
                 is BinaryOrExitLeftOperandNode -> "Exit left part of ||"

@@ -488,7 +488,9 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
     }
 
     override fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression) {
-        graphBuilder.exitLeftBinaryAndArgument(binaryLogicExpression)
+        val node = graphBuilder.exitLeftBinaryAndArgument(binaryLogicExpression).passFlow(false)
+        val leftOperandVariable = getVariable(node.previousNodes.first().fir)
+        node.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable eq True, node.flow).also { it.freeze() }
     }
 
     override fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression) {

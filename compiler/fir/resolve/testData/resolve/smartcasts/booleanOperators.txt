@@ -2,6 +2,8 @@ FILE: booleanOperators.kt
     public abstract interface A : R|kotlin/Any| {
         public abstract fun foo(): R|kotlin/Unit|
 
+        public abstract fun bool(): R|kotlin/Boolean|
+
     }
     public abstract interface B : R|A| {
         public abstract fun bar(): R|kotlin/Unit|
@@ -70,6 +72,16 @@ FILE: booleanOperators.kt
         when () {
             Boolean(false) || !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_7(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) && R|<local>/x|.R|/A.bool|() ->  {
+                R|<local>/x|.R|/A.foo|()
             }
             else ->  {
             }

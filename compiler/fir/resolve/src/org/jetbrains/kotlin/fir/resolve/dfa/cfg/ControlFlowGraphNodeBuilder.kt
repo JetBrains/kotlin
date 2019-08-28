@@ -158,4 +158,7 @@ abstract class ControlFlowGraphNodeBuilder {
     protected fun createTryExpressionExitNode(fir: FirTryExpression): TryExpressionExitNode =
         TryExpressionExitNode(graph, fir, levelCounter)
 
+    protected fun createBinaryAndExitLeftOperandNode(fir: FirBinaryLogicExpression): BinaryAndExitLeftOperandNode =
+        BinaryAndExitLeftOperandNode(graph, fir, levelCounter)
+
 }

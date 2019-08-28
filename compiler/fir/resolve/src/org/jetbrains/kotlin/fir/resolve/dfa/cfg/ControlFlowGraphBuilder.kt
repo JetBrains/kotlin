@@ -303,9 +303,15 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         return createBinaryAndEnterNode(binaryLogicExpression).also { addNewSimpleNode(it) }.also { levelCounter++ }
     }
 
-    fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression) {
+    fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression): BinaryAndExitLeftOperandNode {
         assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.AND)
-        addEdge(lastNode, binaryAndExitNodes.top(), propagateDeadness = false, isDead = lastNode.booleanConstValue == true)
+        val lastNode = lastNodes.pop()
+        val leftBooleanConstValue = lastNode.booleanConstValue
+        addEdge(lastNode, binaryAndExitNodes.top(), propagateDeadness = false, isDead = leftBooleanConstValue == true)
+        return createBinaryAndExitLeftOperandNode(binaryLogicExpression).also {
+            addEdge(lastNode, it, isDead = leftBooleanConstValue == false)
+            lastNodes.push(it)
+        }
     }
 
     fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression): BinaryAndExitNode {
