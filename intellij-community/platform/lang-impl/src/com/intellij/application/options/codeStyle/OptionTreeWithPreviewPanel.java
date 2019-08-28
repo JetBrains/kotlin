@@ -176,7 +176,15 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     DefaultTreeModel model = new DefaultTreeModel(rootNode);
 
     final Tree optionsTree = new Tree(model);
-    new TreeSpeedSearch(optionsTree).setComparator(new SpeedSearchComparator(false));
+    new TreeSpeedSearch(
+      optionsTree,
+      path -> {
+        final Object lastPathComponent = path.getLastPathComponent();
+        return lastPathComponent instanceof MyToggleTreeNode ? ((MyToggleTreeNode)lastPathComponent).getText() :
+               lastPathComponent.toString();
+      },
+      true)
+      .setComparator(new SpeedSearchComparator(false));
     TreeUtil.installActions(optionsTree);
     optionsTree.setRootVisible(false);
     optionsTree.setShowsRootHandles(true);
