@@ -5,8 +5,9 @@ abstract class Base<T>(var x: T) {
 }
 
 //                         constructor Base<T>(Int)
-//                         │
-class Derived(var x: Int): Base<Int>() {
+//                         │         Derived.<init>.x: Int
+//                         │         │
+class Derived(var x: Int): Base<Int>(x) {
     override fun replace(newValue: Int) {
 //      var (Derived).x: Int
 //      │   Derived.replace.newValue: Int
