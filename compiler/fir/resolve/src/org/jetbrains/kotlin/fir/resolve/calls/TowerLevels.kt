@@ -144,7 +144,7 @@ class MemberScopeTowerLevel(
 // We can access here members of currently accessible scope which is not influenced by explicit receiver
 // We can either have no explicit receiver at all, or it can be an extension receiver
 // An explicit receiver never can be a dispatch receiver at this level
-// So: dispatch receiver = strictly none (EXCEPTION: importing scopes with import from objects)
+// So: dispatch receiver = strictly none (EXCEPTIONS: importing scopes with import from objects, synthetic field variable)
 // So: extension receiver = either none or explicit
 // (if explicit receiver exists, it always *should* be an extension receiver)
 class ScopeTowerLevel(
@@ -169,8 +169,12 @@ class ScopeTowerLevel(
         return when (token) {
             TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { candidate ->
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
+                    val dispatchReceiverValue = when (candidate) {
+                        is FirBackingFieldSymbol -> candidate.fir.symbol.dispatchReceiverValue()
+                        else -> null
+                    }
                     processor.consumeCandidate(
-                        candidate as T, dispatchReceiverValue = null,
+                        candidate as T, dispatchReceiverValue = dispatchReceiverValue,
                         implicitExtensionReceiverValue = implicitExtensionReceiver
                     )
                 } else {
