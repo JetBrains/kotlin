@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
+import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -485,10 +486,18 @@ fun main(args: Array<String>) {
         testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
             model("rawBuilder", testMethod = "doFirBuilderDataTest")
         }
+
+        testClass<AbstractFirVisualizer>("FirVisualizerForRawFirDataGenerated") {
+            model("rawBuilder", testMethod = "doFirBuilderDataTest")
+        }
     }
 
     testGroup("compiler/visualizer/tests", "compiler/visualizer/testData") {
         testClass<AbstractPsiVisualizer>("PsiVisualizerForUncommonCasesGenerated") {
+            model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
+        }
+
+        testClass<AbstractFirVisualizer>("FirVisualizerForUncommonCasesGenerated") {
             model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
         }
     }
