@@ -23,8 +23,7 @@ public class CommentJoinLinesHandler implements JoinRawLinesHandlerDelegate {
   @Override
   public int tryJoinRawLines(@NotNull Document document, @NotNull PsiFile file, int start, int end) {
     CharSequence text = document.getText();
-    if (start > 0 && text.charAt(start) == '\n') start--;
-    PsiComment prevComment = PsiTreeUtil.getNonStrictParentOfType(file.findElementAt(start), PsiComment.class);
+    PsiComment prevComment = PsiTreeUtil.getNonStrictParentOfType(file.findElementAt(start - 1), PsiComment.class);
     PsiComment nextComment = PsiTreeUtil.getNonStrictParentOfType(file.findElementAt(end), PsiComment.class);
     if (prevComment == null || nextComment == null) return CANNOT_JOIN;
     boolean sameComment = prevComment == nextComment;
@@ -53,7 +52,7 @@ public class CommentJoinLinesHandler implements JoinRawLinesHandlerDelegate {
       int lineStart = document.getLineStartOffset(lineNumber);
       int nextEnd = document.getLineEndOffset(lineNumber + 1);
       int margin = CodeStyle.getSettings(file).getRightMargin(file.getLanguage());
-      int lineLength = start + 1 - lineStart;
+      int lineLength = start - lineStart;
       if (lineLength <= margin && lineLength + (nextEnd - end) + 1 > margin) {
         // Respect right margin
         int allowedEnd = end + margin - lineLength - 1;
@@ -69,12 +68,12 @@ public class CommentJoinLinesHandler implements JoinRawLinesHandlerDelegate {
         CharSequence toMove = text.subSequence(end, endOfMovedPart);
         int lineBreakPos = CharArrayUtil.indexOf(text, "\n", start);
         document.deleteString(end, allowedEnd + 1);
-        document.replaceString(start + 1, lineBreakPos, " " + toMove);
-        return start + 2 + toMove.length() + (end - lineBreakPos);
+        document.replaceString(start, lineBreakPos, " " + toMove);
+        return start + 1 + toMove.length() + (end - lineBreakPos);
       }
     }
 
-    document.replaceString(start + 1, end, adjacentLineComments || sameComment ? " " : "");
-    return start + 1;
+    document.replaceString(start, end, adjacentLineComments || sameComment ? " " : "");
+    return start;
   }
 }

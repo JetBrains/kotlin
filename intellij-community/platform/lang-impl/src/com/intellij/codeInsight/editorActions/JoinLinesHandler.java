@@ -22,7 +22,6 @@ import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
@@ -48,18 +47,6 @@ public class JoinLinesHandler extends EditorActionHandler {
   public JoinLinesHandler(EditorActionHandler originalHandler) {
     super(true);
     myOriginalHandler = originalHandler;
-  }
-
-  @NotNull
-  private static TextRange findStartAndEnd(@NotNull CharSequence text, int start, int end) {
-    while (start > 0 && isSpaceOrTab(text, start)) start--;
-    end = StringUtil.skipWhitespaceForward(text, end);
-    return new TextRange(start, end);
-  }
-
-  private static boolean isSpaceOrTab(@NotNull CharSequence text, int index) {
-    char c = text.charAt(index);
-    return c == ' ' || c == '\t';
   }
 
   @Override
@@ -188,34 +175,38 @@ public class JoinLinesHandler extends EditorActionHandler {
      * @return number of unprocessed lines
      */
     private int processRawJoiners(int lineCount) {
-      int count = 0;
       int startLine = myLine;
       List<JoinLinesHandlerDelegate> list = JoinLinesHandlerDelegate.EP_NAME.getExtensionList();
       int beforeLines = myDoc.getLineCount();
       CharSequence text = myDoc.getCharsSequence();
-      while (count < lineCount) {
+      int finalLine = myLine + lineCount;
+      int finalOffset = myDoc.getLineEndOffset(myLine + lineCount);
+      while (startLine < finalLine) {
         myIndicator.checkCanceled();
-        myIndicator.setFraction(0.1 + 0.2 * count / lineCount);
-        JoinLinesOffsets offsets = new JoinLinesOffsets(myDoc, startLine);
+        myIndicator.setFraction(0.1 + 0.2 * (startLine - myLine) / Math.max(1, finalLine - myLine));
 
-        TextRange limits = findStartAndEnd(text, offsets.lastNonSpaceOffsetInStartLine, offsets.firstNonSpaceOffsetInNextLine);
-        int start = limits.getStartOffset();
-        int end = limits.getEndOffset();
         int rc = CANNOT_JOIN;
+
+        int lineEndOffset = myDoc.getLineEndOffset(startLine);
+        int start = StringUtil.skipWhitespaceBackward(text, lineEndOffset);
+        int end = CharArrayUtil.shiftForward(text, lineEndOffset, finalOffset, " \t\n");
+        int linesToJoin = myDoc.getLineNumber(end) - startLine;
         JoinRawLinesHandlerDelegate rawJoiner = null;
-        for (JoinLinesHandlerDelegate delegate : list) {
-          if (delegate instanceof JoinRawLinesHandlerDelegate) {
-            rawJoiner = (JoinRawLinesHandlerDelegate)delegate;
-            rc = rawJoiner.tryJoinRawLines(myDoc, myFile, start, end);
-            if (rc != CANNOT_JOIN) {
-              myCaretRestoreOffset = checkOffset(rc, delegate, myDoc);
-              break;
+        if (end < finalOffset && start > 0 && text.charAt(start - 1) != '\n') {
+          // Skip raw joiners if either of first or last lines is empty
+          for (JoinLinesHandlerDelegate delegate : list) {
+            if (delegate instanceof JoinRawLinesHandlerDelegate) {
+              rawJoiner = (JoinRawLinesHandlerDelegate)delegate;
+              rc = rawJoiner.tryJoinRawLines(myDoc, myFile, start, end);
+              if (rc != CANNOT_JOIN) {
+                myCaretRestoreOffset = checkOffset(rc, delegate, myDoc);
+                break;
+              }
             }
           }
         }
         if (rc == CANNOT_JOIN) {
-          startLine++;
-          count++;
+          startLine += linesToJoin;
         }
         else {
           myManager.doPostponedOperationsAndUnblockDocument(myDoc);
@@ -228,13 +219,13 @@ public class JoinLinesHandler extends EditorActionHandler {
             // if number of lines is the same, continue processing from the next line
             myLine++;
             startLine++;
-            count++;
           } else {
             // Single Join two lines procedure could join more than two (e.g. if it removes braces)
-            count += Math.max(beforeLines - afterLines, 1);
+            finalLine -= Math.max(beforeLines - afterLines, 1);
           }
           beforeLines = afterLines;
           text = myDoc.getCharsSequence();
+          finalOffset = myDoc.getLineEndOffset(finalLine);
         }
       }
       return startLine - myLine;
