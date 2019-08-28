@@ -3,6 +3,7 @@
 // ACTION: Add arrayOf wrapper
 // ACTION: Change parameter 'value' type of primary constructor of class 'Foo' to 'String'
 // ACTION: Create test
+// ACTION: Extract 'Bar' from current file
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: To raw string literal
