@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -40,8 +39,9 @@ abstract class IrFunctionBase(
     IrDeclarationBase(startOffset, endOffset, origin),
     IrFunction {
 
+    @Suppress("DEPRECATION")
     final override var returnType: IrType = returnType
-        get() = if (field === IrUninitializedType) {
+        get() = if (field === org.jetbrains.kotlin.ir.types.impl.IrUninitializedType) {
             error("Return type is not initialized")
         } else {
             field

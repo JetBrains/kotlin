@@ -45,12 +45,9 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : FileLowering
         val actualCompanion = getActualPrimitiveCompanion(companion)
             ?: return null
 
-        val actualFunction =
-            actualCompanion.declarations
-                .filterIsInstance<IrSimpleFunction>()
-                .single { it.name == function.name }
-
-        return actualFunction!!
+        return actualCompanion.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .single { it.name == function.name }
     }
 
     override fun lower(irFile: IrFile) {

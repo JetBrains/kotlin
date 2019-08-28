@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -1023,10 +1021,10 @@ open class WrappedFieldDescriptor(
 
     override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
 
-    override fun isLateInit() = owner.correspondingProperty?.isLateinit ?: false
+    override fun isLateInit() = owner.correspondingPropertySymbol?.owner?.isLateinit ?: false
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? =
-        owner.correspondingProperty?.descriptor?.extensionReceiverParameter
+        owner.correspondingPropertySymbol?.owner?.descriptor?.extensionReceiverParameter
 
     override fun isExternal() = owner.isExternal
 

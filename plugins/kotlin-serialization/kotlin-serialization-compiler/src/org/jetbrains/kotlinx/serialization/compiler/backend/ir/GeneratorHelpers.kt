@@ -250,7 +250,7 @@ interface IrBuilderExtension {
         irProperty.parent = propertyParent
         irProperty.backingField = generatePropertyBackingField(propertyDescriptor, irProperty).apply {
             parent = propertyParent
-            correspondingProperty = irProperty
+            correspondingPropertySymbol = irProperty.symbol
         }
         val fieldSymbol = irProperty.backingField!!.symbol
         irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(it, fieldSymbol) }

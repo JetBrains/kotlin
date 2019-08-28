@@ -247,7 +247,7 @@ open class IrFileSerializer(
         is IrReturnableBlockSymbol ->
             ProtoSymbolKind.RETURNABLE_BLOCK_SYMBOL
         is IrFieldSymbol ->
-            if (symbol.owner.correspondingProperty.let { it == null || it.isDelegated })
+            if (symbol.owner.correspondingPropertySymbol?.owner.let { it == null || it.isDelegated })
                 ProtoSymbolKind.STANDALONE_FIELD_SYMBOL
             else
                 ProtoSymbolKind.FIELD_SYMBOL
