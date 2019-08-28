@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight;
 
@@ -17,7 +17,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
@@ -63,8 +62,8 @@ public class AutoPopupController implements Disposable {
   private final Project myProject;
   private final Alarm myAlarm = new Alarm(this);
 
-  public static AutoPopupController getInstance(Project project){
-    return ServiceManager.getService(project, AutoPopupController.class);
+  public static AutoPopupController getInstance(@NotNull Project project) {
+    return project.getService(AutoPopupController.class);
   }
 
   public AutoPopupController(Project project) {
