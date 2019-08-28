@@ -52,7 +52,7 @@ class SerializableCompanionJsTranslator(
                         serializer,
                         serializableDescriptor.module,
                         serializableDescriptor.defaultType,
-                        genericGetter = {
+                        genericGetter = { it, _ ->
                             args[it]
                         })
                 )

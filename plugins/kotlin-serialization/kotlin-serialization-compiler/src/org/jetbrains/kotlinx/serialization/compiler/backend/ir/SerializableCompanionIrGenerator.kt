@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -23,8 +22,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
-import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
 
 class SerializableCompanionIrGenerator(
     val irClass: IrClass,
@@ -94,10 +91,9 @@ class SerializableCompanionIrGenerator(
             val args: List<IrExpression> = getter.valueParameters.map { irGet(it) }
             val expr = serializerInstance(
                 this@SerializableCompanionIrGenerator,
-                serializableDescriptor, serializer,
-                serializableDescriptor.module,
+                serializer, serializableDescriptor.module,
                 serializableDescriptor.defaultType
-            ) { args[it] }
+            ) { it, _ -> args[it] }
             patchSerializableClassWithMarkerAnnotation(serializer)
             +irReturn(requireNotNull(expr))
         }

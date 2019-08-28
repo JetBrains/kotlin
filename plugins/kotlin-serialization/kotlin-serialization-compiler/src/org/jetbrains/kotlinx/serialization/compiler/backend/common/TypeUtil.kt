@@ -90,12 +90,16 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
     }
 }
 
-fun AbstractSerialGenerator.immediateSealedSerializableSubclassesFor(
+fun AbstractSerialGenerator.allSealedSerializableSubclassesFor(
     klass: ClassDescriptor,
     module: ModuleDescriptor
 ): Pair<List<KotlinType>, List<ClassDescriptor>> {
     assert(klass.kind == ClassKind.CLASS && klass.modality == Modality.SEALED)
-    val serializableSubtypes = klass.sealedSubclasses.map { it.toSimpleType() }
+    fun recursiveSealed(klass: ClassDescriptor): Collection<ClassDescriptor> {
+        return klass.sealedSubclasses.flatMap { if (it.modality == Modality.SEALED) recursiveSealed(it) else setOf(it) }
+    }
+
+    val serializableSubtypes = recursiveSealed(klass).map { it.toSimpleType() }
     return serializableSubtypes to serializableSubtypes.mapNotNull { findTypeSerializerOrContextUnchecked(module, it) }
 }
 
