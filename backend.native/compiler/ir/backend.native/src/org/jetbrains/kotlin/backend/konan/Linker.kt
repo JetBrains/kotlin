@@ -24,21 +24,10 @@ internal class Linker(val context: Context) {
     private val platform = context.config.platform
     private val config = context.config.configuration
     private val linkerOutput = determineLinkerOutput(context)
-    private val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     private val linker = platform.linker
     private val target = context.config.target
     private val optimize = context.shouldOptimize()
     private val debug = context.config.debug || context.config.lightDebug
-
-    // Ideally we'd want to have
-    //      #pragma weak main = Konan_main
-    // in the launcher.cpp.
-    // Unfortunately, anything related to weak linking on MacOS
-    // only seems to be working with dynamic libraries.
-    // So we stick to "-alias _main _konan_main" on Mac.
-    // And just do the same on Linux.
-    private val entryPointSelector: List<String>
-        get() = if (nomain || linkerOutput != LinkerOutputKind.EXECUTABLE) emptyList() else platform.entrySelector
 
     fun link(objectFiles: List<ObjectFile>) {
         val nativeDependencies = context.llvm.nativeDependenciesToLink
@@ -91,8 +80,7 @@ internal class Linker(val context: Context) {
             File(executable).delete()
             linker.linkCommands(objectFiles = objectFiles, executable = executable,
                     libraries = linker.linkStaticLibraries(includedBinaries) + context.config.defaultSystemLibraries,
-                    linkerArgs = entryPointSelector +
-                            asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
+                    linkerArgs = asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                             BitcodeEmbedding.getLinkerOptions(context.config) +
                             libraryProvidedLinkerFlags + frameworkLinkerArgs,
                     optimize = optimize, debug = debug, kind = linkerOutput,

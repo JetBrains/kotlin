@@ -205,7 +205,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(FRAMEWORK_IMPORT_HEADERS, arguments.frameworkImportHeaders.toNonNullList())
                 arguments.emitLazyObjCHeader?.let { put(EMIT_LAZY_OBJC_HEADER_FILE, it) }
 
-                put(BITCODE_EMBEDDING_MODE, selectBitcodeEmbeddingMode(this, arguments, outputKind))
+                put(BITCODE_EMBEDDING_MODE, selectBitcodeEmbeddingMode(this, arguments))
                 put(DEBUG_INFO_VERSION, arguments.debugInfoFormatVersion.toInt())
                 put(COVERAGE, arguments.coverage)
                 put(LIBRARIES_TO_COVER, arguments.coveredLibraries.toNonNullList())
@@ -247,41 +247,21 @@ private fun selectFrameworkType(
 
 private fun selectBitcodeEmbeddingMode(
         configuration: CompilerConfiguration,
-        arguments: K2NativeCompilerArguments,
-        outputKind: CompilerOutputKind
-): BitcodeEmbedding.Mode {
-
-    if (outputKind != CompilerOutputKind.FRAMEWORK) {
-        return BitcodeEmbedding.Mode.NONE.also {
-            val flag = when {
-                arguments.embedBitcodeMarker -> EMBED_BITCODE_MARKER_FLAG
-                arguments.embedBitcode -> EMBED_BITCODE_FLAG
-                else -> return@also
-            }
-
+        arguments: K2NativeCompilerArguments
+): BitcodeEmbedding.Mode = when {
+    arguments.embedBitcodeMarker -> {
+        if (arguments.embedBitcode) {
             configuration.report(
                     STRONG_WARNING,
-                    "'$flag' is only supported when producing frameworks, " +
-                            "but the compiler is producing ${outputKind.name.toLowerCase()}"
+                    "'$EMBED_BITCODE_FLAG' is ignored because '$EMBED_BITCODE_MARKER_FLAG' is specified"
             )
         }
+        BitcodeEmbedding.Mode.MARKER
     }
-
-    return when {
-        arguments.embedBitcodeMarker -> {
-            if (arguments.embedBitcode) {
-                configuration.report(
-                        STRONG_WARNING,
-                        "'$EMBED_BITCODE_FLAG' is ignored because '$EMBED_BITCODE_MARKER_FLAG' is specified"
-                )
-            }
-            BitcodeEmbedding.Mode.MARKER
-        }
-        arguments.embedBitcode -> {
-            BitcodeEmbedding.Mode.FULL
-        }
-        else -> BitcodeEmbedding.Mode.NONE
+    arguments.embedBitcode -> {
+        BitcodeEmbedding.Mode.FULL
     }
+    else -> BitcodeEmbedding.Mode.NONE
 }
 
 private fun selectExportedLibraries(

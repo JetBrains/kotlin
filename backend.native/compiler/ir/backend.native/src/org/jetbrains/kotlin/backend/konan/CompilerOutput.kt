@@ -4,9 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.LLVMLinkModules2
-import llvm.LLVMModuleRef
-import llvm.LLVMWriteBitcodeToFile
+import llvm.*
 import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
@@ -57,6 +55,16 @@ private fun runLlvmPipeline(context: Context) = when {
     else -> {}
 }
 
+private fun insertAliasToEntryPoint(context: Context) {
+    val nomain = context.config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
+    if (context.config.produce != CompilerOutputKind.PROGRAM || nomain)
+        return
+    val module = context.llvmModule
+    val entryPoint = LLVMGetNamedFunction(module, "Konan_main")
+            ?: error("Module doesn't contain `Konan_main`")
+    LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
+}
+
 internal fun produceOutput(context: Context) {
 
     val config = context.config.configuration
@@ -83,6 +91,9 @@ internal fun produceOutput(context: Context) {
             }
             linkAllDependecies(context, generatedBitcodeFiles)
             runLlvmPipeline(context)
+            // Insert `_main` after pipeline so we won't worry about optimizations
+            // corrupting entry point.
+            insertAliasToEntryPoint(context)
             LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
         CompilerOutputKind.LIBRARY -> {
