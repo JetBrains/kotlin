@@ -19,11 +19,7 @@ dependencies {
     compile(projectRuntimeJar(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
     compileOnly(intellijDep()) {
-        if (Platform[181].orHigher()) {
-            includeJars("jdom", "trove4j", "jps-model", "openapi", "platform-api", "util", "asm-all", rootProject = rootProject)
-        } else {
-            includeJars("jdom", "trove4j", "jps-model", "openapi", "util", "asm-all", rootProject = rootProject)
-        }
+        includeJars("jdom", "trove4j", "jps-model", "openapi", "platform-api", "util", "asm-all", rootProject = rootProject)
     }
     compileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
     testCompileOnly(project(":kotlin-reflect-api"))
