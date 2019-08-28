@@ -34,6 +34,11 @@ public class BlackBoxCodegenTestWithVariadicGenericsGenerated extends AbstractBl
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/variadicGenerics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("lambdaWithBoxedArgs.kt")
+    public void testLambdaWithBoxedArgs() throws Exception {
+        runTest("compiler/testData/codegen/variadicGenerics/lambdaWithBoxedArgs.kt");
+    }
+
     @TestMetadata("materialize.kt")
     public void testMaterialize() throws Exception {
         runTest("compiler/testData/codegen/variadicGenerics/materialize.kt");

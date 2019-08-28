@@ -21,11 +21,9 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.substituteVariadicType
+import org.jetbrains.kotlin.types.replaceAll
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -471,7 +469,7 @@ internal object CreateVariadicTypeVariablesResolutionPart : ResolutionPart() {
         val argumentStableType = argument.safeAs<SimpleKotlinCallArgument>()?.receiver?.stableType
             ?: error { "Simple value argument expected for vararg" }
         val substitutedVarargElementType = parameter.varargElementType
-            ?.substituteVariadicType(variadicTypeParameter.defaultType, freshVariable.defaultType)
+            ?.replaceAll(variadicTypeParameter.defaultType, freshVariable.defaultType)
             ?: error { "Type variable not found" }
 
         csBuilder.registerVariable(freshVariable)

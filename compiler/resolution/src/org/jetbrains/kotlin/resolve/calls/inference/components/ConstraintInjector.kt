@@ -76,7 +76,9 @@ class ConstraintInjector(
     ) {
         val possibleNewConstraints = Stack<Pair<TypeVariableMarker, Constraint>>()
         val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType, possibleNewConstraints)
-        typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
+
+        if (listOf(lowerType, upperType).none { it.containsStubTypeVariable() })
+            typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
 
         while (possibleNewConstraints.isNotEmpty()) {
             val (typeVariable, constraint) = possibleNewConstraints.pop()
@@ -166,9 +168,7 @@ class ConstraintInjector(
         }
 
         fun runIsSubtypeOf(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
-            if (!AbstractTypeChecker.isSubtypeOf(this@TypeCheckerContext as AbstractTypeCheckerContext, lowerType, upperType)
-                && listOf(lowerType, upperType).none { it.containsStubTypeVariable() }
-            ) {
+            if (!AbstractTypeChecker.isSubtypeOf(this@TypeCheckerContext as AbstractTypeCheckerContext, lowerType, upperType)) {
                 // todo improve error reporting -- add information about base types
                 c.addError(NewConstraintError(lowerType, upperType, position))
             }

@@ -52,4 +52,10 @@ object TupleType {
             descriptor = getTupleClassDescriptor(moduleDescriptor) ?: error { "Tuple class descriptor not found" }
         )
     }
+
+    @JvmStatic
+    fun getTypeArgument(type: KotlinType): KotlinType {
+        assert(isTupleType(type)) { "Tuple type expected, but received $type" }
+        return type.arguments.single().type
+    }
 }

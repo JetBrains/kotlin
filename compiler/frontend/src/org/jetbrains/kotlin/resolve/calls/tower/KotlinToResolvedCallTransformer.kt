@@ -354,9 +354,7 @@ class KotlinToResolvedCallTransformer(
     }
 
     private fun KotlinType.isVariadicFunctionType(): Boolean =
-        !TypeUtils.noExpectedType(this)
-                && isFunctionType
-                && getValueParameterTypesFromFunctionType().any { TupleType.isTupleType(it.type) }
+        contains(TupleType::isTupleType) && isFunctionType
 
     private fun ValueParameterDescriptor?.isVariadic(): Boolean {
         if (this == null) return false

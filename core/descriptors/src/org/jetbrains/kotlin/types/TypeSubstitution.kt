@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.typeUtil.contains
 
 abstract class TypeSubstitution {
     companion object {
@@ -143,6 +144,36 @@ fun SimpleType.replace(
             constructor,
             newArguments,
             isMarkedNullable
+    )
+}
+
+fun KotlinType.replaceAll(from: KotlinType, to: SimpleType): KotlinType {
+    if (this.contains { it.isError })
+        return this
+    return when (val unwrapped = unwrap()) {
+        is SimpleType -> unwrapped.replaceAll(from, to)
+        is FlexibleType -> KotlinTypeFactory.flexibleType(
+            unwrapped.lowerBound.replaceAll(from, to),
+            unwrapped.upperBound.replaceAll(from, to)
+        )
+    }
+}
+
+fun SimpleType.replaceAll(from: KotlinType, to: SimpleType): SimpleType {
+    if (this == from) {
+        return to
+    }
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+        annotations = annotations,
+        constructor = constructor,
+        memberScope = memberScope,
+        nullable = isNullable(),
+        arguments = arguments.map { typeProjection ->
+            TypeProjectionImpl(
+                typeProjection.projectionKind,
+                typeProjection.type.replaceAll(from, to)
+            )
+        }
     )
 }
 

@@ -264,6 +264,7 @@ class ResolvedAtomCompleter(
             }
         }
 
+        // TODO why copying only args is not enough?
         val copy = descriptor
             .newCopyBuilder()
             .setValueParameters(newValueParameters)

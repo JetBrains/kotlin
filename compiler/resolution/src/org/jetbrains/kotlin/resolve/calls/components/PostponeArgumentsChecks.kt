@@ -20,16 +20,16 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LHSArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariadicTypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.replaceAll
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.findAll
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.lang.AssertionError
 
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,
@@ -166,19 +166,27 @@ private fun extractLambdaParameters(
     }
 }
 
-// TODO deeply buried parameter pack
-// TODO Add errors with csBuilder
 fun KotlinType.replaceTupleTypes(csBuilder: ConstraintSystemBuilder): List<KotlinType> {
     if (!TupleType.isTupleType(this)) return listOf(this)
 
-    val tupleTypeArgumentType = this.arguments.singleOrNull()?.type ?: return listOf(this)
+    val tupleTypeArgumentType = TupleType.getTypeArgument(this)
+    val stubVariableTypes = tupleTypeArgumentType.findAll {
+        it.constructor.safeAs<TypeVariableTypeConstructor>()?.isStub ?: false
+    }
+    if (stubVariableTypes.isEmpty()) return listOf(this)
 
-    val csTypeVariables = csBuilder.currentStorage().allTypeVariables
-    return csTypeVariables.values
-        .filter {
-            it.safeAs<VariadicTypeVariableFromCallableDescriptor>()?.packVariable?.defaultType == tupleTypeArgumentType
-        }
-        .map { (it as VariadicTypeVariableFromCallableDescriptor).defaultType }
+    val packVariableType = stubVariableTypes.singleOrNull() ?: error("Multiple variadic type variables are not expected in a single type")
+
+    val allVariadicVariables = csBuilder.currentStorage().allTypeVariables.values
+        .filterIsInstance<VariadicTypeVariableFromCallableDescriptor>()
+
+    val relevantVariadicVariables = allVariadicVariables
+        .filter { it.packVariable.defaultType == packVariableType }
+        .sortedBy { it.index }
+
+    return relevantVariadicVariables.map { variadicTypeVariable ->
+        tupleTypeArgumentType.replaceAll(packVariableType, variadicTypeVariable.defaultType)
+    }
 }
 
 fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(

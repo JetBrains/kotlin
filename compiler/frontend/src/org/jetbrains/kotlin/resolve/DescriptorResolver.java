@@ -313,9 +313,8 @@ public class DescriptorResolver {
         KotlinType variableType = type;
         if (typeReference != null && valueParameter.hasModifier(VARARG_KEYWORD)) {
             if (typeReference.getTypeElement() instanceof KtTupleType) {
-                assert type.getConstructor().getDeclarationDescriptor() == TupleType.getTupleClassDescriptor(moduleDescriptor)
-                        : "Tuple type has incorrect constructor descriptor";
-                varargElementType = type.getArguments().get(0).getType();
+                assert TupleType.isTupleType(type) : "KtTupleType resolved to non-tuple type";
+                varargElementType = TupleType.getTypeArgument(type);
             } else {
                 varargElementType = type;
             }
