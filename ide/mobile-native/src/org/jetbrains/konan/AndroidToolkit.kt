@@ -11,7 +11,7 @@ import com.intellij.util.EnvironmentUtil
 import java.io.File
 
 object AndroidToolkit {
-    val home: File? = EnvironmentUtil.getValue("ANDROID_HOME")?.let { File(it) }
+    val home: File? = EnvironmentUtil.getValue("ANDROID_SDK_ROOT")?.let { File(it) }
     val adb: File? = home?.let { File(File(it, "platform-tools"), "adb".exe) }
     val buildTools: File? = home?.let { home ->
         File(home, "build-tools").listFiles()?.maxBy {
