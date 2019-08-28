@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 (s: kotlin.String?): kotlin.Int declared in <root>'
         CALL 'public open fun extLength (): kotlin.Int declared in <root>.IHost' type=kotlin.Int origin=null
-          $this: GET_VAR 's: kotlin.String? declared in <root>.test5' type=kotlin.String? origin=null
+          $this: GET_VAR '<this>: <root>.IHost declared in <root>.IHost' type=<root>.IHost origin=null
   FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
     BLOCK_BODY

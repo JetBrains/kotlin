@@ -3,7 +3,6 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
     BLOCK_BODY
       CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
         $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:java.io.PrintStream? visibility:public [final,static]' type=java.io.PrintStream? origin=GET_PROPERTY
-          receiver: GET_OBJECT 'CLASS CLASS name:System modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         x: CONST String type=kotlin.String value="testFun"
   PROPERTY name:testProp visibility:public modality:FINAL [var]
     FUN name:<get-testProp> visibility:public modality:FINAL <> () returnType:kotlin.Any
@@ -11,7 +10,6 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:java.io.PrintStream? visibility:public [final,static]' type=java.io.PrintStream? origin=GET_PROPERTY
-            receiver: GET_OBJECT 'CLASS CLASS name:System modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           x: CONST String type=kotlin.String value="testProp/get"
         RETURN type=kotlin.Nothing from='public final fun <get-testProp> (): kotlin.Any declared in <root>'
           CONST Int type=kotlin.Any value=42
@@ -21,7 +19,6 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:java.io.PrintStream? visibility:public [final,static]' type=java.io.PrintStream? origin=GET_PROPERTY
-            receiver: GET_OBJECT 'CLASS CLASS name:System modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           x: CONST String type=kotlin.String value="testProp/set"
   CLASS CLASS name:TestClass modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestClass
@@ -38,7 +35,6 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
               then: BLOCK type=kotlin.Int origin=null
                 CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
                   $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:java.io.PrintStream? visibility:public [final,static]' type=java.io.PrintStream? origin=GET_PROPERTY
-                    receiver: GET_OBJECT 'CLASS CLASS name:System modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
                   x: CONST String type=kotlin.String value="TestClass/test"
                 CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:<root>.TestClass) returnType:kotlin.Int
@@ -52,7 +48,6 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:java.io.PrintStream? visibility:public [final,static]' type=java.io.PrintStream? origin=GET_PROPERTY
-            receiver: GET_OBJECT 'CLASS CLASS name:System modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           x: CONST String type=kotlin.String value="TestClass/init"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

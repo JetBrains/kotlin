@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
@@ -749,28 +750,28 @@ internal class Fir2IrVisitor(
             is IrCallImpl -> {
                 val ownerFunction = symbol.owner
                 if (ownerFunction.dispatchReceiverParameter != null) {
-                    val explicitReceiver = qualifiedAccess.explicitReceiver?.toIrExpression()
-                    if (explicitReceiver != null) {
-                        dispatchReceiver = explicitReceiver
-                    } else {
-                        // TODO: implicit dispatch receiver
+                    dispatchReceiver = qualifiedAccess.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
+                        ?: qualifiedAccess.explicitReceiver?.toIrExpression() // NB: this applies to the situation when call is unresolved
+                    if (dispatchReceiver == null) {
+                        throw AssertionError()
                     }
                 } else if (ownerFunction.extensionReceiverParameter != null) {
-                    val explicitReceiver = qualifiedAccess.explicitReceiver?.toIrExpression()
-                    if (explicitReceiver != null) {
-                        extensionReceiver = explicitReceiver
-                    } else {
-                        // TODO: implicit extension receiver
+                    extensionReceiver = qualifiedAccess.extensionReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
+                        ?: qualifiedAccess.explicitReceiver?.toIrExpression()
+                    if (extensionReceiver == null) {
+                        throw AssertionError()
                     }
                 }
                 this
             }
             is IrFieldExpressionBase -> {
-                val explicitReceiver = qualifiedAccess.explicitReceiver?.toIrExpression()
-                if (explicitReceiver != null) {
-                    receiver = explicitReceiver
-                } else {
-                    // TODO: implicit receiver
+                val ownerField = symbol.owner
+                if (!ownerField.isStatic) {
+                    receiver = qualifiedAccess.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
+                        ?: qualifiedAccess.explicitReceiver?.toIrExpression()
+                    if (receiver == null) {
+                        throw AssertionError()
+                    }
                 }
                 this
             }
