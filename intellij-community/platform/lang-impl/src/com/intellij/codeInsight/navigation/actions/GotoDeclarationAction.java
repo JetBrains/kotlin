@@ -374,7 +374,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
 
     InputEvent inputEvent = event.getInputEvent();
     Editor editor = event.getData(CommonDataKeys.EDITOR);
-    if (editor != null && inputEvent instanceof MouseEvent &&
+    if (editor != null && inputEvent instanceof MouseEvent && event.getPlace().equals(ActionPlaces.MOUSE_SHORTCUT) &&
         !EditorUtil.isPointOverText(editor, new RelativePoint((MouseEvent)inputEvent).getPoint(editor.getContentComponent()))) {
       event.getPresentation().setEnabled(false);
       return;
