@@ -29,6 +29,16 @@ public class PsiVisualizerForUncommonCasesGenerated extends AbstractPsiVisualize
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/visualizer/testData/uncommonCases/testFiles"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() throws Exception {
+        runTest("compiler/visualizer/testData/uncommonCases/testFiles/dataClass.kt");
+    }
+
+    @TestMetadata("delegation.kt")
+    public void testDelegation() throws Exception {
+        runTest("compiler/visualizer/testData/uncommonCases/testFiles/delegation.kt");
+    }
+
     @TestMetadata("innerWith.kt")
     public void testInnerWith() throws Exception {
         runTest("compiler/visualizer/testData/uncommonCases/testFiles/innerWith.kt");
@@ -42,6 +52,11 @@ public class PsiVisualizerForUncommonCasesGenerated extends AbstractPsiVisualize
     @TestMetadata("properties.kt")
     public void testProperties() throws Exception {
         runTest("compiler/visualizer/testData/uncommonCases/testFiles/properties.kt");
+    }
+
+    @TestMetadata("receiver.kt")
+    public void testReceiver() throws Exception {
+        runTest("compiler/visualizer/testData/uncommonCases/testFiles/receiver.kt");
     }
 
     @TestMetadata("superTypes.kt")
