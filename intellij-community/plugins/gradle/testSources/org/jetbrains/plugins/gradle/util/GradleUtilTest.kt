@@ -70,7 +70,7 @@ class GradleUtilTest: UsefulTestCase() {
     assertNull(GradleInstallationManager.parseDistributionVersion("gradle"));
 
     assertEquals(GradleVersion.version("5.2.1"), GradleInstallationManager.parseDistributionVersion("abc/gradle-5.2.1-bin.zip"));
-    assertEquals(GradleVersion.version("5.2.1"), GradleInstallationManager.parseDistributionVersion("abc/nebula-gradle-5.2.1-bin.zip"));
+    assertEquals(GradleVersion.version("5.2.1"), GradleInstallationManager.parseDistributionVersion("abc/abc-gradle-5.2.1-bin.zip"));
 
     assertNull(GradleInstallationManager.parseDistributionVersion("abc/gradle-unexpected-bin.zip"));
   }
