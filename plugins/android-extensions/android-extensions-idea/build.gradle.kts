@@ -63,12 +63,12 @@ dependencies {
 }
 
 sourceSets {
-    if (Ide.AS33.orHigher() || Ide.IJ191.orHigher()) {
-        "main" { }
-        "test" { }
-    } else {
+    if (Ide.IJ183()) {
         "main" { projectDefault() }
         "test" { projectDefault() }
+    } else {
+        "main" { }
+        "test" { }
     }
 }
 

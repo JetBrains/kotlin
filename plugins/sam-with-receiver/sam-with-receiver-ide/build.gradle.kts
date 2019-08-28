@@ -14,7 +14,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":idea:idea-core"))
 
-    Ide.AS33.orHigher.not {
+    Ide.IJ183 {
         compile(project(":idea:idea-android"))
     }
 
