@@ -59,7 +59,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
         producingTask: Task,
         copy: Boolean = false
     ) {
-        if (!compilation.target.konanTarget.enabledOnCurrentHost) {
+        if (!compilation.konanTarget.enabledOnCurrentHost) {
             return
         }
 
@@ -118,7 +118,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             this.binary = binary
             group = BasePlugin.BUILD_GROUP
             description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
-            enabled = target.konanTarget.enabledOnCurrentHost
+            enabled = binary.konanTarget.enabledOnCurrentHost
             destinationDir = binary.outputDirectory
             addCompilerPlugins()
 
@@ -135,7 +135,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             group = RUN_GROUP
             description = "Executes Kotlin/Native executable ${binary.name} for target ${binary.target.name}"
 
-            enabled = binary.target.konanTarget.isCurrentHost
+            enabled = binary.konanTarget.isCurrentHost
 
             executable = binary.outputFile.absolutePath
             workingDir = project.projectDir
@@ -154,7 +154,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             group = BasePlugin.BUILD_GROUP
             description = "Compiles a klibrary from the '${compilation.name}' " +
                     "compilation for target '${compilation.platformType.name}'."
-            enabled = compilation.target.konanTarget.enabledOnCurrentHost
+            enabled = compilation.konanTarget.enabledOnCurrentHost
 
             destinationDir = klibOutputDirectory(compilation)
             addCompilerPlugins()
@@ -185,7 +185,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
                 description = "Generates Kotlin/Native interop library '${interop.name}' " +
                         "for compilation '${compilation.name}'" +
                         "of target '${konanTarget.name}'."
-                enabled = compilation.target.konanTarget.enabledOnCurrentHost
+                enabled = compilation.konanTarget.enabledOnCurrentHost
 
                 val interopOutput = project.files(outputFileProvider).builtBy(this)
                 with(compilation) {

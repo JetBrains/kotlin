@@ -118,7 +118,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
     }
 
     val target: String
-        @Input get() = compilation.target.konanTarget.name
+        @Input get() = compilation.konanTarget.name
 
     // region Compiler options.
     @get:Internal
@@ -148,7 +148,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
     // OutputFile is located under the destinationDir, so there is no need to register it as a separate output.
     @Internal
     val outputFile: Provider<File> = project.provider {
-        val konanTarget = compilation.target.konanTarget
+        val konanTarget = compilation.konanTarget
 
         val prefix = outputKind.prefix(konanTarget)
         val suffix = outputKind.suffix(konanTarget)
@@ -614,7 +614,7 @@ open class CInteropProcess : DefaultTask() {
     lateinit var destinationDir: Provider<File>
 
     val konanTarget: KonanTarget
-        @Internal get() = settings.compilation.target.konanTarget
+        @Internal get() = settings.compilation.konanTarget
 
     val interopName: String
         @Internal get() = settings.name

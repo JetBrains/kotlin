@@ -90,8 +90,8 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
 
         result.compilations.all { compilation ->
-            val target = compilation.target.konanTarget
-            compilation.target.project.whenEvaluated {
+            val target = compilation.konanTarget
+            project.whenEvaluated {
                 // First, put common libs:
                 defaultLibs(!compilation.enableEndorsedLibs).forEach {
                     project.dependencies.add(compilation.compileDependencyConfigurationName, it)

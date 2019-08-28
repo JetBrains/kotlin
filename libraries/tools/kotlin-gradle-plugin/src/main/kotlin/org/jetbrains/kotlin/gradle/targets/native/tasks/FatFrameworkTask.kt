@@ -130,7 +130,7 @@ open class FatFrameworkTask: DefaultTask() {
      */
     fun from(frameworks: Iterable<Framework>) {
         frameworks.forEach {
-            val konanTarget = it.target.konanTarget
+            val konanTarget = it.konanTarget
             val arch = konanTarget.architecture
             require(konanTarget.family == Family.IOS) {
                 "Cannot add a framework with target '${konanTarget.visibleName}' to the fat framework: " +
@@ -165,14 +165,14 @@ open class FatFrameworkTask: DefaultTask() {
         }
 
     private val Framework.plistPlatform: String
-        get() = when(target.konanTarget) {
+        get() = when(konanTarget) {
             KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iPhoneOS"
             KonanTarget.IOS_X64 -> "iPhoneSimulator"
             KonanTarget.TVOS_ARM64 -> "appletvos"
             KonanTarget.TVOS_X64 -> "appletvsimulator"
             KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "watchos"
             KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64 -> "watchsimulator"
-            else -> error("Fat frameworks are not supported for target `${target.konanTarget.visibleName}`")
+            else -> error("Fat frameworks are not supported for target `${konanTarget.visibleName}`")
         }
 
     // Runs the PlistBuddy utility with the given commands to configure the given plist file.
