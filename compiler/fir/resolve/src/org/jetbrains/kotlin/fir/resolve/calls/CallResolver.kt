@@ -169,6 +169,10 @@ class CallResolver(
 
         // Member of implicit receiver' type *and* relevant scope
         for (implicitReceiverValue in implicitReceiverValues) {
+            if (!blockDispatchReceivers || implicitReceiverValue !is ImplicitDispatchReceiverValue) {
+                // Direct use of implicit receiver (see inside)
+                group = processImplicitReceiver(towerDataConsumer, implicitReceiverValue, group)
+            }
             val implicitScope = implicitReceiverValue.implicitScope
             if (implicitScope != null) {
                 // Regular implicit receiver scope (outer objects only?)
@@ -188,15 +192,10 @@ class CallResolver(
                     // }
                     towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, implicitCompanionScope), group++)
                 }
-                if (blockDispatchReceivers) {
-                    continue
-                }
                 if (!implicitReceiverValue.boundSymbol.fir.isInner) {
                     blockDispatchReceivers = true
                 }
             }
-            // Direct use of implicit receiver (see inside)
-            group = processImplicitReceiver(towerDataConsumer, implicitReceiverValue, group)
         }
 
         // Member of top-level scope & importing scope

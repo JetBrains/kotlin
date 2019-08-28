@@ -70,7 +70,7 @@ FILE: enums.kt
 
         }
 
-        public final val g: R|kotlin/Double| = D|D|R|/Planet.Companion.G||.R|kotlin/Double.times|(R|<local>/m|)|.R|kotlin/Double.div|(D|R|<local>/r||.R|kotlin/Double.times|(R|<local>/r|))
+        public final val g: R|kotlin/Double| = D|D|D|this@R|/Planet.Companion||.R|/Planet.Companion.G||.R|kotlin/Double.times|(R|<local>/m|)|.R|kotlin/Double.div|(D|R|<local>/r||.R|kotlin/Double.times|(R|<local>/r|))
             public get(): R|kotlin/Double|
 
         public abstract fun sayHello(): R|kotlin/Unit|
