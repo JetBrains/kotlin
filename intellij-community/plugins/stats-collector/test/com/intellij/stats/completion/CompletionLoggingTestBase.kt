@@ -6,7 +6,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.stats.completion.events.CompletionStartedEvent
 import com.intellij.stats.completion.events.LogEvent
-import com.intellij.testFramework.replaceServiceInstance
+import com.intellij.testFramework.replaceService
 import org.assertj.core.api.Assertions
 import org.mockito.Mockito
 
@@ -54,7 +54,7 @@ abstract class CompletionLoggingTestBase : LightFixtureCompletionTestCase() {
 
     mockLoggerProvider = Mockito.mock(CompletionLoggerProvider::class.java)
     Mockito.`when`(mockLoggerProvider.newCompletionLogger()).thenReturn(completionFileLogger())
-    ApplicationManager.getApplication().replaceServiceInstance(CompletionLoggerProvider::class.java, mockLoggerProvider, testRootDisposable)
+    ApplicationManager.getApplication().replaceService(CompletionLoggerProvider::class.java, mockLoggerProvider, testRootDisposable)
 
     myFixture.addClass(runnableInterface)
     myFixture.configureByText(JavaFileType.INSTANCE, testText)
