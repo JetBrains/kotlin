@@ -7,48 +7,32 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class InlineCodegenForDefaultBody(
-    function: FunctionDescriptor,
+    private val function: FunctionDescriptor,
     codegen: ExpressionCodegen,
     val state: GenerationState,
+    private val methodOwner: Type,
+    private val jvmSignature: JvmMethodSignature,
     private val sourceCompilerForInline: SourceCompilerForInline
 ) : CallGenerator {
-
     private val sourceMapper: SourceMapper = codegen.parentCodegen.orCreateSourceMapper
-
-    private val functionDescriptor =
-        if (InlineUtil.isArrayConstructorWithLambda(function))
-            FictitiousArrayConstructor.create(function as ConstructorDescriptor)
-        else
-            function.original
-
-
-    init {
-        sourceCompilerForInline.initializeInlineFunctionContext(functionDescriptor)
-    }
-
-
-    private val jvmSignature: JvmMethodGenericSignature
 
     private val methodStartLabel = Label()
 
     init {
         assert(InlineUtil.isInline(function)) {
-            "InlineCodegen can inline only inline functions and array constructors: $function"
+            "InlineCodegenForDefaultBody can inline only inline functions: $function"
         }
-        sourceCompilerForInline.initializeInlineFunctionContext(functionDescriptor)
-        jvmSignature = state.typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompilerForInline.contextKind)
 
         //InlineCodegenForDefaultBody created just after visitCode call
         codegen.v.visitLabel(methodStartLabel)
@@ -56,7 +40,7 @@ class InlineCodegenForDefaultBody(
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
         val nodeAndSmap =
-            InlineCodegen.createInlineMethodNode(functionDescriptor, jvmSignature, callDefault, null, state, sourceCompilerForInline)
+            InlineCodegen.createInlineMethodNode(function, methodOwner, jvmSignature, callDefault, null, state, sourceCompilerForInline)
         val childSourceMapper = InlineCodegen.createNestedSourceMapper(nodeAndSmap, sourceMapper)
 
         val node = nodeAndSmap.node

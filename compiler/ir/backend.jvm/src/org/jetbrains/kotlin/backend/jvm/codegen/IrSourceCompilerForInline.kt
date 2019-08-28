@@ -156,10 +156,6 @@ class IrSourceCompilerForInline(
         return setOf(codegen.irFunction.name.asString())
     }
 
-    override fun initializeInlineFunctionContext(functionDescriptor: FunctionDescriptor) {
-        //TODO
-    }
-
     private class FakeClassCodegen(irFunction: IrFunction, codegen: ClassCodegen) :
         ClassCodegen(irFunction.parent as IrClass, codegen.context) {
 

@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.resolve.jvm.*;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -2641,11 +2642,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal())),
                         bindingContext, state
                 );
+
+        PsiSourceCompilerForInline sourceCompiler = new PsiSourceCompilerForInline(this, callElement);
+        FunctionDescriptor functionDescriptor =
+                InlineUtil.isArrayConstructorWithLambda(original)
+                ? FictitiousArrayConstructor.create((ConstructorDescriptor) original) : original.getOriginal();
+
+        sourceCompiler.initializeInlineFunctionContext(functionDescriptor);
+        JvmMethodSignature signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContextKind());
+        Type methodOwner = typeMapper.mapImplementationOwner(functionDescriptor);
         if (isDefaultCompilation) {
-            return new InlineCodegenForDefaultBody(original, this, state, new PsiSourceCompilerForInline(this, callElement));
+            return new InlineCodegenForDefaultBody(functionDescriptor, this, state, methodOwner, signature, sourceCompiler);
         }
         else {
-            return new PsiInlineCodegen(this, state, original, typeParameterMappings, new PsiSourceCompilerForInline(this, callElement));
+            return new PsiInlineCodegen(this, state, functionDescriptor, methodOwner, signature, typeParameterMappings, sourceCompiler);
         }
     }
 

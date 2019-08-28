@@ -61,8 +61,7 @@ class MethodSignatureMapper(context: JvmBackendContext) {
             // we still need to return some IrCallableMethod with some owner instance, but that owner will be ignored at the call site.
             // Here we return a fake type, but this needs to be refactored so that we never call mapToCallableMethod on intrinsics.
             // TODO: get rid of fake owner here
-            val fakeOwner = Type.getObjectType("kotlin/internal/ir/Intrinsic")
-            return IrCallableMethod(fakeOwner, Opcodes.INVOKESTATIC, mapSignatureSkipGeneric(callee), false)
+            return IrCallableMethod(FAKE_OWNER_TYPE, Opcodes.INVOKESTATIC, mapSignatureSkipGeneric(callee), false)
         }
 
         val owner = typeMapper.mapClass(calleeParent)
@@ -118,5 +117,9 @@ class MethodSignatureMapper(context: JvmBackendContext) {
                 ?: error("Fake override should have at least one overridden descriptor: ${current.render()}")
         }
         return current
+    }
+
+    companion object {
+        val FAKE_OWNER_TYPE = Type.getObjectType("kotlin/internal/ir/Intrinsic")
     }
 }

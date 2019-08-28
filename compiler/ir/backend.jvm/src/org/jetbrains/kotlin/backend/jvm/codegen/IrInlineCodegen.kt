@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.codegen.AsmUtil.BOUND_REFERENCE_RECEIVER
+import org.jetbrains.kotlin.codegen.IrExpressionLambda
+import org.jetbrains.kotlin.codegen.JvmKotlinType
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -27,10 +31,13 @@ class IrInlineCodegen(
     codegen: ExpressionCodegen,
     state: GenerationState,
     function: FunctionDescriptor,
+    methodOwner: Type,
+    signature: JvmMethodSignature,
     typeParameterMappings: IrTypeParameterMappings,
     sourceCompiler: SourceCompilerForInline
-) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings.toTypeParameterMappings(), sourceCompiler),
-    IrCallGenerator {
+) : InlineCodegen<ExpressionCodegen>(
+    codegen, state, function, methodOwner, signature, typeParameterMappings.toTypeParameterMappings(), sourceCompiler
+), IrCallGenerator {
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         // TODO: JVM assertions are not implemented yet in IR backend
     }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -29,9 +30,13 @@ class PsiInlineCodegen(
     codegen: ExpressionCodegen,
     state: GenerationState,
     function: FunctionDescriptor,
+    methodOwner: Type,
+    signature: JvmMethodSignature,
     typeParameterMappings: TypeParameterMappings,
     sourceCompiler: SourceCompilerForInline
-) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings, sourceCompiler), CallGenerator {
+) : InlineCodegen<ExpressionCodegen>(
+    codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler
+), CallGenerator {
 
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         if (info.generateAssertField) {
