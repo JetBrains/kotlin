@@ -14,14 +14,14 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.konan.MobileBundle
 import java.io.OutputStream
+import java.util.concurrent.CompletableFuture
 
 class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
     lateinit var appId: String
     private var processClient: Client? = null
     private val logCatTask = LogCatReceiverTask(raw)
 
-    val debuggerPort: Int?
-        @Synchronized get() = processClient?.debuggerListenPort
+    val debuggerPort = CompletableFuture<Int>()
 
     private fun isRelevantEvent(device: IDevice, changeMask: Int, expectedMask: Int) =
         (changeMask and expectedMask) == expectedMask &&
@@ -31,13 +31,18 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
         override fun clientChanged(client: Client, changeMask: Int) {
             if (!isRelevantEvent(client.device, changeMask, Client.CHANGE_NAME)) return
 
-            synchronized(this@AndroidProcessHandler) {
-                if (appId == client.clientData?.clientDescription ||
-                    appId == client.clientData?.packageName
-                ) {
-                    processClient = client
+            val clientDescription = client.clientData.clientDescription
+            if (clientDescription != null) {
+                synchronized(this@AndroidProcessHandler) {
+                    if (appId == clientDescription || appId == client.clientData.packageName) {
+                        processClient = client
+                        debuggerPort.complete(client.debuggerListenPort)
+                        notifyTextAvailable(
+                            MobileBundle.message("run.android.started", client.clientData.pid) + "\n",
+                            ProcessOutputType.SYSTEM
+                        )
+                    }
                 }
-                notifyTextAvailable(MobileBundle.message("run.android.started", client.clientData.pid) + "\n", ProcessOutputType.SYSTEM)
             }
         }
     }

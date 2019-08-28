@@ -17,9 +17,9 @@ import com.intellij.execution.configurations.RemoteState
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.filters.TextConsoleBuilderFactory
 import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ProgramRunner
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
@@ -58,28 +58,32 @@ class AndroidCommandLineState(
 
         val wrapper = DebugProcessHandlerWrapper(handler)
 
-        ApplicationManager.getApplication().executeOnPooledThread {
-            while (handler.debuggerPort == null) Thread.sleep(100)
-            val debugPort = handler.debuggerPort!!.toString()
-            val connection = RemoteConnection(true, "localhost", debugPort, false)
+        handler.debuggerPort.thenAccept { debugPort ->
+            ProcessIOExecutorService.INSTANCE.execute {
+                try {
+                    val connection = RemoteConnection(true, "localhost", debugPort.toString(), false)
 
-            val result = DefaultExecutionResult(debugConsole, handler, *createActions(debugConsole, handler, executor))
+                    val result = DefaultExecutionResult(debugConsole, handler, *createActions(debugConsole, handler, executor))
 
-            val debugState = object : RemoteState {
-                override fun getRemoteConnection(): RemoteConnection = connection
-                override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult? = result
-            }
-            wrapper.detachProcess() // to reuse already existing run tab
+                    val debugState = object : RemoteState {
+                        override fun getRemoteConnection(): RemoteConnection = connection
+                        override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult? = result
+                    }
+                    wrapper.detachProcess() // to reuse already existing run tab
 
-            runInEdt {
-                val debugEnvironment = DefaultDebugEnvironment(environment, debugState, connection, false)
-                val debuggerSession = DebuggerManagerEx.getInstanceEx(project).attachVirtualMachine(debugEnvironment)!!
-                val session = XDebuggerManager.getInstance(project).startSession(environment, object : XDebugProcessStarter() {
-                    override fun start(session: XDebugSession): XDebugProcess =
-                        JavaDebugProcess.create(session, debuggerSession)
-                })
-                (session as XDebugSessionImpl).showSessionTab()
-                session.debugProcess.processHandler.startNotify()
+                    runInEdt {
+                        val debugEnvironment = DefaultDebugEnvironment(environment, debugState, connection, false)
+                        val debuggerSession = DebuggerManagerEx.getInstanceEx(project).attachVirtualMachine(debugEnvironment)!!
+                        val session = XDebuggerManager.getInstance(project).startSession(environment, object : XDebugProcessStarter() {
+                            override fun start(session: XDebugSession): XDebugProcess =
+                                JavaDebugProcess.create(session, debuggerSession)
+                        })
+                        (session as XDebugSessionImpl).showSessionTab()
+                        session.debugProcess.processHandler.startNotify()
+                    }
+                } catch (e: Throwable) {
+                    log.error(e)
+                }
             }
         }
 
