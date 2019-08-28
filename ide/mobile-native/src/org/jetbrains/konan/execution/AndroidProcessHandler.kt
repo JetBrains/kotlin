@@ -47,13 +47,7 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
             if (!isRelevantEvent(device, changeMask, IDevice.CHANGE_CLIENT_LIST)) return
 
             synchronized(this@AndroidProcessHandler) {
-                val client = device.getClient(appId)
-                if (client != null) {
-                    processClient = client
-                    return
-                }
-
-                if (processClient != null) {
+                if (device.getClient(appId) == null && processClient != null) {
                     detachProcess()
                 }
             }
