@@ -1,4 +1,6 @@
 digraph inPlaceLambdas_kt {
+graph [splines=ortho]
+
 subgraph foo {
   0 [shape=box label="Enter function foo"];
   1 [shape=box label="Exit function foo"];

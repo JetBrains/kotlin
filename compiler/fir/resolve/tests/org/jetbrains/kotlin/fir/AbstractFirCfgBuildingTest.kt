@@ -60,6 +60,8 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
 
         override fun visitFile(file: FirFile) {
             dotBuilder.appendln("digraph ${file.name.replace(".", "_")} {")
+                .appendln("graph [splines=ortho]")
+                .appendln()
             super.visitFile(file)
             dotBuilder.appendln("}")
         }

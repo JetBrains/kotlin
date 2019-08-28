@@ -1,4 +1,6 @@
 digraph lambdas_kt {
+graph [splines=ortho]
+
 subgraph run {
   0 [shape=box label="Enter function run"];
   1 [shape=box label="Enter block"];

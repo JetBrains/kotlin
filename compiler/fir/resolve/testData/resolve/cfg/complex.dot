@@ -1,4 +1,6 @@
 digraph complex_kt {
+graph [splines=ortho]
+
 subgraph fetchPluginReleaseDate {
   0 [shape=box label="Enter function fetchPluginReleaseDate"];
   1 [shape=box label="Enter block"];

@@ -1,4 +1,6 @@
 digraph loops_kt {
+graph [splines=ortho]
+
 subgraph testWhile {
   0 [shape=box label="Enter function testWhile"];
   1 [shape=box label="Enter block"];

@@ -1,4 +1,6 @@
 digraph returns_kt {
+graph [splines=ortho]
+
 subgraph test_0 {
   0 [shape=box label="Enter function test_0"];
   1 [shape=box label="Enter block"];

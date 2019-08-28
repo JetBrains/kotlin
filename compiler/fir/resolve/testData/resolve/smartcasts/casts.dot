@@ -1,4 +1,6 @@
 digraph casts_kt {
+graph [splines=ortho]
+
 subgraph test_1 {
   0 [shape=box label="Enter function test_1"];
   1 [shape=box label="Enter block"];

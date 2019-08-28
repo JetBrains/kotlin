@@ -1,4 +1,6 @@
 digraph initBlock_kt {
+graph [splines=ortho]
+
 subgraph <init> {
   0 [shape=box label="Enter function <init>"];
   1 [shape=box label="Exit function <init>"];
