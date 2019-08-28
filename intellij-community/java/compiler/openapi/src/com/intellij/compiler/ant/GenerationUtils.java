@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -66,7 +67,7 @@ public class GenerationUtils {
     return toRelativePath(localPath, baseDir, baseDirPropertyName, genOptions);
   }
 
-  public static String toRelativePath(String path,
+  public static String toRelativePath(@NotNull String path,
                                       File baseDir,
                                       @NonNls final String baseDirPropertyName,
                                       GenerationOptions genOptions) {

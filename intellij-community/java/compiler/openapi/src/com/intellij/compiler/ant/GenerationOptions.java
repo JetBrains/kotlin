@@ -16,6 +16,7 @@
 package com.intellij.compiler.ant;
 
 import com.intellij.openapi.module.Module;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Ant file generation options. This object is availalbe during construction of ant object tree.
@@ -96,7 +97,7 @@ public abstract class GenerationOptions {
      * @param path a path to update
      * @return an updated path or argument
      */
-    public abstract String subsitutePathWithMacros(String path);
+    public abstract String subsitutePathWithMacros(@NotNull String path);
 
     /**
      * Get property reference for the specified url of module output directory

@@ -152,7 +152,7 @@ public class GenerationOptionsImpl extends GenerationOptions {
   }
 
   @Override
-  public String subsitutePathWithMacros(String path) {
+  public String subsitutePathWithMacros(@NotNull String path) {
     return myMacroReplacementMap.substitute(path, SystemInfo.isFileSystemCaseSensitive);
   }
 
