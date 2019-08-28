@@ -15,7 +15,8 @@ const val metadataDescriptor: String = "Lkotlin/Metadata;"
  */
 internal val lazyAsmApiVersion = lazy {
     try {
-        Opcodes::API_VERSION.get()
+        val field = Opcodes::class.java.getField("API_VERSION")
+        field.get(null) as Int
     } catch(e: Throwable) {
         Opcodes.API_VERSION
     }
