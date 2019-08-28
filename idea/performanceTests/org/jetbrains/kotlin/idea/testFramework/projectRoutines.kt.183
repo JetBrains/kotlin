@@ -61,10 +61,12 @@ fun closeProject(project: Project) {
     projectManagerEx.closeAndDispose(project)
 }
 
+// BUNCH: 183
 fun waitForAllEditorsFinallyLoaded(project: Project) {
- // 182 does not have this public api
+ // 183 does not have this public api
 }
 
+// BUNCH: 183
 fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementationClass: String, toImplementationClass: String) {
- // 182 does not have this public api
+ // 183 does not have this public api
 }
