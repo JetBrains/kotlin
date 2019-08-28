@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -192,11 +193,17 @@ class ExpressionCodegen(
         writeParameterInLocalVariableTable(startLabel, endLabel)
     }
 
+    private fun Visibility.isLocalOrPrivate() =
+        this == Visibilities.LOCAL || Visibilities.isPrivate(this)
+
     private fun generateNonNullAssertions() {
         if (state.isParamAssertionsDisabled)
             return
 
-        val isSyntheticOrBridge = irFunction.origin.isSynthetic ||
+        val notCallableFromJava = isInlineLambda ||
+                irFunction.visibility.isLocalOrPrivate() ||
+                irFunction.origin.isSynthetic ||
+                (irFunction is IrConstructor && irFunction.parentAsClass.visibility.isLocalOrPrivate()) ||
                 // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
                 irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
                 // Although these are accessible from Java, the functions they bridge to already have the assertions.
@@ -204,7 +211,7 @@ class ExpressionCodegen(
                 irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
-        if (!isInlineLambda && !isSyntheticOrBridge && !Visibilities.isPrivate(irFunction.visibility)) {
+        if (!notCallableFromJava) {
             irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
             irFunction.valueParameters.forEach(::generateNonNullAssertion)
         }
