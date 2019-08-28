@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin.test
 
 import org.gradle.testkit.runner.TaskOutcome
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class PathSpecification extends BaseKonanSpecification {
 
@@ -31,7 +32,7 @@ class PathSpecification extends BaseKonanSpecification {
         expect:
         def project = KonanProject.createEmpty(
                 projectDirectory,
-                platformManager.enabled.collect { t -> t.visibleName }
+                platformManager.filteredOutEnabledButNotSupported.collect { t -> t.visibleName }
         ) { KonanProject it ->
             it.generateSrcFile("main.kt")
             it.generateDefFile("interop.def", "")
