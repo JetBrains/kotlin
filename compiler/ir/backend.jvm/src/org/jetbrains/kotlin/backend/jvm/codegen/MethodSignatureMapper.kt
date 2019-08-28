@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
@@ -313,7 +312,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         val overriddenSpecialBuiltinFunction = callee.descriptor.original.getOverriddenBuiltinReflectingJvmDescriptor()
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
-            return context.state.typeMapper.mapSignatureSkipGeneric(overriddenSpecialBuiltinFunction.original, OwnerKind.IMPLEMENTATION)
+            return mapSignatureSkipGeneric(context.referenceSimpleFunction(overriddenSpecialBuiltinFunction.original).owner)
         }
 
         return null
