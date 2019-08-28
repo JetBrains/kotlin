@@ -1,36 +1,36 @@
 digraph booleanOperators_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph foo {
-  0 [shape=box label="Enter function foo"];
-  1 [shape=box label="Exit function foo"];
+subgraph cluster_foo {
+  0 [shape=box label="Enter function foo" style="filled"];
+  1 [shape=box label="Exit function foo" style="filled"];
 
   0 -> {1};
 }
 
-subgraph bool {
-  2 [shape=box label="Enter function bool"];
-  3 [shape=box label="Exit function bool"];
+subgraph cluster_bool {
+  2 [shape=box label="Enter function bool" style="filled"];
+  3 [shape=box label="Exit function bool" style="filled"];
 
   2 -> {3};
 }
 
-subgraph bar {
-  4 [shape=box label="Enter function bar"];
-  5 [shape=box label="Exit function bar"];
+subgraph cluster_bar {
+  4 [shape=box label="Enter function bar" style="filled"];
+  5 [shape=box label="Exit function bar" style="filled"];
 
   4 -> {5};
 }
 
-subgraph baz {
-  6 [shape=box label="Enter function baz"];
-  7 [shape=box label="Exit function baz"];
+subgraph cluster_baz {
+  6 [shape=box label="Enter function baz" style="filled"];
+  7 [shape=box label="Exit function baz" style="filled"];
 
   6 -> {7};
 }
 
-subgraph test_1 {
-  8 [shape=box label="Enter function test_1"];
+subgraph cluster_test_1 {
+  8 [shape=box label="Enter function test_1" style="filled"];
   9 [shape=box label="Enter block"];
   10 [shape=box label="Enter when"];
   11 [shape=box label="Enter when branch condition "];
@@ -58,7 +58,7 @@ subgraph test_1 {
   33 [shape=box label="Exit when branch result"];
   34 [shape=box label="Exit when"];
   35 [shape=box label="Exit block"];
-  36 [shape=box label="Exit function test_1"];
+  36 [shape=box label="Exit function test_1" style="filled"];
 
   8 -> {9};
   9 -> {10};
@@ -90,8 +90,8 @@ subgraph test_1 {
   35 -> {36};
 }
 
-subgraph test_2 {
-  37 [shape=box label="Enter function test_2"];
+subgraph cluster_test_2 {
+  37 [shape=box label="Enter function test_2" style="filled"];
   38 [shape=box label="Enter block"];
   39 [shape=box label="Enter when"];
   40 [shape=box label="Enter when branch condition "];
@@ -119,7 +119,7 @@ subgraph test_2 {
   62 [shape=box label="Exit when branch result"];
   63 [shape=box label="Exit when"];
   64 [shape=box label="Exit block"];
-  65 [shape=box label="Exit function test_2"];
+  65 [shape=box label="Exit function test_2" style="filled"];
 
   37 -> {38};
   38 -> {39};
@@ -151,8 +151,8 @@ subgraph test_2 {
   64 -> {65};
 }
 
-subgraph test_3 {
-  66 [shape=box label="Enter function test_3"];
+subgraph cluster_test_3 {
+  66 [shape=box label="Enter function test_3" style="filled"];
   67 [shape=box label="Enter block"];
   68 [shape=box label="Enter when"];
   69 [shape=box label="Enter when branch condition "];
@@ -172,7 +172,7 @@ subgraph test_3 {
   83 [shape=box label="Exit when branch result"];
   84 [shape=box label="Exit when"];
   85 [shape=box label="Exit block"];
-  86 [shape=box label="Exit function test_3"];
+  86 [shape=box label="Exit function test_3" style="filled"];
 
   66 -> {67};
   67 -> {68};
@@ -196,8 +196,8 @@ subgraph test_3 {
   85 -> {86};
 }
 
-subgraph test_4 {
-  87 [shape=box label="Enter function test_4"];
+subgraph cluster_test_4 {
+  87 [shape=box label="Enter function test_4" style="filled"];
   88 [shape=box label="Enter block"];
   89 [shape=box label="Enter when"];
   90 [shape=box label="Enter when branch condition "];
@@ -225,7 +225,7 @@ subgraph test_4 {
   112 [shape=box label="Access variable R|<local>/x|"];
   113 [shape=box label="Access variable <Unresolved name: length>#"];
   114 [shape=box label="Exit block"];
-  115 [shape=box label="Exit function test_4"];
+  115 [shape=box label="Exit function test_4" style="filled"];
 
   87 -> {88};
   88 -> {89};
@@ -257,8 +257,8 @@ subgraph test_4 {
   114 -> {115};
 }
 
-subgraph test_5 {
-  116 [shape=box label="Enter function test_5"];
+subgraph cluster_test_5 {
+  116 [shape=box label="Enter function test_5" style="filled"];
   117 [shape=box label="Enter block"];
   118 [shape=box label="Enter when"];
   119 [shape=box label="Enter when branch condition "];
@@ -282,7 +282,7 @@ subgraph test_5 {
   137 [shape=box label="Exit when branch result"];
   138 [shape=box label="Exit when"];
   139 [shape=box label="Exit block"];
-  140 [shape=box label="Exit function test_5"];
+  140 [shape=box label="Exit function test_5" style="filled"];
 
   116 -> {117};
   117 -> {118};
@@ -310,8 +310,8 @@ subgraph test_5 {
   139 -> {140};
 }
 
-subgraph test_6 {
-  141 [shape=box label="Enter function test_6"];
+subgraph cluster_test_6 {
+  141 [shape=box label="Enter function test_6" style="filled"];
   142 [shape=box label="Enter block"];
   143 [shape=box label="Enter when"];
   144 [shape=box label="Enter when branch condition "];
@@ -336,7 +336,7 @@ subgraph test_6 {
   163 [shape=box label="Exit when branch result"];
   164 [shape=box label="Exit when"];
   165 [shape=box label="Exit block"];
-  166 [shape=box label="Exit function test_6"];
+  166 [shape=box label="Exit function test_6" style="filled"];
 
   141 -> {142};
   142 -> {143};
@@ -366,8 +366,8 @@ subgraph test_6 {
   165 -> {166};
 }
 
-subgraph test_7 {
-  167 [shape=box label="Enter function test_7"];
+subgraph cluster_test_7 {
+  167 [shape=box label="Enter function test_7" style="filled"];
   168 [shape=box label="Enter block"];
   169 [shape=box label="Enter when"];
   170 [shape=box label="Enter when branch condition "];
@@ -391,7 +391,7 @@ subgraph test_7 {
   188 [shape=box label="Exit when branch result"];
   189 [shape=box label="Exit when"];
   190 [shape=box label="Exit block"];
-  191 [shape=box label="Exit function test_7"];
+  191 [shape=box label="Exit function test_7" style="filled"];
 
   167 -> {168};
   168 -> {169};

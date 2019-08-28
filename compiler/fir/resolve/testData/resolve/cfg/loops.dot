@@ -1,8 +1,8 @@
 digraph loops_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph testWhile {
-  0 [shape=box label="Enter function testWhile"];
+subgraph cluster_testWhile {
+  0 [shape=box label="Enter function testWhile" style="filled"];
   1 [shape=box label="Enter block"];
   2 [shape=box label="Enter while loop"];
   3 [shape=box label="Enter loop condition"];
@@ -19,7 +19,7 @@ subgraph testWhile {
   14 [shape=box label="Access variable R|<local>/x|"];
   15 [shape=box label="Type operator: x is String"];
   16 [shape=box label="Exit block"];
-  17 [shape=box label="Exit function testWhile"];
+  17 [shape=box label="Exit function testWhile" style="filled"];
 
   0 -> {1};
   1 -> {2};
@@ -40,8 +40,8 @@ subgraph testWhile {
   16 -> {17};
 }
 
-subgraph testDoWhile {
-  18 [shape=box label="Enter function testDoWhile"];
+subgraph cluster_testDoWhile {
+  18 [shape=box label="Enter function testDoWhile" style="filled"];
   19 [shape=box label="Enter block"];
   20 [shape=box label="Enter do-while loop"];
   21 [shape=box label="Enter loop block"];
@@ -58,7 +58,7 @@ subgraph testDoWhile {
   32 [shape=box label="Access variable R|<local>/x|"];
   33 [shape=box label="Type operator: x is String"];
   34 [shape=box label="Exit block"];
-  35 [shape=box label="Exit function testDoWhile"];
+  35 [shape=box label="Exit function testDoWhile" style="filled"];
 
   18 -> {19};
   19 -> {20};
@@ -79,8 +79,8 @@ subgraph testDoWhile {
   34 -> {35};
 }
 
-subgraph testFor {
-  36 [shape=box label="Enter function testFor"];
+subgraph cluster_testFor {
+  36 [shape=box label="Enter function testFor" style="filled"];
   37 [shape=box label="Enter block"];
   38 [shape=box label="Const: Int(0)"];
   39 [shape=box label="Const: Int(5)"];
@@ -108,7 +108,7 @@ subgraph testFor {
   61 [shape=box label="Access variable R|<local>/x|"];
   62 [shape=box label="Type operator: x is String"];
   63 [shape=box label="Exit block"];
-  64 [shape=box label="Exit function testFor"];
+  64 [shape=box label="Exit function testFor" style="filled"];
 
   36 -> {37};
   37 -> {38};
@@ -140,8 +140,8 @@ subgraph testFor {
   63 -> {64};
 }
 
-subgraph testWhileTrue {
-  65 [shape=box label="Enter function testWhileTrue"];
+subgraph cluster_testWhileTrue {
+  65 [shape=box label="Enter function testWhileTrue" style="filled"];
   66 [shape=box label="Enter block"];
   67 [shape=box label="Enter while loop"];
   68 [shape=box label="Enter loop condition"];
@@ -156,7 +156,7 @@ subgraph testWhileTrue {
   77 [shape=box label="Exit whileloop[DEAD]"];
   78 [shape=box label="Const: Int(1)[DEAD]"];
   79 [shape=box label="Exit block[DEAD]"];
-  80 [shape=box label="Exit function testWhileTrue[DEAD]"];
+  80 [shape=box label="Exit function testWhileTrue[DEAD]" style="filled"];
 
   65 -> {66};
   66 -> {67};
@@ -176,8 +176,8 @@ subgraph testWhileTrue {
   79 -> {80} [style=dotted];
 }
 
-subgraph testWhileTrueWithBreak {
-  81 [shape=box label="Enter function testWhileTrueWithBreak"];
+subgraph cluster_testWhileTrueWithBreak {
+  81 [shape=box label="Enter function testWhileTrueWithBreak" style="filled"];
   82 [shape=box label="Enter block"];
   83 [shape=box label="Enter while loop"];
   84 [shape=box label="Enter loop condition"];
@@ -206,7 +206,7 @@ subgraph testWhileTrueWithBreak {
   107 [shape=box label="Exit whileloop"];
   108 [shape=box label="Const: Int(1)"];
   109 [shape=box label="Exit block"];
-  110 [shape=box label="Exit function testWhileTrueWithBreak"];
+  110 [shape=box label="Exit function testWhileTrueWithBreak" style="filled"];
 
   81 -> {82};
   82 -> {83};
@@ -241,8 +241,8 @@ subgraph testWhileTrueWithBreak {
   109 -> {110};
 }
 
-subgraph testWhileFalse {
-  111 [shape=box label="Enter function testWhileFalse"];
+subgraph cluster_testWhileFalse {
+  111 [shape=box label="Enter function testWhileFalse" style="filled"];
   112 [shape=box label="Enter block"];
   113 [shape=box label="Enter while loop"];
   114 [shape=box label="Enter loop condition"];
@@ -257,7 +257,7 @@ subgraph testWhileFalse {
   123 [shape=box label="Exit whileloop"];
   124 [shape=box label="Const: Int(1)"];
   125 [shape=box label="Exit block"];
-  126 [shape=box label="Exit function testWhileFalse"];
+  126 [shape=box label="Exit function testWhileFalse" style="filled"];
 
   111 -> {112};
   112 -> {113};
@@ -277,8 +277,8 @@ subgraph testWhileFalse {
   125 -> {126};
 }
 
-subgraph testDoWhileTrue {
-  127 [shape=box label="Enter function testDoWhileTrue"];
+subgraph cluster_testDoWhileTrue {
+  127 [shape=box label="Enter function testDoWhileTrue" style="filled"];
   128 [shape=box label="Enter block"];
   129 [shape=box label="Enter do-while loop"];
   130 [shape=box label="Enter loop block"];
@@ -293,7 +293,7 @@ subgraph testDoWhileTrue {
   139 [shape=box label="Exit do-whileloop[DEAD]"];
   140 [shape=box label="Const: Int(1)[DEAD]"];
   141 [shape=box label="Exit block[DEAD]"];
-  142 [shape=box label="Exit function testDoWhileTrue[DEAD]"];
+  142 [shape=box label="Exit function testDoWhileTrue[DEAD]" style="filled"];
 
   127 -> {128};
   128 -> {129};
@@ -313,8 +313,8 @@ subgraph testDoWhileTrue {
   141 -> {142} [style=dotted];
 }
 
-subgraph testDoWhileTrueWithBreak {
-  143 [shape=box label="Enter function testDoWhileTrueWithBreak"];
+subgraph cluster_testDoWhileTrueWithBreak {
+  143 [shape=box label="Enter function testDoWhileTrueWithBreak" style="filled"];
   144 [shape=box label="Enter block"];
   145 [shape=box label="Enter do-while loop"];
   146 [shape=box label="Enter loop block"];
@@ -343,7 +343,7 @@ subgraph testDoWhileTrueWithBreak {
   169 [shape=box label="Exit do-whileloop"];
   170 [shape=box label="Const: Int(1)"];
   171 [shape=box label="Exit block"];
-  172 [shape=box label="Exit function testDoWhileTrueWithBreak"];
+  172 [shape=box label="Exit function testDoWhileTrueWithBreak" style="filled"];
 
   143 -> {144};
   144 -> {145};
@@ -378,8 +378,8 @@ subgraph testDoWhileTrueWithBreak {
   171 -> {172};
 }
 
-subgraph testDoWhileFalse {
-  173 [shape=box label="Enter function testDoWhileFalse"];
+subgraph cluster_testDoWhileFalse {
+  173 [shape=box label="Enter function testDoWhileFalse" style="filled"];
   174 [shape=box label="Enter block"];
   175 [shape=box label="Enter do-while loop"];
   176 [shape=box label="Enter loop block"];
@@ -393,7 +393,7 @@ subgraph testDoWhileFalse {
   184 [shape=box label="Exit do-whileloop"];
   185 [shape=box label="Const: Int(1)"];
   186 [shape=box label="Exit block"];
-  187 [shape=box label="Exit function testDoWhileFalse"];
+  187 [shape=box label="Exit function testDoWhileFalse" style="filled"];
   188 [shape=box label="Stub[DEAD]"];
 
   173 -> {174};

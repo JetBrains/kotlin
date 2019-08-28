@@ -1,8 +1,8 @@
 digraph complex_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph fetchPluginReleaseDate {
-  0 [shape=box label="Enter function fetchPluginReleaseDate"];
+subgraph cluster_fetchPluginReleaseDate {
+  0 [shape=box label="Enter function fetchPluginReleaseDate" style="filled"];
   1 [shape=box label="Enter block"];
   2 [shape=box label="Const: String(https://plugins.jetbrains.com/api/plugins/)"];
   3 [shape=box label="Access variable R|<local>/pluginId|"];
@@ -46,7 +46,7 @@ subgraph fetchPluginReleaseDate {
   38 [shape=box label="Access variable <Unresolved name: IOException>#"];
   39 [shape=box label="Access variable <Unresolved name: ResponseParseException>#"];
   40 [shape=box label="Exit annotation"];
-  41 [shape=box label="Exit function fetchPluginReleaseDate"];
+  41 [shape=box label="Exit function fetchPluginReleaseDate" style="filled"];
 
   0 -> {1};
   1 -> {2};

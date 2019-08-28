@@ -60,7 +60,7 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
 
         override fun visitFile(file: FirFile) {
             dotBuilder.appendln("digraph ${file.name.replace(".", "_")} {")
-                .appendln("graph [splines=ortho]")
+                .appendln("graph [splines=ortho, nodesep=3]")
                 .appendln()
             super.visitFile(file)
             dotBuilder.appendln("}")
@@ -86,7 +86,8 @@ fun ControlFlowGraph.dotRenderToStringBuilder(builder: StringBuilder, indexOffse
     with(builder) {
         val sortedNodes = sortNodes()
         val indices = sortedNodes.indicesMap().mapValues { (_, index) -> index + indexOffset }
-        appendln("subgraph ${name.replace(" ", "_")} {")
+        val graphName = name.replace(Regex("[ <>]"), "_")
+        appendln("subgraph cluster_$graphName {")
 
         fun CFGNode<*>.splitEdges(): Pair<List<CFGNode<*>>, List<CFGNode<*>>> =
             if (isDead) emptyList<CFGNode<*>>() to followingNodes
@@ -95,7 +96,12 @@ fun ControlFlowGraph.dotRenderToStringBuilder(builder: StringBuilder, indexOffse
         sortedNodes.forEach {
             append(INDENT)
             append(indices.getValue(it))
-            appendln(" [shape=box label=\"${it.render().replace("\"", "")}\"];")
+            val attributes = mutableListOf("shape=box")
+            attributes += "label=\"${it.render().replace("\"", "")}\""
+            if (it == enterNode || it == exitNode) {
+                attributes += "style=\"filled\""
+            }
+            appendln(attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
         }
         appendln()
 

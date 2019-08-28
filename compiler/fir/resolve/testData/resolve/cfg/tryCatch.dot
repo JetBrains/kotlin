@@ -1,8 +1,8 @@
 digraph tryCatch_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph test_1 {
-  0 [shape=box label="Enter function test_1"];
+subgraph cluster_test_1 {
+  0 [shape=box label="Enter function test_1" style="filled"];
   1 [shape=box label="Enter block"];
   2 [shape=box label="Try expression enter"];
   3 [shape=box label="Try main block enter"];
@@ -25,7 +25,7 @@ subgraph test_1 {
   20 [shape=box label="Catch exit"];
   21 [shape=box label="Try expression exit"];
   22 [shape=box label="Exit block"];
-  23 [shape=box label="Exit function test_1"];
+  23 [shape=box label="Exit function test_1" style="filled"];
 
   0 -> {1};
   1 -> {2};
@@ -52,8 +52,8 @@ subgraph test_1 {
   22 -> {23};
 }
 
-subgraph test_2 {
-  24 [shape=box label="Enter function test_2"];
+subgraph cluster_test_2 {
+  24 [shape=box label="Enter function test_2" style="filled"];
   25 [shape=box label="Enter block"];
   26 [shape=box label="Try expression enter"];
   27 [shape=box label="Try main block enter"];
@@ -69,7 +69,7 @@ subgraph test_2 {
   37 [shape=box label="Try expression exit"];
   38 [shape=box label="Variable declaration: lval x: R|kotlin/Int|"];
   39 [shape=box label="Exit block"];
-  40 [shape=box label="Exit function test_2"];
+  40 [shape=box label="Exit function test_2" style="filled"];
 
   24 -> {25};
   25 -> {26};
@@ -89,8 +89,8 @@ subgraph test_2 {
   39 -> {40};
 }
 
-subgraph test_3 {
-  41 [shape=box label="Enter function test_3"];
+subgraph cluster_test_3 {
+  41 [shape=box label="Enter function test_3" style="filled"];
   42 [shape=box label="Enter block"];
   43 [shape=box label="Enter while loop"];
   44 [shape=box label="Enter loop condition"];
@@ -158,7 +158,7 @@ subgraph test_3 {
   106 [shape=box label="Const: Int(3)"];
   107 [shape=box label="Variable declaration: lval z: R|kotlin/Int|"];
   108 [shape=box label="Exit block"];
-  109 [shape=box label="Exit function test_3"];
+  109 [shape=box label="Exit function test_3" style="filled"];
 
   41 -> {42};
   42 -> {43};

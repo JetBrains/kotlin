@@ -1,12 +1,12 @@
 digraph lambdas_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph run {
-  0 [shape=box label="Enter function run"];
+subgraph cluster_run {
+  0 [shape=box label="Enter function run" style="filled"];
   1 [shape=box label="Enter block"];
   2 [shape=box label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
   3 [shape=box label="Exit block"];
-  4 [shape=box label="Exit function run"];
+  4 [shape=box label="Exit function run" style="filled"];
 
   0 -> {1};
   1 -> {2};
@@ -14,8 +14,8 @@ subgraph run {
   3 -> {4};
 }
 
-subgraph test_1 {
-  5 [shape=box label="Enter function test_1"];
+subgraph cluster_test_1 {
+  5 [shape=box label="Enter function test_1" style="filled"];
   6 [shape=box label="Enter block"];
   7 [shape=box label="Enter when"];
   8 [shape=box label="Enter when branch condition "];
@@ -42,7 +42,7 @@ subgraph test_1 {
   26 [shape=box label="Exit when branch result"];
   27 [shape=box label="Exit when"];
   28 [shape=box label="Exit block"];
-  29 [shape=box label="Exit function test_1"];
+  29 [shape=box label="Exit function test_1" style="filled"];
 
   5 -> {6};
   6 -> {7};
@@ -70,13 +70,13 @@ subgraph test_1 {
   28 -> {29};
 }
 
-subgraph <anonymous> {
-  30 [shape=box label="Enter function anonymousFunction"];
+subgraph cluster__anonymous_ {
+  30 [shape=box label="Enter function anonymousFunction" style="filled"];
   31 [shape=box label="Enter block"];
   32 [shape=box label="Access variable R|<local>/x|"];
   33 [shape=box label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
   34 [shape=box label="Exit block"];
-  35 [shape=box label="Exit function anonymousFunction"];
+  35 [shape=box label="Exit function anonymousFunction" style="filled"];
 
   30 -> {31};
   31 -> {32};
@@ -85,8 +85,8 @@ subgraph <anonymous> {
   34 -> {35};
 }
 
-subgraph test_2 {
-  36 [shape=box label="Enter function test_2"];
+subgraph cluster_test_2 {
+  36 [shape=box label="Enter function test_2" style="filled"];
   37 [shape=box label="Enter block"];
   38 [shape=box label="Enter when"];
   39 [shape=box label="Enter when branch condition "];
@@ -104,7 +104,7 @@ subgraph test_2 {
   51 [shape=box label="Exit when branch result"];
   52 [shape=box label="Exit when"];
   53 [shape=box label="Exit block"];
-  54 [shape=box label="Exit function test_2"];
+  54 [shape=box label="Exit function test_2" style="filled"];
 
   36 -> {37};
   37 -> {38};

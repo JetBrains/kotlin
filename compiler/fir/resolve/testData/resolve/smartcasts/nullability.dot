@@ -1,50 +1,50 @@
 digraph nullability_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph foo {
-  0 [shape=box label="Enter function foo"];
-  1 [shape=box label="Exit function foo"];
+subgraph cluster_foo {
+  0 [shape=box label="Enter function foo" style="filled"];
+  1 [shape=box label="Exit function foo" style="filled"];
 
   0 -> {1};
 }
 
-subgraph getA {
-  2 [shape=box label="Enter function getA"];
-  3 [shape=box label="Exit function getA"];
+subgraph cluster_getA {
+  2 [shape=box label="Enter function getA" style="filled"];
+  3 [shape=box label="Exit function getA" style="filled"];
 
   2 -> {3};
 }
 
-subgraph val_s {
-  4 [shape=box label="Enter property"];
-  5 [shape=box label="Exit property"];
+subgraph cluster_val_s {
+  4 [shape=box label="Enter property" style="filled"];
+  5 [shape=box label="Exit property" style="filled"];
 
   4 -> {5};
 }
 
-subgraph fs {
-  6 [shape=box label="Enter function fs"];
-  7 [shape=box label="Exit function fs"];
+subgraph cluster_fs {
+  6 [shape=box label="Enter function fs" style="filled"];
+  7 [shape=box label="Exit function fs" style="filled"];
 
   6 -> {7};
 }
 
-subgraph val_data {
-  8 [shape=box label="Enter property"];
-  9 [shape=box label="Exit property"];
+subgraph cluster_val_data {
+  8 [shape=box label="Enter property" style="filled"];
+  9 [shape=box label="Exit property" style="filled"];
 
   8 -> {9};
 }
 
-subgraph fdata {
-  10 [shape=box label="Enter function fdata"];
-  11 [shape=box label="Exit function fdata"];
+subgraph cluster_fdata {
+  10 [shape=box label="Enter function fdata" style="filled"];
+  11 [shape=box label="Exit function fdata" style="filled"];
 
   10 -> {11};
 }
 
-subgraph test_1 {
-  12 [shape=box label="Enter function test_1"];
+subgraph cluster_test_1 {
+  12 [shape=box label="Enter function test_1" style="filled"];
   13 [shape=box label="Enter block"];
   14 [shape=box label="Enter when"];
   15 [shape=box label="Enter when branch condition "];
@@ -68,7 +68,7 @@ subgraph test_1 {
   33 [shape=box label="Access variable R|<local>/x|"];
   34 [shape=box label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
   35 [shape=box label="Exit block"];
-  36 [shape=box label="Exit function test_1"];
+  36 [shape=box label="Exit function test_1" style="filled"];
 
   12 -> {13};
   13 -> {14};
@@ -96,8 +96,8 @@ subgraph test_1 {
   35 -> {36};
 }
 
-subgraph test_2 {
-  37 [shape=box label="Enter function test_2"];
+subgraph cluster_test_2 {
+  37 [shape=box label="Enter function test_2" style="filled"];
   38 [shape=box label="Enter block"];
   39 [shape=box label="Enter when"];
   40 [shape=box label="Enter when branch condition "];
@@ -121,7 +121,7 @@ subgraph test_2 {
   58 [shape=box label="Access variable R|<local>/x|"];
   59 [shape=box label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
   60 [shape=box label="Exit block"];
-  61 [shape=box label="Exit function test_2"];
+  61 [shape=box label="Exit function test_2" style="filled"];
 
   37 -> {38};
   38 -> {39};
@@ -149,8 +149,8 @@ subgraph test_2 {
   60 -> {61};
 }
 
-subgraph test_3 {
-  62 [shape=box label="Enter function test_3"];
+subgraph cluster_test_3 {
+  62 [shape=box label="Enter function test_3" style="filled"];
   63 [shape=box label="Enter block"];
   64 [shape=box label="Enter when"];
   65 [shape=box label="Access variable R|<local>/x|"];
@@ -174,7 +174,7 @@ subgraph test_3 {
   83 [shape=box label="Access variable R|<local>/x|"];
   84 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   85 [shape=box label="Exit block"];
-  86 [shape=box label="Exit function test_3"];
+  86 [shape=box label="Exit function test_3" style="filled"];
 
   62 -> {63};
   63 -> {64};
@@ -203,8 +203,8 @@ subgraph test_3 {
   85 -> {86};
 }
 
-subgraph test_4 {
-  87 [shape=box label="Enter function test_4"];
+subgraph cluster_test_4 {
+  87 [shape=box label="Enter function test_4" style="filled"];
   88 [shape=box label="Enter block"];
   89 [shape=box label="Enter when"];
   90 [shape=box label="Enter when branch condition "];
@@ -227,7 +227,7 @@ subgraph test_4 {
   107 [shape=box label="Access variable R|<local>/x|"];
   108 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   109 [shape=box label="Exit block"];
-  110 [shape=box label="Exit function test_4"];
+  110 [shape=box label="Exit function test_4" style="filled"];
 
   87 -> {88};
   88 -> {89};
@@ -255,8 +255,8 @@ subgraph test_4 {
   109 -> {110};
 }
 
-subgraph test_5 {
-  111 [shape=box label="Enter function test_5"];
+subgraph cluster_test_5 {
+  111 [shape=box label="Enter function test_5" style="filled"];
   112 [shape=box label="Enter block"];
   113 [shape=box label="Enter when"];
   114 [shape=box label="Enter when branch condition "];
@@ -286,7 +286,7 @@ subgraph test_5 {
   138 [shape=box label="Exit when branch result"];
   139 [shape=box label="Exit when"];
   140 [shape=box label="Exit block"];
-  141 [shape=box label="Exit function test_5"];
+  141 [shape=box label="Exit function test_5" style="filled"];
 
   111 -> {112};
   112 -> {113};
@@ -320,8 +320,8 @@ subgraph test_5 {
   140 -> {141};
 }
 
-subgraph test_6 {
-  142 [shape=box label="Enter function test_6"];
+subgraph cluster_test_6 {
+  142 [shape=box label="Enter function test_6" style="filled"];
   143 [shape=box label="Enter block"];
   144 [shape=box label="Enter when"];
   145 [shape=box label="Access variable R|<local>/q|"];
@@ -355,7 +355,7 @@ subgraph test_6 {
   173 [shape=box label="Access variable R|/MyData.s|"];
   174 [shape=box label="Function call: R|<local>/q|.R|/Q.data|.R|/MyData.s|.R|kotlin/Int.inc|()"];
   175 [shape=box label="Exit block"];
-  176 [shape=box label="Exit function test_6"];
+  176 [shape=box label="Exit function test_6" style="filled"];
 
   142 -> {143};
   143 -> {144};
@@ -394,8 +394,8 @@ subgraph test_6 {
   175 -> {176};
 }
 
-subgraph test_7 {
-  177 [shape=box label="Enter function test_7"];
+subgraph cluster_test_7 {
+  177 [shape=box label="Enter function test_7" style="filled"];
   178 [shape=box label="Enter block"];
   179 [shape=box label="Enter when"];
   180 [shape=box label="Enter when branch condition "];
@@ -425,7 +425,7 @@ subgraph test_7 {
   204 [shape=box label="Exit when branch result"];
   205 [shape=box label="Exit when"];
   206 [shape=box label="Exit block"];
-  207 [shape=box label="Exit function test_7"];
+  207 [shape=box label="Exit function test_7" style="filled"];
 
   177 -> {178};
   178 -> {179};
@@ -459,8 +459,8 @@ subgraph test_7 {
   206 -> {207};
 }
 
-subgraph test_8 {
-  208 [shape=box label="Enter function test_8"];
+subgraph cluster_test_8 {
+  208 [shape=box label="Enter function test_8" style="filled"];
   209 [shape=box label="Enter block"];
   210 [shape=box label="Enter when"];
   211 [shape=box label="Enter when branch condition "];
@@ -480,7 +480,7 @@ subgraph test_8 {
   225 [shape=box label="Exit when branch result"];
   226 [shape=box label="Exit when"];
   227 [shape=box label="Exit block"];
-  228 [shape=box label="Exit function test_8"];
+  228 [shape=box label="Exit function test_8" style="filled"];
 
   208 -> {209};
   209 -> {210};
@@ -504,8 +504,8 @@ subgraph test_8 {
   227 -> {228};
 }
 
-subgraph test_9 {
-  229 [shape=box label="Enter function test_9"];
+subgraph cluster_test_9 {
+  229 [shape=box label="Enter function test_9" style="filled"];
   230 [shape=box label="Enter block"];
   231 [shape=box label="Enter when"];
   232 [shape=box label="Enter when branch condition "];
@@ -584,7 +584,7 @@ subgraph test_9 {
   305 [shape=box label="Access variable R|<local>/b|"];
   306 [shape=box label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
   307 [shape=box label="Exit block"];
-  308 [shape=box label="Exit function test_9"];
+  308 [shape=box label="Exit function test_9" style="filled"];
 
   229 -> {230};
   230 -> {231};
@@ -667,8 +667,8 @@ subgraph test_9 {
   307 -> {308};
 }
 
-subgraph test_10 {
-  309 [shape=box label="Enter function test_10"];
+subgraph cluster_test_10 {
+  309 [shape=box label="Enter function test_10" style="filled"];
   310 [shape=box label="Enter block"];
   311 [shape=box label="Enter when"];
   312 [shape=box label="Enter when branch condition "];
@@ -747,7 +747,7 @@ subgraph test_10 {
   385 [shape=box label="Access variable R|<local>/b|"];
   386 [shape=box label="Function call: R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
   387 [shape=box label="Exit block"];
-  388 [shape=box label="Exit function test_10"];
+  388 [shape=box label="Exit function test_10" style="filled"];
 
   309 -> {310};
   310 -> {311};

@@ -1,8 +1,8 @@
 digraph simpleIf_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph test_1 {
-  0 [shape=box label="Enter function test_1"];
+subgraph cluster_test_1 {
+  0 [shape=box label="Enter function test_1" style="filled"];
   1 [shape=box label="Enter block"];
   2 [shape=box label="Enter when"];
   3 [shape=box label="Enter when branch condition "];
@@ -23,7 +23,7 @@ subgraph test_1 {
   18 [shape=box label="Access variable R|<local>/x|"];
   19 [shape=box label="Access variable <Unresolved name: length>#"];
   20 [shape=box label="Exit block"];
-  21 [shape=box label="Exit function test_1"];
+  21 [shape=box label="Exit function test_1" style="filled"];
 
   0 -> {1};
   1 -> {2};
@@ -48,8 +48,8 @@ subgraph test_1 {
   20 -> {21};
 }
 
-subgraph test_2 {
-  22 [shape=box label="Enter function test_2"];
+subgraph cluster_test_2 {
+  22 [shape=box label="Enter function test_2" style="filled"];
   23 [shape=box label="Enter block"];
   24 [shape=box label="Access variable R|<local>/x|"];
   25 [shape=box label="Type operator: x is String"];
@@ -72,7 +72,7 @@ subgraph test_2 {
   42 [shape=box label="Access variable R|<local>/x|"];
   43 [shape=box label="Access variable <Unresolved name: length>#"];
   44 [shape=box label="Exit block"];
-  45 [shape=box label="Exit function test_2"];
+  45 [shape=box label="Exit function test_2" style="filled"];
 
   22 -> {23};
   23 -> {24};
@@ -99,8 +99,8 @@ subgraph test_2 {
   44 -> {45};
 }
 
-subgraph test_3 {
-  46 [shape=box label="Enter function test_3"];
+subgraph cluster_test_3 {
+  46 [shape=box label="Enter function test_3" style="filled"];
   47 [shape=box label="Enter block"];
   48 [shape=box label="Enter when"];
   49 [shape=box label="Enter when branch condition "];
@@ -128,7 +128,7 @@ subgraph test_3 {
   71 [shape=box label="Exit when branch result"];
   72 [shape=box label="Exit when"];
   73 [shape=box label="Exit block"];
-  74 [shape=box label="Exit function test_3"];
+  74 [shape=box label="Exit function test_3" style="filled"];
 
   46 -> {47};
   47 -> {48};

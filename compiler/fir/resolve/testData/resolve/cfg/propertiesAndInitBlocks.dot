@@ -1,12 +1,12 @@
 digraph propertiesAndInitBlocks_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph run {
-  0 [shape=box label="Enter function run"];
+subgraph cluster_run {
+  0 [shape=box label="Enter function run" style="filled"];
   1 [shape=box label="Enter block"];
   2 [shape=box label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
   3 [shape=box label="Exit block"];
-  4 [shape=box label="Exit function run"];
+  4 [shape=box label="Exit function run" style="filled"];
 
   0 -> {1};
   1 -> {2};
@@ -14,23 +14,23 @@ subgraph run {
   3 -> {4};
 }
 
-subgraph val_x1 {
-  5 [shape=box label="Enter property"];
+subgraph cluster_val_x1 {
+  5 [shape=box label="Enter property" style="filled"];
   6 [shape=box label="Const: Int(1)"];
-  7 [shape=box label="Exit property"];
+  7 [shape=box label="Exit property" style="filled"];
 
   5 -> {6};
   6 -> {7};
 }
 
-subgraph <getter> {
-  8 [shape=box label="Enter function getter"];
+subgraph cluster__getter_ {
+  8 [shape=box label="Enter function getter" style="filled"];
   9 [shape=box label="Enter block"];
   10 [shape=box label="Const: Int(1)"];
   11 [shape=box label="Jump: ^ Int(1)"];
   12 [shape=box label="Stub[DEAD]"];
   13 [shape=box label="Exit block[DEAD]"];
-  14 [shape=box label="Exit function getter[DEAD]"];
+  14 [shape=box label="Exit function getter[DEAD]" style="filled"];
 
   8 -> {9};
   9 -> {10};
@@ -40,13 +40,13 @@ subgraph <getter> {
   13 -> {14} [style=dotted];
 }
 
-subgraph <setter> {
-  15 [shape=box label="Enter function setter"];
+subgraph cluster__setter_ {
+  15 [shape=box label="Enter function setter" style="filled"];
   16 [shape=box label="Enter block"];
   17 [shape=box label="Const: Int(1)"];
   18 [shape=box label="Assignmenet: F|/x2|"];
   19 [shape=box label="Exit block"];
-  20 [shape=box label="Exit function setter"];
+  20 [shape=box label="Exit function setter" style="filled"];
 
   15 -> {16};
   16 -> {17};
@@ -55,17 +55,17 @@ subgraph <setter> {
   19 -> {20};
 }
 
-subgraph val_x2 {
-  21 [shape=box label="Enter property"];
+subgraph cluster_val_x2 {
+  21 [shape=box label="Enter property" style="filled"];
   22 [shape=box label="Const: Int(1)"];
-  23 [shape=box label="Exit property"];
+  23 [shape=box label="Exit property" style="filled"];
 
   21 -> {22};
   22 -> {23};
 }
 
-subgraph foo {
-  24 [shape=box label="Enter function foo"];
+subgraph cluster_foo {
+  24 [shape=box label="Enter function foo" style="filled"];
   25 [shape=box label="Enter block"];
   26 [shape=box label="Const: Int(1)"];
   27 [shape=box label="Const: Int(1)"];
@@ -75,7 +75,7 @@ subgraph foo {
   31 [shape=box label="Throw: throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
   32 [shape=box label="Stub[DEAD]"];
   33 [shape=box label="Exit block[DEAD]"];
-  34 [shape=box label="Exit function foo[DEAD]"];
+  34 [shape=box label="Exit function foo[DEAD]" style="filled"];
 
   24 -> {25};
   25 -> {26};
@@ -89,14 +89,14 @@ subgraph foo {
   33 -> {34} [style=dotted];
 }
 
-subgraph <init> {
-  35 [shape=box label="Enter function <init>"];
-  36 [shape=box label="Exit function <init>"];
+subgraph cluster__init_ {
+  35 [shape=box label="Enter function <init>" style="filled"];
+  36 [shape=box label="Exit function <init>" style="filled"];
 
   35 -> {36};
 }
 
-subgraph <getter> {
+subgraph cluster__getter_ {
   37 [shape=box label="Enter init block"];
   38 [shape=box label="Enter block"];
   39 [shape=box label="Function call: <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
@@ -104,10 +104,10 @@ subgraph <getter> {
   41 [shape=box label="Stub[DEAD]"];
   42 [shape=box label="Exit block[DEAD]"];
   43 [shape=box label="Exit init block[DEAD]"];
-  44 [shape=box label="Enter function getter"];
+  44 [shape=box label="Enter function getter" style="filled"];
   45 [shape=box label="Enter block"];
   46 [shape=box label="Exit block"];
-  47 [shape=box label="Exit function getter"];
+  47 [shape=box label="Exit function getter" style="filled"];
 
   37 -> {38};
   38 -> {39};
@@ -120,14 +120,14 @@ subgraph <getter> {
   46 -> {47};
 }
 
-subgraph <init> {
-  48 [shape=box label="Enter function <init>"];
-  49 [shape=box label="Exit function <init>"];
+subgraph cluster__init_ {
+  48 [shape=box label="Enter function <init>" style="filled"];
+  49 [shape=box label="Exit function <init>" style="filled"];
 
   48 -> {49};
 }
 
-subgraph val_x3 {
+subgraph cluster_val_x3 {
   50 [shape=box label="Enter init block"];
   51 [shape=box label="Enter block"];
   52 [shape=box label="Function call: <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
@@ -136,7 +136,7 @@ subgraph val_x3 {
   55 [shape=box label="Const: Int(1)[DEAD]"];
   56 [shape=box label="Exit block[DEAD]"];
   57 [shape=box label="Exit init block[DEAD]"];
-  58 [shape=box label="Enter property"];
+  58 [shape=box label="Enter property" style="filled"];
   59 [shape=box label="Enter function anonymousFunction"];
   60 [shape=box label="Enter block"];
   61 [shape=box label="Function call: <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
@@ -165,7 +165,7 @@ subgraph val_x3 {
     throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
 }
 )[DEAD]"];
-  67 [shape=box label="Exit property[DEAD]"];
+  67 [shape=box label="Exit property[DEAD]" style="filled"];
 
   50 -> {51};
   51 -> {52};
@@ -185,8 +185,8 @@ subgraph val_x3 {
   66 -> {67} [style=dotted];
 }
 
-subgraph val_x4 {
-  68 [shape=box label="Enter property"];
+subgraph cluster_val_x4 {
+  68 [shape=box label="Enter property" style="filled"];
   69 [shape=box label="Try expression enter"];
   70 [shape=box label="Try main block enter"];
   71 [shape=box label="Enter block"];
@@ -204,7 +204,7 @@ subgraph val_x4 {
   83 [shape=box label="Exit block"];
   84 [shape=box label="Catch exit"];
   85 [shape=box label="Try expression exit"];
-  86 [shape=box label="Exit property"];
+  86 [shape=box label="Exit property" style="filled"];
 
   68 -> {69};
   69 -> {70};

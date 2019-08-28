@@ -1,22 +1,22 @@
 digraph elvis_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph foo {
-  0 [shape=box label="Enter function foo"];
-  1 [shape=box label="Exit function foo"];
+subgraph cluster_foo {
+  0 [shape=box label="Enter function foo" style="filled"];
+  1 [shape=box label="Exit function foo" style="filled"];
 
   0 -> {1};
 }
 
-subgraph val_b {
-  2 [shape=box label="Enter property"];
-  3 [shape=box label="Exit property"];
+subgraph cluster_val_b {
+  2 [shape=box label="Enter property" style="filled"];
+  3 [shape=box label="Exit property" style="filled"];
 
   2 -> {3};
 }
 
-subgraph test_1 {
-  4 [shape=box label="Enter function test_1"];
+subgraph cluster_test_1 {
+  4 [shape=box label="Enter function test_1" style="filled"];
   5 [shape=box label="Enter block"];
   6 [shape=box label="Enter when"];
   7 [shape=box label="Enter when branch condition "];
@@ -53,7 +53,7 @@ subgraph test_1 {
   38 [shape=box label="Exit when branch result"];
   39 [shape=box label="Exit when"];
   40 [shape=box label="Exit block"];
-  41 [shape=box label="Exit function test_1"];
+  41 [shape=box label="Exit function test_1" style="filled"];
 
   4 -> {5};
   5 -> {6};

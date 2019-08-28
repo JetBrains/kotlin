@@ -1,16 +1,16 @@
 digraph initBlock_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph <init> {
-  0 [shape=box label="Enter function <init>"];
-  1 [shape=box label="Exit function <init>"];
+subgraph cluster__init_ {
+  0 [shape=box label="Enter function <init>" style="filled"];
+  1 [shape=box label="Exit function <init>" style="filled"];
 
   0 -> {1};
 }
 
-subgraph <init> {
-  2 [shape=box label="Enter function <init>"];
-  3 [shape=box label="Exit function <init>"];
+subgraph cluster__init_ {
+  2 [shape=box label="Enter function <init>" style="filled"];
+  3 [shape=box label="Exit function <init>" style="filled"];
 
   2 -> {3};
 }

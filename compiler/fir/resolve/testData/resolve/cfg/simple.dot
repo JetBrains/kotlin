@@ -1,19 +1,19 @@
 digraph simple_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph foo {
-  0 [shape=box label="Enter function foo"];
+subgraph cluster_foo {
+  0 [shape=box label="Enter function foo" style="filled"];
   1 [shape=box label="Enter block"];
   2 [shape=box label="Exit block"];
-  3 [shape=box label="Exit function foo"];
+  3 [shape=box label="Exit function foo" style="filled"];
 
   0 -> {1};
   1 -> {2};
   2 -> {3};
 }
 
-subgraph test {
-  4 [shape=box label="Enter function test"];
+subgraph cluster_test {
+  4 [shape=box label="Enter function test" style="filled"];
   5 [shape=box label="Enter block"];
   6 [shape=box label="Const: Int(1)"];
   7 [shape=box label="Variable declaration: lval x: R|kotlin/Int|"];
@@ -23,7 +23,7 @@ subgraph test {
   11 [shape=box label="Variable declaration: lval y: R|kotlin/Int|"];
   12 [shape=box label="Function call: R|/foo|()"];
   13 [shape=box label="Exit block"];
-  14 [shape=box label="Exit function test"];
+  14 [shape=box label="Exit function test" style="filled"];
 
   4 -> {5};
   5 -> {6};

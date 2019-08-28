@@ -1,15 +1,15 @@
 digraph endlessLoops_kt {
-graph [splines=ortho]
+graph [splines=ortho, nodesep=3]
 
-subgraph foo {
-  0 [shape=box label="Enter function foo"];
-  1 [shape=box label="Exit function foo"];
+subgraph cluster_foo {
+  0 [shape=box label="Enter function foo" style="filled"];
+  1 [shape=box label="Exit function foo" style="filled"];
 
   0 -> {1};
 }
 
-subgraph test_1 {
-  2 [shape=box label="Enter function test_1"];
+subgraph cluster_test_1 {
+  2 [shape=box label="Enter function test_1" style="filled"];
   3 [shape=box label="Enter block"];
   4 [shape=box label="Enter while loop"];
   5 [shape=box label="Enter loop condition"];
@@ -41,7 +41,7 @@ subgraph test_1 {
   31 [shape=box label="Access variable R|<local>/x|"];
   32 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   33 [shape=box label="Exit block"];
-  34 [shape=box label="Exit function test_1"];
+  34 [shape=box label="Exit function test_1" style="filled"];
 
   2 -> {3};
   3 -> {4};
@@ -79,8 +79,8 @@ subgraph test_1 {
   33 -> {34};
 }
 
-subgraph test_2 {
-  35 [shape=box label="Enter function test_2"];
+subgraph cluster_test_2 {
+  35 [shape=box label="Enter function test_2" style="filled"];
   36 [shape=box label="Enter block"];
   37 [shape=box label="Enter while loop"];
   38 [shape=box label="Enter loop condition"];
@@ -112,7 +112,7 @@ subgraph test_2 {
   64 [shape=box label="Access variable R|<local>/x|"];
   65 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   66 [shape=box label="Exit block"];
-  67 [shape=box label="Exit function test_2"];
+  67 [shape=box label="Exit function test_2" style="filled"];
 
   35 -> {36};
   36 -> {37};
@@ -150,8 +150,8 @@ subgraph test_2 {
   66 -> {67};
 }
 
-subgraph test_3 {
-  68 [shape=box label="Enter function test_3"];
+subgraph cluster_test_3 {
+  68 [shape=box label="Enter function test_3" style="filled"];
   69 [shape=box label="Enter block"];
   70 [shape=box label="Enter while loop"];
   71 [shape=box label="Enter loop condition"];
@@ -198,7 +198,7 @@ subgraph test_3 {
   112 [shape=box label="Access variable R|<local>/x|"];
   113 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   114 [shape=box label="Exit block"];
-  115 [shape=box label="Exit function test_3"];
+  115 [shape=box label="Exit function test_3" style="filled"];
 
   68 -> {69};
   69 -> {70};
@@ -252,8 +252,8 @@ subgraph test_3 {
   114 -> {115};
 }
 
-subgraph test_4 {
-  116 [shape=box label="Enter function test_4"];
+subgraph cluster_test_4 {
+  116 [shape=box label="Enter function test_4" style="filled"];
   117 [shape=box label="Enter block"];
   118 [shape=box label="Enter while loop"];
   119 [shape=box label="Enter loop condition"];
@@ -287,7 +287,7 @@ subgraph test_4 {
   147 [shape=box label="Access variable R|<local>/x|"];
   148 [shape=box label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
   149 [shape=box label="Exit block"];
-  150 [shape=box label="Exit function test_4"];
+  150 [shape=box label="Exit function test_4" style="filled"];
 
   116 -> {117};
   117 -> {118};
@@ -328,8 +328,8 @@ subgraph test_4 {
   149 -> {150};
 }
 
-subgraph test_5 {
-  151 [shape=box label="Enter function test_5"];
+subgraph cluster_test_5 {
+  151 [shape=box label="Enter function test_5" style="filled"];
   152 [shape=box label="Enter block"];
   153 [shape=box label="Enter do-while loop"];
   154 [shape=box label="Enter loop block"];
@@ -361,7 +361,7 @@ subgraph test_5 {
   180 [shape=box label="Access variable R|<local>/x|"];
   181 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   182 [shape=box label="Exit block"];
-  183 [shape=box label="Exit function test_5"];
+  183 [shape=box label="Exit function test_5" style="filled"];
 
   151 -> {152};
   152 -> {153};
@@ -399,8 +399,8 @@ subgraph test_5 {
   182 -> {183};
 }
 
-subgraph test_6 {
-  184 [shape=box label="Enter function test_6"];
+subgraph cluster_test_6 {
+  184 [shape=box label="Enter function test_6" style="filled"];
   185 [shape=box label="Enter block"];
   186 [shape=box label="Enter do-while loop"];
   187 [shape=box label="Enter loop block"];
@@ -432,7 +432,7 @@ subgraph test_6 {
   213 [shape=box label="Access variable R|<local>/x|"];
   214 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   215 [shape=box label="Exit block"];
-  216 [shape=box label="Exit function test_6"];
+  216 [shape=box label="Exit function test_6" style="filled"];
 
   184 -> {185};
   185 -> {186};
@@ -470,8 +470,8 @@ subgraph test_6 {
   215 -> {216};
 }
 
-subgraph test_7 {
-  217 [shape=box label="Enter function test_7"];
+subgraph cluster_test_7 {
+  217 [shape=box label="Enter function test_7" style="filled"];
   218 [shape=box label="Enter block"];
   219 [shape=box label="Enter do-while loop"];
   220 [shape=box label="Enter loop block"];
@@ -488,7 +488,7 @@ subgraph test_7 {
   231 [shape=box label="Access variable R|<local>/x|[DEAD]"];
   232 [shape=box label="Function call: R|<local>/x|.<Unresolved name: foo>#()[DEAD]"];
   233 [shape=box label="Exit block[DEAD]"];
-  234 [shape=box label="Exit function test_7[DEAD]"];
+  234 [shape=box label="Exit function test_7[DEAD]" style="filled"];
 
   217 -> {218};
   218 -> {219};
