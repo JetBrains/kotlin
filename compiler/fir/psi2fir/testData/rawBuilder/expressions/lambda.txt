@@ -11,14 +11,14 @@ FILE: lambda.kt
             public? get(): Int
 
         public final fun component1(): <implicit> {
-            ^component1 R|/Tuple.x|
+            ^component1 D|this@R|/Tuple||.R|/Tuple.x|
         }
 
         public final fun component2(): <implicit> {
-            ^component2 R|/Tuple.y|
+            ^component2 D|this@R|/Tuple||.R|/Tuple.y|
         }
 
-        public final fun copy(x: Int = R|/Tuple.x|, y: Int = R|/Tuple.y|): R|Tuple| {
+        public final fun copy(x: Int = D|this@R|/Tuple||.R|/Tuple.x|, y: Int = D|this@R|/Tuple||.R|/Tuple.y|): R|Tuple| {
         }
 
     }

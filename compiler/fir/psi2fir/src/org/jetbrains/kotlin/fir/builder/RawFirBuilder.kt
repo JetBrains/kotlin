@@ -491,7 +491,8 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     val zippedParameters = classOrObject.primaryConstructorParameters.zip(
                         firClass.declarations.filterIsInstance<FirProperty>()
                     )
-                    zippedParameters.generateComponentFunctions(session, firClass, context.packageFqName, context.className)
+                    zippedParameters.generateComponentFunctions(
+                        session, firClass, context.packageFqName, context.className, firPrimaryConstructor)
                     zippedParameters.generateCopyFunction(
                         session, classOrObject, firClass, context.packageFqName, context.className, firPrimaryConstructor
                     )

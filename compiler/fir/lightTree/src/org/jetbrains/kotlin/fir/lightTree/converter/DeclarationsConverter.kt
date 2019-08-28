@@ -406,7 +406,9 @@ class DeclarationsConverter(
             //parse data class
             if (modifiers.isDataClass() && firPrimaryConstructor != null) {
                 val zippedParameters = MutableList(properties.size) { null }.zip(properties)
-                zippedParameters.generateComponentFunctions(session, firClass, context.packageFqName, context.className)
+                zippedParameters.generateComponentFunctions(
+                    session, firClass, context.packageFqName, context.className, firPrimaryConstructor
+                )
                 zippedParameters.generateCopyFunction(
                     session, null, firClass, context.packageFqName, context.className, firPrimaryConstructor
                 )

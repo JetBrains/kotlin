@@ -15,19 +15,19 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.references.FirImplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtTypeReference
 
 fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
-    session: FirSession, firClass: FirClassImpl, packageFqName: FqName, classFqName: FqName
+    session: FirSession, firClass: FirClassImpl, packageFqName: FqName, classFqName: FqName,
+    firPrimaryConstructor: FirConstructor
 ) {
     var componentIndex = 1
     for ((ktParameter, firProperty) in this) {
@@ -52,6 +52,9 @@ fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
                         ktParameter,
                         FirQualifiedAccessExpressionImpl(ktParameter).apply {
                             val parameterName = firProperty.name
+                            dispatchReceiver = FirThisReceiverExpressionImpl(null, FirImplicitThisReference(firClass.symbol)).apply {
+                                typeRef = firPrimaryConstructor.returnTypeRef
+                            }
                             calleeReference = FirResolvedCallableReferenceImpl(
                                 ktParameter,
                                 parameterName, firProperty.symbol
@@ -83,15 +86,17 @@ fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
             isInfix = false, isInline = false,
             isTailRec = false, isExternal = false,
             isSuspend = false, receiverTypeRef = null,
-            returnTypeRef = firPrimaryConstructor.returnTypeRef//FirImplicitTypeRefImpl(session, this)
+            returnTypeRef = firPrimaryConstructor.returnTypeRef
         ).apply {
-            val copyFunction = this
             for ((ktParameter, firProperty) in this@generateCopyFunction) {
                 val name = firProperty.name
                 valueParameters += FirValueParameterImpl(
                     session, ktParameter, name,
                     firProperty.returnTypeRef,
                     FirQualifiedAccessExpressionImpl(ktParameter).apply {
+                        dispatchReceiver = FirThisReceiverExpressionImpl(null, FirImplicitThisReference(firClass.symbol)).apply {
+                            typeRef = firPrimaryConstructor.returnTypeRef
+                        }
                         calleeReference = FirResolvedCallableReferenceImpl(ktParameter, name, firProperty.symbol)
                     },
                     isCrossinline = false, isNoinline = false, isVararg = false

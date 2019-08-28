@@ -11,14 +11,14 @@ FILE: components.kt
             public get(): R|kotlin/String|
 
         public final fun component1(): R|kotlin/Int| {
-            ^component1 R|/D.x|
+            ^component1 D|this@R|/D||.R|/D.x|
         }
 
         public final fun component2(): R|kotlin/String| {
-            ^component2 R|/D.y|
+            ^component2 D|this@R|/D||.R|/D.y|
         }
 
-        public final fun copy(x: R|kotlin/Int| = R|/D.x|, y: R|kotlin/String| = R|/D.y|): R|D| {
+        public final fun copy(x: R|kotlin/Int| = D|this@R|/D||.R|/D.x|, y: R|kotlin/String| = D|this@R|/D||.R|/D.y|): R|D| {
         }
 
     }
