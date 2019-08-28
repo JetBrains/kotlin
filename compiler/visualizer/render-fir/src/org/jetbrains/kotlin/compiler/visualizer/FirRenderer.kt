@@ -250,7 +250,8 @@ class FirRenderer(private val firFile: FirFile) : FirVisitor<Unit, StringBuilder
         var id = when (symbol) {
             is ConeCallableSymbol -> {
                 val callableId = symbol.callableId
-                callableId.toString().replace("." + callableId.callableName.asString(), "")
+                val idWithPackage = callableId.toString().replace("." + callableId.callableName.asString(), "")
+                removeCurrentFilePackage(idWithPackage)
             }
             is ConeClassLikeSymbol -> symbol.classId.getWithoutCurrentPackage()
             else -> ""
