@@ -4,7 +4,7 @@ abstract class Base<T>(var x: T) {
     fun replace(newValue: T)
 }
 
-class Derived(var x: Int): Base<Int>() {
+class Derived(var x: Int): Base<Int>(x) {
     override fun replace(newValue: Int) {
         x = newValue
     }
