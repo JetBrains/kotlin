@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -29,8 +33,18 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
 
-class IrTypeMapper(private val context: JvmBackendContext) {
+class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase() {
     internal val typeSystem = IrTypeCheckerContext(context.irBuiltIns)
+
+    override fun mapClass(classifier: ClassifierDescriptor): Type =
+        when (classifier) {
+            is ClassDescriptor ->
+                mapClass(context.referenceClass(classifier).owner)
+            is TypeParameterDescriptor ->
+                mapType(context.referenceTypeParameter(classifier).owner.defaultType)
+            else ->
+                error("Unknown descriptor: $classifier")
+        }
 
     fun classInternalName(irClass: IrClass): String =
         context.getLocalClassInfo(irClass)?.internalName

@@ -67,7 +67,7 @@ open class ClassCodegen protected constructor(
 
     private var sourceMapper: DefaultSourceMapper? = null
 
-    private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state)
+    private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state, typeMapper)
     private val serializer: DescriptorSerializer? =
         when (val metadata = irClass.metadata) {
             is MetadataSource.Class -> DescriptorSerializer.create(metadata.descriptor, serializerExtension, parentClassCodegen?.serializer)

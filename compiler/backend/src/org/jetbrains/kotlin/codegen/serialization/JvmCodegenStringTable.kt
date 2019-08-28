@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.serialization
 
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
@@ -15,12 +15,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.DescriptorAwareStringTable
 
 class JvmCodegenStringTable @JvmOverloads constructor(
-    private val typeMapper: KotlinTypeMapper,
+    private val typeMapper: KotlinTypeMapperBase,
     nameResolver: JvmNameResolver? = null
 ) : JvmStringTable(nameResolver), DescriptorAwareStringTable {
-    override fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId {
-        val container = descriptor.containingDeclaration
-        return when (container) {
+    override fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId =
+        when (val container = descriptor.containingDeclaration) {
             is ClassifierDescriptorWithTypeParameters -> getLocalClassIdReplacement(container).createNestedClassId(descriptor.name)
             is PackageFragmentDescriptor -> {
                 throw IllegalStateException("getLocalClassIdReplacement should only be called for local classes: $descriptor")
@@ -30,5 +29,4 @@ class JvmCodegenStringTable @JvmOverloads constructor(
                 ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), true)
             }
         }
-    }
 }
