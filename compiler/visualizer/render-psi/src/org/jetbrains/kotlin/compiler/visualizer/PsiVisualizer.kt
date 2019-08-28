@@ -35,33 +35,16 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import java.util.ArrayList
 
-class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : BaseRenderer {
+class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : BaseRenderer() {
     private val bindingContext = analysisResult.bindingContext
-    private val annotations = mutableSetOf<Annotator.AnnotationInfo>()
     private val filePackage = file.packageFqName.toString().replace(".", "/")
     private val argumentsLabel = "<PLACE-FOR-ARGUMENTS>"
 
     val descriptorRenderer = PsiDescriptorRenderer()
 
-    private val unnecessaryData = mapOf(
-        "kotlin/" to ""
-    )
-
-    private fun addAnnotation(annotationText: String, element: PsiElement, deleteDuplicate: Boolean = true) {
-        annotations.removeIf { it.range.startOffset == element.textRange.startOffset && deleteDuplicate }
-
-        var textWithOutUnnecessaryData = annotationText
-        for ((key, value) in unnecessaryData) {
-            textWithOutUnnecessaryData = textWithOutUnnecessaryData.replace(key, value)
-        }
-        if (textWithOutUnnecessaryData != element.text && textWithOutUnnecessaryData.isNotEmpty()) {
-            annotations.add(Annotator.AnnotationInfo(textWithOutUnnecessaryData, element.textRange))
-        }
-    }
-
     override fun render(): String {
         file.accept(Renderer())
-        return annotate(file.text, annotations).joinToString("\n")
+        return annotate(file.text, getAnnotations()).joinToString("\n")
     }
 
     inner class Renderer : KtVisitorVoid() {
