@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.daemon.experimental.integration
 
-import junit.framework.Assert
 import junit.framework.TestCase
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
@@ -281,12 +280,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         for (assertArgValue in allAssetionsArgs) {
             withDaemonJvmOptionsSetTo(assertArgValue) {
-                Assert.assertEquals(assertArgValue, assertionsJvmArgs())
+                assertEquals(assertArgValue, assertionsJvmArgs())
             }
         }
 
         withDaemonJvmOptionsSetTo(null) {
-            Assert.assertEquals("-ea", assertionsJvmArgs())
+            assertEquals("-ea", assertionsJvmArgs())
         }
     }
 
@@ -778,6 +777,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     private val PARALLEL_THREADS_TO_COMPILE = 10
     private val PARALLEL_WAIT_TIMEOUT_S = 60L
 
+    @UseExperimental(ObsoleteCoroutinesApi::class)
     private fun runCompile(
         daemon: CompileServiceAsync,
         resultCodes: Array<Int?>,
@@ -877,6 +877,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         const val connectionFailedErr = -100
     }
 
+    @UseExperimental(ObsoleteCoroutinesApi::class)
     fun ignore_testParallelDaemonStart() {
 
         val doneLatch = CountDownLatch(ParallelStartParams.threads)

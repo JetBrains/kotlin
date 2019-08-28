@@ -186,7 +186,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")
     }
 
-    private fun terminate(daemonOptions: DaemonOptions) {
+    private fun terminate(@Suppress("UNUSED_PARAMETER") daemonOptions: DaemonOptions) {
         println("\n\nkillall -9 Console && open ${logFiles.joinToString(" ")}\n\n")
         log.info("in finally")
 //        runBlocking {
