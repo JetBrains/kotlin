@@ -51,7 +51,7 @@ class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationB
                 serial,
                 this,
                 null
-            ) {
+            ) { it, _ ->
                 load(it + 1, kSerializerType)
             }
             areturn(kSerializerType)

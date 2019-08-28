@@ -248,7 +248,6 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             val innerSerial = serializerInstance(
                 this@SerializerIrGenerator,
                 saveFunc.dispatchReceiverParameter!!,
-                serializableDescriptor,
                 sti.serializer,
                 property.module,
                 property.type,
@@ -381,7 +380,6 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                                 val innerSerial = serializerInstance(
                                     this@SerializerIrGenerator,
                                     loadFunc.dispatchReceiverParameter!!,
-                                    serializableDescriptor,
                                     sti.serializer,
                                     property.module,
                                     property.type,

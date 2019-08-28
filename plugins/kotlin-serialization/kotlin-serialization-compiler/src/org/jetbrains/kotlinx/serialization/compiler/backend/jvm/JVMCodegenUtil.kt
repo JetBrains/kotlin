@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
@@ -177,7 +178,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromClass(
         serializer,
         this,
         sti.property.genericIndex
-    ) { idx ->
+    ) { idx, _ ->
         load(varIndexStart + idx, kSerializerType)
     }
 }
@@ -201,7 +202,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithou
         serializer,
         this,
         property.genericIndex
-    ) { idx ->
+    ) { idx, _ ->
         load(0, kSerializerType)
         getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$idx", kSerializerType.descriptor)
     }.also { if (it && property.type.isMarkedNullable) wrapStackValueIntoNullableSerializer() }
@@ -211,7 +212,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codeg
     return serializerCodegen.stackValueSerializerInstance(
         codegen, sti.property.module, sti.property.type,
         sti.serializer, this, sti.property.genericIndex
-    ) { idx ->
+    ) { idx, _ ->
         load(0, kSerializerType)
         getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$idx", kSerializerType.descriptor)
     }
@@ -220,10 +221,13 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codeg
 // returns false is cannot not use serializer
 // use iv == null to check only (do not emit serializer onto stack)
 internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
-                                          iv: InstructionAdapter?, genericIndex: Int? = null, genericSerializerFieldGetter: (InstructionAdapter.(Int) -> Unit)? = null): Boolean {
+                                                                  iv: InstructionAdapter?,
+                                                                  genericIndex: Int? = null,
+                                                                  genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
+): Boolean {
     if (maybeSerializer == null && genericIndex != null) {
         // get field from serializer object
-        iv?.run { genericSerializerFieldGetter?.invoke(this, genericIndex) }
+        iv?.run { genericSerializerFieldGetter?.invoke(this, genericIndex, kType) }
         return true
     }
     val serializer = maybeSerializer ?: return false
@@ -302,16 +306,41 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
             sealedSerializerId -> {
                 aconst(serialName)
                 signature.append("Ljava/lang/String;")
-                val (subClasses, subSerializers) = immediateSealedSerializableSubclassesFor(kType.toClassDescriptor!!, module)
+                aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
+                AsmUtil.wrapJavaClassIntoKClass(this)
+                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
+                val (subClasses, subSerializers) = allSealedSerializableSubclassesFor(kType.toClassDescriptor!!, module)
                 // KClasses vararg
-                fillArray(AsmTypes.K_CLASS_TYPE, subClasses) { i, type ->
+                fillArray(AsmTypes.K_CLASS_TYPE, subClasses) { _, type ->
                     aconst(codegen.typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT))
                     AsmUtil.wrapJavaClassIntoKClass(this)
                 }
                 signature.append(AsmTypes.K_CLASS_ARRAY_TYPE.descriptor)
                 // Serializers vararg
                 fillArray(kSerializerType, subSerializers) { i, serializer ->
-                    instantiate(subClasses[i] to serializer, writeSignature = false)
+                    val (argType, argSerializer) = subClasses[i] to serializer
+                    assert(
+                        stackValueSerializerInstance(
+                            codegen,
+                            module,
+                            argType,
+                            argSerializer,
+                            this,
+                            argType.genericIndex
+                        ) { _, genericType ->
+                            // if we encountered generic type parameter in one of subclasses of sealed class, use polymorphism from upper bound
+                            assert(
+                                stackValueSerializerInstance(
+                                    codegen,
+                                    module,
+                                    (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound,
+                                    module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer),
+                                    this
+                                )
+                            )
+                        }
+                    )
+                    if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
                 }
                 signature.append(kSerializerArrayType.descriptor)
             }

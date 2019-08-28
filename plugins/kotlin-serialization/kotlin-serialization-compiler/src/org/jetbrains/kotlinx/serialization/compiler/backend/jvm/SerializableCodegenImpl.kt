@@ -104,8 +104,8 @@ class SerializableCodegenImpl(
             superTypeArguments.forEach {
                 val genericIdx = serializableDescriptor.defaultType.arguments.indexOf(it).let { if (it == -1) null else it }
                 val serial = findTypeSerializerOrContext(serializableDescriptor.module, it.type)
-                stackValueSerializerInstance(classCodegen, serializableDescriptor.module, it.type, serial, this, genericIdx) {
-                    load(offsetI + it, kSerializerType)
+                stackValueSerializerInstance(classCodegen, serializableDescriptor.module, it.type, serial, this, genericIdx) { i, _ ->
+                    load(offsetI + i, kSerializerType)
                 }
             }
             val superSignature =

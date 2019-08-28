@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -134,13 +135,18 @@ internal fun AbstractSerialGenerator.serializerInstance(
     module: ModuleDescriptor,
     kType: KotlinType,
     genericIndex: Int? = null,
-    genericGetter: (Int) -> JsExpression = { JsNameRef(context.scope().declareName("${SerialEntityNames.typeArgPrefix}$it"), JsThisRef()) }
+    genericGetter: (Int, KotlinType) -> JsExpression = { it, _ ->
+        JsNameRef(
+            context.scope().declareName("${SerialEntityNames.typeArgPrefix}$it"),
+            JsThisRef()
+        )
+    }
 ): JsExpression? {
     val nullableSerClass =
         context.translateQualifiedReference(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
     if (serializerClass == null) {
         if (genericIndex == null) return null
-        return genericGetter(genericIndex)
+        return genericGetter(genericIndex, kType)
     }
     if (serializerClass.kind == ClassKind.OBJECT) {
         return context.serializerObjectGetter(serializerClass)
@@ -163,7 +169,8 @@ internal fun AbstractSerialGenerator.serializerInstance(
             )
             serializerClass.classId == sealedSerializerId -> mutableListOf<JsExpression>().apply {
                 add(JsStringLiteral(kType.serialName()))
-                val (subclasses, subSerializers) = immediateSealedSerializableSubclassesFor(
+                add(ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!))
+                val (subclasses, subSerializers) = allSealedSerializableSubclassesFor(
                     kType.toClassDescriptor!!,
                     module
                 )
@@ -173,8 +180,17 @@ internal fun AbstractSerialGenerator.serializerInstance(
                         it.toClassDescriptor!!
                     )
                 }))
-                add(JsArrayLiteral(subSerializers.mapIndexed { i, ser ->
-                    instantiate(ser, subclasses[i])!!
+                add(JsArrayLiteral(subSerializers.mapIndexed { i, serializer ->
+                    val type = subclasses[i]
+                    val expr = serializerInstance(context, serializer, module, type, type.genericIndex) { _, genericType ->
+                        serializerInstance(
+                            context,
+                            module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer),
+                            module,
+                            (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound
+                        )!!
+                    }!!
+                    if (type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
                 }))
             }
             else -> kType.arguments.map {
