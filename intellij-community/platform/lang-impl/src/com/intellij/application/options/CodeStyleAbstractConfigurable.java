@@ -9,6 +9,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class CodeStyleAbstractConfigurable implements CodeStyleConfigurable, OptionsContainingConfigurable {
@@ -97,7 +98,12 @@ public abstract class CodeStyleAbstractConfigurable implements CodeStyleConfigur
   @NotNull
   @Override
   public Set<String> processListOptions() {
-    return myPanel.processListOptions();
+    return myPanel.getOptionIndexer().processListOptions();
+  }
+
+  @Override
+  public Map<String, Set<String>> processListOptionsWithPaths() {
+    return myPanel.getOptionIndexer().processListOptionsWithPaths();
   }
 
   protected CodeStyleSettings getCurrentSettings() {

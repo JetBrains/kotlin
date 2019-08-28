@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Map;
 import java.util.Set;
 
 public class CodeStyleConfigurableWrapper
@@ -129,10 +130,20 @@ public class CodeStyleConfigurableWrapper
   @NotNull
   @Override
   public Set<String> processListOptions() {
+    return getOptionIndexer().processListOptions();
+  }
+
+  @Override
+  public Map<String, Set<String>> processListOptionsWithPaths() {
+    return getOptionIndexer().processListOptionsWithPaths();
+  }
+
+  @NotNull
+  private OptionsContainingConfigurable getOptionIndexer() {
     if (myPanel == null) {
       myPanel = new CodeStyleMainPanel(myOwner.getModel(), myFactory, canBeShared());
     }
-    return myPanel.processListOptions();
+    return myPanel.getOptionIndexer();
   }
 
   public void selectTab(@NotNull String tab) {

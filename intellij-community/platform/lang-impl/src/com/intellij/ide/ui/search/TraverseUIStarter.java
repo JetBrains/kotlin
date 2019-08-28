@@ -30,6 +30,7 @@ import com.intellij.util.io.URLUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -215,16 +216,24 @@ public class TraverseUIStarter implements ApplicationStarter {
   private static void processOptionsContainingConfigurable(OptionsContainingConfigurable configurable, Element configurableElement) {
     Set<String> optionsPath = configurable.processListOptions();
     Set<OptionDescription> result = wordsToOptionDescriptors(optionsPath);
+    Map<String,Set<String>> optionsWithPaths = configurable.processListOptionsWithPaths();
+    for (String path : optionsWithPaths.keySet()) {
+      result.addAll(wordsToOptionDescriptors(optionsWithPaths.get(path), path));
+    }
     writeOptions(configurableElement, result);
   }
 
   private static Set<OptionDescription> wordsToOptionDescriptors(@NotNull Set<String> optionsPath) {
+    return wordsToOptionDescriptors(optionsPath, null);
+  }
+
+  private static Set<OptionDescription> wordsToOptionDescriptors(@NotNull Set<String> optionsPath, @Nullable String path) {
     SearchableOptionsRegistrar registrar = SearchableOptionsRegistrar.getInstance();
     Set<OptionDescription> result = new TreeSet<>();
     for (String opt : optionsPath) {
       for (String word : registrar.getProcessedWordsWithoutStemming(opt)) {
         if (word != null) {
-          result.add(new OptionDescription(word, opt, null));
+          result.add(new OptionDescription(word, opt, path));
         }
       }
     }

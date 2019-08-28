@@ -23,17 +23,16 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
-import java.util.HashSet;
+
+import java.util.*;
+
 import com.intellij.util.ui.GraphicsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Rustam Vishnyakov
@@ -481,12 +480,23 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
 
   @NotNull
   @Override
-  public Set<String> processListOptions() {
-    final Set<String> result = new HashSet<>();
-    for (CodeStyleAbstractPanel tab : myTabs) {
-      result.addAll(tab.processListOptions());
-    }
-    return result;
+  public OptionsContainingConfigurable getOptionIndexer() {
+    return new OptionsContainingConfigurable() {
+      @NotNull
+      @Override
+      public Set<String> processListOptions() {
+        return Collections.emptySet();
+      }
+
+      @Override
+      public Map<String, Set<String>> processListOptionsWithPaths() {
+        final Map<String,Set<String>> result = new HashMap<>();
+        for (CodeStyleAbstractPanel tab : myTabs) {
+          result.put(tab.getTabTitle(), tab.processListOptions());
+        }
+        return result;
+      }
+    };
   }
 
   //========================================================================================================================================

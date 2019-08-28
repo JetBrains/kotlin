@@ -3,6 +3,7 @@
 package com.intellij.application.options.codeStyle;
 
 import com.intellij.application.options.CodeStyleAbstractPanel;
+import com.intellij.application.options.OptionsContainingConfigurable;
 import com.intellij.application.options.TabbedLanguageCodeStylePanel;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
@@ -29,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -274,10 +274,10 @@ public class CodeStyleMainPanel extends JPanel implements TabbedLanguageCodeStyl
   }
 
   @NotNull
-  public Set<String> processListOptions() {
+  public OptionsContainingConfigurable getOptionIndexer() {
     final CodeStyleScheme defaultScheme = CodeStyleSchemes.getInstance().getDefaultScheme();
     final NewCodeStyleSettingsPanel panel = ensurePanel(defaultScheme);
-    return panel.processListOptions();
+    return panel.getOptionIndexer();
   }
 
   @Override
