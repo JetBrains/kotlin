@@ -1,6 +1,3 @@
-
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -55,9 +52,7 @@ dependencies {
 
     testRuntime(intellijPluginDep("android"))
 
-    if (Platform[181].orHigher()) {
-        testRuntime(intellijPluginDep("smali"))
-    }
+    testRuntime(intellijPluginDep("smali"))
 
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("coverage"))

@@ -57,9 +57,7 @@ dependencies {
         testRuntime(intellijPluginDep("maven"))
     }
     testRuntime(intellijPluginDep("android"))
-    if (Platform[181].orHigher()) {
-        testRuntime(intellijPluginDep("smali"))
-    }
+    testRuntime(intellijPluginDep("smali"))
 }
 
 sourceSets {

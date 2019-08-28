@@ -11,9 +11,7 @@ dependencies {
     testRuntime(intellijDep())
     testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "openapi") }
 
-    Platform[181].orHigher {
-        testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
-    }
+    testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
 
     Platform[192].orHigher {
         testRuntime(intellijPluginDep("java"))
