@@ -7,9 +7,11 @@ import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.impl.stores.ModuleStore;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.impl.scopes.ModuleScopeProviderImpl;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -22,6 +24,7 @@ import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.openapi.vfs.pointers.VirtualFilePointerListener;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.serviceContainer.PlatformComponentManagerImpl;
@@ -57,7 +60,18 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     myModuleScopeProvider = new ModuleScopeProviderImpl(this);
 
     myName = name;
-    myImlFilePointer = VirtualFilePointerManager.getInstance().create(VfsUtilCore.pathToUrl(filePath), this, null);
+    myImlFilePointer = VirtualFilePointerManager.getInstance().create(
+      VfsUtilCore.pathToUrl(filePath), this,
+      new VirtualFilePointerListener() {
+        @Override
+        public void validityChanged(@NotNull VirtualFilePointer[] pointers) {
+          VirtualFile file = myImlFilePointer.getFile();
+          if (file != null) {
+            ((ModuleStore)ServiceKt.getStateStore(ModuleImpl.this)).setPath(file.getPath(), false);
+            ModuleManager.getInstance(myProject).incModificationCount();
+          }
+        }
+      });
   }
 
   @Override
@@ -127,6 +141,10 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
       ServiceKt.getStateStore(this).getStorageManager()
         .rename(StoragePathMacros.MODULE_FILE, newName + ModuleFileType.DOT_DEFAULT_EXTENSION);
     }
+  }
+
+  public void updatePath(@NotNull String newPath) {
+    System.out.println("here");
   }
 
   @Override
