@@ -64,6 +64,7 @@ class FirJavaElementFinder(
     }
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
+        if (qualifiedName.endsWith(".")) return null
         val classId = ClassId.topLevel(FqName(qualifiedName))
 
         val firClass =
