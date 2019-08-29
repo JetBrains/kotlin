@@ -3,7 +3,6 @@ package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.impl.ComponentManagerImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.*;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
@@ -255,9 +254,8 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
                                 @NotNull final List<Runnable> postImportTasks,
                                 @NotNull final List<Runnable> onSuccessImportTasks,
                                 @NotNull final List<Runnable> onFailureImportTasks) {
-    if (project.isDisposed()) return;
-    if (project instanceof ComponentManagerImpl) {
-      assert ((ComponentManagerImpl)project).isComponentsCreated();
+    if (project.isDisposed()) {
+      return;
     }
 
     final List<DataNode<T>> toImport = ContainerUtil.newSmartList();
