@@ -219,7 +219,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
             wholeFile: File)
 }
 
-open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(), Java9TestLauncher {
+open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(), CustomJdkTestLauncher {
     companion object {
         private val KOTLIN_METADATA_GROUP = "[a-z0-9]+ = (\\{.+?\\}|[0-9]+)"
         private val KOTLIN_METADATA_REGEX = "@kotlin\\.Metadata\\(($KOTLIN_METADATA_GROUP)(, $KOTLIN_METADATA_GROUP)*\\)".toRegex()
@@ -261,6 +261,7 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 
         super.doTest(filePath)
         doTestWithJdk9(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
+        doTestWithJdk11(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
     }
 
     override fun check(kaptContext: KaptContextForStubGeneration, javaFiles: List<File>, txtFile: File, wholeFile: File) {

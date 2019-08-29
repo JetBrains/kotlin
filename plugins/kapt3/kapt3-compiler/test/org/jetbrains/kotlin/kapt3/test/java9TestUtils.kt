@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.SystemInfoRt
+import org.jetbrains.kotlin.kapt3.base.util.isJava11OrLater
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -25,17 +26,25 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 
-interface Java9TestLauncher {
+interface CustomJdkTestLauncher {
     fun doTestWithJdk9(mainClass: Class<*>, arg: String) {
         // Already under Java 9
         if (isJava9OrLater()) return
 
+        doTestCustomJdk(mainClass, arg, KotlinTestUtils.getJdk9Home())
+    }
+
+    fun doTestWithJdk11(mainClass: Class<*>, arg: String) {
+        if (isJava9OrLater()) return
+        doTestCustomJdk(mainClass, arg, KotlinTestUtils.getJdk11Home())
+    }
+
+    private fun doTestCustomJdk(mainClass: Class<*>, arg: String, javaHome: File) {
         //TODO unmute after investigation (tests are failing on TeamCity)
         if (SystemInfoRt.isWindows) return
 
-        val jdk9Home = KotlinTestUtils.getJdk9Home()
-        val javaExe = File(jdk9Home, "bin/java.exe").takeIf { it.exists() } ?: File(jdk9Home, "bin/java")
-        assert(javaExe.exists()) { "Can't find 'java' executable in $jdk9Home" }
+        val javaExe = File(javaHome, "bin/java.exe").takeIf { it.exists() } ?: File(javaHome, "bin/java")
+        assert(javaExe.exists()) { "Can't find 'java' executable in $javaHome" }
 
         val currentJavaHome = System.getProperty("java.home")
 
@@ -60,7 +69,7 @@ interface Java9TestLauncher {
 
         process.waitFor(3, TimeUnit.MINUTES)
         if (process.exitValue() != 0) {
-            throw AssertionError("Java 9 test process exited with exit code ${process.exitValue()} \n")
+            throw AssertionError("Java $javaHome test process exited with exit code ${process.exitValue()} \n")
         }
     }
 

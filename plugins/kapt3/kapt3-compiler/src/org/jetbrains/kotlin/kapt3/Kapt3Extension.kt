@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation.Companion.K
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt3.base.util.info
+import org.jetbrains.kotlin.kapt3.base.util.isJava11OrLater
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
@@ -358,8 +359,15 @@ private class PrettyWithWorkarounds(private val context: Context, val out: Write
         if ((tree.mods.flags and ENUM) != 0L) {
             // Pretty does not print annotations for enum values for some reason
             printExpr(TreeMaker.instance(context).Modifiers(0, tree.mods.annotations))
-        }
 
+            if (isJava11OrLater()) {
+                // Print enums fully, there is an issue when using Pretty in JDK 11.
+                // See https://youtrack.jetbrains.com/issue/KT-33052.
+                print("/*public static final*/ ${tree.name}")
+                tree.init?.let { print(" /* = $it */") }
+                return
+            }
+        }
         super.visitVarDef(tree)
     }
 }

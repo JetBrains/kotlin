@@ -605,6 +605,15 @@ public class KotlinTestUtils {
         return new File(jdk9);
     }
 
+    @NotNull
+    public static File getJdk11Home() {
+        String jdk11 = System.getenv("JDK_11");
+        if (jdk11 == null) {
+            throw new AssertionError("Environment variable JDK_11 is not set!");
+        }
+        return new File(jdk11);
+    }
+
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
         List<KotlinSourceRoot> roots = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
         if (roots.isEmpty()) return;
