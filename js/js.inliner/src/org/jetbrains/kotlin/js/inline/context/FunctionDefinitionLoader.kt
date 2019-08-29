@@ -75,7 +75,7 @@ class FunctionDefinitionLoader(
         return lookUpFunctionDirect(call, scope) ?: lookUpFunctionIndirect(call, scope) ?: lookUpFunctionExternal(call, scope.fragment)
     }
 
-    private val functionReader = FunctionReader(inliner.reporter, inliner.config)
+    private val functionReader = FunctionReader(inliner.reporter, inliner.config, inliner.bindingContext)
 
     private data class FragmentInfo(
         val functions: Map<JsName, FunctionWithWrapper>,
@@ -160,7 +160,7 @@ class FunctionDefinitionLoader(
     private fun lookUpFunctionDirect(call: JsInvocation, callsiteScope: InliningScope): InlineFunctionDefinition? {
         val descriptor = call.descriptor ?: return null
 
-        val tag = Namer.getFunctionTag(descriptor, inliner.config)
+        val tag = Namer.getFunctionTag(descriptor, inliner.config, inliner.bindingContext)
 
         val definitionFragment = fragmentByTag(tag) ?: return null
 
@@ -178,7 +178,7 @@ class FunctionDefinitionLoader(
     private fun lookUpFunctionExternal(call: JsInvocation, fragment: JsProgramFragment): InlineFunctionDefinition? =
         call.descriptor?.let { descriptor ->
             functionReader[descriptor, fragment]?.let {
-                InlineFunctionDefinition(it, Namer.getFunctionTag(descriptor, inliner.config))
+                InlineFunctionDefinition(it, Namer.getFunctionTag(descriptor, inliner.config, inliner.bindingContext))
             }
         }
 

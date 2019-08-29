@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 
-class JsBuiltinNameClashChecker(private val nameSuggestion: NameSuggestion) : DeclarationChecker {
+class JsBuiltinNameClashChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val nameSuggestion = NameSuggestion(context.trace.bindingContext)
         if (AnnotationsUtils.isNativeObject(descriptor)) return
         if (descriptor.containingDeclaration !is ClassDescriptor) return
 

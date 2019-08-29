@@ -100,6 +100,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "Can't apply multiple inheritance here, since it's impossible to generate bridge for system function {0}",
             Renderers.DECLARATION_NAME_WITH_KIND)
 
+        put(ErrorsJs.NESTED_JS_EXPORT, "@JsExport is only allowed on files and top-level declarations")
+        put(ErrorsJs.WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) can't be exported to JS", Renderers.STRING)
+        put(ErrorsJs.NON_EXPORTABLE_TYPE, "Exported declaration uses non-exportable {0} type: {1}", Renderers.STRING, RENDER_TYPE)
+
         this
     }
 }

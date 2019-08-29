@@ -111,7 +111,7 @@ public final class StaticContext {
     private final JsImportedModule currentModuleAsImported;
 
     @NotNull
-    private final NameSuggestion nameSuggestion = new NameSuggestion();
+    private final NameSuggestion nameSuggestion;
 
     @NotNull
     private final Map<DeclarationDescriptor, JsName> nameCache = new HashMap<>();
@@ -169,6 +169,7 @@ public final class StaticContext {
         fragment = new JsProgramFragment(rootFunction.getScope(), packageFqn);
 
         this.bindingTrace = bindingTrace;
+        this.nameSuggestion = new NameSuggestion(bindingTrace.getBindingContext());
         this.namer = Namer.newInstance(program.getRootScope());
         this.intrinsics = new Intrinsics();
         this.rootScope = fragment.getScope();
@@ -801,7 +802,7 @@ public final class StaticContext {
 
     public void addInlineCall(@NotNull CallableDescriptor descriptor) {
         descriptor = (CallableDescriptor) JsDescriptorUtils.findRealInlineDeclaration(descriptor);
-        String tag = Namer.getFunctionTag(descriptor, config);
+        String tag = Namer.getFunctionTag(descriptor, config, getBindingContext());
         JsExpression moduleExpression = exportModuleForInline(DescriptorUtils.getContainingModule(descriptor));
         if (moduleExpression == null) {
             moduleExpression = getModuleExpressionFor(descriptor);

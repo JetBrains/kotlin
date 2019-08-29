@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -40,7 +41,7 @@ import kotlin.math.abs
  * A new instance of this class can be created for each request, however, it's recommended to use stable instance, since
  * [NameSuggestion] supports caching.
  */
-class NameSuggestion {
+class NameSuggestion(val bindingContext: BindingContext) {
     private val cache: MutableMap<DeclarationDescriptor, SuggestedName?> = Collections.synchronizedMap(WeakHashMap())
 
     /**
@@ -112,7 +113,7 @@ class NameSuggestion {
             // Local functions and variables are always private with their own names as suggested names
             is CallableDescriptor ->
                 if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) {
-                    val ownName = getNameForAnnotatedObject(descriptor) ?: getSuggestedName(descriptor)
+                    val ownName = getNameForAnnotatedObject(descriptor, bindingContext) ?: getSuggestedName(descriptor)
                     var name = ownName
                     var scope = descriptor.containingDeclaration
 
@@ -195,7 +196,7 @@ class NameSuggestion {
 
         parts.reverse()
         val unmangledName = parts.joinToString("$")
-        val (id, stable) = mangleNameIfNecessary(unmangledName, fixedDescriptor)
+        val (id, stable) = mangleNameIfNecessary(unmangledName, fixedDescriptor, bindingContext)
         return SuggestedName(listOf(id), stable, fixedDescriptor, current)
     }
 
@@ -217,7 +218,7 @@ class NameSuggestion {
     }
 
     companion object {
-        private fun mangleNameIfNecessary(baseName: String, descriptor: DeclarationDescriptor): NameAndStability {
+        private fun mangleNameIfNecessary(baseName: String, descriptor: DeclarationDescriptor, bindingContext: BindingContext): NameAndStability {
             // If we have a callable descriptor (property or method) it can override method in a parent class.
             // Traverse to the topmost overridden method.
             // It does not matter which path to choose during traversal, since front-end must ensure
@@ -230,7 +231,7 @@ class NameSuggestion {
             }
 
             // If declaration is marked with either external, @native, @library or @JsName, return its stable name as is.
-            val nativeName = getNameForAnnotatedObject(overriddenDescriptor)
+            val nativeName = getNameForAnnotatedObject(overriddenDescriptor, bindingContext)
             if (nativeName != null) return NameAndStability(nativeName, true)
 
             if (overriddenDescriptor is FunctionDescriptor) {

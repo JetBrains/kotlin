@@ -31,11 +31,13 @@ import org.jetbrains.kotlin.types.DynamicTypesAllowed
 object JsPlatformConfigurator : PlatformConfiguratorBase(
         DynamicTypesAllowed(),
         additionalDeclarationCheckers = listOf(
-                NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
-                JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-                JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
-                JsRuntimeAnnotationChecker,
-                JsDynamicDeclarationChecker
+            NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
+            JsNameChecker, JsModuleChecker, JsExternalFileChecker,
+            JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
+            JsRuntimeAnnotationChecker,
+            JsDynamicDeclarationChecker,
+            JsExportAnnotationChecker,
+            JsExportDeclarationChecker
         ),
         additionalCallCheckers = listOf(
                 JsModuleCallChecker,
@@ -46,7 +48,6 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         identifierChecker = JsIdentifierChecker
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
-        container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useImpl<JsTypeSpecificityComparator>()
         container.useImpl<JsNameClashChecker>()

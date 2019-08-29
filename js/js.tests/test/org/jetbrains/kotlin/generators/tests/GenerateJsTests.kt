@@ -32,6 +32,11 @@ fun main(args: Array<String>) {
             model("typescript-export/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
         }
 
+        testClass<AbstractLegacyJsTypeScriptExportTest> {
+            model("typescript-export/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
+        }
+
+
         testClass<AbstractSourceMapGenerationSmokeTest> {
             model("sourcemap/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }

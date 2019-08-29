@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JsNameClashChecker(
-    private val nameSuggestion: NameSuggestion,
     private val languageVersionSettings: LanguageVersionSettings
 ) : DeclarationChecker {
     companion object {
@@ -45,6 +44,7 @@ class JsNameClashChecker(
                 Errors.PACKAGE_OR_CLASSIFIER_REDECLARATION)
     }
 
+    lateinit var nameSuggestion: NameSuggestion
     private val scopes = mutableMapOf<DeclarationDescriptor, MutableMap<String, DeclarationDescriptor>>()
     private val clashedFakeOverrides = mutableMapOf<DeclarationDescriptor, Pair<DeclarationDescriptor, DeclarationDescriptor>>()
     private val clashedDescriptors = mutableSetOf<Pair<DeclarationDescriptor, String>>()
@@ -62,6 +62,8 @@ class JsNameClashChecker(
             diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
     ) {
         if (descriptor is ConstructorDescriptor && descriptor.isPrimary) return
+        if (!this::nameSuggestion.isInitialized || nameSuggestion.bindingContext !== bindingContext)
+            nameSuggestion = NameSuggestion(bindingContext)
 
         for (suggested in nameSuggestion.suggestAllPossibleNames(descriptor)) {
             if (suggested.stable && suggested.scope is ClassOrPackageFragmentDescriptor && presentsInGeneratedCode(suggested.descriptor)) {

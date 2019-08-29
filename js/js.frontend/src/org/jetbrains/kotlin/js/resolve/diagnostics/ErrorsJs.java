@@ -105,6 +105,10 @@ public interface ErrorsJs {
     DiagnosticFactory1<PsiElement, CallableMemberDescriptor> WRONG_MULTIPLE_INHERITANCE =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
+    DiagnosticFactory0<PsiElement> NESTED_JS_EXPORT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<KtExpression, String> WRONG_EXPORTED_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory2<PsiElement, String, KotlinType> NON_EXPORTABLE_TYPE = DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
