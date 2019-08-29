@@ -5,7 +5,6 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.module.impl.ModuleManagerImpl
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.serviceContainer.ServiceManagerImpl
@@ -106,8 +105,8 @@ internal fun moveComponentConfiguration(defaultProject: Project, element: Elemen
     }
   }
 
-  val projectComponents = (defaultProject as ProjectEx).getComponentInstancesOfType(PersistentStateComponent::class.java)
-  projectComponents.forEachGuaranteed {
+  @Suppress("DEPRECATION")
+  defaultProject.getComponentInstancesOfType(PersistentStateComponent::class.java).forEachGuaranteed {
     processComponents(it.javaClass)
   }
 

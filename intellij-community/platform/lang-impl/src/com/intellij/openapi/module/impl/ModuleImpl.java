@@ -168,7 +168,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
 
   @Override
   public void projectOpened() {
-    for (ModuleComponent component : getComponentInstancesOfType(ModuleComponent.class)) {
+    for (ModuleComponent component : getModuleComponents()) {
       try {
         //noinspection deprecation
         component.projectOpened();
@@ -181,7 +181,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
 
   @Override
   public void projectClosed() {
-    List<ModuleComponent> components = getComponentInstancesOfType(ModuleComponent.class);
+    List<ModuleComponent> components = getModuleComponents();
     for (int i = components.size() - 1; i >= 0; i--) {
       try {
         //noinspection deprecation
@@ -213,9 +213,15 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   @Override
   public void moduleAdded() {
     isModuleAdded = true;
-    for (ModuleComponent component : getComponentInstancesOfType(ModuleComponent.class)) {
+    for (ModuleComponent component : getModuleComponents()) {
       component.moduleAdded();
     }
+  }
+
+  @NotNull
+  private List<ModuleComponent> getModuleComponents() {
+    //noinspection deprecation
+    return getComponentInstancesOfType(ModuleComponent.class);
   }
 
   @Override
