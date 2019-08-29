@@ -203,7 +203,7 @@ open class FirBodyResolveTransformer(
         data: Any?
     ): CompositeTransformResult<FirStatement> {
 
-        val result = when (val callee = qualifiedAccessExpression.calleeReference) {
+        var result = when (val callee = qualifiedAccessExpression.calleeReference) {
             is FirExplicitThisReference -> {
                 val labelName = callee.labelName
                 val implicitReceiver = implicitReceiverStack[labelName]
@@ -241,31 +241,30 @@ open class FirBodyResolveTransformer(
                 val transformedCallee = callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression, file)
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
-                val result = if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
+                if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
                     callCompleter.completeCall(transformedCallee, data as? FirTypeRef)
                 } else {
                     transformedCallee
                 }
-                if (result is FirQualifiedAccessExpression) {
-                    dataFlowAnalyzer.getTypeUsingSmartcastInfo(result)?.let { typesFromSmartCast ->
-                        val allTypes = typesFromSmartCast.toMutableList().also {
-                            it += result.resultType.coneTypeUnsafe<ConeKotlinType>()
-                        }
-                        val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx as ConeInferenceContext, allTypes)
-                        // TODO: add check that intersectedType is not equal to original type
-                        FirExpressionWithSmartcastImpl(result, typesFromSmartCast).also {
-                            it.resultType = FirResolvedTypeRefImpl(result.psi, intersectedType, result.resultType.annotations)
-                        }
-                    } ?: result
-                } else {
-                    result
-                }
             }
         }
         if (result is FirQualifiedAccessExpression) {
+            result = transformQualifiedAccessUsingSmartcastInfo(result)
             dataFlowAnalyzer.exitQualifiedAccessExpression(result)
         }
         return result.compose()
+    }
+
+    private fun transformQualifiedAccessUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): FirQualifiedAccessExpression {
+        val typesFromSmartCast = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression) ?: return qualifiedAccessExpression
+        val allTypes = typesFromSmartCast.toMutableList().also {
+            it += qualifiedAccessExpression.resultType.coneTypeUnsafe<ConeKotlinType>()
+        }
+        val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx as ConeInferenceContext, allTypes)
+        // TODO: add check that intersectedType is not equal to original type
+        return FirExpressionWithSmartcastImpl(qualifiedAccessExpression, typesFromSmartCast).also {
+            it.resultType = FirResolvedTypeRefImpl(qualifiedAccessExpression.resultType.psi, intersectedType, qualifiedAccessExpression.resultType.annotations)
+        }
     }
 
     override fun transformVariableAssignment(
