@@ -1,3 +1,4 @@
+// FIR_IGNORE
 abstract class A {
     abstract class Nested
 }

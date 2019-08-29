@@ -1,3 +1,4 @@
+// FIR_IGNORE
 fun test() {
 //      Int Int
 //      │   │

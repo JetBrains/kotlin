@@ -1,3 +1,4 @@
+// FIR_IGNORE
 class WithInit(x: Int) {
 //      Int
 //      │

@@ -1,3 +1,4 @@
+// FIR_IGNORE
 fun withLocals(p: Int): Int {
     class Local(val pp: Int) {
 //                 Int

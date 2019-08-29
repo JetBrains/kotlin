@@ -1,3 +1,4 @@
+// FIR_IGNORE
 //                                 Int
 //                                 │ distance.x: Int
 //                                 │ │ fun (Int).plus(Int): Int

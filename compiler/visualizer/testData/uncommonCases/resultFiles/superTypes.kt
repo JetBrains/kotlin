@@ -1,3 +1,4 @@
+// FIR_IGNORE
 package org.jetbrains.kotlin.test
 
 abstract class Base<T>(var x: T) {

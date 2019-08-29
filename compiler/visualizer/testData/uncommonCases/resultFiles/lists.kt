@@ -1,3 +1,4 @@
+// FIR_IGNORE
 package org.jetbrains.kotlin.test
 
 //  collections/List<Int>

@@ -1,3 +1,4 @@
+// FIR_IGNORE
 package test
 
 interface Some

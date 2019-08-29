@@ -1,3 +1,4 @@
+// FIR_IGNORE
 package p
 
 class A {
