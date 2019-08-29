@@ -658,6 +658,9 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
     }
   }
 
+  public void highlightOptions(@NotNull String searchString) {
+  }
+
   @Nullable
   private static JPanel findTabbedPaneChild(@NotNull JComponent component) {
     Container parent = component.getParent();

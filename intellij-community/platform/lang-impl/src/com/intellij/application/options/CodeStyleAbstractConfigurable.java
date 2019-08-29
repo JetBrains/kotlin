@@ -109,4 +109,8 @@ public abstract class CodeStyleAbstractConfigurable implements CodeStyleConfigur
   protected CodeStyleSettings getCurrentSettings() {
     return mySettings;
   }
+
+  public void highlightOptions(@NotNull String searchString) {
+    myPanel.highlightOptions(searchString);
+  }
 }

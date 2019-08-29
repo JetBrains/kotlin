@@ -629,4 +629,11 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
   public void changeTab(@NotNull String tabTitle) {
     myTabbedPane.setSelectedTitle(tabTitle);
   }
+
+  @Override
+  public void highlightOptions(@NotNull String searchString) {
+    for (CodeStyleAbstractPanel tab : myTabs) {
+      tab.highlightOptions(searchString);
+    }
+  }
 }

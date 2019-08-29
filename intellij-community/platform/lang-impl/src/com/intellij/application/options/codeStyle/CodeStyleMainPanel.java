@@ -293,4 +293,8 @@ public class CodeStyleMainPanel extends JPanel implements TabbedLanguageCodeStyl
     Language language = panel.getDefaultLanguage();
     return language != null ? SELECTED_TAB + "." + language.getID() : SELECTED_TAB;
   }
+
+  public void highlightOptions(@NotNull String searchString) {
+    ensureCurrentPanel().highlightOptions(searchString);
+  }
 }

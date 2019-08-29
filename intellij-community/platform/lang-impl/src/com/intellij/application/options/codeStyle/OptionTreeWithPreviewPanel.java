@@ -10,6 +10,7 @@ import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -45,6 +46,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
   private final Map<String, String> myRenamedFields = new THashMap<>();
   private final Map<String, String> myRemappedGroups = new THashMap<>();
 
+  private MySearchStringProvider mySearchStringProvider;
 
   public OptionTreeWithPreviewPanel(CodeStyleSettings settings) {
     super(settings);
@@ -182,6 +184,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
                lastPathComponent.toString();
       },
       true);
+    mySearchStringProvider = new MySearchStringProvider(speedSearch);
     speedSearch.setComparator(new SpeedSearchComparator(false));
     TreeUtil.installActions(optionsTree);
     optionsTree.setRootVisible(false);
@@ -216,7 +219,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
       row++;
     }
 
-    optionsTree.setCellRenderer(new MyTreeCellRenderer(speedSearch));
+    optionsTree.setCellRenderer(new MyTreeCellRenderer(mySearchStringProvider));
     optionsTree.setBackground(UIUtil.getPanelBackground());
     optionsTree.setBorder(JBUI.Borders.emptyRight(10));
 
@@ -407,15 +410,14 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
   protected static class MyTreeCellRenderer implements TreeCellRenderer {
     private final SimpleColoredComponent myLabel;
     private final JCheckBox              myCheckBox;
-    private final TreeSpeedSearch        mySpeedSearch;
     private final JPanel                 myCheckBoxPanel;
+    private final MySearchStringProvider mySearchStringProvider;
 
     public MyTreeCellRenderer() {
       this(null);
     }
 
-    public MyTreeCellRenderer(@Nullable TreeSpeedSearch speedSearch) {
-      mySpeedSearch = speedSearch;
+    public MyTreeCellRenderer(@Nullable MySearchStringProvider searchStringProvider) {
       myCheckBox = new JCheckBox();
       myCheckBox.setMargin(JBUI.emptyInsets());
       myLabel = new SimpleColoredComponent();
@@ -423,6 +425,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
       myCheckBoxPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
       myCheckBoxPanel.add(myCheckBox);
       myCheckBoxPanel.add(myLabel);
+      mySearchStringProvider = searchStringProvider;
     }
 
     @Override
@@ -456,8 +459,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
 
     private void setLabelText(@NotNull String text, int style, @NotNull Color foreground, @NotNull Color background) {
       myLabel.clear();
-      String prefix = mySpeedSearch != null ? mySpeedSearch.getEnteredPrefix() : null;
-      SearchUtil.appendFragments(prefix, text, style, foreground, background, myLabel);
+      SearchUtil.appendFragments(mySearchStringProvider.getSearchString(), text, style, foreground, background, myLabel);
     }
   }
 
@@ -643,5 +645,30 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
 
   private String getRemappedGroup(String fieldName, String defaultName) {
     return myRemappedGroups.getOrDefault(fieldName, defaultName);
+  }
+
+  @Override
+  public void highlightOptions(@NotNull String searchString) {
+    mySearchStringProvider.find(searchString);
+  }
+
+  private static class MySearchStringProvider {
+    private final     TreeSpeedSearch mySpeedSearch;
+    private @Nullable String          mySearchString;
+
+    private MySearchStringProvider(@NotNull TreeSpeedSearch search) {
+      mySpeedSearch = search;
+    }
+
+    public String getSearchString() {
+      String speedSearch = mySpeedSearch.getEnteredPrefix();
+      if (StringUtil.isNotEmpty(speedSearch)) return speedSearch;
+      return ObjectUtils.notNull(mySearchString, "");
+    }
+
+    private void find(@NotNull String searchString) {
+      mySearchString = searchString;
+      mySpeedSearch.findAndSelectElement(searchString);
+    }
   }
 }

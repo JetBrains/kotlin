@@ -123,4 +123,10 @@ public class NewCodeStyleSettingsPanel extends JPanel implements TabbedLanguageC
       ((TabbedLanguageCodeStylePanel)panel).changeTab(tabTitle);
     }
   }
+
+  void highlightOptions(@NotNull String searchString) {
+    if (myTab instanceof CodeStyleAbstractConfigurable) {
+      ((CodeStyleAbstractConfigurable)myTab).highlightOptions(searchString);
+    }
+  }
 }

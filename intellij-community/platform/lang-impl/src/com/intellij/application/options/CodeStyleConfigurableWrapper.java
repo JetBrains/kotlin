@@ -9,6 +9,7 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Map;
@@ -154,5 +155,11 @@ public class CodeStyleConfigurableWrapper
   @NotNull
   public static String getConfigurableId(String configurableDisplayName) {
     return "preferences.sourceCode." + configurableDisplayName;
+  }
+
+  @Nullable
+  @Override
+  public Runnable enableSearch(String option) {
+    return myPanel != null ? () -> myPanel.highlightOptions(option) : null;
   }
 }
