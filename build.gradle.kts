@@ -515,6 +515,10 @@ tasks {
         dependsOn(":compiler:fir:fir2ir:test")
         dependsOn(":compiler:fir:lightTree:test")
     }
+    
+    register("compilerFrontendVisualizerTest") {
+        dependsOn("compiler:visualizer:test")
+    }
 
     register("scriptingTest") {
         dependsOn("dist")
