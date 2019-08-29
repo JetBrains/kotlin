@@ -14,7 +14,7 @@ FILE: propertiesAndInitBlocks.kt
     public final val x3: R|kotlin/Unit| = R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
         local final fun foo(): R|kotlin/Unit| {
             lval c: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
-            throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+            throw R|java/lang/Exception.Exception|()
         }
 
         local final class LocalClass : R|kotlin/Any| {
@@ -23,13 +23,13 @@ FILE: propertiesAndInitBlocks.kt
             }
 
             init {
-                throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+                throw R|java/lang/Exception.Exception|()
                 Int(1)
             }
 
         }
 
-        throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+        throw R|java/lang/Exception.Exception|()
     }
     )
         public get(): R|kotlin/Unit| {
@@ -39,7 +39,7 @@ FILE: propertiesAndInitBlocks.kt
                 }
 
                 init {
-                    throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+                    throw R|java/lang/Exception.Exception|()
                 }
 
             }

@@ -91,8 +91,8 @@ digraph propertiesAndInitBlocks_kt {
       27 [label="Const: Int(1)"];
       28 [label="Function call: Int(1).R|kotlin/Int.plus|(Int(1))"];
       29 [label="Variable declaration: lval c: R|kotlin/Int|"];
-      30 [label="Function call: <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
-      31 [label="Throw: throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
+      30 [label="Function call: R|java/lang/Exception.Exception|()"];
+      31 [label="Throw: throw R|java/lang/Exception.Exception|()"];
       32 [label="Stub" style="filled" fillcolor=gray];
       33 [label="Exit block" style="filled" fillcolor=gray];
     }
@@ -125,8 +125,8 @@ digraph propertiesAndInitBlocks_kt {
     subgraph cluster_12 {
       color=blue
       38 [label="Enter block"];
-      39 [label="Function call: <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
-      40 [label="Throw: throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
+      39 [label="Function call: R|java/lang/Exception.Exception|()"];
+      40 [label="Throw: throw R|java/lang/Exception.Exception|()"];
       41 [label="Stub" style="filled" fillcolor=gray];
       42 [label="Exit block" style="filled" fillcolor=gray];
     }
@@ -168,8 +168,8 @@ digraph propertiesAndInitBlocks_kt {
     subgraph cluster_17 {
       color=blue
       51 [label="Enter block"];
-      52 [label="Function call: <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
-      53 [label="Throw: throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
+      52 [label="Function call: R|java/lang/Exception.Exception|()"];
+      53 [label="Throw: throw R|java/lang/Exception.Exception|()"];
       54 [label="Stub" style="filled" fillcolor=gray];
       55 [label="Const: Int(1)" style="filled" fillcolor=gray];
       56 [label="Exit block" style="filled" fillcolor=gray];
@@ -185,8 +185,8 @@ digraph propertiesAndInitBlocks_kt {
       subgraph cluster_20 {
         color=blue
         60 [label="Enter block"];
-        61 [label="Function call: <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
-        62 [label="Throw: throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()"];
+        61 [label="Function call: R|java/lang/Exception.Exception|()"];
+        62 [label="Throw: throw R|java/lang/Exception.Exception|()"];
         63 [label="Stub" style="filled" fillcolor=gray];
         64 [label="Exit block" style="filled" fillcolor=gray];
       }
@@ -195,7 +195,7 @@ digraph propertiesAndInitBlocks_kt {
     66 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     local final fun foo(): R|kotlin/Unit| {
         lval c: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
-        throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+        throw R|java/lang/Exception.Exception|()
     }
 
     local final class LocalClass : R|kotlin/Any| {
@@ -204,13 +204,13 @@ digraph propertiesAndInitBlocks_kt {
         }
 
         init {
-            throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+            throw R|java/lang/Exception.Exception|()
             Int(1)
         }
 
     }
 
-    throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+    throw R|java/lang/Exception.Exception|()
 }
 )" style="filled" fillcolor=gray];
     67 [label="Exit property" style="filled" fillcolor=red];
