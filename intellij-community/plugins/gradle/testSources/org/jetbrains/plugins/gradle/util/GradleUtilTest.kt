@@ -71,6 +71,8 @@ class GradleUtilTest: UsefulTestCase() {
 
     assertEquals(GradleVersion.version("5.2.1"), GradleInstallationManager.parseDistributionVersion("abc/gradle-5.2.1-bin.zip"));
     assertEquals(GradleVersion.version("5.2.1"), GradleInstallationManager.parseDistributionVersion("abc/abc-gradle-5.2.1-bin.zip"));
+    assertEquals(GradleVersion.version("5.2"), GradleInstallationManager.parseDistributionVersion("abc/abc-gradle-5.2-bin.zip"));
+    assertEquals(GradleVersion.version("5.2-rc-1"), GradleInstallationManager.parseDistributionVersion("abc/abc-gradle-5.2-rc-1-bin.zip"));
 
     assertNull(GradleInstallationManager.parseDistributionVersion("abc/gradle-unexpected-bin.zip"));
   }
