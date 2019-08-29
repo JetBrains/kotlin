@@ -310,8 +310,7 @@ internal class HeaderProcessor(
                         progressionType.elementCastFunctionName
                     ),
                     nameHint = "inductionVariable",
-                    isMutable = true,
-                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
+                    isMutable = true
                 )
 
                 // Due to features of PSI2IR we can obtain nullable arguments here while actually
@@ -325,8 +324,7 @@ internal class HeaderProcessor(
                             progressionType.elementCastFunctionName
                         )
                     ),
-                    nameHint = "last",
-                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
+                    nameHint = "last"
                 )
 
                 val stepValue = scope.createTemporaryVariable(
@@ -336,8 +334,7 @@ internal class HeaderProcessor(
                             progressionType.stepCastFunctionName
                         )
                     ),
-                    nameHint = "step",
-                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
+                    nameHint = "step"
                 )
 
                 return when (headerInfo) {
