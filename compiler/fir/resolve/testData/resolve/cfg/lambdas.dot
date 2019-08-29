@@ -1,48 +1,80 @@
 digraph lambdas_kt {
-graph [splines=ortho, nodesep=3]
+  graph [splines=ortho nodesep=3]
+  node [shape=box penwidth=2]
+  edge [penwidth=2]
 
-subgraph cluster_run {
-  0 [shape=box label="Enter function run" style="filled"];
-  1 [shape=box label="Enter block"];
-  2 [shape=box label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
-  3 [shape=box label="Exit block"];
-  4 [shape=box label="Exit function run" style="filled"];
+  subgraph cluster_0 {
+    color=red
+    0 [label="Enter function run" style="filled" fillcolor=red];
+    subgraph cluster_1 {
+      color=blue
+      1 [label="Enter block"];
+      2 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+      3 [label="Exit block"];
+    }
+    4 [label="Exit function run" style="filled" fillcolor=red];
+  }
 
   0 -> {1};
   1 -> {2};
   2 -> {3};
   3 -> {4};
-}
 
-subgraph cluster_test_1 {
-  5 [shape=box label="Enter function test_1" style="filled"];
-  6 [shape=box label="Enter block"];
-  7 [shape=box label="Enter when"];
-  8 [shape=box label="Enter when branch condition "];
-  9 [shape=box label="Access variable R|<local>/x|"];
-  10 [shape=box label="Type operator: x is Int"];
-  11 [shape=box label="Exit when branch condition"];
-  12 [shape=box label="Enter block"];
-  13 [shape=box label="Enter function anonymousFunction"];
-  14 [shape=box label="Enter block"];
-  15 [shape=box label="Access variable R|<local>/x|"];
-  16 [shape=box label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
-  17 [shape=box label="Exit block"];
-  18 [shape=box label="Exit function anonymousFunction"];
-  19 [shape=box label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+  subgraph cluster_2 {
+    color=red
+    5 [label="Enter function test_1" style="filled" fillcolor=red];
+    subgraph cluster_3 {
+      color=blue
+      6 [label="Enter block"];
+      subgraph cluster_4 {
+        color=blue
+        7 [label="Enter when"];
+        subgraph cluster_5 {
+          color=blue
+          8 [label="Enter when branch condition "];
+          9 [label="Access variable R|<local>/x|"];
+          10 [label="Type operator: x is Int"];
+          11 [label="Exit when branch condition"];
+        }
+        subgraph cluster_6 {
+          color=blue
+          12 [label="Enter block"];
+          subgraph cluster_7 {
+            color=blue
+            13 [label="Enter function anonymousFunction"];
+            subgraph cluster_8 {
+              color=blue
+              14 [label="Enter block"];
+              15 [label="Access variable R|<local>/x|"];
+              16 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+              17 [label="Exit block"];
+            }
+            18 [label="Exit function anonymousFunction"];
+          }
+          19 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     R|<local>/x|.R|kotlin/Int.inc|()
 }
 )"];
-  20 [shape=box label="Exit block"];
-  21 [shape=box label="Exit when branch result"];
-  22 [shape=box label="Enter when branch condition else"];
-  23 [shape=box label="Exit when branch condition"];
-  24 [shape=box label="Enter block"];
-  25 [shape=box label="Exit block"];
-  26 [shape=box label="Exit when branch result"];
-  27 [shape=box label="Exit when"];
-  28 [shape=box label="Exit block"];
-  29 [shape=box label="Exit function test_1" style="filled"];
+          20 [label="Exit block"];
+        }
+        21 [label="Exit when branch result"];
+        subgraph cluster_9 {
+          color=blue
+          22 [label="Enter when branch condition else"];
+          23 [label="Exit when branch condition"];
+        }
+        subgraph cluster_10 {
+          color=blue
+          24 [label="Enter block"];
+          25 [label="Exit block"];
+        }
+        26 [label="Exit when branch result"];
+        27 [label="Exit when"];
+      }
+      28 [label="Exit block"];
+    }
+    29 [label="Exit function test_1" style="filled" fillcolor=red];
+  }
 
   5 -> {6};
   6 -> {7};
@@ -68,43 +100,66 @@ subgraph cluster_test_1 {
   26 -> {27};
   27 -> {28};
   28 -> {29};
-}
 
-subgraph cluster__anonymous_ {
-  30 [shape=box label="Enter function anonymousFunction" style="filled"];
-  31 [shape=box label="Enter block"];
-  32 [shape=box label="Access variable R|<local>/x|"];
-  33 [shape=box label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
-  34 [shape=box label="Exit block"];
-  35 [shape=box label="Exit function anonymousFunction" style="filled"];
+  subgraph cluster_11 {
+    color=red
+    30 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+    subgraph cluster_12 {
+      color=blue
+      31 [label="Enter block"];
+      32 [label="Access variable R|<local>/x|"];
+      33 [label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+      34 [label="Exit block"];
+    }
+    35 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+  }
 
   30 -> {31};
   31 -> {32};
   32 -> {33};
   33 -> {34};
   34 -> {35};
-}
 
-subgraph cluster_test_2 {
-  36 [shape=box label="Enter function test_2" style="filled"];
-  37 [shape=box label="Enter block"];
-  38 [shape=box label="Enter when"];
-  39 [shape=box label="Enter when branch condition "];
-  40 [shape=box label="Access variable R|<local>/x|"];
-  41 [shape=box label="Type operator: x is Int"];
-  42 [shape=box label="Exit when branch condition"];
-  43 [shape=box label="Enter block"];
-  44 [shape=box label="Variable declaration: lval lambda: R|kotlin/Function0<class error: Ambiguity: inc, [kotlin/inc, kotlin/inc]>|"];
-  45 [shape=box label="Exit block"];
-  46 [shape=box label="Exit when branch result"];
-  47 [shape=box label="Enter when branch condition else"];
-  48 [shape=box label="Exit when branch condition"];
-  49 [shape=box label="Enter block"];
-  50 [shape=box label="Exit block"];
-  51 [shape=box label="Exit when branch result"];
-  52 [shape=box label="Exit when"];
-  53 [shape=box label="Exit block"];
-  54 [shape=box label="Exit function test_2" style="filled"];
+  subgraph cluster_13 {
+    color=red
+    36 [label="Enter function test_2" style="filled" fillcolor=red];
+    subgraph cluster_14 {
+      color=blue
+      37 [label="Enter block"];
+      subgraph cluster_15 {
+        color=blue
+        38 [label="Enter when"];
+        subgraph cluster_16 {
+          color=blue
+          39 [label="Enter when branch condition "];
+          40 [label="Access variable R|<local>/x|"];
+          41 [label="Type operator: x is Int"];
+          42 [label="Exit when branch condition"];
+        }
+        subgraph cluster_17 {
+          color=blue
+          43 [label="Enter block"];
+          44 [label="Variable declaration: lval lambda: R|kotlin/Function0<class error: Ambiguity: inc, [kotlin/inc, kotlin/inc]>|"];
+          45 [label="Exit block"];
+        }
+        46 [label="Exit when branch result"];
+        subgraph cluster_18 {
+          color=blue
+          47 [label="Enter when branch condition else"];
+          48 [label="Exit when branch condition"];
+        }
+        subgraph cluster_19 {
+          color=blue
+          49 [label="Enter block"];
+          50 [label="Exit block"];
+        }
+        51 [label="Exit when branch result"];
+        52 [label="Exit when"];
+      }
+      53 [label="Exit block"];
+    }
+    54 [label="Exit function test_2" style="filled" fillcolor=red];
+  }
 
   36 -> {37};
   37 -> {38};
@@ -124,6 +179,5 @@ subgraph cluster_test_2 {
   51 -> {52};
   52 -> {53};
   53 -> {54};
-}
 
 }

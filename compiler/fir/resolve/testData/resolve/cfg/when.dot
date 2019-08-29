@@ -1,52 +1,86 @@
 digraph when_kt {
-graph [splines=ortho, nodesep=3]
+  graph [splines=ortho nodesep=3]
+  node [shape=box penwidth=2]
+  edge [penwidth=2]
 
-subgraph cluster_test_1 {
-  0 [shape=box label="Enter function test_1" style="filled"];
-  1 [shape=box label="Enter block"];
-  2 [shape=box label="Enter when"];
-  3 [shape=box label="Enter when branch condition "];
-  4 [shape=box label="Access variable R|<local>/x|"];
-  5 [shape=box label="Const: Int(1)"];
-  6 [shape=box label="Operator =="];
-  7 [shape=box label="Exit when branch condition"];
-  8 [shape=box label="Enter block"];
-  9 [shape=box label="Const: Int(10)"];
-  10 [shape=box label="Exit block"];
-  11 [shape=box label="Exit when branch result"];
-  12 [shape=box label="Enter when branch condition "];
-  13 [shape=box label="Access variable R|<local>/x|"];
-  14 [shape=box label="Const: Int(2)"];
-  15 [shape=box label="Function call: R|<local>/x|.R|kotlin/Int.rem|(Int(2))"];
-  16 [shape=box label="Const: Int(0)"];
-  17 [shape=box label="Operator =="];
-  18 [shape=box label="Exit when branch condition"];
-  19 [shape=box label="Enter block"];
-  20 [shape=box label="Const: Int(20)"];
-  21 [shape=box label="Exit block"];
-  22 [shape=box label="Exit when branch result"];
-  23 [shape=box label="Enter when branch condition "];
-  24 [shape=box label="Const: Int(1)"];
-  25 [shape=box label="Const: Int(1)"];
-  26 [shape=box label="Function call: Int(1).R|kotlin/Int.minus|(Int(1))"];
-  27 [shape=box label="Const: Int(0)"];
-  28 [shape=box label="Operator =="];
-  29 [shape=box label="Exit when branch condition"];
-  30 [shape=box label="Enter block"];
-  31 [shape=box label="Jump: ^test_1 Unit"];
-  32 [shape=box label="Stub[DEAD]"];
-  33 [shape=box label="Exit block[DEAD]"];
-  34 [shape=box label="Exit when branch result[DEAD]"];
-  35 [shape=box label="Enter when branch condition else"];
-  36 [shape=box label="Exit when branch condition"];
-  37 [shape=box label="Enter block"];
-  38 [shape=box label="Const: Int(5)"];
-  39 [shape=box label="Exit block"];
-  40 [shape=box label="Exit when branch result"];
-  41 [shape=box label="Exit when"];
-  42 [shape=box label="Variable declaration: lval y: R|kotlin/Int|"];
-  43 [shape=box label="Exit block"];
-  44 [shape=box label="Exit function test_1" style="filled"];
+  subgraph cluster_0 {
+    color=red
+    0 [label="Enter function test_1" style="filled" fillcolor=red];
+    subgraph cluster_1 {
+      color=blue
+      1 [label="Enter block"];
+      subgraph cluster_2 {
+        color=blue
+        2 [label="Enter when"];
+        subgraph cluster_3 {
+          color=blue
+          3 [label="Enter when branch condition "];
+          4 [label="Access variable R|<local>/x|"];
+          5 [label="Const: Int(1)"];
+          6 [label="Operator =="];
+          7 [label="Exit when branch condition"];
+        }
+        subgraph cluster_4 {
+          color=blue
+          8 [label="Enter block"];
+          9 [label="Const: Int(10)"];
+          10 [label="Exit block"];
+        }
+        11 [label="Exit when branch result"];
+        subgraph cluster_5 {
+          color=blue
+          12 [label="Enter when branch condition "];
+          13 [label="Access variable R|<local>/x|"];
+          14 [label="Const: Int(2)"];
+          15 [label="Function call: R|<local>/x|.R|kotlin/Int.rem|(Int(2))"];
+          16 [label="Const: Int(0)"];
+          17 [label="Operator =="];
+          18 [label="Exit when branch condition"];
+        }
+        subgraph cluster_6 {
+          color=blue
+          19 [label="Enter block"];
+          20 [label="Const: Int(20)"];
+          21 [label="Exit block"];
+        }
+        22 [label="Exit when branch result"];
+        subgraph cluster_7 {
+          color=blue
+          23 [label="Enter when branch condition "];
+          24 [label="Const: Int(1)"];
+          25 [label="Const: Int(1)"];
+          26 [label="Function call: Int(1).R|kotlin/Int.minus|(Int(1))"];
+          27 [label="Const: Int(0)"];
+          28 [label="Operator =="];
+          29 [label="Exit when branch condition"];
+        }
+        subgraph cluster_8 {
+          color=blue
+          30 [label="Enter block"];
+          31 [label="Jump: ^test_1 Unit"];
+          32 [label="Stub" style="filled" fillcolor=gray];
+          33 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        34 [label="Exit when branch result" style="filled" fillcolor=gray];
+        subgraph cluster_9 {
+          color=blue
+          35 [label="Enter when branch condition else"];
+          36 [label="Exit when branch condition"];
+        }
+        subgraph cluster_10 {
+          color=blue
+          37 [label="Enter block"];
+          38 [label="Const: Int(5)"];
+          39 [label="Exit block"];
+        }
+        40 [label="Exit when branch result"];
+        41 [label="Exit when"];
+      }
+      42 [label="Variable declaration: lval y: R|kotlin/Int|"];
+      43 [label="Exit block"];
+    }
+    44 [label="Exit function test_1" style="filled" fillcolor=red];
+  }
 
   0 -> {1};
   1 -> {2};
@@ -93,34 +127,56 @@ subgraph cluster_test_1 {
   41 -> {42};
   42 -> {43};
   43 -> {44};
-}
 
-subgraph cluster_test_2 {
-  45 [shape=box label="Enter function test_2" style="filled"];
-  46 [shape=box label="Enter block"];
-  47 [shape=box label="Enter when"];
-  48 [shape=box label="Enter when branch condition "];
-  49 [shape=box label="Enter &&"];
-  50 [shape=box label="Access variable R|<local>/x|"];
-  51 [shape=box label="Type operator: x is A"];
-  52 [shape=box label="Exit left part of &&"];
-  53 [shape=box label="Access variable R|<local>/x|"];
-  54 [shape=box label="Type operator: x is B"];
-  55 [shape=box label="Exit &&"];
-  56 [shape=box label="Exit when branch condition"];
-  57 [shape=box label="Enter block"];
-  58 [shape=box label="Access variable R|<local>/x|"];
-  59 [shape=box label="Type operator: x is A"];
-  60 [shape=box label="Exit block"];
-  61 [shape=box label="Exit when branch result"];
-  62 [shape=box label="Enter when branch condition else"];
-  63 [shape=box label="Exit when branch condition"];
-  64 [shape=box label="Enter block"];
-  65 [shape=box label="Exit block"];
-  66 [shape=box label="Exit when branch result"];
-  67 [shape=box label="Exit when"];
-  68 [shape=box label="Exit block"];
-  69 [shape=box label="Exit function test_2" style="filled"];
+  subgraph cluster_11 {
+    color=red
+    45 [label="Enter function test_2" style="filled" fillcolor=red];
+    subgraph cluster_12 {
+      color=blue
+      46 [label="Enter block"];
+      subgraph cluster_13 {
+        color=blue
+        47 [label="Enter when"];
+        subgraph cluster_14 {
+          color=blue
+          48 [label="Enter when branch condition "];
+          subgraph cluster_15 {
+            color=blue
+            49 [label="Enter &&"];
+            50 [label="Access variable R|<local>/x|"];
+            51 [label="Type operator: x is A"];
+            52 [label="Exit left part of &&"];
+            53 [label="Access variable R|<local>/x|"];
+            54 [label="Type operator: x is B"];
+            55 [label="Exit &&"];
+          }
+          56 [label="Exit when branch condition"];
+        }
+        subgraph cluster_16 {
+          color=blue
+          57 [label="Enter block"];
+          58 [label="Access variable R|<local>/x|"];
+          59 [label="Type operator: x is A"];
+          60 [label="Exit block"];
+        }
+        61 [label="Exit when branch result"];
+        subgraph cluster_17 {
+          color=blue
+          62 [label="Enter when branch condition else"];
+          63 [label="Exit when branch condition"];
+        }
+        subgraph cluster_18 {
+          color=blue
+          64 [label="Enter block"];
+          65 [label="Exit block"];
+        }
+        66 [label="Exit when branch result"];
+        67 [label="Exit when"];
+      }
+      68 [label="Exit block"];
+    }
+    69 [label="Exit function test_2" style="filled" fillcolor=red];
+  }
 
   45 -> {46};
   46 -> {47};
@@ -146,6 +202,5 @@ subgraph cluster_test_2 {
   66 -> {67};
   67 -> {68};
   68 -> {69};
-}
 
 }

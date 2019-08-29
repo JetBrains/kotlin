@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-
+private const val EDGE = " -> "
+private const val INDENT = "  "
+private const val RED = "red"
+private const val BLUE = "blue"
 
 /*
  * For comfort viewing dumps of control flow graph you can setup external tool in IDEA that opens .dot files
@@ -57,10 +60,14 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
         private val dotBuilder: StringBuilder
     ) : FirVisitorVoid() {
         private var indexOffset = 0
+        private var clusterCounter = 0
+        private var offset = 1
 
         override fun visitFile(file: FirFile) {
             dotBuilder.appendln("digraph ${file.name.replace(".", "_")} {")
-                .appendln("graph [splines=ortho, nodesep=3]")
+                .appendln("${INDENT}graph [splines=ortho nodesep=3]")
+                .appendln("${INDENT}node [shape=box penwidth=2]")
+                .appendln("${INDENT}edge [penwidth=2]")
                 .appendln()
             super.visitFile(file)
             dotBuilder.appendln("}")
@@ -73,60 +80,85 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
         override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
             val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
             controlFlowGraph.renderToStringBuilder(simpleBuilder)
-            indexOffset = controlFlowGraph.dotRenderToStringBuilder(dotBuilder, indexOffset)
+            indexOffset = controlFlowGraph.dotRenderToStringBuilder(dotBuilder)
             dotBuilder.appendln()
         }
-    }
-}
 
-private const val EDGE = " -> "
-private const val INDENT = "  "
-
-fun ControlFlowGraph.dotRenderToStringBuilder(builder: StringBuilder, indexOffset: Int): Int {
-    with(builder) {
-        val sortedNodes = sortNodes()
-        val indices = sortedNodes.indicesMap().mapValues { (_, index) -> index + indexOffset }
-        val graphName = name.replace(Regex("[ <>]"), "_")
-        appendln("subgraph cluster_$graphName {")
-
-        fun CFGNode<*>.splitEdges(): Pair<List<CFGNode<*>>, List<CFGNode<*>>> =
-            if (isDead) emptyList<CFGNode<*>>() to followingNodes
-            else followingNodes.filter { !it.isDead } to followingNodes.filter { it.isDead }
-
-        sortedNodes.forEach {
-            append(INDENT)
-            append(indices.getValue(it))
-            val attributes = mutableListOf("shape=box")
-            attributes += "label=\"${it.render().replace("\"", "")}\""
-            if (it == enterNode || it == exitNode) {
-                attributes += "style=\"filled\""
-            }
-            appendln(attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
+        private fun StringBuilder.enterCluster(color: String) {
+            indent()
+            appendln("subgraph cluster_${clusterCounter++} {")
+            offset++
+            indent()
+            appendln("color=$color")
         }
-        appendln()
 
-        sortedNodes.forEachIndexed { i, node ->
-            if (node.followingNodes.isEmpty()) return@forEachIndexed
-            val (aliveEdges, deadEdges) = node.splitEdges()
+        private fun StringBuilder.exitCluster() {
+            offset--
+            indent()
+            appendln("}")
+        }
 
-            fun renderEdges(edges: List<CFGNode<*>>, isDead: Boolean) {
-                if (edges.isEmpty()) return
-                append(INDENT)
-                append(i + indexOffset)
-                append(EDGE)
-                append(edges.joinToString(prefix = "{", postfix = "}", separator = " ") { indices.getValue(it).toString() })
-                if (isDead) {
-                    append(" [style=dotted]")
+        private fun StringBuilder.indent() {
+            append(INDENT.repeat(offset))
+        }
+
+        fun ControlFlowGraph.dotRenderToStringBuilder(builder: StringBuilder): Int {
+            with(builder) {
+                val sortedNodes = sortNodes()
+                val indices = sortedNodes.indicesMap().mapValues { (_, index) -> index + indexOffset }
+
+                fun CFGNode<*>.splitEdges(): Pair<List<CFGNode<*>>, List<CFGNode<*>>> =
+                    if (isDead) emptyList<CFGNode<*>>() to followingNodes
+                    else followingNodes.filter { !it.isDead } to followingNodes.filter { it.isDead }
+
+                var color = RED
+                sortedNodes.forEach {
+                    if (it is EnterNode) {
+                        enterCluster(color)
+                        color = BLUE
+                    }
+                    indent()
+                    append(indices.getValue(it))
+                    val attributes = mutableListOf<String>()
+                    attributes += "label=\"${it.render().replace("\"", "")}\""
+                    if (it == enterNode || it == exitNode) {
+                        attributes += "style=\"filled\""
+                        attributes += "fillcolor=red"
+                    }
+                    if (it.isDead) {
+                        attributes += "style=\"filled\""
+                        attributes += "fillcolor=gray"
+                    }
+                    appendln(attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
+                    if (it is ExitNode) {
+                        exitCluster()
+                    }
                 }
-                appendln(";")
+                appendln()
+
+                sortedNodes.forEachIndexed { i, node ->
+                    if (node.followingNodes.isEmpty()) return@forEachIndexed
+
+                    val (aliveEdges, deadEdges) = node.splitEdges()
+
+                    fun renderEdges(edges: List<CFGNode<*>>, isDead: Boolean) {
+                        if (edges.isEmpty()) return
+                        indent()
+                        append(i + indexOffset)
+                        append(EDGE)
+                        append(edges.joinToString(prefix = "{", postfix = "}", separator = " ") { indices.getValue(it).toString() })
+                        if (isDead) {
+                            append(" [style=dotted]")
+                        }
+                        appendln(";")
+                    }
+
+                    renderEdges(aliveEdges, false)
+                    renderEdges(deadEdges, true)
+                }
+
+                return indexOffset + sortedNodes.size
             }
-
-            renderEdges(aliveEdges, false)
-            renderEdges(deadEdges, true)
         }
-
-        appendln("}")
-
-        return indexOffset + sortedNodes.size
     }
 }

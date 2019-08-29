@@ -149,9 +149,6 @@ fun CFGNode<*>.render(): String =
                 else -> TODO(this@render.toString())
             }
         )
-        if (isDead) {
-            append(DEAD)
-        }
     }
 
 private fun FirFunction<*>.name(): String = when (this) {
