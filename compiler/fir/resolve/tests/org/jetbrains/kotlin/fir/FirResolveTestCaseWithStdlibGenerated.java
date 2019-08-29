@@ -94,6 +94,11 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         runTest("compiler/fir/resolve/testData/resolve/stdlib/multipleImplicitReceivers.kt");
     }
 
+    @TestMetadata("problems.kt")
+    public void testProblems() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/problems.kt");
+    }
+
     @TestMetadata("recursiveBug.kt")
     public void testRecursiveBug() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/recursiveBug.kt");
