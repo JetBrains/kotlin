@@ -33,6 +33,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.UIBundle;
 import com.intellij.util.Alarm;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -124,7 +125,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
       @NotNull
       @Override
       public String getDoNotShowMessage() {
-        return CommonBundle.message("dialog.options.do.not.show");
+        return UIBundle.message("dialog.options.do.not.show");
       }
     };
     return Messages.showOkCancelDialog(
@@ -167,7 +168,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
       @NotNull
       @Override
       public String getDoNotShowMessage() {
-        return CommonBundle.message("dialog.options.do.not.show");
+        return UIBundle.message("dialog.options.do.not.show");
       }
     };
 
