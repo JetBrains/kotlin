@@ -1,4 +1,4 @@
-fun <T, E, F, S> foo(x: /*T0@*/T, y: /*T2@*/List</*T1@*/E>, z: /*T4@*/List</*T3@*/F>, a: /*T5@*/S) {}
+fun <T, E, F, S> foo(x: /*T0@*/T, y: /*T2@*/List</*T1@*/E>?, z: /*T4@*/List</*T3@*/F>?, a: /*T5@*/S) {}
 
 fun bar() {
     val lst: /*T8@*/List</*T7@*/Int?> = listOf</*T6@*/Int?>(null/*NULL!!U*/)/*List<T6@Int>!!L*/

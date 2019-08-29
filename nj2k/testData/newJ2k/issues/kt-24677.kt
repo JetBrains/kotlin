@@ -1,11 +1,11 @@
 import java.util.ArrayList
 
 internal interface FooInterface {
-    fun foo(): ArrayList<out Foo.SomeClass>?
+    fun foo(): ArrayList<out Foo.SomeClass?>?
 }
 
 class Foo : FooInterface {
-    override fun foo(): ArrayList<SomeClass>? {
+    override fun foo(): ArrayList<SomeClass?>? {
         return null
     }
 

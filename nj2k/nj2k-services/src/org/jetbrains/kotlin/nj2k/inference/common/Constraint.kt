@@ -54,28 +54,8 @@ class LiteralBound private constructor(val state: State) : ConstraintBound() {
     }
 }
 
-val TypeVariable.constraintBound: TypeVariableBound
-    get() = TypeVariableBound(this)
-
-val State.constraintBound: LiteralBound
-    get() = when (this) {
-        State.LOWER -> LiteralBound.LOWER
-        State.UPPER -> LiteralBound.UPPER
-        State.UNKNOWN -> LiteralBound.UNKNOWN
-    }
-
-val BoundTypeLabel.constraintBound: ConstraintBound?
-    get() = when (this) {
-        is TypeVariableLabel -> typeVariable.constraintBound
-        is TypeParameterLabel -> null
-        is GenericLabel -> null
-        StarProjectionLabel -> null
-        NullLiteralLabel -> LiteralBound.UPPER
-        LiteralLabel -> LiteralBound.LOWER
-    }
-
-val BoundType.constraintBound: ConstraintBound?
-    get() = when (this) {
-        is BoundTypeImpl -> label.constraintBound
-        is WithForcedStateBoundType -> forcedState.constraintBound
-    }
+fun State.constraintBound(): LiteralBound = when (this) {
+    State.LOWER -> LiteralBound.LOWER
+    State.UPPER -> LiteralBound.UPPER
+    State.UNKNOWN -> LiteralBound.UNKNOWN
+}

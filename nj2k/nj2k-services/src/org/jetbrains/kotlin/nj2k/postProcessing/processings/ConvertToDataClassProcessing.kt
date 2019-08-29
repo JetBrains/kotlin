@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.asAssignment
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierTypeOrDefault
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConvertToDataClassProcessing : ElementsBasedPostProcessing() {
@@ -64,7 +65,7 @@ class ConvertToDataClassProcessing : ElementsBasedPostProcessing() {
                             } ?: return@map null
                         val propertyType = property.type() ?: return@map null
                         val parameterType = parameter.type() ?: return@map null
-                        if (propertyType != parameterType) return@map null
+                        if (!KotlinTypeChecker.DEFAULT.equalTypes(propertyType, parameterType)) return@map null
                         parametersUsed += parameter
                         ConstructorParameterInitialization(property, parameter, assignment)
                     }

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.nj2k.postProcessing.resolve
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -55,8 +56,8 @@ class RemoveExplicitPropertyTypeProcessing : ApplicabilityBasedInspectionLikePro
         val initializer = element.initializer ?: return false
         val withoutExpectedType =
             initializer.analyzeInContext(initializer.getResolutionScope()).getType(initializer) ?: return false
-        val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false
-        return withoutExpectedType == descriptor.returnType
+        val typeBeDescriptor = element.resolveToDescriptorIfAny().safeAs<CallableDescriptor>()?.returnType ?: return false
+        return KotlinTypeChecker.DEFAULT.equalTypes(withoutExpectedType, typeBeDescriptor)
     }
 
     override fun apply(element: KtProperty) {

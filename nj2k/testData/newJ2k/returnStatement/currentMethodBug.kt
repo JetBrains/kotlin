@@ -12,6 +12,6 @@ internal class C {
             return string
         }
 
-    fun foo(i: I) {}
+    fun foo(i: I?) {}
     var string: String? = null
 }

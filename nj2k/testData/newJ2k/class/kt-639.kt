@@ -4,7 +4,7 @@ import java.util.HashMap
 
 internal class Test {
     constructor() {}
-    constructor(s: String) {}
+    constructor(s: String?) {}
 }
 
 internal class User {

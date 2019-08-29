@@ -357,11 +357,12 @@ fun JKType.arrayFqName(): String =
     else KotlinBuiltIns.FQ_NAMES.array.asString()
 
 fun JKClassSymbol.isArrayType(): Boolean =
-    fqName in
-            JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE.values
-                .filterIsInstance<JKJavaPrimitiveType>()
-                .map { PrimitiveType.valueOf(it.jvmPrimitiveType.name).arrayTypeFqName.asString() } +
-            KotlinBuiltIns.FQ_NAMES.array.asString()
+    fqName in arrayFqNames
+
+private val arrayFqNames = JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE.values
+    .filterIsInstance<JKJavaPrimitiveType>()
+    .map { PrimitiveType.valueOf(it.jvmPrimitiveType.name).arrayTypeFqName.asString() } +
+        KotlinBuiltIns.FQ_NAMES.array.asString()
 
 fun JKType.isArrayType() =
     when (this) {
@@ -370,6 +371,18 @@ fun JKType.isArrayType() =
         else -> false
     }
 
+val JKType.isCollectionType: Boolean
+    get() = safeAs<JKClassType>()?.classReference?.fqName in collectionFqNames
+
+private val collectionFqNames = setOf(
+    KotlinBuiltIns.FQ_NAMES.mutableIterator.asString(),
+    KotlinBuiltIns.FQ_NAMES.mutableList.asString(),
+    KotlinBuiltIns.FQ_NAMES.mutableCollection.asString(),
+    KotlinBuiltIns.FQ_NAMES.mutableSet.asString(),
+    KotlinBuiltIns.FQ_NAMES.mutableMap.asString(),
+    KotlinBuiltIns.FQ_NAMES.mutableMapEntry.asString(),
+    KotlinBuiltIns.FQ_NAMES.mutableListIterator.asString()
+)
 
 fun JKType.arrayInnerType(): JKType? =
     when (this) {

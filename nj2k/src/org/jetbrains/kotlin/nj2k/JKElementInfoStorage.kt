@@ -14,9 +14,10 @@ sealed class SuperFunctionInfo
 data class ExternalSuperFunctionInfo(val descriptor: FunctionDescriptor) : SuperFunctionInfo()
 data class InternalSuperFunctionInfo(val label: JKElementInfoLabel) : SuperFunctionInfo()
 
-data class FunctionInfo(val originalDescriptor: FunctionDescriptor, val superFunctions: List<SuperFunctionInfo>) : JKElementInfo
+data class FunctionInfo(val superFunctions: List<SuperFunctionInfo>) : JKElementInfo
 
 object UnknownNullability : JKElementInfo
+object UnknownMutability : JKElementInfo
 
 inline class JKElementInfoLabel(val label: String) {
     fun render(): String = "/*@@$label@@*/"

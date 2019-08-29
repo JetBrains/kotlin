@@ -36,37 +36,41 @@ interface BoundTypeCalculator {
     ): BoundType
 }
 
-class BoundTypeCalculatorImpl(
+open class BoundTypeCalculatorImpl(
     private val resolutionFacade: ResolutionFacade,
     private val enhancer: BoundTypeEnhancer
 ) : BoundTypeCalculator {
     private val cache = mutableMapOf<KtExpression, BoundType>()
 
-    override fun expressionsWithBoundType() = cache.toList()
+    final override fun expressionsWithBoundType() = cache.toList()
 
-    override fun KtExpression.boundType(inferenceContext: InferenceContext): BoundType = cache.getOrPut(this) {
+    final override fun KtExpression.boundType(inferenceContext: InferenceContext): BoundType = cache.getOrPut(this) {
         calculateBoundType(inferenceContext, this)
     }
 
-    private fun calculateBoundType(inferenceContext: InferenceContext, expression: KtExpression): BoundType = when {
-        expression.isNullExpression() -> BoundType.NULL
-        expression is KtParenthesizedExpression -> expression.expression?.boundType(inferenceContext)
-        expression is KtConstantExpression
-                || expression is KtStringTemplateExpression
-                || expression.node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT
-                || expression is KtBinaryExpression ->
-            BoundType.LITERAL
-        expression is KtQualifiedExpression -> expression.toBoundTypeAsQualifiedExpression(inferenceContext)
-        expression is KtBinaryExpressionWithTypeRHS -> expression.toBoundTypeAsCastExpression(inferenceContext)
-        expression is KtNameReferenceExpression -> expression.toBoundTypeAsReferenceExpression(inferenceContext)
-        expression is KtCallExpression -> expression.toBoundTypeAsCallableExpression(null, inferenceContext)
-        expression is KtLambdaExpression -> expression.toBoundTypeAsLambdaExpression(inferenceContext)
-        expression is KtLabeledExpression -> expression.baseExpression?.boundType(inferenceContext)
-        expression is KtIfExpression -> expression.toBoundTypeAsIfExpression(inferenceContext)
-        else -> null
-    }?.let { boundType ->
-        enhancer.enhance(expression, boundType, inferenceContext)
-    } ?: BoundType.LITERAL
+    open fun interceptCalculateBoundType(inferenceContext: InferenceContext, expression: KtExpression): BoundType? =
+        null
+
+    private fun calculateBoundType(inferenceContext: InferenceContext, expression: KtExpression): BoundType =
+        interceptCalculateBoundType(inferenceContext, expression) ?: when {
+            expression.isNullExpression() -> BoundType.NULL
+            expression is KtParenthesizedExpression -> expression.expression?.boundType(inferenceContext)
+            expression is KtConstantExpression
+                    || expression is KtStringTemplateExpression
+                    || expression.node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT
+                    || expression is KtBinaryExpression ->
+                BoundType.LITERAL
+            expression is KtQualifiedExpression -> expression.toBoundTypeAsQualifiedExpression(inferenceContext)
+            expression is KtBinaryExpressionWithTypeRHS -> expression.toBoundTypeAsCastExpression(inferenceContext)
+            expression is KtNameReferenceExpression -> expression.toBoundTypeAsReferenceExpression(inferenceContext)
+            expression is KtCallExpression -> expression.toBoundTypeAsCallableExpression(null, inferenceContext)
+            expression is KtLambdaExpression -> expression.toBoundTypeAsLambdaExpression(inferenceContext)
+            expression is KtLabeledExpression -> expression.baseExpression?.boundType(inferenceContext)
+            expression is KtIfExpression -> expression.toBoundTypeAsIfExpression(inferenceContext)
+            else -> null
+        }?.let { boundType ->
+            enhancer.enhance(expression, boundType, inferenceContext)
+        } ?: BoundType.LITERAL
 
     private fun KtIfExpression.toBoundTypeAsIfExpression(inferenceContext: InferenceContext): BoundType? {
         val isNullLiteralPossible = then?.isNullExpression() == true || `else`?.isNullExpression() == true
@@ -166,7 +170,7 @@ class BoundTypeCalculatorImpl(
         return selectorExpression.toBoundTypeAsCallableExpression(receiverBoundType, inferenceContext)
     }
 
-    override fun KotlinType.boundType(
+    final override fun KotlinType.boundType(
         typeVariable: TypeVariable?,
         contextBoundType: BoundType?,
         call: ResolvedCall<*>?,
@@ -220,8 +224,9 @@ class BoundTypeCalculatorImpl(
                 when {
                     containingDeclaration == call?.candidateDescriptor?.original -> {
                         val returnTypeVariable = inferenceContext.typeElementToTypeVariable[
-                                call.call.typeArguments.getOrNull(target.index)?.typeReference?.typeElement ?: return null
-                        ] ?: return null
+                                call.call.typeArguments.getOrNull(target.index)?.typeReference?.typeElement
+                                    ?: return BoundType.STAR_PROJECTION
+                        ] ?: return BoundType.STAR_PROJECTION
                         BoundTypeImpl(
                             TypeVariableLabel(returnTypeVariable),
                             returnTypeVariable.typeParameters
@@ -238,8 +243,9 @@ class BoundTypeCalculatorImpl(
                     // `this` or `super` call case
                     containingDeclaration == call?.candidateDescriptor.safeAs<ConstructorDescriptor>()?.constructedClass -> {
                         val returnTypeVariable = inferenceContext.typeElementToTypeVariable[
-                                call?.call?.typeArguments?.getOrNull(target.index)?.typeReference?.typeElement ?: return null
-                        ] ?: return null
+                                call?.call?.typeArguments?.getOrNull(target.index)?.typeReference?.typeElement
+                                    ?: return BoundType.STAR_PROJECTION
+                        ] ?: return BoundType.STAR_PROJECTION
                         BoundTypeImpl(
                             TypeVariableLabel(returnTypeVariable),
                             returnTypeVariable.typeParameters

@@ -238,6 +238,13 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
     NamedPostProcessingGroup(
         "Inferring declarations nullability",
         listOf(
+            InspectionLikeProcessingGroup(
+                processings = listOf(
+                    VarToValProcessing(),
+                    generalInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false))
+                ),
+                runSingleTime = true
+            ),
             nullabilityProcessing,
             clearUndefinedLabelsProcessing
         )

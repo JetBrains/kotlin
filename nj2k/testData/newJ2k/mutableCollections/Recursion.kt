@@ -1,9 +1,9 @@
 internal class A {
-    fun foo(collection: MutableCollection<String>) {
+    fun foo(collection: MutableCollection<String?>) {
         bar(collection)
     }
 
-    fun bar(collection: MutableCollection<String>) {
+    fun bar(collection: MutableCollection<String?>) {
         if (collection.size < 5) {
             foo(collection)
         } else {

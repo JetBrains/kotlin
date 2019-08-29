@@ -14,6 +14,7 @@ class InferenceFacade(
     private val constraintsCollectorAggregator: ConstraintsCollectorAggregator,
     private val boundTypeCalculator: BoundTypeCalculator,
     private val stateUpdater: StateUpdater,
+    private val defaultStateProvider: DefaultStateProvider,
     private val renderDebugTypes: Boolean = false,
     private val printDebugConstraints: Boolean = false
 ) {
@@ -22,7 +23,7 @@ class InferenceFacade(
         val constraints = constraintsCollectorAggregator.collectConstraints(boundTypeCalculator, inferenceContext, elements)
 
         val initialConstraints = if (renderDebugTypes) constraints.map { it.copy() } else null
-        Solver(inferenceContext, printDebugConstraints).solveConstraints(constraints)
+        Solver(inferenceContext, printDebugConstraints, defaultStateProvider).solveConstraints(constraints)
 
         if (renderDebugTypes) {
             with(DebugPrinter(inferenceContext)) {

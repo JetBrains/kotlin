@@ -1,4 +1,4 @@
-internal class X(private val list: List<Y>) {
+internal class X(private val list: MutableList<Y>) {
 
     internal inner class Y
 }

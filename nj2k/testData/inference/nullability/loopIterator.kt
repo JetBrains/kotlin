@@ -1,5 +1,5 @@
-fun test(a: /*T1@*/List</*T0@*/Int>) {
-    for (i: /*T2@*/Int in a/*T1@List<T0@Int>*/) {
+fun test(a: /*T1@*/List</*T0@*/Int?>) {
+    for (i: /*T2@*/Int? in a/*T1@List<T0@Int>*/) {
 
     }
 }

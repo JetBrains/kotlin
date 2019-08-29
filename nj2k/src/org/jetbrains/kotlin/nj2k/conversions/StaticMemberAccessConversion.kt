@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -47,14 +48,13 @@ class StaticMemberAccessConversion(private val context: NewJ2kConverterContext) 
             )
         }
         return recurse(element)
-
     }
 
     private fun JKSymbol.isStaticMember(): Boolean {
         val target = target
         return when (target) {
             is PsiModifierListOwner -> target.hasModifier(JvmModifier.STATIC)
-            is KtElement -> target.parentOfType<KtClassOrObject>()
+            is KtElement -> target.getStrictParentOfType<KtClassOrObject>()
                 ?.safeAs<KtObjectDeclaration>()
                 ?.isCompanion() == true
             is JKTreeElement ->

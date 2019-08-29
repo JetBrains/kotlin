@@ -12,27 +12,14 @@ import org.jetbrains.kotlin.psi.KtTypeElement
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 class NullabilityStateUpdater : StateUpdater() {
-    override fun updateStates(inferenceContext: InferenceContext) {
-        if (inferenceContext.typeVariables.isEmpty()) return
-
-        val deepComparator = Comparator<TypeElementBasedTypeVariable> { o1, o2 ->
-            if (o1.typeElement.typeElement.isAncestor(o2.typeElement.typeElement)) 1 else -1
-        }
-        for (typeVariable in inferenceContext
-            .typeVariables
-            .filterIsInstance<TypeElementBasedTypeVariable>()
-            .sortedWith(deepComparator)
-        ) {
-            when (typeVariable.state) {
-                State.LOWER -> typeVariable.changeState(toNullable = false)
-                State.UPPER -> typeVariable.changeState(toNullable = true)
-                State.UNKNOWN -> {
-                    if (typeVariable.typeElement is TypeParameterElementData) {
-                        typeVariable.changeState(toNullable = false)
-                    } else {
-                        typeVariable.changeState(toNullable = true)
-                    }
-                }
+    override fun TypeElementBasedTypeVariable.updateState() = when (state) {
+        State.LOWER -> changeState(toNullable = false)
+        State.UPPER -> changeState(toNullable = true)
+        State.UNKNOWN -> {
+            if (typeElement is TypeParameterElementData) {
+                changeState(toNullable = false)
+            } else {
+                changeState(toNullable = true)
             }
         }
     }

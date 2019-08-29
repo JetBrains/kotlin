@@ -31,6 +31,7 @@ abstract class AbstractNullabilityInferenceTest : AbstractConstraintCollectorTes
             },
             ConstraintsCollectorAggregator(
                 resolutionFacade,
+                NullabilityConstraintBoundProvider(),
                 listOf(
                     CommonConstraintsCollector(),
                     CallExpressionConstraintCollector(),
@@ -40,6 +41,7 @@ abstract class AbstractNullabilityInferenceTest : AbstractConstraintCollectorTes
             ),
             BoundTypeCalculatorImpl(resolutionFacade, typeEnhancer),
             NullabilityStateUpdater(),
+            NullabilityDefaultStateProvider(),
             renderDebugTypes = true
         )
     }
@@ -69,4 +71,5 @@ abstract class AbstractNullabilityInferenceTest : AbstractConstraintCollectorTes
     }
 
     override fun getProjectDescriptor() =
-        descriptorByFileDirective(File(testDataPath, fileName()), isAllFilesPresentInTest())}
+        descriptorByFileDirective(File(testDataPath, fileName()), isAllFilesPresentInTest())
+}

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.nj2k.inference.AbstractConstraintCollectorTest
 import org.jetbrains.kotlin.nj2k.inference.common.collectors.CallExpressionConstraintCollector
 import org.jetbrains.kotlin.nj2k.inference.common.collectors.CommonConstraintsCollector
 import org.jetbrains.kotlin.nj2k.inference.common.collectors.FunctionConstraintsCollector
+import org.jetbrains.kotlin.nj2k.inference.nullability.NullabilityConstraintBoundProvider
 import org.jetbrains.kotlin.psi.KtTypeElement
 
 abstract class AbstractCommonConstraintCollectorTest : AbstractConstraintCollectorTest() {
@@ -21,6 +22,7 @@ abstract class AbstractCommonConstraintCollectorTest : AbstractConstraintCollect
             },
             ConstraintsCollectorAggregator(
                 resolutionFacade,
+                NullabilityConstraintBoundProvider(),
                 listOf(
                     CommonConstraintsCollector(),
                     CallExpressionConstraintCollector(),
@@ -29,7 +31,10 @@ abstract class AbstractCommonConstraintCollectorTest : AbstractConstraintCollect
             ),
             BoundTypeCalculatorImpl(resolutionFacade, BoundTypeEnhancer.ID),
             object : StateUpdater() {
-                override fun updateStates(inferenceContext: InferenceContext) {}
+                override fun TypeElementBasedTypeVariable.updateState() = Unit
+            },
+            object : DefaultStateProvider() {
+                override fun defaultStateFor(typeVariable: TypeVariable): State = State.LOWER
             },
             renderDebugTypes = true
         )

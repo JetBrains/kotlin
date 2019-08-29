@@ -14,14 +14,15 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class ConstraintsCollectorAggregator(
     private val resolutionFacade: ResolutionFacade,
-    private val collectors: List<ConstraintsCollector>
+    private val constraintBoundProvider: ConstraintBoundProvider,
+    val collectors: List<ConstraintsCollector>
 ) {
     fun collectConstraints(
         boundTypeCalculator: BoundTypeCalculator,
         inferenceContext: InferenceContext,
         elements: List<KtElement>
     ): List<Constraint> {
-        val constraintsBuilder = ConstraintBuilder(inferenceContext, boundTypeCalculator)
+        val constraintsBuilder = ConstraintBuilder(inferenceContext, boundTypeCalculator, constraintBoundProvider)
         for (element in elements) {
             element.forEachDescendantOfType<KtElement> { innerElement ->
                 if (innerElement.getStrictParentOfType<KtImportDirective>() != null) return@forEachDescendantOfType

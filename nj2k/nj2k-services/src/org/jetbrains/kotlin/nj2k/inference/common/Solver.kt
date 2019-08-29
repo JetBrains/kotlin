@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.nj2k.inference.common
 
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 internal class Solver(
-    private val analysisContext: InferenceContext,
-    private val printConstraints: Boolean
+    private val inferenceContext: InferenceContext,
+    private val printConstraints: Boolean,
+    private val defaultStateProvider: DefaultStateProvider
 ) {
-    private val printer = DebugPrinter(analysisContext)
+    private val printer = DebugPrinter(inferenceContext)
 
     private fun List<Constraint>.printDebugInfo(step: Int) =
         with(printer) {
@@ -24,7 +24,7 @@ internal class Solver(
                 }
                 println()
                 println("type variables:")
-                for (typeVariable in analysisContext.typeVariables) {
+                for (typeVariable in inferenceContext.typeVariables) {
                     println("${typeVariable.name} := ${typeVariable.state}")
                 }
                 println("---------------\n")
@@ -55,9 +55,11 @@ internal class Solver(
                 }
             }
             if (!somethingChanged) {
-                val typeVariable = mutableConstraints.getTypeVariableAsEqualsOrUpperBound()
+                val typeVariable =
+                    mutableConstraints.getTypeVariableAsEqualsOrUpperBound()
+                        ?: inferenceContext.typeVariables.firstOrNull { !it.isFixed }
                 if (typeVariable != null) {
-                    typeVariable.setStateIfNotFixed(State.LOWER)
+                    typeVariable.setStateIfNotFixed(defaultStateProvider.defaultStateFor(typeVariable))
                     somethingChanged = true
                 }
             }
@@ -142,11 +144,11 @@ internal class Solver(
                 val (lower, upper) = constraint
                 if (lower is TypeVariableBound && lower.typeVariable.isFixed) {
                     somethingChanged = true
-                    constraint.subtype = lower.typeVariable.state.constraintBound
+                    constraint.subtype = lower.typeVariable.state.constraintBound()
                 }
                 if (upper is TypeVariableBound && upper.typeVariable.isFixed) {
                     somethingChanged = true
-                    constraint.supertype = upper.typeVariable.state.constraintBound
+                    constraint.supertype = upper.typeVariable.state.constraintBound()
                 }
             }
         }
@@ -166,14 +168,27 @@ internal class Solver(
         }
 
 
-    private fun List<Constraint>.getTypeVariableAsEqualsOrUpperBound(): TypeVariable? =
-        asSequence().filterIsInstance<SubtypeConstraint>()
-            .map { it.supertype }
-            .firstIsInstanceOrNull<TypeVariableBound>()
-            ?.typeVariable
-            ?: asSequence().filterIsInstance<EqualsConstraint>()
-                .flatMap { sequenceOf(it.left, it.right) }
-                .firstIsInstanceOrNull<TypeVariableBound>()
-                ?.typeVariable
+    private fun List<Constraint>.getTypeVariableAsEqualsOrUpperBound(): TypeVariable? {
+        for (constraint in this) {
+            when (constraint) {
+                is SubtypeConstraint -> {
+                    constraint.supertype.safeAs<TypeVariableBound>()
+                        ?.typeVariable
+                        ?.takeIf { defaultStateProvider.defaultStateFor(it) == State.LOWER }
+                        ?.let { return it }
+                    constraint.subtype.safeAs<TypeVariableBound>()
+                        ?.typeVariable
+                        ?.takeIf { defaultStateProvider.defaultStateFor(it) == State.UPPER }
+                        ?.let { return it }
+                }
+                is EqualsConstraint -> {
+                    (constraint.left.safeAs<TypeVariableBound>()
+                        ?: constraint.right.safeAs())
+                        ?.let { return it.typeVariable }
+                }
+            }
+        }
+        return null
+    }
 }
 

@@ -32,6 +32,10 @@ fun String.asSetterName() =
         ?.decapitalize()
         ?.escaped()
 
+fun String.isPossiblyGetterOrSetterName() =
+    asGetterName() != null || asSetterName() != null
+
+
 private val KEYWORDS = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()
 
 fun String.escaped() =

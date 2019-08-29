@@ -54,6 +54,7 @@ val nullabilityProcessing =
             NullabilityContextCollector(resolutionFacade, converterContext),
             ConstraintsCollectorAggregator(
                 resolutionFacade,
+                NullabilityConstraintBoundProvider(),
                 listOf(
                     CommonConstraintsCollector(),
                     CallExpressionConstraintCollector(),
@@ -62,7 +63,8 @@ val nullabilityProcessing =
                 )
             ),
             BoundTypeCalculatorImpl(resolutionFacade, NullabilityBoundTypeEnhancer(resolutionFacade)),
-            NullabilityStateUpdater()
+            NullabilityStateUpdater(),
+            NullabilityDefaultStateProvider()
         )
         val elements = if (rangeMarker != null) {
             file.elementsInRange(rangeMarker.range ?: return@postProcessing).filterIsInstance<KtElement>()

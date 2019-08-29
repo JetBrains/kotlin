@@ -1,4 +1,4 @@
-fun bar(map: /*T2@*/HashMap</*T0@*/String?, /*T1@*/Int>, list1: /*T4@*/List</*T3@*/Int>, list2: /*T6@*/List</*T5@*/String?>) {
+fun bar(map: /*T2@*/HashMap</*T0@*/String?, /*T1@*/Int>, list1: /*T4@*/List</*T3@*/Int?>, list2: /*T6@*/List</*T5@*/String?>) {
     for (entry: /*T9@*/MutableMap.MutableEntry</*T7@*/String?, /*T8@*/Int> in map/*T2@HashMap<T0@String, T1@Int>*/.entries/*MutableSet<MutableEntry<T0@String, T1@Int>>*/) {
         val value: /*T10@*/Int = entry/*T9@MutableEntry<T7@String, T8@Int>*/.value/*T8@Int*/
         if (entry/*T9@MutableEntry<T7@String, T8@Int>*/.key/*T7@String*/ == null/*LIT*/) {

@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 @Suppress("unused")
 class ConstraintBuilder(
     private val inferenceContext: InferenceContext,
-    private val boundTypeCalculator: BoundTypeCalculator
-) : BoundTypeCalculator by boundTypeCalculator {
+    private val boundTypeCalculator: BoundTypeCalculator,
+    private val constraintBoundProvider: ConstraintBoundProvider
+) : BoundTypeCalculator by boundTypeCalculator, ConstraintBoundProvider by constraintBoundProvider {
     private val constraints = mutableListOf<Constraint>()
 
     fun TypeVariable.isSubtypeOf(supertype: BoundType, priority: ConstraintPriority) {
@@ -39,7 +40,7 @@ class ConstraintBuilder(
 
     fun KtExpression.isTheSameTypeAs(other: State, priority: ConstraintPriority) {
         boundType().label.safeAs<TypeVariableLabel>()?.typeVariable?.let { typeVariable ->
-            constraints += EqualsConstraint(typeVariable.constraintBound, other.constraintBound, priority)
+            constraints += EqualsConstraint(typeVariable.constraintBound(), other.constraintBound(), priority)
         }
     }
 
@@ -104,8 +105,8 @@ class ConstraintBuilder(
 
         if (typeVariable !in ignoreTypeVariables && other.typeVariable !in ignoreTypeVariables) {
             constraints += EqualsConstraint(
-                constraintBound ?: return,
-                other.constraintBound ?: return,
+                constraintBound() ?: return,
+                other.constraintBound() ?: return,
                 priority
             )
         }
@@ -121,8 +122,8 @@ class ConstraintBuilder(
         }
 
         constraints += SubtypeConstraint(
-            constraintBound ?: return,
-            supertype.constraintBound ?: return,
+            constraintBound() ?: return,
+            supertype.constraintBound() ?: return,
             priority
         )
     }

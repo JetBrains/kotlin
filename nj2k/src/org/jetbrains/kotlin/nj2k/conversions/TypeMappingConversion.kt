@@ -22,17 +22,6 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
 class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
-    private val typeFlavorCalculator = TypeFlavorCalculator(object : TypeFlavorConverterFacade {
-        override val referenceSearcher: ReferenceSearcher
-            get() = context.converter.converterServices.oldServices.referenceSearcher
-        override val javaDataFlowAnalyzerFacade: JavaDataFlowAnalyzerFacade
-            get() = context.converter.converterServices.oldServices.javaDataFlowAnalyzerFacade
-        override val resolverForConverter: ResolverForConverter
-            get() = context.converter.converterServices.oldServices.resolverForConverter
-
-        override fun inConversionScope(element: PsiElement): Boolean = context.inConversionContext(element)
-    })
-
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         return when (element) {
             is JKTypeElement -> {
@@ -62,8 +51,7 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
                 }
             )
         }
-        val typeParametersCount = classSymbol.expectedTypeParametersCount()
-        return when (typeParametersCount) {
+        return when (val typeParametersCount = classSymbol.expectedTypeParametersCount()) {
             0 -> this
             else -> JKTypeArgumentListImpl(List(typeParametersCount) {
                 JKTypeElementImpl(
@@ -124,7 +112,7 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
 
     private fun JKClassSymbol.mapClassSymbol(typeElement: JKTypeElement?): JKClassSymbol {
         if (this is JKUniverseClassSymbol) return this
-        val newFqName = typeElement?.let { kotlinCollectionClassName(it) }
+        val newFqName = kotlinCollectionClassName()
             ?: kotlinStandardType()
             ?: fqName
         return context.symbolProvider.provideClassSymbol(newFqName)
@@ -137,12 +125,8 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
             nullability
         )
 
-
-    private fun JKClassSymbol.kotlinCollectionClassName(typeElement: JKTypeElement?): String? {
-        val isStructureMutable = calculateStructureMutability(typeElement)
-        return if (isStructureMutable) toKotlinMutableTypesMap[fqName]
-        else toKotlinTypesMap[fqName]
-    }
+    private fun JKClassSymbol.kotlinCollectionClassName(): String? =
+        toKotlinMutableTypesMap[fqName]
 
     private fun JKClassSymbol.kotlinStandardType(): String? {
         if (isKtFunction(fqName)) return fqName
@@ -155,16 +139,6 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
             context.symbolProvider.provideClassSymbol(fqName),
             nullability = Nullability.NotNull
         )
-    }
-
-    private fun calculateStructureMutability(typeElement: JKTypeElement?): Boolean {
-        val parent = typeElement?.parent ?: return false
-        val psi = parent.psi ?: return false
-        return when (parent) {
-            is JKVariable -> typeFlavorCalculator.variableMutability(psi as PsiVariable) == Mutability.Mutable
-            is JKMethod -> typeFlavorCalculator.methodMutability(psi as PsiMethod) == Mutability.Mutable
-            else -> false
-        }
     }
 
     companion object {

@@ -2,7 +2,7 @@ class TestMutltipleCtorsWithJavadoc
 /**
  * Javadoc for 1st ctor
  * @param x
- */(private val x: String) {
+ */(private val x: String?) {
     private var y: String? = null
 
     // ---
@@ -14,7 +14,7 @@ class TestMutltipleCtorsWithJavadoc
      * @param x
      * @param y
      */
-    constructor(x: String, y: String?) : this(x) {
+    constructor(x: String?, y: String?) : this(x) {
         this.y = y
     }
 
