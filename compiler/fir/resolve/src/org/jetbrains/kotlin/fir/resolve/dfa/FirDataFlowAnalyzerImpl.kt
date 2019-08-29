@@ -288,13 +288,17 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
                     operandVariable,
                     FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
                 )
-            ).addNotApprovedFact(
+            )
+            // TODO: design do we need casts to Nothing?
+            /*
+            flow = addNotApprovedFact(
                 expressionVariable, UnapprovedFirDataFlowInfo(
                     eq(conditionValue.invert()!!),
                     operandVariable,
                     FirDataFlowInfo(setOf(session.builtinTypes.nullableNothingType.coneTypeUnsafe()), emptySet())
                 )
             )
+            */
 
         }
         node.flow = flow
