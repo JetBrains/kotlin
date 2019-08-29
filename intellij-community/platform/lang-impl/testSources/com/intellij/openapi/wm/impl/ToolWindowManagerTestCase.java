@@ -3,7 +3,6 @@ package com.intellij.openapi.wm.impl;
 
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.intellij.testFramework.ServiceContainerUtil;
 import com.intellij.testFramework.SkipInHeadlessEnvironment;
@@ -14,7 +13,6 @@ import com.intellij.testFramework.SkipInHeadlessEnvironment;
 @SkipInHeadlessEnvironment
 public abstract class ToolWindowManagerTestCase extends LightPlatformCodeInsightTestCase {
   protected ToolWindowManagerImpl myManager;
-  private ToolWindowManagerEx myOldManager;
 
   @Override
   public void setUp() throws Exception {
@@ -25,7 +23,7 @@ public abstract class ToolWindowManagerTestCase extends LightPlatformCodeInsight
       }
     };
     Disposer.register(getTestRootDisposable(), myManager);
-    myOldManager = (ToolWindowManagerEx)ServiceContainerUtil.registerComponentInstance(getProject(), ToolWindowManager.class, myManager);
+    ServiceContainerUtil.registerComponentInstance(getProject(), ToolWindowManager.class, myManager, getTestRootDisposable());
     myManager.init();
   }
 
@@ -34,8 +32,6 @@ public abstract class ToolWindowManagerTestCase extends LightPlatformCodeInsight
     try {
       myManager.projectClosed();
       myManager = null;
-      ServiceContainerUtil.registerComponentInstance(getProject(), ToolWindowManager.class, myOldManager);
-      myOldManager = null;
     }
     catch (Throwable e) {
       addSuppressedException(e);
