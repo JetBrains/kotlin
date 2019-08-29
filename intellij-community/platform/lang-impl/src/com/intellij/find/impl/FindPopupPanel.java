@@ -1151,7 +1151,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     mySearchTextArea.setInfoText(null);
     myResultsPreviewTable.setModel(model);
 
-    if (result != null) {
+    if (result != null && result.component != myReplaceComponent) {
       onStop(hash, result.message);
       return;
     }
