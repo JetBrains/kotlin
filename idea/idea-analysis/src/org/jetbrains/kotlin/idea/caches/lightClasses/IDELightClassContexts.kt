@@ -182,6 +182,8 @@ internal object IDELightClassContexts {
     private fun isDummyResolveApplicable(classOrObject: KtClassOrObject): Boolean {
         if (classOrObject.hasModifier(KtTokens.INLINE_KEYWORD)) return false
 
+        if (hasVariadicMembers(classOrObject)) return false
+
         if (classOrObject.hasLightClassMatchingErrors) return false
 
         if (hasDelegatedSupertypes(classOrObject)) return false
@@ -251,6 +253,12 @@ internal object IDELightClassContexts {
     private fun hasMembersOverridingInternalMembers(classOrObject: KtClassOrObject): Boolean {
         return classOrObject.declarations.filterIsInstance<KtCallableDeclaration>().any {
             possiblyOverridesInternalMember(it)
+        }
+    }
+
+    private fun hasVariadicMembers(classOrObject: KtClassOrObject): Boolean {
+        return classOrObject.declarations.filterIsInstance<KtNamedFunction>().any {
+            it.typeParameters.any { it.hasModifier(KtTokens.VARARG_KEYWORD) }
         }
     }
 

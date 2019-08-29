@@ -272,7 +272,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         return LazyLightClassDataHolder.ForFacade(
             builder,
             exactContextProvider = { IDELightClassContexts.contextForFacade(sortedFiles) },
-            dummyContextProvider = { IDELightClassContexts.lightContextForFacade(sortedFiles) },
+            // TODO: remove hack. Disabled because Tuple can't resolve from dummy context
+//            dummyContextProvider = { IDELightClassContexts.lightContextForFacade(sortedFiles) },
+            dummyContextProvider = { null },
             diagnosticsHolderProvider = { files.first().getDiagnosticsHolder() }
         )
     }
