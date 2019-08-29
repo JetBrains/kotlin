@@ -9,5 +9,5 @@ fun test() {
 // 0 hasNext
 // 0 nextChar
 // 0 INVOKEINTERFACE
-// 1 ISTORE 4
-// 1 ILOAD 4
+// 1 charAt \(I\)C
+// 1 length \(\)I

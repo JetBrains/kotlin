@@ -262,8 +262,7 @@ class ExpressionCodegen(
         info.variables.forEach {
             when (it.declaration.origin) {
                 IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                IrDeclarationOrigin.FOR_LOOP_ITERATOR,
-                IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE -> {
+                IrDeclarationOrigin.FOR_LOOP_ITERATOR -> {
                     // Ignore implicitly created variables
                 }
                 else -> {
