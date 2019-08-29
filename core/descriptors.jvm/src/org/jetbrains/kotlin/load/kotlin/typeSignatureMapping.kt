@@ -54,19 +54,16 @@ fun <T : Any> mapType(
     mode: TypeMappingMode,
     typeMappingConfiguration: TypeMappingConfiguration<T>,
     descriptorTypeWriter: JvmDescriptorTypeWriter<T>?,
-    writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3,
-    isIrBackend: Boolean
+    writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3
 ): T {
     typeMappingConfiguration.preprocessType(kotlinType)?.let { newType ->
-        return mapType(newType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType, isIrBackend)
+        return mapType(newType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
     }
 
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
             transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),
-            factory, mode, typeMappingConfiguration, descriptorTypeWriter,
-            writeGenericType,
-            isIrBackend
+            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
         )
     }
 
@@ -89,7 +86,7 @@ fun <T : Any> mapType(
         // It's not very important because such types anyway are prohibited in declarations
         return mapType(
             commonSupertype.replaceArgumentsWithStarProjections(),
-            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType, isIrBackend
+            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
         )
     }
 
@@ -123,13 +120,10 @@ fun <T : Any> mapType(
             } else {
                 descriptorTypeWriter?.writeArrayType()
 
-                arrayElementType =
-                    mapType(
-                        memberType, factory,
-                        mode.toGenericArgumentMode(memberProjection.projectionKind),
-                        typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
-                        isIrBackend
-                    )
+                arrayElementType = mapType(
+                    memberType, factory, mode.toGenericArgumentMode(memberProjection.projectionKind), typeMappingConfiguration,
+                    descriptorTypeWriter, writeGenericType
+                )
 
                 descriptorTypeWriter?.writeArrayEnd()
             }
@@ -143,13 +137,8 @@ fun <T : Any> mapType(
                 val expandedType = SimpleClassicTypeSystemContext.computeExpandedTypeForInlineClass(kotlinType) as KotlinType?
                 if (expandedType != null) {
                     return mapType(
-                        expandedType,
-                        factory,
-                        mode.wrapInlineClassesMode(),
-                        typeMappingConfiguration,
-                        descriptorTypeWriter,
-                        writeGenericType,
-                        isIrBackend
+                        expandedType, factory, mode.wrapInlineClassesMode(), typeMappingConfiguration,
+                        descriptorTypeWriter, writeGenericType
                     )
                 }
             }
@@ -166,13 +155,7 @@ fun <T : Any> mapType(
                                     descriptor.containingDeclaration as ClassDescriptor
                                 else
                                     descriptor
-                            factory.createObjectType(
-                                computeInternalName(
-                                    enumClassIfEnumEntry.original,
-                                    typeMappingConfiguration,
-                                    isIrBackend
-                                )
-                            )
+                            factory.createObjectType(computeInternalName(enumClassIfEnumEntry.original, typeMappingConfiguration))
                         }
                 }
 
@@ -183,13 +166,8 @@ fun <T : Any> mapType(
 
         descriptor is TypeParameterDescriptor -> {
             val type = mapType(
-                descriptor.representativeUpperBound,
-                factory,
-                mode,
-                typeMappingConfiguration,
-                writeGenericType = DO_NOTHING_3,
-                descriptorTypeWriter = null,
-                isIrBackend = isIrBackend
+                descriptor.representativeUpperBound, factory, mode, typeMappingConfiguration,
+                writeGenericType = DO_NOTHING_3, descriptorTypeWriter = null
             )
             descriptorTypeWriter?.writeTypeVariable(descriptor.getName(), type)
             return type
@@ -241,13 +219,11 @@ fun <T : Any> TypeSystemCommonBackendContext.mapBuiltInType(
 
 fun computeInternalName(
     klass: ClassDescriptor,
-    typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl,
-    isIrBackend: Boolean
+    typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl
 ): String {
-
     typeMappingConfiguration.getPredefinedFullInternalNameForClass(klass)?.let { return it }
 
-    val container = if (isIrBackend) getContainer(klass.containingDeclaration) else klass.containingDeclaration
+    val container = klass.containingDeclaration
 
     val name = SpecialNames.safeIdentifier(klass.name).identifier
     if (container is PackageFragmentDescriptor) {
@@ -259,16 +235,11 @@ fun computeInternalName(
         ?: throw IllegalArgumentException("Unexpected container: $container for $klass")
 
     val containerInternalName =
-        typeMappingConfiguration.getPredefinedInternalNameForClass(containerClass) ?: computeInternalName(
-            containerClass,
-            typeMappingConfiguration,
-            isIrBackend
-        )
+        typeMappingConfiguration.getPredefinedInternalNameForClass(containerClass)
+            ?: computeInternalName(containerClass, typeMappingConfiguration)
+
     return "$containerInternalName$$name"
 }
-
-private fun getContainer(container: DeclarationDescriptor?): DeclarationDescriptor? =
-    container as? ClassDescriptor ?: container as? PackageFragmentDescriptor ?: container?.let { getContainer(it.containingDeclaration) }
 
 open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeFactory<T>) {
     private var jvmCurrentTypeArrayLevel: Int = 0
