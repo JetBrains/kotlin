@@ -18,7 +18,7 @@ class MLCompletionWeigher : CompletionWeigher() {
       }
     }
 
-    return if (result.isEmpty()) null else DummyComparable(result)
+    return if (result.isEmpty()) DummyComparable.EMPTY else DummyComparable(result)
   }
 
   private class DummyComparable(values: Map<String, Any>) : Comparable<Any> {
@@ -28,7 +28,9 @@ class MLCompletionWeigher : CompletionWeigher() {
 
     override fun toString(): String = representation
 
-    private companion object {
+    companion object {
+      val EMPTY = DummyComparable(emptyMap())
+
       private fun calculateRepresentation(values: Map<String, Any>): String {
         return values.entries.joinToString(",", "[", "]", transform = { "${it.key}=${it.value}" })
       }
