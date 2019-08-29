@@ -60,8 +60,8 @@ internal sealed class CheckReceivers : ResolutionStage() {
             return this == DISPATCH_RECEIVER || this == BOTH_RECEIVERS
         }
 
-        override fun Candidate.getReceiverValue(): ReceiverValue? {
-            return dispatchReceiverValue
+        override fun Candidate.getReceiverType(): ConeKotlinType? {
+            return dispatchReceiverValue?.type
         }
     }
 
@@ -74,35 +74,30 @@ internal sealed class CheckReceivers : ResolutionStage() {
             return this == EXTENSION_RECEIVER || this == BOTH_RECEIVERS
         }
 
-        override fun Candidate.getReceiverValue(): ReceiverValue? {
+        override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
             val callable = callableSymbol.fir
-            val type = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type ?: return null
-            return object : ReceiverValue {
-                override val type: ConeKotlinType
-                    get() = type
-
-            }
+            return (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
         }
     }
 
-    abstract fun Candidate.getReceiverValue(): ReceiverValue?
+    abstract fun Candidate.getReceiverType(): ConeKotlinType?
 
     abstract fun ExplicitReceiverKind.shouldBeCheckedAgainstExplicit(): Boolean
 
     abstract fun ExplicitReceiverKind.shouldBeCheckedAgainstImplicit(): Boolean
 
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val expectedReceiverParameterValue = candidate.getReceiverValue()
+        val expectedReceiverType = candidate.getReceiverType()
         val explicitReceiverExpression = callInfo.explicitReceiver
         val explicitReceiverKind = candidate.explicitReceiverKind
 
-        if (expectedReceiverParameterValue != null) {
+        if (expectedReceiverType != null) {
             if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeCheckedAgainstExplicit()) {
                 resolveArgumentExpression(
                     candidate.csBuilder,
                     argument = explicitReceiverExpression,
-                    expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverParameterValue.type),
+                    expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType),
                     expectedTypeRef = explicitReceiverExpression.typeRef,
                     sink = sink,
                     isReceiver = true,
@@ -117,7 +112,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     resolvePlainArgumentType(
                         candidate.csBuilder,
                         argumentType = argumentExtensionReceiverValue.type,
-                        expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverParameterValue.type),
+                        expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type),
                         sink = sink,
                         isReceiver = true,
                         isSafeCall = callInfo.isSafeCall

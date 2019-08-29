@@ -11,13 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
-import org.jetbrains.kotlin.fir.references.FirImplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -68,19 +65,11 @@ class Candidate(
 
     fun dispatchReceiverExpression(): FirExpression = when (explicitReceiverKind) {
         ExplicitReceiverKind.DISPATCH_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> callInfo.explicitReceiver!!
-        else -> dispatchReceiverValue?.let {
-            FirThisReceiverExpressionImpl(null, FirImplicitThisReference(it.klassSymbol)).apply {
-                typeRef = FirResolvedTypeRefImpl(null, it.type)
-            }
-        } ?: FirNoReceiverExpression
+        else -> dispatchReceiverValue?.receiverExpression ?: FirNoReceiverExpression
     }
 
     fun extensionReceiverExpression(): FirExpression = when (explicitReceiverKind) {
         ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> callInfo.explicitReceiver!!
-        else -> implicitExtensionReceiverValue?.let {
-            FirThisReceiverExpressionImpl(null, FirImplicitThisReference(it.boundSymbol)).apply {
-                typeRef = FirResolvedTypeRefImpl(null, it.type)
-            }
-        } ?: FirNoReceiverExpression
+        else -> implicitExtensionReceiverValue?.receiverExpression ?: FirNoReceiverExpression
     }
 }
