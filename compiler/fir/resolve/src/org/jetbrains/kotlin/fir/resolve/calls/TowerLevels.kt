@@ -70,6 +70,7 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
         return when (this) {
             is FirNamedFunctionSymbol -> fir.dispatchReceiverValue(session)
             is FirPropertySymbol -> fir.dispatchReceiverValue(session)
+            is FirFieldSymbol -> fir.dispatchReceiverValue(session)
             is FirClassSymbol -> ClassDispatchReceiverValue(fir.symbol)
             else -> null
         }
