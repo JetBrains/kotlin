@@ -46,7 +46,7 @@ public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase 
         doTestEquals(((KtLightClass) theClass).getKotlinOrigin());
     }
 
-    private static void doTestEquals(@Nullable KtClassOrObject origin) {
+    static void doTestEquals(@Nullable KtClassOrObject origin) {
         assertNotNull(origin);
 
         PsiClass lightClass1 = KtLightClassForSourceDeclaration.Companion.createNoCache(origin, true);
