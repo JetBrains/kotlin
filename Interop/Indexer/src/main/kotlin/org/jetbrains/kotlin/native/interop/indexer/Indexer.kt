@@ -469,6 +469,11 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         Language.OBJECTIVE_C -> supplier()
     }
 
+    // We omit `const` qualifier for IntegerType and FloatingType to make `CBridgeGen` simpler.
+    // See KT-28102.
+    private fun String.dropConstQualifier() =
+            substringAfterLast("const ")
+
     private fun convertUnqualifiedPrimitiveType(type: CValue<CXType>): Type = when (type.kind) {
         CXTypeKind.CXType_Char_U, CXTypeKind.CXType_Char_S -> {
             assert(type.getSize() == 1L)
@@ -479,19 +484,19 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         CXTypeKind.CXType_UInt, CXTypeKind.CXType_ULong, CXTypeKind.CXType_ULongLong -> IntegerType(
                 size = type.getSize().toInt(),
                 isSigned = false,
-                spelling = clang_getTypeSpelling(type).convertAndDispose()
+                spelling = clang_getTypeSpelling(type).convertAndDispose().dropConstQualifier()
         )
 
         CXTypeKind.CXType_SChar, CXTypeKind.CXType_Short,
         CXTypeKind.CXType_Int, CXTypeKind.CXType_Long, CXTypeKind.CXType_LongLong -> IntegerType(
                 size = type.getSize().toInt(),
                 isSigned = true,
-                spelling = clang_getTypeSpelling(type).convertAndDispose()
+                spelling = clang_getTypeSpelling(type).convertAndDispose().dropConstQualifier()
         )
 
         CXTypeKind.CXType_Float, CXTypeKind.CXType_Double -> FloatingType(
                 size = type.getSize().toInt(),
-                spelling = clang_getTypeSpelling(type).convertAndDispose()
+                spelling = clang_getTypeSpelling(type).convertAndDispose().dropConstQualifier()
         )
 
         CXTypeKind.CXType_Bool -> CBoolType
