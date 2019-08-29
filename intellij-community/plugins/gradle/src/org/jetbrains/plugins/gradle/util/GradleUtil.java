@@ -71,7 +71,9 @@ public class GradleUtil {
 
   @NotNull
   public static FileChooserDescriptor getGradleHomeFileChooserDescriptor() {
-    return FileChooserDescriptorFactory.createSingleFolderDescriptor();
+    // allow selecting files to avoid confusion:
+    // on macOS a user can select any file but after clicking OK, dialog is closed, but IDEA doesnt' receive the file and doesn't react
+    return FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
   }
 
   public static boolean isGradleDefaultWrapperFilesExist(@Nullable String gradleProjectPath) {
