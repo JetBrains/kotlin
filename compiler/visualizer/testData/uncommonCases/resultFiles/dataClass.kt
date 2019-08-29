@@ -1,3 +1,4 @@
+// FIR_IGNORE
 data class Vector(val x: Int, val y: Int) {
 //                                  Vector
 //                                  │ constructor Vector(Int, Int)

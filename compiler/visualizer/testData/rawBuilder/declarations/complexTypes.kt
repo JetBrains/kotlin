@@ -1,3 +1,4 @@
+// FIR_IGNORE
 package a.b
 
 class C<T, out S> {

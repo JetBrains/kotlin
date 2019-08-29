@@ -1,3 +1,4 @@
+// FIR_IGNORE
 //                            collections/List<T>     collections/List<String>
 //                            │                       │
 fun <T> copyWhenGreater(list: List<T>, threshold: T): List<String>

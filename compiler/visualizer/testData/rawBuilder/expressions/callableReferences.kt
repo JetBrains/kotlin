@@ -1,3 +1,4 @@
+// FIR_IGNORE
 class A {
     fun foo() {}
 //      Int   Int

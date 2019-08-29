@@ -1,3 +1,4 @@
+// FIR_IGNORE
 //                            foo.a: Int
 //                            │ fun (Int).compareTo(Int): Int
 //                            │ │ foo.b: Int

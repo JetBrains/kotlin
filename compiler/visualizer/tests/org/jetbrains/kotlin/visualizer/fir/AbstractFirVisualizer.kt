@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.visualizer.AbstractVisualizer
+import org.junit.Assert
 import java.io.File
 
 abstract class AbstractFirVisualizer : AbstractVisualizer() {
@@ -55,6 +56,17 @@ abstract class AbstractFirVisualizer : AbstractVisualizer() {
         val psiRenderResult = renderer.render()
 
         val expectedPath = file.absolutePath.replace(replacement.first, replacement.second)
-        KotlinTestUtils.assertEqualsToFile(File(expectedPath), psiRenderResult)
+        val expectedText = File(expectedPath).readLines()
+        if (expectedText[0].startsWith("// FIR_IGNORE")) {
+            Assert.assertFalse(
+                "Files are identical, please delete ignore directive",
+                expectedText.filterIndexed { index, _ -> index > 0 }.joinToString("\n") == psiRenderResult
+            )
+            return
+        }
+        KotlinTestUtils.assertEqualsToFile(File(expectedPath), psiRenderResult) {
+            return@assertEqualsToFile it.replace("// FIR_IGNORE\n", "")
+        }
+
     }
 }

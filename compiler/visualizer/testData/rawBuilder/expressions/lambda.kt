@@ -1,3 +1,4 @@
+// FIR_IGNORE
 data class Tuple(val x: Int, val y: Int)
 
 //                                Int

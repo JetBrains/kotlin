@@ -21,6 +21,8 @@ abstract class AbstractPsiVisualizer : AbstractVisualizer() {
         val psiRenderResult = renderer.render()
 
         val expectedPath = file.absolutePath.replace(replacement.first, replacement.second)
-        KotlinTestUtils.assertEqualsToFile(File(expectedPath), psiRenderResult)
+        KotlinTestUtils.assertEqualsToFile(File(expectedPath), psiRenderResult) {
+            return@assertEqualsToFile it.replace("// FIR_IGNORE\n", "")
+        }
     }
 }

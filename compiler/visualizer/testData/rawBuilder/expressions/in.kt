@@ -1,3 +1,4 @@
+// FIR_IGNORE
 //                         collections/Collection<Int>
 //                         │                Boolean
 //                         │                │

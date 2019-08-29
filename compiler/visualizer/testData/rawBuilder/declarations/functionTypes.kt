@@ -1,3 +1,4 @@
+// FIR_IGNORE
 //                                      Unit
 //                                      │ fun ((T) -> Unit).invoke(T): Unit
 //                                      │ │
