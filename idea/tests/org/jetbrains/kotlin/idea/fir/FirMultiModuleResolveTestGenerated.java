@@ -64,6 +64,11 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
         runTest("idea/testData/fir/multiModule/fullWithJavaPredefinedSignature/");
     }
 
+    @TestMetadata("intersectionTypesProblem")
+    public void testIntersectionTypesProblem() throws Exception {
+        runTest("idea/testData/fir/multiModule/intersectionTypesProblem/");
+    }
+
     @TestMetadata("javaGetPrefixConflict")
     public void testJavaGetPrefixConflict() throws Exception {
         runTest("idea/testData/fir/multiModule/javaGetPrefixConflict/");
