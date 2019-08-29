@@ -477,5 +477,5 @@ class InlinerExpressionLocationHint(val inlineAtSymbol: IrSymbol) : IrStatementO
         get() = (inlineAtSymbol as? IrFunction)?.file
 
     private val functionNameOrDefaultToString: String
-        get() = (inlineAtSymbol as? IrFunction)?.name?.asString() ?: toString()
+        get() = (inlineAtSymbol as? IrFunction)?.name?.asString() ?: inlineAtSymbol.toString()
 }
