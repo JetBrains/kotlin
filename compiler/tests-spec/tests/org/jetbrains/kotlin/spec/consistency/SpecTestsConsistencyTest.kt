@@ -26,8 +26,6 @@ class SpecTestsConsistencyTest : TestCase() {
     companion object {
         private val specSentencesStorage = SpecSentencesStorage()
 
-        private const val CURRENT_VERSION = "0.1-99"
-
         @org.junit.runners.Parameterized.Parameters(name = "{0}")
         @JvmStatic
         fun getTestFiles() = emptyList<Array<Any>>()
