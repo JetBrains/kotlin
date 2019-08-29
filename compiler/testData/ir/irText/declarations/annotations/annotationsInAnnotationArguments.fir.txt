@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.A1 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.A1.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A1) returnType:kotlin.Int
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.A1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A1 declared in <root>.A1.<get-x>' type=<root>.A1 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (a:<root>.A1) returnType:<root>.A2 [primary]
       VALUE_PARAMETER name:a index:0 type:<root>.A1
     PROPERTY name:a visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:a type:<root>.A1 visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:a type:<root>.A1 visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'a: <root>.A1 declared in <root>.A2.<init>' type=<root>.A1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:<root>.A2) returnType:<root>.A1
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A2
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-a> (): <root>.A1 declared in <root>.A2'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:<root>.A1 visibility:public [final]' type=<root>.A1 origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:<root>.A1 visibility:private [final]' type=<root>.A1 origin=null
               receiver: GET_VAR '<this>: <root>.A2 declared in <root>.A2.<get-a>' type=<root>.A2 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (xs:kotlin.Array<<root>.A1>) returnType:<root>.AA [primary]
       VALUE_PARAMETER name:xs index:0 type:kotlin.Array<<root>.A1>
     PROPERTY name:xs visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<<root>.A1> visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<<root>.A1> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'xs: kotlin.Array<<root>.A1> declared in <root>.AA.<init>' type=kotlin.Array<<root>.A1> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.AA) returnType:kotlin.Array<<root>.A1>
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.AA
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.Array<<root>.A1> declared in <root>.AA'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<<root>.A1> visibility:public [final]' type=kotlin.Array<<root>.A1> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<<root>.A1> visibility:private [final]' type=kotlin.Array<<root>.A1> origin=null
               receiver: GET_VAR '<this>: <root>.AA declared in <root>.AA.<get-xs>' type=<root>.AA origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

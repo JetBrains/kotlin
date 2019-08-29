@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/functionsWithAnnotations.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.TestAnn [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.TestAnn.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnn) returnType:kotlin.Int
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/functionsWithAnnotations.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestAnn
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestAnn'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestAnn declared in <root>.TestAnn.<get-x>' type=<root>.TestAnn origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

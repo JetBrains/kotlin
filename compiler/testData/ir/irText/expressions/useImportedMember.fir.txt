@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         RETURN type=kotlin.Nothing from='public final fun f (): kotlin.Int declared in <root>.C'
           CONST Int type=kotlin.Int value=3
     PROPERTY name:p visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=4
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
@@ -87,14 +87,14 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Int declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-p>' type=<root>.C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-p>' type=<root>.C origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-p>' type=kotlin.Int origin=null
     PROPERTY name:ext visibility:public modality:FINAL [val]
@@ -181,7 +181,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=4
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="4"
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
         receiver: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
         value: CONST Int type=kotlin.Int value=5
       WHEN type=kotlin.Unit origin=IF

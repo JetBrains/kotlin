@@ -1,13 +1,13 @@
 FILE fqName:<root> fileName:/elvis.kt
   PROPERTY name:p visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Any? visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Any? visibility:private [final,static]
       EXPRESSION_BODY
         CONST Null type=kotlin.Nothing? value=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Any?
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Any? declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Any? visibility:public [final,static]' type=kotlin.Any? origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Any? visibility:private [final,static]' type=kotlin.Any? origin=null
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Any? declared in <root>'

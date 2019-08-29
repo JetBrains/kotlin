@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
     CONSTRUCTOR visibility:public <> (klass:kotlin.reflect.KClass<*>) returnType:<root>.A [primary]
       VALUE_PARAMETER name:klass index:0 type:kotlin.reflect.KClass<*>
     PROPERTY name:klass visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:klass type:kotlin.reflect.KClass<*> visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:klass type:kotlin.reflect.KClass<*> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'klass: kotlin.reflect.KClass<*> declared in <root>.A.<init>' type=kotlin.reflect.KClass<*> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-klass> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.reflect.KClass<*>
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-klass> (): kotlin.reflect.KClass<*> declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:klass type:kotlin.reflect.KClass<*> visibility:public [final]' type=kotlin.reflect.KClass<*> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:klass type:kotlin.reflect.KClass<*> visibility:private [final]' type=kotlin.reflect.KClass<*> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-klass>' type=<root>.A origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

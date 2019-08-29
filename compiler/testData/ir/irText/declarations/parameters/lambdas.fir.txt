@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.String, kotlin.String> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.String, kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.String
@@ -11,9 +11,9 @@ FILE fqName:<root> fileName:/lambdas.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function1<kotlin.String, kotlin.String> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.String, kotlin.String> visibility:public [final,static]' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.String, kotlin.String> visibility:private [final,static]' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<IrErrorType> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
@@ -23,9 +23,9 @@ FILE fqName:<root> fileName:/lambdas.kt
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:public [final,static]' type=kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:private [final,static]' type=kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.Int) returnType:kotlin.Unit
@@ -37,9 +37,9 @@ FILE fqName:<root> fileName:/lambdas.kt
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:public [final,static]' type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=null
   PROPERTY name:test4 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=LAMBDA
           FUN name:<no name provided> visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.Int) returnType:kotlin.Unit
@@ -50,4 +50,5 @@ FILE fqName:<root> fileName:/lambdas.kt
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:public [final,static]' type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=null
+

@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
           CALL 'public final fun <get-x> (): T of <root>.Base declared in <root>.Base' type=T of <root>.Base origin=null
             $this: GET_VAR '<this>: <root>.Base declared in <root>.Base' type=<root>.Base<*> origin=null
     PROPERTY name:bar visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private
         EXPRESSION_BODY
           GET_VAR 'x: T of <uninitialized parent> declared in <root>.Derived1.<init>' type=T of <uninitialized parent> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.Derived1) returnType:T of <root>.Derived1
@@ -26,14 +26,14 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): T of <root>.Derived1 declared in <root>.Derived1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:public' type=T of <root>.Derived1 origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private' type=T of <root>.Derived1 origin=null
               receiver: GET_VAR '<this>: <root>.Derived1 declared in <root>.Derived1.<get-bar>' type=<root>.Derived1 origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:FINAL <> ($this:<root>.Derived1, <set-?>:T of <root>.Derived1) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Derived1
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Derived1 declared in <root>.Derived1.<set-bar>' type=<root>.Derived1 origin=null
             value: GET_VAR '<set-?>: T of <root>.Derived1 declared in <root>.Derived1.<set-bar>' type=T of <root>.Derived1 origin=null
     PROPERTY name:exn visibility:public modality:FINAL [var]

@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/objectAsCallable.kt
       RETURN type=kotlin.Nothing from='public final fun invoke (i: kotlin.Int): kotlin.Int declared in <root>'
         GET_VAR 'i: kotlin.Int declared in <root>.invoke' type=kotlin.Int origin=null
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:private [final,static]
       EXPRESSION_BODY
         ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [/A.A]>#' type=IrErrorType
           CONST Int type=kotlin.Int value=42
@@ -87,9 +87,9 @@ FILE fqName:<root> fileName:/objectAsCallable.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static]' type=IrErrorType origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:private [final,static]
       EXPRESSION_BODY
         ERROR_CALL 'Unresolved reference: <Unresolved name: X>#' type=IrErrorType
           CONST Int type=kotlin.Int value=42
@@ -97,4 +97,5 @@ FILE fqName:<root> fileName:/objectAsCallable.kt
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static]' type=IrErrorType origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
+

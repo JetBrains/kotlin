@@ -11,3 +11,4 @@ FILE fqName:<root> fileName:/localClasses.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.outer.LocalClass
           BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Unresolved name: foo>#' type=IrErrorType
+

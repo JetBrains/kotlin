@@ -499,7 +499,7 @@ internal class Fir2IrVisitor(
             ) {
                 backingField = createBackingField(
                     property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                    property.visibility, property.name, property.isVal, initializer, type
+                    Visibilities.PRIVATE, property.name, property.isVal, initializer, type
                 )
             } else if (delegate != null) {
                 backingField = createBackingField(

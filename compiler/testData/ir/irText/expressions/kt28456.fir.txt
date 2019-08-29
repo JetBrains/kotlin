@@ -58,3 +58,4 @@ FILE fqName:<root> fileName:/kt28456.kt
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
       ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+
