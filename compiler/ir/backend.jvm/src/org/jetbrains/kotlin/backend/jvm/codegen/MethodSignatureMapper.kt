@@ -204,6 +204,13 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
         }
 
+        // This is needed because mapSignature is currently invoked in CallableReferenceLowering before InnerClassesLowering where
+        // this parameter is transformed to a normal value parameter.
+        // TODO: do not call mapSignature in CallableReferenceLowering
+        if (function is IrConstructor && function.dispatchReceiverParameter != null) {
+            writeParameter(sw, JvmMethodParameterKind.VALUE, function.dispatchReceiverParameter!!.type, function)
+        }
+
         for (parameter in function.valueParameters) {
             val type = if (forceSingleValueParameterBoxing(function.descriptor)) parameter.type.makeNullable() else parameter.type
             writeParameter(sw, JvmMethodParameterKind.VALUE, type, function)
@@ -312,7 +319,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         val overriddenSpecialBuiltinFunction = callee.descriptor.original.getOverriddenBuiltinReflectingJvmDescriptor()
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
-            return mapSignatureSkipGeneric(context.referenceSimpleFunction(overriddenSpecialBuiltinFunction.original).owner)
+            return mapSignatureSkipGeneric(context.referenceFunction(overriddenSpecialBuiltinFunction.original).owner)
         }
 
         return null
