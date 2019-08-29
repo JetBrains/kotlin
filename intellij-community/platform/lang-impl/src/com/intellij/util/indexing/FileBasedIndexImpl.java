@@ -447,16 +447,24 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     }
     final File registeredIndicesFile = new File(PathManager.getIndexRoot(), "registered");
     final Set<String> indicesToDrop = new THashSet<>();
-    try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(registeredIndicesFile)))) {
-      final int size = in.readInt();
-      for (int idx = 0; idx < size; idx++) {
-        indicesToDrop.add(IOUtil.readString(in));
+    boolean exceptionThrown = false;
+    if (registeredIndicesFile.exists()) {
+      try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(registeredIndicesFile)))) {
+        final int size = in.readInt();
+        for (int idx = 0; idx < size; idx++) {
+          indicesToDrop.add(IOUtil.readString(in));
+        }
+      }
+      catch (Throwable e) { // workaround for IDEA-194253
+        LOG.info(e);
+        exceptionThrown = true;
+        ids.stream().map(ID::getName).forEach(indicesToDrop::add);
       }
     }
-    catch (IOException ignored) {
-    }
-    for (ID<?, ?> key : ids) {
-      indicesToDrop.remove(key.getName());
+    if (!exceptionThrown) {
+      for (ID<?, ?> key : ids) {
+        indicesToDrop.remove(key.getName());
+      }
     }
     if (!indicesToDrop.isEmpty()) {
       LOG.info("Dropping indices:" + StringUtil.join(indicesToDrop, ","));
@@ -473,7 +481,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       }
     }
     catch (IOException e) {
-      LOG.error(e);
+      LOG.info(e);
     }
   }
 
