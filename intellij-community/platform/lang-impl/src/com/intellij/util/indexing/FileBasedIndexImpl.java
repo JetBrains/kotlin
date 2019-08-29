@@ -2527,7 +2527,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       }
       finally {
         ShutDownTracker.getInstance().registerShutdownTask(FileBasedIndexImpl.this::performShutdown);
-        saveRegisteredIndicesAndDropUnregisteredOnes(state.getIndexIDs());
 
         myFlushingFuture = FlushingDaemon.everyFiveSeconds(new Runnable() {
           private final SerializationManagerEx mySerializationManager = SerializationManagerEx.getInstanceEx();
@@ -2551,6 +2550,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
           return null;
         });
         myInitialized = true;  // this will ensure that all changes to component's state will be visible to other threads
+        saveRegisteredIndicesAndDropUnregisteredOnes(state.getIndexIDs());
       }
     }
   }
