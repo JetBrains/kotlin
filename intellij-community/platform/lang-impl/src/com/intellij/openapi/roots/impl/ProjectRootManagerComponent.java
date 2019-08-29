@@ -57,17 +57,15 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
   private boolean myPointerChangesDetected;
   private int myInsideRefresh;
-  private final BatchUpdateListener myHandler;
-  private final MessageBusConnection myConnection;
   @NotNull
   private Set<LocalFileSystem.WatchRequest> myRootsToWatch = new THashSet<>();
   private Disposable myRootPointersDisposable = Disposer.newDisposable(); // accessed in EDT
 
-  public ProjectRootManagerComponent(Project project, StartupManager startupManager) {
+  public ProjectRootManagerComponent(@NotNull Project project) {
     super(project);
 
-    myConnection = project.getMessageBus().connect(project);
-    myConnection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
+    MessageBusConnection connection = project.getMessageBus().connect(this);
+    connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
       @Override
       public void beforeFileTypesChanged(@NotNull FileTypeEvent event) {
         beforeRootsChange(true);
@@ -87,10 +85,10 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     }, project);
 
     if (!myProject.isDefault()) {
-      startupManager.registerStartupActivity(() -> myStartupActivityPerformed = true);
+      StartupManager.getInstance(project).registerStartupActivity(() -> myStartupActivityPerformed = true);
     }
 
-    myHandler = new BatchUpdateListener() {
+    connection.subscribe(BatchUpdateListener.TOPIC, new BatchUpdateListener() {
       @Override
       public void onBatchUpdateStarted() {
         myRootsChanged.levelUp();
@@ -102,12 +100,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
         myRootsChanged.levelDown();
         myFileTypesChanged.levelDown();
       }
-    };
-  }
-
-  @Override
-  public void initializeComponent() {
-    myConnection.subscribe(BatchUpdateListener.TOPIC, myHandler);
+    });
   }
 
   @Override
