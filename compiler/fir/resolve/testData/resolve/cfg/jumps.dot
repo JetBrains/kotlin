@@ -197,4 +197,106 @@ subgraph cluster_test_4 {
   88 -> {89};
 }
 
+subgraph cluster_test_5 {
+  90 [shape=box label="Enter function test_5" style="filled"];
+  91 [shape=box label="Enter block"];
+  92 [shape=box label="Enter while loop"];
+  93 [shape=box label="Enter loop condition"];
+  94 [shape=box label="Access variable R|<local>/b|"];
+  95 [shape=box label="Exit loop condition"];
+  96 [shape=box label="Enter loop block"];
+  97 [shape=box label="Enter block"];
+  98 [shape=box label="Enter when"];
+  99 [shape=box label="Enter when branch condition "];
+  100 [shape=box label="Access variable R|<local>/b|"];
+  101 [shape=box label="Exit when branch condition"];
+  102 [shape=box label="Enter block"];
+  103 [shape=box label="Jump: continue@@@[R|<local>/b|] "];
+  104 [shape=box label="Stub[DEAD]"];
+  105 [shape=box label="Exit block[DEAD]"];
+  106 [shape=box label="Exit when branch result[DEAD]"];
+  107 [shape=box label="Enter when branch condition else"];
+  108 [shape=box label="Exit when branch condition"];
+  109 [shape=box label="Enter block"];
+  110 [shape=box label="Exit block"];
+  111 [shape=box label="Exit when branch result"];
+  112 [shape=box label="Exit when"];
+  113 [shape=box label="Exit block"];
+  114 [shape=box label="Exit loop block"];
+  115 [shape=box label="Exit whileloop"];
+  116 [shape=box label="Exit block"];
+  117 [shape=box label="Exit function test_5" style="filled"];
+
+  90 -> {91};
+  91 -> {92};
+  92 -> {93};
+  93 -> {94};
+  94 -> {95};
+  95 -> {115 96};
+  96 -> {97};
+  97 -> {98};
+  98 -> {99};
+  99 -> {100};
+  100 -> {101};
+  101 -> {102 107};
+  102 -> {103};
+  103 -> {92};
+  103 -> {104} [style=dotted];
+  104 -> {105} [style=dotted];
+  105 -> {106} [style=dotted];
+  106 -> {112} [style=dotted];
+  107 -> {108};
+  108 -> {109};
+  109 -> {110};
+  110 -> {111};
+  111 -> {112};
+  112 -> {113};
+  113 -> {114};
+  114 -> {93};
+  115 -> {116};
+  116 -> {117};
+}
+
+subgraph cluster_run {
+  118 [shape=box label="Enter function run" style="filled"];
+  119 [shape=box label="Enter block"];
+  120 [shape=box label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+  121 [shape=box label="Exit block"];
+  122 [shape=box label="Exit function run" style="filled"];
+
+  118 -> {119};
+  119 -> {120};
+  120 -> {121};
+  121 -> {122};
+}
+
+subgraph cluster_test_6 {
+  123 [shape=box label="Enter function test_6" style="filled"];
+  124 [shape=box label="Enter block"];
+  125 [shape=box label="Enter function anonymousFunction"];
+  126 [shape=box label="Enter block"];
+  127 [shape=box label="Jump: ^@run Unit"];
+  128 [shape=box label="Stub[DEAD]"];
+  129 [shape=box label="Exit block[DEAD]"];
+  130 [shape=box label="Exit function anonymousFunction"];
+  131 [shape=box label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    ^@run Unit
+}
+)"];
+  132 [shape=box label="Exit block"];
+  133 [shape=box label="Exit function test_6" style="filled"];
+
+  123 -> {124};
+  124 -> {125};
+  125 -> {126};
+  126 -> {127};
+  127 -> {130};
+  127 -> {128} [style=dotted];
+  128 -> {129} [style=dotted];
+  129 -> {130} [style=dotted];
+  130 -> {131};
+  131 -> {132};
+  132 -> {133};
+}
+
 }

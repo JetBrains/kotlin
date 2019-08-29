@@ -39,3 +39,25 @@ FILE: jumps.kt
         while(Boolean(true))
         R|<local>/x|.R|kotlin/Int.inc|()
     }
+    public final fun test_5(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(R|<local>/b|) {
+            when () {
+                R|<local>/b| ->  {
+                    continue@@@[R|<local>/b|]
+                }
+                else ->  {
+                }
+            }
+
+        }
+
+    }
+    public final fun run(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun test_6(): R|kotlin/Unit| {
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            ^@run Unit
+        }
+        )
+    }

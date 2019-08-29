@@ -31,3 +31,21 @@ fun test_4(x: Int?) {
     } while (true)
     x.inc()
 }
+
+fun test_5(b: Boolean) {
+    while (b) {
+        if (b) {
+            continue
+        }
+    }
+}
+
+fun run(block: () -> Unit) {
+    block()
+}
+
+fun test_6() {
+    run {
+        return@run
+    }
+}

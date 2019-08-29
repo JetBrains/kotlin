@@ -218,6 +218,7 @@ subgraph cluster_test_3 {
   92 -> {99} [style=dotted];
   93 -> {109 94};
   94 -> {95};
+  95 -> {43};
   95 -> {96} [style=dotted];
   96 -> {97} [style=dotted];
   97 -> {98} [style=dotted];

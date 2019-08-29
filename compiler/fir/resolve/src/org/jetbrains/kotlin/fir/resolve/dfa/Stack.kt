@@ -70,8 +70,11 @@ class NodeStorage<T : FirElement, N : CFGNode<T>>(
     }
 }
 
-class SymbolBasedNodeStorage<T, N : CFGNode<T>> : Stack<N> where T : FirElement {
-    private val stack: Stack<N> = stackOf()
+class SymbolBasedNodeStorage<T, N : CFGNode<T>>(
+    pushCallback: ((N) -> Unit)? = null,
+    popCallback: ((N) -> Unit)? = null
+) : Stack<N> where T : FirElement {
+    private val stack: Stack<N> = StackImpl(pushCallback = pushCallback, popCallback = popCallback)
     private val map: MutableMap<FirBasedSymbol<*>, N> = mutableMapOf()
 
     override val size: Int get() = stack.size

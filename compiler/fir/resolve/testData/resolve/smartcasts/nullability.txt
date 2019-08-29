@@ -49,7 +49,7 @@ FILE: nullability.kt
                 ^test_3 Unit
             }
             else ->  {
-                R|<local>/<elvis>|!
+                R|<local>/<elvis>|
             }
         }
 
@@ -79,12 +79,12 @@ FILE: nullability.kt
 
     }
     public final fun test_6(q: R|Q?|): R|kotlin/Unit| {
-        when (lval <elvis>: R|kotlin/Int| = R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()) {
+        when (lval <elvis>: R|kotlin/Int?| = R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()) {
             ==($subj$, Null(null)) ->  {
                 ^test_6 Unit
             }
             else ->  {
-                R|<local>/<elvis>|!
+                R|<local>/<elvis>|
             }
         }
 

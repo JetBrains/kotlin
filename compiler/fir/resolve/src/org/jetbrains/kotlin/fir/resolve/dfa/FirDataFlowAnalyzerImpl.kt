@@ -349,7 +349,9 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
     // ----------------------------------- While Loop -----------------------------------
 
     override fun enterWhileLoop(loop: FirLoop) {
-        graphBuilder.enterWhileLoop(loop).passFlow()
+        val (loopEnterNode, loopConditionEnterNode) = graphBuilder.enterWhileLoop(loop)
+        loopEnterNode.passFlow()
+        loopConditionEnterNode.passFlow()
     }
 
     override fun exitWhileLoopCondition(loop: FirLoop) {

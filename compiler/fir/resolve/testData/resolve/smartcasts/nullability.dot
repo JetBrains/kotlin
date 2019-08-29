@@ -328,7 +328,7 @@ subgraph cluster_test_6 {
   146 [shape=box label="Access variable R|/Q.data|"];
   147 [shape=box label="Access variable R|/MyData.s|"];
   148 [shape=box label="Function call: R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()"];
-  149 [shape=box label="Variable declaration: lval <elvis>: R|kotlin/Int|"];
+  149 [shape=box label="Variable declaration: lval <elvis>: R|kotlin/Int?|"];
   150 [shape=box label="Enter when branch condition "];
   151 [shape=box label="Const: Null(null)"];
   152 [shape=box label="Operator =="];
