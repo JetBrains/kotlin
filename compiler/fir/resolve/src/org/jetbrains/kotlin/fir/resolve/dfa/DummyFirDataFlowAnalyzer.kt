@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 
 class DummyFirDataFlowAnalyzer : FirDataFlowAnalyzer() {
     companion object {
         private const val DUMMY = "<DUMMY>"
     }
 
-    override fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): ConeKotlinType? {
-        return qualifiedAccessExpression.typeRef.coneTypeUnsafe()
+    override fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): Collection<ConeKotlinType>? {
+        return null
     }
 
     override fun enterFunction(function: FirFunction<*>) {}

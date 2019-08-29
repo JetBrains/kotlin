@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 abstract class FirDataFlowAnalyzer {
-    abstract fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): ConeKotlinType?
+    abstract fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): Collection<ConeKotlinType>?
 
     // ----------------------------------- Named function -----------------------------------
 

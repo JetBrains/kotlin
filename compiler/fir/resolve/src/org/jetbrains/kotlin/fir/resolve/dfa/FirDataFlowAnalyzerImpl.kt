@@ -39,13 +39,10 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
     private val variableStorage = DataFlowVariableStorage()
     private val edges = mutableMapOf<CFGNode<*>, Flow>().withDefault { Flow.EMPTY }
 
-    override fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): ConeKotlinType? {
+    override fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): Collection<ConeKotlinType>? {
         val symbol: FirBasedSymbol<*> = qualifiedAccessExpression.resolvedSymbol ?: return null
         val variable = variableStorage[symbol]?.real ?: return null
-        val smartCastTypes = graphBuilder.lastNode.flow.approvedFacts(variable)?.exactType ?: return null
-        val smartCastType = context.myIntersectTypes(smartCastTypes.toList()) ?: return null
-        val originalType = qualifiedAccessExpression.typeRef.coneTypeSafe<ConeKotlinType>() ?: return null
-        return ConeTypeIntersector.intersectTypesFromSmartcasts(context, originalType, smartCastType)
+        return graphBuilder.lastNode.flow.approvedFacts(variable)?.exactType ?: return null
     }
 
     // ----------------------------------- Named function -----------------------------------

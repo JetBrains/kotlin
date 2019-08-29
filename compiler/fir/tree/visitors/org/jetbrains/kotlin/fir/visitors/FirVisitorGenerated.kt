@@ -314,6 +314,10 @@ abstract class FirVisitor<out R, in D> {
         return visitUnknownTypeExpression(errorExpression, data)
     }
 
+    open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): R {
+        return visitUnknownTypeExpression(expressionWithSmartcast, data)
+    }
+
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): R {
         return visitUnknownTypeExpression(qualifiedAccessExpression, data)
     }

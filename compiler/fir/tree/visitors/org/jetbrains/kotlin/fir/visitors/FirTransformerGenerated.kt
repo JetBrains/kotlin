@@ -314,6 +314,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformUnknownTypeExpression(errorExpression, data)
     }
 
+    open fun transformExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): CompositeTransformResult<FirStatement> {
+        return transformUnknownTypeExpression(expressionWithSmartcast, data)
+    }
+
     open fun transformQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformUnknownTypeExpression(qualifiedAccessExpression, data)
     }
@@ -628,6 +632,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitExpression(expression: FirExpression, data: D): CompositeTransformResult<FirElement> {
         return transformExpression(expression, data)
+    }
+
+    final override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): CompositeTransformResult<FirElement> {
+        return transformExpressionWithSmartcast(expressionWithSmartcast, data)
     }
 
     final override fun visitField(field: FirField, data: D): CompositeTransformResult<FirElement> {

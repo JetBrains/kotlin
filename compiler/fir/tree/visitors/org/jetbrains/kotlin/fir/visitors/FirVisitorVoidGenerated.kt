@@ -314,6 +314,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitUnknownTypeExpression(errorExpression, null)
     }
 
+    open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
+        visitUnknownTypeExpression(expressionWithSmartcast, null)
+    }
+
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
         visitUnknownTypeExpression(qualifiedAccessExpression, null)
     }
@@ -628,6 +632,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitExpression(expression: FirExpression, data: Nothing?) {
         visitExpression(expression)
+    }
+
+    final override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Nothing?) {
+        visitExpressionWithSmartcast(expressionWithSmartcast)
     }
 
     final override fun visitField(field: FirField, data: Nothing?) {

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -246,11 +247,19 @@ open class FirBodyResolveTransformer(
                     transformedCallee
                 }
                 if (result is FirQualifiedAccessExpression) {
-                    dataFlowAnalyzer.getTypeUsingSmartcastInfo(result)?.let { typeWithSmartCasts ->
-                        result.resultType = FirResolvedTypeRefImpl(result.psi, typeWithSmartCasts, result.resultType.annotations)
-                    }
+                    dataFlowAnalyzer.getTypeUsingSmartcastInfo(result)?.let { typesFromSmartCast ->
+                        val allTypes = typesFromSmartCast.toMutableList().also {
+                            it += result.resultType.coneTypeUnsafe<ConeKotlinType>()
+                        }
+                        val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx as ConeInferenceContext, allTypes)
+                        // TODO: add check that intersectedType is not equal to original type
+                        FirExpressionWithSmartcastImpl(result, typesFromSmartCast).also {
+                            it.resultType = FirResolvedTypeRefImpl(result.psi, intersectedType, result.resultType.annotations)
+                        }
+                    } ?: result
+                } else {
+                    result
                 }
-                result
             }
         }
         if (result is FirQualifiedAccessExpression) {
