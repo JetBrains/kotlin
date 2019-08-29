@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 // NOTE: avoid using blocking lazy in light classes, it leads to deadlocks
 fun <T> lazyPub(initializer: () -> T) = lazy(LazyThreadSafetyMode.PUBLICATION, initializer)
 
+fun <T> lazySync(initializer: () -> T) = lazy(LazyThreadSafetyMode.SYNCHRONIZED, initializer)
+
 fun LightElement.cannotModify(): Nothing {
     throw IncorrectOperationException("Modification not implemented.")
 }

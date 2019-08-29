@@ -14,7 +14,7 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.classes.lazySync
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -43,9 +43,11 @@ sealed class LazyLightClassDataHolder(
             cache.computeIfAbsent(lazyLightClassDataHolder, diagnostics)
     }
 
-    private val exactResultLazyValue = lazyPub { builder(exactContextProvider()).stub }
+    private val _builderExactContextProvider: LightClassBuilderResult by lazySync { builder(exactContextProvider()) }
 
-    private val lazyInexactStub by lazyPub {
+    private val exactResultLazyValue = lazySync { _builderExactContextProvider.stub }
+
+    private val lazyInexactStub by lazySync {
         dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
     }
 
@@ -56,7 +58,7 @@ sealed class LazyLightClassDataHolder(
 
     override val extraDiagnostics: Diagnostics
         get() = diagnosticsHolderProvider().getOrCompute(this) {
-            builder(exactContextProvider()).diagnostics
+            _builderExactContextProvider.diagnostics
                 // Force lazy diagnostics computation because otherwise a lot of memory is retained by computation.
                 // NB: Laziness here is not crucial anyway since somebody already has requested diagnostics and we hope one will use them
                 .takeUnless { it.isEmpty() } ?: Diagnostics.EMPTY
@@ -100,9 +102,9 @@ sealed class LazyLightClassDataHolder(
     private inner class LazyLightClassData(
         findDelegate: (PsiJavaFileStub) -> PsiClass
     ) : LightClassData {
-        override val clsDelegate: PsiClass by lazyPub { findDelegate(javaFileStub) }
+        override val clsDelegate: PsiClass by lazySync { findDelegate(javaFileStub) }
 
-        private val dummyDelegate: PsiClass? by lazyPub { inexactStub?.let(findDelegate) }
+        private val dummyDelegate: PsiClass? by lazySync { inexactStub?.let(findDelegate) }
 
         override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
             if (dummyDelegate == null) return KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)
