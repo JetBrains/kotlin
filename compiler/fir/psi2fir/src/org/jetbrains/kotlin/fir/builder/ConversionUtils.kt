@@ -155,7 +155,7 @@ fun FirExpression.generateNotNullOrOther(
         branches += FirWhenBranchImpl(
             other.psi, FirElseIfTrueCondition(basePsi),
             FirSingleExpressionBlock(
-                FirUncheckedNotNullCastImpl(basePsi, generateResolvedAccessExpression(basePsi, subjectVariable))
+                generateResolvedAccessExpression(basePsi, subjectVariable)
             )
         )
     }
