@@ -182,44 +182,15 @@ class ConeDefinitelyNotNullType(val original: ConeKotlinType): ConeKotlinType(),
  *   only via ConeTypeIntersector
  */
 class ConeIntersectionType(
-    val constructor: ConeIntersectionTypeConstructor
-) : ConeKotlinType(), SimpleTypeMarker {
+    val intersectedTypes: Collection<ConeKotlinType>
+) : ConeKotlinType(), SimpleTypeMarker, TypeConstructorMarker {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = emptyArray()
 
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
-
-    val intersectedTypes: Collection<ConeKotlinType> get() = constructor.intersectedTypes
-    val statusMap: Map<ConeKotlinType, ConeIntersectionTypeConstructor.IntersectionStatus> get() = constructor.statusMap
 }
 
-class ConeIntersectionTypeConstructor(
-    val intersectedTypes: Collection<ConeKotlinType>,
-    val statusMap: Map<ConeKotlinType, IntersectionStatus>
-) : TypeConstructorMarker {
-    val supertypes: Collection<ConeKotlinType> get() = intersectedTypes
-
-    /*
-     * IMPORTANT: use this method only for types from intersectedTypes
-     */
-    fun getStatus(type: ConeKotlinType): IntersectionStatus {
-        return statusMap[type] ?: error("")
-    }
-
-    enum class IntersectionStatus {
-        FROM_INFERENCE,
-        FROM_SMARTCAST
-    }
-}
-
-fun ConeIntersectionTypeConstructor.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionTypeConstructor {
-    val newStatusMap = mutableMapOf<ConeKotlinType, ConeIntersectionTypeConstructor.IntersectionStatus>()
-    val newTypes = intersectedTypes.map { type ->
-        val newType = func(type)
-        // TODO: what if some types squash? What status should we choose?
-        newStatusMap[newType] = getStatus(type)
-        newType
-    }
-    return ConeIntersectionTypeConstructor(newTypes, newStatusMap)
+fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes.map(func))
 }

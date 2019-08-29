@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.calls.hasNullableSuperType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -141,7 +142,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeAbbreviatedType -> this.directExpansionType(session)?.typeConstructor()
                 ?: ErrorTypeConstructor("Failed to expand alias: ${this}")
             is ConeLookupTagBasedType -> this.lookupTag.toSymbol(session) ?: ErrorTypeConstructor("Unresolved: ${this.lookupTag}")
-            is ConeIntersectionType -> constructor
+            is ConeIntersectionType -> this
             else -> error("?: ${this}")
         }
 
@@ -206,7 +207,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedTypeConstructor,
             is ErrorTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionTypeConstructor -> 0
+            is ConeIntersectionType -> 0
             is FirClassSymbol -> fir.typeParameters.size
             is FirTypeAliasSymbol -> fir.typeParameters.size
             else -> error("?!:10")
@@ -232,13 +233,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is FirClassSymbol -> fir.superConeTypes
             is FirTypeAliasSymbol -> listOfNotNull(fir.expandedConeType)
             is ConeCapturedTypeConstructor -> supertypes!!
-            is ConeIntersectionTypeConstructor -> intersectedTypes
+            is ConeIntersectionType -> intersectedTypes
             else -> error("?!:13")
         }
     }
 
     override fun TypeConstructorMarker.isIntersection(): Boolean {
-        return this is ConeIntersectionTypeConstructor
+        return this is ConeIntersectionType
     }
 
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {
@@ -279,7 +280,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionTypeConstructor -> false
+            is ConeIntersectionType -> false
             is ConeSymbol -> true
             else -> true
         }
@@ -381,12 +382,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return ConeTypeIntersector.intersectTypes(this, types as List<ConeKotlinType>) as SimpleTypeMarker
+        return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>) as SimpleTypeMarker
     }
 
     override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return ConeTypeIntersector.intersectTypes(this, types as List<ConeKotlinType>)
+        return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>)
     }
 
     private fun prepareClassLikeType(

@@ -6,32 +6,22 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
-import org.jetbrains.kotlin.fir.types.ConeIntersectionTypeConstructor.IntersectionStatus
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
 object ConeTypeIntersector {
-    fun intersectTypes(context: ConeTypeContext, types: List<ConeKotlinType>): ConeKotlinType {
-        require(context is ConeInferenceContext)
-        return intersectTypes(context, types, types.map { IntersectionStatus.FROM_INFERENCE })
-    }
-
-    private fun intersectTypes(
+    fun intersectTypes(
         context: ConeInferenceContext,
-        types: List<ConeKotlinType>,
-        intersectionStatus: List<IntersectionStatus>
+        types: List<ConeKotlinType>
     ): ConeKotlinType {
-        assert(types.size == intersectionStatus.size)
-
         when (types.size) {
             0 -> error("Expected some types")
             1 -> return types.single()
         }
 
         val inputTypes = mutableListOf<ConeKotlinType>()
-        val statusMap = mutableMapOf<ConeKotlinType, IntersectionStatus>()
-        flatIntersectionTypes(types, intersectionStatus, inputTypes, statusMap)
+        flatIntersectionTypes(types, inputTypes)
 
         /**
          * resultNullability. Value description:
@@ -49,19 +39,16 @@ object ConeTypeIntersector {
 
         val inputTypesWithCorrectNullability = inputTypes.mapTo(LinkedHashSet()) {
             if (resultNullability == ResultNullability.NOT_NULL) with(context) {
-                val resultType = it.makeDefinitelyNotNullOrNotNull() as ConeKotlinType
-                statusMap[resultType] = statusMap.remove(it)!!
-                resultType
+                it.makeDefinitelyNotNullOrNotNull() as ConeKotlinType
             } else it
         }
 
-        return intersectTypesWithoutIntersectionType(context, inputTypesWithCorrectNullability, statusMap)
+        return intersectTypesWithoutIntersectionType(context, inputTypesWithCorrectNullability)
     }
 
     private fun intersectTypesWithoutIntersectionType(
         context: ConeTypeContext,
-        inputTypes: Set<ConeKotlinType>,
-        statusMap: MutableMap<ConeKotlinType, IntersectionStatus>
+        inputTypes: Set<ConeKotlinType>
     ): ConeKotlinType {
         if (inputTypes.size == 1) return inputTypes.single().type
 
@@ -81,7 +68,7 @@ object ConeTypeIntersector {
              * We want to drop A from that set, because it's useless for type checking. But in case if
              *   A came from inference and B came from smartcast we want to safe both types in intersection
              */
-            isStrictSupertype(context, lower, upper) && statusMap[lower]!! <= statusMap[upper]!!
+            isStrictSupertype(context, lower, upper)
         }
         assert(filteredEqualTypes.isNotEmpty(), errorMessage)
 
@@ -95,11 +82,7 @@ object ConeTypeIntersector {
 
         if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
 
-        val constructor = ConeIntersectionTypeConstructor(
-            filteredSuperAndEqualTypes,
-            filteredSuperAndEqualTypes.associateWithTo(mutableMapOf()) { statusMap[it]!! }
-        )
-        return ConeIntersectionType(constructor)
+        return ConeIntersectionType(filteredSuperAndEqualTypes)
     }
 
     private fun filterTypes(
@@ -123,32 +106,17 @@ object ConeTypeIntersector {
         }
     }
 
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun MutableMap<ConeKotlinType, IntersectionStatus>.updateStatus(type: ConeKotlinType, status: IntersectionStatus) {
-        // We should keep status FROM_SMARTCAST for correct diagnostic reporting
-        val existingStatus = get(type)
-        if (existingStatus == null) {
-            put(type, status)
-        } else {
-            put(type, minOf(status, existingStatus))
-        }
-    }
-
     private fun flatIntersectionTypes(
         inputTypes: List<ConeKotlinType>,
-        intersectionStatus: List<IntersectionStatus>,
-        typeCollector: MutableList<ConeKotlinType>,
-        statusMap: MutableMap<ConeKotlinType, IntersectionStatus>
+        typeCollector: MutableList<ConeKotlinType>
     ) {
-        for ((inputType, status) in inputTypes.zip(intersectionStatus)) {
+        for (inputType in inputTypes) {
             if (inputType is ConeIntersectionType) {
                 for (type in inputType.intersectedTypes) {
                     typeCollector += type
-                    statusMap.updateStatus(type, status)
                 }
             } else {
                 typeCollector += inputType
-                statusMap.updateStatus(inputType, status)
             }
         }
     }

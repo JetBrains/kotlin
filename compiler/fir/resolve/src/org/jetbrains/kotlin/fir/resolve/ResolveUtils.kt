@@ -164,9 +164,9 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
         is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor) as T
         is ConeIntersectionType -> when (nullability) {
-            ConeNullability.NULLABLE -> ConeIntersectionType(constructor.mapTypes {
+            ConeNullability.NULLABLE -> this.mapTypes {
                 it.withNullability(nullability)
-            })
+            }
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> this
         } as T

@@ -89,7 +89,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
             substitutedTypes += substitutedType
         }
         if (!somethingIsSubstituted) return null
-        return ConeIntersectionType(ConeIntersectionTypeConstructor(substitutedTypes, statusMap))
+        return ConeIntersectionType(substitutedTypes)
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeDefinitelyNotNullType? {
