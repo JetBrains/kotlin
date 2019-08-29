@@ -1,13 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle;
 
+import com.intellij.ide.ui.search.SearchUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
-import com.intellij.ui.ClickListener;
-import com.intellij.ui.SpeedSearchComparator;
-import com.intellij.ui.TreeSpeedSearch;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.containers.MultiMap;
@@ -57,9 +57,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     initTables();
 
     myOptionsTree = createOptionsTree();
-    myOptionsTree.setCellRenderer(new MyTreeCellRenderer());
-    myOptionsTree.setBackground(UIUtil.getPanelBackground());
-    myOptionsTree.setBorder(JBUI.Borders.emptyRight(10));
+
     JScrollPane scrollPane = new JBScrollPane(myOptionsTree) {
       @Override
       public Dimension getMinimumSize() {
@@ -176,15 +174,15 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     DefaultTreeModel model = new DefaultTreeModel(rootNode);
 
     final Tree optionsTree = new Tree(model);
-    new TreeSpeedSearch(
+    TreeSpeedSearch speedSearch = new TreeSpeedSearch(
       optionsTree,
       path -> {
         final Object lastPathComponent = path.getLastPathComponent();
         return lastPathComponent instanceof MyToggleTreeNode ? ((MyToggleTreeNode)lastPathComponent).getText() :
                lastPathComponent.toString();
       },
-      true)
-      .setComparator(new SpeedSearchComparator(false));
+      true);
+    speedSearch.setComparator(new SpeedSearchComparator(false));
     TreeUtil.installActions(optionsTree);
     optionsTree.setRootVisible(false);
     optionsTree.setShowsRootHandles(true);
@@ -217,6 +215,10 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
       optionsTree.expandRow(row);
       row++;
     }
+
+    optionsTree.setCellRenderer(new MyTreeCellRenderer(speedSearch));
+    optionsTree.setBackground(UIUtil.getPanelBackground());
+    optionsTree.setBorder(JBUI.Borders.emptyRight(10));
 
     return optionsTree;
   }
@@ -403,54 +405,59 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
   }
 
   protected static class MyTreeCellRenderer implements TreeCellRenderer {
-    private final JLabel myLabel;
-    private final JCheckBox myCheckBox;
+    private final SimpleColoredComponent myLabel;
+    private final JCheckBox              myCheckBox;
+    private final TreeSpeedSearch        mySpeedSearch;
+    private final JPanel                 myCheckBoxPanel;
 
     public MyTreeCellRenderer() {
-      myLabel = new JLabel();
+      this(null);
+    }
+
+    public MyTreeCellRenderer(@Nullable TreeSpeedSearch speedSearch) {
+      mySpeedSearch = speedSearch;
       myCheckBox = new JCheckBox();
       myCheckBox.setMargin(JBUI.emptyInsets());
+      myLabel = new SimpleColoredComponent();
+      myCheckBoxPanel = new JPanel();
+      myCheckBoxPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+      myCheckBoxPanel.add(myCheckBox);
+      myCheckBoxPanel.add(myLabel);
     }
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded,
                                                   boolean leaf, int row, boolean hasFocus) {
+      Color background = isSelected ? UIUtil.getTreeSelectionBackground(hasFocus) : tree.getBackground();
+      Color foreground = isSelected ? UIUtil.getTreeSelectionForeground(hasFocus) : tree.getForeground();
       if (value instanceof MyToggleTreeNode) {
         MyToggleTreeNode treeNode = (MyToggleTreeNode)value;
-        JToggleButton button = myCheckBox;
-        button.setText(treeNode.getText());
-        button.setSelected(treeNode.isSelected);
-        if (isSelected) {
-          button.setForeground(UIUtil.getTreeSelectionForeground(hasFocus));
-          button.setBackground(UIUtil.getTreeSelectionBackground(hasFocus));
-        }
-        else {
-          button.setForeground(UIUtil.getTreeForeground());
-          button.setBackground(tree.getBackground());
-        }
 
+        JToggleButton button = myCheckBox;
+        button.setSelected(treeNode.isSelected);
+        button.setForeground(foreground);
+        button.setBackground(background);
+        button.setVisible(true);
         button.setEnabled(tree.isEnabled() && treeNode.isEnabled());
 
-        return button;
+        setLabelText(treeNode.getText(), SimpleTextAttributes.STYLE_PLAIN, foreground, background);
       }
       else {
-        myLabel.setText(value.toString());
-        myLabel.setFont(myLabel.getFont().deriveFont(Font.BOLD));
-        myLabel.setOpaque(true);
-
-        if (isSelected) {
-          myLabel.setForeground(UIUtil.getTreeSelectionForeground(hasFocus));
-          myLabel.setBackground(UIUtil.getTreeSelectionBackground(hasFocus));
-        }
-        else {
-          myLabel.setForeground(UIUtil.getTreeForeground());
-          myLabel.setBackground(tree.getBackground());
-        }
+        myCheckBox.setVisible(false);
+        setLabelText(value.toString(), SimpleTextAttributes.STYLE_BOLD, foreground, background);
 
         myLabel.setEnabled(tree.isEnabled());
-
-        return myLabel;
       }
+      myCheckBoxPanel.setForeground(foreground);
+      myCheckBoxPanel.setBackground(background);
+      myLabel.setOpaque(true);
+      return myCheckBoxPanel;
+    }
+
+    private void setLabelText(@NotNull String text, int style, @NotNull Color foreground, @NotNull Color background) {
+      myLabel.clear();
+      String prefix = mySpeedSearch != null ? mySpeedSearch.getEnteredPrefix() : null;
+      SearchUtil.appendFragments(prefix, text, style, foreground, background, myLabel);
     }
   }
 
