@@ -88,6 +88,8 @@ class InvokeReceiverCandidateCollector(
                         (candidate.symbol as ConeCallableSymbol).callableId.callableName,
                         candidate
                     )
+                    dispatchReceiver = candidate.dispatchReceiverExpression()
+                    extensionReceiver = candidate.extensionReceiverExpression()
                     typeRef = callResolver.typeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe())
                 },
                 invokeCallInfo.arguments,

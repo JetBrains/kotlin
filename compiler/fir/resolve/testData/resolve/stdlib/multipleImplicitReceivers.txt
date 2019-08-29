@@ -29,7 +29,7 @@ FILE: multipleImplicitReceivers.kt
             R|kotlin/with|<R|IFoo|, R|kotlin/Int|>(R|<local>/fooImpl|, <L> = with@fun R|IFoo|.<anonymous>(it: R|IFoo|): R|kotlin/Unit| {
                 D|this@R|/IFoo||E|this@R|special/anonymous||.R|/IFoo.foo|
                 R|kotlin/with|<R|IInvoke|, R|kotlin/Int|>(R|<local>/invokeImpl|, <L> = with@fun R|IInvoke|.<anonymous>(it: R|IInvoke|): R|kotlin/Unit| {
-                    D|this@R|/IInvoke||E|R|/IFoo.foo||.R|/IInvoke.invoke|()
+                    D|this@R|/IInvoke||E|D|this@R|/IFoo||E|this@R|special/anonymous||.R|/IFoo.foo||.R|/IInvoke.invoke|()
                 }
                 )
             }

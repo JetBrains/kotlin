@@ -14,7 +14,7 @@ FILE: extension.kt
             public get(): R|kotlin/Int|
 
         public final fun foo(): R|Foo| {
-            ^foo D|this@R|/Foo||E|R|/Foo.x||.R|/Foo.invoke|()
+            ^foo D|this@R|/Foo||E|D|this@R|/Foo||.R|/Foo.x||.R|/Foo.invoke|()
         }
 
     }
