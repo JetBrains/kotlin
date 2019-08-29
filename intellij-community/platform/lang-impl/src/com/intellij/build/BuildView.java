@@ -83,6 +83,7 @@ public class BuildView extends CompositeView<ExecutionConsole>
     myBuildDescriptor = buildDescriptor;
     myViewManager = viewManager;
     myExecutionConsole = executionConsole;
+    Disposer.register(project, this);
   }
 
   @Override

@@ -369,7 +369,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     if (node.getResult() != null) {
       return node.getResult(); // if another thread set result for child
     }
-    if(node.isFailed()) {
+    if (node.isFailed()) {
       return result.createFailureResult();
     }
 
@@ -727,7 +727,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     myTreeModel.getInvoker().invokeLater(task);
   }
 
-  private static class ConsoleViewHandler {
+  private static class ConsoleViewHandler implements Disposable {
     private static final String EMPTY_CONSOLE_NAME = "empty";
     private final Project myProject;
     private final JPanel myPanel;
@@ -748,6 +748,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       myProject = project;
       myPanel = new JPanel(new BorderLayout());
       myViewSettingsProvider = buildViewSettingsProvider;
+      Disposer.register(parentDisposable, this);
       myView = new CompositeView<ExecutionConsole>(null) {
         @Override
         public void addView(@NotNull ExecutionConsole view, @NotNull String viewName, boolean enable) {
@@ -755,6 +756,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
           UIUtil.removeScrollBorder(view.getComponent());
         }
       };
+      Disposer.register(this, myView);
       if (executionConsole != null && buildViewSettingsProvider.isSideBySideView()) {
         String nodeConsoleViewName = getNodeConsoleViewName(buildProgressRootNode);
         myView.addView(executionConsole, nodeConsoleViewName, true);
@@ -787,9 +789,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         TreePath selectionPath = tree.getSelectionPath();
         setNode(selectionPath != null ? (DefaultMutableTreeNode)selectionPath.getLastPathComponent() : null);
       });
-
-      Disposer.register(parentDisposable, myView);
-      Disposer.register(parentDisposable, emptyConsole);
     }
 
     @Nullable
@@ -874,12 +873,18 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
     }
 
+    @Override
+    public void dispose() {
+      deferredNodeOutput.clear();
+    }
+
     @NotNull
     private static String getNodeConsoleViewName(@NotNull ExecutionNode node) {
       return String.valueOf(System.identityHashCode(node));
     }
 
     private void setNode(@Nullable DefaultMutableTreeNode node) {
+      if (myProject.isDisposed()) return;
       if (node == null || node.getUserObject() == myExecutionNode) return;
       if (node.getUserObject() instanceof ExecutionNode) {
         myExecutionNode = (ExecutionNode)node.getUserObject();
@@ -994,6 +999,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     {
       putClientProperty(DefaultTreeUI.SHRINK_LONG_RENDERER, true);
     }
+
     private String myDurationText;
     private Color myDurationColor;
     private int myDurationWidth;
