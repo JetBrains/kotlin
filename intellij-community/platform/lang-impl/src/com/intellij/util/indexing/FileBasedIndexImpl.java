@@ -472,7 +472,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         IOUtil.writeString(id.getName(), os);
       }
     }
-    catch (IOException ignored) {
+    catch (IOException e) {
+      LOG.error(e);
     }
   }
 
