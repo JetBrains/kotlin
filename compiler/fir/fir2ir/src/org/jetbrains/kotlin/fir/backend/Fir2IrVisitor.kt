@@ -769,9 +769,6 @@ internal class Fir2IrVisitor(
                 if (!ownerField.isStatic) {
                     receiver = qualifiedAccess.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
                         ?: qualifiedAccess.explicitReceiver?.toIrExpression()
-                    if (receiver == null) {
-                        throw AssertionError()
-                    }
                 }
                 this
             }
