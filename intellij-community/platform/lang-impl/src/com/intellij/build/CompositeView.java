@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CompositeView<T extends ComponentContainer> extends JPanel implements ComponentContainer, DataProvider {
   private final Map<String, T> myViewMap = ContainerUtil.newConcurrentMap();
   private final String mySelectionStateKey;
-  private final AtomicReference<String> myEnabledViewRef = new AtomicReference<>();
+  private final AtomicReference<String> myVisibleViewRef = new AtomicReference<>();
   @NotNull
   private final SwitchViewAction mySwitchViewAction;
 
@@ -41,7 +41,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     mySwitchViewAction = new SwitchViewAction();
   }
 
-  public void addView(@NotNull T view, @NotNull String viewName, boolean enable) {
+  public void addView(@NotNull T view, @NotNull String viewName) {
     T oldView = getView(viewName);
     if (oldView != null) {
       remove(oldView.getComponent());
@@ -49,22 +49,26 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     }
     myViewMap.put(viewName, view);
     add(view.getComponent(), viewName);
-
-    String storedState = getStoredState();
-    if ((storedState != null && storedState.equals(viewName)) || storedState == null && enable) {
-      enableView(viewName);
-      setStoredState(viewName);
-    }
     Disposer.register(this, view);
   }
 
-  public void enableView(@NotNull String viewName) {
-    enableView(viewName, true);
+  public void addViewAndShowIfNeeded(@NotNull T view, @NotNull String viewName, boolean showByDefault) {
+    addView(view, viewName);
+    String storedState = getStoredState();
+    if (storedState != null && (storedState.equals(viewName)) ||
+        storedState == null && showByDefault) {
+      showView(viewName);
+    }
   }
 
-  public void enableView(@NotNull String viewName, boolean requestFocus) {
-    if (!StringUtil.equals(viewName, myEnabledViewRef.get())) {
-      myEnabledViewRef.set(viewName);
+  public void showView(@NotNull String viewName) {
+    showView(viewName, true);
+    setStoredState(viewName);
+  }
+
+  public void showView(@NotNull String viewName, boolean requestFocus) {
+    if (!StringUtil.equals(viewName, myVisibleViewRef.get())) {
+      myVisibleViewRef.set(viewName);
       CardLayout cl = (CardLayout)(getLayout());
       cl.show(this, viewName);
     }
@@ -78,8 +82,8 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
     }
   }
 
-  public boolean isViewEnabled(String viewName) {
-    return StringUtil.equals(myEnabledViewRef.get(), viewName);
+  public boolean isViewVisible(String viewName) {
+    return StringUtil.equals(myVisibleViewRef.get(), viewName);
   }
 
   public T getView(@NotNull String viewName) {
@@ -122,11 +126,11 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
   @Nullable
   @Override
   public Object getData(@NotNull @NonNls String dataId) {
-    String enabledViewName = myEnabledViewRef.get();
-    if (enabledViewName != null) {
-      T enabledView = getView(enabledViewName);
-      if (enabledView instanceof DataProvider) {
-        Object data = ((DataProvider)enabledView).getData(dataId);
+    String visibleViewName = myVisibleViewRef.get();
+    if (visibleViewName != null) {
+      T visibleView = getView(visibleViewName);
+      if (visibleView instanceof DataProvider) {
+        Object data = ((DataProvider)visibleView).getData(dataId);
         if (data != null) return data;
       }
     }
@@ -164,10 +168,10 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
 
     @Override
     public boolean isSelected(@NotNull final AnActionEvent event) {
-      String enabledViewName = myEnabledViewRef.get();
-      if (enabledViewName == null) return true;
+      String visibleViewName = myVisibleViewRef.get();
+      if (visibleViewName == null) return true;
       Set<String> viewNames = myViewMap.keySet();
-      return viewNames.isEmpty() || enabledViewName.equals(viewNames.iterator().next());
+      return viewNames.isEmpty() || visibleViewName.equals(viewNames.iterator().next());
     }
 
     @Override
@@ -175,8 +179,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
       if (myViewMap.size() > 1) {
         List<String> names = new ArrayList<>(myViewMap.keySet());
         String viewName = flag ? names.get(0) : names.get(1);
-        enableView(viewName);
-        setStoredState(viewName);
+        showView(viewName);
         ApplicationManager.getApplication().invokeLater(() -> update(event));
       }
     }

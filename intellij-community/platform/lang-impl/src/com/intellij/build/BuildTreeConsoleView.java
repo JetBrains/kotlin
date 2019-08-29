@@ -751,19 +751,19 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       Disposer.register(parentDisposable, this);
       myView = new CompositeView<ExecutionConsole>(null) {
         @Override
-        public void addView(@NotNull ExecutionConsole view, @NotNull String viewName, boolean enable) {
-          super.addView(view, viewName, enable);
+        public void addView(@NotNull ExecutionConsole view, @NotNull String viewName) {
+          super.addView(view, viewName);
           UIUtil.removeScrollBorder(view.getComponent());
         }
       };
       Disposer.register(this, myView);
       if (executionConsole != null && buildViewSettingsProvider.isSideBySideView()) {
         String nodeConsoleViewName = getNodeConsoleViewName(buildProgressRootNode);
-        myView.addView(executionConsole, nodeConsoleViewName, true);
+        myView.addViewAndShowIfNeeded(executionConsole, nodeConsoleViewName, true);
         myNodeConsoleViewName.set(nodeConsoleViewName);
       }
       ConsoleView emptyConsole = new ConsoleViewImpl(project, GlobalSearchScope.EMPTY_SCOPE, true, false);
-      myView.addView(emptyConsole, EMPTY_CONSOLE_NAME, false);
+      myView.addView(emptyConsole, EMPTY_CONSOLE_NAME);
       if (!buildViewSettingsProvider.isSideBySideView()) {
         myPanel.setVisible(false);
       }
@@ -817,7 +817,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
           deferredNodeOutput.remove(nodeConsoleViewName);
           deferredOutput.forEach(consumer -> consumer.accept((BuildTextConsoleView)view));
         }
-        myView.enableView(nodeConsoleViewName, false);
+        myView.showView(nodeConsoleViewName, false);
         myPanel.setVisible(true);
         return true;
       }
@@ -827,11 +827,11 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         BuildTextConsoleView textConsoleView = new BuildTextConsoleView(myProject, true);
         deferredNodeOutput.remove(nodeConsoleViewName);
         deferredOutput.forEach(consumer -> consumer.accept(textConsoleView));
-        myView.addView(textConsoleView, nodeConsoleViewName, false);
-        myView.enableView(nodeConsoleViewName, false);
+        myView.addView(textConsoleView, nodeConsoleViewName);
+        myView.showView(nodeConsoleViewName, false);
       }
       else if (myViewSettingsProvider.isSideBySideView()) {
-        myView.enableView(EMPTY_CONSOLE_NAME, false);
+        myView.showView(EMPTY_CONSOLE_NAME, false);
         return true;
       }
 
@@ -842,8 +842,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         if (!hasChanged) return false;
 
         taskOutputView.scrollTo(0);
-        myView.addView(taskOutputView, nodeConsoleViewName, false);
-        myView.enableView(nodeConsoleViewName, false);
+        myView.addView(taskOutputView, nodeConsoleViewName);
+        myView.showView(nodeConsoleViewName, false);
         myPanel.setVisible(true);
       }
       return true;
@@ -895,7 +895,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
       myExecutionNode = null;
       if (myView.getView(CONSOLE_VIEW_NAME) != null/* && myViewSettingsProvider.isSideBySideView()*/) {
-        myView.enableView(CONSOLE_VIEW_NAME, false);
+        myView.showView(CONSOLE_VIEW_NAME, false);
         myPanel.setVisible(true);
       }
       else {
