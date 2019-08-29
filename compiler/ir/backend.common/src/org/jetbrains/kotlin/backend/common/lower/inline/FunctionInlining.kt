@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -429,12 +430,15 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                     return@forEach
                 }
 
+                val variableInitializer = it.argumentExpression.transform(substitutor, data = null) // Arguments may reference the previous ones - substitute them.
                 val newVariable =
                     currentScope.scope.createTemporaryVariableWithWrappedDescriptor(
-                        irExpression = it.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
-                            substitutor,
-                            data = null
-                        ),
+                        irExpression = IrBlockImpl (variableInitializer.startOffset,
+                                variableInitializer.endOffset,
+                                variableInitializer.type,
+                                InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)).apply {
+                            statements.add(variableInitializer)
+                        },
                         nameHint = callee.symbol.owner.name.toString(),
                         isMutable = false
                     )
@@ -464,4 +468,14 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
         fun withLocation(startOffset: Int, endOffset: Int) =
             IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
     }
+}
+
+class InlinerExpressionLocationHint(val inlineAtSymbol: IrSymbol) : IrStatementOrigin {
+    override fun toString(): String = "(${this.javaClass.simpleName} : $functionNameOrDefaultToString @${functionFileOrNull?.fileEntry?.name})"
+
+    private val functionFileOrNull: IrFile?
+        get() = (inlineAtSymbol as? IrFunction)?.file
+
+    private val functionNameOrDefaultToString: String
+        get() = (inlineAtSymbol as? IrFunction)?.name?.asString() ?: toString()
 }
