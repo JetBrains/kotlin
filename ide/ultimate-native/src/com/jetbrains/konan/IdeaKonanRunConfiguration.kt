@@ -9,13 +9,15 @@ import com.intellij.execution.CommonProgramRunConfigurationParameters
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.Executor
 import com.intellij.execution.configuration.EnvironmentVariablesComponent
-import com.intellij.execution.configurations.*
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.LocatableConfigurationBase
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.debugger.CidrDebugProfile
 import org.jdom.Element
-import org.jetbrains.kotlin.idea.run.LocatableConfigurationBaseAny
 import org.jetbrains.kotlin.konan.target.HostManager
 import javax.swing.Icon
 
@@ -25,7 +27,7 @@ class IdeaKonanRunConfiguration(
     project: Project,
     factory: ConfigurationFactory,
     var executable: KonanExecutable?
-) : LocatableConfigurationBaseAny(project, factory, executable?.base?.name), CommonProgramRunConfigurationParameters, CidrDebugProfile {
+) : LocatableConfigurationBase<Any>(project, factory, executable?.base?.name), CommonProgramRunConfigurationParameters, CidrDebugProfile {
 
     var selectedTarget: IdeaKonanExecutionTarget? = null
 
