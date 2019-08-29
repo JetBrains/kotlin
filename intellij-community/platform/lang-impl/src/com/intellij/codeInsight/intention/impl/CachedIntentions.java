@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.intention.impl;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -236,8 +236,12 @@ public class CachedIntentions {
                                             @Nullable PsiFile containingFile,
                                             @Nullable Editor containingEditor) {
     IntentionActionWithTextCaching cachedAction = new IntentionActionWithTextCaching(descriptor, (cached, action)->{
-      removeActionFromCached(cached);
-      markInvoked(action);
+      if (action instanceof QuickFixWrapper) {
+        // remove only inspection fixes after invocation,
+        // since intention actions might be still available
+        removeActionFromCached(cached);
+        markInvoked(action);
+      }
     });
     if (element == null) return cachedAction;
     final List<IntentionAction> options = descriptor.getOptions(element, containingEditor);
