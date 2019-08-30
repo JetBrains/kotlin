@@ -44,7 +44,11 @@ open class InliningContext(
     val classRegeneration: Boolean
 ) {
 
-    val isInliningLambda = lambdaInfo != null
+    val isInliningLambda
+        get() = lambdaInfo != null
+
+    val isInliningIrLambda
+        get() = lambdaInfo != null && !lambdaInfo.hasDispatchReceiver
 
     var generateAssertField = false
 

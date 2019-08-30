@@ -586,8 +586,8 @@ class MethodInliner(
                         if (isAnonymousSingletonLoad(className, fieldInsnNode.name)) {
                             recordTransformation(
                                 AnonymousObjectTransformationInfo(
-                                    className, awaitClassReification, isAlreadyRegenerated(className), true,
-                                    inliningContext.nameGenerator
+                                    className, awaitClassReification, hashMapOf(), false, isAlreadyRegenerated(className), null, true,
+                                    inliningContext.nameGenerator, false, inliningContext.isInliningIrLambda
                                 )
                             )
                             awaitClassReification = false
@@ -848,7 +848,8 @@ class MethodInliner(
             desc,
             false,
             inliningContext.nameGenerator,
-            capturesAnonymousObjectThatMustBeRegenerated
+            capturesAnonymousObjectThatMustBeRegenerated,
+            inliningContext.isInliningIrLambda
         )
 
         val memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(anonymousType)
