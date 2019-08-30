@@ -25,15 +25,17 @@ import org.jetbrains.kotlin.utils.DFS
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     private val mainFunction: IrSimpleFunction?,
-    private val mainArguments: List<String>?
+    private val mainArguments: List<String>?,
+    private val generateScriptModule: Boolean = false,
+    var namer: NameTables = NameTables(emptyList())
 ) {
     val moduleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
 
     private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
-        val statements = mutableListOf(
-            JsStringLiteral("use strict").makeStmt()
-        )
+        val statements = mutableListOf<JsStatement>().also {
+            if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
+        }
 
         val preDeclarationBlock = JsBlock()
         val postDeclarationBlock = JsBlock()

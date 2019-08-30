@@ -46,6 +46,9 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitDeclaration(declaration: IrDeclaration): IrStatement = declaration.transformChildren()
     final override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): IrStatement = visitDeclaration(declaration)
 
+    open fun visitScript(declaration: IrScript) = visitDeclaration(declaration)
+    final override fun visitScript(declaration: IrScript, data: Nothing?) = visitScript(declaration)
+
     open fun visitClass(declaration: IrClass) = visitDeclaration(declaration)
     final override fun visitClass(declaration: IrClass, data: Nothing?) = visitClass(declaration)
 

@@ -344,6 +344,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "FUN ${renderOriginIfNonTrivial()}"
         }
 
+    override fun visitScript(declaration: IrScript, data: Nothing?) = "SCRIPT"
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
             "FUN ${renderOriginIfNonTrivial()}" +

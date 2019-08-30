@@ -49,6 +49,12 @@ class PropertiesLowering(
         return declaration
     }
 
+    override fun visitScript(declaration: IrScript): IrStatement {
+        declaration.transformChildrenVoid(this)
+        declaration.transformDeclarationsFlat { lowerProperty(it, ClassKind.CLASS) }
+        return declaration
+    }
+
     private fun lowerProperty(declaration: IrDeclaration, kind: ClassKind): List<IrDeclaration>? =
         if (declaration is IrProperty)
             if (skipExternalProperties && declaration.isEffectivelyExternal()) listOf(declaration) else {

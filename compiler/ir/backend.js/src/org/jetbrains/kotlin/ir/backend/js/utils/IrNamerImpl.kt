@@ -37,7 +37,7 @@ class IrNamerImpl(private val newNameTables: NameTables) : IrNamer {
     }
 
     override fun getNameForField(field: IrField): JsName {
-        return if (field.isStatic) {
+        return if (field.isStatic || field.parent is IrScript) {
             getNameForStaticDeclaration(field)
         } else {
             getNameForMemberField(field)

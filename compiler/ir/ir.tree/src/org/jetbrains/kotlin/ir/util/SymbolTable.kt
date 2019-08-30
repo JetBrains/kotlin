@@ -98,8 +98,10 @@ open class SymbolTable : ReferenceSymbolTable {
             val s = get(d0)
             if (s == null) {
                 val new = orElse()
-                assert(unboundSymbols.add(new)) {
-                    "Symbol for ${new.descriptor} was already referenced"
+                if (!new.isBound) {
+                    assert(unboundSymbols.add(new)) {
+                        "Symbol for ${new.descriptor} was already referenced"
+                    }
                 }
                 set(d0, new)
                 return new
@@ -192,7 +194,9 @@ open class SymbolTable : ReferenceSymbolTable {
             currentScope?.dump() ?: "<none>"
     }
 
-    private val externalPackageFragmentTable = FlatSymbolTable<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol>()
+    private val externalPackageFragmentTable =
+        FlatSymbolTable<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol>()
+    private val scriptSymbolTable = FlatSymbolTable<ScriptDescriptor, IrScript, IrScriptSymbol>()
     private val classSymbolTable = FlatSymbolTable<ClassDescriptor, IrClass, IrClassSymbol>()
     private val constructorSymbolTable = FlatSymbolTable<ClassConstructorDescriptor, IrConstructor, IrConstructorSymbol>()
     private val enumEntrySymbolTable = FlatSymbolTable<ClassDescriptor, IrEnumEntry, IrEnumEntrySymbol>()
@@ -231,6 +235,19 @@ open class SymbolTable : ReferenceSymbolTable {
             startOffset, endOffset, origin,
             IrAnonymousInitializerSymbolImpl(descriptor)
         )
+
+    fun declareScript(
+        descriptor: ScriptDescriptor,
+        scriptFactory: (IrScriptSymbol) -> IrScript = { symbol: IrScriptSymbol ->
+            IrScriptImpl(symbol, descriptor.name)
+        }
+    ): IrScript {
+        return scriptSymbolTable.declare(
+            descriptor,
+            { IrScriptSymbolImpl(descriptor) },
+            scriptFactory
+        )
+    }
 
     fun declareClass(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
@@ -439,7 +456,11 @@ open class SymbolTable : ReferenceSymbolTable {
 
     override fun referenceValueParameter(descriptor: ParameterDescriptor) =
         valueParameterSymbolTable.referenced(descriptor) {
-            throw AssertionError("Undefined parameter referenced: $descriptor\n${valueParameterSymbolTable.dump()}")
+            if (descriptor.containingDeclaration is ScriptDescriptor) {
+                scriptSymbolTable.referenced(descriptor.containingDeclaration as ScriptDescriptor) { error("  ") }.owner.thisReceiver.symbol
+            } else {
+                throw AssertionError("Undefined parameter referenced: $descriptor\n${valueParameterSymbolTable.dump()}")
+            }
         }
 
     override fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol =
