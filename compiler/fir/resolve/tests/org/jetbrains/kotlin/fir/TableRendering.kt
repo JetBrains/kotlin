@@ -66,7 +66,7 @@ class RTableContext {
 
     fun printout(out: Appendable) {
         val colSize = IntArray(cols) { index ->
-            data.filterIsInstance<Row.Data>().fold(0) { acc, row -> maxOf(acc, row.cells[index].text.length) }
+            data.filterIsInstance<Row.Data>().fold(0) { acc, row -> maxOf(acc, row.cells.getOrNull(index)?.text?.length ?: 0) }
         }
 
 

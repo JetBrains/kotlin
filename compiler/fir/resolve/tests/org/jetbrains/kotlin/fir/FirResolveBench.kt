@@ -287,7 +287,6 @@ class FirResolveBench(val withProgress: Boolean) {
                     timeCell(totalTime, fractionDigits = 0)
                     timeCell(totalTime / averageFiles)
                     cell("$averageFiles")
-                    cell("$averageFiles")
                     timeCell(totalCpuTime, fractionDigits = 0)
                     timeCell(totalUserTime)
                     timeCell(totalGcTime, inputUnit = TableTimeUnit.MS)
