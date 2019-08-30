@@ -456,7 +456,11 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
 
         // Within inline functions, we have to assume the worst.
-        val function = currentFunction?.irElement as IrFunction?
+        val currentFunctionOrClass = allScopes.lastOrNull {
+            it.scope.scopeOwnerSymbol is IrFunctionSymbol || it.scope.scopeOwnerSymbol is IrClassSymbol }
+        // If this is a class instead of a function, then we're actually in a field initializer
+        // that will be emitted as part of the non-inline by definition primary constructor.
+        val function = currentFunctionOrClass?.irElement as? IrFunction
         if (function?.isInline == true && !function.visibility.isPrivate && (withSuper || !function.visibility.isProtected))
             return false
 
