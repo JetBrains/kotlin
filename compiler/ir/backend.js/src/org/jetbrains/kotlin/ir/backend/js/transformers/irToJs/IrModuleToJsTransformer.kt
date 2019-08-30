@@ -73,7 +73,7 @@ class IrModuleToJsTransformer(
 
         module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
 
-        val namer = NameTables(module.files + additionalPackages)
+        namer.merge(module.files, additionalPackages)
 
         val program = JsProgram()
 
@@ -102,25 +102,33 @@ class IrModuleToJsTransformer(
         val exportStatements = ExportModelToJsStatements(internalModuleName, namer)
             .generateModuleExport(exportedModule)
 
-        with(rootFunction) {
-            parameters += JsParameter(internalModuleName)
-            parameters += importedJsModules.map { JsParameter(it.internalName) }
-            with(body) {
+        if (generateScriptModule) {
+            with(program.globalBlock) {
                 statements += importStatements
                 statements += moduleBody
                 statements += exportStatements
-                statements += generateCallToMain(rootContext)
-                statements += JsReturn(internalModuleName.makeRef())
             }
-        }
+        } else {
+            with(rootFunction) {
+                parameters += JsParameter(internalModuleName)
+                parameters += importedJsModules.map { JsParameter(it.internalName) }
+                with(body) {
+                    statements += importStatements
+                    statements += moduleBody
+                    statements += exportStatements
+                    statements += generateCallToMain(rootContext)
+                    statements += JsReturn(internalModuleName.makeRef())
+                }
+            }
 
-        program.globalBlock.statements += ModuleWrapperTranslation.wrap(
-            moduleName,
-            rootFunction,
-            importedJsModules,
-            program,
-            kind = moduleKind
-        )
+            program.globalBlock.statements += ModuleWrapperTranslation.wrap(
+                moduleName,
+                rootFunction,
+                importedJsModules,
+                program,
+                kind = moduleKind
+            )
+        }
 
         return CompilerResult(program.toString(), dts)
     }
