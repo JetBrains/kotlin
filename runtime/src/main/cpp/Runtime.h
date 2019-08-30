@@ -42,8 +42,10 @@ RuntimeState* RUNTIME_USED Kotlin_suspendRuntime();
 // the runtime. After resume, current thread could be used for executing Kotlin code.
 void RUNTIME_USED Kotlin_resumeRuntime(RuntimeState*);
 
-// Gets currently active runtime, nullptr if no runtime is currently available.
+// Gets currently active runtime, fails if no runtime is currently available.
 RuntimeState* RUNTIME_USED Kotlin_getRuntime();
+
+bool Kotlin_hasRuntime();
 
 // Appends given node to an initializer list.
 void AppendToInitializersTail(struct InitNode*);

@@ -568,34 +568,6 @@ class ExceptionObjHolder {
    ObjHeader* obj_;
 };
 
-class KRefSharedHolder {
- public:
-  inline ObjHeader** slotToInit() {
-    initRefOwner();
-    return &obj_;
-  }
-
-  inline void init(ObjHeader* obj) {
-    SetHeapRef(slotToInit(), obj);
-  }
-
-  ObjHeader* ref() const;
-
-  inline void dispose() {
-    verifyRefOwner();
-    ZeroHeapRef(&obj_);
-  }
-
- private:
-  typedef MemoryState* RefOwner;
-
-  ObjHeader* obj_;
-  RefOwner owner_;
-
-  void initRefOwner();
-  void verifyRefOwner() const;
-};
-
 class ForeignRefManager;
 typedef ForeignRefManager* ForeignRefContext;
 

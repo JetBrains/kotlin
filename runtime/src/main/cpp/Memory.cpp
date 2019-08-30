@@ -466,31 +466,6 @@ struct MemoryState {
 #endif // COLLECT_STATISTIC
 };
 
-ObjHeader* KRefSharedHolder::ref() const {
-  verifyRefOwner();
-  return obj_;
-}
-
-void KRefSharedHolder::initRefOwner() {
-  RuntimeAssert(owner_ == nullptr, "Must be uninitialized");
-  owner_ = memoryState;
-}
-
-void KRefSharedHolder::verifyRefOwner() const {
-  // Note: checking for 'shareable()' and retrieving 'type_info()'
-  // are supposed to be correct even for unowned object.
-  if (owner_ != memoryState) {
-    // Initialized runtime is required to throw the exception below
-    // or to provide proper execution context for shared objects:
-    if (memoryState == nullptr) Kotlin_initRuntimeIfNeeded();
-    auto* container = obj_->container();
-    if (!isShareable(container)) {
-      // TODO: add some info about the owner.
-      ThrowIllegalObjectSharingException(obj_->type_info(), obj_);
-    }
-  }
-}
-
 namespace {
 
 #if TRACE_MEMORY
@@ -2626,19 +2601,11 @@ ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t coun
 extern "C" {
 
 // Private memory interface.
-void AddRefFromAssociatedObject(const ObjHeader* object) {
-  addHeapRef(const_cast<ObjHeader*>(object));
-}
-
 void ReleaseHeapRefStrict(const ObjHeader* object) {
   releaseHeapRef<true>(const_cast<ObjHeader*>(object));
 }
 void ReleaseHeapRefRelaxed(const ObjHeader* object) {
   releaseHeapRef<false>(const_cast<ObjHeader*>(object));
-}
-
-void ReleaseRefFromAssociatedObject(const ObjHeader* object) {
-  ReleaseHeapRef(object);
 }
 
 void DeinitInstanceBody(const TypeInfo* typeInfo, void* body) {

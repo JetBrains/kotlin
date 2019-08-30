@@ -22,6 +22,7 @@
 #import <Foundation/NSException.h>
 #import <Foundation/NSString.h>
 #import "Memory.h"
+#import "MemorySharedRefs.hpp"
 
 namespace {
   Class nsStringClass = nullptr;

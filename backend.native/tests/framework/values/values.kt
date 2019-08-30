@@ -10,6 +10,7 @@ package conversions
 
 import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
+import kotlin.native.ref.WeakReference
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -737,4 +738,39 @@ class TestWeakRefs(private val frozen: Boolean) {
     }
 
     private class Node(var next: Node?)
+}
+
+class SharedRefs {
+    class MutableData {
+        var x = 0
+
+        fun update() { x += 1 }
+    }
+
+    fun createRegularObject(): MutableData = create { MutableData() }
+
+    fun createLambda(): () -> Unit = create {
+        var mutableData = 0
+        {
+            println(mutableData++)
+        }
+    }
+
+    fun createCollection(): MutableList<Any> = create {
+        mutableListOf()
+    }
+
+    fun createFrozenRegularObject() = createRegularObject().freeze()
+    fun createFrozenLambda() = createLambda().freeze()
+    fun createFrozenCollection() = createCollection().freeze()
+
+    fun hasAliveObjects(): Boolean {
+        kotlin.native.internal.GC.collect()
+        return mustBeRemoved.any { it.get() != null }
+    }
+
+    private fun <T : Any> create(block: () -> T) = block()
+            .also { mustBeRemoved += WeakReference(it) }
+
+    private val mustBeRemoved = mutableListOf<WeakReference<*>>()
 }

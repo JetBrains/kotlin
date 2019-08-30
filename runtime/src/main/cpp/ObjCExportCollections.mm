@@ -15,6 +15,7 @@
  */
 
 #import "Memory.h"
+#import "MemorySharedRefs.hpp"
 #import "Types.h"
 
 #if KONAN_OBJC_INTEROP
@@ -400,6 +401,9 @@ static inline id KSet_getElement(KRef set, id object) {
 // ?
 
 -(void)dealloc {
+  // Note: since setHolder initialization is not performed directly with alloc,
+  // it is possible that it wasn't initialized properly.
+  // Fortunately setHolder.dispose() handles the zero-initialized case too.
   setHolder.dispose();
   [super dealloc];
 }
@@ -508,6 +512,9 @@ static inline id KMap_get(KRef map, id aKey) {
 }
 
 -(void)dealloc {
+  // Note: since mapHolder initialization is not performed directly with alloc,
+  // it is possible that it wasn't initialized properly.
+  // Fortunately mapHolder.dispose() handles the zero-initialized case too.
   mapHolder.dispose();
   [super dealloc];
 }

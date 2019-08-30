@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+#import "Atomic.h"
 #import "Types.h"
 #import "Memory.h"
+#import "MemorySharedRefs.hpp"
 #include "Natives.h"
 
 #if KONAN_OBJC_INTEROP
@@ -140,7 +142,7 @@ extern "C" id objc_autoreleaseReturnValue(id self);
 static void initializeObjCExport();
 
 @implementation KotlinBase {
-  KRefSharedHolder refHolder;
+  BackRefFromAssociatedObject refHolder;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
@@ -173,14 +175,14 @@ static void initializeObjCExport();
   }
   ObjHolder holder;
   AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
-  UpdateHeapRef(result->refHolder.slotToInit(), holder.obj());
+  result->refHolder.initAndAddRef(holder.obj());
   return result;
 }
 
 +(instancetype)createWrapper:(ObjHeader*)obj {
   KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
-  candidate->refHolder.init(obj);
+  candidate->refHolder.initAndAddRef(obj);
 
   if (!obj->permanent()) { // TODO: permanent objects should probably be supported as custom types.
     if (!obj->container()->shareable()) {
@@ -188,7 +190,7 @@ static void initializeObjCExport();
     } else {
       id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate);
       if (old != nullptr) {
-        candidate->refHolder.dispose();
+        candidate->refHolder.releaseRef();
         [candidate releaseAsAssociatedObject];
         return objc_retainAutoreleaseReturnValue(old);
       }
@@ -199,35 +201,27 @@ static void initializeObjCExport();
 }
 
 -(instancetype)retain {
-  ObjHeader* obj = refHolder.ref();
-  if (obj->permanent()) { // TODO: consider storing `isPermanent` to self field.
+  if (refHolder.permanent()) { // TODO: consider storing `isPermanent` to self field.
     [super retain];
   } else {
-    AddRefFromAssociatedObject(obj);
+    refHolder.addRef();
   }
   return self;
 }
 
 -(BOOL)_tryRetain {
-  ObjHeader* obj = refHolder.ref();
-  if (obj->permanent()) {
+  if (refHolder.permanent()) {
     return [super _tryRetain];
-  } else if (!obj->has_meta_object()) {
-    // Then object is being deallocated;
-    // return `NO` as required by _tryRetain semantics:
-    return NO;
   } else {
-    AddRefFromAssociatedObject(obj);
-    return YES;
+    return refHolder.tryAddRef();
   }
 }
 
 -(oneway void)release {
-  ObjHeader* obj = refHolder.ref();
-  if (obj->permanent()) {
+  if (refHolder.permanent()) {
     [super release];
   } else {
-    ReleaseRefFromAssociatedObject(obj);
+    refHolder.releaseRef();
   }
 }
 

@@ -176,6 +176,10 @@ RuntimeState* RUNTIME_USED Kotlin_getRuntime() {
   return ::runtimeState;
 }
 
+bool Kotlin_hasRuntime() {
+  return isValidRuntime();
+}
+
 void CheckIsMainThread() {
   if (!isMainThread)
     ThrowIncorrectDereferenceException();

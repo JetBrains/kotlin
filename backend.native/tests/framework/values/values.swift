@@ -808,6 +808,175 @@ func testWeakRefs0(frozen: Bool) throws {
     // try test4()
 }
 
+var falseFlag = false
+
+class TestSharedRefs {
+    private func testLambdaSimple() throws {
+        func getClosure() -> (() -> Void) {
+            let lambda = autoreleasepool {
+                SharedRefs().createLambda()
+            }
+            return { if falseFlag { lambda() } }
+        }
+
+        DispatchQueue.global().async(execute: getClosure())
+    }
+
+    private static func runInNewThread(initializeKotlinRuntime: Bool, block: @escaping () -> Void) {
+        class Closure {
+            static var currentBlock: (() -> Void)? = nil
+            static var initializeKotlinRuntime: Bool = false
+        }
+
+        Closure.currentBlock = block
+        Closure.initializeKotlinRuntime = initializeKotlinRuntime
+
+        var thread: pthread_t? = nil
+        let createCode = pthread_create(&thread, nil, { _ in
+            if Closure.initializeKotlinRuntime {
+                let ignore = SharedRefs() // Ensures that Kotlin runtime gets initialized.
+            }
+
+            Closure.currentBlock!()
+            Closure.currentBlock = nil
+
+            return nil
+        }, nil)
+        try! assertEquals(actual: createCode, expected: 0)
+
+        let joinCode = pthread_join(thread!, nil)
+        try! assertEquals(actual: joinCode, expected: 0)
+    }
+
+    private func runInNewThread(initializeKotlinRuntime: Bool, block: @escaping () -> Void) {
+        return TestSharedRefs.runInNewThread(initializeKotlinRuntime: initializeKotlinRuntime, block: block)
+    }
+
+    private func testObjectPartialRelease() {
+        let object = autoreleasepool { SharedRefs().createRegularObject() }
+        var objectVar: AnyObject? = object
+
+        runInNewThread(initializeKotlinRuntime: true) {
+            objectVar = nil
+        }
+    }
+
+    private func testRunRefCount<T>(
+        run: (@escaping () -> Void) -> Void,
+        createObject: @escaping (SharedRefs) -> T
+    ) throws {
+        let refs = SharedRefs()
+
+        var objectVar1: T? = autoreleasepool { createObject(refs) }
+        var objectVar2: T? = nil
+
+        try assertTrue(refs.hasAliveObjects())
+
+        run {
+            objectVar2 = objectVar1!
+            objectVar1 = nil
+        }
+
+        try assertTrue(refs.hasAliveObjects())
+
+        run {
+            objectVar2 = nil
+        }
+
+        try assertFalse(refs.hasAliveObjects())
+    }
+
+    private func testBackgroundRefCount<T>(createObject: @escaping (SharedRefs) -> T) throws {
+        try testRunRefCount(
+            run: { runInNewThread(initializeKotlinRuntime: false, block: $0) },
+            createObject: createObject
+        )
+
+        try testRunRefCount(
+            run: { runInNewThread(initializeKotlinRuntime: true, block: $0) },
+            createObject: createObject
+        )
+    }
+
+    private func testReferenceOutlivesThread(releaseWithKotlinRuntime: Bool) throws {
+        var objectVar: AnyObject? = nil
+        weak var objectWeakVar: AnyObject? = nil
+        var collection: AnyObject? = nil
+
+        runInNewThread(initializeKotlinRuntime: false) {
+            autoreleasepool {
+                let refs = SharedRefs()
+                collection = refs.createCollection()
+
+                let object = refs.createRegularObject()
+                objectVar = object
+                objectWeakVar = object
+
+                try! assertTrue(objectWeakVar === object)
+            }
+        }
+
+        runInNewThread(initializeKotlinRuntime: releaseWithKotlinRuntime) {
+            objectVar = nil
+            collection = nil
+            ValuesKt.gc()
+            try! assertTrue(objectWeakVar === nil)
+        }
+
+    }
+
+    private func testMoreWorkBeforeThreadExit() throws {
+        class Deinit {
+            static var object1: AnyObject? = nil
+            static var object2: AnyObject? = nil
+            static weak var weakVar2: AnyObject? = nil
+
+            deinit {
+                TestSharedRefs.runInNewThread(initializeKotlinRuntime: false) {
+                    Deinit.object2 = nil
+                }
+            }
+        }
+
+        runInNewThread(initializeKotlinRuntime: false) {
+            autoreleasepool {
+                let object1 = SharedRefs.MutableData()
+                Deinit.object1 = object1
+                setAssociatedObject(object: object1, value: Deinit())
+
+                let object2 = SharedRefs.MutableData()
+                Deinit.object2 = object2
+                Deinit.weakVar2 = object2
+            }
+
+            TestSharedRefs.runInNewThread(initializeKotlinRuntime: false) {
+                Deinit.object1 = nil
+            }
+        }
+
+        try assertTrue(Deinit.weakVar2 === nil)
+    }
+
+    func test() throws {
+        try testLambdaSimple()
+        try testObjectPartialRelease()
+
+        try testBackgroundRefCount(createObject: { $0.createLambda() })
+        try testBackgroundRefCount(createObject: { $0.createRegularObject() })
+        try testBackgroundRefCount(createObject: { $0.createCollection() })
+
+        try testBackgroundRefCount(createObject: { $0.createFrozenLambda() })
+        try testBackgroundRefCount(createObject: { $0.createFrozenRegularObject() })
+        try testBackgroundRefCount(createObject: { $0.createFrozenCollection() })
+
+        try testReferenceOutlivesThread(releaseWithKotlinRuntime: false)
+        try testReferenceOutlivesThread(releaseWithKotlinRuntime: true)
+        try testMoreWorkBeforeThreadExit()
+
+        usleep(300 * 1000)
+    }
+}
+
 // See https://github.com/JetBrains/kotlin-native/issues/2931
 func testGH2931() throws {
     for i in 0..<50000 {
@@ -877,6 +1046,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestInvalidIdentifiers", method: withAutorelease(testInvalidIdentifiers)),
             TestCase(name: "TestDeprecation", method: withAutorelease(testDeprecation)),
             TestCase(name: "TestWeakRefs", method: withAutorelease(testWeakRefs)),
+            TestCase(name: "TestSharedRefs", method: withAutorelease(TestSharedRefs().test)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }
