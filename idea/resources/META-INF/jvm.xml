@@ -1,9 +1,4 @@
 <idea-plugin>
-    <extensionPoints>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.platformGradleDetector"
-                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinPlatformGradleDetector"/>
-    </extensionPoints>
-
     <application-components>
         <component>
             <implementation-class>org.jetbrains.kotlin.idea.JvmPluginStartupComponent</implementation-class>
