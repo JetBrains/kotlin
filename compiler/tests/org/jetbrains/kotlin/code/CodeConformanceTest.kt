@@ -96,6 +96,44 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
+    fun testForgottenBunchDirectivesAndFiles() {
+        val root = File(".").absoluteFile
+        val maxStepsCount = 100
+        val additionalExtensions = listOf(
+            "after", "new", "before", "expected",
+            "todo", "delete", "touch", "prefix", "postfix", "map",
+            "fragment", "after2", "result", "log", "messages", "conflicts", "match", "imports", "txt", "xml"
+        )
+        val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
+        val possibleAdditionalExtensions = extensions.plus(additionalExtensions)
+        val failBuilder = StringBuilder()
+        for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, root)) {
+            if (EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
+            val matches = Regex("BUNCH: (\\w+)").findAll(sourceFile.readText())
+                .map { it.groupValues[1] }.toSet().filterNot { it in extensions }
+            for (bunch in matches) {
+                val filename = FileUtil.toSystemIndependentName(sourceFile.absoluteFile.toRelativeString(root))
+                failBuilder.append("$filename has unregistered $bunch bunch directive\n")
+            }
+
+            val filesWithPrefix = sourceFile.parentFile.listFiles { file ->
+                file.name.startsWith(sourceFile.name + ".")
+            } ?: continue
+            for (relatedFile in filesWithPrefix) {
+                val extension = relatedFile.extension
+                if (extension !in possibleAdditionalExtensions
+                    && extension.toIntOrNull() ?: maxStepsCount >= maxStepsCount
+                ) {
+                    val filename = FileUtil.toSystemIndependentName(relatedFile.absoluteFile.toRelativeString(root))
+                    failBuilder.append("$filename has unknown bunch extension\n")
+                }
+            }
+        }
+        if (failBuilder.isNotEmpty()) {
+            fail("\n" + failBuilder.toString())
+        }
+    }
+
     fun testNoBadSubstringsInProjectCode() {
         class TestData(val message: String, val filter: (String) -> Boolean) {
             val result: MutableList<File> = ArrayList()
