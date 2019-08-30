@@ -219,22 +219,17 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
 }
 
 /** Builds a [HeaderInfo] for progressions built using the `indices` extension property. */
-internal class IndicesHandler(private val context: CommonBackendContext) : ProgressionHandler {
+internal abstract class IndicesHandler(private val context: CommonBackendContext) : ProgressionHandler {
 
-    override val matcher = SimpleCalleeMatcher {
-        // TODO: Handle Collection<*>.indices
-        // TODO: Handle CharSequence.indices
-        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() } }
-        fqName { it == FqName("kotlin.collections.<get-indices>") }
-        parameterCount { it == 0 }
-    }
+    // TODO: Handle Collection<*>.indices
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // `last = array.size - 1` (last is inclusive) for the loop `for (i in array.indices)`.
-            val arraySizeProperty = expression.extensionReceiver!!.type.getClass()!!.properties.first { it.name.asString() == "size" }
-            val last = irCall(arraySizeProperty.getter!!).apply {
-                dispatchReceiver = expression.extensionReceiver
+            val receiver = expression.extensionReceiver!!
+            val sizeProperty = receiver.type.getClass()!!.properties.first { it.name.asString() == sizePropertyName() }
+            val last = irCall(sizeProperty.getter!!).apply {
+                dispatchReceiver = receiver
             }.decrement()
 
             ProgressionHeaderInfo(
@@ -246,6 +241,29 @@ internal class IndicesHandler(private val context: CommonBackendContext) : Progr
                 direction = ProgressionDirection.INCREASING
             )
         }
+
+    internal abstract fun sizePropertyName() : String
+}
+
+internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+    override val matcher = SimpleCalleeMatcher {
+        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() } }
+        fqName { it == FqName("kotlin.collections.<get-indices>") }
+        parameterCount { it == 0 }
+    }
+
+    override fun sizePropertyName(): String = "size"
+}
+
+internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+
+    override val matcher = SimpleCalleeMatcher {
+        extensionReceiver { it != null && it.type.run { isSubtypeOfClass(context.ir.symbols.charSequence)} }
+        fqName { it == FqName("kotlin.text.<get-indices>") }
+        parameterCount { it == 0 }
+    }
+
+    override fun sizePropertyName(): String = "length"
 }
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
