@@ -28,9 +28,9 @@ import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.editor.event.EditorFactoryEvent
+import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.idea.util.compat.EditorFactoryListenerWrapper
 
 class LookupCancelWatcher(val project: Project) : ProjectComponent {
     private class Reminiscence(editor: Editor, offset: Int) {
@@ -91,21 +91,11 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
                 }
             }
         }
-
-        override fun itemSelected(event: LookupEvent) {
-            // BUNCH: 182
-            // Has default implementation since 183
-        }
-
-        override fun currentItemChanged(event: LookupEvent) {
-            // BUNCH: 182
-            // Has default implementation since 183
-        }
     }
 
     override fun initComponent() {
         EditorFactory.getInstance().addEditorFactoryListener(
-            object : EditorFactoryListenerWrapper {
+            object : EditorFactoryListener {
                 override fun editorReleased(event: EditorFactoryEvent) {
                     if (lastReminiscence?.editor == event.editor) {
                         lastReminiscence!!.dispose()
