@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -51,6 +48,7 @@ internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
 //
 internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass {
     private val inlinableCR = mutableSetOf<IrCallableReference>()
+
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
 
@@ -118,7 +116,9 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                         expression.startOffset, expression.endOffset, field.type,
                         newLambda.symbol, newLambda.symbol.descriptor, 0,
                         IrStatementOrigin.LAMBDA
-                    )
+                    ).apply {
+                        copyAttributes(expression)
+                    }
                 }
             }
 
@@ -209,7 +209,9 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 expression.startOffset, expression.endOffset, referencedFunction.returnType,
                 newLambda.symbol, newLambda.symbol.descriptor, referencedFunction.typeParameters.size,
                 IrStatementOrigin.LAMBDA
-            )
+            ).apply {
+                copyAttributes(expression)
+            }
         }
     }
 }

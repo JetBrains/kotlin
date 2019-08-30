@@ -151,11 +151,14 @@ class IrExpressionLambdaImpl(
         return false //always false
     }
 
-    companion object {
-        private var counter: Int = 123//TODO: pass proper type
-    }
-
-    override val lambdaClassType: Type = Type.getObjectType("test${counter++}")
+    // This name doesn't actually matter: it is used internally to tell this lambda's captured
+    // arguments apart from any other scope's. So long as it's unique, any value is fine.
+    // This particular string slightly aids in debugging internal compiler errors as it at least
+    // points towards the function containing the lambda.
+    override val lambdaClassType: Type = Type.getObjectType(
+        context.getLocalClassInfo(reference)?.internalName
+            ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
+    )
 
     override val capturedVars: List<CapturedParamDesc> =
         arrayListOf<CapturedParamDesc>().apply {
