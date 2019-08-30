@@ -63,21 +63,21 @@ FILE fqName:<root> fileName:/when.kt
             then: CONST String type=kotlin.String value="null"
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+              arg0: GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any origin=null
               arg1: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
             then: CONST String type=kotlin.String value="A"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-              GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+              GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any origin=null
             then: CONST String type=kotlin.String value="String"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Number
-              GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+              GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any origin=null
             then: CONST String type=kotlin.String value="!Number"
           BRANCH
             if: CALL 'public final fun contains (element: T of <uninitialized parent>): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=null
               $receiver: CALL 'public final fun setOf (): kotlin.collections.Set<T of <uninitialized parent>> [inline] declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Nothing> origin=null
-              element: GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+              element: GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Number origin=null
             then: CONST String type=kotlin.String value="nothingness?"
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

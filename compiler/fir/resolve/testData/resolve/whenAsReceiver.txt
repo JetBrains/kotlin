@@ -5,7 +5,7 @@ FILE: whenAsReceiver.kt
                 throw <Unresolved name: KotlinNullPointerException>#()
             }
             else ->  {
-                R|<local>/<bangbang>|!
+                R|<local>/<bangbang>|
             }
         }
 

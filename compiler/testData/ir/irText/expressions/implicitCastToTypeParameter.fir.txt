@@ -54,8 +54,9 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
       BLOCK_BODY
         TYPE_OP type=T of <root>.Bar origin=CAST typeOperand=T of <root>.Bar
           GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Bar.useT]>#' type=IrErrorType
-          GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
+        CALL 'public final fun useT (t: T of <root>.Bar): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
+          $this: GET_VAR '<this>: <root>.Bar declared in <root>.Bar' type=<root>.Bar<*> origin=null
+          t: GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=T of <root>.Bar origin=null
     FUN name:useT visibility:public modality:FINAL <> ($this:<root>.Bar, t:T of <root>.Bar) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Bar
       VALUE_PARAMETER name:t index:0 type:T of <root>.Bar

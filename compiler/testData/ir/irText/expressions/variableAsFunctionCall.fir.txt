@@ -24,10 +24,10 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
         ERROR_CALL 'Unresolved reference: <Unresolved name: invoke>#' type=IrErrorType
           CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
             $receiver: CONST String type=kotlin.String value="hello"
-  FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:kotlin.String
+  FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:kotlin.String?
     VALUE_PARAMETER name:ns index:0 type:kotlin.String?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (ns: kotlin.String?): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
-          $this: CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
+      RETURN type=kotlin.Nothing from='public final fun test4 (ns: kotlin.String?): kotlin.String? declared in <root>'
+        CALL 'public abstract fun invoke (): kotlin.String declared in kotlin.Function0' type=kotlin.String? origin=null
+          $this: CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String>? origin=null
             $receiver: GET_VAR 'ns: kotlin.String? declared in <root>.test4' type=kotlin.String? origin=null

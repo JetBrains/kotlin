@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/implicitCastToNonNull.kt
-  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:IrErrorType
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:kotlin.Int
     VALUE_PARAMETER name:x index:0 type:kotlin.String?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.String?): IrErrorType declared in <root>'
-        WHEN type=IrErrorType origin=IF
+      RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.String?): kotlin.Int declared in <root>'
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.String? declared in <root>.test1' type=kotlin.String? origin=null
@@ -11,13 +11,13 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#' type=IrErrorType
-  FUN name:test2 visibility:public modality:FINAL <T> (x:T of <root>.test2) returnType:IrErrorType
+            then: ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
+  FUN name:test2 visibility:public modality:FINAL <T> (x:T of <root>.test2) returnType:kotlin.Int
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:T of <root>.test2
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test2 <T> (x: T of <root>.test2): IrErrorType declared in <root>'
-        WHEN type=IrErrorType origin=IF
+      RETURN type=kotlin.Nothing from='public final fun test2 <T> (x: T of <root>.test2): kotlin.Int declared in <root>'
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: T of <root>.test2 declared in <root>.test2' type=T of <root>.test2 origin=null
@@ -25,33 +25,33 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/CharSequence.length]>#' type=IrErrorType
-  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:IrErrorType [inline]
+            then: ERROR_CALL 'No getter found for R|kotlin/CharSequence.length|' type=kotlin.Int
+  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): IrErrorType [inline] declared in <root>'
-        WHEN type=IrErrorType origin=IF
+      RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): kotlin.Int [inline] declared in <root>'
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test3
               GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
-  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:IrErrorType [inline]
+            then: ERROR_CALL 'No getter found for R|kotlin/CharSequence.length|' type=kotlin.Int
+  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any?
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): IrErrorType [inline] declared in <root>'
-        WHEN type=IrErrorType origin=IF
+      RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): kotlin.Int [inline] declared in <root>'
+        WHEN type=kotlin.Int origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test4
               GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+            then: ERROR_CALL 'No getter found for R|kotlin/CharSequence.length|' type=kotlin.Int
   FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1<S of <root>.test5, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     TYPE_PARAMETER name:S index:0 variance: superTypes:[]
@@ -66,4 +66,4 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
               arg1: CONST Null type=kotlin.Nothing? value=null
           then: CALL 'public abstract fun invoke (p1: S of <root>.test5): kotlin.Unit declared in kotlin.Function1' type=kotlin.Unit origin=null
             $this: GET_VAR 'fn: kotlin.Function1<S of <root>.test5, kotlin.Unit> declared in <root>.test5' type=kotlin.Function1<S of <root>.test5, kotlin.Unit> origin=null
-            p1: GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=T of <root>.test5 origin=null
+            p1: GET_VAR 'x: T of <root>.test5 declared in <root>.test5' type=kotlin.Any origin=null

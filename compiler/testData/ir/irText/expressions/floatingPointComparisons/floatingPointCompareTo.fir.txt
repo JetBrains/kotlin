@@ -17,8 +17,9 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
               GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo]>#' type=IrErrorType
-                GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
+              arg0: CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
+                $this: GET_VAR 'x: kotlin.Double declared in <root>.test2d' type=kotlin.Double origin=null
+                other: GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Double origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -40,8 +41,9 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: compareTo>#' type=IrErrorType
-                GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
+              arg0: CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
+                $this: GET_VAR 'x: kotlin.Any declared in <root>.test3d' type=kotlin.Double origin=null
+                other: GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Double origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -64,8 +66,9 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
-                GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
+              arg0: CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
+                $this: GET_VAR 'x: kotlin.Float declared in <root>.test2f' type=kotlin.Float origin=null
+                other: GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Float origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -87,8 +90,9 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: compareTo>#' type=IrErrorType
-                GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
+              arg0: CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
+                $this: GET_VAR 'x: kotlin.Any declared in <root>.test3f' type=kotlin.Float origin=null
+                other: GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Float origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -110,8 +114,9 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: compareTo>#' type=IrErrorType
-                GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
+              arg0: CALL 'public final fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
+                $this: GET_VAR 'x: kotlin.Any declared in <root>.testFD' type=kotlin.Float origin=null
+                other: GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Double origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -133,8 +138,9 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: compareTo>#' type=IrErrorType
-                GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
+              arg0: CALL 'public final fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
+                $this: GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Double origin=null
+                other: GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Float origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -157,8 +163,9 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
-                GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Any origin=null
+              arg0: CALL 'public open fun compareTo (other: kotlin.Float): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
+                $this: GET_VAR '<this>: kotlin.Float declared in kotlin.Float' type=kotlin.Float origin=null
+                other: GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Float origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -173,8 +180,9 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
               GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
-                GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
+              arg0: CALL 'public final fun compareTo (other: kotlin.Double): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
+                $this: GET_VAR '<this>: kotlin.Float declared in kotlin.Float' type=kotlin.Float origin=null
+                other: GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Double origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

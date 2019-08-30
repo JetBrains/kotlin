@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/temporaryInInitBlock.kt
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
-          value: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+          value: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String? origin=null
             $this: GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Any? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

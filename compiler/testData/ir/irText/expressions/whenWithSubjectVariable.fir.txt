@@ -3,13 +3,13 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Any declared in <root>'
         CONST Int type=kotlin.Any value=1
-  FUN name:test visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (): IrErrorType declared in <root>'
-        BLOCK type=IrErrorType origin=WHEN
+      RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>'
+        BLOCK type=kotlin.Int origin=WHEN
           VAR name:y type:kotlin.Any [val]
             CALL 'public final fun foo (): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          WHEN type=IrErrorType origin=WHEN
+          WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
                 GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
-              then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
+              then: ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Int
                 GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null

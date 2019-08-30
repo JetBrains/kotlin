@@ -7,8 +7,9 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         GET_VAR 'a: kotlin.Any declared in <root>.testFunction' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
         GET_VAR 'b: kotlin.Any declared in <root>.testFunction' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: <Unresolved name: add>#' type=IrErrorType
-        GET_VAR 'b: kotlin.Any declared in <root>.testFunction' type=kotlin.Any origin=null
+      CALL 'public abstract fun add (element: kotlin.String): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
+        $this: GET_VAR 'a: kotlin.Any declared in <root>.testFunction' type=kotlin.collections.MutableList<kotlin.String> origin=null
+        element: GET_VAR 'b: kotlin.Any declared in <root>.testFunction' type=kotlin.String origin=null
   FUN name:testProperty visibility:public modality:FINAL <> (a:kotlin.Any, b:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     VALUE_PARAMETER name:b index:1 type:kotlin.Any
@@ -17,7 +18,7 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         GET_VAR 'a: kotlin.Any declared in <root>.testProperty' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
         GET_VAR 'b: kotlin.Any declared in <root>.testProperty' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: <Unresolved name: value>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: R|/Cell.value|' type=IrErrorType
   FUN name:testInnerClass visibility:public modality:FINAL <> (a:kotlin.Any, b:kotlin.Any, c:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     VALUE_PARAMETER name:b index:1 type:kotlin.Any
@@ -29,9 +30,9 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         GET_VAR 'b: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
         GET_VAR 'c: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: <Unresolved name: use>#' type=IrErrorType
-        GET_VAR 'b: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
-        GET_VAR 'c: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Any origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Outer.Inner.use]>#' type=IrErrorType
+        GET_VAR 'b: kotlin.Any declared in <root>.testInnerClass' type=kotlin.Int origin=null
+        GET_VAR 'c: kotlin.Any declared in <root>.testInnerClass' type=kotlin.String origin=null
   FUN name:testNonSubstitutedTypeParameter visibility:public modality:FINAL <T> (a:kotlin.Any, b:kotlin.Any) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
@@ -41,8 +42,9 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         GET_VAR 'a: kotlin.Any declared in <root>.testNonSubstitutedTypeParameter' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter> origin=CAST typeOperand=kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter>
         GET_VAR 'b: kotlin.Any declared in <root>.testNonSubstitutedTypeParameter' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: <Unresolved name: add>#' type=IrErrorType
-        GET_VAR 'b: kotlin.Any declared in <root>.testNonSubstitutedTypeParameter' type=kotlin.Any origin=null
+      CALL 'public abstract fun add (element: kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter>): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
+        $this: GET_VAR 'a: kotlin.Any declared in <root>.testNonSubstitutedTypeParameter' type=kotlin.collections.MutableList<kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter>> origin=null
+        element: GET_VAR 'b: kotlin.Any declared in <root>.testNonSubstitutedTypeParameter' type=kotlin.collections.List<T of <root>.testNonSubstitutedTypeParameter> origin=null
   CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Cell
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]

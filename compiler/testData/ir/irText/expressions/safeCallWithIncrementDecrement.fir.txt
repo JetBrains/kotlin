@@ -32,7 +32,7 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun inc (): kotlin.Int? declared in test'
-        CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int? origin=null
           $this: GET_VAR '<this>: kotlin.Int? declared in test.inc' type=kotlin.Int? origin=null
   FUN name:get visibility:public modality:FINAL <> ($receiver:kotlin.Int?, index:kotlin.Int) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int?

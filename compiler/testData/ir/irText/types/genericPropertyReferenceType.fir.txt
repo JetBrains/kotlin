@@ -63,4 +63,4 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
       TYPE_OP type=<root>.C<kotlin.String> origin=CAST typeOperand=<root>.C<kotlin.String>
         GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        p: ERROR_CALL 'Unsupported callable reference: R|<local>/a|::<Inapplicable(WRONG_RECEIVER): [/y]>#' type=IrErrorType
+        p: PROPERTY_REFERENCE 'public final y: IrErrorType [var]' field=null getter='public final fun <get-y> (): IrErrorType declared in <root>' setter='public final fun <set-y> (v: IrErrorType): kotlin.Unit declared in <root>' type=IrErrorType origin=null

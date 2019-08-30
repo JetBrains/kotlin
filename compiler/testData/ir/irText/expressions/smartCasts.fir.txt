@@ -24,15 +24,15 @@ FILE fqName:<root> fileName:/smartCasts.kt
             GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Any): kotlin.Unit declared in <root>'
             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-        ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/expectsString]>#' type=IrErrorType
-        GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+      CALL 'public final fun println (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+        message: ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
+      CALL 'public final fun expectsString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        s: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.String origin=null
       CALL 'public final fun expectsInt (i: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        i: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/expectsString]>#' type=IrErrorType
-        CALL 'public final fun overloaded (x: kotlin.Any): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          x: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+        i: ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
+      CALL 'public final fun expectsString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        s: CALL 'public final fun overloaded (s: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
+          s: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.String origin=null
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
@@ -43,8 +43,8 @@ FILE fqName:<root> fileName:/smartCasts.kt
           then: RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Any): kotlin.String declared in <root>'
             CONST String type=kotlin.String value=""
       RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Any): kotlin.String declared in <root>'
-        CALL 'public final fun overloaded (x: kotlin.Any): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          x: GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+        CALL 'public final fun overloaded (s: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
+          s: GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.String origin=null
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
@@ -55,4 +55,4 @@ FILE fqName:<root> fileName:/smartCasts.kt
           then: RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Any): kotlin.String declared in <root>'
             CONST String type=kotlin.String value=""
       RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Any): kotlin.String declared in <root>'
-        GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+        GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.String origin=null

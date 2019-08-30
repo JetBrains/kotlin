@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/whileDoWhile.kt
             GET_VAR 'val a: kotlin.Any? [val] declared in <root>.testSmartcastInCondition' type=kotlin.Any? origin=null
           then: BLOCK type=kotlin.Unit origin=null
             WHILE label=null origin=WHILE_LOOP
-              condition: GET_VAR 'val a: kotlin.Any? [val] declared in <root>.testSmartcastInCondition' type=kotlin.Any? origin=null
+              condition: GET_VAR 'val a: kotlin.Any? [val] declared in <root>.testSmartcastInCondition' type=kotlin.Boolean origin=null
               body: BLOCK type=kotlin.Unit origin=null
             DO_WHILE label=null origin=DO_WHILE_LOOP
               body: BLOCK type=kotlin.Unit origin=null

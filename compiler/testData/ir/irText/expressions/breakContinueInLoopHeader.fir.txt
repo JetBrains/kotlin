@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   then: BREAK label=null loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'val <elvis>: kotlin.Boolean? [val] declared in <root>.test1' type=kotlin.Boolean? origin=null
+                  then: GET_VAR 'val <elvis>: kotlin.Boolean? [val] declared in <root>.test1' type=kotlin.Boolean origin=null
             body: BLOCK type=kotlin.Unit origin=null
   FUN name:test2 visibility:public modality:FINAL <> (c:kotlin.Boolean?) returnType:kotlin.Unit
     VALUE_PARAMETER name:c index:0 type:kotlin.Boolean?
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   then: CONTINUE label=null loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'val <elvis>: kotlin.Boolean? [val] declared in <root>.test2' type=kotlin.Boolean? origin=null
+                  then: GET_VAR 'val <elvis>: kotlin.Boolean? [val] declared in <root>.test2' type=kotlin.Boolean origin=null
             body: BLOCK type=kotlin.Unit origin=null
   FUN name:test3 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>?
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   then: CONTINUE label=null loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'val <elvis>: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String>? origin=null
+                  then: GET_VAR 'val <elvis>: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String> origin=null
           VAR name:<iterator> type:kotlin.collections.Iterator<kotlin.String> [val]
             CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
               $this: GET_VAR 'val <range>: kotlin.collections.List<kotlin.String> [val] declared in <root>.test3' type=kotlin.collections.List<kotlin.String> origin=null
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   then: BREAK label=null loop.label=L
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'val <elvis>: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String>? origin=null
+                  then: GET_VAR 'val <elvis>: kotlin.collections.List<kotlin.String>? [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String> origin=null
           VAR name:<iterator> type:kotlin.collections.Iterator<kotlin.String> [val]
             CALL 'public abstract fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in kotlin.collections.List' type=kotlin.collections.Iterator<kotlin.String> origin=null
               $this: GET_VAR 'val <range>: kotlin.collections.List<kotlin.String> [val] declared in <root>.test4' type=kotlin.collections.List<kotlin.String> origin=null
