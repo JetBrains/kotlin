@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -40,8 +41,10 @@ class SerializableCompanionIrGenerator(
         ) {
             val companionDescriptor = irClass.descriptor
             val serializableClass = getSerializableClassDescriptorByCompanion(companionDescriptor) ?: return
-            if (serializableClass.shouldHaveGeneratedMethodsInCompanion)
+            if (serializableClass.shouldHaveGeneratedMethodsInCompanion) {
                 SerializableCompanionIrGenerator(irClass, context, bindingContext).generate()
+                irClass.patchDeclarationParents(irClass.parent)
+            }
         }
     }
 

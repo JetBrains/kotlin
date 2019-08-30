@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.*
@@ -423,12 +424,14 @@ interface IrBuilderExtension {
             original.valueParameters.associate { it.descriptor to it.defaultValue?.expression }
         return fun(f: IrField): IrExpression? {
             val i = f.initializer?.expression ?: return null
-            return if (i is IrGetValueImpl && i.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
-                // this is a primary constructor property, use corresponding default of value parameter
-                defaultsMap.getValue(i.descriptor as ParameterDescriptor)
-            } else {
-                i
-            }
+            val irExpression =
+                if (i is IrGetValueImpl && i.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
+                    // this is a primary constructor property, use corresponding default of value parameter
+                    defaultsMap.getValue(i.descriptor as ParameterDescriptor)
+                } else {
+                    i
+                }
+            return irExpression?.deepCopyWithVariables()
         }
     }
 

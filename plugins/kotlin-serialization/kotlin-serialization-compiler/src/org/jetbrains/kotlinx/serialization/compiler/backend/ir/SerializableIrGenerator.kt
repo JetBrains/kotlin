@@ -1,19 +1,23 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -99,21 +103,9 @@ class SerializableIrGenerator(
             irClass.declarations.asSequence()
                 .filterIsInstance<IrAnonymousInitializer>()
                 .forEach { initializer ->
-                    initializer.body.statements.forEach { +it.deepCopyWithSymbols(initialParent = ctor) }
+                    initializer.body.deepCopyWithVariables().statements.forEach { +it }
                 }
         }
-
-    // todo: this is copypaste from DeepCopyIrWithSymbols.kt,
-    //   remove after KT-18563 is fixed and bootstrap updated.
-    private inline fun <reified T : IrElement> T.deepCopyWithSymbols(
-        initialParent: IrDeclarationParent? = null,
-        descriptorRemapper: DescriptorsRemapper = DescriptorsRemapper.Default
-    ): T {
-        val symbolRemapper = DeepCopySymbolRemapper(descriptorRemapper)
-        acceptVoid(symbolRemapper)
-        val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
-        return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(initialParent) as T
-    }
 
     private fun IrBlockBodyBuilder.generateSuperNonSerializableCall(superClass: ClassDescriptor) {
         val suitableCtor = superClass.constructors.singleOrNull { it.valueParameters.size == 0 }
@@ -165,8 +157,10 @@ class SerializableIrGenerator(
         ) {
             val serializableClass = irClass.descriptor
 
-            if (serializableClass.isInternalSerializable)
+            if (serializableClass.isInternalSerializable) {
                 SerializableIrGenerator(irClass, context, bindingContext).generate()
+                irClass.patchDeclarationParents(irClass.parent)
+            }
             else if (serializableClass.hasSerializableAnnotationWithoutArgs && !serializableClass.hasCompanionObjectAsSerializer) {
                 throw CompilationException(
                     "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +

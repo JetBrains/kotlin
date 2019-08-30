@@ -40,7 +40,8 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
         LINENUMBER (12)
           ICONST_1
           ANEWARRAY
-          DUP
+          ASTORE (1)
+          ALOAD (1)
           ICONST_0
           NEW
           DUP
@@ -48,6 +49,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           CHECKCAST
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           AASTORE
+          ALOAD (1)
           ARETURN
         LABEL (L1)
     }
@@ -86,13 +88,10 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ILOAD (4)
           TABLESWITCH
         LABEL (L4)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, throwNpe, ()V)
-          GOTO (L5)
-        LABEL (L6)
           ICONST_0
           ISTORE (3)
           GOTO (L5)
-        LABEL (L7)
+        LABEL (L6)
           ALOAD (7)
           ALOAD (2)
           ICONST_0
@@ -111,7 +110,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           IOR
           ISTORE (5)
           GOTO (L5)
-        LABEL (L8)
+        LABEL (L7)
           NEW
           DUP
           ILOAD (4)
@@ -124,7 +123,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
         LABEL (L3)
           ALOAD (7)
           ALOAD (2)
-        LABEL (L9)
+        LABEL (L8)
         LINENUMBER (12)
           INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
           NEW
@@ -136,7 +135,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           CHECKCAST
           INVOKESPECIAL (ListOfUsers, <init>, (ILjava/util/List;Lkotlinx/serialization/SerializationConstructorMarker;)V)
           ARETURN
-        LABEL (L10)
+        LABEL (L9)
     }
 
     public java.lang.Object deserialize(kotlinx.serialization.Decoder decoder) {
@@ -330,11 +329,13 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
         LINENUMBER (9)
           ICONST_1
           ANEWARRAY
-          DUP
+          ASTORE (1)
+          ALOAD (1)
           ICONST_0
           GETSTATIC (INSTANCE, LUser$$serializer;)
           CHECKCAST
           AASTORE
+          ALOAD (1)
           ARETURN
         LABEL (L1)
     }
@@ -373,13 +374,10 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ILOAD (4)
           TABLESWITCH
         LABEL (L4)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, throwNpe, ()V)
-          GOTO (L5)
-        LABEL (L6)
           ICONST_0
           ISTORE (3)
           GOTO (L5)
-        LABEL (L7)
+        LABEL (L6)
           ALOAD (7)
           ALOAD (2)
           ICONST_0
@@ -394,7 +392,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           IOR
           ISTORE (5)
           GOTO (L5)
-        LABEL (L8)
+        LABEL (L7)
           NEW
           DUP
           ILOAD (4)
@@ -407,7 +405,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
         LABEL (L3)
           ALOAD (7)
           ALOAD (2)
-        LABEL (L9)
+        LABEL (L8)
         LINENUMBER (9)
           INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
           NEW
@@ -419,7 +417,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           CHECKCAST
           INVOKESPECIAL (OptionalUser, <init>, (ILUser;Lkotlinx/serialization/SerializationConstructorMarker;)V)
           ARETURN
-        LABEL (L10)
+        LABEL (L9)
     }
 
     public java.lang.Object deserialize(kotlinx.serialization.Decoder decoder) {
@@ -624,6 +622,7 @@ public final class OptionalUser : java/lang/Object {
           CHECKCAST
           ICONST_1
           ACONST_NULL
+          CHECKCAST
           INVOKESPECIAL (OptionalUser, <init>, (LUser;ILkotlin/jvm/internal/DefaultConstructorMarker;)V)
           RETURN
         LABEL (L1)
@@ -678,16 +677,18 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
         LINENUMBER (6)
           ICONST_2
           ANEWARRAY
-          DUP
+          ASTORE (1)
+          ALOAD (1)
           ICONST_0
           GETSTATIC (INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
           CHECKCAST
           AASTORE
-          DUP
+          ALOAD (1)
           ICONST_1
           GETSTATIC (INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
           CHECKCAST
           AASTORE
+          ALOAD (1)
           ARETURN
         LABEL (L1)
     }
@@ -728,13 +729,10 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ILOAD (4)
           TABLESWITCH
         LABEL (L4)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, throwNpe, ()V)
-          GOTO (L5)
-        LABEL (L6)
           ICONST_0
           ISTORE (3)
           GOTO (L5)
-        LABEL (L7)
+        LABEL (L6)
           ALOAD (8)
           ALOAD (2)
           ICONST_0
@@ -746,7 +744,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           IOR
           ISTORE (5)
           GOTO (L5)
-        LABEL (L8)
+        LABEL (L7)
           ALOAD (8)
           ALOAD (2)
           ICONST_1
@@ -758,7 +756,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           IOR
           ISTORE (5)
           GOTO (L5)
-        LABEL (L9)
+        LABEL (L8)
           NEW
           DUP
           ILOAD (4)
@@ -771,7 +769,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
         LABEL (L3)
           ALOAD (8)
           ALOAD (2)
-        LABEL (L10)
+        LABEL (L9)
         LINENUMBER (6)
           INVOKEINTERFACE (kotlinx/serialization/CompositeDecoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
           NEW
@@ -785,7 +783,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           CHECKCAST
           INVOKESPECIAL (User, <init>, (ILjava/lang/String;Ljava/lang/String;Lkotlinx/serialization/SerializationConstructorMarker;)V)
           ARETURN
-        LABEL (L11)
+        LABEL (L10)
     }
 
     public java.lang.Object deserialize(kotlinx.serialization.Decoder decoder) {
