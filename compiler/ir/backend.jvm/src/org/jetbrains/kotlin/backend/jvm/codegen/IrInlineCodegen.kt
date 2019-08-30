@@ -125,8 +125,8 @@ class IrInlineCodegen(
     ): LambdaInfo {
         val referencedFunction = irReference.symbol.owner
         return IrExpressionLambdaImpl(
-            irReference, referencedFunction, codegen.typeMapper, codegen.methodSignatureMapper, codegen.context, parameter.isCrossinline,
-            boundReceiver != null, parameter.type.isExtensionFunctionType
+            irReference, referencedFunction, codegen.localTypePrefix, codegen.typeMapper, codegen.methodSignatureMapper,
+            codegen.context, parameter.isCrossinline, boundReceiver != null, parameter.type.isExtensionFunctionType
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
             closureInfo.functionalArgument = lambda
@@ -138,6 +138,7 @@ class IrInlineCodegen(
 class IrExpressionLambdaImpl(
     val reference: IrFunctionReference,
     val function: IrFunction,
+    typePrefix: String,
     private val typeMapper: IrTypeMapper,
     methodSignatureMapper: MethodSignatureMapper,
     private val context: JvmBackendContext,
@@ -151,10 +152,10 @@ class IrExpressionLambdaImpl(
     }
 
     companion object {
-        private var counter: Int = 123//TODO: pass proper type
+        private var counter: Int = 1//TODO: pass proper type
     }
 
-    override val lambdaClassType: Type = Type.getObjectType("test${counter++}")
+    override val lambdaClassType: Type = Type.getObjectType("$typePrefix\$lambda-${counter++}")
 
     override val capturedVars: List<CapturedParamDesc> =
         reference.getArgumentsWithIr().map { (param, _) ->
