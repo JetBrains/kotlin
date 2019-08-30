@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
@@ -32,14 +31,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
     private val transformer: FirBodyResolveTransformer,
     private val topLevelScopes: List<FirScope>,
     private val localScopes: List<FirLocalScope>,
-    private val implicitReceiverStack: List<ImplicitReceiverValue<*>>,
+    override val implicitReceiverStack: ImplicitReceiverStack,
     private val qualifiedResolver: FirQualifiedNameResolver
 ) : BodyResolveComponents by transformer {
 
@@ -72,7 +70,7 @@ class FirCallResolver(
         )
 
         val consumer = createFunctionConsumer(session, name, info, inferenceComponents, resolver.collector, resolver)
-        val result = resolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
+        val result = resolver.runTowerResolver(consumer, implicitReceiverStack.receiversAsReversed())
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
@@ -171,7 +169,7 @@ class FirCallResolver(
             info, inferenceComponents,
             resolver.collector
         )
-        val result = resolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
+        val result = resolver.runTowerResolver(consumer, implicitReceiverStack.receiversAsReversed())
 
         val candidates = result.bestCandidates()
         val nameReference = createResolvedNamedReference(

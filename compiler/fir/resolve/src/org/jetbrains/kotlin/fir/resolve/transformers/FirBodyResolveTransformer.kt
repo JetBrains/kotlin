@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import com.google.common.collect.LinkedHashMultimap
-import com.google.common.collect.SetMultimap
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -67,8 +65,7 @@ open class FirBodyResolveTransformer(
 
     private val localScopes = mutableListOf<FirLocalScope>()
     private val topLevelScopes = mutableListOf<FirScope>()
-    final override val implicitReceiverPerLabel: SetMultimap<Name, ImplicitReceiverValue<*>> = LinkedHashMultimap.create()
-    private val implicitReceiverStack = mutableListOf<ImplicitReceiverValue<*>>()
+    final override val implicitReceiverStack: ImplicitReceiverStack = ImplicitReceiverStack()
     final override val inferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
 
     private var primaryConstructorParametersScope: FirLocalScope? = null
@@ -200,9 +197,7 @@ open class FirBodyResolveTransformer(
         when (val callee = qualifiedAccessExpression.calleeReference) {
             is FirExplicitThisReference -> {
                 val labelName = callee.labelName
-                val implicitReceivers =
-                    if (labelName == null) implicitReceiverPerLabel.values() else implicitReceiverPerLabel[Name.identifier(labelName)]
-                val implicitReceiver = implicitReceivers.lastOrNull()
+                val implicitReceiver = implicitReceiverStack[labelName]
                 callee.boundSymbol = implicitReceiver?.boundSymbol
                 qualifiedAccessExpression.resultType = FirResolvedTypeRefImpl(
                     null, implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName"),
@@ -214,7 +209,7 @@ open class FirBodyResolveTransformer(
                 if (callee.superTypeRef is FirResolvedTypeRef) {
                     qualifiedAccessExpression.resultType = callee.superTypeRef
                 } else {
-                    val superTypeRef = implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
+                    val superTypeRef = implicitReceiverStack.lastDispatchReceiver()
                         ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
                         ?: FirErrorTypeRefImpl(qualifiedAccessExpression.psi, "No super type")
                     qualifiedAccessExpression.resultType = superTypeRef
@@ -793,11 +788,9 @@ open class FirBodyResolveTransformer(
                 throw IllegalArgumentException("Incorrect label & receiver owner: ${owner.javaClass}")
             }
         }
-        implicitReceiverPerLabel.put(labelName, implicitReceiverValue)
-        implicitReceiverStack += implicitReceiverValue
+        implicitReceiverStack.add(labelName, implicitReceiverValue)
         val result = block()
-        implicitReceiverStack.removeAt(implicitReceiverStack.size - 1)
-        implicitReceiverPerLabel.remove(labelName, implicitReceiverValue)
+        implicitReceiverStack.pop(labelName)
         return result
     }
 

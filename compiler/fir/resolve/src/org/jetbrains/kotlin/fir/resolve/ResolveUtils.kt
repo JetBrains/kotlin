@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -274,8 +273,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
         }
         is FirThisReference -> {
             val labelName = newCallee.labelName
-            val implicitReceivers = if (labelName == null) implicitReceiverPerLabel.values() else implicitReceiverPerLabel[Name.identifier(labelName)]
-            val implicitReceiver = implicitReceivers.lastOrNull()
+            val implicitReceiver = implicitReceiverStack[labelName]
             FirResolvedTypeRefImpl(null, implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName"), emptyList())
         }
         else -> error("Failed to extract type from: $newCallee")

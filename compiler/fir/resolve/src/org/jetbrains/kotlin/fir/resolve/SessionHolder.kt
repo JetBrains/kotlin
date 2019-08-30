@@ -5,21 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import com.google.common.collect.SetMultimap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
 
 interface SessionHolder {
     val session: FirSession
@@ -27,7 +23,7 @@ interface SessionHolder {
 
 interface BodyResolveComponents : SessionHolder {
     val returnTypeCalculator: ReturnTypeCalculator
-    val implicitReceiverPerLabel: SetMultimap<Name, ImplicitReceiverValue<*>>
+    val implicitReceiverStack: ImplicitReceiverStack
     val noExpectedType: FirTypeRef
     val symbolProvider: FirSymbolProvider
     val file: FirFile
