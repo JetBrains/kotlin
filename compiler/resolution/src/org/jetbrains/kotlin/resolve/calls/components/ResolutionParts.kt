@@ -469,6 +469,7 @@ internal object CreateVariadicTypeVariablesResolutionPart : ResolutionPart() {
 
         if (argument.isSpread) {
             variadicPackTypeVariable.isStub = false
+            checkVariadicSpreadArgument(argument, parameter)
             return
         } else {
             variadicPackTypeVariable.isStub = true
@@ -478,10 +479,10 @@ internal object CreateVariadicTypeVariablesResolutionPart : ResolutionPart() {
         resolvedCall.variadicTypeVariables.add(freshVariable)
 
         val argumentStableType = argument.safeAs<SimpleKotlinCallArgument>()?.receiver?.stableType
-            ?: error { "Simple value argument expected for vararg" }
+            ?: error("Simple value argument expected for vararg")
         val substitutedVarargElementType = parameter.varargElementType
             ?.replaceAll(variadicTypeParameter.defaultType, freshVariable.defaultType)
-            ?: error { "Type variable not found" }
+            ?: error("Type variable not found")
 
         csBuilder.registerVariable(freshVariable)
         csBuilder.addSubtypeConstraint(
@@ -489,5 +490,15 @@ internal object CreateVariadicTypeVariablesResolutionPart : ResolutionPart() {
             substitutedVarargElementType,
             ArgumentConstraintPosition(argument)
         )
+    }
+
+    private fun KotlinResolutionCandidate.checkVariadicSpreadArgument(
+        argument: KotlinCallArgument,
+        parameter: ValueParameterDescriptor
+    ) {
+        val variadicArgsTotalCount = resolvedCall.argumentToCandidateParameter.values.count { it == parameter }
+        if (variadicArgsTotalCount > 1) {
+            this.addDiagnostic(MultipleVariadicArgumentsWithSpread(argument))
+        }
     }
 }

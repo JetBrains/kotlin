@@ -78,4 +78,9 @@ public class DiagnosticsTestWithVariadicGenericsGenerated extends AbstractDiagno
     public void testVarargLambdaTypeInference() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/varargLambdaTypeInference.kt");
     }
+
+    @TestMetadata("variadicSpread.kt")
+    public void testVariadicSpread() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/variadicSpread.kt");
+    }
 }

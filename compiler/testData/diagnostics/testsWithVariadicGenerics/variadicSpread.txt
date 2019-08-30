@@ -1,0 +1,8 @@
+package
+
+public val v1: kotlin.Unit
+public val v2: kotlin.Unit
+public val v3: kotlin.Unit
+public val v4: kotlin.Unit
+public val v5: kotlin.Unit
+public fun </*0*/ Ts> variadic(/*0*/ vararg args: Ts /*kotlin.Tuple<Ts>*/): kotlin.Unit

@@ -161,7 +161,18 @@ class DiagnosticReporterByTrackingStrategy(
                         )
                     )
                 }
+            }
 
+            MultipleVariadicArgumentsWithSpread::class.java -> {
+                require(diagnostic is MultipleVariadicArgumentsWithSpread) {
+                    "diagnostic ($diagnostic) should have type MultipleVariadicArgumentsWithSpread"
+                }
+
+                diagnostic.argument.psiExpression?.let {
+                    trace.report(
+                        MULTIPLE_VARIADIC_ARGUMENTS_WITH_SPREAD.on(it)
+                    )
+                }
             }
         }
     }

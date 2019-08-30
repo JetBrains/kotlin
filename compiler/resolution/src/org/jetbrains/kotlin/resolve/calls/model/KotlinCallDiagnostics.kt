@@ -203,3 +203,9 @@ class OnlyInputTypesDiagnostic(val typeVariable: NewTypeVariable) : KotlinCallDi
         reporter.onCall(this)
     }
 }
+
+class MultipleVariadicArgumentsWithSpread(val argument: KotlinCallArgument) : KotlinCallDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
+    }
+}
