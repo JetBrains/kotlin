@@ -192,7 +192,9 @@ open class SymbolTable : ReferenceSymbolTable {
             currentScope?.dump() ?: "<none>"
     }
 
-    private val externalPackageFragmentTable = FlatSymbolTable<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol>()
+    private val externalPackageFragmentTable =
+        FlatSymbolTable<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol>()
+    private val scriptSymbolTable = FlatSymbolTable<ScriptDescriptor, IrScript, IrScriptSymbol>()
     private val classSymbolTable = FlatSymbolTable<ClassDescriptor, IrClass, IrClassSymbol>()
     private val constructorSymbolTable = FlatSymbolTable<ClassConstructorDescriptor, IrConstructor, IrConstructorSymbol>()
     private val enumEntrySymbolTable = FlatSymbolTable<ClassDescriptor, IrEnumEntry, IrEnumEntrySymbol>()
@@ -231,6 +233,21 @@ open class SymbolTable : ReferenceSymbolTable {
             startOffset, endOffset, origin,
             IrAnonymousInitializerSymbolImpl(descriptor)
         )
+
+    fun listExistedScripts() = scriptSymbolTable.descriptorToSymbol.map { it.value }
+
+    fun declareScript(
+        descriptor: ScriptDescriptor,
+        scriptFactory: (IrScriptSymbol) -> IrScript = { symbol: IrScriptSymbol ->
+            IrScriptImpl(symbol, descriptor.name)
+        }
+    ): IrScript {
+        return scriptSymbolTable.declare(
+            descriptor,
+            { IrScriptSymbolImpl(descriptor) },
+            scriptFactory
+        )
+    }
 
     fun declareClass(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,

@@ -26,6 +26,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitPackageFragment(declaration: IrPackageFragment, data: D) = visitElement(declaration, data)
     fun visitFile(declaration: IrFile, data: D) = visitPackageFragment(declaration, data)
     fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: D) = visitPackageFragment(declaration, data)
+    fun visitScript(declaration: IrScript, data: D) = visitDeclaration(declaration, data)
 
     fun visitDeclaration(declaration: IrDeclaration, data: D) = visitElement(declaration, data)
     fun visitClass(declaration: IrClass, data: D) = visitDeclaration(declaration, data)
