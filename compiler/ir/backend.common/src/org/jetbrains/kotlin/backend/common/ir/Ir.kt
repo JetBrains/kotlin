@@ -228,6 +228,14 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     open fun functionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getFunction(n))
     open fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getSuspendFunction(n))
 
+    fun kproperty0(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty0)
+    fun kproperty1(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty1)
+    fun kproperty2(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty2)
+
+    fun kmutableproperty0(): IrClassSymbol = symbolTable.referenceClass(builtIns.kMutableProperty0)
+    fun kmutableproperty1(): IrClassSymbol = symbolTable.referenceClass(builtIns.kMutableProperty1)
+    fun kmutableproperty2(): IrClassSymbol = symbolTable.referenceClass(builtIns.kMutableProperty2)
+
     val extensionToString = getSimpleFunction(Name.identifier("toString")) {
         it.dispatchReceiverParameter == null && it.extensionReceiverParameter != null &&
                 KotlinBuiltIns.isNullableAny(it.extensionReceiverParameter!!.type) && it.valueParameters.size == 0
