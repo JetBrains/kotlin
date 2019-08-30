@@ -55,6 +55,7 @@ import com.intellij.usages.impl.UsageViewImpl;
 import com.intellij.usages.rules.PsiElementUsage;
 import com.intellij.util.Processor;
 import com.intellij.util.ThrowableRunnable;
+import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -170,7 +171,9 @@ public abstract class BaseRefactoringProcessor implements Runnable {
   protected abstract String getCommandName();
 
   protected void doRun() {
-    PsiDocumentManager.getInstance(myProject).commitAllDocuments();
+    if (!commitAllDocuments()) {
+      return;
+    }
     final Ref<UsageInfo[]> refUsages = new Ref<>();
     final Ref<Language> refErrorLanguage = new Ref<>();
     final Ref<Boolean> refProcessCanceled = new Ref<>();
@@ -237,6 +240,24 @@ public abstract class BaseRefactoringProcessor implements Runnable {
     else {
       execute(usages);
     }
+  }
+
+  private boolean commitAllDocuments() {
+    final int semaphoreTimeoutInMs = 50;
+    final Runnable commitAllDocumentsRunnable = () -> {
+      Semaphore semaphore = new Semaphore(1);
+      ApplicationManager.getApplication().invokeLater(() -> {
+        PsiDocumentManager.getInstance(myProject).performWhenAllCommitted(() -> {
+          semaphore.up();
+        });
+      });
+      while (!semaphore.waitFor(semaphoreTimeoutInMs)) {
+        ProgressManager.checkCanceled();
+      }
+    };
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously(commitAllDocumentsRunnable,
+                                                                             RefactoringBundle.message("commit.documents.progress.text"),
+                                                                             true, myProject);
   }
 
   @TestOnly
