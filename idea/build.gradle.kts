@@ -181,6 +181,7 @@ dependencies {
         testRuntime(intellijPluginDep("git4idea"))
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
+        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
     }
 
     performanceTestCompile(sourceSets["test"].output)
