@@ -13,6 +13,7 @@ import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListen
 import com.intellij.openapi.project.ExternalStorageConfigurationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Key;
 import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,13 +30,18 @@ import java.util.TreeSet;
 @State(name = "GradleSettings", storages = @Storage("gradle.xml"))
 public class GradleSettings extends AbstractExternalSystemSettings<GradleSettings, GradleProjectSettings, GradleSettingsListener>
   implements PersistentStateComponent<GradleSettings.MyState> {
+  private static final Key<GradleSettings> BUG_WORKAROUND_KEY = Key.create("GradleSettings https://youtrack.jetbrains.com/issue/IDEA-220429");
+
   public GradleSettings(@NotNull Project project) {
     super(GradleSettingsListener.TOPIC, project);
+
+    project.putUserData(BUG_WORKAROUND_KEY, this);
   }
 
   @NotNull
   public static GradleSettings getInstance(@NotNull Project project) {
-    return project.getService(GradleSettings.class);
+    GradleSettings settings = BUG_WORKAROUND_KEY.get(project);
+    return settings == null ? project.getService(GradleSettings.class) : settings;
   }
 
   @Override
