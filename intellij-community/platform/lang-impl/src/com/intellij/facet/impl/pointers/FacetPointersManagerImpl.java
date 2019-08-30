@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.facet.impl.pointers;
 
 import com.intellij.ProjectTopics;
@@ -10,7 +10,6 @@ import com.intellij.facet.pointers.FacetPointer;
 import com.intellij.facet.pointers.FacetPointerListener;
 import com.intellij.facet.pointers.FacetPointersManager;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.ModuleListener;
@@ -27,13 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FacetPointersManagerImpl extends FacetPointersManager implements BaseComponent {
+public final class FacetPointersManagerImpl extends FacetPointersManager {
   private final Map<String, FacetPointerImpl> myPointers = new HashMap<>();
   private final Map<Class<? extends Facet>, EventDispatcher<FacetPointerListener>> myDispatchers = new HashMap<>();
   @NotNull private final Project myProject;
 
   public FacetPointersManagerImpl(@NotNull Project project) {
     myProject = project;
+    initComponent();
   }
 
   @Override
@@ -66,8 +66,7 @@ public class FacetPointersManagerImpl extends FacetPointersManager implements Ba
     myPointers.remove(pointer.getId());
   }
 
-  @Override
-  public void initComponent() {
+  private void initComponent() {
     MessageBusConnection connection = myProject.getMessageBus().connect();
     connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
