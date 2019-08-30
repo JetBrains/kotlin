@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.codegen.AsmUtil.BOUND_REFERENCE_RECEIVER
 import org.jetbrains.kotlin.codegen.IrExpressionLambda
 import org.jetbrains.kotlin.codegen.JvmKotlinType
 import org.jetbrains.kotlin.codegen.StackValue
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -46,7 +45,7 @@ class IrInlineCodegen(
         val lambdaInfo = next as IrExpressionLambdaImpl
         activeLambda = lambdaInfo
 
-        lambdaInfo.reference.getArguments().forEachIndexed { index, (_, ir) ->
+        lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
             putCapturedValueOnStack(ir, lambdaInfo.capturedParamsInDesc[index], index)
         }
         activeLambda = null
@@ -161,17 +160,8 @@ class IrExpressionLambdaImpl(
     )
 
     override val capturedVars: List<CapturedParamDesc> =
-        arrayListOf<CapturedParamDesc>().apply {
-            reference.getArguments().forEachIndexed { _, (_, ir) ->
-                add(
-                    when (ir) {
-                        is IrGetValue -> capturedParamDesc(ir.descriptor.name.asString(), typeMapper.mapType(ir.type))
-                        is IrConst<*> -> capturedParamDesc(BOUND_REFERENCE_RECEIVER, typeMapper.mapType(ir.type))
-                        is IrGetField -> capturedParamDesc(ir.descriptor.name.asString(), typeMapper.mapType(ir.type))
-                        else -> error("Unrecognized expression: ${ir.dump()}")
-                    }
-                )
-            }
+        reference.getArgumentsWithIr().map { (param, _) ->
+            capturedParamDesc(param.name.asString(), typeMapper.mapType(param.type))
         }
 
     private val loweredMethod = methodSignatureMapper.mapAsmMethod(function.getOrCreateSuspendFunctionViewIfNeeded(context))
