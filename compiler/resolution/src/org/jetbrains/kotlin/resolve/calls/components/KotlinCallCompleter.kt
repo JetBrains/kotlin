@@ -43,7 +43,7 @@ class KotlinCallCompleter(
         val candidate = prepareCandidateForCompletion(factory, candidates, resolutionCallbacks)
         val returnType = candidate.returnTypeWithSmartCastInfo(resolutionCallbacks)
 
-        candidate.addExpectedTypeConstraint(returnType, expectedType, resolutionCallbacks)
+        candidate.addExpectedTypeConstraint(returnType, expectedType)
         candidate.addExpectedTypeFromCastConstraint(returnType, resolutionCallbacks)
 
         return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
@@ -65,7 +65,7 @@ class KotlinCallCompleter(
             val diagnosticsHolder = KotlinDiagnosticsHolder.SimpleHolder()
 
             candidate.addExpectedTypeConstraint(
-                candidate.returnTypeWithSmartCastInfo(resolutionCallbacks), expectedType, resolutionCallbacks
+                candidate.returnTypeWithSmartCastInfo(resolutionCallbacks), expectedType
             )
 
             runCompletion(
@@ -151,8 +151,7 @@ class KotlinCallCompleter(
 
     private fun KotlinResolutionCandidate.addExpectedTypeConstraint(
         returnType: UnwrappedType?,
-        expectedType: UnwrappedType?,
-        resolutionCallbacks: KotlinResolutionCallbacks
+        expectedType: UnwrappedType?
     ) {
         if (returnType == null) return
         if (expectedType == null || (TypeUtils.noExpectedType(expectedType) && expectedType !== TypeUtils.UNIT_EXPECTED_TYPE)) return
@@ -162,6 +161,10 @@ class KotlinCallCompleter(
                 // This is needed to avoid multiple mismatch errors as we type check resulting type against expected one later
                 // Plus, it helps with IDE-tests where it's important to have particular diagnostics.
                 // Note that it aligns with the old inference, see CallCompleter.completeResolvedCallAndArguments
+
+                // Another point is to avoid adding constraint from expected type for constant expressions like `1 + 1` because of
+                // type coercion for numbers:
+                // val a: Long = 1 + 1, result type of "1 + 1" will be Int and adding constraint with Long will produce type mismatch
                 return
             }
 
@@ -169,12 +172,6 @@ class KotlinCallCompleter(
                 csBuilder.addSubtypeConstraintIfCompatible(
                     returnType, csBuilder.builtIns.unitType, ExpectedTypeConstraintPosition(resolvedCall.atom)
                 )
-
-            resolutionCallbacks.isCompileTimeConstant(resolvedCall, expectedType) -> {
-                // We don't add expected type constraint for constant expression like "1 + 1" because of type coercion for numbers:
-                // val a: Long = 1 + 1, note that result type of "1 + 1" will be Int and adding constraint with Long will produce type mismatch
-                return
-            }
 
             else ->
                 csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
