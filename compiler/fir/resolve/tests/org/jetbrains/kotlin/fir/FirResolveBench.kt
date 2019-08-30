@@ -304,7 +304,8 @@ fun doFirResolveTestBench(
     firFiles: List<FirFile>,
     transformers: List<FirTransformer<Nothing?>>,
     gc: Boolean = true,
-    withProgress: Boolean = false
+    withProgress: Boolean = false,
+    silent: Boolean = true
 ) {
 
     if (gc) {
@@ -313,7 +314,7 @@ fun doFirResolveTestBench(
 
     val bench = FirResolveBench(withProgress)
     bench.processFiles(firFiles, transformers)
-    bench.report(System.out)
+    if (!silent) bench.report(System.out)
     bench.throwFailure()
 }
 
