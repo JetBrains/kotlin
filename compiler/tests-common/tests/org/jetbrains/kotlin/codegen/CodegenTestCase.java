@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
+import org.jetbrains.kotlin.cli.js.K2JsIrCompilerKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
@@ -70,6 +71,7 @@ import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsK
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
+import static org.jetbrains.kotlin.scripting.compiler.plugin.JsScriptEvaluationExtensionKt.loadJsScriptConfiguration;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
@@ -143,6 +145,10 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, coroutinesPackage);
         updateConfiguration(configuration);
         setCustomDefaultJvmTarget(configuration);
+
+        if (testFilesWithConfigurationDirectives.stream().anyMatch(it -> it.name.endsWith(".kts"))) {
+            loadJsScriptConfiguration(configuration, K2JsIrCompilerKt::loadPluginsForTests);
+        }
 
         return configuration;
     }
@@ -354,7 +360,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         List<KtFile> ktFiles = new ArrayList<>(files.size());
         for (TestFile file : files) {
-            if (file.name.endsWith(".kt")) {
+            if (file.name.endsWith(".kt") || file.name.endsWith(".kts")) {
                 // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
                 String content = CheckerTestUtil.INSTANCE.parseDiagnosedRanges(file.content, new ArrayList<>(0), null);
                 ktFiles.add(KotlinTestUtils.createFile(file.name, content, project));

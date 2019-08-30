@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrScriptSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -116,6 +118,18 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitDeclaration(declaration: IrDeclaration): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
+
+    override fun visitScript(declaration: IrScript): IrStatement {
+        return IrScriptImpl(
+            //TODO: something may go wrong, because expected using symbolRemapper
+            IrScriptSymbolImpl(declaration.descriptor as ScriptDescriptor),
+            declaration.name
+        ).also {
+            it.thisReceiver = declaration.thisReceiver.transform()
+            declaration.transformDeclarationsTo(it)
+            it.statements.addAll(declaration.statements.map { it.transform() })
+        }
+    }
 
     override fun visitClass(declaration: IrClass): IrClass =
         IrClassImpl(

@@ -48,7 +48,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         val ignoreErrors = shouldIgnoreErrors(wholeFile)
         val irModule = generateIrModule(ignoreErrors)
 
-        val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
+        val ktFiles = testFiles.filter { it.name.endsWith(".kt") || it.name.endsWith(".kts") }
         for ((testFile, irFile) in ktFiles.zip(irModule.files)) {
             doTestIrFileAgainstExpectations(dir, testFile, irFile)
         }
@@ -299,7 +299,9 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
     internal class IrTreeFileLabel(val expectedTextFile: File, val lineNumber: Int)
 
-    protected open fun getExpectedTextFileName(testFile: TestFile, name: String = testFile.name): String = name.replace(".kt", ".txt")
+    protected open fun getExpectedTextFileName(testFile: TestFile, name: String = testFile.name): String {
+        return name.replace(".kts", ".txt").replace(".kt", ".txt")
+    }
 
     private fun parseExpectations(dir: File, testFile: TestFile): Expectations {
         val regexps =
