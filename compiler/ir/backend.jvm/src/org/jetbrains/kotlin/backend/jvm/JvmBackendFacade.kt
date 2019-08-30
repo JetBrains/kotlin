@@ -65,6 +65,9 @@ object JvmBackendFacade {
         val context = JvmBackendContext(
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, firMode
         )
+        state.irBasedMapAsmMethod = { descriptor ->
+            context.methodSignatureMapper.mapAsmMethod(context.referenceFunction(descriptor).owner)
+        }
         //TODO
         ExternalDependenciesGenerator(
             irModuleFragment.descriptor,
