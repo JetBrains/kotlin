@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.io.PrintStream
 import kotlin.math.max
 import kotlin.reflect.KClass
@@ -35,8 +36,17 @@ private data class ErrorTypeReport(val report: String, var count: Int = 0)
 
 class FirResolveBench(val withProgress: Boolean) {
 
-    val timePerTransformer = mutableMapOf<KClass<*>, Long>()
-    val counterPerTransformer = mutableMapOf<KClass<*>, Long>()
+
+    data class Measure(
+        var time: Long = 0,
+        var user: Long = 0,
+        var cpu: Long = 0,
+        var gcTime: Long = 0,
+        var gcCollections: Int = 0,
+        var files: Int = 0
+    ) {}
+
+    val timePerTransformer = mutableMapOf<KClass<*>, Measure>()
     var resolvedTypes = 0
     var errorTypes = 0
     var unresolvedTypes = 0
@@ -51,9 +61,59 @@ class FirResolveBench(val withProgress: Boolean) {
 
     private val errorTypesReports = mutableMapOf<String, ErrorTypeReport>()
 
-    fun countBuilder(builder: RawFirBuilder, time: Long) {
-        timePerTransformer.merge(builder::class, time) { a, b -> a + b }
-        counterPerTransformer.merge(builder::class, 1) { a, b -> a + b }
+    fun buildFiles(
+        builder: RawFirBuilder,
+        ktFiles: List<KtFile>
+    ): List<FirFile> {
+        return ktFiles.map { file ->
+            val before = vmStateSnapshot()
+            var firFile: FirFile? = null
+            val time = measureNanoTime {
+                firFile = builder.buildFirFile(file)
+                (builder.session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
+            }
+            val after = vmStateSnapshot()
+            val diff = after - before
+            recordTime(builder::class, diff, time)
+            firFile!!
+        }
+    }
+
+    private fun recordTime(stageClass: KClass<*>, diff: VMCounters, time: Long) {
+        timePerTransformer.computeIfAbsent(stageClass) { Measure() }.apply {
+            this.time += time
+            this.files += 1
+            this.user += diff.userTime
+            this.cpu += diff.cpuTime
+            this.gcCollections += diff.gcInfo.values.sumBy { it.collections.toInt() }
+            this.gcTime += diff.gcInfo.values.sumByLong { it.gcTime }
+        }
+    }
+
+    private fun runStage(transformer: FirTransformer<Nothing?>, firFileSequence: Sequence<FirFile>) {
+        for (firFile in firFileSequence) {
+            var fail = false
+            val before = vmStateSnapshot()
+            val time = measureNanoTime {
+                try {
+                    transformer.transformFile(firFile, null)
+                } catch (e: Throwable) {
+                    val ktFile = firFile.psi as KtFile
+                    println("Fail in file: ${ktFile.virtualFilePath}")
+                    fail = true
+                    fails += FailureInfo(transformer::class, e, ktFile.virtualFilePath)
+                    //println(ktFile.text)
+                    //throw e
+                }
+            }
+            if (!fail) {
+                val after = vmStateSnapshot()
+                val diff = after - before
+                recordTime(transformer::class, diff, time)
+
+            }
+            //totalLength += StringBuilder().apply { FirRenderer(this).visitFile(firFile) }.length
+        }
     }
 
     fun processFiles(
@@ -65,26 +125,7 @@ class FirResolveBench(val withProgress: Boolean) {
             for ((stage, transformer) in transformers.withIndex()) {
                 println("Starting stage #$stage. $transformer")
                 val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
-                for (firFile in firFileSequence) {
-                    var fail = false
-                    val time = measureNanoTime {
-                        try {
-                            transformer.transformFile(firFile, null)
-                        } catch (e: Throwable) {
-                            val ktFile = firFile.psi as KtFile
-                            println("Fail in file: ${ktFile.virtualFilePath}")
-                            fail = true
-                            fails += FailureInfo(transformer::class, e, ktFile.virtualFilePath)
-                            //println(ktFile.text)
-                            //throw e
-                        }
-                    }
-                    if (!fail) {
-                        timePerTransformer.merge(transformer::class, time) { a, b -> a + b }
-                        counterPerTransformer.merge(transformer::class, 1) { a, b -> a + b }
-                    }
-                    //totalLength += StringBuilder().apply { FirRenderer(this).visitFile(firFile) }.length
-                }
+                runStage(transformer, firFileSequence)
                 checkFirProvidersConsistency(firFiles)
             }
 
@@ -210,21 +251,52 @@ class FirResolveBench(val withProgress: Boolean) {
         stream.println("ERRONEOUSLY RESOLVED IMPLICIT TYPES: $implicitTypes (${implicitTypes percentOf resolvedTypes} of resolved)")
         stream.println("UNIQUE ERROR TYPES: ${errorTypesReports.size}")
 
+        printTable(stream) {
+            row {
+                cell("Stage", LEFT)
+                cells("Time", "Time per file", "Files: OK/E/T", "CPU", "User", "GC", "GC count")
+            }
+            separator()
+            timePerTransformer.forEach { (transformer, measure) ->
+                val time = measure.time
+                val counter = measure.files
+                row {
+                    cell(transformer.simpleName.toString(), LEFT)
+                    timeCell(time, fractionDigits = 0)
+                    timeCell(time / counter)
+                    cell("$counter/${fileCount - counter}/$fileCount")
+                    timeCell(measure.cpu, fractionDigits = 0)
+                    timeCell(measure.user)
+                    timeCell(measure.gcTime, inputUnit = TableTimeUnit.MS)
+                    cell(measure.gcCollections.toString())
+                }
+            }
 
-        var totalTime = 0L
-        var totalFiles = 0L
+            if (timePerTransformer.keys.size > 0) {
+                separator()
+                val totalTime = timePerTransformer.values.sumByLong { it.time }
+                val totalCpuTime = timePerTransformer.values.sumByLong { it.cpu }
+                val totalUserTime = timePerTransformer.values.sumByLong { it.user }
+                val totalGcTime = timePerTransformer.values.sumByLong { it.gcTime }
+                val totalGcCollections = timePerTransformer.values.sumBy { it.gcCollections }
+                val averageFiles = timePerTransformer.values.map { it.files }.average().toLong()
 
-        timePerTransformer.forEach { (transformer, time) ->
-            val counter = counterPerTransformer[transformer]!!
-            stream.println("${transformer.simpleName}, TIME: ${time * 1e-6} ms, TIME PER FILE: ${(time / counter) * 1e-6} ms, FILES: OK/E/T $counter/${fileCount - counter}/$fileCount")
-            totalTime += time
-            totalFiles += counter
+
+                row {
+                    cell("Total", LEFT)
+                    timeCell(totalTime, fractionDigits = 0)
+                    timeCell(totalTime / averageFiles)
+                    cell("$averageFiles")
+                    cell("$averageFiles")
+                    timeCell(totalCpuTime, fractionDigits = 0)
+                    timeCell(totalUserTime)
+                    timeCell(totalGcTime, inputUnit = TableTimeUnit.MS)
+                    cell(totalGcCollections.toString())
+                }
+            }
+
         }
 
-        if (counterPerTransformer.keys.size > 0) {
-            totalFiles /= counterPerTransformer.keys.size
-            stream.println("Total, TIME: ${totalTime * 1e-6} ms, TIME PER FILE: ${(totalTime / totalFiles) * 1e-6} ms")
-        }
     }
 }
 

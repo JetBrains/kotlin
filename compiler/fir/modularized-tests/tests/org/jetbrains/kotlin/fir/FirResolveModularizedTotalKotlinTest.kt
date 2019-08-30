@@ -57,16 +57,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val builder = RawFirBuilder(session, stubMode = false)
 
         val totalTransformer = FirTotalResolveTransformer()
-        val firFiles = ktFiles.toList().mapNotNull {
-            var firFile: FirFile? = null
-            val time = measureNanoTime {
-                firFile = builder.buildFirFile(it)
-                (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
-            }
-            bench.countBuilder(builder, time)
-            firFile
-        }.toList()
-
+        val firFiles = bench.buildFiles(builder, ktFiles)
 
         println("Raw FIR up, files: ${firFiles.size}")
 
