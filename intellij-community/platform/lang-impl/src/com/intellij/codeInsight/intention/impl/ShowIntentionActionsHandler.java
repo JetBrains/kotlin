@@ -112,8 +112,6 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
   public static boolean availableFor(@NotNull PsiFile psiFile, @NotNull Editor editor, @NotNull IntentionAction action) {
     if (!psiFile.isValid()) return false;
 
-    int offset = editor.getCaretModel().getOffset();
-    PsiElement psiElement = psiFile.findElementAt(offset);
     try {
       Project project = psiFile.getProject();
       action = IntentionActionDelegate.unwrap(action);
@@ -129,7 +127,13 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
       
       if (action instanceof PsiElementBaseIntentionAction) {
         PsiElementBaseIntentionAction psiAction = (PsiElementBaseIntentionAction)action;
-        if (psiElement == null || !psiAction.checkFile(psiFile) || !psiAction.isAvailable(project, editor, psiElement)) return false;
+        if (!psiAction.checkFile(psiFile)) {
+          return false;
+        }
+        PsiElement leaf = psiFile.findElementAt(editor.getCaretModel().getOffset());
+        if (leaf == null || !psiAction.isAvailable(project, editor, leaf)) {
+          return false;
+        }
       }
       else if (!action.isAvailable(project, editor, psiFile)) {
         return false;
