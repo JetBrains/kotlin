@@ -17,13 +17,13 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.util.Arrays;
 
 public class OptimizeImportsAction extends AnAction {
@@ -272,7 +272,7 @@ public class OptimizeImportsAction extends AnAction {
 
       myOnlyVcsCheckBox.setEnabled(myContextHasChanges);
       myOnlyVcsCheckBox.setSelected(myContextHasChanges && lastRunVcsChangedTextEnabled);
-      myOnlyVcsCheckBox.setBorder(new EmptyBorder(0, 10 , 0, 0));
+      myOnlyVcsCheckBox.setBorder(JBUI.Borders.emptyLeft(10));
       panel.add(myOnlyVcsCheckBox);
       return panel;
     }
