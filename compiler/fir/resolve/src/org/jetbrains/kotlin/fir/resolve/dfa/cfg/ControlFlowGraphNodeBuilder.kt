@@ -161,4 +161,9 @@ abstract class ControlFlowGraphNodeBuilder {
     protected fun createBinaryAndExitLeftOperandNode(fir: FirBinaryLogicExpression): BinaryAndExitLeftOperandNode =
         BinaryAndExitLeftOperandNode(graph, fir, levelCounter)
 
+    protected fun createBinaryAndEnterRightOperandNode(fir: FirBinaryLogicExpression): BinaryAndEnterRightOperandNode =
+        BinaryAndEnterRightOperandNode(graph, fir, levelCounter)
+
+    protected fun createBinaryOrEnterRightOperandNode(fir: FirBinaryLogicExpression): BinaryOrEnterRightOperandNode =
+        BinaryOrEnterRightOperandNode(graph, fir, levelCounter)
 }

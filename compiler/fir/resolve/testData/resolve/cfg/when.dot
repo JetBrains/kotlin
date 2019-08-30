@@ -146,36 +146,37 @@ digraph when_kt {
             50 [label="Access variable R|<local>/x|"];
             51 [label="Type operator: x is A"];
             52 [label="Exit left part of &&"];
-            53 [label="Access variable R|<local>/x|"];
-            54 [label="Type operator: x is B"];
-            55 [label="Exit &&"];
+            53 [label="Enter right part of &&"];
+            54 [label="Access variable R|<local>/x|"];
+            55 [label="Type operator: x is B"];
+            56 [label="Exit &&"];
           }
-          56 [label="Exit when branch condition"];
+          57 [label="Exit when branch condition"];
         }
         subgraph cluster_16 {
           color=blue
-          57 [label="Enter block"];
-          58 [label="Access variable R|<local>/x|"];
-          59 [label="Type operator: x is A"];
-          60 [label="Exit block"];
+          58 [label="Enter block"];
+          59 [label="Access variable R|<local>/x|"];
+          60 [label="Type operator: x is A"];
+          61 [label="Exit block"];
         }
-        61 [label="Exit when branch result"];
+        62 [label="Exit when branch result"];
         subgraph cluster_17 {
           color=blue
-          62 [label="Enter when branch condition else"];
-          63 [label="Exit when branch condition"];
+          63 [label="Enter when branch condition else"];
+          64 [label="Exit when branch condition"];
         }
         subgraph cluster_18 {
           color=blue
-          64 [label="Enter block"];
-          65 [label="Exit block"];
+          65 [label="Enter block"];
+          66 [label="Exit block"];
         }
-        66 [label="Exit when branch result"];
-        67 [label="Exit when"];
+        67 [label="Exit when branch result"];
+        68 [label="Exit when"];
       }
-      68 [label="Exit block"];
+      69 [label="Exit block"];
     }
-    69 [label="Exit function test_2" style="filled" fillcolor=red];
+    70 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
   45 -> {46};
@@ -184,23 +185,24 @@ digraph when_kt {
   48 -> {49};
   49 -> {50};
   50 -> {51};
-  51 -> {55 52};
-  52 -> {53};
+  51 -> {52};
+  52 -> {56 53};
   53 -> {54};
   54 -> {55};
   55 -> {56};
-  56 -> {57 62};
-  57 -> {58};
+  56 -> {57};
+  57 -> {58 63};
   58 -> {59};
   59 -> {60};
   60 -> {61};
-  61 -> {67};
-  62 -> {63};
+  61 -> {62};
+  62 -> {68};
   63 -> {64};
   64 -> {65};
   65 -> {66};
   66 -> {67};
   67 -> {68};
   68 -> {69};
+  69 -> {70};
 
 }

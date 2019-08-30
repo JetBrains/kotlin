@@ -491,9 +491,11 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
     }
 
     override fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression) {
-        val node = graphBuilder.exitLeftBinaryAndArgument(binaryLogicExpression).passFlow(false)
-        val leftOperandVariable = getVariable(node.previousNodes.first().fir)
-        node.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable eq True, node.flow).also { it.freeze() }
+        val (leftNode, rightNode) = graphBuilder.exitLeftBinaryAndArgument(binaryLogicExpression)
+        leftNode.passFlow()
+        rightNode.passFlow(false)
+        val leftOperandVariable = getVariable(leftNode.previousNodes.first().fir)
+        rightNode.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable eq True, rightNode.flow).also { it.freeze() }
     }
 
     override fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression) {
@@ -534,9 +536,11 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
     }
 
     override fun exitLeftBinaryOrArgument(binaryLogicExpression: FirBinaryLogicExpression) {
-        val node = graphBuilder.exitLeftBinaryOrArgument(binaryLogicExpression).passFlow(false)
-        val leftOperandVariable = getVariable(node.previousNodes.first().fir)
-        node.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable eq False, node.flow).also { it.freeze() }
+        val (leftNode, rightNode) = graphBuilder.exitLeftBinaryOrArgument(binaryLogicExpression)
+        leftNode.passFlow()
+        rightNode.passFlow(false)
+        val leftOperandVariable = getVariable(leftNode.previousNodes.first().fir)
+        rightNode.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable eq False, rightNode.flow).also { it.freeze() }
     }
 
     override fun exitBinaryOr(binaryLogicExpression: FirBinaryLogicExpression) {

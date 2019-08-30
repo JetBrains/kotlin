@@ -517,7 +517,6 @@ open class FirBodyResolveTransformer(
         if (whenExpression.calleeReference is FirResolvedCallableReference && whenExpression.resultType !is FirImplicitTypeRef) {
             return whenExpression.compose()
         }
-
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
         return withScopeCleanup(localScopes) with@{
             if (whenExpression.subjectVariable != null) {

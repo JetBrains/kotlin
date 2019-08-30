@@ -312,15 +312,21 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         return createBinaryAndEnterNode(binaryLogicExpression).also { addNewSimpleNode(it) }.also { levelCounter++ }
     }
 
-    fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression): BinaryAndExitLeftOperandNode {
+    fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression): Pair<BinaryAndExitLeftOperandNode, BinaryAndEnterRightOperandNode> {
         assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.AND)
         val lastNode = lastNodes.pop()
         val leftBooleanConstValue = lastNode.booleanConstValue
-        addEdge(lastNode, binaryAndExitNodes.top(), propagateDeadness = false, isDead = leftBooleanConstValue == true)
-        return createBinaryAndExitLeftOperandNode(binaryLogicExpression).also {
-            addEdge(lastNode, it, isDead = leftBooleanConstValue == false)
+
+        val leftExitNode = createBinaryAndExitLeftOperandNode(binaryLogicExpression).also {
+            addEdge(lastNode, it)
+            addEdge(it, binaryAndExitNodes.top(), propagateDeadness = false, isDead = leftBooleanConstValue == true)
+        }
+
+        val rightEnterNode = createBinaryAndEnterRightOperandNode(binaryLogicExpression).also {
+            addEdge(leftExitNode, it, isDead = leftBooleanConstValue == false)
             lastNodes.push(it)
         }
+        return leftExitNode to rightEnterNode
     }
 
     fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression): BinaryAndExitNode {
@@ -342,17 +348,23 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         }.also { levelCounter++ }
     }
 
-    fun exitLeftBinaryOrArgument(binaryLogicExpression: FirBinaryLogicExpression): BinaryOrExitLeftOperandNode {
+    fun exitLeftBinaryOrArgument(binaryLogicExpression: FirBinaryLogicExpression): Pair<BinaryOrExitLeftOperandNode, BinaryOrEnterRightOperandNode> {
         levelCounter--
         assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.OR)
         val previousNode = lastNodes.pop()
         val leftBooleanValue = previousNode.booleanConstValue
-        addEdge(previousNode, binaryOrExitNodes.top(), isDead = leftBooleanValue == false)
-        return createBinaryOrExitLeftOperandNode(binaryLogicExpression).also {
-            addEdge(previousNode, it, isDead = leftBooleanValue == true)
+
+        val leftExitNode = createBinaryOrExitLeftOperandNode(binaryLogicExpression).also {
+            addEdge(previousNode, it)
+            addEdge(it, binaryOrExitNodes.top(), isDead = leftBooleanValue == false)
+        }
+
+        val rightExitNode = createBinaryOrEnterRightOperandNode(binaryLogicExpression).also {
+            addEdge(leftExitNode, it, isDead = leftBooleanValue == true)
             lastNodes.push(it)
             levelCounter++
         }
+        return leftExitNode to rightExitNode
     }
 
     fun exitBinaryOr(binaryLogicExpression: FirBinaryLogicExpression): BinaryOrExitNode {

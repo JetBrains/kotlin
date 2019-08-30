@@ -134,9 +134,11 @@ fun CFGNode<*>.render(): String =
 
                 is BinaryAndEnterNode -> "Enter &&"
                 is BinaryAndExitLeftOperandNode -> "Exit left part of &&"
+                is BinaryAndEnterRightOperandNode -> "Enter right part of &&"
                 is BinaryAndExitNode -> "Exit &&"
                 is BinaryOrEnterNode -> "Enter ||"
                 is BinaryOrExitLeftOperandNode -> "Exit left part of ||"
+                is BinaryOrEnterRightOperandNode -> "Enter right part of ||"
                 is BinaryOrExitNode -> "Exit ||"
 
                 is PropertyEnterNode -> "Enter property"
