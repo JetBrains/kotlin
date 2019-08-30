@@ -38,12 +38,12 @@ abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val c
         ).toSet()
     }
 
-    val additionalSerializersInScopeOfCurrentFile: Map<KotlinType, ClassDescriptor> by lazy {
+    val additionalSerializersInScopeOfCurrentFile: Map<ClassDescriptor, ClassDescriptor> by lazy {
         getKClassListFromFileAnnotation(SerializationAnnotations.additionalSerializersFqName, currentDeclaration)
             .associateBy(
                 {
-                    it.supertypes().find(::isKSerializer)?.arguments?.firstOrNull()?.type
-                        ?: throw AssertionError("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer")
+                    it.supertypes().find(::isKSerializer)?.arguments?.firstOrNull()?.type.toClassDescriptor
+                        ?: throw AssertionError("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer or does not provide serializer for concrete type")
                 },
                 { it.toClassDescriptor!! }
             )

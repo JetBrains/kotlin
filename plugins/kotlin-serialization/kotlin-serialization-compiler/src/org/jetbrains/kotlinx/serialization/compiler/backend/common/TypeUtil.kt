@@ -46,7 +46,7 @@ open class SerialTypeInfo(
 )
 
 fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType, module: ModuleDescriptor): ClassDescriptor? {
-    additionalSerializersInScopeOfCurrentFile[propertyType]?.let { return it }
+    additionalSerializersInScopeOfCurrentFile[propertyType.toClassDescriptor]?.let { return it }
     if (propertyType in contextualKClassListInCurrentFile)
         return module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
     if (propertyType.toClassDescriptor?.annotations?.hasAnnotation(SerializationAnnotations.polymorphicFqName) == true)
@@ -136,7 +136,7 @@ fun AbstractSerialGenerator.findTypeSerializerOrContextUnchecked(
     if (kType.isTypeParameter()) return null
     if (kType.isMarkedNullable) return findTypeSerializerOrContextUnchecked(module, kType.makeNotNullable())
     annotations.serializableWith(module)?.let { return it.toClassDescriptor }
-    additionalSerializersInScopeOfCurrentFile[kType]?.let { return it }
+    additionalSerializersInScopeOfCurrentFile[kType.toClassDescriptor]?.let { return it }
     if (kType in contextualKClassListInCurrentFile) return module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
     return analyzeSpecialSerializers(module, annotations) ?: findTypeSerializer(module, kType)
 }
