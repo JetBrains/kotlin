@@ -222,8 +222,6 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
 /** Builds a [HeaderInfo] for progressions built using the `indices` extension property. */
 internal abstract class IndicesHandler(protected val context: CommonBackendContext) : ProgressionHandler {
 
-    // TODO: Handle Collection<*>.indices
-
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // `last = array.size - 1` (last is inclusive) for the loop `for (i in array.indices)`.
@@ -245,9 +243,9 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
     abstract val IrType.sizePropertyGetter: IrSimpleFunction
 }
 
-internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
+internal class CollectionIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
     override val matcher = SimpleCalleeMatcher {
-        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() } }
+        extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() || isCollection() } }
         fqName { it == FqName("kotlin.collections.<get-indices>") }
         parameterCount { it == 0 }
     }
