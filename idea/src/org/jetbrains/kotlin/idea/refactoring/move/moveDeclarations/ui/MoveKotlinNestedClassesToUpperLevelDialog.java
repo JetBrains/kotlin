@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.HelpID;
+import com.intellij.refactoring.PackageWrapper;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveDialogBase;
+import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil;
 import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.refactoring.ui.PackageNameReferenceEditorCombo;
 import com.intellij.ui.EditorTextField;
@@ -200,8 +203,37 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         return null;
     }
 
+
+    private static class MoveKotlinNestedClassesToUpperLevelModelWithUIChooser extends MoveKotlinNestedClassesToUpperLevelModel {
+        public MoveKotlinNestedClassesToUpperLevelModelWithUIChooser(
+                @NotNull Project project,
+                @NotNull KtClassOrObject innerClass,
+                @NotNull PsiElement target,
+                @Nullable String parameter,
+                @NotNull String className,
+                boolean passOuterClass,
+                boolean searchInComments,
+                boolean isSearchInNonJavaFiles,
+                @NotNull String packageName,
+                boolean isOpenInEditor
+        ) {
+            super(project, innerClass, target, parameter, className, passOuterClass, searchInComments, isSearchInNonJavaFiles, packageName,
+                  isOpenInEditor);
+        }
+
+        @Nullable
+        @Override
+        protected VirtualFile chooseSourceRoot(
+                @NotNull PackageWrapper newPackage,
+                @NotNull List<? extends VirtualFile> contentSourceRoots,
+                @Nullable PsiDirectory initialDir
+        ) {
+            return MoveClassesOrPackagesUtil.chooseSourceRoot(newPackage, contentSourceRoots, initialDir);
+        }
+    }
+
     private Model<MoveKotlinDeclarationsProcessor> getModel() {
-        return new MoveKotlinNestedClassesToUpperLevelModel(
+        return new MoveKotlinNestedClassesToUpperLevelModelWithUIChooser(
                 project,
                 innerClass,
                 targetContainer,
@@ -211,9 +243,9 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
                 searchInCommentsCheckBox.isSelected(),
                 searchForTextOccurrencesCheckBox.isSelected(),
                 packageNameField.getText(),
-                isOpenInEditor());
+                isOpenInEditor()
+        );
     }
-
 
     @Override
     protected void doAction() {

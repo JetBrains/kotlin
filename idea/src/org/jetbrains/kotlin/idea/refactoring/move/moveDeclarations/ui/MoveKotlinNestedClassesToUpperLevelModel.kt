@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-internal class MoveKotlinNestedClassesToUpperLevelModel(
+internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
     val project: Project,
     val innerClass: KtClassOrObject,
     val target: PsiElement,
@@ -50,6 +50,12 @@ internal class MoveKotlinNestedClassesToUpperLevelModel(
     val packageName: String,
     val isOpenInEditor: Boolean
 ) : Model<MoveKotlinDeclarationsProcessor> {
+
+    protected abstract fun chooseSourceRoot(
+        newPackage: PackageWrapper,
+        contentSourceRoots: List<VirtualFile>,
+        initialDir: PsiDirectory?
+    ): VirtualFile?
 
     private val innerClassDescriptor = innerClass.unsafeResolveToDescriptor(BodyResolveMode.FULL) as ClassDescriptor
 
@@ -77,7 +83,7 @@ internal class MoveKotlinNestedClassesToUpperLevelModel(
                         }
                     }
 
-                    targetSourceRoot = MoveClassesOrPackagesUtil.chooseSourceRoot(newPackage, contentSourceRoots, initialDir) ?: return null
+                    targetSourceRoot = chooseSourceRoot(newPackage, contentSourceRoots, initialDir) ?: return null
                 } else {
                     targetSourceRoot = contentSourceRoots[0]
                 }

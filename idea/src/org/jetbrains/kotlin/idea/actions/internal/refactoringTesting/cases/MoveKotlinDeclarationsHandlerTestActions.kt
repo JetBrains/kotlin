@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.cases
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
+import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -112,7 +114,7 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
             ?: outerClass.containingClassOrObject
             ?: outerClass.containingFile.let { it.containingDirectory ?: it }
 
-        val model = MoveKotlinNestedClassesToUpperLevelModel(
+        val model = object : MoveKotlinNestedClassesToUpperLevelModel(
             project = nestedClass.project,
             innerClass = nestedClass,
             target = newTarget,
@@ -123,7 +125,13 @@ internal class MoveKotlinDeclarationsHandlerTestActions(private val caseDataKeep
             isSearchInNonJavaFiles = randomBoolean(),
             packageName = randomClassName(),
             isOpenInEditor = false
-        )
+        ) {
+            override fun chooseSourceRoot(
+                newPackage: PackageWrapper,
+                contentSourceRoots: List<VirtualFile>,
+                initialDir: PsiDirectory?
+            ) = randomNullability { contentSourceRoots.randomElementOrNull() }
+        }
 
         caseDataKeeper.caseData = model.testDataString()
 
