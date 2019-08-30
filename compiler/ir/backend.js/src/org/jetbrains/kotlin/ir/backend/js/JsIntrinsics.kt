@@ -261,12 +261,18 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
     val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
-    val charSequenceLengthPropertyGetterSymbol =
-        charSequenceClassSymbol.owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "length" }.getter!!.symbol
-    val charSequenceGetFunctionSymbol =
+    val charSequenceLengthPropertyGetterSymbol by lazy {
+        with(charSequenceClassSymbol.owner.declarations) {
+            filterIsInstance<IrProperty>().firstOrNull { it.name.asString() == "length" }?.getter ?:
+            filterIsInstance<IrFunction>().first { it.name.asString() == "<get-length>" }
+        }.symbol
+    }
+    val charSequenceGetFunctionSymbol by lazy {
         charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "get" }.symbol
-    val charSequenceSubSequenceFunctionSymbol =
+    }
+    val charSequenceSubSequenceFunctionSymbol by lazy {
         charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "subSequence" }.symbol
+    }
 
 
     val jsCharSequenceGet = getInternalFunction("charSequenceGet")
