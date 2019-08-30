@@ -142,12 +142,13 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
   }
 
   @Nullable
-  public static Pair<PsiFile,Editor> chooseBetweenHostAndInjected(@NotNull PsiFile hostFile, @NotNull Editor hostEditor, @NotNull PairProcessor<? super PsiFile, ? super Editor> predicate) {
+  public static Pair<PsiFile, Editor> chooseBetweenHostAndInjected(@NotNull PsiFile hostFile,
+                                                                   @NotNull Editor hostEditor,
+                                                                   @Nullable PsiFile injectedFile,
+                                                                   @NotNull PairProcessor<? super PsiFile, ? super Editor> predicate) {
     Editor editorToApply = null;
     PsiFile fileToApply = null;
 
-    int offset = hostEditor.getCaretModel().getOffset();
-    PsiFile injectedFile = InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, offset);
     if (injectedFile != null) {
       Editor injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(hostEditor, injectedFile);
       if (predicate.process(injectedFile, injectedEditor)) {
@@ -223,7 +224,12 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
   public static Pair<PsiFile, Editor> chooseFileForAction(@NotNull PsiFile hostFile,
                                                           @Nullable Editor hostEditor,
                                                           @NotNull IntentionAction action) {
-    return hostEditor == null ? Pair.create(hostFile, null) :
-           chooseBetweenHostAndInjected(hostFile, hostEditor, (psiFile, editor) -> availableFor(psiFile, editor, action));
+    if (hostEditor == null) {
+      return Pair.create(hostFile, null);
+    }
+
+    PsiFile injectedFile = InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, hostEditor.getCaretModel().getOffset());
+    return chooseBetweenHostAndInjected(hostFile, hostEditor, injectedFile,
+                                        (psiFile, editor) -> availableFor(psiFile, editor, action));
   }
 }
