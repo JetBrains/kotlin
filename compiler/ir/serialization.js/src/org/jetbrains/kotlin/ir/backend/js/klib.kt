@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -29,6 +26,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.ExpectDeclarationRemover
+import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
@@ -71,7 +69,7 @@ fun loadKlib(klibPath: String) =
 
 internal val JS_KLIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("JS KLIBRARY")
 
-private val emptyLoggingContext = object : LoggingContext {
+val emptyLoggingContext = object : LoggingContext {
     override var inVerbosePhase = false
 
     override fun log(message: () -> String) {}
@@ -199,7 +197,7 @@ private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): Gene
     )
 }
 
-private fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: JsIrLinker? = null) =
+fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: IrDeserializer? = null) =
     Psi2IrTranslator(languageVersionSettings, configuration).generateModuleFragment(this, files, deserializer)
 
 
@@ -246,6 +244,24 @@ private fun loadKlibMetadata(
     md.setDependencies(listOf(md) + dependencies)
 
     return md
+}
+
+fun getModuleDescriptorByLibrary(
+    current: KotlinLibrary
+): ModuleDescriptorImpl {
+    val parts = loadKlibMetadataParts(current)
+    val isBuiltIns = parts.importedModules.isEmpty()
+    return loadKlibMetadata(
+        parts,
+        current,
+        isBuiltIns,
+        LookupTracker.DO_NOTHING,
+        LockBasedStorageManager("ModulesStructure"),
+        JsKlibMetadataVersion.INSTANCE,
+        LanguageVersionSettingsImpl.DEFAULT,
+        null,
+        emptyList()
+    )
 }
 
 private class ModulesStructure(
@@ -417,7 +433,7 @@ fun serializeModuleIntoKlib(
 
     buildKoltinLibrary(
         linkDependencies = dependencies,
-        ir = fullSerializedIr,
+        ir = serializedIr,
         metadata = serializedMetadata,
         dataFlowGraph = null,
         manifestProperties = null,

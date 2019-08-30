@@ -19,6 +19,8 @@ data class JvmDependency(val classpath: List<File>) : ScriptDependency {
     companion object { private const val serialVersionUID: Long = 1L }
 }
 
+data class JsDependency(val path: String) : ScriptDependency
+
 interface JvmScriptCompilationConfigurationKeys
 
 open class JvmScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptCompilationConfigurationKeys {

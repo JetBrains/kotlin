@@ -12,11 +12,23 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
+import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.DFS
+
+fun sortDependencies(dependencies: Collection<IrModuleFragment>): Collection<IrModuleFragment> {
+    val mapping = dependencies.map { it.descriptor to it }.toMap()
+
+    return DFS.topologicalOrder(dependencies) { m ->
+        val descriptor = m.descriptor
+        descriptor.allDependencyModules.filter { it != descriptor }.map { mapping[it] }
+    }.reversed()
+}
 
 class CompilerResult(
     val jsCode: String,
@@ -71,4 +83,16 @@ fun compile(
 
     val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
     return transformer.generateModule(moduleFragment)
+}
+
+fun compileForRepl(
+    context: JsIrBackendContext,
+    moduleFragment: IrModuleFragment,
+    nameTables: NameTables
+): String {
+    moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
+    jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, moduleFragment)
+
+    val transformer = IrModuleToJsTransformer(context, null, null, true, nameTables)
+    return transformer.generateModule(moduleFragment).jsCode
 }
