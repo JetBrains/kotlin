@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeInsight.daemon.ChangeLocalityDetector;
@@ -37,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-class PsiChangeHandler extends PsiTreeChangeAdapter implements Disposable {
+final class PsiChangeHandler extends PsiTreeChangeAdapter implements Disposable {
   private static final ExtensionPointName<ChangeLocalityDetector> EP_NAME = ExtensionPointName.create("com.intellij.daemon.changeLocalityDetector");
   private /*NOT STATIC!!!*/ final Key<Boolean> UPDATE_ON_COMMIT_ENGAGED = Key.create("UPDATE_ON_COMMIT_ENGAGED");
 
@@ -45,17 +44,14 @@ class PsiChangeHandler extends PsiTreeChangeAdapter implements Disposable {
   private final Map<Document, List<Pair<PsiElement, Boolean>>> changedElements = ContainerUtil.createWeakMap();
   private final FileStatusMap myFileStatusMap;
 
-  PsiChangeHandler(@NotNull Project project,
-                   @NotNull final PsiDocumentManagerImpl documentManager,
-                   @NotNull EditorFactory editorFactory,
-                   @NotNull MessageBusConnection connection,
-                   @NotNull FileStatusMap fileStatusMap) {
+  PsiChangeHandler(@NotNull Project project, @NotNull MessageBusConnection connection) {
     myProject = project;
-    myFileStatusMap = fileStatusMap;
-    editorFactory.getEventMulticaster().addDocumentListener(new DocumentListener() {
+    myFileStatusMap = DaemonCodeAnalyzerEx.getInstanceEx(myProject).getFileStatusMap();
+    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener() {
       @Override
       public void beforeDocumentChange(@NotNull DocumentEvent e) {
         final Document document = e.getDocument();
+        PsiDocumentManagerImpl documentManager = (PsiDocumentManagerImpl)PsiDocumentManager.getInstance(myProject);
         if (documentManager.getSynchronizer().isInSynchronization(document)) return;
         if (documentManager.getCachedPsiFile(document) == null) return;
         if (document.getUserData(UPDATE_ON_COMMIT_ENGAGED) == null) {

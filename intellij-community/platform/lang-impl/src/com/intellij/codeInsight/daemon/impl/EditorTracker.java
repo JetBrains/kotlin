@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.openapi.Disposable;
@@ -28,12 +28,10 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.*;
 
-public class EditorTracker implements ProjectComponent {
+public final class EditorTracker implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(EditorTracker.class);
 
   private final Project myProject;
-  private final WindowManager myWindowManager;
-  private final EditorFactory myEditorFactory;
 
   private final Map<Window, List<Editor>> myWindowToEditorsMap = new HashMap<>();
   private final Map<Window, WindowAdapter> myWindowToWindowFocusListenerMap = new HashMap<>();
@@ -45,15 +43,13 @@ public class EditorTracker implements ProjectComponent {
   private IdeFrameImpl myIdeFrame;
   private Window myActiveWindow;
 
-  public EditorTracker(Project project, WindowManager windowManager, EditorFactory editorFactory) {
+  public EditorTracker(Project project) {
     myProject = project;
-    myWindowManager = windowManager;
-    myEditorFactory = editorFactory;
   }
 
   @Override
   public void projectOpened() {
-    myIdeFrame = ((WindowManagerEx)myWindowManager).getFrame(myProject);
+    myIdeFrame = ((WindowManagerEx)WindowManager.getInstance()).getFrame(myProject);
     myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void selectionChanged(@NotNull FileEditorManagerEvent event) {
@@ -63,7 +59,7 @@ public class EditorTracker implements ProjectComponent {
     });
 
     final MyEditorFactoryListener myEditorFactoryListener = new MyEditorFactoryListener();
-    myEditorFactory.addEditorFactoryListener(myEditorFactoryListener, myProject);
+    EditorFactory.getInstance().addEditorFactoryListener(myEditorFactoryListener, myProject);
     Disposer.register(myProject, () -> myEditorFactoryListener.executeOnRelease(null));
   }
 
