@@ -33,6 +33,12 @@ interface ClassLoweringPass : FileLoweringPass {
     override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
+interface ScriptLoweringPass : FileLoweringPass {
+    fun lower(irScript: IrScript)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
+}
+
 interface DeclarationContainerLoweringPass : FileLoweringPass {
     fun lower(irDeclarationContainer: IrDeclarationContainer)
 
@@ -66,14 +72,35 @@ fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     })
 }
 
+fun ScriptLoweringPass.runOnFilePostfix(irFile: IrFile) {
+    irFile.acceptVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitScript(declaration: IrScript) {
+            declaration.acceptChildrenVoid(this)
+            lower(declaration)
+        }
+    })
+}
+
 fun DeclarationContainerLoweringPass.asClassLoweringPass() = object : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         this@asClassLoweringPass.lower(irClass)
     }
 }
 
+fun DeclarationContainerLoweringPass.asScriptLoweringPass() = object : ScriptLoweringPass {
+    override fun lower(irScript: IrScript) {
+        this@asScriptLoweringPass.lower(irScript)
+    }
+}
+
 fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
     this.asClassLoweringPass().runOnFilePostfix(irFile)
+    this.asScriptLoweringPass().runOnFilePostfix(irFile)
+
     this.lower(irFile as IrDeclarationContainer)
 }
 

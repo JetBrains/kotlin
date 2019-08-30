@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.MISSING_IMPORTED_SCRIPT_FILE
 import org.jetbrains.kotlin.diagnostics.Errors.MISSING_IMPORTED_SCRIPT_PSI
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -162,13 +163,16 @@ class LazyScriptDescriptor(
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
     internal val baseClassDescriptor: () -> ClassDescriptor? = resolveSession.storageManager.createNullableLazyValue {
-        val baseClass = getScriptingClass(
-            scriptCompilationConfiguration()[ScriptCompilationConfiguration.baseClass]
-                ?: throw IllegalStateException("Base class is not configured for the script ${scriptInfo.script.containingFile}")
-        )
+        val scriptBaseType = scriptCompilationConfiguration()[ScriptCompilationConfiguration.baseClass]
+            ?: error("Base class is not configured for the script ${scriptInfo.script.containingFile}")
+        val typeName = scriptBaseType.typeName
+        val fqnName = FqName(typeName)
+        val classId = ClassId.topLevel(fqnName)
+
         findTypeDescriptor(
-            baseClass,
-            if (baseClass.qualifiedName?.startsWith("kotlin.script.templates.standard") == true) Errors.MISSING_SCRIPT_STANDARD_TEMPLATE
+            classId,
+            typeName,
+            if (fqnName.parent().asString().startsWith("kotlin.script.templates.standard")) Errors.MISSING_SCRIPT_STANDARD_TEMPLATE
             else Errors.MISSING_SCRIPT_BASE_CLASS
         )
     }

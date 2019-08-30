@@ -403,7 +403,9 @@ open class DefaultParameterInjector(
 
 class DefaultParameterCleaner constructor(val context: CommonBackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
-        irFunction.valueParameters.forEach { it.defaultValue = null }
+        if (!context.scriptMode) {
+            irFunction.valueParameters.forEach { it.defaultValue = null }
+        }
     }
 }
 
