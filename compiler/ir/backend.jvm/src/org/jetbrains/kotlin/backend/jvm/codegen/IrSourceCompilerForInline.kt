@@ -98,7 +98,8 @@ class IrSourceCompilerForInline(
         assert(codegen.lastLineNumber >= 0) { "lastLineNumber shall be not negative, but is ${codegen.lastLineNumber}" }
 
         val irFunction = getFunctionToInline(callElement as IrCall, jvmSignature, callDefault)
-        return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), CallSiteMarker(codegen.lastLineNumber))
+        val classCodegen = FakeClassCodegen(irFunction, codegen.classCodegen, codegen.irFunction.isInline || codegen.isInlineLambda)
+        return makeInlineNode(irFunction, classCodegen, CallSiteMarker(codegen.lastLineNumber))
     }
 
     private fun getFunctionToInline(call: IrCall, jvmSignature: JvmMethodSignature, callDefault: Boolean): IrFunction {
@@ -156,8 +157,8 @@ class IrSourceCompilerForInline(
         return setOf(codegen.irFunction.name.asString())
     }
 
-    private class FakeClassCodegen(irFunction: IrFunction, codegen: ClassCodegen) :
-        ClassCodegen(irFunction.parent as IrClass, codegen.context) {
+    private class FakeClassCodegen(irFunction: IrFunction, codegen: ClassCodegen, withinInline: Boolean) :
+        ClassCodegen(irFunction.parent as IrClass, codegen.context, withinInline = withinInline) {
 
         override fun createClassBuilder(): ClassBuilder {
             return FakeBuilder
