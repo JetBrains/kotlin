@@ -27,7 +27,7 @@ import java.awt.*;
  * @author peter
  */
 public abstract class AbstractFindUsagesDialog extends DialogWrapper {
-  private final Project myProject;
+  protected final Project myProject;
   protected final FindUsagesOptions myFindUsagesOptions;
 
   private final boolean myToShowInNewTab;
