@@ -68,6 +68,7 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings;
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
+import static org.jetbrains.kotlin.cli.js.K2JsIrCompilerKt.loadPluginsForTests;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
@@ -130,6 +131,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         );
     }
 
+    protected void configureTestSpecific(@NotNull CompilerConfiguration configuration, @NotNull List<TestFile> testFiles) {}
+
     @NotNull
     protected CompilerConfiguration createConfiguration(
             @NotNull ConfigurationKind kind,
@@ -143,6 +146,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, coroutinesPackage);
         updateConfiguration(configuration);
         setCustomDefaultJvmTarget(configuration);
+
+        configureTestSpecific(configuration, testFilesWithConfigurationDirectives);
 
         return configuration;
     }
@@ -354,7 +359,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         List<KtFile> ktFiles = new ArrayList<>(files.size());
         for (TestFile file : files) {
-            if (file.name.endsWith(".kt")) {
+            if (file.name.endsWith(".kt") || file.name.endsWith(".kts")) {
                 // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
                 String content = CheckerTestUtil.INSTANCE.parseDiagnosedRanges(file.content, new ArrayList<>(0), null);
                 ktFiles.add(KotlinTestUtils.createFile(file.name, content, project));
