@@ -26,7 +26,7 @@ internal object MapArguments : FirTransformer<Map<FirElement, FirElement>>() {
         functionCall: FirFunctionCall,
         data: Map<FirElement, FirElement>
     ): CompositeTransformResult<FirStatement> {
-        return (functionCall.transformChildren(this, data) as FirStatement).compose()
+        return (functionCall.transformArguments(this, data) as FirStatement).compose()
     }
 
     override fun transformWrappedArgumentExpression(
