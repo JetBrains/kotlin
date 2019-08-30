@@ -149,6 +149,9 @@ abstract class ScriptDefinition : UserDataHolderBase() {
                 ?: hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
         }
 
+        override val platform: String
+            get() = compilationConfiguration[ScriptCompilationConfiguration.platform] ?: super.platform
+
         override val baseClassType: KotlinType
             get() = compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!
 
