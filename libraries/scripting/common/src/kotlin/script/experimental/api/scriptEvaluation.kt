@@ -144,7 +144,7 @@ sealed class ResultValue(val scriptClass: KClass<*>? = null, val scriptInstance:
      * @param scriptClass the loaded class of the script
      * @param scriptInstance instance of the script class
      */
-    class Value(val name: String, val value: Any?, val type: String, scriptClass: KClass<*>, scriptInstance: Any) :
+    class Value(val name: String, val value: Any?, val type: String, scriptClass: KClass<*>?, scriptInstance: Any?) :
         ResultValue(scriptClass, scriptInstance) {
 
         override fun toString(): String = "$name: $type = $value"
