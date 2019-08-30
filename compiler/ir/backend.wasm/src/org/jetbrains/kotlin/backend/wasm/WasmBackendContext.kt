@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -34,6 +36,8 @@ class WasmBackendContext(
 ) : CommonBackendContext {
     override val builtIns = module.builtIns
     override var inVerbosePhase: Boolean = false
+    override val scriptMode = false
+    override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
 
     // Place to store declarations excluded from code generation
     val excludedDeclarations: IrPackageFragment by lazy {

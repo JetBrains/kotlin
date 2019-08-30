@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -27,7 +28,11 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : FileLowering
         if (!irClass.isCompanion)
             return null
 
-        val parent = irClass.parent as IrClass
+        //TODO: Figure out how to check for primitive companion in case similar to REPL in better way
+        val parent = irClass.parent as? IrClass
+            ?: context.symbolTable.referenceClass(irClass.descriptor.containingDeclaration as ClassDescriptor).owner.also {
+                assert(context.scriptMode)
+            }
 
         if (!parent.defaultType.isPrimitiveType() && !parent.defaultType.isString())
             return null
