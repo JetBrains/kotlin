@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
@@ -31,14 +30,15 @@ class FirClassSubstitutionScope(
     substitution: Map<ConeTypeParameterSymbol, ConeKotlinType>
 ) : FirScope() {
 
-    private val fakeOverrides = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
+    private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
+    private val fakeOverrideProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
 
     private val substitutor = substitutorByMap(substitution)
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         useSiteScope.processFunctionsByName(name) process@{ original ->
 
-            val function = fakeOverrides.getOrPut(original) { createFakeOverride(original) }
+            val function = fakeOverrideFunctions.getOrPut(original) { createFakeOverrideFunction(original) }
             processor(function)
         }
 
@@ -47,7 +47,14 @@ class FirClassSubstitutionScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return useSiteScope.processPropertiesByName(name, processor)
+        return useSiteScope.processPropertiesByName(name) process@{ original ->
+            if (original is FirPropertySymbol) {
+                val property = fakeOverrideProperties.getOrPut(original) { createFakeOverrideProperty(original) }
+                processor(property)
+            } else {
+                processor(original)
+            }
+        }
     }
 
     private val typeCalculator by lazy { ReturnTypeCalculatorWithJump(session, scopeSession) }
@@ -56,7 +63,7 @@ class FirClassSubstitutionScope(
         return substitutor.substituteOrNull(this)
     }
 
-    private fun createFakeOverride(original: FirFunctionSymbol<*>): FirFunctionSymbol<*> {
+    private fun createFakeOverrideFunction(original: FirFunctionSymbol<*>): FirFunctionSymbol<*> {
         val member = when (original) {
             is FirNamedFunctionSymbol -> original.fir
             is FirConstructorSymbol -> return original
@@ -73,11 +80,23 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute()
         }
 
-        return createFakeOverride(session, member, original, newReceiverType, newReturnType, newParameterTypes)
+        return createFakeOverrideFunction(session, member, original, newReceiverType, newReturnType, newParameterTypes)
+    }
+
+    private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
+        val member = original.fir
+
+        val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
+        val newReceiverType = receiverType?.substitute()
+
+        val returnType = typeCalculator.tryCalculateReturnType(member).type
+        val newReturnType = returnType.substitute()
+
+        return createFakeOverrideProperty(session, member, original, newReceiverType, newReturnType)
     }
 
     companion object {
-        fun createFakeOverride(
+        fun createFakeOverrideFunction(
             session: FirSession,
             baseFunction: FirNamedFunction,
             baseSymbol: FirNamedFunctionSymbol,
@@ -109,6 +128,29 @@ class FirClassSubstitutionScope(
                             )
                         }
                     }
+                }
+            }
+            return symbol
+        }
+
+        fun createFakeOverrideProperty(
+            session: FirSession,
+            baseProperty: FirProperty,
+            baseSymbol: FirPropertySymbol,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null
+        ): FirPropertySymbol {
+            val symbol = FirPropertySymbol(baseSymbol.callableId, true, baseSymbol)
+            with(baseProperty) {
+                FirMemberPropertyImpl(
+                    session,
+                    psi, symbol, name,
+                    baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType),
+                    baseProperty.returnTypeRef.withReplacedConeType(newReturnType),
+                    isVar, initializer = null, delegate = null
+                ).apply {
+                    resolvePhase = baseProperty.resolvePhase
+                    status = baseProperty.status as FirDeclarationStatusImpl
                 }
             }
             return symbol

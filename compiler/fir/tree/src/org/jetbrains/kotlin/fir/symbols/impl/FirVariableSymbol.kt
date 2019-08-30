@@ -20,7 +20,12 @@ open class FirVariableSymbol<D : FirVariable<D>>(override val callableId: Callab
     constructor(name: Name) : this(CallableId(name))  // TODO?
 }
 
-open class FirPropertySymbol(callableId: CallableId) : ConePropertySymbol, FirVariableSymbol<FirProperty>(callableId)
+open class FirPropertySymbol(
+    callableId: CallableId,
+    val isFakeOverride: Boolean = false,
+    // Actual for fake override only
+    val overriddenSymbol: FirPropertySymbol? = null
+) : ConePropertySymbol, FirVariableSymbol<FirProperty>(callableId)
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
 

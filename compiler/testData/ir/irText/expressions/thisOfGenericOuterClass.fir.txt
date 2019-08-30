@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
             PROPERTY name:xx visibility:public modality:FINAL [val]
               FIELD PROPERTY_BACKING_FIELD name:xx type:IrErrorType visibility:private [final]
                 EXPRESSION_BODY
-                  ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/plus]>#' type=IrErrorType
+                  ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#' type=IrErrorType
                     ERROR_CALL 'Unresolved reference: <Unresolved name: y>#' type=IrErrorType
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:<root>.test.<no name provided>) returnType:IrErrorType
                 correspondingProperty: PROPERTY name:xx visibility:public modality:FINAL [val]

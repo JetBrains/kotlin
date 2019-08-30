@@ -219,7 +219,7 @@ internal class Fir2IrVisitor(
                         }
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION) {
                         // Trivial fake override case
-                        val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverride(session, originalFunction, functionSymbol)
+                        val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideFunction(session, originalFunction, functionSymbol)
                         val fakeOverrideFunction = fakeOverrideSymbol.fir
 
                         val irFunction = declarationStorage.getIrFunction(
