@@ -39,6 +39,9 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     private val variableStorage = DataFlowVariableStorage()
     private val edges = mutableMapOf<CFGNode<*>, Flow>().withDefault { Flow.EMPTY }
 
+    /*
+     * If there is no types from smartcasts function returns null
+     */
     fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): Collection<ConeKotlinType>? {
         val symbol: FirBasedSymbol<*> = qualifiedAccessExpression.resolvedSymbol ?: return null
         val variable = variableStorage[symbol]?.real ?: return null
