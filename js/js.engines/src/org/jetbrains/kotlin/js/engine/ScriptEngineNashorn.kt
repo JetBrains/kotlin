@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.interop
+package org.jetbrains.kotlin.js.engine
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory
 import jdk.nashorn.internal.runtime.ScriptRuntime

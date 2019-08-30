@@ -77,6 +77,7 @@ include ":kotlin-build-common",
         ":js:js.ast",
         ":js:js.serializer",
         ":js:js.parser",
+        ":js:js.engines",
         ":js:js.frontend",
         ":js:js.translator",
         ":js:js.dce",
@@ -191,6 +192,8 @@ include ":kotlin-build-common",
         ":kotlin-annotations-jvm",
         ":kotlin-annotations-android",
         ":kotlin-scripting-common",
+        ':kotlin-scripting-js',
+        ':kotlin-scripting-js-test',
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host",
         ":kotlin-scripting-jvm-host-test",
@@ -376,6 +379,8 @@ project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$root
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/kotlin-annotations-android" as File
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
+project(':kotlin-scripting-js').projectDir = "$rootDir/libraries/scripting/js" as File
+project(':kotlin-scripting-js-test').projectDir = "$rootDir/libraries/scripting/js-test" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
 project(':kotlin-scripting-jvm-host-test').projectDir = "$rootDir/libraries/scripting/jvm-host-test" as File
@@ -401,6 +406,9 @@ project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
 project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-abi-gen/embeddable" as File
+
+project(':js:js.tests').projectDir =  "$rootDir/js/js.tests" as File
+project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")

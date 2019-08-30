@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.dce.DeadCodeElimination
 import org.jetbrains.kotlin.js.dce.InputFile
 import org.jetbrains.kotlin.js.dce.InputResource
+import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
+import org.jetbrains.kotlin.js.engine.ScriptEngineV8Lazy
 import org.jetbrains.kotlin.js.facade.*
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
@@ -43,8 +45,6 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
-import org.jetbrains.kotlin.js.test.interop.ScriptEngineNashorn
-import org.jetbrains.kotlin.js.test.interop.ScriptEngineV8Lazy
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
@@ -869,6 +869,8 @@ abstract class BasicBoxTest(
         private val OLD_MODULE_SUFFIX = "-old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
-        private val engineForMinifier = if (runTestInNashorn) ScriptEngineNashorn() else ScriptEngineV8Lazy()
+        private val engineForMinifier =
+            if (runTestInNashorn) ScriptEngineNashorn()
+            else ScriptEngineV8Lazy(KotlinTestUtils.tmpDirForReusableFolder("j2v8_library_path").path)
     }
 }
