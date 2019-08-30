@@ -71,9 +71,6 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         RawFirBuilder(object : FirSessionBase(null) {}, stubMode).buildFirFile(this)
 
     private fun FirElement.traverseChildren(result: MutableSet<FirElement> = hashSetOf()): MutableSet<FirElement> {
-        if (this is FirResolvePhase) {
-            return result
-        }
         if (!result.add(this)) {
             return result
         }
