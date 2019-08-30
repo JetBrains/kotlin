@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
@@ -51,6 +48,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 generateClassOrObjectDeclaration(ktDeclaration)
             is KtTypeAlias ->
                 generateTypeAliasDeclaration(ktDeclaration)
+            is KtScript ->
+                ScriptGenerator(this).generateScriptDeclaration(ktDeclaration)
             else ->
                 IrErrorDeclarationImpl(
                     ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
