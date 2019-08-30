@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi.KtFile
@@ -67,6 +68,9 @@ object JvmBackendFacade {
         )
         state.irBasedMapAsmMethod = { descriptor ->
             context.methodSignatureMapper.mapAsmMethod(context.referenceFunction(descriptor).owner)
+        }
+        state.mapInlineClass = { descriptor ->
+            context.typeMapper.mapType(context.referenceClass(descriptor).owner.defaultType)
         }
         //TODO
         ExternalDependenciesGenerator(
