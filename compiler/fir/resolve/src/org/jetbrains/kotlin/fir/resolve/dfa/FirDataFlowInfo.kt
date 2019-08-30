@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.render
 
 data class UnapprovedFirDataFlowInfo(
-    val condition: ConditionRHS,
+    val condition: Condition,
     val variable: DataFlowVariable,
     val info: FirDataFlowInfo
 ) {

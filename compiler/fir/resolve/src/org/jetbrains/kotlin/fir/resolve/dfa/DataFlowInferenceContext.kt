@@ -26,7 +26,7 @@ interface DataFlowInferenceContext : TypeSystemCommonSuperTypesContext, ConeInfe
         return when (types.size) {
             0 -> null
             1 -> types.first()
-            else -> ConeTypeIntersector.intersectTypes(this, types)
+            else -> ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types)
         }
     }
 

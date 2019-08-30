@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.dfa.ConditionValue.*
+import org.jetbrains.kotlin.fir.resolve.dfa.Condition.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -87,7 +87,7 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
         val previousNode = node.usefulPreviousNodes.singleOrNull() as? WhenBranchConditionExitNode
         if (previousNode != null) {
-            node.flow = logicSystem.approveFactsInsideFlow(previousNode.trueCondition, node.flow)
+            node.flow = logicSystem.approveFactsInsideFlow(previousNode.variable, EqTrue, node.flow)
         }
         node.flow.freeze()
     }
@@ -127,14 +127,14 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
                     flow = flow.addNotApprovedFact(
                         expressionVariable,
                         UnapprovedFirDataFlowInfo(
-                            eq(True), varVariable, chooseInfo(true)
+                            EqTrue, varVariable, chooseInfo(true)
                         )
                     )
 
                     flow = flow.addNotApprovedFact(
                         expressionVariable,
                         UnapprovedFirDataFlowInfo(
-                            eq(False), varVariable, chooseInfo(false)
+                            EqFalse, varVariable, chooseInfo(false)
                         )
                     )
                 }
@@ -148,12 +148,12 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
                     flow = flow.addNotApprovedFact(
                         expressionVariable,
                         UnapprovedFirDataFlowInfo(
-                            notEq(Null), varVariable, FirDataFlowInfo(setOf(type), emptySet())
+                            NotEqNull, varVariable, FirDataFlowInfo(setOf(type), emptySet())
                         )
                     ).addNotApprovedFact(
                         expressionVariable,
                         UnapprovedFirDataFlowInfo(
-                            eq(Null), varVariable, FirDataFlowInfo(emptySet(), setOf(type))
+                            EqNull, varVariable, FirDataFlowInfo(emptySet(), setOf(type))
                         )
                     )
                 }
@@ -208,7 +208,7 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
             operandVariables.forEach { operandVariable ->
                 flow = flow.addNotApprovedFact(
                     expressionVariable, UnapprovedFirDataFlowInfo(
-                        eq(isEq.toConditionValue()),
+                        isEq.toEqBoolean(),
                         operandVariable,
                         FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
                     )
@@ -247,22 +247,22 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
         val expressionVariable = getVariable(node.fir)
 
         variableStorage[operand]?.let { operandVariable ->
-            val operator = when (operation) {
-                FirOperation.EQ, FirOperation.IDENTITY -> ConditionOperator.Eq
-                FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> ConditionOperator.NotEq
+            val condition = when (operation) {
+                FirOperation.EQ, FirOperation.IDENTITY -> EqNull
+                FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> NotEqNull
                 else -> throw IllegalArgumentException()
             }
-            val facts = logicSystem.approveFact(Condition(operandVariable, operator, Null), flow)
+            val facts = logicSystem.approveFact(operandVariable, condition, flow)
             facts.forEach { (variable, info) ->
                 flow = flow.addNotApprovedFact(
                     expressionVariable,
                     UnapprovedFirDataFlowInfo(
-                        eq(True), variable, info
+                        EqTrue, variable, info
                     )
                 ).addNotApprovedFact(
                     expressionVariable,
                     UnapprovedFirDataFlowInfo(
-                        eq(False), variable, info.invert()
+                        EqFalse, variable, info.invert()
                     )
                 )
             }
@@ -272,16 +272,16 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
         val operandVariables = getRealVariablesForSafeCallChain(operand).takeIf { it.isNotEmpty() } ?: return
 
-        val conditionValue = when (operation) {
-            FirOperation.EQ, FirOperation.IDENTITY -> False
-            FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> True
+        val condition = when (operation) {
+            FirOperation.EQ, FirOperation.IDENTITY -> EqFalse
+            FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> EqTrue
             else -> throw IllegalArgumentException()
         }
 
         operandVariables.forEach { operandVariable ->
             flow = flow.addNotApprovedFact(
                 expressionVariable, UnapprovedFirDataFlowInfo(
-                    eq(conditionValue),
+                    condition,
                     operandVariable,
                     FirDataFlowInfo(setOf(session.builtinTypes.anyType.coneTypeUnsafe()), emptySet())
                 )
@@ -317,7 +317,7 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
         val node = graphBuilder.enterWhenBranchCondition(whenBranch).passFlow(false)
         val previousNode = node.previousNodes.single()
         if (previousNode is WhenBranchConditionExitNode) {
-            node.flow = logicSystem.approveFactsInsideFlow(previousNode.falseCondition, node.flow)
+            node.flow = logicSystem.approveFactsInsideFlow(previousNode.variable, EqFalse, node.flow)
         }
         node.flow.freeze()
     }
@@ -326,8 +326,7 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
         val node = graphBuilder.exitWhenBranchCondition(whenBranch).passFlow()
 
         val conditionVariable = getVariable(whenBranch.condition)
-        node.trueCondition = conditionVariable eq True
-        node.falseCondition = conditionVariable eq False
+        node.variable = conditionVariable
     }
 
     override fun exitWhenBranchResult(whenBranch: FirWhenBranch) {
@@ -495,7 +494,7 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
         leftNode.passFlow()
         rightNode.passFlow(false)
         val leftOperandVariable = getVariable(leftNode.previousNodes.first().fir)
-        rightNode.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable eq True, rightNode.flow).also { it.freeze() }
+        rightNode.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable, EqTrue, rightNode.flow).also { it.freeze() }
     }
 
     override fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression) {
@@ -508,10 +507,10 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
         val andVariable = getVariable(binaryLogicExpression)
 
-        val leftIsTrue = approveFact(leftVariable, True, flowFromRight)
-        val leftIsFalse = approveFact(leftVariable, False, flowFromRight)
-        val rightIsTrue = approveFact(rightVariable, True, flowFromRight) ?: mutableMapOf()
-        val rightIsFalse = approveFact(rightVariable, False, flowFromRight)
+        val leftIsTrue = approveFact(leftVariable, EqTrue, flowFromRight)
+        val leftIsFalse = approveFact(leftVariable, EqFalse, flowFromRight)
+        val rightIsTrue = approveFact(rightVariable, EqTrue, flowFromRight) ?: mutableMapOf()
+        val rightIsFalse = approveFact(rightVariable, EqFalse, flowFromRight)
 
         flowFromRight.approvedFacts.forEach { (variable, info) ->
             val actualInfo = flowFromLeft.approvedFacts[variable]?.let { info - it } ?: info
@@ -520,12 +519,12 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
         logicSystem.andForVerifiedFacts(leftIsTrue, rightIsTrue)?.let {
             for ((variable, info) in it) {
-                flow.addNotApprovedFact(andVariable, UnapprovedFirDataFlowInfo(eq(True), variable, info))
+                flow.addNotApprovedFact(andVariable, UnapprovedFirDataFlowInfo(EqTrue, variable, info))
             }
         }
         logicSystem.orForVerifiedFacts(leftIsFalse, rightIsFalse)?.let {
             for ((variable, info) in it) {
-                flow.addNotApprovedFact(andVariable, UnapprovedFirDataFlowInfo(eq(False), variable, info))
+                flow.addNotApprovedFact(andVariable, UnapprovedFirDataFlowInfo(EqFalse, variable, info))
             }
         }
         node.flow = flow.removeSyntheticVariable(leftVariable).removeSyntheticVariable(rightVariable).also { it.freeze() }
@@ -540,7 +539,7 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
         leftNode.passFlow()
         rightNode.passFlow(false)
         val leftOperandVariable = getVariable(leftNode.previousNodes.first().fir)
-        rightNode.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable eq False, rightNode.flow).also { it.freeze() }
+        rightNode.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable, EqFalse, rightNode.flow).also { it.freeze() }
     }
 
     override fun exitBinaryOr(binaryLogicExpression: FirBinaryLogicExpression) {
@@ -553,19 +552,19 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
         val orVariable = getVariable(binaryLogicExpression)
 
-        val leftIsTrue = approveFact(leftVariable, True, flowFromLeft)
-        val leftIsFalse = approveFact(leftVariable, False, flowFromLeft)
-        val rightIsTrue = approveFact(rightVariable, True, flowFromRight)
-        val rightIsFalse = approveFact(rightVariable, False, flowFromRight)
+        val leftIsTrue = approveFact(leftVariable, EqTrue, flowFromLeft)
+        val leftIsFalse = approveFact(leftVariable, EqFalse, flowFromLeft)
+        val rightIsTrue = approveFact(rightVariable, EqTrue, flowFromRight)
+        val rightIsFalse = approveFact(rightVariable, EqFalse, flowFromRight)
 
         logicSystem.orForVerifiedFacts(leftIsTrue, rightIsTrue)?.let {
             for ((variable, info) in it) {
-                flow.addNotApprovedFact(orVariable, UnapprovedFirDataFlowInfo(eq(True), variable, info))
+                flow.addNotApprovedFact(orVariable, UnapprovedFirDataFlowInfo(EqTrue, variable, info))
             }
         }
         logicSystem.andForVerifiedFacts(leftIsFalse, rightIsFalse)?.let {
             for ((variable, info) in it) {
-                flow.addNotApprovedFact(orVariable, UnapprovedFirDataFlowInfo(eq(False), variable, info))
+                flow.addNotApprovedFact(orVariable, UnapprovedFirDataFlowInfo(EqFalse, variable, info))
             }
         }
         node.flow = flow.removeSyntheticVariable(leftVariable).removeSyntheticVariable(rightVariable).also { it.freeze() }
@@ -599,8 +598,8 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
     // -------------------------------------------------------------------------------------------------------------------------
 
-    private fun approveFact(variable: DataFlowVariable, value: ConditionValue, flow: Flow): MutableMap<DataFlowVariable, FirDataFlowInfo>? =
-        logicSystem.approveFact(variable eq value, flow)
+    private fun approveFact(variable: DataFlowVariable, condition: Condition, flow: Flow): MutableMap<DataFlowVariable, FirDataFlowInfo>? =
+        logicSystem.approveFact(variable, condition, flow)
 
     private fun FirBinaryLogicExpression.getVariables(): Pair<DataFlowVariable, DataFlowVariable> =
         getVariable(leftOperand) to getVariable(rightOperand)

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.dfa.Condition
+import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowVariable
 
 class ControlFlowGraph(val name: String) {
     val nodes = mutableListOf<CFGNode<*>>()
@@ -67,8 +67,7 @@ class WhenEnterNode(owner: ControlFlowGraph, override val fir: FirWhenExpression
 class WhenExitNode(owner: ControlFlowGraph, override val fir: FirWhenExpression, level: Int) : CFGNode<FirWhenExpression>(owner, level), ExitNode
 class WhenBranchConditionEnterNode(owner: ControlFlowGraph, override val fir: FirWhenBranch, level: Int) : CFGNode<FirWhenBranch>(owner, level), EnterNode
 class WhenBranchConditionExitNode(owner: ControlFlowGraph, override val fir: FirWhenBranch, level: Int) : CFGNode<FirWhenBranch>(owner, level), ExitNode {
-    lateinit var trueCondition: Condition
-    lateinit var falseCondition: Condition
+    lateinit var variable: DataFlowVariable
 }
 class WhenBranchResultExitNode(owner: ControlFlowGraph, override val fir: FirWhenBranch, level: Int) : CFGNode<FirWhenBranch>(owner, level)
 

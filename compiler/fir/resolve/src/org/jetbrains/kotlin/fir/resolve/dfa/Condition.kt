@@ -5,69 +5,22 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-enum class ConditionValue(val token: String) {
-    True("true"), False("false"), Null("null");
+enum class Condition {
+    EqTrue, EqFalse, EqNull, NotEqNull;
 
-    override fun toString(): String {
-        return token
+    fun invert(): Condition = when (this) {
+        EqTrue -> EqFalse
+        EqFalse -> EqTrue
+        EqNull -> NotEqNull
+        NotEqNull -> EqNull
     }
 
-    fun invert(): ConditionValue? = when (this) {
-        True -> False
-        False -> True
-        else -> null
-    }
-}
-
-fun Boolean.toConditionValue(): ConditionValue = if (this) ConditionValue.True else ConditionValue.False
-
-enum class ConditionOperator(val token: String) {
-    Eq("=="), NotEq("!=");
-
-    fun invert(): ConditionOperator = when (this) {
-        Eq -> NotEq
-        NotEq -> Eq
-    }
-
-    override fun toString(): String {
-        return token
+    override fun toString(): String = when (this) {
+        EqTrue -> "== True"
+        EqFalse -> "== False"
+        EqNull -> "== Null"
+        NotEqNull -> "!= Null"
     }
 }
 
-class Condition(val variable: DataFlowVariable, val rhs: ConditionRHS) {
-    val operator: ConditionOperator get() = rhs.operator
-    val value: ConditionValue get() = rhs.value
-
-    constructor(
-        variable: DataFlowVariable,
-        operator: ConditionOperator,
-        value: ConditionValue
-    ) : this(variable, ConditionRHS(operator, value))
-
-    override fun toString(): String {
-        return "$variable $rhs"
-    }
-}
-
-data class ConditionRHS(val operator: ConditionOperator, val value: ConditionValue) {
-    fun invert(): ConditionRHS {
-        val newValue = value.invert()
-        return if (newValue != null) {
-            ConditionRHS(operator, newValue)
-        } else {
-            ConditionRHS(operator.invert(), value)
-        }
-    }
-
-    override fun toString(): String {
-        return "$operator $value"
-    }
-}
-
-
-internal fun eq(value: ConditionValue): ConditionRHS = ConditionRHS(ConditionOperator.Eq, value)
-internal fun notEq(value: ConditionValue): ConditionRHS = ConditionRHS(ConditionOperator.NotEq, value)
-internal infix fun DataFlowVariable.eq(value: ConditionValue): Condition =
-    Condition(this, org.jetbrains.kotlin.fir.resolve.dfa.eq(value))
-internal infix fun DataFlowVariable.notEq(value: ConditionValue): Condition =
-    Condition(this, org.jetbrains.kotlin.fir.resolve.dfa.notEq(value))
+fun Boolean.toEqBoolean(): Condition = if (this) Condition.EqTrue else Condition.EqFalse

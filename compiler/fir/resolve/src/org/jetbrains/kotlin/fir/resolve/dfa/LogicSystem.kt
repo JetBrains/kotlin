@@ -69,8 +69,8 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
         return map
     }
 
-    fun approveFactsInsideFlow(proof: Condition, flow: Flow): Flow {
-        val notApprovedFacts: Set<UnapprovedFirDataFlowInfo> = flow.notApprovedFacts[proof.variable]
+    fun approveFactsInsideFlow(variable: DataFlowVariable, condition: Condition, flow: Flow): Flow {
+        val notApprovedFacts: Set<UnapprovedFirDataFlowInfo> = flow.notApprovedFacts[variable]
         if (notApprovedFacts.isEmpty()) {
             return flow
         }
@@ -78,7 +78,7 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
         val flow = flow.copyForBuilding()
         val newFacts = HashMultimap.create<DataFlowVariable, FirDataFlowInfo>()
         notApprovedFacts.forEach {
-            if (it.condition == proof.rhs) {
+            if (it.condition == condition) {
                 newFacts.put(it.variable, it.info)
             }
         }
@@ -93,14 +93,14 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
         return flow
     }
 
-    fun approveFact(proof: Condition, flow: Flow): MutableMap<DataFlowVariable, FirDataFlowInfo> {
-        val notApprovedFacts: Set<UnapprovedFirDataFlowInfo> = flow.notApprovedFacts[proof.variable]
+    fun approveFact(variable: DataFlowVariable, condition: Condition, flow: Flow): MutableMap<DataFlowVariable, FirDataFlowInfo> {
+        val notApprovedFacts: Set<UnapprovedFirDataFlowInfo> = flow.notApprovedFacts[variable]
         if (notApprovedFacts.isEmpty()) {
             return mutableMapOf()
         }
         val newFacts = HashMultimap.create<DataFlowVariable, FirDataFlowInfo>()
         notApprovedFacts.forEach {
-            if (it.condition == proof.rhs) {
+            if (it.condition == condition) {
                 newFacts.put(it.variable, it.info)
             }
         }
