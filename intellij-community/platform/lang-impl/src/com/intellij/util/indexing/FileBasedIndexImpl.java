@@ -71,7 +71,6 @@ import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.storage.HeavyProcessLatch;
-import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
@@ -164,15 +163,12 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     return state;
   }
 
-  public FileBasedIndexImpl(Application application, VirtualFileManager vfManager,
-                            FileDocumentManager fdm,
-                            FileTypeManagerImpl fileTypeManager,
-                            @NotNull MessageBus bus, ManagingFS managingFS) {
-    myFileDocumentManager = fdm;
-    myFileTypeManager = fileTypeManager;
-    myIsUnitTestMode = application.isUnitTestMode();
+  public FileBasedIndexImpl() {
+    myFileDocumentManager = FileDocumentManager.getInstance();
+    myFileTypeManager = ((FileTypeManagerImpl)FileTypeManager.getInstance());
+    myIsUnitTestMode = ApplicationManager.getApplication().isUnitTestMode();
 
-    final MessageBusConnection connection = bus.connect();
+    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
     connection.subscribe(PsiDocumentTransactionListener.TOPIC, new PsiDocumentTransactionListener() {
       @Override
       public void transactionStarted(@NotNull final Document doc, @NotNull final PsiFile file) {
@@ -255,17 +251,17 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       }
     });
 
-    application.addApplicationListener(new ApplicationListener() {
+    ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
       @Override
       public void writeActionStarted(@NotNull Object action) {
         myUpToDateIndicesForUnsavedOrTransactedDocuments.clear();
       }
     }, this);
 
-    myChangedFilesCollector = new ChangedFilesCollector(managingFS);
+    myChangedFilesCollector = new ChangedFilesCollector(ManagingFS.getInstance());
     myConnection = connection;
 
-    vfManager.addAsyncFileListener(myChangedFilesCollector, this);
+    VirtualFileManager.getInstance().addAsyncFileListener(myChangedFilesCollector, this);
 
     initComponent();
   }
@@ -2411,7 +2407,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     private final IndexConfiguration state = new IndexConfiguration();
     private final Set<ID<?, ?>> versionChangedIndexes = ContainerUtil.newConcurrentSet();
     private boolean currentVersionCorrupted;
-    private SerializationManagerEx mySerializationManagerEx;
 
     private void initAssociatedDataForExtensions() {
       Activity activity = ParallelActivity.PREPARE_APP_INIT.start("file index extensions iteration");
@@ -2463,7 +2458,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     protected void prepare() {
       initAssociatedDataForExtensions();
 
-      mySerializationManagerEx = SerializationManagerEx.getInstanceEx();
       File indexRoot = PathManager.getIndexRoot();
 
       PersistentIndicesConfiguration.loadConfiguration();
@@ -2474,7 +2468,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         FileUtil.deleteWithRenaming(indexRoot);
         indexRoot.mkdirs();
         // serialization manager is initialized before and use removed index root so we need to reinitialize it
-        mySerializationManagerEx.reinitializeNameStorage();
+        SerializationManagerEx.getInstanceEx().reinitializeNameStorage();
         ID.reinitializeDiskStorage();
         PersistentIndicesConfiguration.saveConfiguration();
         FileUtil.delete(corruptionMarker);
@@ -2526,11 +2520,12 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         saveRegisteredIndicesAndDropUnregisteredOnes(state.getIndexIDs());
 
         myFlushingFuture = FlushingDaemon.everyFiveSeconds(new Runnable() {
+          private final SerializationManagerEx mySerializationManager = SerializationManagerEx.getInstanceEx();
           private int lastModCount;
 
           @Override
           public void run() {
-            mySerializationManagerEx.flushNameStorage();
+            mySerializationManager.flushNameStorage();
 
             int currentModCount = myLocalModCount.get();
             if (lastModCount == currentModCount) {

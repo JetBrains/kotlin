@@ -26,7 +26,9 @@ import com.intellij.util.Processor;
 import com.intellij.util.Processors;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
-import com.intellij.util.indexing.impl.*;
+import com.intellij.util.indexing.impl.InputDataDiffBuilder;
+import com.intellij.util.indexing.impl.MapInputDataDiffBuilder;
+import com.intellij.util.indexing.impl.UpdateData;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
@@ -51,7 +53,7 @@ import java.util.concurrent.locks.ReadWriteLock;
   @Storage(value = StoragePathMacros.CACHE_FILE),
   @Storage(value = "stubIndex.xml", deprecated = true, roamingType = RoamingType.DISABLED)
 })
-public class StubIndexImpl extends StubIndex implements PersistentStateComponent<StubIndexState> {
+public final class StubIndexImpl extends StubIndex implements PersistentStateComponent<StubIndexState> {
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
   private static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.StubIndexImpl");
 
@@ -68,8 +70,8 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
 
   private StubIndexState myPreviouslyRegistered;
 
-  public StubIndexImpl(FileBasedIndex fileBasedIndex) {
-    myStubProcessingHelper = new StubProcessingHelper(fileBasedIndex);
+  public StubIndexImpl() {
+    myStubProcessingHelper = new StubProcessingHelper(FileBasedIndex.getInstance());
   }
 
   @Nullable
