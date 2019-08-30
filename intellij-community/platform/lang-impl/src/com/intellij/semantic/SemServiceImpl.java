@@ -111,13 +111,11 @@ public final class SemServiceImpl extends SemService {
     return map;
   }
 
-  @Override
-  public void clearCache() {
+  private void clearCache() {
     myCache.set(null);
   }
 
   @Override
-  @Nullable
   public <T extends SemElement> List<T> getSemElements(@NotNull SemKey<T> key, @NotNull final PsiElement psi) {
     List<T> cached = _getCachedSemElements(key, psi);
     if (cached != null) {
