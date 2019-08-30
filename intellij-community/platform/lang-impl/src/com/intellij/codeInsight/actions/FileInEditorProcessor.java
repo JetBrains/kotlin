@@ -223,8 +223,8 @@ public class FileInEditorProcessor {
 
   private boolean shouldNotify() {
     if (isInHeadlessMode()) return false;
-    EditorSettingsExternalizable.OptionSet editorOptions = EditorSettingsExternalizable.getInstance().getOptions();
-    return editorOptions.SHOW_NOTIFICATION_AFTER_REFORMAT_CODE_ACTION && myEditor != null && !myProcessSelectedText;
+    EditorSettingsExternalizable es = EditorSettingsExternalizable.getInstance();
+    return es.isShowNotificationAfterReformat() && myEditor != null && !myProcessSelectedText;
   }
 
   private static boolean isInHeadlessMode() {

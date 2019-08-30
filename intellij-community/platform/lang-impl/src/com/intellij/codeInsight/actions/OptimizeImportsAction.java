@@ -129,7 +129,7 @@ public class OptimizeImportsAction extends AnAction {
     }
     else{
       final OptimizeImportsProcessor optimizer = new OptimizeImportsProcessor(project, file);
-      if (editor != null && EditorSettingsExternalizable.getInstance().getOptions().SHOW_NOTIFICATION_AFTER_OPTIMIZE_IMPORTS_ACTION) {
+      if (editor != null && EditorSettingsExternalizable.getInstance().isShowNotificationAfterOptimizeImports()) {
         optimizer.setCollectInfo(true);
         optimizer.setPostRunnable(() -> {
           LayoutCodeInfoCollector collector = optimizer.getInfoCollector();
@@ -147,7 +147,7 @@ public class OptimizeImportsAction extends AnAction {
   }
 
   @Override
-  public void update(@NotNull AnActionEvent event){
+  public void update(@NotNull AnActionEvent event) {
     if (!LanguageImportStatements.INSTANCE.hasAnyExtensions()) {
       event.getPresentation().setVisible(false);
       return;

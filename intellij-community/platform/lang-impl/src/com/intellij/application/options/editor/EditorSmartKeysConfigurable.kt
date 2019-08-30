@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.editor
 
-import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.CodeInsightSettings.*
 import com.intellij.codeInsight.editorActions.SmartBackspaceMode
 import com.intellij.lang.CodeDocumentationAwareCommenter
@@ -21,7 +20,7 @@ import java.awt.event.KeyEvent
 import javax.swing.DefaultComboBoxModel
 
 val editorSettings = EditorSettingsExternalizable.getInstance()
-val codeInsightSettings = CodeInsightSettings.getInstance()
+val codeInsightSettings = getInstance()
 
 val myCbSmartHome = CheckboxDescriptor(ApplicationBundle.message("checkbox.smart.home"),
                                        PropertyBinding(editorSettings::isSmartHome, editorSettings::setSmartHome))

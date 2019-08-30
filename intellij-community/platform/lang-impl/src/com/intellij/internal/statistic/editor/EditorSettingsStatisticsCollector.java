@@ -70,8 +70,8 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     addBoolIfDiffers(set, es, esDefault, s -> s.isPreselectRename(), "preselectOnRename");
     addBoolIfDiffers(set, es, esDefault, s -> s.isShowInlineLocalDialog(), "inlineDialog");
     addBoolIfDiffers(set, es, esDefault, s -> s.isRefrainFromScrolling(), "minimizeScrolling");
-    addBoolIfDiffers(set, es, esDefault, s -> s.getOptions().SHOW_NOTIFICATION_AFTER_REFORMAT_CODE_ACTION, "afterReformatNotification");
-    addBoolIfDiffers(set, es, esDefault, s -> s.getOptions().SHOW_NOTIFICATION_AFTER_OPTIMIZE_IMPORTS_ACTION, "afterOptimizeNotification");
+    addBoolIfDiffers(set, es, esDefault, s -> s.isShowNotificationAfterReformat(), "afterReformatNotification");
+    addBoolIfDiffers(set, es, esDefault, s -> s.isShowNotificationAfterOptimizeImports(), "afterOptimizeNotification");
     addBoolIfDiffers(set, es, esDefault, s -> s.isSmartHome(), "smartHome");
     addBoolIfDiffers(set, es, esDefault, s -> s.isCamelWords(), "camelWords");
     addBoolIfDiffers(set, es, esDefault, s -> s.isShowParameterNameHints(), "editor.inlay.parameter.hints");
