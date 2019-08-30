@@ -24,21 +24,8 @@ abstract class FirAbstractQualifiedAccess(
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        calleeReference = calleeReference.transformSingle(transformer, data)
-        explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
-        dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
-        extensionReceiver = extensionReceiver.transformSingle(transformer, data)
+        super<FirModifiableQualifiedAccess>.transformChildren(transformer, data)
 
         return super<FirAnnotatedStatement>.transformChildren(transformer, data)
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
-        calleeReference = calleeReference.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
-        explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
-        return this
     }
 }

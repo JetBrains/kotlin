@@ -26,10 +26,7 @@ class FirQualifiedAccessExpressionImpl(
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        calleeReference = calleeReference.transformSingle(transformer, data)
-        explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
-        dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
-        extensionReceiver = extensionReceiver.transformSingle(transformer, data)
+        super<FirModifiableQualifiedAccess>.transformChildren(transformer, data)
 
         return super<FirQualifiedAccessExpression>.transformChildren(transformer, data)
     }

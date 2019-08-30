@@ -30,8 +30,12 @@ interface FirQualifiedAccess : FirResolvable {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         calleeReference.accept(visitor, data)
         explicitReceiver?.accept(visitor, data)
-        dispatchReceiver.accept(visitor, data)
-        extensionReceiver.accept(visitor, data)
+        if (dispatchReceiver !== explicitReceiver) {
+            dispatchReceiver.accept(visitor, data)
+        }
+        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
+            extensionReceiver.accept(visitor, data)
+        }
         super.acceptChildren(visitor, data)
     }
 
