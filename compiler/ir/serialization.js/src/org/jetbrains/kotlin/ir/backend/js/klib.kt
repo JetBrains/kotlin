@@ -222,12 +222,30 @@ private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): Gene
     )
 }
 
-private fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: JsIrLinker? = null) =
+fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: IrDeserializer? = null) =
     Psi2IrTranslator(languageVersionSettings, configuration).generateModuleFragment(this, files, deserializer)
 
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
 val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
+
+fun getModuleDescriptorByLibrary(
+    current: KotlinLibrary
+): ModuleDescriptorImpl {
+    val parts = loadKlibMetadataParts(current)
+    val isBuiltIns = parts.importedModules.isEmpty()
+    return loadKlibMetadata(
+        parts,
+        current,
+        isBuiltIns,
+        LookupTracker.DO_NOTHING,
+        LockBasedStorageManager("ModulesStructure"),
+        JsKlibMetadataVersion.INSTANCE,
+        LanguageVersionSettingsImpl.DEFAULT,
+        null,
+        emptyList()
+    )
+}
 
 private class ModulesStructure(
     private val project: Project,
@@ -298,7 +316,6 @@ private class ModulesStructure(
             getModuleDescriptor(builtInsDep)
         else
             null // null in case compiling builtInModule itself
-
 }
 
 private fun getDescriptorForElement(

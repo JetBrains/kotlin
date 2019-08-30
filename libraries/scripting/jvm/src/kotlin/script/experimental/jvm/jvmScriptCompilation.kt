@@ -25,6 +25,8 @@ class JvmDependencyFromClassLoader(val classLoaderGetter: ClassLoaderByConfigura
     fun getClassLoader(configuration: ScriptCompilationConfiguration): ClassLoader = classLoaderGetter(configuration)
 }
 
+data class JsDependency(val path: String) : ScriptDependency
+
 interface JvmScriptCompilationConfigurationKeys
 
 open class JvmScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptCompilationConfigurationKeys {
