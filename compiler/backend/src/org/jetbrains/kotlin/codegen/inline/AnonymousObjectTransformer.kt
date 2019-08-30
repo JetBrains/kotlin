@@ -499,11 +499,11 @@ class AnonymousObjectTransformer(
         //TODO: some of such parameters could be skipped - we should perform additional analysis
         val capturedLambdasToInline = HashMap<String, LambdaInfo>() //captured var of inlined parameter
         val allRecapturedParameters = ArrayList<CapturedParamDesc>()
-        val addCapturedNotAddOuter =
-            parentFieldRemapper.isRoot || parentFieldRemapper is InlinedLambdaRemapper && parentFieldRemapper.parent!!.isRoot
+        val addCapturedNotAddOuter = capturedLambdas.all { !it.hasDispatchReceiver } ||
+                parentFieldRemapper.isRoot || parentFieldRemapper is InlinedLambdaRemapper && parentFieldRemapper.parent!!.isRoot
         val alreadyAdded = HashMap<String, CapturedParamInfo>()
         for (info in capturedLambdas) {
-            if (addCapturedNotAddOuter) {
+            if (!info.hasDispatchReceiver || addCapturedNotAddOuter) {
                 for (desc in info.capturedVars) {
                     val key = desc.fieldName + "$$$" + desc.type.className
                     val alreadyAddedParam = alreadyAdded[key]
