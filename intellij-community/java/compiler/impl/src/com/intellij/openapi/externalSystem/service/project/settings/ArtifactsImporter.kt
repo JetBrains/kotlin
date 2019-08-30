@@ -4,11 +4,10 @@ package com.intellij.openapi.externalSystem.service.project.settings
 import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.BeforeRunTaskProvider
 import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.project.settings.ConfigurationData
 import com.intellij.openapi.externalSystem.project.PackagingModifiableModel
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModulePointer
 import com.intellij.openapi.module.ModulePointerManager
 import com.intellij.openapi.project.Project
@@ -16,6 +15,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
 import com.intellij.packaging.artifacts.*
 import com.intellij.packaging.elements.CompositePackagingElement
+import com.intellij.packaging.elements.PackagingElement
 import com.intellij.packaging.impl.artifacts.PlainArtifactType
 import com.intellij.packaging.impl.elements.*
 import com.intellij.packaging.impl.run.BuildArtifactsBeforeRunTask
@@ -23,6 +23,7 @@ import com.intellij.packaging.impl.run.BuildArtifactsBeforeRunTaskProvider
 import com.intellij.util.ObjectUtils.consumeIfCast
 
 class ArtifactsImporter: ConfigurationHandler {
+  private val LOG = Logger.getInstance(ArtifactsImporter::class.java)
 
   override fun apply(project: Project, modelsProvider: IdeModifiableModelsProvider, configuration: ConfigurationData) {
     val artifacts = configuration.find("ideArtifacts") as? List<*> ?: return
@@ -44,18 +45,42 @@ class ArtifactsImporter: ConfigurationHandler {
                                            .findArtifact(name)?.let { modifiableModel.getOrCreateModifiableArtifact(it) }
                                          ?: modifiableModel.addArtifact(name, type)
       val rootElement = type.createRootElement(name)
-      populateArtifact(project, rootElement, artifactConfig, postponedOps)
+      populateArtifact(project, modelsProvider, rootElement, artifactConfig, postponedOps)
       artifact.rootElement = rootElement
     }
 
     postponedOps.forEach { it.invoke(modifiableModel) }
   }
 
-  private fun populateArtifact(project: Project, element: CompositePackagingElement<*>,
+  private fun populateArtifact(project: Project,
+                               modelsProvider: IdeModifiableModelsProvider,
+                               element: CompositePackagingElement<*>,
                                config: Map<*, *>,
                                postponedOps: MutableList<(ModifiableArtifactModel) -> Unit>) {
-    consumeIfCast(config["children"], List::class.java) {
-      it.forEach { child ->
+    fun createModulePointer(moduleName: String): ModulePointer {
+      val module = modelsProvider.findIdeModule(moduleName)
+      return if (module != null) {
+        ModulePointerManager.getInstance(project).create(module)
+      } else {
+        LOG.warn("Artifact `${element.name}`: unable to find module `$moduleName`");
+        ModulePointerManager.getInstance(project).create(moduleName)
+      }
+    }
+
+    fun addModuleElement(config: Map<*, *>, provider: (ModulePointer) -> PackagingElement<*>) {
+      val moduleName = config["moduleName"] as? String
+      if (moduleName == null) {
+        LOG.warn("Artifact `${element.name}`: moduleName missed for $config")
+        return
+      }
+
+      val modulePointer = createModulePointer(moduleName)
+      val child = provider(modulePointer)
+      element.addOrFindChild(child)
+    }
+
+    consumeIfCast(config["children"], List::class.java) { children ->
+      children.forEach { child ->
         consumeIfCast(child, Map::class.java) child@{ config ->
           val type = config["type"] as? String ?: return@child
           when (type) {
@@ -63,13 +88,13 @@ class ArtifactsImporter: ConfigurationHandler {
 
             "DIR" -> {
               val directory = DirectoryPackagingElement(config["name"] as? String ?: "no_name")
-              populateArtifact(project, directory, config,postponedOps)
+              populateArtifact(project, modelsProvider, directory, config, postponedOps)
               element.addOrFindChild(directory)
             }
 
             "ARCHIVE" -> {
               val archive = ArchivePackagingElement(config["name"] as? String ?: "no_name")
-              populateArtifact(project, archive, config, postponedOps)
+              populateArtifact(project, modelsProvider, archive, config, postponedOps)
               element.addOrFindChild(archive)
             }
 
@@ -87,32 +112,11 @@ class ArtifactsImporter: ConfigurationHandler {
               }
             }
 
-            "MODULE_OUTPUT" -> {
-              val moduleName = config["moduleName"] as? String
-              project.ifModuleFound(moduleName) { module ->
-                val pointer: ModulePointer = ModulePointerManager.getInstance(project).create(module)
-                val moduleOutput = ProductionModuleOutputPackagingElement(project, pointer)
-                element.addOrFindChild(moduleOutput)
-              }
-            }
+            "MODULE_OUTPUT" -> addModuleElement(config) { ProductionModuleOutputPackagingElement(project, it) }
 
-            "MODULE_TEST_OUTPUT" -> {
-              val moduleName = config["moduleName"] as? String
-              project.ifModuleFound(moduleName) { module ->
-                val pointer: ModulePointer = ModulePointerManager.getInstance(project).create(module)
-                val moduleOutput = TestModuleOutputPackagingElement(project, pointer)
-                element.addOrFindChild(moduleOutput)
-              }
-            }
+            "MODULE_TEST_OUTPUT" -> addModuleElement(config) { TestModuleOutputPackagingElement(project, it) }
 
-            "MODULE_SRC" -> {
-              val moduleName = config["moduleName"] as? String
-              project.ifModuleFound(moduleName) { module ->
-                val pointer: ModulePointer = ModulePointerManager.getInstance(project).create(module)
-                val moduleOutput = ProductionModuleSourcePackagingElement(project, pointer)
-                element.addOrFindChild(moduleOutput)
-              }
-            }
+            "MODULE_SRC" ->  addModuleElement(config) { ProductionModuleSourcePackagingElement(project, it) }
 
             "FILE" -> {
               consumeIfCast(config["sourceFiles"], List::class.java) {
@@ -151,6 +155,8 @@ class ArtifactsImporter: ConfigurationHandler {
                 }
               }
             }
+
+            else -> LOG.warn("Artifact `${element.name}`: unsupported artifact type `$type` in $config")
           }
         }
       }
@@ -160,10 +166,6 @@ class ArtifactsImporter: ConfigurationHandler {
   private fun Project.findLibraryByNameSuffix(nameSuffix: String): Library? {
     val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(this@findLibraryByNameSuffix)
     return libraryTable.libraries.find { it.name?.endsWith(nameSuffix) ?: false }
-  }
-
-  private fun Project.ifModuleFound(moduleName: String?, processor: (Module) -> Unit) {
-    if (moduleName != null) { ModuleManager.getInstance(this@ifModuleFound).findModuleByName(moduleName)?.let { processor(it) } }
   }
 }
 
