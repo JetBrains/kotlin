@@ -13,5 +13,5 @@ FILE: constructor.kt
         ^foo R|/C.C|()
     }
     public final fun bar(): R|C| {
-        ^bar D|R|/foo|()|.R|/C.create|()
+        ^bar R|/foo|().R|/C.create|()
     }

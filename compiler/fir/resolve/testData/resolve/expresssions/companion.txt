@@ -18,7 +18,7 @@ FILE: companion.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            D|this@R|/A.Companion||.R|/A.Companion.foo|()
+            this@R|/A.Companion|.R|/A.Companion.foo|()
         }
 
     }
@@ -42,10 +42,10 @@ FILE: companion.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        D|Q|A||.R|/A.Companion.foo|()
-        D|Q|B||.R|/A.bar|()
-        D|Q|B||.R|/B.Companion.baz|()
-        lval x: R|kotlin/String| = D|Q|A||.R|/A.Companion.D|
-        lval y: R|kotlin/String| = D|Q|B||.R|/B.Companion.C|
+        Q|A|.R|/A.Companion.foo|()
+        Q|B|.R|/A.bar|()
+        Q|B|.R|/B.Companion.baz|()
+        lval x: R|kotlin/String| = Q|A|.R|/A.Companion.D|
+        lval y: R|kotlin/String| = Q|B|.R|/B.Companion.C|
         lval z: <ERROR TYPE REF: Unresolved name: D> = Q|B|.<Unresolved name: D>#
     }

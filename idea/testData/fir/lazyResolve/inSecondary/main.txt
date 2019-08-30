@@ -5,7 +5,7 @@ FILE: main.kt
 
         public constructor(): R|Foo| {
             super<R|kotlin/Any|>()
-            R|/Foo.x| = Int(42)
+            this@R|/Foo|.R|/Foo.x| = Int(42)
         }
 
     }

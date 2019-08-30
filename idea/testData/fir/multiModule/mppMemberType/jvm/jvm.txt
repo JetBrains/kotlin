@@ -18,14 +18,14 @@ FILE: jvm.kt
         }
 
         public final fun useMember(): R|kotlin/Unit| {
-            D|this@R|/MyList||.R|/MyList.get|(Int(1))
-            D|this@R|/MyList||.R|/MyList.set|(Int(2), Int(3))
+            this@R|/MyList|.R|/MyList.get|(Int(1))
+            this@R|/MyList|.R|/MyList.set|(Int(2), Int(3))
         }
 
     }
     public final fun useList(list: R|MyList|): R|kotlin/Unit| {
-        D|R|<local>/list||.R|/MyList.get|(Int(1))
-        D|R|<local>/list||.R|/MyList.set|(Int(2), Int(3))
+        R|<local>/list|.R|/MyList.get|(Int(1))
+        R|<local>/list|.R|/MyList.set|(Int(2), Int(3))
     }
     public final class DerivedWrapper : R|Wrapper| {
         public constructor(): R|DerivedWrapper| {
@@ -33,8 +33,8 @@ FILE: jvm.kt
         }
 
         public final fun use(): R|kotlin/Unit| {
-            D|D|this@R|/Wrapper||.R|/Wrapper.list||.R|/MyList.get|(Int(1))
-            D|D|this@R|/Wrapper||.R|/Wrapper.list||.R|/MyList.set|(Int(2), Int(3))
+            this@R|/Wrapper|.R|/Wrapper.list|.R|/MyList.get|(Int(1))
+            this@R|/Wrapper|.R|/Wrapper.list|.R|/MyList.set|(Int(2), Int(3))
         }
 
     }

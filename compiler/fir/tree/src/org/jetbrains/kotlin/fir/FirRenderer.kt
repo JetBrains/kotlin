@@ -826,27 +826,34 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val dispatchReceiver = qualifiedAccess.dispatchReceiver
         val extensionReceiver = qualifiedAccess.extensionReceiver
-        if (dispatchReceiver !is FirNoReceiverExpression) {
-            print("D|")
-            dispatchReceiver.accept(this)
-            print("|")
-        }
-        if (extensionReceiver !is FirNoReceiverExpression) {
-            print("E|")
-            extensionReceiver.accept(this)
-            print("|")
-        }
-        if (explicitReceiver != null) {
-            if (explicitReceiver !== dispatchReceiver && explicitReceiver !== extensionReceiver) {
+        var hasSomeReceiver = true
+        when {
+            dispatchReceiver !is FirNoReceiverExpression && extensionReceiver !is FirNoReceiverExpression -> {
+                print("(")
+                dispatchReceiver.accept(this)
+                print(", ")
+                extensionReceiver.accept(this)
+                print(")")
+            }
+            dispatchReceiver !is FirNoReceiverExpression -> {
+                dispatchReceiver.accept(this)
+            }
+            extensionReceiver !is FirNoReceiverExpression -> {
+                extensionReceiver.accept(this)
+            }
+            explicitReceiver != null -> {
                 explicitReceiver.accept(this)
             }
+            else -> {
+                hasSomeReceiver = false
+            }
+        }
+        if (hasSomeReceiver) {
             if (qualifiedAccess.safe) {
                 print("?.")
             } else {
                 print(".")
             }
-        } else if (dispatchReceiver !is FirNoReceiverExpression || extensionReceiver !is FirNoReceiverExpression) {
-            print(".")
         }
     }
 

@@ -27,7 +27,7 @@ FILE: receiverConsistency.kt
     public final fun test(): R|kotlin/Unit| {
         lval c: R|C| = R|/C.C|()
         R|/foo|()
-        D|R|<local>/c||.R|/C.bar|()
+        R|<local>/c|.R|/C.bar|()
         lval err: R|C| = R|/C.C|()
         R|<local>/err|.<Unresolved name: foo>#()
     }

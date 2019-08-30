@@ -47,11 +47,11 @@ FILE: qualifiedExpressions.kt
         public get(): R|kotlin/Int|
     public final fun main(): R|kotlin/Unit| {
         Q|a/b|.R|a/b/foo|()
-        D|Q|a/b/C||.R|a/b/C.Companion.foo|()
-        D|Q|a/b/C.D||.R|a/b/C.D.foo|()
+        Q|a/b/C|.R|a/b/C.Companion.foo|()
+        Q|a/b/C.D|.R|a/b/C.D.foo|()
         lval x: R|kotlin/Int| = Q|a/b|.R|a/b/f|
-        D|Q|a/b/C||.R|a/b/C.Companion.foo|()
-        D|R|a/b/C.C|()|.R|a/b/C.foo|()
+        Q|a/b/C|.R|a/b/C.Companion.foo|()
+        R|a/b/C.C|().R|a/b/C.foo|()
         lval e: R|a/b/E| = Q|a/b/E.entry|
         lval e1: R|a/b/E| = Q|a/b/E.entry|
     }

@@ -1,4 +1,4 @@
 FILE: user.kt
     public final fun foo(hello: R|hello/Hello|): R|kotlin/String| {
-        ^foo D|R|<local>/hello||.R|hello/Hello.msg|
+        ^foo R|<local>/hello|.R|hello/Hello.msg|
     }

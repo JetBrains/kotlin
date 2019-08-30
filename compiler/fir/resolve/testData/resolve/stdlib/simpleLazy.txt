@@ -4,13 +4,13 @@ FILE: simpleLazy.kt
     }
     )
         public get(): R|kotlin/String| {
-            ^ E|D|/x||.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/x|)
+            ^ D|/x|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/x|)
         }
     public final fun foo(): R|kotlin/Unit| {
-        D|R|/x||.R|kotlin/String.length|
+        R|/x|.R|kotlin/String.length|
         lval y: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
             String(Bye)
         }
         )
-        D|R|<local>/y||.R|kotlin/String.length|
+        R|<local>/y|.R|kotlin/String.length|
     }

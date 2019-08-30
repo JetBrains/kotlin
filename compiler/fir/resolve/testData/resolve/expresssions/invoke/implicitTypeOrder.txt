@@ -5,7 +5,7 @@ FILE: implicitTypeOrder.kt
         }
 
         public final fun bar(): R|A| {
-            ^bar D|R|/foo||.R|/A.invoke|()
+            ^bar R|/foo|.R|/A.invoke|()
         }
 
         public final fun invoke(): R|A| {

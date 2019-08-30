@@ -24,12 +24,12 @@ FILE: importedReceiver.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        E|Int(42)|.R|/foo|<R|kotlin/Int|>()
-        E|String()|.R|/foo|<R|kotlin/String|>()
-        D|this@R|/My||E|Int(42)|.R|/My.bar|<R|kotlin/Int|>()
-        D|this@R|/My||E|String()|.R|/My.bar|<R|kotlin/String|>()
-        D|this@R|/My||.R|/My.baz|()
-        D|this@R|/My||E|Boolean(true)|.R|/My.gau|()
-        D|this@R|/Your||.R|FakeOverride</Your.wat: R|kotlin/Unit|>|()
+        Int(42).R|/foo|<R|kotlin/Int|>()
+        String().R|/foo|<R|kotlin/String|>()
+        (this@R|/My|, Int(42)).R|/My.bar|<R|kotlin/Int|>()
+        (this@R|/My|, String()).R|/My.bar|<R|kotlin/String|>()
+        this@R|/My|.R|/My.baz|()
+        (this@R|/My|, Boolean(true)).R|/My.gau|()
+        this@R|/Your|.R|FakeOverride</Your.wat: R|kotlin/Unit|>|()
         Boolean(false).<Inapplicable(WRONG_RECEIVER): [/Your.watwat]>#()
     }

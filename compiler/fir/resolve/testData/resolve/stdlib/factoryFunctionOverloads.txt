@@ -18,7 +18,7 @@ FILE: factoryFunctionOverloads.kt
         , R|<local>/flag|)
     }
     public final fun A(c: R|C|, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {
-        ^A R|/A.A|(D|R|<local>/c||.R|/C.b|, R|<local>/flag|)
+        ^A R|/A.A|(R|<local>/c|.R|/C.b|, R|<local>/flag|)
     }
     public final class A : R|kotlin/Any| {
         public constructor(b: R|B|, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {

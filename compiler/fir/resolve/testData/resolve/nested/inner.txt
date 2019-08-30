@@ -5,13 +5,13 @@ FILE: inner.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            D|this@R|/Owner||.R|/Owner.bar|()
-            D|this@R|/Owner||.R|/Owner.bar|()
+            this@R|/Owner|.R|/Owner.bar|()
+            this@R|/Owner|.R|/Owner.bar|()
         }
 
         public final fun bar(): R|kotlin/Unit| {
             lval i: R|Owner.Inner| = R|/Owner.Inner.Inner|()
-            D|R|<local>/i||.R|/Owner.Inner.baz|()
+            R|<local>/i|.R|/Owner.Inner.baz|()
         }
 
         public final fun err(): R|kotlin/Unit| {
@@ -23,15 +23,15 @@ FILE: inner.kt
             }
 
             public final fun baz(): R|kotlin/Unit| {
-                D|this@R|/Owner.Inner||.R|/Owner.Inner.gau|()
-                D|this@R|/Owner.Inner||.R|/Owner.Inner.gau|()
+                this@R|/Owner.Inner|.R|/Owner.Inner.gau|()
+                this@R|/Owner.Inner|.R|/Owner.Inner.gau|()
             }
 
             public final fun gau(): R|kotlin/Unit| {
                 lval o: R|Owner| = R|/Owner.Owner|()
-                D|R|<local>/o||.R|/Owner.foo|()
-                D|this@R|/Owner||.R|/Owner.foo|()
-                D|this@R|/Owner||.R|/Owner.foo|()
+                R|<local>/o|.R|/Owner.foo|()
+                this@R|/Owner|.R|/Owner.foo|()
+                this@R|/Owner|.R|/Owner.foo|()
                 this@R|/Owner.Inner|.<Unresolved name: err>#()
             }
 
@@ -40,9 +40,9 @@ FILE: inner.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval o: R|Owner| = R|/Owner.Owner|()
-        D|R|<local>/o||.R|/Owner.foo|()
+        R|<local>/o|.R|/Owner.foo|()
         lval err: <ERROR TYPE REF: Unresolved name: Inner> = Q|Owner|.<Unresolved name: Inner>#()
         R|<local>/err|.<Unresolved name: baz>#()
-        lval i: R|Owner.Inner| = D|R|<local>/o||.R|/Owner.Inner.Inner|()
-        D|R|<local>/i||.R|/Owner.Inner.gau|()
+        lval i: R|Owner.Inner| = R|<local>/o|.R|/Owner.Inner.Inner|()
+        R|<local>/i|.R|/Owner.Inner.gau|()
     }

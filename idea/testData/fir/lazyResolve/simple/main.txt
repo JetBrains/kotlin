@@ -8,5 +8,5 @@ FILE: main.kt
         lval y: <implicit> = Double(2.0)
     }
     public final fun bar(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Int| {
-        ^bar D|R|<local>/x||.R|kotlin/Int.plus|(R|<local>/y|)
+        ^bar R|<local>/x|.R|kotlin/Int.plus|(R|<local>/y|)
     }

@@ -23,7 +23,7 @@ FILE: common.kt
         }
 
         public open fun baz(arg: R|kotlin/CharSequence|): R|kotlin/String| {
-            ^baz D|R|<local>/arg||.R|kotlin/Any.toString|()
+            ^baz R|<local>/arg|.R|kotlin/Any.toString|()
         }
 
     }

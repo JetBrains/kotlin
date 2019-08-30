@@ -8,7 +8,7 @@ FILE: sameReceiver.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            D|this@R|/Foo||E|this@R|/Foo||.R|/Foo.bar|()
+            (this@R|/Foo|, this@R|/Foo|).R|/Foo.bar|()
         }
 
     }
