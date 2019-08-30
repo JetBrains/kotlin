@@ -58,6 +58,11 @@ dependencies {
     }
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
+
+    if (Ide.AS36.orHigher()) {
+        testRuntime(intellijPluginDep("android-layoutlib"))
+        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
+    }
 }
 
 sourceSets {
