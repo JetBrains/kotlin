@@ -175,7 +175,12 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     ): FreshVariableNewTypeSubstitutor {
         val typeParameters = candidateDescriptor.typeParameters
 
-        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(it, isStub = it.isVariadic) }
+        val freshTypeVariables = typeParameters.map {
+            val newVariable = TypeVariableFromCallableDescriptor(it)
+            if (it.isVariadic)
+                newVariable.isStub = true
+            newVariable
+        }
 
         val toFreshVariables = FreshVariableNewTypeSubstitutor(freshTypeVariables)
 
@@ -441,11 +446,10 @@ internal object CreateVariadicTypeVariablesResolutionPart : ResolutionPart() {
         val variadicTypeParameter = candidateDescriptor.typeParameters.singleOrNull { it.isVariadic } ?: return
         val packTypeVariableType = resolvedCall.substitutor.safeSubstitute(variadicTypeParameter.defaultType)
 
-        val packTypeVariable: TypeVariableFromCallableDescriptor =
-            csBuilder.currentStorage().allTypeVariables.values.singleOrNull { typeVariable ->
-                typeVariable is TypeVariableFromCallableDescriptor && typeVariable.defaultType == packTypeVariableType
-            }.safeAs()
-                ?: error { "Type variable for parameter $variadicTypeParameter is not found in constraint storage" }
+        val packTypeVariable = csBuilder.currentStorage().allTypeVariables.values
+            .filterIsInstance<TypeVariableFromCallableDescriptor>()
+            .singleOrNull { it.defaultType == packTypeVariableType }
+            ?: error("Type variable for parameter $variadicTypeParameter is not found in constraint storage")
 
         prepareNewVariableForVariadicArgument(argument, parameter, variadicTypeParameter, packTypeVariable)
     }
@@ -462,6 +466,13 @@ internal object CreateVariadicTypeVariablesResolutionPart : ResolutionPart() {
         val varargTypeIsVariadic = parameter.varargElementType?.contains { it == variadicTypeParameter.defaultType } ?: false
         if (!varargTypeIsVariadic)
             return
+
+        if (argument.isSpread) {
+            variadicPackTypeVariable.isStub = false
+            return
+        } else {
+            variadicPackTypeVariable.isStub = true
+        }
 
         val freshVariable = VariadicTypeVariableFromCallableDescriptor(variadicPackTypeVariable, resolvedCall.variadicTypeVariables.size)
         resolvedCall.variadicTypeVariables.add(freshVariable)

@@ -31,12 +31,13 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 class TypeVariableTypeConstructor(
     private val builtIns: KotlinBuiltIns,
     val debugName: String,
-    val isStub: Boolean = false
+    var isStub: Boolean = false
 ) : TypeConstructor,
     NewTypeVariableConstructor {
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
@@ -53,8 +54,13 @@ class TypeVariableTypeConstructor(
     override fun toString() = "TypeVariable($debugName)"
 }
 
-sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String, val isStub: Boolean = false) : TypeVariableMarker {
-    val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name, isStub)
+sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) : TypeVariableMarker {
+    val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
+    var isStub: Boolean = false
+        set(value) {
+            field = value
+            freshTypeConstructor.safeAs<TypeVariableTypeConstructor>()!!.isStub = value
+        }
 
     // member scope is used if we have receiver with type TypeVariable(T)
     // todo add to member scope methods from supertypes for type variable
@@ -69,9 +75,8 @@ sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String, val isStub:
 }
 
 class TypeVariableFromCallableDescriptor(
-    val originalTypeParameter: TypeParameterDescriptor,
-    isStub: Boolean = false
-) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier, isStub) {
+    val originalTypeParameter: TypeParameterDescriptor
+) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier) {
     override fun hasOnlyInputTypesAnnotation(): Boolean = originalTypeParameter.hasOnlyInputTypesAnnotation()
 }
 

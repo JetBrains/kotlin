@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference
+// WITH_RUNTIME
 
 fun <R, vararg Ts> variadic (
     vararg arguments: *Ts,

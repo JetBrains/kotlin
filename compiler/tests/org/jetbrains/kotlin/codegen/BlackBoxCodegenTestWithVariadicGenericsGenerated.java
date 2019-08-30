@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxCodegenTestWithVariadicGenericsGenerated extends AbstractBlackBoxCodegenTestWithVariadicGenerics {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
     }
 
     @TestMetadata("24args.kt")
@@ -31,7 +31,12 @@ public class BlackBoxCodegenTestWithVariadicGenericsGenerated extends AbstractBl
     }
 
     public void testAllFilesPresentInVariadicGenerics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/variadicGenerics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/variadicGenerics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+    }
+
+    @TestMetadata("chainedCalls.kt")
+    public void testChainedCalls() throws Exception {
+        runTest("compiler/testData/codegen/variadicGenerics/chainedCalls.kt");
     }
 
     @TestMetadata("lambdaWithBoxedArgs.kt")

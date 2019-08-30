@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.replaceAll
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.findAll
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.lang.AssertionError
 
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,

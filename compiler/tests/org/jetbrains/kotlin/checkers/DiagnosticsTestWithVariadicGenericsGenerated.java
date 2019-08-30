@@ -34,6 +34,11 @@ public class DiagnosticsTestWithVariadicGenericsGenerated extends AbstractDiagno
         runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/boxed.kt");
     }
 
+    @TestMetadata("chainedCalls.kt")
+    public void testChainedCalls() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/chainedCalls.kt");
+    }
+
     @TestMetadata("emptyArgumentList.kt")
     public void testEmptyArgumentList() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/emptyArgumentList.kt");

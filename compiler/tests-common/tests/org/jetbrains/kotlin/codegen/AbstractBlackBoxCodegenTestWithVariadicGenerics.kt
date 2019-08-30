@@ -25,11 +25,5 @@ open class AbstractBlackBoxCodegenTestWithVariadicGenerics : AbstractBlackBoxCod
 //        configuration.put(JVMConfigurationKeys.IR, true)
     }
 
-    override fun getBackend() = TargetBackend.ANY
-//    override fun getBackend() = TargetBackend.JVM_IR
-
-    override fun getClassPathURLs(): Array<out URL> {
-        val urls = super.getClassPathURLs()
-        return urls
-    }
+    override fun getBackend() = TargetBackend.JVM
 }

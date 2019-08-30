@@ -160,7 +160,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBlackBoxCodegenTestWithVariadicGenerics> {
-            model("codegen/variadicGenerics", targetBackend = TargetBackend.ANY)
+            model("codegen/variadicGenerics", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractLightAnalysisModeTest> {

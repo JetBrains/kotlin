@@ -1,5 +1,6 @@
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
+// IGNORE_BACKEND: JVM
 
 class Box<T>(val value: T)
 

@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference
+// WITH_RUNTIME
 
 fun box(): String {
     wrapArgsInTuple()

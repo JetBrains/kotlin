@@ -49,7 +49,7 @@ object TupleType {
         return KotlinTypeFactory.simpleNotNullType(
             annotations = Annotations.EMPTY,
             arguments = arguments,
-            descriptor = getTupleClassDescriptor(moduleDescriptor) ?: error { "Tuple class descriptor not found" }
+            descriptor = getTupleClassDescriptor(moduleDescriptor) ?: error("Tuple class descriptor not found")
         )
     }
 

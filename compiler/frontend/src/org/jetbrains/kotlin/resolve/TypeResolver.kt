@@ -403,16 +403,12 @@ class TypeResolver(
                     c.trace.report(UNSUPPORTED.on(tupleType, "Spread operator with bare type is not allowed"))
                     type(ErrorUtils.createUnresolvedType(tupleType.getDebugText(), emptyList()))
                 } else {
-                    val tupleVarargParameterType = getTupleVarargParameterType(baseType.actualType)
+                    val tupleVarargParameterType = TupleType.createType(
+                        moduleDescriptor,
+                        TypeProjectionImpl(INVARIANT, baseType.actualType)
+                    )
                     type(tupleVarargParameterType)
                 }
-            }
-
-            private fun getTupleVarargParameterType(elementType: KotlinType): KotlinType {
-                val tupleClassDescriptor = TupleType.getTupleClassDescriptor(moduleDescriptor)
-                    ?: error("Tuple class descriptor not found")
-                val types = listOf(TypeProjectionImpl(Variance.INVARIANT, elementType))
-                return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, tupleClassDescriptor, types)
             }
         })
 
