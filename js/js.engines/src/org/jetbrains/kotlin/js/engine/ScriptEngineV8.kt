@@ -3,20 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.interop
+package org.jetbrains.kotlin.js.engine
 
 import com.eclipsesource.v8.V8
 import com.eclipsesource.v8.V8Array
 import com.eclipsesource.v8.V8Object
 import com.eclipsesource.v8.utils.V8ObjectUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-class ScriptEngineV8 : ScriptEngine {
-    companion object {
-        // It's important that this is not created per test, but rather per process.
-        val LIBRARY_PATH_BASE = KotlinTestUtils.tmpDirForReusableFolder("j2v8_library_path").path
-    }
+class ScriptEngineV8(LIBRARY_PATH_BASE: String) : ScriptEngine {
 
     override fun <T> releaseObject(t: T) {
         (t as? V8Object)?.release()
@@ -82,7 +77,7 @@ class ScriptEngineV8 : ScriptEngine {
     }
 }
 
-class ScriptEngineV8Lazy : ScriptEngine {
+class ScriptEngineV8Lazy(LIBRARY_PATH_BASE: String) : ScriptEngine {
     override fun <T> eval(script: String) = engine.eval<T>(script)
 
     override fun saveState() = engine.saveState()
@@ -99,5 +94,5 @@ class ScriptEngineV8Lazy : ScriptEngine {
 
     override fun restoreState() = engine.restoreState()
 
-    private val engine by lazy { ScriptEngineV8() }
+    private val engine by lazy { ScriptEngineV8(LIBRARY_PATH_BASE) }
 }
