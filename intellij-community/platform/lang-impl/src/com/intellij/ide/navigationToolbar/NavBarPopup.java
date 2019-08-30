@@ -1,11 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.navigationToolbar;
 
+import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.ide.navigationToolbar.ui.NavBarUIManager;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventId;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventLogger;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Queryable;
 import com.intellij.openapi.util.Disposer;
@@ -169,7 +172,7 @@ public class NavBarPopup extends LightweightHint implements Disposable{
     map.put(ListActions.Left.ID, createMoveAction(panel, -1));
     map.put(ListActions.Right.ID, createMoveAction(panel, 1));
     installEnterAction(list, panel, KeyEvent.VK_ENTER);
-    installEscapeAction(list, panel, KeyEvent.VK_ESCAPE);
+    new CancelPopupAction(panel).registerCustomShortcutSet(KeyEvent.VK_ESCAPE, 0, list);
     JComponent component = ListWithFilter.wrap(list, new NavBarListWrapper(list), o -> panel.getPresentation().getPresentableText(o));
     component.putClientProperty(JBLIST_KEY, list);
     return component;
@@ -185,14 +188,18 @@ public class NavBarPopup extends LightweightHint implements Disposable{
     list.registerKeyboardAction(action, KeyStroke.getKeyStroke(keyCode, 0), JComponent.WHEN_FOCUSED);
   }
 
-  private static void installEscapeAction(JBList list, NavBarPanel panel, int keyCode) {
-    AbstractAction action = new AbstractAction() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        panel.cancelPopup();
-      }
-    };
-    list.registerKeyboardAction(action, KeyStroke.getKeyStroke(keyCode, 0), JComponent.WHEN_FOCUSED);
+  static class CancelPopupAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
+
+    private final NavBarPanel myPanel;
+
+    private CancelPopupAction(NavBarPanel panel) {
+      myPanel = panel;
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      myPanel.cancelPopup();
+    }
   }
 
   @NotNull
