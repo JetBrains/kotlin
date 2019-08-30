@@ -142,20 +142,20 @@ sealed class ResultValue(val scriptClass: KClass<*>? = null, val scriptInstance:
      * @param value actual result value
      * @param type name of the result type
      * @param scriptClass the loaded class of the script
-     * @param scriptInstance instance of the script class
+     * @param scriptInstance instance of the script class. Should be nullable since on some platforms (e.g. JS) there is no actual instance
      */
-    class Value(val name: String, val value: Any?, val type: String, scriptClass: KClass<*>, scriptInstance: Any) :
+    class Value(val name: String, val value: Any?, val type: String, scriptClass: KClass<*>?, scriptInstance: Any?) :
         ResultValue(scriptClass, scriptInstance) {
 
         override fun toString(): String = "$name: $type = $value"
     }
 
     /**
-     * The result value representing unit result, e.g. when the script ends with a statement
+     * The result value representing unit result, e.g. when the script ends with a statement.
      * @param scriptClass the loaded class of the script
-     * @param scriptInstance instance of the script class
+     * @param scriptInstance instance of the script class. Please note it's nullable for symmetry with `Value`
      */
-    class Unit(scriptClass: KClass<*>, scriptInstance: Any) : ResultValue(scriptClass, scriptInstance) {
+    class Unit(scriptClass: KClass<*>, scriptInstance: Any?) : ResultValue(scriptClass, scriptInstance) {
         override fun toString(): String = "Unit"
     }
 
