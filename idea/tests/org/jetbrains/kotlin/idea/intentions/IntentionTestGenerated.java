@@ -1216,6 +1216,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addNameToArgument/linkedList.kt");
         }
 
+        @TestMetadata("mixingPositionedAndNamed.kt")
+        public void testMixingPositionedAndNamed() throws Exception {
+            runTest("idea/testData/intentions/addNameToArgument/mixingPositionedAndNamed.kt");
+        }
+
         @TestMetadata("notInsideIndices.kt")
         public void testNotInsideIndices() throws Exception {
             runTest("idea/testData/intentions/addNameToArgument/notInsideIndices.kt");
