@@ -20,13 +20,10 @@ internal class ApplicationPathMacroManager : PathMacroManager(null)
 
 const val APP_CONFIG = "\$APP_CONFIG$"
 
-class ApplicationStoreImpl(pathMacroManager: PathMacroManager?) : ComponentStoreWithExtraComponents() {
+class ApplicationStoreImpl : ComponentStoreWithExtraComponents() {
   private val application = ApplicationManager.getApplication()
 
-  @Suppress("unused")
-  constructor() : this(PathMacroManager.getInstance(ApplicationManager.getApplication()))
-
-  override val storageManager = ApplicationStorageManager(application, pathMacroManager)
+  override val storageManager = ApplicationStorageManager(application, PathMacroManager.getInstance(ApplicationManager.getApplication()))
 
   // number of app components require some state, so, we load default state in test mode
   override val loadPolicy: StateLoadPolicy
