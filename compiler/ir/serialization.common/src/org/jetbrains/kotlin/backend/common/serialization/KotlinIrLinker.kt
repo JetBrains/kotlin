@@ -589,7 +589,7 @@ abstract class KotlinIrLinker(
         }
     }
 
-    private fun deserializeIrModuleHeader(
+    fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
         deserializationStrategy: DeserializationStrategy = DeserializationStrategy.ONLY_REFERENCED
     ): IrModuleFragment {
