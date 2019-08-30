@@ -61,9 +61,11 @@ class BlackListDialog(val language: Language, private val patternToAdd: String? 
 
     return panel {
       row {
-        right {
-          link("Reset") {
-            setLanguageBlacklistToDefault(language)
+        row {
+          right {
+            link("Reset") {
+              setLanguageBlacklistToDefault(language)
+            }
           }
         }
 
