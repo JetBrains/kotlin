@@ -1,16 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.codeStyle;
 
-import com.intellij.ide.ui.search.SearchUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -46,7 +43,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
   private final Map<String, String> myRenamedFields = new THashMap<>();
   private final Map<String, String> myRemappedGroups = new THashMap<>();
 
-  private MySearchStringProvider mySearchStringProvider;
+  private SpeedSearchHelper mySearchHelper;
 
   public OptionTreeWithPreviewPanel(CodeStyleSettings settings) {
     super(settings);
@@ -184,7 +181,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
                lastPathComponent.toString();
       },
       true);
-    mySearchStringProvider = new MySearchStringProvider(speedSearch);
+    mySearchHelper = new SpeedSearchHelper(speedSearch);
     speedSearch.setComparator(new SpeedSearchComparator(false));
     TreeUtil.installActions(optionsTree);
     optionsTree.setRootVisible(false);
@@ -219,7 +216,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
       row++;
     }
 
-    optionsTree.setCellRenderer(new MyTreeCellRenderer(mySearchStringProvider));
+    optionsTree.setCellRenderer(new MyTreeCellRenderer(mySearchHelper));
     optionsTree.setBackground(UIUtil.getPanelBackground());
     optionsTree.setBorder(JBUI.Borders.emptyRight(10));
 
@@ -411,13 +408,13 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     private final SimpleColoredComponent myLabel;
     private final JCheckBox              myCheckBox;
     private final JPanel                 myCheckBoxPanel;
-    private final MySearchStringProvider mySearchStringProvider;
+    private final SpeedSearchHelper      mySearchStringProvider;
 
     public MyTreeCellRenderer() {
       this(null);
     }
 
-    public MyTreeCellRenderer(@Nullable MySearchStringProvider searchStringProvider) {
+    public MyTreeCellRenderer(@Nullable SpeedSearchHelper searchStringProvider) {
       myCheckBox = new JCheckBox();
       myCheckBox.setMargin(JBUI.emptyInsets());
       myLabel = new SimpleColoredComponent();
@@ -443,11 +440,11 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
         button.setVisible(true);
         button.setEnabled(tree.isEnabled() && treeNode.isEnabled());
 
-        setLabelText(treeNode.getText(), SimpleTextAttributes.STYLE_PLAIN, foreground, background);
+        mySearchStringProvider.setLabelText(myLabel, treeNode.getText(), SimpleTextAttributes.STYLE_PLAIN, foreground, background);
       }
       else {
         myCheckBox.setVisible(false);
-        setLabelText(value.toString(), SimpleTextAttributes.STYLE_BOLD, foreground, background);
+        mySearchStringProvider.setLabelText(myLabel, value.toString(), SimpleTextAttributes.STYLE_BOLD, foreground, background);
 
         myLabel.setEnabled(tree.isEnabled());
       }
@@ -457,10 +454,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
       return myCheckBoxPanel;
     }
 
-    private void setLabelText(@NotNull String text, int style, @NotNull Color foreground, @NotNull Color background) {
-      myLabel.clear();
-      SearchUtil.appendFragments(mySearchStringProvider.getSearchString(), text, style, foreground, background, myLabel);
-    }
+
   }
 
   private class BooleanOptionKey extends OrderedOption {
@@ -649,26 +643,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
 
   @Override
   public void highlightOptions(@NotNull String searchString) {
-    mySearchStringProvider.find(searchString);
+    mySearchHelper.find(searchString);
   }
 
-  private static class MySearchStringProvider {
-    private final     TreeSpeedSearch mySpeedSearch;
-    private @Nullable String          mySearchString;
-
-    private MySearchStringProvider(@NotNull TreeSpeedSearch search) {
-      mySpeedSearch = search;
-    }
-
-    public String getSearchString() {
-      String speedSearch = mySpeedSearch.getEnteredPrefix();
-      if (StringUtil.isNotEmpty(speedSearch)) return speedSearch;
-      return ObjectUtils.notNull(mySearchString, "");
-    }
-
-    private void find(@NotNull String searchString) {
-      mySearchString = searchString;
-      mySpeedSearch.findAndSelectElement(searchString);
-    }
-  }
 }
