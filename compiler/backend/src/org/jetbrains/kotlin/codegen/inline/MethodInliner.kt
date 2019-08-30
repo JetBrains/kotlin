@@ -303,10 +303,9 @@ class MethodInliner(
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
 
-                    val bridge = typeMapper.mapAsmMethod(erasedInvokeFunction)
                     StackValue
                         .onStack(info.invokeMethod.returnType, info.invokeMethodDescriptor.returnType)
-                        .put(bridge.returnType, erasedInvokeFunction.returnType, this)
+                        .put(OBJECT_TYPE, erasedInvokeFunction.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
                     childSourceMapper.endMapping()
