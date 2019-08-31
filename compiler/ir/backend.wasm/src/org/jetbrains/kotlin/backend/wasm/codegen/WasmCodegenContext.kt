@@ -6,45 +6,65 @@
 package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.ast.WasmData
-import org.jetbrains.kotlin.backend.wasm.ast.WasmModuleField
-import org.jetbrains.kotlin.ir.backend.js.utils.Signature
+import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.parentAsClass
 
 
-class WasmTypeInfo {
-    val classes = mutableMapOf<IrClass, ClassMetadata>()
-    val interfaces = mutableMapOf<IrClass, InterfaceMetadata>()
-    val virtualFunctionIds = mutableMapOf<IrSimpleFunction, Int>()
-    val signatures = mutableMapOf<Signature, VirtualMethodMetadata>()
-    var datas = mutableListOf<WasmData>()
-    var typeInfoSizeInBytes: Int = 0
-}
-
 class WasmCodegenContext(
-    private val topLevelNames: Map<IrDeclarationWithName, String>,
-    private val typeNames: Map<IrDeclarationWithName, String>,
     val backendContext: WasmBackendContext,
-    val typeInfo: WasmTypeInfo
+    val wasm: WasmCompiledModuleFragment
 ) {
-    val imports = mutableListOf<WasmModuleField>()
-    var localNames: Map<IrValueDeclaration, String> = emptyMap()
+    var locals: Map<IrValueSymbol, Int> = emptyMap()
     var labels: Map<LoopLabel, String> = emptyMap()
 
     var currentClass: IrClass? = null
 
-    val stringLiterals = mutableListOf<String>()
+    private val classMetadataCache = mutableMapOf<IrClassSymbol, ClassMetadata>()
+    fun getClassMetadata(irClass: IrClass): ClassMetadata =
+        classMetadataCache.getOrPut(irClass.symbol) {
+            val superClass = irClass.getSuperClass(backendContext.irBuiltIns)
+            val superClassMetadata = superClass?.let { getClassMetadata(it) }
+            ClassMetadata(irClass, superClassMetadata)
+        }
 
-    fun getGlobalName(declaration: IrDeclarationWithName): String =
-        topLevelNames[declaration]
-            ?: error("Can't find name for ${declaration.fqNameWhenAvailable}")
+    fun getClassId(declaration: IrClass): WasmSymbol<Int> =
+        wasm.classIds.reference(declaration.symbol)
 
-    fun getLocalName(declaration: IrValueDeclaration): String =
-        localNames[declaration]
-            ?: error("Can't find local name for ${declaration.fqNameWhenAvailable}")
+    fun getInterfaceId(declaration: IrClass): WasmSymbol<Int> =
+        wasm.interfaceId.reference(declaration.symbol)
+
+    fun getGlobalName(declaration: IrFunction): WasmFunctionSymbol =
+        wasm.functions.reference(declaration.symbol)
+
+    fun getGlobalName(declaration: IrField): WasmGlobalSymbol {
+        assert(declaration.isStatic) {
+            "accessedField should be static"
+        }
+        return wasm.globals.reference(declaration.symbol)
+    }
+
+    private val structFieldCache = mutableMapOf<IrFieldSymbol, Int>()
+    fun getStructFieldRef(declaration: IrField): WasmStructFieldSymbol {
+        val klass = declaration.parentAsClass
+        val metadata = getClassMetadata(klass)
+        val fieldId = metadata.fields.indexOf(declaration)
+        return WasmStructFieldSymbol(fieldId)
+    }
+
+    fun getStructTypeName(klass: IrClass): WasmStructTypeSymbol {
+        return wasm.structTypes.reference(klass.symbol)
+    }
+
+    fun getFunctionTypeName(function: IrFunction): WasmFunctionTypeSymbol =
+        wasm.functionTypes.reference(function.symbol)
+
+    fun getLocalName(declaration: IrValueDeclaration): Int =
+        locals.getValue(declaration.symbol)
 
     fun getBreakLabelName(loop: IrLoop): String =
         labels[LoopLabel(loop, LoopLabelType.BREAK)]
@@ -58,13 +78,6 @@ class WasmCodegenContext(
         labels[LoopLabel(loop, LoopLabelType.LOOP)]
             ?: error("Can't find loop label name")
 
-    fun getStructTypeName(klass: IrClass): String =
-        typeNames[klass]
-            ?: error("Can't find struct type name for class ${klass.fqNameWhenAvailable}")
-
-
-    fun getFunctionTypeName(function: IrFunction): String =
-        typeNames[function]
-            ?: error("Can't find function type name ${function.fqNameWhenAvailable}")
-
+    fun virtualFunctionId(function: IrSimpleFunction): WasmSymbol<Int> =
+        wasm.virtualFunctionId.reference(function.symbol)
 }

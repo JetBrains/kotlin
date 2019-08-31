@@ -5,21 +5,48 @@
 
 package org.jetbrains.kotlin.backend.wasm.ast
 
+typealias VariableRef = String
 
 sealed class WasmImmediate {
-    object None : WasmImmediate()
+    // TODO: Move away from strings
     class DeclarationReference(val name: String) : WasmImmediate()
-    class StructFieldReference(val name1: String, val name2: Int) : WasmImmediate()
+
+    class VariableRef(val id: Int) : WasmImmediate()
+
+    sealed class FunctionSymbol : WasmImmediate() {
+        class Linked(val ref: WasmFunctionSymbol) : FunctionSymbol()
+    }
+
+    sealed class FunctionTypeSymbol : WasmImmediate() {
+        class Linked(val ref: WasmFunctionTypeSymbol) : FunctionTypeSymbol()
+    }
+
+    sealed class GlobalSymbol : WasmImmediate() {
+        class Linked(val ref: WasmGlobalSymbol) : GlobalSymbol()
+    }
+
+    sealed class StructTypeSymbol : WasmImmediate() {
+        class Linked(val ref: WasmStructTypeSymbol) : StructTypeSymbol()
+    }
+
+    sealed class StructFieldSymbol : WasmImmediate() {
+        class Linked(val ref: WasmStructFieldSymbol) : StructFieldSymbol()
+    }
+
     class LiteralValue<T : Number>(val value: T) : WasmImmediate()
+    class I32Symbol(val value: WasmSymbol<Int>) : WasmImmediate()
+    class ValueType(val type: WasmValueType) : WasmImmediate()
     class ResultType(val type: WasmValueType?) : WasmImmediate()
-    class Type2(val t1: WasmValueType, val t2: WasmValueType) : WasmImmediate()
 }
 
 sealed class WasmInstruction(
     val mnemonic: String,
-    val immediate: WasmImmediate = WasmImmediate.None,
+    val immediates: List<WasmImmediate> = emptyList(),
     val operands: List<WasmInstruction> = emptyList()
-)
+) {
+    constructor(mnemonic: String, immediate: WasmImmediate, operands: List<WasmInstruction> = emptyList()) :
+            this(mnemonic, listOf(immediate), operands)
+}
 
 class WasmSimpleInstruction(mnemonic: String, operands: List<WasmInstruction>) :
     WasmInstruction(mnemonic, operands = operands)
@@ -39,24 +66,24 @@ class WasmDrop(instructions: List<WasmInstruction>) :
 class WasmNot(boolValue: WasmInstruction) :
     WasmInstruction("i32.eqz", operands = listOf(boolValue))
 
-class WasmCall(name: String, operands: List<WasmInstruction>) :
-    WasmInstruction("call", WasmImmediate.DeclarationReference(name), operands)
+class WasmCall(symbol: WasmFunctionSymbol, operands: List<WasmInstruction>) :
+    WasmInstruction("call", WasmImmediate.FunctionSymbol.Linked(symbol), operands)
 
 // Last operand is a function index
-class WasmCallIdirect(functionType: String, operands: List<WasmInstruction>) :
-    WasmInstruction("call_indirect", immediate = WasmImmediate.DeclarationReference(functionType), operands = operands)
+class WasmCallIdirect(symbol: WasmFunctionTypeSymbol, operands: List<WasmInstruction>) :
+    WasmInstruction("call_indirect", immediate = WasmImmediate.FunctionTypeSymbol.Linked(symbol), operands = operands)
 
-class WasmGetLocal(name: String) :
-    WasmInstruction("get_local", WasmImmediate.DeclarationReference(name))
+class WasmGetLocal(id: Int) :
+    WasmInstruction("get_local", WasmImmediate.VariableRef(id))
 
-class WasmGetGlobal(name: String) :
-    WasmInstruction("get_global", WasmImmediate.DeclarationReference(name))
+class WasmSetLocal(id: Int, value: WasmInstruction) :
+    WasmInstruction("set_local", WasmImmediate.VariableRef(id), listOf(value))
 
-class WasmSetGlobal(name: String, value: WasmInstruction) :
-    WasmInstruction("set_global", WasmImmediate.DeclarationReference(name), listOf(value))
+class WasmGetGlobal(symbol: WasmGlobalSymbol) :
+    WasmInstruction("get_global", WasmImmediate.GlobalSymbol.Linked(symbol))
 
-class WasmSetLocal(name: String, value: WasmInstruction) :
-    WasmInstruction("set_local", WasmImmediate.DeclarationReference(name), listOf(value))
+class WasmSetGlobal(symbol: WasmGlobalSymbol, value: WasmInstruction) :
+    WasmInstruction("set_global", WasmImmediate.GlobalSymbol.Linked(symbol), listOf(value))
 
 class WasmIf(condition: WasmInstruction, resultType: WasmValueType?, thenInstructions: WasmThen?, elseInstruction: WasmElse?) :
     WasmInstruction(
@@ -100,22 +127,44 @@ class WasmLabelledBlock(label: String, instructions: List<WasmInstruction>) :
     WasmInstruction("block", immediate = WasmImmediate.DeclarationReference(label), operands = instructions)
 
 
-class WasmStructNew(structName: String, operands: List<WasmInstruction>) :
-    WasmInstruction("struct.new", WasmImmediate.DeclarationReference(structName), operands)
+class WasmStructNew(structName: WasmStructTypeSymbol, operands: List<WasmInstruction>) :
+    WasmInstruction("struct.new", WasmImmediate.StructTypeSymbol.Linked(structName), operands)
 
-class WasmStructSet(structName: String, fieldId: Int, structRef: WasmInstruction, value: WasmInstruction) :
-    WasmInstruction("struct.set", WasmImmediate.StructFieldReference(structName, fieldId), listOf(structRef, value))
+class WasmStructSet(structName: WasmStructTypeSymbol, fieldId: WasmStructFieldSymbol, structRef: WasmInstruction, value: WasmInstruction) :
+    WasmInstruction(
+        "struct.set",
+        listOf(
+            WasmImmediate.StructTypeSymbol.Linked(structName),
+            WasmImmediate.StructFieldSymbol.Linked(fieldId)
+        ),
+        listOf(structRef, value)
+    )
 
-class WasmStructGet(structName: String, fieldId: Int, structRef: WasmInstruction) :
-    WasmInstruction("struct.get", WasmImmediate.StructFieldReference(structName, fieldId), listOf(structRef))
+class WasmStructGet(structName: WasmStructTypeSymbol, fieldId: WasmStructFieldSymbol, structRef: WasmInstruction) :
+    WasmInstruction(
+        "struct.get",
+        listOf(
+            WasmImmediate.StructTypeSymbol.Linked(structName),
+            WasmImmediate.StructFieldSymbol.Linked(fieldId)
+        ),
+        listOf(structRef)
+    )
 
 class WasmStructNarrow(fromType: WasmValueType, toType: WasmValueType, value: WasmInstruction) :
-    WasmInstruction("struct.narrow", WasmImmediate.Type2(fromType, toType), listOf(value))
+    WasmInstruction(
+        "struct.narrow", listOf(
+            WasmImmediate.ValueType(fromType),
+            WasmImmediate.ValueType(toType)
+        ), listOf(value)
+    )
 
-sealed class WasmConst<KotlinType : Number, WasmType : WasmValueType>(value: KotlinType, type: WasmType) :
+sealed class WasmConst<KotlinType : Number, WasmType : WasmSimpleValueType>(value: KotlinType, type: WasmType) :
     WasmInstruction(type.mnemonic + ".const", WasmImmediate.LiteralValue<KotlinType>(value))
 
 class WasmI32Const(value: Int) : WasmConst<Int, WasmI32>(value, WasmI32)
 class WasmI64Const(value: Long) : WasmConst<Long, WasmI64>(value, WasmI64)
 class WasmF32Const(value: Float) : WasmConst<Float, WasmF32>(value, WasmF32)
 class WasmF64Const(value: Double) : WasmConst<Double, WasmF64>(value, WasmF64)
+
+class WasmI32Symbol(value: WasmSymbol<Int>) :
+    WasmInstruction("i32.const", WasmImmediate.I32Symbol(value))

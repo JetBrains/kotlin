@@ -6,29 +6,41 @@
 package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.ir.backend.js.utils.Signature
+import org.jetbrains.kotlin.ir.backend.js.utils.functionSignature
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 
 class ClassMetadata(
-    val ir: IrClass,
-
-    // Class ID is a pointer to class RTTI in linear memory
-    val id: Int,
-
-    // null for kotlin.Any class
-    val superClass: ClassMetadata?,
-
+    val klass: IrClass,
+    val superClass: ClassMetadata?
+) {
     // List of all fields including fields of super classes
     // In Wasm order
-    val fields: List<IrFieldSymbol>,
+    val fields: List<IrField> =
+        superClass?.fields.orEmpty() + klass.declarations.filterIsInstance<IrField>()
 
     // Implemented interfaces in no particular order
-    val interfaces: List<InterfaceMetadata>,
+    val interfaces: List<IrClass> = klass.allInterfaces()
 
     // Virtual methods in Wasm order
-    val virtualMethods: List<VirtualMethodMetadata>
-) {
+    val virtualMethods: List<VirtualMethodMetadata> = run {
+        val virtualFunctions =
+            klass.declarations
+                .filterIsInstance<IrSimpleFunction>()
+                .filterVirtualFunctions()
+                .map { VirtualMethodMetadata(it, functionSignature(it)) }
+
+        val signatureToVirtualFunction = virtualFunctions.associateBy { it.signature }
+
+        val newVirtualMethods = virtualFunctions.filter { it.signature !in superClass?.virtualMethodsSignatures.orEmpty() }
+        val superVirtualMethods = superClass?.virtualMethods.orEmpty().map { signatureToVirtualFunction.getValue(it.signature) }
+        val orderedVirtualFunctions = superVirtualMethods + newVirtualMethods
+
+        orderedVirtualFunctions
+    }
+
     val virtualMethodsSignatures: Set<Signature> =
         virtualMethods.map { it.signature }.toHashSet()
 }

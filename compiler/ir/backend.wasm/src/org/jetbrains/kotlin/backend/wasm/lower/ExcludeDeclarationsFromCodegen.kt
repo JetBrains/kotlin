@@ -75,7 +75,6 @@ private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.internal.PlatformDependent",
     "kotlin.CharSequence",
     "kotlin.Annotation",
-    "kotlin.Comparable",
     "kotlin.collections.Collection",
     "kotlin.collections.Iterable",
     "kotlin.collections.List",

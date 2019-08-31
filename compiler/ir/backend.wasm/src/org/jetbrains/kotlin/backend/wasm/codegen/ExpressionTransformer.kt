@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmInstructionAnnotation
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isAny
@@ -37,8 +34,8 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
             is IrConstKind.Null -> WasmRefNull
             is IrConstKind.String -> {
                 val value = kind.valueOf(expression)
-                val index = data.stringLiterals.size
-                data.stringLiterals.add(value)
+                val index = data.wasm.stringLiterals.size
+                data.wasm.stringLiterals.add(value)
                 val funName = data.getGlobalName(data.backendContext.wasmSymbols.stringGetLiteral.owner)
                 val operand = WasmI32Const(index)
                 WasmCall(funName, listOf(operand))
@@ -60,9 +57,8 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
         return when {
             receiver != null -> {
                 val fieldClass = field.parentAsClass
-                val fieldId = getFieldId(field, data)
                 WasmStructGet(
-                    data.getStructTypeName(fieldClass), fieldId,
+                    data.getStructTypeName(fieldClass), data.getStructFieldRef(field),
                     expressionToWasmInstruction(receiver, data)
                 )
             }
@@ -80,27 +76,20 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
         TODO("IrGetObjectValue ${expression.dump()}")
     }
 
-    private fun getFieldId(field: IrField, context: WasmCodegenContext): Int {
-        val fieldClass = field.parentAsClass
-        val classInfo = context.typeInfo.classes[fieldClass]!!
-        return classInfo.fields.indexOf(field.symbol)
-    }
-
     override fun visitSetField(expression: IrSetField, data: WasmCodegenContext): WasmInstruction {
         val field = expression.symbol.owner
-        val fieldName = data.getGlobalName(expression.symbol.owner)
         val receiver = expression.receiver
         val wasmValue = expressionToWasmInstruction(expression.value, data)
         return when {
             receiver != null -> {
                 WasmStructSet(
                     structName = data.getStructTypeName(field.parentAsClass),
-                    fieldId = getFieldId(field, data),
+                    fieldId = data.getStructFieldRef(field),
                     structRef = expressionToWasmInstruction(receiver, data),
                     value = wasmValue
                 )
             }
-            else -> WasmSetGlobal(fieldName, wasmValue)
+            else -> WasmSetGlobal(data.getGlobalName(expression.symbol.owner), wasmValue)
         }
     }
 
@@ -113,14 +102,15 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
     override fun visitConstructorCall(expression: IrConstructorCall, data: WasmCodegenContext): WasmInstruction {
         val klass = expression.symbol.owner.parentAsClass
         val structTypeName = data.getStructTypeName(klass)
-        val klassInfo = data.typeInfo.classes[klass]!!
-        val klassId = klassInfo.id
+        val klassId = data.getClassId(klass)
 
-        val initialValues = klassInfo.fields.mapIndexed { index, field ->
+        val fields = klass.allFields(data.backendContext.irBuiltIns)
+
+        val initialValues = fields.mapIndexed { index, field ->
             if (index == 0)
-                WasmI32Const(klassId)
+                WasmI32Symbol(klassId)
             else
-                defaultInitializerForType(data.transformType(field.owner.type))
+                defaultInitializerForType(data.transformType(field.type))
         }
 
         return WasmBlock(
@@ -150,7 +140,8 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
         if (function is IrSimpleFunction && function.isOverridable) {
             val klass = function.parentAsClass
             if (!klass.isInterface) {
-                val classMetadata = data.typeInfo.classes[klass]!!
+                val classMetadata = data.getClassMetadata(klass)
+                // TODO: Simplify
                 val vfSlot = classMetadata.virtualMethods.map { it.function }.indexOf(function)
                 // FIXME: Avoid double side effect of dispatch receiver
                 val tableIndex =
@@ -193,21 +184,16 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
                 val klass = call.getTypeArgument(0)!!.getClass()
                     ?: error("No class given for wasmClassId intrinsic")
                 assert(!klass.isInterface)
-                val klassMetadata = context.typeInfo.classes[klass]
-                if (klassMetadata == null) {
-                    println("No metadata for class ${klass.fqNameWhenAvailable}")
-                    // TODO: Fail here
-                    return WasmUnreachable
-                }
-                return WasmI32Const(klassMetadata.id)
+                return WasmI32Symbol(context.getClassId(klass))
             }
 
             symbols.wasmInterfaceId -> {
                 val irInterface = call.getTypeArgument(0)!!.getClass()
                     ?: error("No interface given for wasmInterfaceId intrinsic")
                 assert(irInterface.isInterface)
-                return WasmI32Const(context.typeInfo.interfaces[irInterface]!!.id)
+                return WasmI32Symbol(context.getInterfaceId(irInterface))
             }
+
             symbols.structNarrow -> {
                 val fromType = call.getTypeArgument(0)!!
                 val toType = call.getTypeArgument(1)!!
@@ -268,7 +254,7 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: WasmCodegenContext): WasmInstruction {
         val klass = data.currentClass!!
         if (klass.defaultType.isAny()) return WasmNop
-        return transformCall(expression, data, WasmGetLocal(data.getLocalName(klass.thisReceiver!!)))
+        return transformCall(expression, data, WasmGetLocal(0))
     }
 
     override fun visitTry(aTry: IrTry, data: WasmCodegenContext): WasmInstruction {

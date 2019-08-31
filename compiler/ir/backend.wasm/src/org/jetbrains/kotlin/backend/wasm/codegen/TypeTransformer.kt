@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -14,48 +15,63 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
 
 
-fun WasmCodegenContext.transformType(irType: IrType): WasmValueType =
-    when {
-        irType.isBoolean() -> WasmI32
-        irType.isByte() -> WasmI32
-        irType.isShort() -> WasmI32
-        irType.isInt() -> WasmI32
-        irType.isLong() -> WasmI64
-        irType.isChar() -> WasmI32
-        irType.isFloat() -> WasmF32
-        irType.isDouble() -> WasmF64
-        irType.isString() || irType.isNullableString() -> WasmAnyRef
+// TODO: Refactor
+fun WasmCodegenContext.transformType(irType: IrType): WasmValueType {
+    val typeTransformer = TypeTransformer(this, backendContext.irBuiltIns)
+    return with(typeTransformer) { irType.toWasmValueType() }
+}
 
-        // irType.isAny() || irType.isNullableAny() -> WasmAnyRef
-        else -> WasmRef(getStructTypeName(irType.erasedUpperBound ?: backendContext.irBuiltIns.anyClass.owner))
-    }
-
+// TODO: Refactor
 fun WasmCodegenContext.resultType(type: IrType): WasmValueType? {
     if (type.isUnit() || type.isNothing()) return null
     return transformType(type)
 }
 
-fun WasmCodegenContext.wasmFunctionType(function: IrSimpleFunction): WasmFunctionType {
-    val irParameters = function.run {
-        listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters
-    }
-    return WasmFunctionType(getFunctionTypeName(function), irParameters.map { transformType(it.type) }, resultType(function.returnType))
-}
+class TypeTransformer(val context: WasmCodegenContext, val builtIns: IrBuiltIns) {
+    fun IrType.toWasmResultType(): WasmValueType? =
+        when (this) {
+            builtIns.unitType,
+            builtIns.nothingType ->
+                null
 
+            else ->
+                toWasmValueType()
+        }
 
-fun irFunctionToWasmFunctionType(function: IrFunction) {
-    val irParameters = function.run {
-        listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters
-    }
-}
+    fun IrType.toWasmValueType(): WasmValueType =
+        when (this) {
+            builtIns.booleanType,
+            builtIns.byteType,
+            builtIns.shortType,
+            builtIns.intType,
+            builtIns.charType ->
+                WasmI32
 
-fun WasmCodegenContext.wasmStructType(klass: IrClass): WasmStructType {
-    val classMetadata: ClassMetadata = typeInfo.classes[klass] ?: error("Can't find class metadata for class ${klass.fqNameWhenAvailable}")
+            builtIns.longType ->
+                WasmI64
 
-    return WasmStructType(
-        getStructTypeName(klass),
-        classMetadata.fields.map { it.owner }.map { WasmStructField(getGlobalName(it), transformType(it.type), true) }
-    )
+            builtIns.floatType ->
+                WasmF32
+
+            builtIns.doubleType ->
+                WasmF64
+
+            builtIns.stringType,
+            builtIns.stringType.makeNullable() ->
+                WasmAnyRef
+
+            else ->
+                WasmStructRef(
+                    context.getStructTypeName(erasedUpperBound ?: builtIns.anyClass.owner)
+                )
+        }
+
+    fun IrFunction.toWasmFunctionType(): WasmFunctionType =
+        WasmFunctionType(
+            fqNameWhenAvailable.toString(),
+            parameterTypes = getEffectiveValueParameters().map { it.type.toWasmValueType() },
+            resultType = returnType.toWasmResultType()
+        )
 }
 
 
