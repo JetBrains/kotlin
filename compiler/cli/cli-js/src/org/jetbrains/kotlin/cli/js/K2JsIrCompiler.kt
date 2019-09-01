@@ -294,25 +294,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
 
-        val incrementalDataProvider = services[IncrementalDataProvider::class.java]
-        if (incrementalDataProvider != null) {
-            configuration.put(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER, incrementalDataProvider)
-        }
-
-        val incrementalResultsConsumer = services[IncrementalResultsConsumer::class.java]
-        if (incrementalResultsConsumer != null) {
-            configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, incrementalResultsConsumer)
-        }
-
-        val lookupTracker = services[LookupTracker::class.java]
-        if (lookupTracker != null) {
-            configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, lookupTracker)
-        }
-
-        val expectActualTracker = services[ExpectActualTracker::class.java]
-        if (expectActualTracker != null) {
-            configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, expectActualTracker)
-        }
+        configuration.putIfNotNull(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER, services[IncrementalDataProvider::class.java])
+        configuration.putIfNotNull(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, services[IncrementalResultsConsumer::class.java])
+        configuration.putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
+        configuration.putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
 
         val sourceMapEmbedContentString = arguments.sourceMapEmbedSources
         var sourceMapContentEmbedding: SourceMapSourceEmbedding? = if (sourceMapEmbedContentString != null)
