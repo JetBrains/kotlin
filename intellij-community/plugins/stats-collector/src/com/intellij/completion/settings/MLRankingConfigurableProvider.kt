@@ -3,9 +3,11 @@ package com.intellij.completion.settings
 
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurableProvider
+import com.intellij.util.PlatformUtils
 
 class MLRankingConfigurableProvider : ConfigurableProvider() {
   override fun createConfigurable(): Configurable? {
+    if (PlatformUtils.isWebStorm()) return null
     return MLRankingConfigurable()
   }
 }
