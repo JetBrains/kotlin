@@ -75,7 +75,7 @@ public class GridCellImpl implements GridCell {
     });
 
     myTabs.getPresentation().setSideComponentVertical(!context.getLayoutSettings().isToolbarHorizontal())
-      .setStealthTabMode(false).setFocusCycle(false).setPaintFocus(true)
+      .setFocusCycle(false).setPaintFocus(true)
       .setTabDraggingEnabled(context.isMoveToGridActionEnabled()).setSideComponentOnTabs(false);
 
     myTabs.addTabMouseListener(new MouseAdapter() {
