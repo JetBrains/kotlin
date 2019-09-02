@@ -179,7 +179,7 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
     return 31 + Objects.hashCode(myId, myScope, myClasspathOrder);
   }
 
-  protected static int calcFilesPathsHasCode(@NotNull Iterable<File> iterable) {
+  protected static int calcFilesPathsHashCode(@NotNull Iterable<File> iterable) {
     return reduce(iterable, 0, new BiFunction<Integer, Integer, File>() {
       @Override
       public Integer fun(Integer currentResult, File item) {

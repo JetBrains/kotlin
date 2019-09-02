@@ -63,7 +63,7 @@ public final class DefaultExternalMultiLibraryDependency extends AbstractExterna
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(super.hashCode(), calcFilesPathsHasCode(files));
+    return Objects.hashCode(super.hashCode(), calcFilesPathsHashCode(files));
   }
 
   @Override
