@@ -1738,6 +1738,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/autoImports/checkNoStackOverflowInImportInnerClassInCurrentFile.kt");
         }
 
+        @TestMetadata("conflictWithClassIdentifier.kt")
+        public void testConflictWithClassIdentifier() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/conflictWithClassIdentifier.kt");
+        }
+
+        @TestMetadata("conflictWithLocalIdentifier.kt")
+        public void testConflictWithLocalIdentifier() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/conflictWithLocalIdentifier.kt");
+        }
+
         @TestMetadata("enumEntries.kt")
         public void testEnumEntries() throws Exception {
             runTest("idea/testData/quickfix/autoImports/enumEntries.kt");
