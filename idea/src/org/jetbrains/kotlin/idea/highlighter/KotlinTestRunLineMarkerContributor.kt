@@ -38,9 +38,11 @@ import javax.swing.Icon
 
 class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
     companion object {
-        fun getTestStateIcon(url: String, project: Project): Icon? {
+        fun getTestStateIcon(url: String, project: Project, strict: Boolean): Icon? {
             val defaultIcon = AllIcons.RunConfigurations.TestState.Run
-            val state = TestStateStorage.getInstance(project).getState(url) ?: return defaultIcon
+            val state = TestStateStorage.getInstance(project).getState(url)
+                ?: return if (strict) null else defaultIcon
+
             return when (TestIconMapper.getMagnitude(state.magnitude)) {
                 TestStateInfo.Magnitude.ERROR_INDEX,
                 TestStateInfo.Magnitude.FAILED_INDEX -> AllIcons.RunConfigurations.TestState.Red2
