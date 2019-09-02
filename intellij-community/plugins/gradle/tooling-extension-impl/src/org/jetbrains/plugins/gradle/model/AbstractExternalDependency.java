@@ -159,11 +159,12 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
 
   private static boolean equal(@NotNull Collection<ExternalDependency> dependencies1,
                                @NotNull Collection<ExternalDependency> dependencies2) {
-    DependenciesIterator iterator1 = new DependenciesIterator(dependencies1);
-    DependenciesIterator iterator2 = new DependenciesIterator(dependencies2);
+    final DependenciesIterator iterator1 = new DependenciesIterator(dependencies1);
+    final DependenciesIterator iterator2 = new DependenciesIterator(dependencies2);
     return ContainerUtil.match(iterator1, iterator2, new BooleanBiFunction<AbstractExternalDependency, AbstractExternalDependency>() {
       @Override
       public Boolean fun(AbstractExternalDependency o1, AbstractExternalDependency o2) {
+        if (!Objects.equal(iterator1.myProcessedStructure, iterator2.myProcessedStructure)) return false;
         return Objects.equal(o1.myId, o2.myId) && Objects.equal(o1.myScope, o2.myScope);
       }
     });
@@ -177,11 +178,13 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
   private static class DependenciesIterator implements Iterator<AbstractExternalDependency> {
     private final Set<AbstractExternalDependency> mySeenDependencies;
     private final LinkedList<ExternalDependency> myToProcess;
+    private final LinkedList<Integer> myProcessedStructure;
 
     private DependenciesIterator(@NotNull Collection<ExternalDependency> dependencies) {
       //noinspection unchecked
       mySeenDependencies = new THashSet<AbstractExternalDependency>(TObjectHashingStrategy.IDENTITY);
       myToProcess = new LinkedList<ExternalDependency>(dependencies);
+      myProcessedStructure = new LinkedList<Integer>();
     }
 
     @Override
@@ -200,6 +203,7 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
       AbstractExternalDependency dependency = (AbstractExternalDependency)myToProcess.removeFirst();
       if (mySeenDependencies.add(dependency)) {
         myToProcess.addAll(dependency.myDependencies);
+        myProcessedStructure.add(dependency.myDependencies.size());
         return dependency;
       }
       else {
