@@ -167,7 +167,7 @@ private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     return 0
 }
 
-private fun IrDeclarationWithVisibility.getVisibilityAccessFlag(kind: OwnerKind? = null): Int =
+fun IrDeclarationWithVisibility.getVisibilityAccessFlag(kind: OwnerKind? = null): Int =
     specialCaseVisibility(kind)
         ?: visibilityToAccessFlag[visibility]
         ?: throw IllegalStateException("$visibility is not a valid visibility in backend for ${ir2string(this)}")
@@ -223,9 +223,9 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
 //    if (memberDescriptor is ConstructorDescriptor && isAnonymousObject(memberDescriptor.containingDeclaration)) {
 //        return getVisibilityAccessFlagForAnonymous(memberDescriptor.containingDeclaration as ClassDescriptor)
 //    }
-    if (this is IrConstructor && parentAsClass.isAnonymousObject) {
-        return parentAsClass.getVisibilityAccessFlagForAnonymous()
-    }
+//    if (this is IrConstructor && parentAsClass.isAnonymousObject) {
+//        return parentAsClass.getVisibilityAccessFlagForAnonymous()
+//    }
 
 //    TODO: when is this applicable?
 //    if (memberDescriptor is SyntheticJavaPropertyDescriptor) {
