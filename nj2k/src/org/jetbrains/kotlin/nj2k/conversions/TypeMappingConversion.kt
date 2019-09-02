@@ -112,6 +112,7 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
 
     private fun JKClassSymbol.mapClassSymbol(typeElement: JKTypeElement?): JKClassSymbol {
         if (this is JKUniverseClassSymbol) return this
+        if (typeElement?.parentOfType<JKInheritanceInfo>() != null) return this
         val newFqName = kotlinCollectionClassName()
             ?: kotlinStandardType()
             ?: fqName

@@ -1376,6 +1376,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/detectProperties/CannotDropOnlySetter.java");
         }
 
+        @TestMetadata("commentInInitStatement.java")
+        public void testCommentInInitStatement() throws Exception {
+            runTest("nj2k/testData/newJ2k/detectProperties/commentInInitStatement.java");
+        }
+
         @TestMetadata("Comments.java")
         public void testComments() throws Exception {
             runTest("nj2k/testData/newJ2k/detectProperties/Comments.java");
@@ -3626,6 +3631,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("Iterator2.java")
         public void testIterator2() throws Exception {
             runTest("nj2k/testData/newJ2k/mutableCollections/Iterator2.java");
+        }
+
+        @TestMetadata("listOfMutableList.java")
+        public void testListOfMutableList() throws Exception {
+            runTest("nj2k/testData/newJ2k/mutableCollections/listOfMutableList.java");
+        }
+
+        @TestMetadata("mutableListInOtherClass.java")
+        public void testMutableListInOtherClass() throws Exception {
+            runTest("nj2k/testData/newJ2k/mutableCollections/mutableListInOtherClass.java");
         }
 
         @TestMetadata("Overrides.java")

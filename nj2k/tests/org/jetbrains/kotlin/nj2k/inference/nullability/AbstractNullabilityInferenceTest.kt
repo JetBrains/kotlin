@@ -26,7 +26,7 @@ abstract class AbstractNullabilityInferenceTest : AbstractConstraintCollectorTes
         val typeEnhancer = NullabilityBoundTypeEnhancer(resolutionFacade)
         return InferenceFacade(
             object : ContextCollector(resolutionFacade) {
-                override fun ClassReference.getState(typeElement: KtTypeElement?): State? =
+                override fun ClassReference.getState(typeElement: KtTypeElement?): State =
                     State.UNKNOWN
             },
             ConstraintsCollectorAggregator(

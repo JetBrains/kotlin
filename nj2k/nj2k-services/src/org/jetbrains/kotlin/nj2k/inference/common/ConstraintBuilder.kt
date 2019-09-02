@@ -40,7 +40,11 @@ class ConstraintBuilder(
 
     fun KtExpression.isTheSameTypeAs(other: State, priority: ConstraintPriority) {
         boundType().label.safeAs<TypeVariableLabel>()?.typeVariable?.let { typeVariable ->
-            constraints += EqualsConstraint(typeVariable.constraintBound(), other.constraintBound(), priority)
+            constraints += EqualsConstraint(
+                typeVariable.constraintBound(),
+                other.constraintBound() ?: return@let,
+                priority
+            )
         }
     }
 

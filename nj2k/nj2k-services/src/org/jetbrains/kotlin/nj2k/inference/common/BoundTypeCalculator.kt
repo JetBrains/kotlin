@@ -88,9 +88,7 @@ open class BoundTypeCalculatorImpl(
             valueParameters.map { parameter ->
                 parameter.typeReference?.typeElement?.let { typeElement ->
                     inferenceContext.typeElementToTypeVariable[typeElement]
-                }?.let { typeVariable ->
-                    typeVariable.asBoundType()
-                } ?: return null
+                }?.asBoundType() ?: return null
             }
         } else {
             descriptor.valueParameters.map { parameter ->
@@ -220,7 +218,12 @@ open class BoundTypeCalculatorImpl(
                 )
 
             is TypeParameterDescriptor -> {
-                val containingDeclaration = target.containingDeclaration
+                val containingDeclaration = target.containingDeclaration.let { container ->
+                    when (container) {
+                        is TypeAliasDescriptor -> container.classDescriptor
+                        else -> container
+                    } ?: container
+                }
                 when {
                     containingDeclaration == call?.candidateDescriptor?.original -> {
                         val returnTypeVariable = inferenceContext.typeElementToTypeVariable[
@@ -240,7 +243,7 @@ open class BoundTypeCalculatorImpl(
                     contextBoundType?.isReferenceToClass == true ->
                         contextBoundType.typeParameters.getOrNull(target.index)?.boundType
 
-                    // `this` or `super` call case
+                    // `this`, `super`, or constructor call cases
                     containingDeclaration == call?.candidateDescriptor.safeAs<ConstructorDescriptor>()?.constructedClass -> {
                         val returnTypeVariable = inferenceContext.typeElementToTypeVariable[
                                 call?.call?.typeArguments?.getOrNull(target.index)?.typeReference?.typeElement

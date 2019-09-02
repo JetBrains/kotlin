@@ -54,8 +54,15 @@ class LiteralBound private constructor(val state: State) : ConstraintBound() {
     }
 }
 
-fun State.constraintBound(): LiteralBound = when (this) {
+fun State.constraintBound(): LiteralBound? = when (this) {
     State.LOWER -> LiteralBound.LOWER
     State.UPPER -> LiteralBound.UPPER
     State.UNKNOWN -> LiteralBound.UNKNOWN
+    State.UNUSED -> null
 }
+
+val ConstraintBound.isUnused
+    get() = when (this) {
+        is TypeVariableBound -> typeVariable.state == State.UNUSED
+        is LiteralBound -> state == State.UNUSED
+    }

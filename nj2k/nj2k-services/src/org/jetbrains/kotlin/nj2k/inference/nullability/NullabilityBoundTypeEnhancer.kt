@@ -30,19 +30,17 @@ class NullabilityBoundTypeEnhancer(private val resolutionFacade: ResolutionFacad
         expression: KtExpression,
         boundType: BoundType,
         inferenceContext: InferenceContext
-    ): BoundType {
-        return when {
-            expression.isNullExpression() ->
-                WithForcedStateBoundType(boundType, State.UPPER)
-            expression is KtCallExpression -> enhanceCallExpression(expression, boundType, inferenceContext)
-            expression is KtQualifiedExpression && expression.selectorExpression is KtCallExpression ->
-                enhanceCallExpression(expression.selectorExpression as KtCallExpression, boundType, inferenceContext)
-            expression is KtNameReferenceExpression ->
-                boundType.enhanceWith(expression.smartCastEnhancement())
-            expression is KtLambdaExpression ->
-                WithForcedStateBoundType(boundType, State.LOWER)
-            else -> boundType
-        }
+    ): BoundType = when {
+        expression.isNullExpression() ->
+            WithForcedStateBoundType(boundType, State.UPPER)
+        expression is KtCallExpression -> enhanceCallExpression(expression, boundType, inferenceContext)
+        expression is KtQualifiedExpression && expression.selectorExpression is KtCallExpression ->
+            enhanceCallExpression(expression.selectorExpression as KtCallExpression, boundType, inferenceContext)
+        expression is KtNameReferenceExpression ->
+            boundType.enhanceWith(expression.smartCastEnhancement())
+        expression is KtLambdaExpression ->
+            WithForcedStateBoundType(boundType, State.LOWER)
+        else -> boundType
     }
 
     private fun enhanceCallExpression(

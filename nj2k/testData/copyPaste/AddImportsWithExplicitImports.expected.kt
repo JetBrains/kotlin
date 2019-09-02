@@ -1,7 +1,7 @@
 import java.io.File
 
 class C {
-    private fun memberFun(file: File?) {}
+    private fun memberFun(file: File) {}
 
     companion object {
         @JvmStatic

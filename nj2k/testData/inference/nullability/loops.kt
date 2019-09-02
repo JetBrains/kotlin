@@ -1,4 +1,4 @@
-fun bar(map: /*T2@*/HashMap</*T0@*/String?, /*T1@*/Int>, list1: /*T4@*/List</*T3@*/Int?>, list2: /*T6@*/List</*T5@*/String?>) {
+fun bar(map: /*T2@*/HashMap</*T0@*/String?, /*T1@*/Int>, list1: /*T4@*/List</*T3@*/Int>, list2: /*T6@*/List</*T5@*/String?>) {
     for (entry: /*T9@*/MutableMap.MutableEntry</*T7@*/String?, /*T8@*/Int> in map/*T2@HashMap<T0@String, T1@Int>*/.entries/*MutableSet<MutableEntry<T0@String, T1@Int>>*/) {
         val value: /*T10@*/Int = entry/*T9@MutableEntry<T7@String, T8@Int>*/.value/*T8@Int*/
         if (entry/*T9@MutableEntry<T7@String, T8@Int>*/.key/*T7@String*/ == null/*LIT*/) {
@@ -21,11 +21,11 @@ fun bar(map: /*T2@*/HashMap</*T0@*/String?, /*T1@*/Int>, list1: /*T4@*/List</*T3
 //T9 := LOWER due to 'USE_AS_RECEIVER'
 //T7 := UPPER due to 'COMPARE_WITH_NULL'
 //T10 := LOWER due to 'USE_AS_RECEIVER'
-//T0 := T7 due to 'ASSIGNMENT'
-//T1 := T8 due to 'ASSIGNMENT'
+//T7 := T0 due to 'ASSIGNMENT'
+//T8 := T1 due to 'ASSIGNMENT'
 //T11 := LOWER due to 'USE_AS_RECEIVER'
-//T11 <: T3 due to 'ASSIGNMENT'
+//T3 <: T11 due to 'ASSIGNMENT'
 //T4 := LOWER due to 'USE_AS_RECEIVER'
 //T12 := UPPER due to 'COMPARE_WITH_NULL'
-//T12 <: T5 due to 'ASSIGNMENT'
+//T5 <: T12 due to 'ASSIGNMENT'
 //T6 := LOWER due to 'USE_AS_RECEIVER'

@@ -25,7 +25,9 @@ internal class Solver(
                 println()
                 println("type variables:")
                 for (typeVariable in inferenceContext.typeVariables) {
-                    println("${typeVariable.name} := ${typeVariable.state}")
+                    if (typeVariable.state != State.UNUSED) {
+                        println("${typeVariable.name} := ${typeVariable.state}")
+                    }
                 }
                 println("---------------\n")
             }
@@ -33,6 +35,7 @@ internal class Solver(
 
     fun solveConstraints(constraints: List<Constraint>) {
         val mutableConstraints = constraints.toMutableList()
+        mutableConstraints.filterOutConstraintsWithUnusedState()
         var currentStep = ConstraintPriority.values().first()
 
         var i = 0
@@ -144,11 +147,11 @@ internal class Solver(
                 val (lower, upper) = constraint
                 if (lower is TypeVariableBound && lower.typeVariable.isFixed) {
                     somethingChanged = true
-                    constraint.subtype = lower.typeVariable.state.constraintBound()
+                    constraint.subtype = lower.typeVariable.state.constraintBound() ?: continue
                 }
                 if (upper is TypeVariableBound && upper.typeVariable.isFixed) {
                     somethingChanged = true
-                    constraint.supertype = upper.typeVariable.state.constraintBound()
+                    constraint.supertype = upper.typeVariable.state.constraintBound() ?: continue
                 }
             }
         }
@@ -189,6 +192,15 @@ internal class Solver(
             }
         }
         return null
+    }
+
+    private fun MutableList<Constraint>.filterOutConstraintsWithUnusedState() {
+        removeIf { constraint ->
+            when (constraint) {
+                is SubtypeConstraint -> constraint.subtype.isUnused || constraint.supertype.isUnused
+                is EqualsConstraint -> constraint.left.isUnused || constraint.right.isUnused
+            }
+        }
     }
 }
 

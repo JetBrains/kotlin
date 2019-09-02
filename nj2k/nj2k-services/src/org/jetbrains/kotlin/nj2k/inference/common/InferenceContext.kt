@@ -19,7 +19,7 @@ data class InferenceContext(
     val typeElementToTypeVariable: Map<KtTypeElement, TypeVariable>,
     val declarationToTypeVariable: Map<KtNamedDeclaration, TypeVariable>,
     val declarationDescriptorToTypeVariable: Map<DeclarationDescriptor, TypeVariable>,
-    val classSubstitutions: Map<ClassDescriptor, ClassSubstitutor>
+    val superTypesSubstitutions: Map<ClassDescriptor, SuperTypesSubstitutor>
 
 ) {
     fun isInConversionScope(childCandidate: PsiElement) = when (childCandidate) {

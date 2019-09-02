@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.inference.common
 
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 abstract class StateUpdater {
@@ -14,12 +15,14 @@ abstract class StateUpdater {
         val deepComparator = Comparator<TypeElementBasedTypeVariable> { o1, o2 ->
             if (o1.typeElement.typeElement.isAncestor(o2.typeElement.typeElement)) 1 else -1
         }
-        for (typeVariable in inferenceContext
-            .typeVariables
+        val typeVariablesSortedByDeep = inferenceContext.typeVariables
             .filterIsInstance<TypeElementBasedTypeVariable>()
             .sortedWith(deepComparator)
-        ) {
-            typeVariable.updateState()
+
+        runWriteAction {
+            for (typeVariable in typeVariablesSortedByDeep) {
+                typeVariable.updateState()
+            }
         }
     }
 

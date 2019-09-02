@@ -5,23 +5,18 @@
 
 package org.jetbrains.kotlin.nj2k.inference.nullability
 
-import org.jetbrains.kotlin.nj2k.inference.common.*
+import org.jetbrains.kotlin.nj2k.inference.common.State
+import org.jetbrains.kotlin.nj2k.inference.common.StateUpdater
+import org.jetbrains.kotlin.nj2k.inference.common.TypeElementBasedTypeVariable
 import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTypeElement
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 class NullabilityStateUpdater : StateUpdater() {
     override fun TypeElementBasedTypeVariable.updateState() = when (state) {
         State.LOWER -> changeState(toNullable = false)
         State.UPPER -> changeState(toNullable = true)
-        State.UNKNOWN -> {
-            if (typeElement is TypeParameterElementData) {
-                changeState(toNullable = false)
-            } else {
-                changeState(toNullable = true)
-            }
-        }
+        else -> Unit
     }
 
     private fun TypeElementBasedTypeVariable.changeState(toNullable: Boolean) {

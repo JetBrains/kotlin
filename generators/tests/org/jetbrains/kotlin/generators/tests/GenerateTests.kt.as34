@@ -145,6 +145,7 @@ import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.nj2k.AbstractTextNewJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.nj2k.inference.common.AbstractCommonConstraintCollectorTest
+import org.jetbrains.kotlin.nj2k.inference.mutability.AbstractMutabilityInferenceTest
 import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
 import org.jetbrains.kotlin.noarg.AbstractBytecodeListingTestForNoArg
@@ -968,6 +969,9 @@ fun main(args: Array<String>) {
         }
         testClass<AbstractNullabilityInferenceTest> {
             model("inference/nullability")
+        }
+        testClass<AbstractMutabilityInferenceTest> {
+            model("inference/mutability")
         }
         testClass<AbstractNewJavaToKotlinCopyPasteConversionTest> {
             model("copyPaste", pattern = """^([^\.]+)\.java$""")

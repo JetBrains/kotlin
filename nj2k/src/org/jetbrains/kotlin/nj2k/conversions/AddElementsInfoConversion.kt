@@ -6,22 +6,22 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.impl.light.LightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKCapturedType
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
+import org.jetbrains.kotlin.nj2k.types.JKParametrizedType
+import org.jetbrains.kotlin.nj2k.types.JKStarProjectionType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class AddElementsInfoConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class AddElementsInfoConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         when (element) {
             is JKTypeElement -> addInfoForTypeElement(element)
@@ -33,14 +33,10 @@ class AddElementsInfoConversion(private val context: NewJ2kConverterContext) : R
 
     private fun addInfoForTypeElement(typeElement: JKTypeElement) {
         typeElement.type.forAllInnerTypes { type ->
-            if (type.nullability == Nullability.Default
-                || type.safeAs<JKCapturedType>()?.wildcardType is JKStarProjectionType
-            ) {
-                context.elementsInfoStorage.addEntry(type, UnknownNullability)
-            }
-            if (type.isCollectionType) {
-                context.elementsInfoStorage.addEntry(type, UnknownMutability)
-            }
+            val hasUnknownNullability =
+                type.nullability == Nullability.Default || type.safeAs<JKCapturedType>()?.wildcardType is JKStarProjectionType
+            val hasUnknownMutability = type.isCollectionType
+            context.elementsInfoStorage.addEntry(type, JKTypeInfo(hasUnknownNullability, hasUnknownMutability))
         }
     }
 
@@ -48,7 +44,7 @@ class AddElementsInfoConversion(private val context: NewJ2kConverterContext) : R
         val superMethods = function.superMethods() ?: return
         val superDescriptorsInfo = superMethods.map { superDescriptor ->
             val superPsi = superDescriptor.original.findPsi()
-            when (val symbol = context.symbolProvider.symbolsByPsi[superPsi]) {
+            when (val symbol = symbolProvider.symbolsByPsi[superPsi]) {
                 is JKUniverseMethodSymbol ->
                     InternalSuperFunctionInfo(context.elementsInfoStorage.getOrCreateInfoForElement(symbol.target))
                 else -> ExternalSuperFunctionInfo(superDescriptor)
@@ -59,8 +55,8 @@ class AddElementsInfoConversion(private val context: NewJ2kConverterContext) : R
 
     private fun JKMethod.superMethods(): Collection<FunctionDescriptor>? {
         val psiMethod = psi<PsiMethod>() ?: return null
-        psiMethod.getJavaMethodDescriptor()?.let { descriptor ->
-            return descriptor.overriddenDescriptors
+        psiMethod.getJavaMethodDescriptor()?.let {
+            return it.overriddenDescriptors
         }
         return psiMethod.findSuperMethods().mapNotNull { superMethod ->
             when (superMethod) {

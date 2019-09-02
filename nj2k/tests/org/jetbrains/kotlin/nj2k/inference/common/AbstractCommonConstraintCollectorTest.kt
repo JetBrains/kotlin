@@ -17,7 +17,7 @@ abstract class AbstractCommonConstraintCollectorTest : AbstractConstraintCollect
     override fun createInferenceFacade(resolutionFacade: ResolutionFacade): InferenceFacade =
         InferenceFacade(
             object : ContextCollector(resolutionFacade) {
-                override fun ClassReference.getState(typeElement: KtTypeElement?): State? =
+                override fun ClassReference.getState(typeElement: KtTypeElement?): State =
                     State.UNKNOWN
             },
             ConstraintsCollectorAggregator(

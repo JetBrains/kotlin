@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.nj2k.inference.common.BoundTypeCalculator
-import org.jetbrains.kotlin.nj2k.inference.common.ConstraintBuilder
-import org.jetbrains.kotlin.nj2k.inference.common.ConstraintPriority
-import org.jetbrains.kotlin.nj2k.inference.common.InferenceContext
+import org.jetbrains.kotlin.nj2k.inference.common.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.asAssignment
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunction
@@ -108,8 +105,9 @@ class CommonConstraintsCollector : ConstraintsCollector() {
                                 contextBoundType = loopRangeBoundType,
                                 inferenceContext = inferenceContext
                             ) ?: return
-                    loopParameterTypeVariable.isSubtypeOf(
-                        boundType.typeParameters.firstOrNull()?.boundType ?: return,
+
+                    boundType.typeParameters.firstOrNull()?.boundType?.isSubtypeOf(
+                        loopParameterTypeVariable.asBoundType(),
                         ConstraintPriority.ASSIGNMENT
                     )
                 }
@@ -131,5 +129,6 @@ class CommonConstraintsCollector : ConstraintsCollector() {
             ?.firstOrNull { it.valueParameters.isEmpty() }
             ?.original
             ?.returnType
+
     }
 }

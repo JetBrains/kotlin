@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtTypeElement
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class ClassSubstitutor(private val superTypes: Map<ClassifierDescriptor, Map<TypeParameterDescriptor, KtTypeElement>>) {
+class SuperTypesSubstitutor(private val superTypes: Map<ClassifierDescriptor, Map<TypeParameterDescriptor, KtTypeElement>>) {
     operator fun get(klass: ClassDescriptor, typeParameter: TypeParameterDescriptor): KtTypeElement? =
         superTypes[klass]?.get(typeParameter)
 
     companion object {
-        fun createFromKtClass(klass: KtClassOrObject, resolutionFacade: ResolutionFacade): ClassSubstitutor? {
+        fun createFromKtClass(klass: KtClassOrObject, resolutionFacade: ResolutionFacade): SuperTypesSubstitutor? {
             val superTypes =
                 klass.superTypeListEntries.map { superType ->
                     val typeReference = superType.typeReference ?: return null
@@ -31,7 +31,7 @@ class ClassSubstitutor(private val superTypes: Map<ClassifierDescriptor, Map<Typ
                         parameter to (argument.typeElement ?: return null)
                     }.toMap()
                 }.toMap()
-            return ClassSubstitutor(superTypes)
+            return SuperTypesSubstitutor(superTypes)
         }
     }
 }

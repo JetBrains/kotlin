@@ -1,4 +1,3 @@
-// ERROR: Operator call corresponds to a dot-qualified call 'value.plus(1)' which is not allowed on a nullable receiver 'value'.
 import java.util.HashMap
 
 internal enum class E { A, B, C }
@@ -15,7 +14,7 @@ internal class A {
         val i = map.entries.iterator().next().key + 1
     }
 
-    fun bar(list: MutableList<String?>, map: HashMap<String?, Int?>) {
+    fun bar(list: MutableList<String?>, map: HashMap<String, Int>) {
         val c = "a"[0]
         val b = 10.toByte()
         val i = 10.1.toInt()
