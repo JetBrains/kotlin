@@ -12,7 +12,7 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
 
     fun or(storages: Collection<Flow>): Flow {
         storages.singleOrNull()?.let {
-            return it.copy()
+            return it
         }
         val approvedFacts = mutableMapOf<DataFlowVariable, FirDataFlowInfo>().apply {
             storages.map { it.approvedFacts.keys }
