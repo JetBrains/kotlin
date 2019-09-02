@@ -515,6 +515,8 @@
 
     <codeInsight.linkHandler prefix="#kotlinClass/" handlerClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinClassTooltipLinkHandler"/>
 
+    <codeInsight.nonBlockingContextChecker implementation="org.jetbrains.kotlin.idea.inspections.blockingCallsDetection.CoroutineNonBlockingContextChecker"/>
+
     <defaultHighlightingSettingProvider language="kotlin" implementation="org.jetbrains.kotlin.idea.highlighter.KotlinDefaultHighlightingSettingsProvider"/>
 
     <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinTypeDeclarationProvider"/>

@@ -65,10 +65,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
   </extensions>
 
-  <extensions defaultExtensionNs="com.intellij.codeInsight">
-     <nonBlockingContextChecker implementation="org.jetbrains.kotlin.idea.inspections.blockingCallsDetection.CoroutineNonBlockingContextChecker"/>
-  </extensions>
-
     <extensions defaultExtensionNs="com.intellij">
       <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
       <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="2"/>
