@@ -142,7 +142,8 @@ internal class IndexedGetHeaderInfo(
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
-    val objectVariable: IrVariable
+    val objectVariable: IrVariable,
+    val expressionHandler: IndexedGetIterationHandler
 ) : HeaderInfo(
     ProgressionType.INT_PROGRESSION,
     first,

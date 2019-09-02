@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -348,9 +349,7 @@ internal abstract class IndexedGetIterationHandler(protected val context: Common
                 origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
             )
 
-            // `last = array.size` (last is exclusive) for the loop `for (i in array.indices)`.
-            val arraySizeProperty = arrayReference.type.getClass()!!.properties.first { it.name.asString() == sizePropertyName() }
-            val last = irCall(arraySizeProperty.getter!!).apply {
+            val last = irCall(expression.type.sizePropertyGetter).apply {
                 dispatchReceiver = irGet(arrayReference)
             }
 
@@ -358,23 +357,34 @@ internal abstract class IndexedGetIterationHandler(protected val context: Common
                 first = irInt(0),
                 last = last,
                 step = irInt(1),
-                objectVariable = arrayReference
+                objectVariable = arrayReference,
+                expressionHandler = this@IndexedGetIterationHandler
             )
         }
 
-    abstract fun sizePropertyName() : String
+    abstract val IrType.sizePropertyGetter: IrSimpleFunction
+
+    abstract val IrType.getFunction: IrSimpleFunction
 }
 
 /** Builds a [HeaderInfo] for arrays. */
 internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context) {
     override fun match(expression: IrExpression) = expression.type.run { isArray() || isPrimitiveArray() }
 
-    override fun sizePropertyName(): String = "size"
+    override val IrType.sizePropertyGetter
+        get() = getClass()!!.properties.first { it.name == Name.identifier("size") }.getter!!
+
+    override val IrType.getFunction
+        get() = getClass()!!.functions.first { it.name.asString() == "get" }
 }
 
 /** Builds a [HeaderInfo] for iteration over characters in a `CharacterSequence`. */
 internal class CharSequenceIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context) {
     override fun match(expression: IrExpression) = expression.type.isSubtypeOfClass(context.ir.symbols.charSequence)
 
-    override fun sizePropertyName(): String = "length"
+    override val IrType.sizePropertyGetter
+        get() = context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+
+    override val IrType.getFunction
+        get() = context.ir.symbols.charSequence.getSimpleFunction("get")!!.owner
 }

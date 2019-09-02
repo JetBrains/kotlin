@@ -209,7 +209,7 @@ internal class IndexedGetLoopHeader(
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         // inductionVar = loopVar[inductionVariable]
-        val indexedGetFun = headerInfo.objectVariable.type.getClass()!!.functions.first { it.name.asString() == "get" }
+        val indexedGetFun = with(headerInfo.expressionHandler) { headerInfo.objectVariable.type.getFunction }
         irCall(indexedGetFun).apply {
             dispatchReceiver = irGet(headerInfo.objectVariable)
             putValueArgument(0, irGet(inductionVariable))
