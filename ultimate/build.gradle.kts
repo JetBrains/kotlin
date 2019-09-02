@@ -27,6 +27,7 @@ dependencies {
     compile(project(":core:util.runtime")) { isTransitive = false }
     compile(project(":compiler:light-classes")) { isTransitive = false }
     compile(project(":core:type-system")) { isTransitive = false }
+    compile(project(":compiler:cli-common")) { isTransitive = false }
     compile(project(":compiler:frontend")) { isTransitive = false }
     compile(project(":compiler:frontend.common")) { isTransitive = false }
     compile(project(":compiler:frontend.java")) { isTransitive = false }
@@ -37,6 +38,7 @@ dependencies {
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
+    compile(project(":idea:idea-native")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
     compile(project(":compiler:util")) { isTransitive = false }
     compile(project(":idea:idea-jps-common")) { isTransitive = false }
