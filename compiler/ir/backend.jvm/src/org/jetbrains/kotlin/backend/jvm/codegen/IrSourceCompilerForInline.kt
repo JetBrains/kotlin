@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
@@ -37,6 +36,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 class IrSourceCompilerForInline(
     override val state: GenerationState,
     override val callElement: IrMemberAccessExpression,
+    private val callee: IrFunction,
     private val codegen: ExpressionCodegen,
     private val data: BlockInfo
 ) : SourceCompilerForInline {
@@ -94,16 +94,15 @@ class IrSourceCompilerForInline(
         callDefault: Boolean,
         asmMethod: Method
     ): SMAPAndMethodNode {
-        assert(callableDescriptor == callElement.descriptor.original) { "Expected $callableDescriptor got ${callElement.descriptor.original}" }
+        assert(callableDescriptor == callee.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
         assert(codegen.lastLineNumber >= 0) { "lastLineNumber shall be not negative, but is ${codegen.lastLineNumber}" }
 
-        val irFunction = getFunctionToInline(callElement as IrCall, jvmSignature, callDefault)
+        val irFunction = getFunctionToInline(jvmSignature, callDefault)
         val classCodegen = FakeClassCodegen(irFunction, codegen.classCodegen, codegen.irFunction.isInline || codegen.isInlineLambda)
         return makeInlineNode(irFunction, classCodegen, CallSiteMarker(codegen.lastLineNumber))
     }
 
-    private fun getFunctionToInline(call: IrCall, jvmSignature: JvmMethodSignature, callDefault: Boolean): IrFunction {
-        val callee = call.symbol.owner
+    private fun getFunctionToInline(jvmSignature: JvmMethodSignature, callDefault: Boolean): IrFunction {
         val parent = callee.parentAsClass
         if (callDefault) {
             /*TODO: get rid of hack*/
