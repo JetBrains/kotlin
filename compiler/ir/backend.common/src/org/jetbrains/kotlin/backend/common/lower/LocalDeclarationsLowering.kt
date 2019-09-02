@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -48,20 +49,32 @@ interface LocalNameProvider {
     }
 }
 
+interface VisibilityPolicy {
+    fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): Visibility =
+        declaration.visibility
+
+    fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility =
+        Visibilities.PRIVATE
+
+    companion object {
+        val DEFAULT = object : VisibilityPolicy {}
+    }
+}
+
 val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
     get() = generateSequence(this as? IrDeclarationParent) { (it as? IrDeclaration)?.parent }
 
 val IrDeclaration.parents: Sequence<IrDeclarationParent>
     get() = parentsWithSelf.drop(1)
 
-object BOUND_VALUE_PARAMETER: IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
+object BOUND_VALUE_PARAMETER : IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
 
-object BOUND_RECEIVER_PARAMETER: IrDeclarationOriginImpl("BOUND_RECEIVER_PARAMETER")
+object BOUND_RECEIVER_PARAMETER : IrDeclarationOriginImpl("BOUND_RECEIVER_PARAMETER")
 
 class LocalDeclarationsLowering(
     val context: BackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
-    val loweredConstructorVisibility: Visibility = Visibilities.PRIVATE
+    val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT
 ) :
     FileLoweringPass {
 
@@ -107,11 +120,12 @@ class LocalDeclarationsLowering(
         override lateinit var transformedDeclaration: IrSimpleFunction
     }
 
-    private class LocalClassConstructorContext(override val declaration: IrConstructor) : LocalContextWithClosureAsParameters() {
+    private class LocalClassConstructorContext(override val declaration: IrConstructor, val inInlineFunctionScope: Boolean) :
+        LocalContextWithClosureAsParameters() {
         override lateinit var transformedDeclaration: IrConstructor
     }
 
-    private class LocalClassContext(val declaration: IrClass) : LocalContext() {
+    private class LocalClassContext(val declaration: IrClass, val inInlineFunctionScope: Boolean) : LocalContext() {
         lateinit var closure: Closure
 
         // NOTE: This map is iterated over in `rewriteClassMembers` and we're relying on
@@ -449,6 +463,8 @@ class LocalDeclarationsLowering(
             }
 
             localClasses.values.forEach {
+                val localClassVisibility = visibilityPolicy.forClass(it.declaration, it.inInlineFunctionScope)
+                it.declaration.visibility = localClassVisibility
                 createFieldsForCapturedValues(it)
             }
 
@@ -589,6 +605,9 @@ class LocalDeclarationsLowering(
             val newDescriptor = WrappedClassConstructorDescriptor(oldDeclaration.descriptor.annotations, oldDeclaration.descriptor.source)
             val newSymbol = IrConstructorSymbolImpl(newDescriptor)
 
+            val loweredConstructorVisibility =
+                visibilityPolicy.forConstructor(oldDeclaration, constructorContext.inInlineFunctionScope)
+
             val newDeclaration = IrConstructorImpl(
                 oldDeclaration.startOffset, oldDeclaration.endOffset, oldDeclaration.origin,
                 newSymbol, oldDeclaration.name, loweredConstructorVisibility, oldDeclaration.returnType, oldDeclaration.isInline,
@@ -726,9 +745,9 @@ class LocalDeclarationsLowering(
                 override fun visitConstructor(declaration: IrConstructor) {
                     super.visitConstructor(declaration)
 
-                    if (!(declaration.parent as IrClass).isLocalNotInner()) return
+                    if (!declaration.constructedClass.isLocalNotInner()) return
 
-                    localClassConstructors[declaration] = LocalClassConstructorContext(declaration)
+                    localClassConstructors[declaration] = LocalClassConstructorContext(declaration, inInlineFunctionScope)
                 }
 
                 override fun visitClassNew(declaration: IrClass) {
@@ -736,9 +755,12 @@ class LocalDeclarationsLowering(
 
                     if (!declaration.isLocalNotInner()) return
 
-                    val localClassContext = LocalClassContext(declaration)
+                    val localClassContext = LocalClassContext(declaration, inInlineFunctionScope)
                     localClasses[declaration] = localClassContext
                 }
+
+                private val inInlineFunctionScope: Boolean
+                    get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
             })
         }
     }
