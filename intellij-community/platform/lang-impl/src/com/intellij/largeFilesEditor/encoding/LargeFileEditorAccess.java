@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 
-public interface EditorManagerAccess {
+public interface LargeFileEditorAccess {
 
   @NotNull
   VirtualFile getVirtualFile();

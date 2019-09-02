@@ -9,7 +9,7 @@ import com.intellij.find.FindModel;
 import com.intellij.find.FindResult;
 import com.intellij.find.SearchReplaceComponent;
 import com.intellij.largeFilesEditor.Utils;
-import com.intellij.largeFilesEditor.editor.EditorManager;
+import com.intellij.largeFilesEditor.editor.LargeFileEditor;
 import com.intellij.largeFilesEditor.search.actions.*;
 import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
 import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
@@ -49,7 +49,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
   private static final Logger logger = Logger.getInstance(SearchManagerImpl.class);
   private static final long PROGRESS_STATUS_UPDATE_PERIOD = 150;
 
-  private final EditorManager editorManager;
+  private final LargeFileEditor myLargeFileEditor;
   private final FileDataProviderForSearch fileDataProviderForSearch;
   private final RangeSearchCreator myRangeSearchCreator;
 
@@ -74,10 +74,10 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
   private boolean isStatusTextHidden;
   private long lastTimeStatusTextWasChanged;
 
-  public SearchManagerImpl(@NotNull EditorManager editorManager,
+  public SearchManagerImpl(@NotNull LargeFileEditor largeFileEditor,
                            FileDataProviderForSearch fileDataProviderForSearch,
                            @NotNull RangeSearchCreator rangeSearchCreator) {
-    this.editorManager = editorManager;
+    this.myLargeFileEditor = largeFileEditor;
     this.fileDataProviderForSearch = fileDataProviderForSearch;
     this.myRangeSearchCreator = rangeSearchCreator;
 
@@ -107,15 +107,15 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
 
   @Override
   public void onSearchActionHandlerExecuted() {
-    editorManager.getEditor().setHeaderComponent(searchManageGUI);
-    searchManageGUI.requestFocusInTheSearchFieldAndSelectContent(editorManager.getProject());
+    myLargeFileEditor.getEditor().setHeaderComponent(searchManageGUI);
+    searchManageGUI.requestFocusInTheSearchFieldAndSelectContent(myLargeFileEditor.getProject());
     searchManageGUI.getSearchTextComponent().selectAll();
   }
 
   @NotNull
   @Override
-  public EditorManager getEditorManager() {
-    return editorManager;
+  public LargeFileEditor getLargeFileEditor() {
+    return myLargeFileEditor;
   }
 
   @Override
@@ -134,16 +134,16 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
 
   private void launchNewRangeSearch(SearchTaskOptions searchTaskOptions) {
     RangeSearch rangeSearch = myRangeSearchCreator.createContent(
-      editorManager.getProject(), editorManager.getVirtualFile(),
-      editorManager.getVirtualFile().getName());
+      myLargeFileEditor.getProject(), myLargeFileEditor.getVirtualFile(),
+      myLargeFileEditor.getVirtualFile().getName());
     rangeSearch.runNewSearch(searchTaskOptions, fileDataProviderForSearch);
   }
 
   @Override
   public void gotoNextOccurrence(boolean directionForward) {
     int gotoSearchResultIndex = getNextOccurrenceIndexIfCan(directionForward,
-                                                            editorManager.getCaretPageNumber(),
-                                                            editorManager.getCaretPageOffset(),
+                                                            myLargeFileEditor.getCaretPageNumber(),
+                                                            myLargeFileEditor.getCaretPageOffset(),
                                                             closeSearchResultsList);
 
     if (gotoSearchResultIndex == -1) {
@@ -175,7 +175,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
 
     stopSearchTaskIfItExists();
     lastExecutedCloseSearchTask = new CloseSearchTask(
-      options, editorManager.getProject(), fileDataProviderForSearch, this);
+      options, myLargeFileEditor.getProject(), fileDataProviderForSearch, this);
     ApplicationManager.getApplication().executeOnPooledThread(lastExecutedCloseSearchTask);
   }
 
@@ -247,8 +247,8 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
       }
     }
     else {
-      long caretPageNumber = editorManager.getCaretPageNumber();
-      int caretPageOffset = editorManager.getCaretPageOffset();
+      long caretPageNumber = myLargeFileEditor.getCaretPageNumber();
+      int caretPageOffset = myLargeFileEditor.getCaretPageOffset();
       if (directionForward) {
         options.setSearchBounds(caretPageNumber, caretPageOffset,
                                 SearchTaskOptions.NO_LIMIT, SearchTaskOptions.NO_LIMIT);
@@ -284,8 +284,8 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
       if (!caller.isShouldStop()) {
         setNewStatusText("");
         SearchResult closestResult = allMatchesAtFrame.get(indexOfClosestResult);
-        editorManager.getEditorModel().showSearchResult(closestResult);
-        editorManager.getEditorModel().setHighlightingCloseSearchResultsEnabled(true);
+        myLargeFileEditor.getEditorModel().showSearchResult(closestResult);
+        myLargeFileEditor.getEditorModel().setHighlightingCloseSearchResultsEnabled(true);
       }
     });
   }
@@ -299,9 +299,9 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
         if (options.loopedPhase) {
           setNewStatusText("Search complete. No more matches.");
           searchManageGUI.setNotFoundBackground();
-          if (!(editorManager.getEditor().getHeaderComponent() instanceof SearchReplaceComponent)) {
+          if (!(myLargeFileEditor.getEditor().getHeaderComponent() instanceof SearchReplaceComponent)) {
             String message = "\"" + options.stringToFind + "\" not found";
-            showSimpleHintInEditor(message, editorManager.getEditor());
+            showSimpleHintInEditor(message, myLargeFileEditor.getEditor());
           }
         }
         else {
@@ -320,7 +320,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
             message = String.format("\"%s\" not found, perform \"%s\" action again to search from the %s",
                                     options.stringToFind, action.getTemplatePresentation().getText(), findAgainFromText);
           }
-          showSimpleHintInEditor(message, editorManager.getEditor());
+          showSimpleHintInEditor(message, myLargeFileEditor.getEditor());
         }
       }
     });
@@ -364,11 +364,11 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
     else {
       stopSearchTaskIfItExists();
       IdeFocusManager
-        .getInstance(editorManager.getProject())
-        .requestFocus(editorManager.getEditor().getContentComponent(), false);
-      editorManager.getEditorModel().setHighlightingCloseSearchResultsEnabled(false);
-      if (editorManager.getEditor().getHeaderComponent() instanceof SearchReplaceComponent) {
-        editorManager.getEditor().setHeaderComponent(null);
+        .getInstance(myLargeFileEditor.getProject())
+        .requestFocus(myLargeFileEditor.getEditor().getContentComponent(), false);
+      myLargeFileEditor.getEditorModel().setHighlightingCloseSearchResultsEnabled(false);
+      if (myLargeFileEditor.getEditor().getHeaderComponent() instanceof SearchReplaceComponent) {
+        myLargeFileEditor.getEditor().setHeaderComponent(null);
       }
     }
   }
@@ -409,7 +409,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
       setNewStatusText("");
     }
     searchManageGUI.setRegularBackground();
-    editorManager.getEditorModel().setHighlightingCloseSearchResultsEnabled(false);
+    myLargeFileEditor.getEditorModel().setHighlightingCloseSearchResultsEnabled(false);
 
     String stringToFind = searchManageGUI.getSearchTextComponent().getText();
     boolean isMultiline = stringToFind.contains("\n");
@@ -444,7 +444,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
     ArrayList<TextRange> resultsList = new ArrayList<>();
 
     while (true) {
-      FindResult findResult = FindManager.getInstance(editorManager.getProject()).findString(documentText, offset, findModel);
+      FindResult findResult = FindManager.getInstance(myLargeFileEditor.getProject()).findString(documentText, offset, findModel);
       if (findResult.isStringFound()) {
         resultsList.add(findResult);
         offset = findResult.getEndOffset();
@@ -473,8 +473,8 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
 
   private void createSearchManageGUI() {
     searchManageGUI = SearchReplaceComponent
-      .buildFor(editorManager.getProject(),
-                editorManager.getEditor().getContentComponent())
+      .buildFor(myLargeFileEditor.getProject(),
+                myLargeFileEditor.getEditor().getContentComponent())
       .addPrimarySearchActions(prevOccurrenceAction,
                                nextOccurrenceAction,
                                new Separator(),
@@ -601,7 +601,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
       if (!e.getValueIsAdjusting()) { // it happens when the selecting process is over and the selected position is set finaly
         SearchResult selectedSearchResult = list.getSelectedValue();
         if (selectedSearchResult != null) {
-          editorManager.showSearchResult(selectedSearchResult);
+          myLargeFileEditor.showSearchResult(selectedSearchResult);
         }
       }
     }

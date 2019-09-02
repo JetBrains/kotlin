@@ -34,7 +34,7 @@ public final class LargeFileEditorProvider implements DefaultPlatformFileEditorP
   @NotNull
   @Override
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return new EditorManagerImpl(project, file);
+    return new LargeFileEditorImpl(project, file);
   }
 
   @NotNull

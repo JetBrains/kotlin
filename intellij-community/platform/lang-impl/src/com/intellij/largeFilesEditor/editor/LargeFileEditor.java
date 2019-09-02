@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.editor;
 
-import com.intellij.largeFilesEditor.encoding.EditorManagerAccess;
+import com.intellij.largeFilesEditor.encoding.LargeFileEditorAccess;
 import com.intellij.largeFilesEditor.search.SearchManager;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
@@ -13,9 +13,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface EditorManager extends FileEditor {
-  Key<Object> KEY_EDITOR_MARK = new Key<>("lfe.editorMark");
-  Key<EditorManager> KEY_EDITOR_MANAGER = new Key<>("lfe.editorManager");
+public interface LargeFileEditor extends FileEditor {
+  Key<Object> LARGE_FILE_EDITOR_MARK_KEY = new Key<>("lfe.editorMark");
+  Key<LargeFileEditor> LARGE_FILE_EDITOR_KEY = new Key<>("lfe.editor");
 
   SearchManager getSearchManager();
 
@@ -36,7 +36,7 @@ public interface EditorManager extends FileEditor {
   @NotNull
   VirtualFile getVirtualFile();
 
-  EditorManagerAccess createAccessForEncodingWidget();
+  LargeFileEditorAccess createAccessForEncodingWidget();
 
   FileDataProviderForSearch getFileDataProviderForSearch();
 

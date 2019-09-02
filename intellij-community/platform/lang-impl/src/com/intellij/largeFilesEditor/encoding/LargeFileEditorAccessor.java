@@ -5,11 +5,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import org.jetbrains.annotations.Nullable;
 
-public interface EditorManagerAccessor {
+public interface LargeFileEditorAccessor {
 
   /**
    * @return null - if no access
    */
   @Nullable
-  EditorManagerAccess getAccess(@Nullable Project project, @Nullable StatusBar statusBar);
+  LargeFileEditorAccess getAccess(@Nullable Project project, @Nullable StatusBar statusBar);
 }

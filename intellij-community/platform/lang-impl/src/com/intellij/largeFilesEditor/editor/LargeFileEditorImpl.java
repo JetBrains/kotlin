@@ -3,8 +3,8 @@ package com.intellij.largeFilesEditor.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.largeFilesEditor.PlatformActionsReplacer;
-import com.intellij.largeFilesEditor.encoding.EditorManagerAccess;
-import com.intellij.largeFilesEditor.encoding.EditorManagerAccessorImpl;
+import com.intellij.largeFilesEditor.encoding.LargeFileEditorAccess;
+import com.intellij.largeFilesEditor.encoding.LargeFileEditorAccessorImpl;
 import com.intellij.largeFilesEditor.encoding.EncodingWidget;
 import com.intellij.largeFilesEditor.file.LargeFileManager;
 import com.intellij.largeFilesEditor.file.LargeFileManagerImpl;
@@ -47,9 +47,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-public class EditorManagerImpl extends UserDataHolderBase implements EditorManager {
+public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFileEditor {
 
-  private static final Logger logger = Logger.getInstance(EditorManagerImpl.class);
+  private static final Logger logger = Logger.getInstance(LargeFileEditorImpl.class);
   private final Project project;
   private LargeFileManager fileManager;
   private final EditorModel editorModel;
@@ -57,7 +57,7 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
   private final VirtualFile vFile;
   private SearchManager searchManager;
 
-  public EditorManagerImpl(Project project, VirtualFile vFile) {
+  public LargeFileEditorImpl(Project project, VirtualFile vFile) {
     this.vFile = vFile;
     this.project = project;
 
@@ -67,8 +67,8 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
     document = createSpecialDocument(vFile);
 
     editorModel = new EditorModel(document, project, implementDataProviderForEditorModel());
-    editorModel.putUserDataToEditor(KEY_EDITOR_MARK, new Object());
-    editorModel.putUserDataToEditor(KEY_EDITOR_MANAGER, this);
+    editorModel.putUserDataToEditor(LARGE_FILE_EDITOR_MARK_KEY, new Object());
+    editorModel.putUserDataToEditor(LARGE_FILE_EDITOR_KEY, this);
 
     try {
       fileManager = new LargeFileManagerImpl(vFile, customPageSize, customBorderShift);
@@ -111,7 +111,7 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
       }
     }
     if (needToAddNewWidget) {
-      statusBar.addWidget(new EncodingWidget(project, new EditorManagerAccessorImpl()));
+      statusBar.addWidget(new EncodingWidget(project, new LargeFileEditorAccessorImpl()));
     }
   }
 
@@ -246,18 +246,18 @@ public class EditorManagerImpl extends UserDataHolderBase implements EditorManag
   }
 
   @Override
-  public EditorManagerAccess createAccessForEncodingWidget() {
-    return new EditorManagerAccess() {
+  public LargeFileEditorAccess createAccessForEncodingWidget() {
+    return new LargeFileEditorAccess() {
       @NotNull
       @Override
       public VirtualFile getVirtualFile() {
-        return EditorManagerImpl.this.getVirtualFile();
+        return LargeFileEditorImpl.this.getVirtualFile();
       }
 
       @NotNull
       @Override
       public Editor getEditor() {
-        return EditorManagerImpl.this.getEditor();
+        return LargeFileEditorImpl.this.getEditor();
       }
 
       @Override

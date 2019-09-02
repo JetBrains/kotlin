@@ -24,23 +24,23 @@ public class ChangeFileEncodingAction extends com.intellij.openapi.vfs.encoding.
 
   private static final Logger logger = Logger.getInstance(ChangeFileEncodingAction.class);
 
-  private final EditorManagerAccessor editorManagerAccessor;
+  private final LargeFileEditorAccessor myLargeFileEditorAccessor;
   private final Project project;
   private final StatusBar statusBar;
 
-  ChangeFileEncodingAction(EditorManagerAccessor editorManagerAccessor, Project project, StatusBar statusBar) {
-    this.editorManagerAccessor = editorManagerAccessor;
+  ChangeFileEncodingAction(LargeFileEditorAccessor largeFileEditorAccessor, Project project, StatusBar statusBar) {
+    this.myLargeFileEditorAccessor = largeFileEditorAccessor;
     this.project = project;
     this.statusBar = statusBar;
   }
 
   private boolean chosen(@NotNull Charset charset) {
-    EditorManagerAccess editorManagerAccess = editorManagerAccessor.getAccess(project, statusBar);
-    if (editorManagerAccess == null) {
+    LargeFileEditorAccess largeFileEditorAccess = myLargeFileEditorAccessor.getAccess(project, statusBar);
+    if (largeFileEditorAccess == null) {
       logger.warn("tried to change encoding while editor is not accessible");
       return false;
     }
-    boolean result = editorManagerAccess.tryChangeEncoding(charset);
+    boolean result = largeFileEditorAccess.tryChangeEncoding(charset);
     updateWidget();
     return result;
   }

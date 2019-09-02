@@ -2,7 +2,7 @@
 package com.intellij.largeFilesEditor.search;
 
 import com.intellij.find.SearchReplaceComponent;
-import com.intellij.largeFilesEditor.editor.EditorManager;
+import com.intellij.largeFilesEditor.editor.LargeFileEditor;
 import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.CaretEvent;
@@ -23,7 +23,7 @@ public interface SearchManager {
   void onSearchActionHandlerExecuted();
 
   @NotNull
-  EditorManager getEditorManager();
+  LargeFileEditor getLargeFileEditor();
 
   void launchNewRangeSearch(long fromPageNumber, long toPageNumber, boolean forwardDirection);
 

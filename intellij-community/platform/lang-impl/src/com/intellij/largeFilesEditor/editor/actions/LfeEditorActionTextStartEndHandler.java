@@ -2,7 +2,7 @@
 package com.intellij.largeFilesEditor.editor.actions;
 
 import com.intellij.largeFilesEditor.actions.LfeBaseEditorActionHandler;
-import com.intellij.largeFilesEditor.editor.EditorManager;
+import com.intellij.largeFilesEditor.editor.LargeFileEditor;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -21,18 +21,18 @@ public class LfeEditorActionTextStartEndHandler extends LfeBaseEditorActionHandl
   }
 
   @Override
-  protected void doExecuteInLfe(@NotNull EditorManager editorManager,
+  protected void doExecuteInLfe(@NotNull LargeFileEditor largeFileEditor,
                                 @NotNull Editor editor,
                                 @Nullable Caret caret,
                                 DataContext dataContext) {
     if (isStart) {
-      editorManager.getEditorModel().setCaretToFileStartAndShow();
+      largeFileEditor.getEditorModel().setCaretToFileStartAndShow();
     }
     else {
-      editorManager.getEditorModel().setCaretToFileEndAndShow();
+      largeFileEditor.getEditorModel().setCaretToFileEndAndShow();
     }
 
-    IdeDocumentHistory docHistory = IdeDocumentHistory.getInstance(editorManager.getProject());
+    IdeDocumentHistory docHistory = IdeDocumentHistory.getInstance(largeFileEditor.getProject());
     if (docHistory != null) {
       docHistory.includeCurrentCommandAsNavigation();
       docHistory.setCurrentCommandHasMoves();
@@ -40,7 +40,7 @@ public class LfeEditorActionTextStartEndHandler extends LfeBaseEditorActionHandl
   }
 
   @Override
-  protected boolean isEnabledInLfe(@NotNull EditorManager editorManager,
+  protected boolean isEnabledInLfe(@NotNull LargeFileEditor largeFileEditor,
                                    @NotNull Editor editor,
                                    @NotNull Caret caret,
                                    DataContext dataContext) {

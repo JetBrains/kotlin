@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.actions;
 
-import com.intellij.largeFilesEditor.editor.EditorManager;
+import com.intellij.largeFilesEditor.editor.LargeFileEditor;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -18,9 +18,9 @@ public abstract class LfeBaseEditorActionHandler extends EditorActionHandler {
 
   @Override
   protected final void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
-    EditorManager editorManager = Utils.tryGetLargeFileEditorManagerFromEditor(editor);
-    if (editorManager != null) {
-      doExecuteInLfe(editorManager, editor, caret, dataContext);
+    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManagerFromEditor(editor);
+    if (largeFileEditor != null) {
+      doExecuteInLfe(largeFileEditor, editor, caret, dataContext);
     }
     else {
       if (originalHandler != null) {
@@ -31,9 +31,9 @@ public abstract class LfeBaseEditorActionHandler extends EditorActionHandler {
 
   @Override
   protected final boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
-    EditorManager editorManager = Utils.tryGetLargeFileEditorManagerFromEditor(editor);
-    if (editorManager != null) {
-      return isEnabledInLfe(editorManager, editor, caret, dataContext);
+    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManagerFromEditor(editor);
+    if (largeFileEditor != null) {
+      return isEnabledInLfe(largeFileEditor, editor, caret, dataContext);
     }
     else {
       return originalHandler != null
@@ -46,12 +46,12 @@ public abstract class LfeBaseEditorActionHandler extends EditorActionHandler {
     return originalHandler;
   }
 
-  protected abstract void doExecuteInLfe(@NotNull EditorManager editorManager,
+  protected abstract void doExecuteInLfe(@NotNull LargeFileEditor largeFileEditor,
                                          @NotNull Editor editor,
                                          @Nullable Caret caret,
                                          DataContext dataContext);
 
-  protected abstract boolean isEnabledInLfe(@NotNull EditorManager editorManager,
+  protected abstract boolean isEnabledInLfe(@NotNull LargeFileEditor largeFileEditor,
                                             @NotNull Editor editor,
                                             @NotNull Caret caret,
                                             DataContext dataContext);

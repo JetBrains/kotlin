@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.actions;
 
-import com.intellij.largeFilesEditor.editor.EditorManager;
+import com.intellij.largeFilesEditor.editor.LargeFileEditor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -17,9 +17,9 @@ public abstract class LfeBaseProxyAction extends AnAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    EditorManager editorManager = Utils.tryGetLargeFileEditorManager(e);
-    if (editorManager != null) {
-      updateForLfe(e, editorManager);
+    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManager(e);
+    if (largeFileEditor != null) {
+      updateForLfe(e, largeFileEditor);
     }
     else {
       originalAction.update(e);
@@ -28,9 +28,9 @@ public abstract class LfeBaseProxyAction extends AnAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    EditorManager editorManager = Utils.tryGetLargeFileEditorManager(e);
-    if (editorManager != null) {
-      actionPerformedForLfe(e, editorManager);
+    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManager(e);
+    if (largeFileEditor != null) {
+      actionPerformedForLfe(e, largeFileEditor);
     }
     else {
       originalAction.actionPerformed(e);
@@ -39,9 +39,9 @@ public abstract class LfeBaseProxyAction extends AnAction {
 
   @Override
   public void beforeActionPerformedUpdate(@NotNull AnActionEvent e) {
-    EditorManager editorManager = Utils.tryGetLargeFileEditorManager(e);
-    if (editorManager != null) {
-      updateForLfe(e, editorManager);
+    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManager(e);
+    if (largeFileEditor != null) {
+      updateForLfe(e, largeFileEditor);
     }
     else {
       originalAction.beforeActionPerformedUpdate(e);
@@ -94,7 +94,7 @@ public abstract class LfeBaseProxyAction extends AnAction {
     return originalAction.toString();
   }
 
-  protected abstract void updateForLfe(AnActionEvent e, @NotNull EditorManager editorManager);
+  protected abstract void updateForLfe(AnActionEvent e, @NotNull LargeFileEditor largeFileEditor);
 
-  protected abstract void actionPerformedForLfe(AnActionEvent e, @NotNull EditorManager editorManager);
+  protected abstract void actionPerformedForLfe(AnActionEvent e, @NotNull LargeFileEditor largeFileEditor);
 }

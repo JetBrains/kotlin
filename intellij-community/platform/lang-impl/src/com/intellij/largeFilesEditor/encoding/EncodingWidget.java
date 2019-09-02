@@ -30,13 +30,13 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   private final TextPanel myComponent;
   private Alarm myUpdateAlarm;
 
-  private final EditorManagerAccessor myEditorManagerAccessor;
+  private final LargeFileEditorAccessor myLargeFileEditorAccessor;
 
   private boolean myActionEnabled;
 
-  public EncodingWidget(@NotNull final Project project, EditorManagerAccessor editorManagerAccessor) {
+  public EncodingWidget(@NotNull final Project project, LargeFileEditorAccessor largeFileEditorAccessor) {
     super(project);
-    myEditorManagerAccessor = editorManagerAccessor;
+    myLargeFileEditorAccessor = largeFileEditorAccessor;
     myComponent = new TextPanel.WithIconAndArrows();
     myComponent.setBorder(WidgetBorder.WIDE);
   }
@@ -53,7 +53,7 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
 
   @Override
   public StatusBarWidget copy() {
-    return new EncodingWidget(getProject(), myEditorManagerAccessor);
+    return new EncodingWidget(getProject(), myLargeFileEditorAccessor);
   }
 
   @Override
@@ -85,21 +85,21 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
     if (!myActionEnabled) {
       return;
     }
-    EditorManagerAccess editorManagerAccess = myEditorManagerAccessor.getAccess(getProject(), myStatusBar);
-    if (editorManagerAccess != null) {
-      showPopup(editorManagerAccess);
+    LargeFileEditorAccess largeFileEditorAccess = myLargeFileEditorAccessor.getAccess(getProject(), myStatusBar);
+    if (largeFileEditorAccess != null) {
+      showPopup(largeFileEditorAccess);
     }
     else {
       logger.warn("[LargeFileEditorSubsystem] EncodingWidget.tryShowPopup():" +
-                  " this method was called while editorManager is not available as active text editor");
+                  " this method was called while LargeFileEditor is not available as active text editor");
       requestUpdate();
     }
   }
 
-  private void showPopup(@NotNull EditorManagerAccess editorManagerAccess) {
-    ChangeFileEncodingAction action = new ChangeFileEncodingAction(myEditorManagerAccessor, getProject(), myStatusBar);
+  private void showPopup(@NotNull LargeFileEditorAccess largeFileEditorAccess) {
+    ChangeFileEncodingAction action = new ChangeFileEncodingAction(myLargeFileEditorAccessor, getProject(), myStatusBar);
     JComponent where = getComponent();
-    ListPopup popup = action.createPopup(editorManagerAccess.getVirtualFile(), editorManagerAccess.getEditor(),
+    ListPopup popup = action.createPopup(largeFileEditorAccess.getVirtualFile(), largeFileEditorAccess.getEditor(),
                                          where);
     RelativePoint pos = JBPopupFactory.getInstance().guessBestPopupLocation(where);
     popup.showInScreenCoordinates(where, pos.getScreenPoint());
@@ -119,20 +119,20 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   private void update() {
     if (isDisposed()) return;
 
-    EditorManagerAccess editorManagerAccess = myEditorManagerAccessor.getAccess(getProject(), myStatusBar);
+    LargeFileEditorAccess largeFileEditorAccess = myLargeFileEditorAccessor.getAccess(getProject(), myStatusBar);
 
     myActionEnabled = false;
     String charsetName;
     String toolTipText;
 
-    if (editorManagerAccess == null) {
+    if (largeFileEditorAccess == null) {
       toolTipText = "";
       charsetName = "";
       myComponent.setVisible(false);
     }
     else {
       myActionEnabled = true;
-      charsetName = editorManagerAccess.getCharsetName();
+      charsetName = largeFileEditorAccess.getCharsetName();
       toolTipText = "File Encoding: " + charsetName;
       myComponent.setVisible(true);
     }

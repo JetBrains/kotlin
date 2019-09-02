@@ -2,7 +2,7 @@
 package com.intellij.largeFilesEditor.actions;
 
 import com.intellij.find.SearchReplaceComponent;
-import com.intellij.largeFilesEditor.editor.EditorManager;
+import com.intellij.largeFilesEditor.editor.LargeFileEditor;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -17,12 +17,12 @@ public class LfeEditorActionHandlerEscape extends LfeBaseEditorActionHandler {
   }
 
   @Override
-  protected void doExecuteInLfe(@NotNull EditorManager editorManager,
+  protected void doExecuteInLfe(@NotNull LargeFileEditor largeFileEditor,
                                 @NotNull Editor editor,
                                 @Nullable Caret caret,
                                 DataContext dataContext) {
-    if (editorManager.getEditor().getHeaderComponent() instanceof SearchReplaceComponent) {
-      editorManager.getSearchManager().onEscapePressed();
+    if (largeFileEditor.getEditor().getHeaderComponent() instanceof SearchReplaceComponent) {
+      largeFileEditor.getSearchManager().onEscapePressed();
     }
     else if (getOriginalHandler().isEnabled(editor, caret, dataContext)) {
       getOriginalHandler().execute(editor, caret, dataContext);
@@ -30,7 +30,7 @@ public class LfeEditorActionHandlerEscape extends LfeBaseEditorActionHandler {
   }
 
   @Override
-  protected boolean isEnabledInLfe(@NotNull EditorManager editorManager,
+  protected boolean isEnabledInLfe(@NotNull LargeFileEditor largeFileEditor,
                                    @NotNull Editor editor,
                                    @NotNull Caret caret,
                                    DataContext dataContext) {

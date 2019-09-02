@@ -33,8 +33,8 @@ public class FindForwardBackwardAction extends AnAction implements DumbAware {
       return;
     }
     searchManager.launchNewRangeSearch(
-      directionForward ? searchManager.getEditorManager().getCaretPageNumber() : SearchTaskOptions.NO_LIMIT,
-      directionForward ? SearchTaskOptions.NO_LIMIT : searchManager.getEditorManager().getCaretPageNumber(),
+      directionForward ? searchManager.getLargeFileEditor().getCaretPageNumber() : SearchTaskOptions.NO_LIMIT,
+      directionForward ? SearchTaskOptions.NO_LIMIT : searchManager.getLargeFileEditor().getCaretPageNumber(),
       directionForward);
   }
 }
