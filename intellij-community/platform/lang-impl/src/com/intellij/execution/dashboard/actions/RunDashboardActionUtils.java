@@ -2,7 +2,6 @@
 package com.intellij.execution.dashboard.actions;
 
 import com.intellij.execution.dashboard.RunConfigurationsServiceViewContributor;
-import com.intellij.execution.dashboard.RunDashboardGroup;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.execution.dashboard.tree.GroupingNode;
 import com.intellij.execution.services.ServiceViewActionUtils;
@@ -69,7 +68,7 @@ class RunDashboardActionUtils {
 
   private static boolean getLeaves(Project project, AnActionEvent e, List<Object> items, Set<RunDashboardRunConfigurationNode> result) {
     for (Object item : items) {
-      if (item instanceof RunConfigurationsServiceViewContributor || item instanceof RunDashboardGroup) {
+      if (item instanceof RunConfigurationsServiceViewContributor || item instanceof GroupingNode) {
         List<Object> children = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).getChildrenSafe(e, item);
         if (!getLeaves(project, e, children, result)) {
           return false;
