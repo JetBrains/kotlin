@@ -62,7 +62,7 @@ class PluginsDslIT : BaseGradleIT() {
 }
 
 private const val MAVEN_LOCAL_URL_PLACEHOLDER = "<mavenLocalUrl>"
-private const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"
+internal const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"
 
 internal fun BaseGradleIT.transformProjectWithPluginsDsl(
     projectName: String,

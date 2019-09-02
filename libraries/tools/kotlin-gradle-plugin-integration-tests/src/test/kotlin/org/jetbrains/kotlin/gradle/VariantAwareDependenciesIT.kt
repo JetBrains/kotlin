@@ -290,10 +290,17 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             }
         }
 
-    private fun Project.embedProject(other: Project) {
-        setupWorkingDir()
-        other.setupWorkingDir()
-        other.projectDir.copyRecursively(projectDir.resolve(other.projectName))
-        projectDir.resolve("settings.gradle").appendText("\ninclude '${other.projectName}'")
+}
+
+internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project) {
+    setupWorkingDir()
+    other.setupWorkingDir()
+    other.testCase.apply {
+        val gradleBuildScript = other.gradleBuildScript()
+        if (gradleBuildScript.extension == "kts") {
+            gradleBuildScript.modify { it.replace(".version(\"$PLUGIN_MARKER_VERSION_PLACEHOLDER\")", "") }
+        }
     }
+    other.projectDir.copyRecursively(projectDir.resolve(other.projectName))
+    projectDir.resolve("settings.gradle").appendText("\ninclude '${other.projectName}'")
 }

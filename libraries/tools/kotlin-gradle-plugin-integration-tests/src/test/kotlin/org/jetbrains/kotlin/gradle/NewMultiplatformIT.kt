@@ -283,6 +283,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     private fun doTestJvmWithJava(testJavaSupportInJvmTargets: Boolean) =
         with(Project("sample-lib", GradleVersionRequired.AtLeast("5.0"), "new-mpp-lib-and-app")) {
+            embedProject(Project("sample-lib-gradle-kotlin-dsl", directoryPrefix = "new-mpp-lib-and-app"))
+
             lateinit var classesWithoutJava: Set<String>
 
             fun getFilePathsSet(inDirectory: String): Set<String> {
@@ -322,6 +324,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     dependencies {
                         jvm6MainImplementation("com.google.dagger:dagger:2.24")
                         kapt("com.google.dagger:dagger-compiler:2.24")
+                        kapt(project(":sample-lib-gradle-kotlin-dsl"))
                     }
                     """.trimIndent()
                 )
