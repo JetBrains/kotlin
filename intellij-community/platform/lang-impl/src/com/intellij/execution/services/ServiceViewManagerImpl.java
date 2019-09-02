@@ -633,9 +633,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     extract(contentManager, contributorModel, prepareViewState(new ServiceViewState()), true);
   }
 
-  public List<Object> getChildrenSafe(@NotNull AnActionEvent e, @NotNull Object value) {
+  public List<Object> getChildrenSafe(@NotNull AnActionEvent e, @NotNull List<Object> valueSubPath) {
     ServiceView serviceView = ServiceViewActionProvider.getSelectedView(e);
-    return serviceView != null ? serviceView.getChildrenSafe(value) : Collections.emptyList();
+    return serviceView != null ? serviceView.getChildrenSafe(valueSubPath) : Collections.emptyList();
   }
 
   public String getToolWindowId(@NotNull Class<?> contributorClass) {

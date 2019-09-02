@@ -241,7 +241,11 @@ class ServiceTreeView extends ServiceView {
   }
 
   @Override
-  List<Object> getChildrenSafe(@NotNull Object value) {
+  List<Object> getChildrenSafe(@NotNull List<Object> valueSubPath) {
+    Queue<Object> values = new LinkedList<>(valueSubPath);
+    Object visibleRoot = values.poll();
+    if (visibleRoot == null) return Collections.emptyList();
+
     int count = myTree.getRowCount();
     for (int i = 0; i < count; i++) {
       TreePath path = myTree.getPathForRow(i);
@@ -249,8 +253,13 @@ class ServiceTreeView extends ServiceView {
       if (!(node instanceof ServiceViewItem)) continue;
 
       ServiceViewItem item = (ServiceViewItem)node;
-      if (!value.equals(item.getValue())) continue;
+      if (!visibleRoot.equals(item.getValue())) continue;
 
+      while (!values.isEmpty()) {
+        Object value = values.poll();
+        item = ContainerUtil.find(getModel().getChildren(item), child -> value.equals(child.getValue()));
+        if (item == null) return Collections.emptyList();
+      }
       return ContainerUtil.map(getModel().getChildren(item), ServiceViewItem::getValue);
     }
     return Collections.emptyList();

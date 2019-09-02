@@ -108,7 +108,7 @@ class ServiceSingleView extends ServiceView {
   }
 
   @Override
-  List<Object> getChildrenSafe(@NotNull Object value) {
+  List<Object> getChildrenSafe(@NotNull List<Object> valueSubPath) {
     return Collections.emptyList();
   }
 }

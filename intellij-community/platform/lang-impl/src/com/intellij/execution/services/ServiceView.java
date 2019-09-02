@@ -75,7 +75,7 @@ abstract class ServiceView extends JPanel implements Disposable {
     myModel.setGroupByContributor(value);
   }
 
-  abstract List<Object> getChildrenSafe(@NotNull Object value);
+  abstract List<Object> getChildrenSafe(@NotNull List<Object> valueSubPath);
 
   void setAutoScrollToSourceHandler(@NotNull AutoScrollToSourceHandler autoScrollToSourceHandler) {
     myAutoScrollToSourceHandler = autoScrollToSourceHandler;
