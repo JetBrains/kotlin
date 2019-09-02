@@ -80,11 +80,31 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
   protected boolean myEverywhere;
   protected ScopeDescriptor myScopeDescriptor;
 
+  private final GlobalSearchScope myEverywhereScope;
+  private final GlobalSearchScope myProjectScope;
+
   protected AbstractGotoSEContributor(@Nullable Project project, @Nullable PsiElement context) {
     myProject = project;
     psiContext = context;
-    myScopeDescriptor = new ScopeDescriptor(project == null ? GlobalSearchScope.EMPTY_SCOPE :
-                                            GlobalSearchScope.projectScope(project));
+    myEverywhereScope = myProject == null ? GlobalSearchScope.EMPTY_SCOPE : GlobalSearchScope.everythingScope(myProject);
+    GlobalSearchScope projectScope = myProject == null ? GlobalSearchScope.EMPTY_SCOPE : GlobalSearchScope.projectScope(myProject);
+    if (myProject == null) {
+      myProjectScope = GlobalSearchScope.EMPTY_SCOPE;
+    }
+    else if (!myEverywhereScope.equals(projectScope)) {
+      myProjectScope = projectScope;
+    }
+    else {
+      // just get the second scope, i.e. Attached Directories in DataGrip
+      Ref<GlobalSearchScope> result = Ref.create();
+      ScopeChooserCombo.processScopes(myProject, SimpleDataContext.getProjectContext(myProject), 0, o -> {
+        if (o.scopeEquals(myEverywhereScope)) return true;
+        result.set((GlobalSearchScope)o.getScope());
+        return false;
+      });
+      myProjectScope = ObjectUtils.notNull(result.get(), myEverywhereScope);
+    }
+    myScopeDescriptor = new ScopeDescriptor(myProjectScope);
   }
 
   @NotNull
@@ -106,28 +126,7 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
     ArrayList<AnAction> result = new ArrayList<>();
     if (Registry.is("search.everywhere.show.scopes")) {
       result.add(new ScopeChooserAction() {
-        final GlobalSearchScope everywhereScope = GlobalSearchScope.everythingScope(myProject);
-        final GlobalSearchScope projectScope;
-        final boolean canToggleEverywhere;
-
-        {
-          GlobalSearchScope scope = GlobalSearchScope.projectScope(myProject);
-          if (!everywhereScope.equals(scope)) {
-            projectScope = scope;
-            canToggleEverywhere = true;
-          }
-          else {
-            // just get the second scope, i.e. Attached Directories in DataGrip
-            Ref<GlobalSearchScope> result = Ref.create();
-            ScopeChooserCombo.processScopes(myProject, SimpleDataContext.getProjectContext(myProject), 0, o -> {
-              if (o.scopeEquals(everywhereScope)) return true;
-              result.set((GlobalSearchScope)o.getScope());
-              return false;
-            });
-            projectScope = ObjectUtils.notNull(result.get());
-            canToggleEverywhere = false;
-          }
-        }
+        final boolean canToggleEverywhere = !myEverywhereScope.equals(myProjectScope);
 
         @Override
         void onScopeSelected(@NotNull ScopeDescriptor o) {
@@ -143,25 +142,25 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
 
         @Override
         void onProjectScopeToggled() {
-          setEverywhere(!myScopeDescriptor.scopeEquals(everywhereScope));
+          setEverywhere(!myScopeDescriptor.scopeEquals(myEverywhereScope));
         }
 
         @Override
         public boolean isEverywhere() {
-          return myScopeDescriptor.scopeEquals(everywhereScope);
+          return myScopeDescriptor.scopeEquals(myEverywhereScope);
         }
 
         @Override
         public void setEverywhere(boolean everywhere) {
-          myScopeDescriptor = new ScopeDescriptor(everywhere ? everywhereScope : projectScope);
+          myScopeDescriptor = new ScopeDescriptor(everywhere ? myEverywhereScope : myProjectScope);
           onChanged.run();
         }
 
         @Override
         public boolean canToggleEverywhere() {
           if (!canToggleEverywhere) return false;
-          return myScopeDescriptor.scopeEquals(everywhereScope) ||
-                 myScopeDescriptor.scopeEquals(projectScope);
+          return myScopeDescriptor.scopeEquals(myEverywhereScope) ||
+                 myScopeDescriptor.scopeEquals(myProjectScope);
         }
       });
     }
