@@ -2,7 +2,6 @@
 
 package com.intellij.compiler.ant;
 
-import com.intellij.ExtensionPoints;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
@@ -21,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class ChunkBuildExtension {
-  public static final ExtensionPointName<ChunkBuildExtension> EP_NAME = ExtensionPointName.create(ExtensionPoints.ANT_BUILD_GEN);
+  public static final ExtensionPointName<ChunkBuildExtension> EP_NAME = ExtensionPointName.create("com.intellij.antBuildGen");
 
   @NotNull
   @NonNls
