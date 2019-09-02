@@ -26,7 +26,7 @@ The table below shows how Kotlin concepts are mapped to Swift/Objective-C and vi
 | `class` | `class` | `@interface` | [note](#name-translation) |
 | `interface` | `protocol` | `@protocol` | |
 | `constructor`/`create` | Initializer | Initializer | [note](#initializers) |
-| Property | Property | Property | [note](#top-level-functions-and-properties) |
+| Property | Property | Property | [note](#top-level-functions-and-properties) [note](#setters)|
 | Method | Method | Method | [note](#top-level-functions-and-properties) [note](#method-names-translation) |
 | `@Throws` | `throws` | `error:(NSError**)error` | [note](#errors-and-exceptions) |
 | Extension | Extension | Category member | [note](#category-members) |
@@ -66,6 +66,10 @@ named `create`. The latter happens with initializers declared in the Objective-C
 as a Swift extension, because Kotlin has no concept of extension constructors.
 
 Kotlin constructors are imported as initializers to Swift/Objective-C. 
+
+### Setters
+
+Writeable Objective-C properties overriding read-only properties of the superclass are represented as `setFoo()` method for the property `foo`. Same goes for a protocol's read-only properties that are implemented as mutable.
 
 ### Top-level functions and properties
 
