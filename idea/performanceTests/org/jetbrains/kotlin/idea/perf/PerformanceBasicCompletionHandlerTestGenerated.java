@@ -39,6 +39,21 @@ public class PerformanceBasicCompletionHandlerTestGenerated extends AbstractPerf
         runTest("idea/idea-completion/testData/handlers/basic/ClassKeywordBeforeName.kt");
     }
 
+    @TestMetadata("ClassNameForMethodWithPackageConflict.kt")
+    public void testClassNameForMethodWithPackageConflict() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/ClassNameForMethodWithPackageConflict.kt");
+    }
+
+    @TestMetadata("ClassNameForMethodWithPackageConflict2.kt")
+    public void testClassNameForMethodWithPackageConflict2() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/ClassNameForMethodWithPackageConflict2.kt");
+    }
+
+    @TestMetadata("ClassNameWithPackageConflict.kt")
+    public void testClassNameWithPackageConflict() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/ClassNameWithPackageConflict.kt");
+    }
+
     @TestMetadata("ClassWithClassObject.kt")
     public void testClassWithClassObject() throws Exception {
         runTest("idea/idea-completion/testData/handlers/basic/ClassWithClassObject.kt");
@@ -167,6 +182,11 @@ public class PerformanceBasicCompletionHandlerTestGenerated extends AbstractPerf
     @TestMetadata("SpaceAfterParenthesisBug.kt")
     public void testSpaceAfterParenthesisBug() throws Exception {
         runTest("idea/idea-completion/testData/handlers/basic/SpaceAfterParenthesisBug.kt");
+    }
+
+    @TestMetadata("StaticFunctionFromJavaWithConflict.kt")
+    public void testStaticFunctionFromJavaWithConflict() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/StaticFunctionFromJavaWithConflict.kt");
     }
 
     @TestMetadata("StringFakeConstructor.kt")

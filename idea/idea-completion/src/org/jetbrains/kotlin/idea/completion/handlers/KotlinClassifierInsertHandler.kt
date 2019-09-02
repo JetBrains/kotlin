@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.handlers
@@ -27,14 +16,17 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.completion.isAfterDot
 import org.jetbrains.kotlin.idea.completion.isArtificialImportAliasedDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.canAddRootPrefix
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.Companion.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE_WITH_DOT
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
@@ -76,12 +68,18 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                     "$;val v:"  // if we have no reference in the current context we have a more complicated prefix to get one
                 }
                 val tempSuffix = ".xxx" // we add "xxx" after dot because of KT-9606
-                document.replaceString(startOffset, context.tailOffset, tempPrefix + qualifiedName + tempSuffix)
+                val qualifierNameWithRootPrefix = qualifiedName.let {
+                    if (FqName(it).canAddRootPrefix())
+                        ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE_WITH_DOT + it
+                    else
+                        it
+                }
+                document.replaceString(startOffset, context.tailOffset, tempPrefix + qualifierNameWithRootPrefix + tempSuffix)
 
                 psiDocumentManager.commitAllDocuments()
 
                 val classNameStart = startOffset + tempPrefix.length
-                val classNameEnd = classNameStart + qualifiedName.length
+                val classNameEnd = classNameStart + qualifierNameWithRootPrefix.length
                 val rangeMarker = document.createRangeMarker(classNameStart, classNameEnd)
                 val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length)
 
