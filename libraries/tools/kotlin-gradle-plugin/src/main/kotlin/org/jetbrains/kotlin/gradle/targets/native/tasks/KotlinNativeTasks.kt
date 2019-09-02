@@ -236,7 +236,7 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
 
         add("-Xmulti-platform")
         // Endorsed libs are disabled in plugin.
-        add("-noendorsedlibs")
+        add("-no-endorsed-libs")
 
         // Language features.
         addArgIfNotNull("-language-version", languageVersion)
