@@ -5,12 +5,13 @@ import org.gradle.internal.impldep.com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
 import org.jetbrains.plugins.gradle.tooling.util.ContainerUtil;
+import org.jetbrains.plugins.gradle.tooling.util.HashCodeAggregateFunction;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-import static com.intellij.util.containers.ContainerUtilRt.map2List;
+import static org.jetbrains.plugins.gradle.tooling.util.ContainerUtil.aggregate;
 import static org.jetbrains.plugins.gradle.tooling.util.FunctionUtils.FILE_TO_PATH;
 
 public final class DefaultExternalMultiLibraryDependency extends AbstractExternalDependency implements ExternalMultiLibraryDependency {
@@ -66,7 +67,7 @@ public final class DefaultExternalMultiLibraryDependency extends AbstractExterna
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(super.hashCode(), map2List(files, FILE_TO_PATH));
+    return Objects.hashCode(super.hashCode(), aggregate(files, new HashCodeAggregateFunction<File>(FILE_TO_PATH)));
   }
 
   @Override

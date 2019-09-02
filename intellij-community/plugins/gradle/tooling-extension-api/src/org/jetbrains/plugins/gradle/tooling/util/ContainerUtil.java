@@ -30,4 +30,11 @@ public class ContainerUtil extends ContainerUtilRt {
     }
     return !iterator1.hasNext();
   }
+
+  public static <R, T> R aggregate(@NotNull Iterable<? extends T> iterable, @NotNull AggregateFunction<R, T> function) {
+    for (T t : iterable) {
+      function.consume(t);
+    }
+    return function.get();
+  }
 }
