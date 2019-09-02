@@ -360,7 +360,9 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
 open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOptions>() {
 
     init {
-        dependsOn(project.provider { compilation.compileKotlinTask })
+        if (!linkFromSources) {
+            dependsOn(project.provider { compilation.compileKotlinTask })
+        }
     }
 
     @Internal
@@ -370,12 +372,21 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     override val compilation: KotlinNativeCompilation
         get() = binary.compilation
 
-    @InputFile
+    @Internal // Taken into account by getSources().
     val intermediateLibrary: Provider<File> = project.provider {
         compilation.compileKotlinTask.outputFile.get()
     }
 
-    override fun getSource(): FileTree = project.files(intermediateLibrary.get()).asFileTree
+    @InputFiles
+    @SkipWhenEmpty
+    override fun getSource(): FileTree =
+        if (linkFromSources) {
+            // Allow a user to force the old behaviour of a link task.
+            // TODO: Remove in 1.3.70.
+            project.files(compilation.allSources).asFileTree
+        } else {
+            project.files(intermediateLibrary.get()).asFileTree
+        }
 
     @get:Input
     override val outputKind: CompilerOutputKind
@@ -443,6 +454,13 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     val embedBitcode: Framework.BitcodeEmbeddingMode
         get() = (binary as? Framework)?.embedBitcode ?: Framework.BitcodeEmbeddingMode.DISABLE
 
+    // This property allows a user to force the old behaviour of a link task
+    // to workaround issues that may occur after switching to the two-stage linking.
+    // If it is specified, the final binary is built directly from sources instead of a klib.
+    // TODO: Remove it in 1.3.70.
+    private val linkFromSources: Boolean
+        get() = project.hasProperty(LINK_FROM_SOURCES_PROPERTY)
+
     override fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
         addAll(super.buildCompilerArgs())
 
@@ -462,7 +480,25 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
         addKey("-Xstatic-framework", isStaticFramework)
     }
 
-    override fun buildSourceArgs(): List<String> = listOf("-Xinclude=${intermediateLibrary.get().absolutePath}")
+    override fun buildSourceArgs(): List<String> {
+        return if (!linkFromSources) {
+            listOf("-Xinclude=${intermediateLibrary.get().absolutePath}")
+        } else {
+            // Allow a user to force the old behaviour of a link task.
+            // TODO: Remove in 1.3.70.
+            mutableListOf<String>().apply {
+                val friends = compilation.friendCompilation?.output?.allOutputs?.files
+                if (friends != null && friends.isNotEmpty()) {
+                    addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
+                }
+
+                addAll(project.files(compilation.allSources).map { it.absolutePath })
+                if (!compilation.commonSources.isEmpty) {
+                    add("-Xcommon-sources=${compilation.commonSources.joinToString(separator = ",") { it.absolutePath }}")
+                }
+            }
+        }
+    }
 
     private fun validatedExportedLibraries() {
         val exportConfiguration = exportLibraries as? Configuration ?: return
@@ -499,6 +535,10 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     override fun compile() {
         validatedExportedLibraries()
         super.compile()
+    }
+
+    companion object {
+        private const val LINK_FROM_SOURCES_PROPERTY = "kotlin.native.linkFromSources"
     }
 }
 

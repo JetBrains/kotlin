@@ -934,19 +934,19 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testNativeBinaryGroovyDSL() = doTestNativeBinaryDSL("groovy-dsl")
 
+    private fun CompiledProject.checkNativeCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) = taskPaths.forEach { taskPath ->
+        val commandLine = output.lineSequence().dropWhile {
+            !it.contains("Executing actions for task '$taskPath'")
+        }.first {
+            it.contains("Run tool: konanc")
+        }
+        check(commandLine)
+    }
+
     private fun doTestNativeBinaryDSL(
         projectName: String,
         gradleVersionRequired: GradleVersionRequired = gradleVersion
     ) = with(transformProjectWithPluginsDsl(projectName, gradleVersionRequired, "new-mpp-native-binaries")) {
-
-        fun CompiledProject.checkCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) = taskPaths.forEach { taskPath ->
-            val commandLine = output.lineSequence().dropWhile {
-                !it.contains("Executing actions for task '$taskPath'")
-            }.first {
-                it.contains("Run tool: konanc")
-            }
-            check(commandLine)
-        }
 
         val hostSuffix = nativeHostTargetName.capitalize()
         val binaries = mutableListOf(
@@ -1013,7 +1013,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         // Check that kotlinOptions work fine for a compilation.
         build(compileTask) {
             assertSuccessful()
-            checkCommandLineFor(":$compileTask") {
+            checkNativeCommandLineFor(":$compileTask") {
                 assertTrue(it.contains("-verbose"))
             }
         }
@@ -1032,7 +1032,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         build("runTest2ReleaseExecutable$hostSuffix") {
             assertSuccessful()
             assertTasksExecuted(":$compileTestTask")
-            checkCommandLineFor(":linkTest2ReleaseExecutable$hostSuffix") {
+            checkNativeCommandLineFor(":linkTest2ReleaseExecutable$hostSuffix") {
                 assertTrue(it.contains("-tr"))
                 assertTrue(it.contains("-Xtime"))
                 // Check that kotlinOptions of the compilation don't affect the binary.
@@ -1057,7 +1057,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 fileInWorkingDir("build/bin/ios/releaseFramework/native_binary.framework/Headers/native_binary.h")
                     .readText().contains("+ (int32_t)exported")
                 // Check that by default release frameworks have bitcode embedded.
-                checkCommandLineFor(":linkReleaseFrameworkIos") {
+                checkNativeCommandLineFor(":linkReleaseFrameworkIos") {
                     assertTrue(it.contains("-Xembed-bitcode"))
                     assertTrue(it.contains("-opt"))
                 }
@@ -1070,7 +1070,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 fileInWorkingDir("build/bin/ios/debugFramework/native_binary.framework/Headers/native_binary.h")
                     .readText().contains("+ (int32_t)exported")
                 // Check that by default debug frameworks have bitcode marker embedded.
-                checkCommandLineFor(":linkDebugFrameworkIos") {
+                checkNativeCommandLineFor(":linkDebugFrameworkIos") {
                     assertTrue(it.contains("-Xembed-bitcode-marker"))
                     assertTrue(it.contains("-g"))
                 }
@@ -1079,7 +1079,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             // Check manual disabling bitcode embedding, custom command line args and building a static framework.
             build("linkCustomReleaseFrameworkIos") {
                 assertSuccessful()
-                checkCommandLineFor(":linkCustomReleaseFrameworkIos") {
+                checkNativeCommandLineFor(":linkCustomReleaseFrameworkIos") {
                     assertTrue(it.contains("-linker-option -L."))
                     assertTrue(it.contains("-Xtime"))
                     assertTrue(it.contains("-Xstatic-framework"))
@@ -1093,7 +1093,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertFileExists("build/bin/iosSim/releaseFramework/native_binary.framework")
                 assertFileExists("build/bin/iosSim/debugFramework/native_binary.framework")
-                checkCommandLineFor(":linkReleaseFrameworkIosSim", ":linkDebugFrameworkIosSim") {
+                checkNativeCommandLineFor(":linkReleaseFrameworkIosSim", ":linkDebugFrameworkIosSim") {
                     assertFalse(it.contains("-Xembed-bitcode"))
                     assertFalse(it.contains("-Xembed-bitcode-marker"))
                 }
@@ -1113,6 +1113,30 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val failureMsg = "Following dependencies exported in the releaseFramework binary " +
                         "are not specified as API-dependencies of a corresponding source set"
                 assertTrue(output.contains(failureMsg))
+            }
+        }
+    }
+
+    // Check that we still can build binaries from sources if the corresponding property is specified.
+    // TODO: Drop in 1.3.70.
+    @Test
+    fun testLinkNativeBinaryFromSources() = with(
+        transformProjectWithPluginsDsl("groovy-dsl", gradleVersion, "new-mpp-native-binaries")
+    ) {
+        val linkTask = ":linkDebugExecutable${nativeHostTargetName.capitalize()}"
+
+        val prefix = CompilerOutputKind.PROGRAM.prefix(HostManager.host)
+        val suffix = CompilerOutputKind.PROGRAM.suffix(HostManager.host)
+        val fileName = "${prefix}native-binary$suffix"
+        val outputFile = "build/bin/$nativeHostTargetName/debugExecutable/$fileName"
+
+        build(linkTask, "-Pkotlin.native.linkFromSources") {
+            assertSuccessful()
+            assertTasksExecuted(linkTask)
+            assertFileExists(outputFile)
+            checkNativeCommandLineFor(linkTask) {
+                assertTrue(it.contains("-Xcommon-sources="))
+                assertTrue(it.contains(projectDir.resolve("src/commonMain/kotlin/RootMain.kt").absolutePath))
             }
         }
     }
