@@ -45,11 +45,13 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler, privat
 
     open fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {
         return table.getOrPut(declaration) {
-            UniqId(mangler.hashedMangleImpl(declaration), false).also { clashTracker.commit(declaration, it) }
+            with(mangler) {
+                UniqId(declaration.hashedMangle, false).also { clashTracker.commit(declaration, it) }
+            }
         }
     }
 
-    fun isExportedDeclaration(declaration: IrDeclaration): Boolean = mangler.isExportedImpl(declaration)
+    fun isExportedDeclaration(declaration: IrDeclaration): Boolean = with(mangler) { declaration.isExported() }
 }
 
 class DeclarationTable(

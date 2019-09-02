@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.name.Name
 interface KotlinMangler {
     val String.hashMangle: Long
     val IrDeclaration.hashedMangle: Long
-    fun hashedMangleImpl(declaration: IrDeclaration): Long
     fun IrDeclaration.isExported(): Boolean
-    fun isExportedImpl(declaration: IrDeclaration): Boolean
     val IrFunction.functionName: String
     val IrType.isInlined: Boolean
     val Long.isSpecial: Boolean
@@ -33,7 +31,7 @@ interface KotlinMangler {
 abstract class KotlinManglerImpl : KotlinMangler {
     override val String.hashMangle get() = this.cityHash64()
 
-    override fun hashedMangleImpl(declaration: IrDeclaration): Long {
+    private fun hashedMangleImpl(declaration: IrDeclaration): Long {
         return declaration.uniqSymbolName().hashMangle
     }
 
@@ -54,7 +52,7 @@ abstract class KotlinManglerImpl : KotlinMangler {
      * that doesn't depend on any internal transformations (e.g. IR lowering),
      * and so should be computable from the descriptor itself without checking a backend state.
      */
-    tailrec override fun isExportedImpl(declaration: IrDeclaration): Boolean {
+    private tailrec fun isExportedImpl(declaration: IrDeclaration): Boolean {
         // TODO: revise
         val descriptorAnnotations = declaration.descriptor.annotations
 
