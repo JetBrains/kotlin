@@ -24,11 +24,9 @@ import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
-import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.PrintStream
 
@@ -134,5 +133,40 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode
+
+    protected fun commonLoadPlugins(
+        configuration: CompilerConfiguration,
+        paths: KotlinPaths? = null,
+        passedPluginClasspaths: Iterable<String> = emptyList()
+    ): Iterable<String> {
+        var pluginClasspaths: Iterable<String> = passedPluginClasspaths
+        val explicitOrLoadedScriptingPlugin =
+            pluginClasspaths.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) } ||
+                    try {
+                        PluginCliParser::class.java.classLoader.loadClass("org.jetbrains.kotlin.extensions.ScriptingCompilerConfigurationExtension")
+                        true
+                    } catch (_: Throwable) {
+                        false
+                    }
+        // if scripting plugin is not enabled explicitly (probably from another path) and not in the classpath already,
+        // try to find and enable it implicitly
+        if (!explicitOrLoadedScriptingPlugin) {
+            val kotlinPaths = paths ?: PathUtil.kotlinPathsForCompiler
+            val libPath = kotlinPaths.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
+            val (jars, missingJars) =
+                PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.mapNotNull { File(libPath, it) }.partition { it.exists() }
+            if (missingJars.isEmpty()) {
+                pluginClasspaths = jars.map { it.canonicalPath } + pluginClasspaths
+            } else {
+                val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                messageCollector.report(
+                    CompilerMessageSeverity.LOGGING,
+                    "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
+                )
+            }
+        }
+
+        return pluginClasspaths
+    }
 }
 

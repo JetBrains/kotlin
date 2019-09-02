@@ -97,7 +97,9 @@ internal fun ScriptContents.toScriptSource(): SourceCode = when {
     else -> throw IllegalArgumentException("Unable to convert script contents $this into script source")
 }
 
-fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
+fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap {
+    (it as? JvmDependency)?.classpath ?: emptyList()
+} ?: emptyList()
 
 internal fun List<SourceCode>?.toFilesOrEmpty() = this?.map {
     val externalSource = it as? ExternalSourceCode

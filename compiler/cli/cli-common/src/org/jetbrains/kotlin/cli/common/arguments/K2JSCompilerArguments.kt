@@ -25,6 +25,10 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     }
 
     @GradleOption(DefaultValues.StringNullDefault::class)
+    @Argument(value = "-Xscript", valueDescription = "<path>", description = "Use experimental running of .kts files")
+    var scriptPath: String? by NullableStringFreezableVar(null)
+
+    @GradleOption(DefaultValues.StringNullDefault::class)
     @Argument(value = "-output", valueDescription = "<path>", description = "Output file path")
     var outputFile: String? by NullableStringFreezableVar(null)
 

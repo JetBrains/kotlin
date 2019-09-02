@@ -83,6 +83,8 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
+    ":kotlin-scripting-js",
+    ":js:js.engines",
     ":kotlin-stdlib-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-source-sections-compiler-plugin",
     ":kotlin-test:kotlin-test-js",
