@@ -6,21 +6,13 @@
 package org.jetbrains.konan.execution
 
 import com.android.ddmlib.AndroidDebugBridge
-import com.android.ddmlib.EmulatorConsole
-import com.android.ddmlib.IDevice
 import com.android.sdklib.AndroidVersion
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.OSProcessHandler
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.AtomicClearableLazyValue
-import com.intellij.openapi.util.Key
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceManager
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorsRegistry
 import org.jetbrains.konan.AndroidToolkit
-import java.util.concurrent.CompletableFuture
 
 class DeviceService {
     fun getAll(): List<Device> = getAppleDevices() + getAndroidDevices() + androidEmulators.value + getAppleSimulators()
@@ -52,47 +44,22 @@ class DeviceService {
             ?: emptyList()
     }
 
-    internal fun launchAndroidEmulator(emulator: AndroidEmulator): IDevice {
-        // If already running, return immediately
-        adb?.devices?.find { it.avdName == emulator.id }?.let { return it }
+    private var _adb: AndroidDebugBridge? = null
 
-        val commandLine = GeneralCommandLine(AndroidToolkit.emulator!!.path, "-avd", emulator.id)
-        val handler = OSProcessHandler(commandLine)
-        handler.addProcessListener(object : ProcessAdapter() {
-            override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-                log.info("avd: " + event.text)
-            }
-        })
-
-        val future = CompletableFuture<IDevice>()
-        val deviceListener = object : AndroidDebugBridge.IDeviceChangeListener {
-            override fun deviceChanged(device: IDevice, changeMask: Int) {
-                // device might not have `avdName` set yet, so we ask for it explicitly
-                val avdName = EmulatorConsole.getConsole(device).avdName
-                if (avdName == emulator.id) {
-                    log.debug("Device appeared: $avdName")
-                    future.complete(device)
+    val adb: AndroidDebugBridge?
+        @Synchronized
+        get() {
+            val disconnected = _adb?.isConnected != true
+            if (disconnected) {
+                AndroidDebugBridge.initIfNeeded(true)
+                _adb = AndroidToolkit.adb?.let { adbBinary ->
+                    val forceNew = _adb != null
+                    log.info("Creating ADB bridge for ${AndroidToolkit.adb}, forceNew = $forceNew")
+                    AndroidDebugBridge.createBridge(adbBinary.path, forceNew)
                 }
             }
-
-            override fun deviceConnected(device: IDevice) {}
-            override fun deviceDisconnected(device: IDevice) {}
+            return _adb
         }
-
-        AndroidDebugBridge.addDeviceChangeListener(deviceListener)
-        try {
-            return future.get()
-        } finally {
-            AndroidDebugBridge.removeDeviceChangeListener(deviceListener)
-        }
-    }
-
-    private val adb by lazy {
-        AndroidToolkit.adb?.let { adbBinary ->
-            AndroidDebugBridge.init(true)
-            AndroidDebugBridge.createBridge(adbBinary.absolutePath, false)
-        }
-    }
 
     companion object {
         val instance: DeviceService get() = service()

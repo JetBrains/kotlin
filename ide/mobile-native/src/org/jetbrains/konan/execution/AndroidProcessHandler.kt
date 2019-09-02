@@ -129,7 +129,7 @@ class AndroidProcessHandler : ProcessHandler() {
         if (::raw.isInitialized && ::appId.isInitialized) {
             raw.executeShellCommand("am force-stop $appId", receiver)
         }
-        log.debug("Destroyed process with output: ${receiver.output}")
+        log.info("Destroyed process with output: ${receiver.output}")
         synchronized(this) {
             processClient?.kill()
         }
