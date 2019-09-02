@@ -65,7 +65,7 @@ abstract class KotlinIrLinker(
         val deserializedTopLevels = mutableSetOf<UniqId>()
 
         operator fun contains(key: UniqId) = key in deserializedSymbols
-        operator fun get(key: UniqId): IrSymbol = deserializedSymbols[key] ?: error("jfsdhsdfhksjdhfkjshdk")
+        operator fun get(key: UniqId): IrSymbol = deserializedSymbols[key] ?: error("No deserialized symbol found for $key")
 
         abstract fun addUniqID(key: UniqId)
         protected open fun peekReachableKey(): UniqId? = reachableTopLevels.firstOrNull()
