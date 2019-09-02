@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.run
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
@@ -15,3 +16,4 @@ fun Module.asJvmModule(): Module? {
     return null
 }
 
+fun forceGradleRunnerInMPP() = Registry.`is`("kotlin.mpp.tests.force.gradle", true)
