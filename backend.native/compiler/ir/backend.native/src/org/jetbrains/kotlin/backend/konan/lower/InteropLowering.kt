@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.peek
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
@@ -19,13 +22,10 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.companionObject
-import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
-import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -33,7 +33,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -318,7 +321,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                     currentFile, property)
         }
 
-        val name = descriptor.name.asString()
+        val name = property.name.asString()
         val selector = "set${name.capitalize()}:"
 
         return generateFunctionImp(selector, property.setter!!)
@@ -620,11 +623,10 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         expression.transformChildrenVoid()
 
-        val descriptor = expression.descriptor.original
         val callee = expression.symbol.owner
         val initMethod = callee.getObjCInitMethod() ?: return expression
 
-        val arguments = descriptor.valueParameters.map { expression.getValueArgument(it) }
+        val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
         assert(expression.extensionReceiver == null)
         assert(expression.dispatchReceiver == null)
 
@@ -663,7 +665,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                     builder.scope.scopeOwner.annotations.hasAnnotation(FqName("kotlin.native.internal.ExportForCppRuntime"))
 
             if (!useKotlinDispatch) {
-                val arguments = descriptor.valueParameters.map { expression.getValueArgument(it) }
+                val arguments = callee.valueParameters.map { expression.getValueArgument(it.index) }
                 assert(expression.dispatchReceiver == null || expression.extensionReceiver == null)
 
                 if (expression.superQualifier?.isObjCMetaClass() == true) {
@@ -846,7 +848,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         }
 
         if (function.annotations.hasAnnotation(RuntimeNames.cCall)) {
-            context.llvmImports.add(function.descriptor.llvmSymbolOrigin)
+            context.llvmImports.add(function.llvmSymbolOrigin)
             return generateWithStubs { generateCCall(expression, builder, isInvoke = false) }
         }
 
@@ -952,7 +954,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     }
 
                     val conversionSymbol = receiverClass.functions.single {
-                        it.descriptor.name == Name.identifier("to${targetClass.owner.name}")
+                        it.owner.name == Name.identifier("to${targetClass.owner.name}")
                     }
 
                     builder.irCall(conversionSymbol).apply {
@@ -993,7 +995,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
                     val intrinsic = interop.objCObjectInitBy.name
 
                     val argument = expression.getValueArgument(0)!!
-                    val constructedClass = (argument as? IrConstructorCall)?.symbol?.owner?.constructedClass?.descriptor
+                    val constructedClass = (argument as? IrConstructorCall)?.symbol?.owner?.constructedClass
 
                     if (constructedClass == null) {
                         context.reportCompilationError("Argument of '$intrinsic' must be a constructor call",
@@ -1002,7 +1004,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
                     val extensionReceiver = expression.extensionReceiver!!
                     if (extensionReceiver !is IrGetValue ||
-                            extensionReceiver.descriptor != constructedClass.thisAsReceiverParameter) {
+                            !extensionReceiver.symbol.owner.isDispatchReceiverFor(constructedClass)) {
 
                         context.reportCompilationError("Receiver of '$intrinsic' must be a 'this' of the constructed class",
                                 irFile, extensionReceiver)
@@ -1122,11 +1124,22 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
         return argument.statements.last() as? IrFunctionReference
     }
+
+    val IrValueParameter.isDispatchReceiver: Boolean
+        get() = when(val parent = this.parent) {
+            is IrClass -> true
+            is IrFunction -> parent.dispatchReceiverParameter == this
+            else -> false
+        }
+
+    private fun IrValueDeclaration.isDispatchReceiverFor(irClass: IrClass): Boolean =
+        this is IrValueParameter && isDispatchReceiver && type.getClass() == irClass
+
 }
 
 private fun IrCall.getSingleTypeArgument(): IrType {
-    val typeParameter = descriptor.original.typeParameters.single()
-    return getTypeArgument(typeParameter)!!
+    val typeParameter = symbol.owner.typeParameters.single()
+    return getTypeArgument(typeParameter.index)!!
 }
 
 private fun IrBuilder.irFloat(value: Float) =
