@@ -325,10 +325,15 @@ class NewMultiplatformIT : BaseGradleIT() {
                         jvm6MainImplementation("com.google.dagger:dagger:2.24")
                         kapt("com.google.dagger:dagger-compiler:2.24")
                         kapt(project(":sample-lib-gradle-kotlin-dsl"))
+                        
+                        // also check incremental Kapt class structure configurations, KT-33105
+                        jvm6MainImplementation(project(":sample-lib-gradle-kotlin-dsl")) 
                     }
                     """.trimIndent()
                 )
             }
+            // also check incremental Kapt class structure configurations, KT-33105
+            projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=true")
 
             // Check Kapt:
             projectDir.resolve("src/jvm6Main/kotlin/Main.kt").appendText(

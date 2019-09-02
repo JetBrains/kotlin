@@ -396,7 +396,13 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
             maybeRegisterTransform(project)
             val classStructure = project.configurations.create("_classStructure${taskName}")
-            project.dependencies.add(classStructure.name, kotlinCompile.classpath)
+
+            // Wrap the `kotlinCompile.classpath` into a file collection, so that, if the classpath is represented by a configuration,
+            // the configuration is not extended (via extendsFrom, which normally happens when one configuration is _added_ into another)
+            // but is instead included as the (lazily) resolved files. This is needed because the class structure configuration doesn't have
+            // the attributes that are potentially needed to resolve dependencies on MPP modules, and the classpath configuration does.
+            project.dependencies.add(classStructure.name, project.files(project.provider { kotlinCompile.classpath }))
+
             kaptTask.classpathStructure = classStructure.incoming.artifactView { viewConfig ->
                 viewConfig.attributes.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }.files
