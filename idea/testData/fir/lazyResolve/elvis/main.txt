@@ -13,7 +13,7 @@ FILE: main.kt
                     String()
                 }
                 else ->  {
-                    R|<local>/<elvis>|!
+                    R|<local>/<elvis>|
                 }
             }
 
