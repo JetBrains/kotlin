@@ -35,7 +35,8 @@ public abstract class CompletionFinalSorter {
 
 
   @NotNull
-  public abstract Iterable<LookupElement> sort(@NotNull Iterable<LookupElement> initial, @NotNull CompletionParameters parameters);
+  public abstract Iterable<? extends LookupElement> sort(@NotNull Iterable<? extends LookupElement> initial,
+                                                         @NotNull CompletionParameters parameters);
 
   /**
    * For debugging purposes, provide weights by which completion will be sorted.
@@ -60,7 +61,8 @@ public abstract class CompletionFinalSorter {
   private static final CompletionFinalSorter EMPTY_SORTER = new CompletionFinalSorter() {
     @NotNull
     @Override
-    public Iterable<LookupElement> sort(@NotNull Iterable<LookupElement> initial, @NotNull CompletionParameters parameters) {
+    public Iterable<? extends LookupElement> sort(@NotNull Iterable<? extends LookupElement> initial,
+                                                  @NotNull CompletionParameters parameters) {
       return initial;
     }
 

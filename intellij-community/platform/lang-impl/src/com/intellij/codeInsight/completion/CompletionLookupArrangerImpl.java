@@ -304,7 +304,8 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
                                                    Set<? extends LookupElement> items,
                                                    Iterable<? extends LookupElement> sortedElements,
                                                    @Nullable LookupElement relevantSelection) {
-    Iterator<? extends LookupElement> byRelevance = sortedElements.iterator();
+    Iterator<? extends LookupElement> byRelevance =
+      myFinalSorter.sort(sortedElements, Objects.requireNonNull(myProcess.getParameters())).iterator();
 
     final LinkedHashSet<LookupElement> model = new LinkedHashSet<>();
 
@@ -382,8 +383,7 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
       byClassifier.add(myClassifiers.get(sorter).classify(inputBySorter.get(sorter), context));
     }
     //noinspection unchecked
-    Iterable<LookupElement> result = ContainerUtil.concat(byClassifier.toArray(new Iterable[0]));
-    return myFinalSorter.sort(result, Objects.requireNonNull(myProcess.getParameters()));
+    return ContainerUtil.concat(byClassifier.toArray(new Iterable[0]));
   }
 
   private ProcessingContext createContext() {
