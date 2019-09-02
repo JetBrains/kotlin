@@ -20,7 +20,7 @@ import java.util.Map;
  * @author Vladislav.Soroka
  */
 @Order(ExternalSystemNode.BUILTIN_TASKS_DATA_NODE_ORDER)
-public class TasksNode extends ExternalSystemNode {
+public class TasksNode extends ExternalSystemNode<Object> {
 
   private final MultiMap<String, TaskNode> myTasksMap = new MultiMap<>();
 
@@ -54,16 +54,15 @@ public class TasksNode extends ExternalSystemNode {
     return super.isVisible() && hasChildren();
   }
 
-  @SuppressWarnings("unchecked")
   @NotNull
   @Override
-  protected List<? extends ExternalSystemNode> doBuildChildren() {
+  protected List<? extends ExternalSystemNode<?>> doBuildChildren() {
     final List<ExternalSystemNode<?>> result = new ArrayList<>();
     final boolean isGroup = getExternalProjectsView().getGroupTasks();
     if (isGroup) {
       for (Map.Entry<String, Collection<TaskNode>> collectionEntry : myTasksMap.entrySet()) {
         final String group = ObjectUtils.notNull(collectionEntry.getKey(), "other");
-        final ExternalSystemNode tasksGroupNode = new ExternalSystemNode(getExternalProjectsView(), null, null) {
+        final ExternalSystemNode<?> tasksGroupNode = new ExternalSystemNode<Object>(getExternalProjectsView(), null, null) {
 
           @Override
           protected void update(@NotNull PresentationData presentation) {

@@ -32,7 +32,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.SequenceIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -320,7 +319,7 @@ public class IdeModelsProviderImpl implements IdeModelsProvider {
         @NotNull
         @Override
         public Iterator<String> iterator() {
-          return new SequenceIterator<>(names.iterator(), new Iterator<String>() {
+          return ContainerUtil.concatIterators(names.iterator(), new Iterator<String>() {
             int current = 0;
 
             @Override

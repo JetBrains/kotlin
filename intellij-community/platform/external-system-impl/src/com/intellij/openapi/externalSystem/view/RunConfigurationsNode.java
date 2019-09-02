@@ -50,8 +50,8 @@ public class RunConfigurationsNode extends ExternalSystemNode<Void> {
 
   @NotNull
   @Override
-  protected List<? extends ExternalSystemNode> doBuildChildren() {
-    List<ExternalSystemNode> runConfigurationNodes = new ArrayList<>();
+  protected List<? extends ExternalSystemNode<?>> doBuildChildren() {
+    List<ExternalSystemNode<?>> runConfigurationNodes = new ArrayList<>();
     final AbstractExternalSystemTaskConfigurationType configurationType = ExternalSystemUtil.findConfigurationType(myModuleData.getOwner());
     if (configurationType == null) return Collections.emptyList();
 

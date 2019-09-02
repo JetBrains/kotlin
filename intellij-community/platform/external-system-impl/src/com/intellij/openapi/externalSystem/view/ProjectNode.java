@@ -53,17 +53,16 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
 
   @NotNull
   @Override
-  protected List<? extends ExternalSystemNode> doBuildChildren() {
+  protected List<? extends ExternalSystemNode<?>> doBuildChildren() {
     setIdeGrouping(null);
-    final List<? extends ExternalSystemNode> children = super.doBuildChildren();
-    final List<ExternalSystemNode> visibleChildren = ContainerUtil.filter(children, node -> node.isVisible());
+    final List<? extends ExternalSystemNode<?>> children = super.doBuildChildren();
+    final List<ExternalSystemNode<?>> visibleChildren = ContainerUtil.filter(children, node -> node.isVisible());
     if (visibleChildren.size() == 1 && visibleChildren.get(0).getName().equals(getName())) {
       singleModuleProject = true;
-      final ExternalSystemNode node = visibleChildren.get(0);
+      final ExternalSystemNode<?> node = visibleChildren.get(0);
       if (node instanceof ModuleNode) {
         setIdeGrouping(((ModuleNode)node).getIdeGrouping());
       }
-      //noinspection unchecked
       return node.doBuildChildren();
     }
     else {

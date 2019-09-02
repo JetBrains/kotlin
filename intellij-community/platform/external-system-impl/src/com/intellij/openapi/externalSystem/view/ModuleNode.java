@@ -56,7 +56,7 @@ public class ModuleNode extends ExternalSystemNode<ModuleData> {
 
   @NotNull
   @Override
-  protected List<? extends ExternalSystemNode> doBuildChildren() {
+  protected List<? extends ExternalSystemNode<?>> doBuildChildren() {
     List<ExternalSystemNode<?>> myChildNodes = new ArrayList<>();
     if (getExternalProjectsView().getGroupModules()) {
       List<ModuleNode> childModules = ContainerUtil.findAll(

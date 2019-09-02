@@ -184,9 +184,8 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
   }
 
   @Order(ExternalSystemNode.BUILTIN_DEPENDENCIES_DATA_NODE_ORDER)
-  private static class MyDependenciesNode extends ExternalSystemNode {
+  private static class MyDependenciesNode extends ExternalSystemNode<Object> {
     MyDependenciesNode(ExternalProjectsView externalProjectsView) {
-      //noinspection unchecked
       super(externalProjectsView, null, null);
     }
 
@@ -202,7 +201,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
     }
   }
 
-  private static abstract class DependencyDataExternalSystemNode<T extends DependencyData> extends ExternalSystemNode<T> {
+  private static abstract class DependencyDataExternalSystemNode<T extends DependencyData<?>> extends ExternalSystemNode<T> {
 
     private final Navigatable myNavigatable;
 
@@ -246,7 +245,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
     }
 
     @NotNull
-    private static String getDependencySimpleName(@NotNull ExternalSystemNode node) {
+    private static String getDependencySimpleName(@NotNull ExternalSystemNode<?> node) {
       Object thatData = node.getData();
       if (thatData instanceof LibraryDependencyData) {
         LibraryDependencyData dependencyData = (LibraryDependencyData)thatData;
@@ -311,7 +310,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
 
     @NotNull
     @Override
-    protected List<? extends ExternalSystemNode> doBuildChildren() {
+    protected List<? extends ExternalSystemNode<?>> doBuildChildren() {
       return Collections.emptyList();
     }
 
@@ -340,7 +339,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
   }
 
   @NotNull
-  private static String getNodeDisplayName(@NotNull DataNode node) {
+  private static String getNodeDisplayName(@NotNull DataNode<?> node) {
     Object data = node.getData();
     if (data instanceof LibraryDependencyData) {
       LibraryDependencyData libraryDependencyData = (LibraryDependencyData)data;
