@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.*
@@ -64,7 +65,14 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     protected val kotlinTask: TaskProvider<out T> = registerKotlinCompileTask()
 
-    protected val javaSourceSet: SourceSet? = (kotlinCompilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet
+    protected val javaSourceSet: SourceSet?
+        get() =
+            (kotlinCompilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet
+                ?: kotlinCompilation.target.let {
+                    if (it is KotlinJvmTarget && it.withJavaEnabled)
+                        project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets.maybeCreate(kotlinCompilation.name)
+                    else null
+                }
 
     private val defaultKotlinDestinationDir: File
         get() {
@@ -102,21 +110,19 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     }
 
     private fun addKotlinDirectoriesToJavaSourceSet() {
-        if (javaSourceSet == null)
-            return
+        val java = javaSourceSet ?: return
 
         // Try to avoid duplicate Java sources in allSource; run lazily to allow changing the directory set:
         val kotlinSrcDirsToAdd = Callable {
             kotlinCompilation.kotlinSourceSets.map { filterOutJavaSrcDirsIfPossible(it.kotlin) }
         }
 
-        javaSourceSet.allJava.srcDirs(kotlinSrcDirsToAdd)
-        javaSourceSet.allSource.srcDirs(kotlinSrcDirsToAdd)
+        java.allJava.srcDirs(kotlinSrcDirsToAdd)
+        java.allSource.srcDirs(kotlinSrcDirsToAdd)
     }
 
     private fun filterOutJavaSrcDirsIfPossible(sourceDirectorySet: SourceDirectorySet): FileCollection {
-        if (javaSourceSet == null)
-            return sourceDirectorySet
+        val java = javaSourceSet ?: return sourceDirectorySet
 
         // If the API used below is not available, fall back to not filtering the Java sources.
         if (SourceDirectorySet::class.java.methods.none { it.name == "getSourceDirectories" }) {
@@ -129,7 +135,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         }
 
         // Build a lazily-resolved file collection that filters out Java sources from sources of this sourceDirectorySet
-        return getSourceDirectories(sourceDirectorySet).minus(getSourceDirectories(javaSourceSet.java))
+        return getSourceDirectories(sourceDirectorySet).minus(getSourceDirectories(java.java))
     }
 
     private fun createAdditionalClassesTaskForIdeRunner() {
@@ -177,7 +183,9 @@ internal class Kotlin2JvmSourceSetProcessor(
 
         ScriptingGradleSubplugin.configureForSourceSet(project, kotlinCompilation.compilationName)
 
-        project.runOnceAfterEvaluated("Kotlin2JvmSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
+        // TODO: here, the tasks are always triggered for configuration; once the subplugins are able to work without task instances,
+        //       ensure that task configuration is properly avoided here;
+        project.whenEvaluated {
             val kotlinTaskInstance = kotlinTask.get()
             val javaTask = javaSourceSet?.let { project.tasks.findByName(it.compileJavaTaskName) as JavaCompile }
 

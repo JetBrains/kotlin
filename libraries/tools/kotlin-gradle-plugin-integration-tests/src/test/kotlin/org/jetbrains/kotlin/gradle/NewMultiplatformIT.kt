@@ -315,11 +315,30 @@ class NewMultiplatformIT : BaseGradleIT() {
                     
                     apply plugin: 'com.github.johnrengelman.shadow'
                     apply plugin: 'application'
+                    apply plugin: 'kotlin-kapt' // Check that Kapts works, generates and compiles sources
                     
                     mainClassName = 'com.example.lib.CommonKt'
+                    
+                    dependencies {
+                        jvm6MainImplementation("com.google.dagger:dagger:2.24")
+                        kapt("com.google.dagger:dagger-compiler:2.24")
+                    }
                     """.trimIndent()
                 )
             }
+
+            // Check Kapt:
+            projectDir.resolve("src/jvm6Main/kotlin/Main.kt").appendText(
+                "\n" + """
+                interface Iface
+                
+                @dagger.Module
+                object Module {
+                    @JvmStatic @dagger.Provides
+                    fun provideHeater(): Iface = object : Iface { }
+                }
+            """.trimIndent()
+            )
 
             fun javaSourceRootForCompilation(compilationName: String) =
                 if (testJavaSupportInJvmTargets) "src/jvm6${compilationName.capitalize()}/java" else "src/$compilationName/java"
@@ -372,6 +391,12 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 val expectedMainClasses =
                     classesWithoutJava + setOf(
+                        // classes for Kapt test:
+                        "java/main/com/example/lib/Module_ProvideHeaterFactory.class",
+                        "kotlin/jvm6/main/com/example/lib/Module\$provideHeater\$1.class",
+                        "kotlin/jvm6/main/com/example/lib/Iface.class",
+                        "kotlin/jvm6/main/com/example/lib/Module.class",
+                        // other added classes:
                         "kotlin/jvm6/main/com/example/lib/KotlinClassInJava.class",
                         "java/main/com/example/lib/JavaClassInJava.class",
                         "java/test/com/example/lib/JavaTest.class"
@@ -381,7 +406,10 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 val jvmTestTaskName = if (testJavaSupportInJvmTargets) "jvm6Test" else "test"
                 assertTasksExecuted(":$jvmTestTaskName")
-                assertFileExists("build/reports/tests/allTests/classes/com.example.lib.JavaTest.html")
+
+                if (testJavaSupportInJvmTargets) {
+                    assertFileExists("build/reports/tests/allTests/classes/com.example.lib.JavaTest.html")
+                }
 
                 if (testJavaSupportInJvmTargets) {
                     assertNotContains(KotlinJvmWithJavaTargetPreset.DEPRECATION_WARNING)

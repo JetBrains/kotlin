@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -61,7 +62,6 @@ open class KotlinJvmTarget @Inject constructor(
         javaPluginConvention.sourceSets.all { javaSourceSet ->
             val compilation = compilations.getByName(javaSourceSet.name)
             val compileJavaTask = project.tasks.getByName(javaSourceSet.compileJavaTaskName) as AbstractCompile
-            configureJavaTask(compilation.compileKotlinTask, compileJavaTask, project.logger)
 
             setupJavaSourceSetSourcesAndResources(javaSourceSet, compilation)
 
