@@ -79,13 +79,6 @@ public final class DefaultExternalSourceDirectorySet implements ExternalSourceDi
 
   @NotNull
   @Override
-  public File getGradleOutputDir() {
-    assert gradleOutputDirs.size() > 0;
-    return gradleOutputDirs.get(0);
-  }
-
-  @NotNull
-  @Override
   public Collection<File> getGradleOutputDirs() {
     return gradleOutputDirs;
   }
