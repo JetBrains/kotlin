@@ -38,7 +38,7 @@ internal fun mergePackages(
     return node
 }
 
-private fun MemberScope.collectProperties(collector: (PropertyKey, PropertyDescriptor) -> Unit) {
+internal fun MemberScope.collectProperties(collector: (PropertyKey, PropertyDescriptor) -> Unit) {
     getContributedDescriptors(DescriptorKindFilter.VARIABLES).asSequence()
         .filterIsInstance<PropertyDescriptor>()
         .forEach { property ->
@@ -46,7 +46,7 @@ private fun MemberScope.collectProperties(collector: (PropertyKey, PropertyDescr
         }
 }
 
-private data class PropertyKey(
+internal data class PropertyKey(
     val name: Name,
     val extensionReceiverParameterFqName: FqName?
 ) {

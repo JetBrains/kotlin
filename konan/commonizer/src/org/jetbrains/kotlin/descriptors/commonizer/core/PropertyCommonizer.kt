@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.ir.CommonProperty
+import org.jetbrains.kotlin.descriptors.commonizer.ir.ExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.ir.Property
 import org.jetbrains.kotlin.name.Name
 
@@ -36,7 +37,7 @@ class PropertyCommonizer : Commonizer<PropertyDescriptor, Property> {
                 modality = modality.result,
                 type = returnType.result,
                 setter = setter.result,
-                extensionReceiverType = extensionReceiver.result
+                extensionReceiver = extensionReceiver.result?.let { ExtensionReceiver.createNoAnnotations(it) }
             )
         }
 

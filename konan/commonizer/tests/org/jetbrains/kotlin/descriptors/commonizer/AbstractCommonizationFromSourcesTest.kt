@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
+import kotlin.contracts.ExperimentalContracts
 
+@ExperimentalContracts
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
     companion object {
@@ -25,15 +27,15 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             System.setProperty("java.awt.headless", "true")
         }
 
-        fun List<ModuleDescriptor>.eachModuleAsTarget() = CommonizationParameters().also {
-            forEachIndexed { index, module ->
-                it.addTarget("target_$index", listOf(module))
+        fun Collection<ModuleDescriptor>.eachModuleAsTarget() = mapIndexed { index, moduleDescriptor ->
+            "target_$index" to moduleDescriptor
+        }.toMap().toCommonizationParameters()
+
+        fun Map<String, ModuleDescriptor>.toCommonizationParameters() = CommonizationParameters().also {
+            forEach { (targetName, moduleDescriptor) ->
+                it.addTarget(targetName, listOf(moduleDescriptor))
             }
         }
-    }
-
-    fun assertIsDirectory(file: File) {
-        assertTrue("Not a directory: $file", file.isDirectory)
     }
 
     protected fun createEnvironment(bareModuleName: String): KotlinCoreEnvironment {
@@ -65,31 +67,46 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
                 .also(::assertIsDirectory)
         }
 
-    protected val sourceModuleRoots: List<File>
+    protected val sourceModuleRoots: Pair<Set<File>, Set<File>>
         get() {
             val testDataDir = testDataDir
-            val roots = testDataDir.listFiles()?.toList()
 
-            if (roots.isNullOrEmpty())
-                error("No source module roots found in $testDataDir")
+            val originalRoots = testDataDir
+                .resolve("original")
+                .also(::assertIsDirectory)
+                .listFiles()
+                ?.toSet()
+                ?.also { it.forEach(::assertIsDirectory) }
 
-            roots.forEach(::assertIsDirectory)
+            val commonizedRoots = testDataDir
+                .resolve("commonized")
+                .also(::assertIsDirectory)
+                .listFiles()
+                ?.toSet()
+                ?.also { it.forEach(::assertIsDirectory) }
 
-            return roots
+            check(
+                !originalRoots.isNullOrEmpty() && !commonizedRoots.isNullOrEmpty()
+                        && (originalRoots.map { it.name } + "common").toSet() == commonizedRoots.map { it.name }.toSet()
+            ) {
+                "Source module misconfiguration in $testDataDir"
+            }
+
+            return originalRoots to commonizedRoots
         }
 
-    protected val sourceModuleDescriptors: List<ModuleDescriptor>
+    protected val sourceModuleDescriptors: Pair<Map<String, ModuleDescriptor>, Map<String, ModuleDescriptor>>
         get() {
-            return sourceModuleRoots.map { root ->
-                val environment = createEnvironment(root.parentFile.name)
+            fun analyzeTarget(targetRoot: File): Pair<String, ModuleDescriptor> {
+                val environment = createEnvironment(targetRoot.parentFile.parentFile.name)
                 val psiFactory = KtPsiFactory(environment.project)
 
-                val psiFiles = root.walkTopDown()
+                val psiFiles = targetRoot.walkTopDown()
                     .filter { it.isFile }
                     .map { psiFactory.createFile(it.name, doLoadFile(it)) }
                     .toList()
 
-                CommonResolverForModuleFactory.analyzeFiles(
+                val moduleDescriptor = CommonResolverForModuleFactory.analyzeFiles(
                     files = psiFiles,
                     moduleName = environment.moduleName,
                     dependOnBuiltIns = true,
@@ -97,6 +114,32 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
                 ) { content ->
                     environment.createPackagePartProvider(content.moduleContentScope)
                 }.moduleDescriptor
+
+                return targetRoot.name to moduleDescriptor
             }
+
+            return sourceModuleRoots.first.map(::analyzeTarget).toMap() to sourceModuleRoots.second.map(::analyzeTarget).toMap()
         }
+
+    protected fun doTestSuccessfulCommonization() {
+        val (originalModules, commonizedModules) = sourceModuleDescriptors
+
+        val result = runCommonization(originalModules.toCommonizationParameters())
+        assertCommonizationPerformed(result)
+
+        val commonModuleAsExpected = commonizedModules.getValue("common")
+        val commonModuleByCommonizer = result.commonModules.single()
+
+        assertModulesAreEqual(commonModuleAsExpected, commonModuleByCommonizer, "\"common\" target")
+
+        val concreteTargetNames = commonizedModules.keys - "common"
+        assertEquals(concreteTargetNames, result.modulesByTargets.keys)
+
+        for (targetName in concreteTargetNames) {
+            val targetModuleAsExpected = commonizedModules.getValue(targetName)
+            val targetModuleByCommonizer = result.modulesByTargets.getValue(targetName).single()
+
+            assertModulesAreEqual(targetModuleAsExpected, targetModuleByCommonizer, "\"$targetName\" target")
+        }
+    }
 }

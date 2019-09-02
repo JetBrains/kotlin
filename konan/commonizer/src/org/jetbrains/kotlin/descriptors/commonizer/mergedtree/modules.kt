@@ -35,7 +35,7 @@ internal fun mergeModules(modules: List<ModuleDescriptor?>): ModuleNode {
 }
 
 // collects member scopes for every non-empty package provided by this module
-private fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (FqName, MemberScope) -> Unit) {
+internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (FqName, MemberScope) -> Unit) {
     // we don's need to process fragments from other modules which are the dependencies of this module, so
     // let's use the appropriate package fragment provider
     val packageFragmentProvider = (this as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies

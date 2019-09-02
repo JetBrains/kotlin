@@ -43,17 +43,17 @@ class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<PropertySette
     @Test(expected = IllegalStateException::class)
     fun privateOnly() = doTestFailure(PRIVATE)
 
-    @Test
-    fun publicAndProtected() = doTestSuccess(PROTECTED, PUBLIC, PROTECTED, PUBLIC)
-
-    @Test
-    fun publicAndInternal() = doTestSuccess(INTERNAL, PUBLIC, INTERNAL, PUBLIC)
+    @Test(expected = IllegalStateException::class)
+    fun publicAndProtected() = doTestFailure(PUBLIC, PUBLIC, PROTECTED)
 
     @Test(expected = IllegalStateException::class)
-    fun protectedAndInternal() = doTestFailure(PUBLIC, INTERNAL, PROTECTED)
+    fun publicAndInternal() = doTestFailure(PUBLIC, PUBLIC, INTERNAL)
 
     @Test(expected = IllegalStateException::class)
-    fun publicAndPrivate() = doTestFailure(PUBLIC, INTERNAL, PRIVATE)
+    fun protectedAndInternal() = doTestFailure(PROTECTED, PROTECTED, INTERNAL)
+
+    @Test(expected = IllegalStateException::class)
+    fun publicAndPrivate() = doTestFailure(PUBLIC, PUBLIC, PRIVATE)
 
     @Test(expected = IllegalStateException::class)
     fun somethingUnexpected() = doTestFailure(PUBLIC, LOCAL)

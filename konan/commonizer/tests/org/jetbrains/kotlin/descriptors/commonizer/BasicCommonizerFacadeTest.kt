@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.junit.Assert.*
 import org.junit.Test
 import org.jetbrains.kotlin.descriptors.commonizer.AbstractCommonizationFromSourcesTest.Companion.eachModuleAsTarget
+import kotlin.contracts.ExperimentalContracts
 
+@ExperimentalContracts
 class BasicCommonizerFacadeTest {
 
     @Test
@@ -41,8 +43,7 @@ class BasicCommonizerFacadeTest {
 
         val result = runCommonization(modules.eachModuleAsTarget())
 
-        assertTrue(result is CommonizationPerformed)
-        require(result is CommonizationPerformed) // to enforce Kotlin contracts
+        assertCommonizationPerformed(result)
 
         assertSingleModuleForTarget("<foo>", result.commonModules)
 

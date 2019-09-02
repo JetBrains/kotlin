@@ -5,18 +5,26 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import kotlin.contracts.ExperimentalContracts
+
+@ExperimentalContracts
 class PropertyCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTest() {
-    fun testMatchingPackages() {
-        val modules = sourceModuleDescriptors
-        val result = runCommonization(modules.eachModuleAsTarget())
 
-        println(result)
+    fun testMismatchedPackages() = doTestSuccessfulCommonization()
 
-        // TODO: implement
-    }
+    fun testReturnTypes() = doTestSuccessfulCommonization()
 
-    fun testSample() {
-        val modules = sourceModuleDescriptors
-        runCommonization(modules.eachModuleAsTarget())
-    }
+    fun testVisibility() = doTestSuccessfulCommonization()
+
+    fun testSpecificProperties() = doTestSuccessfulCommonization()
+
+    fun testExtensionReceivers() = doTestSuccessfulCommonization()
+
+    fun testSetters() = doTestSuccessfulCommonization()
+
+    fun testAnnotations() = doTestSuccessfulCommonization()
+
+    // TODO: test modality (possible only inside classes)
+    // TODO: test virtual val visibility commonization (possible only inside classes)
+
 }

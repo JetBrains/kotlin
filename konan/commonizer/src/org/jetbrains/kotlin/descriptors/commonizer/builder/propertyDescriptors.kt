@@ -62,8 +62,8 @@ private fun Property.buildDescriptor(
 
     val extensionReceiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
         propertyDescriptor,
-        extensionReceiverType,
-        Annotations.EMPTY
+        extensionReceiver?.type,
+        extensionReceiver?.annotations ?: Annotations.EMPTY
     )
 
     val dispatchReceiverDescriptor = DescriptorUtils.getDispatchReceiverParameterIfNeeded(containingDeclaration)

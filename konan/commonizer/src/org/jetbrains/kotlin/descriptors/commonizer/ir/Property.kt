@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.descriptors.commonizer.ir.Getter.Companion.toGetter
 import org.jetbrains.kotlin.descriptors.commonizer.ir.Setter.Companion.toSetter
+import org.jetbrains.kotlin.descriptors.commonizer.ir.ExtensionReceiver.Companion.toReceiver
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 interface Property : Declaration {
@@ -27,7 +28,7 @@ interface Property : Declaration {
     val isDelegate: Boolean
     val getter: Getter?
     val setter: Setter?
-    val extensionReceiverType: UnwrappedType?
+    val extensionReceiver: ExtensionReceiver?
     val backingFieldAnnotations: Annotations? // null assumes no backing field
     val delegateFieldAnnotations: Annotations? // null assumes no backing field
     val compileTimeInitializer: ConstantValue<*>?
@@ -39,7 +40,7 @@ data class CommonProperty(
     override val modality: Modality,
     override val type: UnwrappedType,
     override val setter: Setter?,
-    override val extensionReceiverType: UnwrappedType?
+    override val extensionReceiver: ExtensionReceiver?
 ) : Property {
     override val annotations get() = Annotations.EMPTY
     override val isVar: Boolean get() = setter != null
@@ -69,7 +70,7 @@ data class TargetProperty(private val descriptor: PropertyDescriptor) : Property
     override val isDelegate: Boolean get() = descriptor.isDelegated
     override val getter: Getter? get() = descriptor.getter?.toGetter()
     override val setter: Setter? get() = descriptor.setter?.toSetter()
-    override val extensionReceiverType: UnwrappedType? get() = descriptor.extensionReceiverParameter?.type?.unwrap()
+    override val extensionReceiver: ExtensionReceiver? get() = descriptor.extensionReceiverParameter?.toReceiver()
     override val backingFieldAnnotations: Annotations? get() = descriptor.backingField?.annotations
     override val delegateFieldAnnotations: Annotations? get() = descriptor.delegateField?.annotations
     override val compileTimeInitializer: ConstantValue<*>? get() = descriptor.compileTimeInitializer
@@ -112,7 +113,7 @@ data class Setter(
             Annotations.EMPTY,
             Annotations.EMPTY,
             visibility,
-            isDefault = true,
+            isDefault = visibility == Visibilities.PUBLIC,
             isExternal = false,
             isInline = false
         )

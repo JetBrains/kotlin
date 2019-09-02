@@ -36,7 +36,7 @@ private class DefaultPropertySetterCommonizer : PropertySetterCommonizer {
         state = when (state) {
             State.ERROR -> State.ERROR
             State.EMPTY -> next?.let {
-                setterVisibility = VisibilityCommonizer.lowering()
+                setterVisibility = VisibilityCommonizer.equalizing()
                 doCommonizeWith(next)
             } ?: State.WITHOUT_SETTER
             State.WITH_SETTER -> next?.let(::doCommonizeWith) ?: State.ERROR
