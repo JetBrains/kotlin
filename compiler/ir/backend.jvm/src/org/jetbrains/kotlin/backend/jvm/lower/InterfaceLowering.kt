@@ -82,6 +82,16 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
             context.localDelegatedProperties[defaultImplsIrClass.attributeOwnerId as IrClass] = localDelegatedProperties
             context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] = emptyList<IrLocalDelegatedPropertySymbol>()
         }
+
+        // Move $$delegatedProperties array
+        val delegatedPropertyArray = irClass.declarations.filterIsInstance<IrField>()
+            .singleOrNull { it.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE }
+        if (delegatedPropertyArray != null) {
+            irClass.declarations.remove(delegatedPropertyArray)
+            defaultImplsIrClass.declarations.add(0, delegatedPropertyArray)
+            delegatedPropertyArray.parent = defaultImplsIrClass
+            delegatedPropertyArray.initializer?.patchDeclarationParents(defaultImplsIrClass)
+        }
     }
 
     private fun shouldRemoveFunction(function: IrFunction): Boolean =
