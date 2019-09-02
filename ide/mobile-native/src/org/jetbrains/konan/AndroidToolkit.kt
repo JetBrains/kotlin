@@ -14,12 +14,15 @@ object AndroidToolkit {
     val home: File? = EnvironmentUtil.getValue("ANDROID_SDK_ROOT")?.let { File(it) }
         ?: File(System.getProperty("user.home"), "Library/Android/sdk")
     val adb: File? = home?.let { File(File(it, "platform-tools"), "adb".exe) }
+    val emulator: File? = home?.let { File(File(it, "tools"), "emulator".exe) }
     val buildTools: File? = home?.let { home ->
         File(home, "build-tools").listFiles()?.maxBy {
             Version.parseVersion(it.name) ?: Version(0, 0, 0)
         }
     }
     val aapt: File? = buildTools?.let { File(it, "aapt".exe) }
+
+    val avdData: File = File(File(System.getProperty("user.home"), ".android"), "avd")
 
     private val String.exe
         get() =

@@ -16,10 +16,10 @@ import org.jetbrains.konan.MobileBundle
 import java.io.OutputStream
 import java.util.concurrent.CompletableFuture
 
-class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
+class AndroidProcessHandler : ProcessHandler() {
+    lateinit var raw: IDevice
     lateinit var appId: String
     private var processClient: Client? = null
-    private val logCatTask = LogCatReceiverTask(raw)
 
     val debuggerPort = CompletableFuture<Int>()
 
@@ -101,6 +101,7 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
         AndroidDebugBridge.addClientChangeListener(clientListener)
         AndroidDebugBridge.addDeviceChangeListener(deviceListener)
 
+        val logCatTask = LogCatReceiverTask(raw)
         logCatTask.addLogCatListener(logCatListener)
         AppExecutorUtil.getAppExecutorService().execute(logCatTask)
 
@@ -125,7 +126,9 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
 
     override fun destroyProcessImpl() {
         val receiver = CollectingOutputReceiver()
-        raw.executeShellCommand("am force-stop $appId", receiver)
+        if (::raw.isInitialized && ::appId.isInitialized) {
+            raw.executeShellCommand("am force-stop $appId", receiver)
+        }
         log.debug("Destroyed process with output: ${receiver.output}")
         synchronized(this) {
             processClient?.kill()

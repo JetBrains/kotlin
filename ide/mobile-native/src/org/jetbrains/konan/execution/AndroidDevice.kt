@@ -7,6 +7,7 @@ package org.jetbrains.konan.execution
 
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
+import com.android.sdklib.AndroidVersion
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.runners.ExecutionEnvironment
@@ -14,62 +15,71 @@ import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
-import com.jetbrains.cidr.execution.CidrCommandLineState
 import org.jetbrains.konan.AndroidToolkit
 import org.jetbrains.konan.MobileBundle
 import java.io.File
 
-class AndroidDevice(private val raw: IDevice) : Device(
-    raw.serialNumber,
-    raw.displayName,
+abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidVersion?) : Device(
+    uniqueID,
+    name,
     "Android",
-    raw.version.apiString
+    osVersion?.apiString ?: "unknown"
 ) {
-    override fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): CidrCommandLineState =
+    override fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): AndroidCommandLineState =
         AndroidCommandLineState(configuration, environment)
 
-    fun install(apk: File) {
-        raw.installPackage(apk.absolutePath, true)
-    }
-
-    fun launch(appId: String, activity: String, waitForDebugger: Boolean) {
-        val receiver = CollectingOutputReceiver()
-        val options = if (waitForDebugger) "-D" else ""
-        raw.executeShellCommand(
-            "am start $options -n \"$appId/$activity\" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER", receiver
-        )
-        log.debug("Launched app with output: ${receiver.output}")
-    }
-
     fun installAndLaunch(apk: File, project: Project, waitForDebugger: Boolean = false): AndroidProcessHandler {
-        val handler = AndroidProcessHandler(raw)
-        runBackgroundableTask(MobileBundle.message("run.preparing"), project, cancellable = false) { indicator ->
+        val handler = AndroidProcessHandler()
+        runBackgroundableTask(MobileBundle.message("run.waiting"), project, cancellable = false) { indicator ->
+            val raw = prepareDevice()
+
             indicator.isIndeterminate = false
+            indicator.fraction = 0.1
+            indicator.text = MobileBundle.message("run.preparing")
 
             val (appId, activity) = getAppMetadata(apk)
             handler.appId = appId
+            handler.raw = raw
 
-            indicator.fraction = 0.2
+            indicator.fraction = 0.3
             indicator.text = MobileBundle.message("run.installing")
-            install(apk)
+
+            raw.installPackage(apk.absolutePath, true)
             handler.prepareForLaunch()
 
             indicator.fraction = 0.8
             indicator.text = MobileBundle.message("run.starting")
-            launch(appId, activity, waitForDebugger)
+
+            val receiver = CollectingOutputReceiver()
+            val options = if (waitForDebugger) "-D" else ""
+            raw.executeShellCommand(
+                "am start $options -n \"$appId/$activity\" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER", receiver
+            )
+            log.debug("Launched app with output: ${receiver.output}")
         }
         return handler
     }
 
-    companion object {
-        private val log = logger<AndroidDevice>()
-
-        private val IDevice.displayName: String
-            get() =
-                if (isEmulator) avdName?.replace('_', ' ') ?: "Unknown Emulator"
-                else getProperty(IDevice.PROP_DEVICE_MODEL) ?: "Unknown Device"
-    }
+    protected abstract fun prepareDevice(): IDevice
 }
+
+class AndroidPhysicalDevice(private val raw: IDevice) : AndroidDevice(
+    raw.serialNumber,
+    raw.getProperty(IDevice.PROP_DEVICE_MODEL) ?: "Unknown Device",
+    raw.version
+) {
+    override fun prepareDevice(): IDevice = raw
+}
+
+class AndroidEmulator(avdName: String, osVersion: AndroidVersion?) : AndroidDevice(
+    avdName,
+    avdName.replace('_', ' '),
+    osVersion
+) {
+    override fun prepareDevice(): IDevice = DeviceService.instance.launchAndroidEmulator(this)
+}
+
+private val log = logger<AndroidDevice>()
 
 // TODO use gradle project data for this
 private fun getAppMetadata(apk: File): Pair<String, String> {
