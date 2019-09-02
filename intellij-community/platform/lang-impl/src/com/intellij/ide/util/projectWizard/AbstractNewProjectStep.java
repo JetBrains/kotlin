@@ -62,7 +62,6 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     addProjectSpecificAction(projectSpecificAction);
 
     DirectoryProjectGenerator<T>[] generators = myCustomization.getProjectGenerators();
-    myCustomization.setUpBasicAction(projectSpecificAction, generators);
 
     addAll(myCustomization.getActions(generators, callback));
     if (myCustomization.showUserDefinedProjects()) {
@@ -75,7 +74,6 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
                                                                         new DirectoryProjectGenerator[templates.length]);
       addAll(myCustomization.getActions(projectGenerators, callback));
     }
-    addAll(myCustomization.getExtraActions(callback));
   }
 
   protected void addProjectSpecificAction(@NotNull final ProjectSpecificAction projectSpecificAction) {
@@ -123,27 +121,24 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
         return AnAction.EMPTY_ARRAY;
       }
 
-      ProjectSettingsStepBase<T> step = generator instanceof CustomStepProjectGenerator ?
-                                     ((ProjectSettingsStepBase<T>)((CustomStepProjectGenerator<T>)generator).createStep(generator, callback)) :
-                                     createProjectSpecificSettingsStep(generator, callback);
+      ProjectSettingsStepBase<T> step;
+      if (generator instanceof CustomStepProjectGenerator) {
+        //noinspection unchecked
+        step = (ProjectSettingsStepBase<T>)((CustomStepProjectGenerator<T>)generator).createStep(generator, callback);
+      }
+      else {
+        step = createProjectSpecificSettingsStep(generator, callback);
+      }
 
       ProjectSpecificAction projectSpecificAction = new ProjectSpecificAction(generator, step);
       return projectSpecificAction.getChildren(null);
     }
 
-    protected boolean shouldIgnore(@NotNull DirectoryProjectGenerator generator) {
+    protected boolean shouldIgnore(@NotNull DirectoryProjectGenerator<?> generator) {
       return generator instanceof HideableProjectGenerator && ((HideableProjectGenerator)generator).isHidden();
     }
 
-    @NotNull
-    public AnAction[] getExtraActions(@NotNull AbstractCallback<T> callback) {
-      return AnAction.EMPTY_ARRAY;
-    }
-
-    public void setUpBasicAction(@NotNull ProjectSpecificAction projectSpecificAction, @NotNull DirectoryProjectGenerator[] generators) {
-    }
-
-    public boolean showUserDefinedProjects(){
+    public boolean showUserDefinedProjects() {
       return false;
     }
   }
@@ -156,17 +151,15 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
       // todo projectToClose should be passed from calling action, this is just a quick workaround
       IdeFrame frame = IdeFocusManager.getGlobalInstance().getLastFocusedFrame();
       final Project projectToClose = frame != null ? frame.getProject() : null;
-      final DirectoryProjectGenerator generator = settings.getProjectGenerator();
-
+      DirectoryProjectGenerator<?> generator = settings.getProjectGenerator();
       Object actualSettings = projectGeneratorPeer.getSettings();
-
       doGenerateProject(projectToClose, settings.getProjectLocation(), generator, actualSettings);
     }
   }
 
-  public static Project doGenerateProject(@Nullable final Project projectToClose,
-                                          @NotNull final String locationString,
-                                          @Nullable final DirectoryProjectGenerator generator,
+  public static Project doGenerateProject(@Nullable Project projectToClose,
+                                          @NotNull String locationString,
+                                          @Nullable DirectoryProjectGenerator generator,
                                           @NotNull Object settings) {
     Path location = Paths.get(locationString);
     try {
@@ -198,7 +191,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
 
     OpenProjectTask options = new OpenProjectTask(false, projectToClose);
     if (generator instanceof TemplateProjectDirectoryGenerator) {
-      ((TemplateProjectDirectoryGenerator)generator).generateProject(baseDir.getName(), locationString);
+      ((TemplateProjectDirectoryGenerator<?>)generator).generateProject(baseDir.getName(), locationString);
     }
     else if (generator != null) {
       options.callback = (p, module) -> generator.generateProject(p, baseDir, settings, module);
