@@ -891,4 +891,53 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
             }
         }
     }
+
+    @TestMetadata("jps-plugin/testData/incremental/scopeExpansion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ScopeExpansion extends AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInScopeExpansion() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/scopeExpansion"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("changeTypeAliasAndUsage")
+        public void testChangeTypeAliasAndUsage() throws Exception {
+            runTest("jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage/");
+        }
+
+        @TestMetadata("protectedBecomesPublicAccessedTroughChild")
+        public void testProtectedBecomesPublicAccessedTroughChild() throws Exception {
+            runTest("jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild/");
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ChangeTypeAliasAndUsage extends AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInChangeTypeAliasAndUsage() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ProtectedBecomesPublicAccessedTroughChild extends AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInProtectedBecomesPublicAccessedTroughChild() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+    }
 }
