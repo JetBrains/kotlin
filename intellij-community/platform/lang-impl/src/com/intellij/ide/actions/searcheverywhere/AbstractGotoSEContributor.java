@@ -68,14 +68,12 @@ import java.util.regex.Pattern;
 public abstract class AbstractGotoSEContributor implements SearchEverywhereContributor<Object> {
   private static final Logger LOG = Logger.getInstance(AbstractGotoSEContributor.class);
 
-  protected static final Pattern patternToDetectLinesAndColumns = Pattern.compile(
+  private static final Pattern ourPatternToDetectLinesAndColumns = Pattern.compile(
     "(.+?)" + // name, non-greedy matching
     "(?::|@|,| |#|#L|\\?l=| on line | at line |:?\\(|:?\\[)" + // separator
     "(\\d+)?(?:\\W(\\d+)?)?" + // line + column
     "[)\\]]?" // possible closing paren/brace
   );
-  protected static final Pattern patternToDetectAnonymousClasses = Pattern.compile("([.\\w]+)((\\$[\\d]+)*(\\$)?)");
-  protected static final Pattern patternToDetectMembers = Pattern.compile("(.+)(#)(.*)");
 
   protected final Project myProject;
   protected final PsiElement psiContext;
@@ -244,7 +242,7 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
     if (StringUtil.containsAnyChar(pattern, ":,;@[( #") ||
         pattern.contains(" line ") ||
         pattern.contains("?l=")) { // quick test if reg exp should be used
-      return applyPatternFilter(pattern, patternToDetectLinesAndColumns);
+      return applyPatternFilter(pattern, ourPatternToDetectLinesAndColumns);
     }
 
     return pattern;
@@ -357,7 +355,7 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
   }
 
   private static int getLineAndColumnRegexpGroup(String text, int groupNumber) {
-    final Matcher matcher = patternToDetectLinesAndColumns.matcher(text);
+    final Matcher matcher = ourPatternToDetectLinesAndColumns.matcher(text);
     if (matcher.matches()) {
       try {
         if (groupNumber <= matcher.groupCount()) {

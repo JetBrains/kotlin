@@ -28,12 +28,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  * @author Konstantin Bulenkov
  */
 public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor {
+
+  private static final Pattern ourPatternToDetectAnonymousClasses = Pattern.compile("([.\\w]+)((\\$[\\d]+)*(\\$)?)");
+  private static final Pattern ourPatternToDetectMembers = Pattern.compile("(.+)(#)(.*)");
 
   private final PersistentSearchEverywhereContributorFilter<Language> myFilter;
 
@@ -87,11 +91,11 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
   @Override
   public String filterControlSymbols(@NotNull String pattern) {
     if (pattern.indexOf('#') != -1) {
-      pattern = applyPatternFilter(pattern, patternToDetectMembers);
+      pattern = applyPatternFilter(pattern, ourPatternToDetectMembers);
     }
 
     if (pattern.indexOf('$') != -1) {
-      pattern = applyPatternFilter(pattern, patternToDetectAnonymousClasses);
+      pattern = applyPatternFilter(pattern, ourPatternToDetectAnonymousClasses);
     }
 
     return super.filterControlSymbols(pattern);
@@ -149,7 +153,7 @@ public class ClassSearchEverywhereContributor extends AbstractGotoSEContributor 
   }
 
   private static String pathToAnonymousClass(String searchedText) {
-    return pathToAnonymousClass(patternToDetectAnonymousClasses.matcher(searchedText));
+    return pathToAnonymousClass(ourPatternToDetectAnonymousClasses.matcher(searchedText));
   }
 
   @Nullable
