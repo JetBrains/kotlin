@@ -8,10 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.ExternalDependencyId;
+import org.jetbrains.plugins.gradle.tooling.util.BiFunction;
 import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
 import org.jetbrains.plugins.gradle.tooling.util.ContainerUtil;
 
+import java.io.File;
 import java.util.*;
+
+import static org.jetbrains.plugins.gradle.tooling.util.ContainerUtil.reduce;
 
 /**
  * @author Vladislav.Soroka
@@ -173,6 +177,15 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
   @Override
   public int hashCode() {
     return 31 + Objects.hashCode(myId, myScope, myClasspathOrder);
+  }
+
+  protected static int calcFilesPathsHasCode(@NotNull Iterable<File> iterable) {
+    return reduce(iterable, 0, new BiFunction<Integer, Integer, File>() {
+      @Override
+      public Integer fun(Integer currentResult, File item) {
+        return 31 * currentResult + (item == null ? 0 : item.getPath().hashCode());
+      }
+    });
   }
 
   private static class DependenciesIterator implements Iterator<AbstractExternalDependency> {

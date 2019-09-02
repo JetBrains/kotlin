@@ -5,6 +5,7 @@ import com.intellij.util.containers.ContainerUtilRt;
 import org.gradle.tooling.model.internal.ImmutableDomainObjectSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -31,10 +32,13 @@ public class ContainerUtil extends ContainerUtilRt {
     return !iterator1.hasNext();
   }
 
-  public static <R, T> R aggregate(@NotNull Iterable<? extends T> iterable, @NotNull AggregateFunction<R, T> function) {
-    for (T t : iterable) {
-      function.consume(t);
+  public static <T, R> R reduce(@NotNull Iterable<? extends T> iterable,
+                                @Nullable R initialValue,
+                                @NotNull BiFunction<? extends R, ? super R, T> function) {
+    R currentResult = initialValue;
+    for (T e : iterable) {
+      currentResult = function.fun(currentResult, e);
     }
-    return function.get();
+    return currentResult;
   }
 }

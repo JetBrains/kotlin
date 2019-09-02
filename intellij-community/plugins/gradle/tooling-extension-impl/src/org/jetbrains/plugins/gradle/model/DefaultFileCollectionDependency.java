@@ -6,14 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
 import org.jetbrains.plugins.gradle.tooling.util.ContainerUtil;
-import org.jetbrains.plugins.gradle.tooling.util.HashCodeAggregateFunction;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static org.jetbrains.plugins.gradle.tooling.util.ContainerUtil.aggregate;
-import static org.jetbrains.plugins.gradle.tooling.util.FunctionUtils.FILE_TO_PATH;
 
 public final class DefaultFileCollectionDependency extends AbstractExternalDependency implements FileCollectionDependency {
   private static final long serialVersionUID = 1L;
@@ -56,7 +52,7 @@ public final class DefaultFileCollectionDependency extends AbstractExternalDepen
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(super.hashCode(), aggregate(files, new HashCodeAggregateFunction<File>(FILE_TO_PATH)));
+    return Objects.hashCode(super.hashCode(), calcFilesPathsHasCode(files));
   }
 
   @Override
