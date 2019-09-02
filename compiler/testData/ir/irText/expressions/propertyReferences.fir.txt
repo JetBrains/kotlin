@@ -191,7 +191,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
           CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int declared in <root>.Delegate' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:delegatedVal$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=GET_PROPERTY
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            kProp: PROPERTY_REFERENCE 'public final delegatedVal: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:delegatedVal$delegate type:<root>.Delegate visibility:private [final,static]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+            kProp: PROPERTY_REFERENCE 'public final delegatedVal: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:delegatedVal$delegate type:<root>.Delegate visibility:private [final,static]' getter='public final fun <get-delegatedVal> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
   PROPERTY name:test_delegatedVal visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_delegatedVal type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
@@ -212,7 +212,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
           CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int declared in <root>.Delegate' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=GET_PROPERTY
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field='FIELD DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+            kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field='FIELD DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedVar> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:delegatedVar visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
@@ -220,7 +220,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
         CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any, value: kotlin.Int): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=GET_PROPERTY
           thisRef: CONST Null type=kotlin.Nothing? value=null
-          kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field='FIELD DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+          kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field='FIELD DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-delegatedVar>' type=kotlin.Int origin=null
   PROPERTY name:test_delegatedVar visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_delegatedVar type:kotlin.Int visibility:private [final,static]

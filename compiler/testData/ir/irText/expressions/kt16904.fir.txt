@@ -83,6 +83,24 @@ FILE fqName:<root> fileName:/kt16904.kt
           value: CONST Int type=kotlin.Int value=42
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.A]'
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:<root>.B
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+        overridden:
+          public final fun <get-x> (): <root>.B declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+      FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+        overridden:
+          public final fun <get-y> (): kotlin.Int declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+      FUN FAKE_OVERRIDE name:<set-y> visibility:public modality:FINAL <> ($this:<root>.Test1, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+        overridden:
+          public final fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.A
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       VALUE_PARAMETER name:y index:0 type:Y of <root>.Derived1.foo
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo <Y> (y: Y of <root>.Derived1.foo): T of <root>.Derived1 declared in <root>.Derived1'
-          CALL 'public final fun <get-x> (): T of <root>.Base declared in <root>.Base' type=T of <root>.Base origin=null
+          CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Base' type=T of <root>.Derived1 origin=null
             $this: GET_VAR '<this>: <root>.Base declared in <root>.Base' type=<root>.Base<*> origin=null
     PROPERTY name:bar visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private
@@ -48,6 +48,12 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1
         VALUE_PARAMETER name:value index:0 type:T of <root>.Derived1
         BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+      FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Derived1) returnType:T of <root>.Derived1
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+        overridden:
+          public final fun <get-x> (): T of <root>.Base declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

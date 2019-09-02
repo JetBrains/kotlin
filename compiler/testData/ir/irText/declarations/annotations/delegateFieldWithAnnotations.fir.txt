@@ -32,4 +32,4 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
           CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Int origin=null
             $receiver: GET_FIELD 'FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final test1: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+            property: PROPERTY_REFERENCE 'public final test1: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test1> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null

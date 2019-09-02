@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
           CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Int origin=null
             $receiver: GET_FIELD 'FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final test7: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+            property: PROPERTY_REFERENCE 'public final test7: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test7> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
   PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
     FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
@@ -88,12 +88,12 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test8> (): IrErrorType declared in <root>'
           ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
             CONST Null type=kotlin.Nothing? value=null
-            PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+            PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> (<set-?>:IrErrorType) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
       BLOCK_BODY
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
           CONST Null type=kotlin.Nothing? value=null
-          PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+          PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
           GET_VAR '<set-?>: IrErrorType declared in <root>.<set-test8>' type=IrErrorType origin=null

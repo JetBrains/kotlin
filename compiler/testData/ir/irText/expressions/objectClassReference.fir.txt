@@ -22,4 +22,4 @@ FILE fqName:<root> fileName:/objectClassReference.kt
     BLOCK_BODY
       GET_CLASS type=kotlin.reflect.KClass<<root>.A>
         GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
-      ERROR_CALL 'No getter found for R|kotlin/jvm/java|' type=java.lang.Class<<root>.A>
+      CALL 'public final fun <get-java> (): java.lang.Class<T of <uninitialized parent>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=null

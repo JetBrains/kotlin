@@ -8,4 +8,5 @@ FILE fqName:<root> fileName:/extensionLambda.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Int
               VALUE_PARAMETER name:it index:0 type:kotlin.String
               BLOCK_BODY
-                ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
+                CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+                  $this: GET_VAR '<this>: kotlin.String declared in kotlin.String' type=kotlin.String origin=null

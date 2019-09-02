@@ -2,7 +2,8 @@ FILE fqName:<root> fileName:/constFromBuiltins.kt
   PROPERTY name:test visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'No getter found for R|kotlin/Int.Companion.MIN_VALUE|' type=kotlin.Int
+        CALL 'public final fun <get-MIN_VALUE> (): kotlin.Int declared in kotlin.Int.Companion' type=kotlin.Int origin=null
+          $this: GET_OBJECT 'CLASS CLASS name:Int modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>]' type=kotlin.Int.Companion
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       BLOCK_BODY

@@ -11,7 +11,8 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
+            then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+              $this: GET_VAR 'x: kotlin.String? declared in <root>.test1' type=kotlin.String origin=null
   FUN name:test2 visibility:public modality:FINAL <T> (x:T of <root>.test2) returnType:kotlin.Int
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:T of <root>.test2
@@ -25,7 +26,8 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'No getter found for R|kotlin/CharSequence.length|' type=kotlin.Int
+            then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=null
+              $this: GET_VAR 'x: T of <root>.test2 declared in <root>.test2' type=kotlin.Any origin=null
   FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
@@ -38,7 +40,8 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'No getter found for R|kotlin/CharSequence.length|' type=kotlin.Int
+            then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=null
+              $this: GET_VAR 'x: kotlin.Any declared in <root>.test3' type=T of <root>.test3 origin=null
   FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:kotlin.Any?
@@ -51,7 +54,8 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: ERROR_CALL 'No getter found for R|kotlin/CharSequence.length|' type=kotlin.Int
+            then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=null
+              $this: GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=T of <root>.test4 origin=null
   FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1<S of <root>.test5, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     TYPE_PARAMETER name:S index:0 variance: superTypes:[]

@@ -197,6 +197,12 @@ FILE fqName:<root> fileName:/kt30020.kt
         public abstract fun lastIndexOf (element: E of kotlin.collections.MutableList): kotlin.Int declared in kotlin.collections.List
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List
       VALUE_PARAMETER name:element index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [val]
+      FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:<root>.AML) returnType:kotlin.Int
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [val]
+        overridden:
+          public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.List
+        $this: VALUE_PARAMETER name:<this> type:<root>.AML
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
