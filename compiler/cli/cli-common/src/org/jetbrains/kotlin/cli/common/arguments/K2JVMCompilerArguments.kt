@@ -45,9 +45,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-no-reflect", description = "Don't include kotlin-reflect.jar into classpath")
     var noReflect: Boolean by FreezableVar(false)
 
-    @Argument(value = "-script", description = "Evaluate the script file")
-    var script: Boolean by FreezableVar(false)
-
     @Argument(
         value = "-script-templates",
         valueDescription = "<fully qualified class name[,]>",
@@ -253,9 +250,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "                              in the 'DefaultImpls' class in addition to the interface method"
     )
     var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
-
-    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
-    var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xdisable-standard-script", description = "Disable standard kotlin script support")
     var disableStandardScript: Boolean by FreezableVar(false)

@@ -1,5 +1,6 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
+  -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xir                       Use IR backend
@@ -17,6 +18,8 @@ where advanced options include:
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xdisable-default-scripting-plugin
+                             Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
   -Xdump-directory           Dump backend state into directory
   -Xdump-fqname              FqName of declaration that should be dumped

@@ -23,8 +23,6 @@ import kotlin.script.experimental.host.toScriptSource
 
 abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
-    abstract fun getSourcePath(arguments: CommonCompilerArguments): String
-
     abstract fun setupScriptConfiguration(configuration: CompilerConfiguration, sourcePath: String)
 
     abstract fun createEnvironment(
@@ -40,11 +38,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 
-    abstract suspend fun preprocessEvaluation(
-        scriptEvaluator: ScriptEvaluator,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration,
-        evaluationConfiguration: ScriptEvaluationConfiguration
-    )
+    protected abstract fun ScriptEvaluationConfiguration.Builder.platformEvaluationConfiguration()
 
     override fun eval(
         arguments: CommonCompilerArguments,
@@ -57,11 +51,13 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Unable to process the script, scripting plugin is not configured")
             return ExitCode.COMPILATION_ERROR
         }
-        val sourcePath = getSourcePath(arguments)
+        val sourcePath = arguments.freeArgs.first()
 
         setupScriptConfiguration(configuration, sourcePath)
 
         val environment = createEnvironment(projectEnvironment, configuration)
+
+        if (messageCollector.hasErrors()) return ExitCode.COMPILATION_ERROR
 
         val scriptFile = File(sourcePath)
         if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile)) {
@@ -82,6 +78,8 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
         val evaluationConfiguration = definition.evaluationConfiguration.with {
             constructorArgs(scriptArgs.toTypedArray())
+            platformEvaluationConfiguration()
+
         }
         val scriptCompilationConfiguration = definition.compilationConfiguration
 
@@ -99,7 +97,6 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
                 return@runBlocking ExitCode.COMPILATION_ERROR
             }
 
-            preprocessEvaluation(scriptEvaluator, scriptCompilationConfiguration, evaluationConfiguration)
             val evalResult = scriptEvaluator.invoke(compiledScript, evaluationConfiguration).valueOr {
                 for (report in it.reports) {
                     messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))

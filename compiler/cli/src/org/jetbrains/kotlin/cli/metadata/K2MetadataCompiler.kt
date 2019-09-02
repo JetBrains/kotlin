@@ -49,6 +49,8 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         // No specific arguments yet
     }
 
+    override fun MutableList<String>.addPlatformOptions(arguments: K2MetadataCompilerArguments) {}
+
     override fun doExecute(
         arguments: K2MetadataCompilerArguments,
         configuration: CompilerConfiguration,
@@ -57,7 +59,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     ): ExitCode {
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-        val pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, configuration)
+        val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         for (arg in arguments.freeArgs) {

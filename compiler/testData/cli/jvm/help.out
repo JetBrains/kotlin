@@ -10,7 +10,6 @@ where possible options include:
   -no-jdk                    Don't include Java runtime into classpath
   -no-reflect                Don't include kotlin-reflect.jar into classpath
   -no-stdlib                 Don't include kotlin-stdlib.jar or kotlin-reflect.jar into classpath
-  -script                    Evaluate the script file
   -script-templates <fully qualified class name[,]>
                              Script definition template classes
   -Werror                    Report an error if there are any warnings
@@ -26,6 +25,7 @@ where possible options include:
                              instead of going through a graceful migration cycle.
                              Code written in the progressive mode is backward compatible; however, code written in
                              non-progressive mode may cause compilation errors in the progressive mode.
+  -script                    Evaluate the script file
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version

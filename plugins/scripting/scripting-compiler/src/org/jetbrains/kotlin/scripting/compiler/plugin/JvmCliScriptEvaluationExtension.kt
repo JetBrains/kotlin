@@ -16,11 +16,15 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
 
 class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
 
-    override fun getSourcePath(arguments: CommonCompilerArguments): String {
-        return arguments.freeArgs.first()
+    override fun ScriptEvaluationConfiguration.Builder.platformEvaluationConfiguration() {
+        jvm {
+            baseClassLoader(null)
+        }
     }
 
     override fun setupScriptConfiguration(configuration: CompilerConfiguration, sourcePath: String) {
@@ -51,14 +55,6 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
     ): ResultWithDiagnostics<CompiledScript<*>> {
         this.environment = environment
         return scriptCompiler.compile(script, scriptCompilationConfiguration)
-    }
-
-    override suspend fun preprocessEvaluation(
-        scriptEvaluator: ScriptEvaluator,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration,
-        evaluationConfiguration: ScriptEvaluationConfiguration
-    ) {
-        //do nothing
     }
 
     override fun isAccepted(arguments: CommonCompilerArguments): Boolean =

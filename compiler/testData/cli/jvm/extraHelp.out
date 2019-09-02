@@ -17,8 +17,6 @@ where advanced options include:
                              default is 'disable' in language version 1.2 and below,
                              'enable' since language version 1.3
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
-  -Xdisable-default-scripting-plugin
-                             Do not enable scripting plugin by default
   -Xdisable-standard-script  Disable standard kotlin script support
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
@@ -79,6 +77,8 @@ where advanced options include:
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xdisable-default-scripting-plugin
+                             Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
   -Xdump-directory           Dump backend state into directory
   -Xdump-fqname              FqName of declaration that should be dumped

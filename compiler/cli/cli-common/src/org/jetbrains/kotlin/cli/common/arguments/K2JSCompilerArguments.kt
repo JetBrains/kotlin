@@ -137,4 +137,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xmetadata-only", description = "Generate *.meta.js and *.kjsm files only")
     var metadataOnly: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
+    var enableJsScripting: Boolean by FreezableVar(false)
 }

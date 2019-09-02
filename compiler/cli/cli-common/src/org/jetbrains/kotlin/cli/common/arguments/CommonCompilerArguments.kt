@@ -76,6 +76,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var progressiveMode by FreezableVar(false)
 
+    @Argument(value = "-script", description = "Evaluate the script file")
+    var script: Boolean by FreezableVar(false)
+
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
     var pluginOptions: Array<String>? by FreezableVar(null)
 
@@ -303,6 +306,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         description = "Compile using Front-end IR. Warning: this feature is far from being production-ready"
     )
     var useFir: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
+    var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
 
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.platform
 import org.jetbrains.kotlin.scripting.repl.js.CompiledToJsScript
 import org.jetbrains.kotlin.scripting.repl.js.JsScriptCompiler
+import org.jetbrains.kotlin.scripting.repl.js.JsScriptDependencyCompiler
 import org.jetbrains.kotlin.scripting.repl.js.JsScriptEvaluator
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -34,10 +35,6 @@ fun loadScriptConfiguration(configuration: CompilerConfiguration) {
 }
 
 class JsScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
-
-    override fun getSourcePath(arguments: CommonCompilerArguments): String {
-        return (arguments as K2JSCompilerArguments).scriptPath!!
-    }
 
     override fun setupScriptConfiguration(configuration: CompilerConfiguration, sourcePath: String) {
         loadScriptConfiguration(configuration)
@@ -59,8 +56,12 @@ class JsScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
     }
 
     private var environment: KotlinCoreEnvironment? = null
+    private var dependencyJsCode: String? = null
     private val scriptCompiler: JsScriptCompiler by lazy {
-        JsScriptCompiler(environment!!)
+        val env = environment ?: error("Expected environment is initialized prior to compiler instantiation")
+        JsScriptCompiler(env).apply {
+            dependencyJsCode = JsScriptDependencyCompiler(env.configuration, nameTables, symbolTable).compile(dependencies)
+        }
     }
 
     override suspend fun compilerInvoke(
@@ -68,22 +69,22 @@ class JsScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>> {
+
         this.environment = environment
-        return scriptCompiler.invoke(script, scriptCompilationConfiguration)
+
+        return scriptCompiler.invoke(script, scriptCompilationConfiguration).onSuccess {
+            val compiledResult = it as CompiledToJsScript
+            val actualResult = dependencyJsCode?.let { d ->
+                dependencyJsCode = null
+                CompiledToJsScript(d + "\n" + compiledResult.jsCode, compiledResult.compilationConfiguration)
+            } ?: compiledResult
+
+            ResultWithDiagnostics.Success(actualResult)
+        }
     }
 
-    override suspend fun preprocessEvaluation(
-        scriptEvaluator: ScriptEvaluator,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration,
-        evaluationConfiguration: ScriptEvaluationConfiguration
-    ) {
-        scriptEvaluator.invoke(
-            CompiledToJsScript(
-                scriptCompiler.scriptDependencyBinary,
-                scriptCompilationConfiguration
-            ),
-            evaluationConfiguration
-        )
+    override fun ScriptEvaluationConfiguration.Builder.platformEvaluationConfiguration() {
+
     }
 
     override fun isAccepted(arguments: CommonCompilerArguments): Boolean {
