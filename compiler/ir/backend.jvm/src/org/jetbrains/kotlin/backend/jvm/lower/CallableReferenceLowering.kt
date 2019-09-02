@@ -172,7 +172,6 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             functionReferenceClass.addConstructor {
                 setSourceRange(irFunctionReference)
                 origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-                visibility = if (inInlineFunctionScope) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
                 returnType = functionReferenceClass.defaultType
                 isPrimary = true
             }.apply {
@@ -380,9 +379,6 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
     private val currentDeclarationParent
         get() = allScopes.last { it.irElement is IrDeclarationParent }.irElement as IrDeclarationParent
-
-    private val inInlineFunctionScope: Boolean
-        get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
 
     private fun IrClassSymbol.functionByName(name: String) = owner.functions.single { it.name.asString() == name }
 
