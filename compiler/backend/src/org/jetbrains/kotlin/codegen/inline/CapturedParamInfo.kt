@@ -58,7 +58,7 @@ class CapturedParamInfo : ParameterInfo {
         this.isSkipInConstructor = skipInConstructor
     }
 
-    fun cloneWithNewDeclarationIndex(newDeclarationIndex: Int): CapturedParamInfo {
+    fun cloneWithNewDeclarationIndex(index: Int, newDeclarationIndex: Int): CapturedParamInfo {
         val result = CapturedParamInfo(
             desc, newFieldName, isSkipped, index, remapValue, isSkipInConstructor, newDeclarationIndex
         )

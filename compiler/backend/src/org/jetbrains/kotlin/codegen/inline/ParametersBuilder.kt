@@ -47,7 +47,7 @@ class ParametersBuilder private constructor() {
     }
 
     fun addCapturedParamCopy(copyFrom: CapturedParamInfo): CapturedParamInfo {
-        return addParameter(copyFrom.cloneWithNewDeclarationIndex(-1))
+        return addParameter(copyFrom.cloneWithNewDeclarationIndex(nextParameterOffset, -1))
     }
 
     fun addCapturedParam(
@@ -95,7 +95,7 @@ class ParametersBuilder private constructor() {
 
         return Parameters(params.map { param ->
             if (param is CapturedParamInfo) {
-                param.cloneWithNewDeclarationIndex(nextDeclarationIndex++)
+                param.cloneWithNewDeclarationIndex(param.index, nextDeclarationIndex++)
             } else {
                 param
             }
