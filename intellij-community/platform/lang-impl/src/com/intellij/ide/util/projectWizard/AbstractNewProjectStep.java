@@ -189,13 +189,15 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
 
     RecentProjectsManager.getInstance().setLastProjectCreationLocation(location.getParent());
 
-    OpenProjectTask options = new OpenProjectTask(false, projectToClose);
+    OpenProjectTask options = new OpenProjectTask(/* forceOpenInNewFrame = */ false, projectToClose);
+    options.isNewProject = true;
+    options.isRefreshVfsNeeded = false;
     if (generator instanceof TemplateProjectDirectoryGenerator) {
       ((TemplateProjectDirectoryGenerator<?>)generator).generateProject(baseDir.getName(), locationString);
     }
     else if (generator != null) {
       options.callback = (p, module) -> generator.generateProject(p, baseDir, settings, module);
     }
-    return PlatformProjectOpenProcessor.doOpenProject(location, options, -1);
+    return PlatformProjectOpenProcessor.openExistingProject(location, location, options, null);
   }
 }
