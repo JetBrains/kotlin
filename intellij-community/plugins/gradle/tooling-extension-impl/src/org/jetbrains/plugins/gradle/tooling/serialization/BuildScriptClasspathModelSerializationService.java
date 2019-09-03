@@ -16,6 +16,7 @@ import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap.SimpleObjectFactor
 import org.jetbrains.plugins.gradle.tooling.util.ObjectCollector;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +69,11 @@ public class BuildScriptClasspathModelSerializationService implements Serializat
         writer.setFieldName(OBJECT_ID_FIELD);
         writer.writeInt(objectId);
         if (isAdded) {
-          writeString(writer, "gradleVersion", model.getGradleVersion());
-          writeFile(writer, "gradleHomeDir", model.getGradleHomeDir());
+          if (!context.isFirstModelWritten) {
+            context.isFirstModelWritten = true;
+            writeString(writer, "gradleVersion", model.getGradleVersion());
+            writeFile(writer, "gradleHomeDir", model.getGradleHomeDir());
+          }
           writeClasspath(writer, model.getClasspath());
         }
         writer.stepOut();
@@ -104,8 +108,13 @@ public class BuildScriptClasspathModelSerializationService implements Serializat
         @Override
         public BuildScriptClasspathModelImpl create() {
           BuildScriptClasspathModelImpl classpathModel = new BuildScriptClasspathModelImpl();
-          classpathModel.setGradleVersion(assertNotNull(readString(reader, "gradleVersion")));
-          classpathModel.setGradleHomeDir(readFile(reader, "gradleHomeDir"));
+          if (!context.isFirstModelRead) {
+            context.isFirstModelRead = true;
+            context.gradleVersion = assertNotNull(readString(reader, "gradleVersion"));
+            context.gradleHomeDir = readFile(reader, "gradleHomeDir");
+          }
+          classpathModel.setGradleVersion(context.gradleVersion);
+          classpathModel.setGradleHomeDir(context.gradleHomeDir);
           List<ClasspathEntryModel> classpathEntries = readClasspath(reader);
           for (ClasspathEntryModel entry : classpathEntries) {
             classpathModel.add(entry);
@@ -142,10 +151,14 @@ public class BuildScriptClasspathModelSerializationService implements Serializat
   }
 
   private static class ReadContext {
+    private boolean isFirstModelRead;
+    private File gradleHomeDir;
+    private String gradleVersion;
     private final IntObjectMap<BuildScriptClasspathModelImpl> objectMap = new IntObjectMap<BuildScriptClasspathModelImpl>();
   }
 
   private static class WriteContext {
+    private boolean isFirstModelWritten;
     private final ObjectCollector<BuildScriptClasspathModel, IOException> objectCollector =
       new ObjectCollector<BuildScriptClasspathModel, IOException>();
   }
