@@ -295,7 +295,7 @@ internal fun createSimplePSICallArgument(
 
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
     val onlyResolvedCall = ktExpression.getCall(bindingContext)?.let {
-        bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
+        bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result
     }
     // todo hack for if expression: sometimes we not write properly type information for branches
     val baseType = typeInfoForArgument.type?.unwrap() ?: onlyResolvedCall?.resultCallAtom?.freshReturnType ?: return null

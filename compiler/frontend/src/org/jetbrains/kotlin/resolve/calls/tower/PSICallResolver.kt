@@ -595,7 +595,7 @@ class PSICallResolver(
                         ?: ktExpression?.getCall(bindingContext)
 
                     val onlyResolvedCall = call?.let {
-                        bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
+                        bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result
                     }
                     if (onlyResolvedCall != null) {
                         subCallArgument = SubKotlinCallArgumentImpl(
