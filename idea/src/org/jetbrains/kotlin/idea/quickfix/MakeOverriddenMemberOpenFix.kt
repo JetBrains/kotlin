@@ -13,12 +13,16 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.util.CachedValue
 import org.jetbrains.kotlin.idea.core.util.getValue
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_KEYWORD
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -56,6 +60,17 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
             ) {
                 return QUICKFIX_UNAVAILABLE
             }
+
+            overriddenDescriptor.takeIf { overriddenMember.isExpectDeclaration() }?.actualsForExpected()?.forEach {
+                if (it is MemberDescriptor && it.modality < Modality.OPEN) {
+                    val member = DescriptorToSourceUtils.descriptorToDeclaration(it)
+                    if (member == null || !member.canRefactor() || member !is KtCallableDeclaration) {
+                        return QUICKFIX_UNAVAILABLE
+                    }
+                    overriddenNonOverridableMembers.add(member.createSmartPointer())
+                }
+            }
+
             val containingDeclarationName = overriddenDescriptor.containingDeclaration.name.asString()
             overriddenNonOverridableMembers.add(overriddenMember.createSmartPointer())
             containingDeclarationsNames.add(containingDeclarationName)
@@ -69,7 +84,7 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
 
     override fun getText(): String {
         val element = element ?: return ""
-        if (overriddenNonOverridableMembers.size == 1) {
+        if (containingDeclarationsNames.size == 1) {
             val name = containingDeclarationsNames[0] + "." + element.name
             return "Make $name $OPEN_KEYWORD"
         }

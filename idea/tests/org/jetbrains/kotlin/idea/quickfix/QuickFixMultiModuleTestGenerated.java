@@ -558,6 +558,39 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @TestMetadata("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MakeOverridenMemberOpen extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("actual")
+        public void testActual() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen/actual/");
+        }
+
+        public void testAllFilesPresentInMakeOverridenMemberOpen() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("expect")
+        public void testExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen/expect/");
+        }
+
+        @TestMetadata("hasAbstract")
+        public void testHasAbstract() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen/hasAbstract/");
+        }
+
+        @TestMetadata("hasOpen")
+        public void testHasOpen() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen/hasOpen/");
+        }
+    }
+
     @TestMetadata("idea/testData/multiModuleQuickFix/other")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
