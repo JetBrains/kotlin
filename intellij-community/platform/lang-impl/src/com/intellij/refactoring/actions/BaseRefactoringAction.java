@@ -92,10 +92,14 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     DataContext dataContext = e.getDataContext();
     Project project = e.getProject();
     if (project == null) return;
-    PsiDocumentManager.getInstance(project).commitAllDocuments();
+    int eventCount = IdeEventQueue.getInstance().getEventCount();
+    if (!PsiDocumentManager.getInstance(project).commitAllDocumentsUnderProgress(
+      RefactoringBundle.message("commit.documents.progress.text"), true)) {
+      return;
+    }
+    IdeEventQueue.getInstance().setEventCount(eventCount);
     final Editor editor = e.getData(CommonDataKeys.EDITOR);
     final PsiElement[] elements = getPsiElementArray(dataContext);
-    int eventCount = IdeEventQueue.getInstance().getEventCount();
 
     RefactoringActionHandler handler;
     try {
