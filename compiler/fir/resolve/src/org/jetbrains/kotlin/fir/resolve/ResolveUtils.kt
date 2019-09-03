@@ -178,6 +178,7 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> this
         } as T
+        is ConeStubType -> ConeStubType(variable, nullability) as T
         else -> error("sealed: ${this::class}")
     }
 }

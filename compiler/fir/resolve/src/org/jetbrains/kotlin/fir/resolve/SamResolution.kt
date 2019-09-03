@@ -51,7 +51,7 @@ class FirSamResolverImpl(
                 getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null,
                 getFunctionTypeForPossibleSamType(type.upperBound) ?: return null
             )
-            is ConeClassErrorType -> null
+            is ConeClassErrorType, is ConeStubType -> null
             // TODO: support those types as well
             is ConeAbbreviatedType, is ConeTypeParameterType, is ConeTypeVariableType,
             is ConeCapturedType, is ConeDefinitelyNotNullType, is ConeIntersectionType -> null

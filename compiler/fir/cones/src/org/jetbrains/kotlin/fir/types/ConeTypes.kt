@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.*
 
 sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
@@ -192,4 +193,18 @@ class ConeIntersectionType(
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
     return ConeIntersectionType(intersectedTypes.map(func))
+}
+
+class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeKotlinType() {
+    override val typeArguments: Array<out ConeKotlinTypeProjection>
+        get() = emptyArray()
+}
+
+open class ConeTypeVariable(name: String) : TypeVariableMarker {
+    val typeConstructor = ConeTypeVariableTypeConstructor(name)
+    val defaultType = ConeTypeVariableType(ConeNullability.NOT_NULL, typeConstructor)
+}
+
+class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
+    override val name: Name get() = Name.identifier(debugName)
 }
