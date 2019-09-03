@@ -1632,6 +1632,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequence.kt");
         }
 
+        @TestMetadata("forInCharSequenceTypeParameter.kt")
+        public void testForInCharSequenceTypeParameter() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceTypeParameter.kt");
+        }
+
         @TestMetadata("forInDownToCharMinValue.kt")
         public void testForInDownToCharMinValue() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/forInDownToCharMinValue.kt");
@@ -1843,6 +1848,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             @TestMetadata("forInCharSequenceIndices.kt")
             public void testForInCharSequenceIndices() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInCharSequenceIndices.kt");
+            }
+
+            @TestMetadata("forInCharSequenceTypeParameterIndices.kt")
+            public void testForInCharSequenceTypeParameterIndices() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInCharSequenceTypeParameterIndices.kt");
             }
 
             @TestMetadata("forInCollectionImplicitReceiverIndices.kt")
