@@ -97,9 +97,7 @@ abstract class KtLightClassForSourceDeclaration(
     abstract override fun getQualifiedName(): String?
 
     override val lightClassData: LightClassData
-        get() = _findLightClassData
-
-    private val _findLightClassData: LightClassData by lazySync { findLightClassData() }
+        get() = findLightClassData()
 
     protected open fun findLightClassData() = getLightClassDataHolder().findDataForClassOrObject(classOrObject)
 
