@@ -2,9 +2,9 @@
 package com.intellij.stats.personalization.session
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.stats.completion.idString
+import com.intellij.stats.storage.factors.LookupStorage
 import com.intellij.stats.storage.factors.MutableLookupStorage
 
 object SessionFactorsUtils {
@@ -34,9 +34,8 @@ object SessionFactorsUtils {
 
   fun shouldUseSessionFactors(): Boolean = Registry.`is`("completion.stats.enable.session.factors")
 
-  fun updateSessionFactors(lookup: LookupImpl, items: List<LookupElement>) {
-    if (!shouldUseSessionFactors()) return
-    val lookupStorage = MutableLookupStorage.get(lookup) ?: return
+  fun updateSessionFactors(lookupStorage: MutableLookupStorage, items: List<LookupElement>): Map<String, Any> {
+    if (!shouldUseSessionFactors()) return emptyMap()
     val sessionFactors = lookupStorage.sessionFactors
     sessionFactors.fireSortingPerforming(items.size)
     val lookupFactors = calculateLookupFactors(sessionFactors)
@@ -44,11 +43,12 @@ object SessionFactorsUtils {
       val storage = lookupStorage.getItemStorage(item.idString())
       storage.sessionFactors.updateUsedSessionFactors(i, lookupFactors, calculateElementFactors(storage.sessionFactors))
     }
+
+    return lookupFactors
   }
 
-  fun saveSessionFactorsTo(map: MutableMap<String, Any>, lookup: LookupImpl, lookupElement: LookupElement) {
-    val factorsStorage = MutableLookupStorage.get(lookup)?.getItemStorage(lookupElement.idString())?.sessionFactors ?: return
-    map.putAll(factorsStorage.lastUsedLookupFactors())
+  fun saveElementFactorsTo(map: MutableMap<String, Any>, lookupStorage: LookupStorage, lookupElement: LookupElement) {
+    val factorsStorage = lookupStorage.getItemStorage(lookupElement.idString()).sessionFactors
     map.putAll(factorsStorage.lastUsedElementFactors())
   }
 

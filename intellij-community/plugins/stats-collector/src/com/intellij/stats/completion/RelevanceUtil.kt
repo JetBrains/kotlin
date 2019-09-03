@@ -6,8 +6,12 @@ import com.intellij.openapi.util.text.StringUtil
 object RelevanceUtil {
   private val IGNORED_FACTORS = setOf("kotlin.byNameAlphabetical", "scalaMethodCompletionWeigher", "unresolvedOnTop")
 
-  fun asRelevanceMap(relevanceObjects: List<Pair<String, Any?>>): MutableMap<String, Any> {
+  /*
+  * First map contains only features affecting default elements ordering
+  * */
+  fun asRelevanceMaps(relevanceObjects: List<Pair<String, Any?>>): kotlin.Pair<Map<String, Any>, MutableMap<String, Any>> {
     val relevanceMap = mutableMapOf<String, Any>()
+    val additionalMap = mutableMapOf<String, Any>()
     for (pair in relevanceObjects) {
       val name = pair.first.normalized()
       val value = pair.second
@@ -16,12 +20,12 @@ object RelevanceUtil {
         "proximity" -> relevanceMap.addCompoundValues("prox", value.toString())
         "kotlin.proximity" -> relevanceMap.addCompoundValues("kt_prox", value.toString())
         "kotlin.callableWeight" -> relevanceMap.addDataClassValues("kotlin.callableWeight", value.toString())
-        "ml_weigh" -> relevanceMap.addCompoundValues("ml", value.toString())
+        "ml_weigh" -> additionalMap.addCompoundValues("ml", value.toString())
         else -> relevanceMap[name] = value
       }
     }
 
-    return relevanceMap
+    return kotlin.Pair(relevanceMap, additionalMap)
   }
 
   private fun String.normalized(): String {

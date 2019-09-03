@@ -2,7 +2,7 @@
 package com.intellij.stats.storage.factors
 
 import com.intellij.stats.personalization.session.ElementSessionFactorsStorage
-import com.jetbrains.completion.feature.impl.FeatureUtils
+import com.intellij.completion.sorting.FeatureUtils
 
 class MutableElementStorage : LookupElementStorage {
   private var factors: Map<String, Any>? = null
@@ -14,6 +14,7 @@ class MutableElementStorage : LookupElementStorage {
     if (score != null) {
       factors[FeatureUtils.ML_RANK] = score
     }
+    factors.putAll(sessionFactors.lastUsedLookupFactors())
     this.factors = factors
   }
 

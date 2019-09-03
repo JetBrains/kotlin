@@ -9,19 +9,14 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.completion.settings.CompletionMLRankingSettings
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.stats.completion.CompletionUtil
 import com.intellij.stats.completion.RelevanceUtil
 import com.intellij.stats.completion.prefixLength
-import com.intellij.stats.experiment.EmulatedExperiment
-import com.intellij.stats.experiment.WebServiceStatus
 import com.intellij.stats.personalization.session.SessionFactorsUtils
 import com.intellij.stats.storage.factors.MutableLookupStorage
 import com.intellij.ui.JBColor
-import com.jetbrains.completion.feature.impl.FeatureUtils
 import java.awt.Color
 import java.util.*
 
@@ -32,7 +27,6 @@ class MLSorterFactory : CompletionFinalSorter.Factory {
 
 
 class MLSorter : CompletionFinalSorter() {
-  private val webServiceStatus = WebServiceStatus.getInstance()
   private val cachedScore: MutableMap<LookupElement, ItemRankInfo> = IdentityHashMap()
 
   override fun getRelevanceObjects(items: MutableIterable<LookupElement>): Map<LookupElement, List<Pair<String, Any>>> {
@@ -113,22 +107,20 @@ class MLSorter : CompletionFinalSorter() {
 
     val relevanceObjects = lookup.getRelevanceObjects(items, false)
 
-    val ranker = lookupStorage.model
+    val rankingModel = lookupStorage.model
 
-    val userFactors = lookupStorage.userFactors
-    val contextFactors = lookupStorage.contextFactors
-    SessionFactorsUtils.updateSessionFactors(lookup, items)
-    // TODO: Utilize session, context and user factors
+    val commonSessionFactors = SessionFactorsUtils.updateSessionFactors(lookupStorage, items)
+    val features = RankingFeatures(lookupStorage.userFactors, lookupStorage.contextFactors, commonSessionFactors)
     for (element in items) {
       val position = positionsBefore.getValue(element)
-      val relevanceMap = buildRelevanceMap(element, relevanceObjects.getOrDefault(element, emptyList()), prefixLength, position, parameters)
-      val score = calculateElementScore(ranker, element, position, relevanceMap, userFactors, contextFactors, prefixLength)
+      val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
+      SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
+      calculateAdditionalFeaturesTo(additional, element, prefixLength, position, parameters)
+      val score = calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
       element2score[element] = score
 
-      // only log the session features because the ML current models know nothing about sessions features
-      SessionFactorsUtils.saveSessionFactorsTo(relevanceMap, lookup, element)
-
-      lookupStorage.fireElementScored(element, relevanceMap, score)
+      additional.putAll(relevance)
+      lookupStorage.fireElementScored(element, additional, score)
     }
   }
 
@@ -142,32 +134,19 @@ class MLSorter : CompletionFinalSorter() {
     return items
   }
 
-  private fun shouldSortByMlRank(languageName: String): Boolean {
-    val application = ApplicationManager.getApplication()
-    if (application.isUnitTestMode) return false
-    val settings = CompletionMLRankingSettings.getInstance()
-    if (application.isEAP && webServiceStatus.isExperimentOnCurrentIDE() && settings.isCompletionLogsSendAllowed) {
-      return EmulatedExperiment.shouldRank(webServiceStatus.experimentVersion())
-    }
+  private fun calculateAdditionalFeaturesTo(
+    additionalMap: MutableMap<String, Any>,
+    lookupElement: LookupElement,
+    prefixLength: Int,
+    position: Int,
+    parameters: CompletionParameters) {
 
-    return settings.isRankingEnabled && settings.isLanguageEnabled(languageName)
-  }
-
-  private fun buildRelevanceMap(lookupElement: LookupElement,
-                                relevanceObjects: List<Pair<String, Any?>>,
-                                prefixLength: Int,
-                                position: Int,
-                                parameters: CompletionParameters): MutableMap<String, Any> {
-    val relevanceMap = RelevanceUtil.asRelevanceMap(relevanceObjects)
-
-    relevanceMap["position"] = position
-    relevanceMap["query_length"] = prefixLength
-    relevanceMap["result_length"] = lookupElement.lookupString.length
-    relevanceMap["auto_popup"] = parameters.isAutoPopup
-    relevanceMap["completion_type"] = parameters.completionType.toString()
-    relevanceMap["invocation_count"] = parameters.invocationCount
-
-    return relevanceMap
+    additionalMap["position"] = position
+    additionalMap["query_length"] = prefixLength
+    additionalMap["result_length"] = lookupElement.lookupString.length
+    additionalMap["auto_popup"] = parameters.isAutoPopup
+    additionalMap["completion_type"] = parameters.completionType.toString()
+    additionalMap["invocation_count"] = parameters.invocationCount
   }
 
   private fun Iterable<LookupElement>.addDiagnosticsIfNeeded(positionsBefore: Map<LookupElement, Int>): Iterable<LookupElement> {
@@ -197,16 +176,12 @@ class MLSorter : CompletionFinalSorter() {
   /**
    * Null means we encountered unknown features and are unable to score
    */
-  private fun calculateElementScore(ranker: RankingSupport.LanguageRanker?,
+  private fun calculateElementScore(ranker: RankingModelWrapper,
                                     element: LookupElement,
                                     position: Int,
-                                    relevance: Map<String, Any>,
-                                    userFactors: Map<String, Any?>,
-                                    contextFactors: Map<String, Any>,
+                                    features: RankingFeatures,
                                     prefixLength: Int): Double? {
-    if (ranker == null || !shouldSortByMlRank(ranker.displayName)) return null
-    val unknownFactors = ranker.unknownFeatures(relevance.keys)
-    val mlRank: Double? = if (unknownFactors.isEmpty()) ranker.rank(relevance, userFactors) else null
+    val mlRank: Double? = if (ranker.shouldSort(features)) ranker.score(features) else null
     val info = ItemRankInfo(position, mlRank, prefixLength)
     cachedScore[element] = info
 

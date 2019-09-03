@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o.
+ * Copyright 2000-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package com.jetbrains.completion.feature.ex
+package com.intellij.completion.sorting
 
-/**
- * @author Vitaliy.Bibaev
- */
-class UnexpectedBinaryValueException(featureName: String, value: String, availableValues: Set<String>)
-    : IllegalArgumentException("Feature $featureName allows $availableValues but not $value")
+
+object FeatureUtils {
+    const val UNDEFINED: String = "UNDEFINED"
+    const val INVALID_CACHE: String = "INVALID_CACHE"
+
+    const val NONE: String = "NONE"
+
+    const val ML_RANK: String = "ml_rank"
+    const val BEFORE_ORDER: String = "before_rerank_order"
+}

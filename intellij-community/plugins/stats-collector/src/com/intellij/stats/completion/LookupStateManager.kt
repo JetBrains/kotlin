@@ -95,8 +95,12 @@ class LookupStateManager {
         if (rest.isNotEmpty()) {
             val relevanceObjects = lookup.getRelevanceObjects(rest, false)
             for (item in rest) {
-                val relevanceMap = relevanceObjects[item]?.let { objects ->
-                    RelevanceUtil.asRelevanceMap(objects).mapValues { entry -> entry.value.toString() }
+                val relevanceMap: Map<String, String> = relevanceObjects[item]?.let { objects ->
+                    val (relevanceMap, additionalMap) = RelevanceUtil.asRelevanceMaps(objects)
+                    val features = mutableMapOf<String, String>()
+                    relevanceMap.forEach { features[it.key] = it.value.toString() }
+                    additionalMap.forEach { features[it.key] = it.value.toString() }
+                    return@let features
                 } ?: emptyMap()
                 result[item] = relevanceMap
             }
