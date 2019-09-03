@@ -22,7 +22,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
-import com.intellij.openapi.wm.impl.ProjectFrame;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.debugger.UiDebuggerExtension;
@@ -339,7 +339,7 @@ public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.Sta
   private static JFrame getFrame() {
     final Frame[] all = Frame.getFrames();
     for (Frame each : all) {
-      if (each instanceof ProjectFrame) {
+      if (each instanceof IdeFrameImpl) {
         return (JFrame)each;
       }
     }

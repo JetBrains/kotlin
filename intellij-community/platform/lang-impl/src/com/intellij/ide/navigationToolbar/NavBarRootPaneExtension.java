@@ -12,7 +12,7 @@ import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeRootPaneNorthExtension;
-import com.intellij.openapi.wm.impl.ProjectFrame;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.util.ui.JBSwingUtilities;
 import com.intellij.util.ui.JBUI;
@@ -141,7 +141,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
 
   private boolean isUndocked() {
     final Window ancestor = SwingUtilities.getWindowAncestor(myWrapperPanel);
-    return (ancestor != null && !(ancestor instanceof ProjectFrame))
+    return (ancestor != null && !(ancestor instanceof IdeFrameImpl))
            || !UISettings.getInstance().getShowMainToolbar()
            || !UISettings.getInstance().getPresentationMode();
   }
