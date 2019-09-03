@@ -23,6 +23,11 @@ dependencies {
     compile("org.openjdk.jmh", "jmh-core", jmhVersion)
     compile("org.openjdk.jmh", "jmh-generator-bytecode", jmhVersion)
     compile("org.openjdk.jmh", "jmh-generator-annprocess", jmhVersion)
+
+    Platform[192].orHigher {
+        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+        testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    }
 }
 
 sourceSets {
