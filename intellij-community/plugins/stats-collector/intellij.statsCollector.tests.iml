@@ -12,7 +12,6 @@
     <orderEntry type="library" scope="TEST" name="mockito" level="project" />
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
     <orderEntry type="library" scope="TEST" name="commons-codec" level="project" />
-    <orderEntry type="module" module-name="intellij.statsCollector.features" scope="TEST" />
     <orderEntry type="module" module-name="intellij.statsCollector.logEvents" scope="TEST" />
     <orderEntry type="module" module-name="intellij.statsCollector" scope="TEST" />
   </component>
