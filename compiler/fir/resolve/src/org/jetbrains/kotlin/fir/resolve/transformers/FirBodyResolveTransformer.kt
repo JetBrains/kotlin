@@ -585,7 +585,13 @@ open class FirBodyResolveTransformer(
 
             constExpression.resultType = FirResolvedTypeRefImpl(null, type, emptyList())
         } else {
-            constExpression.resultType = expectedType
+            constExpression.resultType = if (kind != IrConstKind.Null) {
+                expectedType.resolvedTypeFromPrototype(
+                    expectedType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NOT_NULL)
+                )
+            } else {
+                expectedType
+            }
         }
 
 
