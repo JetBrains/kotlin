@@ -34,8 +34,11 @@ class AbstractExternalDependencyTest {
 
 private fun String.lib(): AbstractExternalDependency {
   val split = split(":")
-  return object : AbstractExternalDependency(DefaultExternalDependencyId(split[0], split[1], split[2]), "", null) {}
+  return MyAbstractExternalDependency(split[0], split[1], split[2])
 }
+
+private class MyAbstractExternalDependency(group: String, name: String, version: String) :
+  AbstractExternalDependency(DefaultExternalDependencyId(group, name, version), "", null)
 
 private fun AbstractExternalDependency.depends(vararg dependencies: AbstractExternalDependency): AbstractExternalDependency {
   this.dependencies.addAll(dependencies)
