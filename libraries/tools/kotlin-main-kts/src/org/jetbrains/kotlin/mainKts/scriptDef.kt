@@ -41,6 +41,11 @@ object MainKtsScriptDefinition : ScriptCompilationConfiguration(
         }
         refineConfiguration {
             onAnnotations(DependsOn::class, Repository::class, Import::class, handler = MainKtsConfigurator())
+            beforeCompiling { context ->
+                configureProvidedPropertiesFromJsr223Context(
+                    ScriptConfigurationRefinementContext(context.script, context.compilationConfiguration, context.collectedData)
+                )
+            }
         }
         ide {
             acceptedLocations(ScriptAcceptedLocation.Everywhere)
@@ -61,11 +66,7 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
     private val resolver = FilesAndIvyResolver()
 
     override operator fun invoke(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-        processAnnotations(context).onSuccess { updatedConfiguration ->
-            configureProvidedPropertiesFromJsr223Context(
-                ScriptConfigurationRefinementContext(context.script, updatedConfiguration, context.collectedData)
-            )
-        }
+        processAnnotations(context)
 
     fun processAnnotations(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
         val diagnostics = arrayListOf<ScriptDiagnostic>()

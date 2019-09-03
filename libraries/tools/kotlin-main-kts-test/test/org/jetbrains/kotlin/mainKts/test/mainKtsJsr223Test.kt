@@ -22,5 +22,15 @@ class MainKtsJsr223Test {
         val res2 = engine.eval("x + 2")
         Assert.assertEquals(5, res2)
     }
+
+    @Test
+    fun testWithDirectBindings() {
+        val engine = ScriptEngineManager().getEngineByExtension("main.kts")!!
+        engine.put("z", 6)
+        val res1 = engine.eval("val x = 7")
+        Assert.assertNull(res1)
+        val res2 = engine.eval("z * x")
+        Assert.assertEquals(42, res2)
+    }
 }
 
