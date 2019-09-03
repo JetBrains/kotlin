@@ -17,6 +17,7 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.util.ui.JBSwingUtilities;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -256,7 +257,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
   }
 
   @Override
-  @NonNls
+  @NotNull
   public String getKey() {
     return NAV_BAR;
   }
