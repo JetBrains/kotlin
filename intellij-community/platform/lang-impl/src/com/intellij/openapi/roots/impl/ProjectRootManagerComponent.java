@@ -114,8 +114,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     LocalFileSystem.getInstance().removeWatchedRoots(myRootsToWatch);
   }
 
-  @Override
-  protected void addRootsToWatch() {
+  private void addRootsToWatch() {
     if (!myProject.isDefault()) {
       Set<String> recursivePaths = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
       Set<String> flatPaths = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
@@ -155,12 +154,10 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   protected void fireBeforeRootsChangeEvent(boolean fileTypes) {
     isFiringEvent = true;
     try {
-      myProject.getMessageBus()
-        .syncPublisher(ProjectTopics.PROJECT_ROOTS)
-        .beforeRootsChange(new ModuleRootEventImpl(myProject, fileTypes));
+      myProject.getMessageBus().syncPublisher(ProjectTopics.PROJECT_ROOTS).beforeRootsChange(new ModuleRootEventImpl(myProject, fileTypes));
     }
     finally {
-      isFiringEvent= false;
+      isFiringEvent = false;
     }
   }
 
@@ -168,13 +165,14 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   protected void fireRootsChangedEvent(boolean fileTypes) {
     isFiringEvent = true;
     try {
-      myProject.getMessageBus()
-        .syncPublisher(ProjectTopics.PROJECT_ROOTS)
-        .rootsChanged(new ModuleRootEventImpl(myProject, fileTypes));
+      myProject.getMessageBus().syncPublisher(ProjectTopics.PROJECT_ROOTS).rootsChanged(new ModuleRootEventImpl(myProject, fileTypes));
     }
     finally {
       isFiringEvent = false;
     }
+
+    synchronizeRoots();
+    addRootsToWatch();
   }
 
   private void collectWatchRoots(@NotNull Set<String> recursivePaths, @NotNull Set<String> flatPaths) {
@@ -207,7 +205,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     myRootPointersDisposable = Disposer.newDisposable();
     List<String> recursiveUrls = ContainerUtil.map(recursivePaths, VfsUtilCore::pathToUrl);
     Set<String> excludedUrls = new THashSet<>();
-    // changes in files provided by this method should be watched manually because no-one's bothered to setup correct pointers for them
+    // changes in files provided by this method should be watched manually because no-one's bothered to set up correct pointers for them
     for (DirectoryIndexExcludePolicy excludePolicy : DirectoryIndexExcludePolicy.EP_NAME.getExtensions(getProject())) {
       Collections.addAll(excludedUrls, excludePolicy.getExcludeUrlsForProject());
     }
@@ -215,7 +213,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     // avoid creating empty unnecessary container
     if (!recursiveUrls.isEmpty() || !flatPaths.isEmpty() || !excludedUrls.isEmpty()) {
       Disposer.register(this, myRootPointersDisposable);
-      // create container with these URLs with the sole purpose to get events to getRootsValidityChangedListener() when these roots change
+      // creating a container with these URLs with the sole purpose to get events to getRootsValidityChangedListener() when these roots change
       VirtualFilePointerContainer container =
         VirtualFilePointerManager.getInstance().createContainer(myRootPointersDisposable, getRootsValidityChangedListener());
 
@@ -230,7 +228,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     collectModuleWatchRoots(recursivePaths, flatPaths);
   }
 
-  private void collectModuleWatchRoots(@NotNull Set<? super String> recursivePaths, @NotNull Set<? super String> flatPaths) {
+  private void collectModuleWatchRoots(@NotNull Set<String> recursivePaths, @NotNull Set<String> flatPaths) {
     Set<String> urls = ContainerUtil.newTroveSet(FileUtil.PATH_HASHING_STRATEGY);
 
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
@@ -260,8 +258,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     }
   }
 
-  @Override
-  protected void doSynchronizeRoots() {
+  private void synchronizeRoots() {
     if (!myStartupActivityPerformed) return;
 
     if (LOG_CACHES_UPDATE || LOG.isDebugEnabled()) {
@@ -319,16 +316,14 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
     @Override
     public void writeActionFinished(@NotNull Object action) {
-      if (--myInsideRefresh == 0) {
-        if (myPointerChangesDetected) {
-          myPointerChangesDetected = false;
-          incModificationCount();
-          myProject.getMessageBus().syncPublisher(ProjectTopics.PROJECT_ROOTS).rootsChanged(new ModuleRootEventImpl(myProject, false));
+      if (--myInsideRefresh == 0 && myPointerChangesDetected) {
+        myPointerChangesDetected = false;
+        incModificationCount();
 
-          doSynchronizeRoots();
+        myProject.getMessageBus().syncPublisher(ProjectTopics.PROJECT_ROOTS).rootsChanged(new ModuleRootEventImpl(myProject, false));
 
-          addRootsToWatch();
-        }
+        synchronizeRoots();
+        addRootsToWatch();
       }
     }
   }
