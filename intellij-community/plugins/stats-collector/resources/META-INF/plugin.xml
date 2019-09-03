@@ -58,8 +58,8 @@
 
     <projectService serviceImplementation="com.intellij.stats.personalization.impl.ProjectUserFactorStorage"/>
 
-    <completion.ml.model implementation="com.jetbrains.completion.ranker.KotlinMLRankingProvider"/>
-    <completion.ml.model implementation="com.jetbrains.completion.ranker.PythonMLRankingProvider"/>
+<!--    <completion.ml.model implementation="com.jetbrains.completion.ranker.KotlinMLRankingProvider"/>-->
+<!--    <completion.ml.model implementation="com.jetbrains.completion.ranker.PythonMLRankingProvider"/>-->
     <weigher key="completion" id="ml_weigh" implementationClass="com.intellij.completion.ml.MLCompletionWeigher" order="last"/>
 
     <registryKey key="completion.stats.exit.experiment" defaultValue="false"
