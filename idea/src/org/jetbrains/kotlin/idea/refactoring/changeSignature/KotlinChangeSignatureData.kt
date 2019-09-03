@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 class KotlinChangeSignatureData(
-        override val baseDescriptor: CallableDescriptor,
-        override val baseDeclaration: PsiElement,
-        private val descriptorsForSignatureChange: Collection<CallableDescriptor>
+    override val baseDescriptor: CallableDescriptor,
+    override val baseDeclaration: PsiElement,
+    private val descriptorsForSignatureChange: Collection<CallableDescriptor>
 ) : KotlinMethodDescriptor {
     private val parameters: List<KotlinParameterInfo>
     override val receiver: KotlinParameterInfo?
@@ -57,30 +57,32 @@ class KotlinChangeSignatureData(
             else -> null
         }
         parameters = baseDescriptor.valueParameters
-                .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
-                    val jetParameter = valueParameters?.get(parameterDescriptor.index)
-                    val parameterType = parameterDescriptor.type
-                    val parameterTypeText = jetParameter?.typeReference?.text
-                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(parameterType)
-                    KotlinParameterInfo(
-                            callableDescriptor = baseDescriptor,
-                            originalIndex = parameterDescriptor.index,
-                            name = parameterDescriptor.name.asString().quoteIfNeeded(),
-                            originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
-                            defaultValueForParameter = jetParameter?.defaultValue,
-                            valOrVar = jetParameter?.valOrVarKeyword.toValVar()
-                    )
-                }
+            .mapTo(receiver?.let { arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
+                val jetParameter = valueParameters?.get(parameterDescriptor.index)
+                val parameterType = parameterDescriptor.type
+                val parameterTypeText = jetParameter?.typeReference?.text
+                    ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(parameterType)
+                KotlinParameterInfo(
+                    callableDescriptor = baseDescriptor,
+                    originalIndex = parameterDescriptor.index,
+                    name = parameterDescriptor.name.asString().quoteIfNeeded(),
+                    originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
+                    defaultValueForParameter = jetParameter?.defaultValue,
+                    valOrVar = jetParameter?.valOrVarKeyword.toValVar()
+                )
+            }
     }
 
     private fun createReceiverInfoIfNeeded(): KotlinParameterInfo? {
         val receiverType = baseDescriptor.extensionReceiverParameter?.type ?: return null
         val receiverName = suggestReceiverNames(baseDeclaration.project, baseDescriptor).first()
         val receiverTypeText = (baseDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.text
-                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
-        return KotlinParameterInfo(callableDescriptor = baseDescriptor,
-                                   name = receiverName,
-                                   originalTypeInfo = KotlinTypeInfo(false, receiverType, receiverTypeText))
+            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
+        return KotlinParameterInfo(
+            callableDescriptor = baseDescriptor,
+            name = receiverName,
+            originalTypeInfo = KotlinTypeInfo(false, receiverType, receiverTypeText)
+        )
     }
 
     override val original: KotlinMethodDescriptor
@@ -89,7 +91,7 @@ class KotlinChangeSignatureData(
     override val primaryCallables: Collection<KotlinCallableDefinitionUsage<PsiElement>> by lazy {
         descriptorsForSignatureChange.map {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.project, it)
-            assert(declaration != null) { "No declaration found for " + baseDescriptor }
+            assert(declaration != null) { "No declaration found for $baseDescriptor" }
             KotlinCallableDefinitionUsage(declaration!!, it, null, null)
         }
     }
@@ -104,8 +106,7 @@ class KotlinChangeSignatureData(
 
             if (primaryDeclaration.isExpectDeclaration()) {
                 return@flatMapTo primaryDeclaration.actualsForExpected().mapNotNull {
-                    val descriptor = it.unsafeResolveToDescriptor()
-                    val callableDescriptor = when (descriptor) {
+                    val callableDescriptor = when (val descriptor = it.unsafeResolveToDescriptor()) {
                         is CallableDescriptor -> descriptor
                         is ClassDescriptor -> descriptor.unsubstitutedPrimaryConstructor ?: return@mapNotNull null
                         else -> return@mapNotNull null
@@ -166,5 +167,5 @@ class KotlinChangeSignatureData(
     override fun canChangeName() = !(baseDescriptor is ConstructorDescriptor || baseDescriptor is AnonymousFunctionDescriptor)
 
     override fun canChangeReturnType(): MethodDescriptor.ReadWriteOption =
-            if (baseDescriptor is ConstructorDescriptor) MethodDescriptor.ReadWriteOption.None else MethodDescriptor.ReadWriteOption.ReadWrite
+        if (baseDescriptor is ConstructorDescriptor) MethodDescriptor.ReadWriteOption.None else MethodDescriptor.ReadWriteOption.ReadWrite
 }
