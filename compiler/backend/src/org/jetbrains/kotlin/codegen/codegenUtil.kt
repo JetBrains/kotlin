@@ -382,7 +382,7 @@ private fun initializeVariadicParameter(
 
     parameterDescriptor.componentVariables.forEachIndexed { ix, variableDescriptor ->
         // TODO check underscores
-        val index = codegen.lookupLocalIndex(variableDescriptor)
+        val index = myFrameMap.enter(variableDescriptor, typeMapper.mapType(variableDescriptor.type))
         val varType = codegen.asmType(variableDescriptor.type)
 
         val storeTo = StackValue.local(index, varType, variableDescriptor, null)
@@ -404,7 +404,7 @@ private fun tupleComponentInitializer(index: Int, tupleStackValue: StackValue): 
         )
         tupleStackValue.put(tupleStackValue.type, tupleStackValue.kotlinType, v)
         v.iconst(index)
-        v.invokevirtual(owner, methodName, signature)
+        v.invokevirtual(owner, methodName, signature, false)
     }
 }
 

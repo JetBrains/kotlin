@@ -1338,13 +1338,6 @@ public class FunctionCodegen {
 
         for (ValueParameterDescriptor parameter : valueParameters) {
             frameMap.enter(parameter, state.getTypeMapper().mapType(parameter));
-            if (parameter instanceof ValueParameterDescriptorImpl.WithVariadicComponents) {
-                List<VariableDescriptor> componentParameters =
-                        ((ValueParameterDescriptorImpl.WithVariadicComponents) parameter).getComponentVariables();
-                for (VariableDescriptor componentParameter : componentParameters) {
-                    frameMap.enter(componentParameter, state.getTypeMapper().mapType(componentParameter));
-                }
-            }
         }
 
         return frameMap;
