@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.config.JvmAnalysisFlags;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -399,5 +401,25 @@ public class JvmCodegenUtil {
         }
 
         return name;
+    }
+
+    // Before metadata version 1.1.16 we did not generate equals-impl0 methods correctly.
+    // The method is still present on all inline classes, but the implementation always throws
+    // a NullPointerException.
+    public static boolean typeHasSpecializedInlineClassEquality(@NotNull KotlinType type, @NotNull GenerationState state) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (!(descriptor instanceof DeserializedClassDescriptor))
+            return true;
+
+        DeserializedClassDescriptor classDescriptor = (DeserializedClassDescriptor) descriptor;
+
+        // The Result class is the only inline class in the standard library without special rules for equality.
+        // We only call Result.equals-impl0 if we are compiling for Kotlin 1.4 or later. Otherwise, the code
+        // might well be running against an older version of the standard library.
+        if (DescriptorUtils.getFqNameSafe(classDescriptor).equals(DescriptorUtils.RESULT_FQ_NAME)) {
+            return state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0;
+        } else {
+            return ((DeserializedClassDescriptor) descriptor).getMetadataVersion().isAtLeast(1, 1, 16);
+        }
     }
 }

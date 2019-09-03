@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -257,7 +259,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     }
 
     private fun IrBuilderWithScope.specializeEqualsCall(left: IrExpression, right: IrExpression): IrExpression? {
-        // There's already special handling for null-comparisons in Equals.kt.
+        // There's already special handling for null-comparisons in the Equals intrinsic.
         // We cannot specialize calls for which the first argument is already boxed.
         if (left.isNullConst() || right.isNullConst() || left.type.unboxInlineClass() == left.type)
             return null
@@ -311,8 +313,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 val arg = expression.dispatchReceiver!!.transform(this, null)
                 coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
             }
-            // Specialize calls to equals with at least one inline class argument to avoid boxing.
-            expression.isInlineClassEqEq -> {
+            // Specialize calls to equals when the left argument is a value of inline class type.
+            expression.isSpecializedInlineClassEqEq -> {
                 expression.transformChildrenVoid()
                 context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
                     .specializeEqualsCall(expression.getValueArgument(0)!!, expression.getValueArgument(1)!!)
@@ -322,10 +324,20 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 super.visitCall(expression)
         }
 
-    private val IrCall.isInlineClassEqEq: Boolean
-        get() = symbol == context.irBuiltIns.eqeqSymbol &&
-                (getValueArgument(0)?.type?.classOrNull?.owner?.isInline == true ||
-                        getValueArgument(1)?.type?.classOrNull?.owner?.isInline == true)
+    private val IrCall.isSpecializedInlineClassEqEq: Boolean
+        get() {
+            // Note that reference equality (x === y) is not allowed on values of inline class type,
+            // so it is enough to check for eqeq.
+            if (symbol != context.irBuiltIns.eqeqSymbol)
+                return false
+
+            val leftClass = getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isInline }
+                ?: return false
+
+            // Before version 1.4, we cannot rely on the Result.equals-impl0 method
+            return (leftClass.fqNameWhenAvailable != DescriptorUtils.RESULT_FQ_NAME) ||
+                    context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+        }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
         val field = expression.symbol.owner

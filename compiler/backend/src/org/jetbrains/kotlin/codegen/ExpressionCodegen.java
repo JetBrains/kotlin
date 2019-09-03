@@ -3513,10 +3513,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Label endLabel = new Label();
             boolean flipComparison = opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ;
 
+            // Don't call equals-impl0 if the class file version is too low to support it.
+            boolean useUnboxedEquals = leftIsUnboxed && JvmCodegenUtil.typeHasSpecializedInlineClassEquality(leftKotlinType, state);
+
             leftValue.put(leftType, leftKotlinType, v);
             //noinspection SuspiciousNameCombination
             Type afterTopType = leftType;
-            if (!leftIsUnboxed) {
+            if (!useUnboxedEquals) {
                 StackValue.coerce(leftType, leftKotlinType, OBJECT_TYPE, nullableAnyType, v);
                 afterTopType = OBJECT_TYPE;
             }
@@ -3524,12 +3527,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             rightValue.put(rightType, rightKotlinType, v);
             //noinspection SuspiciousNameCombination
             Type topType = rightType;
-            if (!leftIsUnboxed || !rightIsUnboxed) {
+            if (!useUnboxedEquals || !rightIsUnboxed) {
                 StackValue.coerce(rightType, rightKotlinType, OBJECT_TYPE, nullableAnyType, v);
                 topType = OBJECT_TYPE;
             }
 
-            if (leftIsUnboxed) {
+            if (useUnboxedEquals) {
                 String className = typeMapper.mapTypeAsDeclaration(leftKotlinType).getInternalName();
                 // Nullable inline class wrappers around non-nullable types are unboxed, yet
                 // equals-impl expects a non-nullable first argument and equals-impl0 expects
@@ -3568,12 +3571,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         v.goTo(endLabel);
                         v.visitLabel(nonNullLabel);
                     }
-                    String descriptor = Type.getMethodType(Type.BOOLEAN_TYPE, leftType, leftType).toString();
+                    String descriptor = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, leftType, leftType);
                     v.invokestatic(className, InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME.asString(), descriptor, false);
                 } else {
                     // equals-impl expects a non-nullable first argument, yet `left` may be unboxed even if
                     // it is nullable when it is a wrapper around a non-nullable reference type.
-                    String descriptor = Type.getMethodType(Type.BOOLEAN_TYPE, leftType, OBJECT_TYPE).toString();
+                    String descriptor = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, leftType, OBJECT_TYPE);
                     v.invokestatic(className, "equals-impl", descriptor, false);
                 }
             } else {
