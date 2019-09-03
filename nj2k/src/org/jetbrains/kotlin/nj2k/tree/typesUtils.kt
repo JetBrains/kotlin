@@ -5,132 +5,76 @@
 
 package org.jetbrains.kotlin.nj2k.tree
 
-import com.intellij.psi.*
+import com.intellij.psi.CommonClassNames
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
-import org.jetbrains.kotlin.nj2k.kotlinTypeByName
-import org.jetbrains.kotlin.nj2k.symbols.*
+import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKMultiverseClassSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKMultiverseKtClassSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.*
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun JKExpression.type(symbolProvider: JKSymbolProvider): JKType? =
+fun JKExpression.type(typeFactory: JKTypeFactory): JKType? =
     when (this) {
-        is JKLiteralExpression -> type.toJkType(symbolProvider)
+        is JKLiteralExpression -> type.toJkType(typeFactory)
         is JKOperatorExpression -> {
-            val operator = operator
-            when (operator) {
+            when (val operator = operator) {
                 is JKKtOperatorImpl -> operator.returnType
-                is JKKtSpreadOperator -> (this as JKPrefixExpression).expression.type(symbolProvider)//TODO ger real type
+                is JKKtSpreadOperator -> (this as JKPrefixExpression).expression.type(typeFactory)//TODO ger real type
                 else -> error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
             }
         }
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
-        is JKQualifiedExpressionImpl -> selector.type(symbolProvider)
-        is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), symbolProvider)
+        is JKQualifiedExpressionImpl -> selector.type(typeFactory)
+        is JKKtThrowExpression -> typeFactory.types.nothing
         is JKClassAccessExpression ->
             JKClassTypeImpl(identifier, emptyList(), Nullability.NotNull)
         is JKJavaNewExpression -> JKClassTypeImpl(classSymbol)
-        is JKKtIsExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES._boolean.asString(), symbolProvider)
-        is JKParenthesizedExpression -> expression.type(symbolProvider)
+        is JKKtIsExpression -> typeFactory.types.boolean
+        is JKParenthesizedExpression -> expression.type(typeFactory)
         is JKTypeCastExpression -> type.type
         is JKThisExpression -> null// TODO return actual type
         is JKSuperExpression -> null// TODO return actual type
         is JKStubExpression -> null
-        is JKIfElseExpression -> thenBranch.type(symbolProvider)// TODO return actual type
+        is JKIfElseExpression -> thenBranch.type(typeFactory)// TODO return actual type
         is JKArrayAccessExpression ->
-            (expression.type(symbolProvider) as? JKParametrizedType)?.parameters?.lastOrNull()
+            (expression.type(typeFactory) as? JKParametrizedType)?.parameters?.lastOrNull()
         is JKClassLiteralExpression -> {
             val symbol = when (literalType) {
                 JKClassLiteralExpression.LiteralType.KOTLIN_CLASS ->
-                    symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.kClass.toSafe())
+                    typeFactory.symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.kClass.toSafe())
                 JKClassLiteralExpression.LiteralType.JAVA_CLASS,
                 JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS, JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE ->
-                    symbolProvider.provideClassSymbol("java.lang.Class")
+                    typeFactory.symbolProvider.provideClassSymbol("java.lang.Class")
             }
             JKClassTypeImpl(symbol, listOf(classType.type), Nullability.NotNull)
         }
         is JKKtAnnotationArrayInitializerExpression -> JKNoTypeImpl //TODO
         is JKLambdaExpression -> returnType.type
         is JKLabeledStatement ->
-            statement.safeAs<JKExpressionStatement>()?.expression?.type(symbolProvider)
+            statement.safeAs<JKExpressionStatement>()?.expression?.type(typeFactory)
         is JKMethodReferenceExpression -> JKNoTypeImpl //TODO
         else -> TODO(this::class.java.toString())
     }
-
-fun ClassId.toKtClassType(
-    symbolProvider: JKSymbolProvider,
-    nullability: Nullability = Nullability.Default
-): JKType =
-    JKClassTypeImpl(symbolProvider.provideClassSymbol(asSingleFqName()), emptyList(), nullability)
-
-
-fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Default): JKType {
-    return when (this) {
-        is PsiClassType -> {
-            val target = resolve()
-            val parameters = parameters.map { it.toJK(symbolProvider, nullability) }
-            when (target) {
-                null ->
-                    JKClassTypeImpl(JKUnresolvedClassSymbol(rawType().canonicalText), parameters, nullability)
-                is PsiTypeParameter ->
-                    JKTypeParameterTypeImpl(symbolProvider.provideDirectSymbol(target) as JKTypeParameterSymbol)
-                else -> {
-                    JKClassTypeImpl(
-                        target.let { symbolProvider.provideDirectSymbol(it) as JKClassSymbol },
-                        parameters,
-                        nullability
-                    )
-                }
-            }
-        }
-        is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK(symbolProvider, nullability), nullability)
-        is PsiPrimitiveType -> JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE[presentableText]
-            ?: error("Invalid primitive type $presentableText")
-        is PsiDisjunctionType ->
-            JKJavaDisjunctionTypeImpl(disjunctions.map { it.toJK(symbolProvider) })
-        is PsiWildcardType ->
-            when {
-                isExtends ->
-                    JKVarianceTypeParameterTypeImpl(
-                        JKVarianceTypeParameterType.Variance.OUT,
-                        extendsBound.toJK(symbolProvider)
-                    )
-                isSuper ->
-                    JKVarianceTypeParameterTypeImpl(
-                        JKVarianceTypeParameterType.Variance.IN,
-                        superBound.toJK(symbolProvider)
-                    )
-                else -> JKStarProjectionTypeImpl()
-            }
-        is PsiCapturedWildcardType ->
-            JKCapturedType(
-                wildcard.toJK(symbolProvider, nullability) as JKWildCardType,
-                nullability
-            )
-        else -> throw Exception("Invalid PSI ${this::class.java}")
-    }
-}
-
 
 fun JKType.asTypeElement() =
     JKTypeElementImpl(this)
@@ -138,25 +82,10 @@ fun JKType.asTypeElement() =
 fun JKClassSymbol.asType(nullability: Nullability = Nullability.Default): JKClassType =
     JKClassTypeImpl(this, emptyList(), nullability)
 
-fun JKType.isSubtypeOf(other: JKType, symbolProvider: JKSymbolProvider): Boolean =
-    other.toKtType(symbolProvider)
-        ?.let { otherType -> this.toKtType(symbolProvider)?.isSubtypeOf(otherType) } == true
+fun JKType.isSubtypeOf(other: JKType, typeFactory: JKTypeFactory): Boolean =
+    other.toKtType(typeFactory)
+        ?.let { otherType -> this.toKtType(typeFactory)?.isSubtypeOf(otherType) } == true
 
-
-fun KotlinType.toJK(symbolProvider: JKSymbolProvider): JKType {
-    return when (val descriptor = constructor.declarationDescriptor) {
-        is TypeParameterDescriptor ->
-            JKTypeParameterTypeImpl(
-                symbolProvider.provideDirectSymbol(descriptor.findPsi() as? KtTypeParameter ?: return JKNoTypeImpl) as JKTypeParameterSymbol
-            )
-
-        else -> JKClassTypeImpl(
-            symbolProvider.provideClassSymbol(getJetTypeFqName(false)),
-            arguments.map { it.type.toJK(symbolProvider) },
-            if (isNullable()) Nullability.Nullable else Nullability.NotNull
-        )
-    }
-}
 
 val PsiType.isKotlinFunctionalType: Boolean
     get() {
@@ -168,22 +97,17 @@ val PsiType.isKotlinFunctionalType: Boolean
 private val functionalTypeRegex = """(kotlin\.jvm\.functions|kotlin)\.Function[\d+]""".toRegex()
 
 
-fun KtTypeReference.toJK(symbolProvider: JKSymbolProvider): JKType? =
+fun KtTypeReference.toJK(typeFactory: JKTypeFactory): JKType? =
     analyze(BodyResolveMode.PARTIAL)
         .get(BindingContext.TYPE, this)
-        ?.toJK(symbolProvider)
+        ?.let { typeFactory.fromKotlinType(it) }
 
 
-fun JKType.toKtType(symbolProvider: JKSymbolProvider): KotlinType? =
-    when (this) {
-        is JKClassType -> classReference.toKtType()
-        is JKJavaPrimitiveType ->
-            kotlinTypeByName(
-                jvmPrimitiveType.primitiveType.typeFqName.asString(),
-                symbolProvider
-            ).toKtType(symbolProvider)
-        else -> null
-    }
+fun JKType.toKtType(typeFactory: JKTypeFactory): KotlinType? = when (this) {
+    is JKClassType -> classReference.toKtType()
+    is JKJavaPrimitiveType -> typeFactory.fromPrimitiveType(this).toKtType(typeFactory)
+    else -> null
+}
 
 infix fun JKJavaPrimitiveType.isStrongerThan(other: JKJavaPrimitiveType) =
     jvmPrimitiveTypesPriority.getValue(this.jvmPrimitiveType.primitiveType) >
@@ -274,27 +198,15 @@ fun JKClassSymbol.isStringType(): Boolean =
     fqName == CommonClassNames.JAVA_LANG_STRING
             || fqName == KotlinBuiltIns.FQ_NAMES.string.asString()
 
-fun JKLiteralExpression.LiteralType.toPrimitiveType(): JKJavaPrimitiveType? =
-    when (this) {
-        JKLiteralExpression.LiteralType.CHAR -> JKJavaPrimitiveTypeImpl.CHAR
-        JKLiteralExpression.LiteralType.BOOLEAN -> JKJavaPrimitiveTypeImpl.BOOLEAN
-        JKLiteralExpression.LiteralType.INT -> JKJavaPrimitiveTypeImpl.INT
-        JKLiteralExpression.LiteralType.LONG -> JKJavaPrimitiveTypeImpl.LONG
-        JKLiteralExpression.LiteralType.FLOAT -> JKJavaPrimitiveTypeImpl.FLOAT
-        JKLiteralExpression.LiteralType.DOUBLE -> JKJavaPrimitiveTypeImpl.DOUBLE
-        JKLiteralExpression.LiteralType.STRING -> null
-        JKLiteralExpression.LiteralType.NULL -> null
-    }
-
 fun JKJavaPrimitiveType.toLiteralType(): JKLiteralExpression.LiteralType? =
     when (this) {
-        JKJavaPrimitiveTypeImpl.CHAR -> JKLiteralExpression.LiteralType.CHAR
-        JKJavaPrimitiveTypeImpl.BOOLEAN -> JKLiteralExpression.LiteralType.BOOLEAN
-        JKJavaPrimitiveTypeImpl.INT -> JKLiteralExpression.LiteralType.INT
-        JKJavaPrimitiveTypeImpl.LONG -> JKLiteralExpression.LiteralType.LONG
-        JKJavaPrimitiveTypeImpl.CHAR -> JKLiteralExpression.LiteralType.CHAR
-        JKJavaPrimitiveTypeImpl.DOUBLE -> JKLiteralExpression.LiteralType.DOUBLE
-        JKJavaPrimitiveTypeImpl.FLOAT -> JKLiteralExpression.LiteralType.FLOAT
+        JKJavaPrimitiveType.CHAR -> JKLiteralExpression.LiteralType.CHAR
+        JKJavaPrimitiveType.BOOLEAN -> JKLiteralExpression.LiteralType.BOOLEAN
+        JKJavaPrimitiveType.INT -> JKLiteralExpression.LiteralType.INT
+        JKJavaPrimitiveType.LONG -> JKLiteralExpression.LiteralType.LONG
+        JKJavaPrimitiveType.CHAR -> JKLiteralExpression.LiteralType.CHAR
+        JKJavaPrimitiveType.DOUBLE -> JKLiteralExpression.LiteralType.DOUBLE
+        JKJavaPrimitiveType.FLOAT -> JKLiteralExpression.LiteralType.FLOAT
         else -> null
     }
 
@@ -314,29 +226,10 @@ fun JKType.asPrimitiveType(): JKJavaPrimitiveType? =
     }
 
 fun JKJavaPrimitiveType.isNumberType() =
-    this == JKJavaPrimitiveTypeImpl.INT ||
-            this == JKJavaPrimitiveTypeImpl.LONG ||
-            this == JKJavaPrimitiveTypeImpl.FLOAT ||
-            this == JKJavaPrimitiveTypeImpl.DOUBLE
-
-inline fun <reified T : JKType> T.addTypeParametersToRawProjectionType(typeParameter: JKType): T =
-    if (this is JKClassType && parameters.isEmpty()) {
-        val parametersCount = classReference.expectedTypeParametersCount()
-        val typeParameters = List(parametersCount) { typeParameter }
-        JKClassTypeImpl(
-            classReference,
-            typeParameters,
-            nullability
-        ) as T
-    } else this
-
-fun JKClassSymbol.expectedTypeParametersCount(): Int =
-    when (val resolvedClass = target) {
-        is PsiClass -> resolvedClass.typeParameters.size
-        is KtClass -> resolvedClass.typeParameters.size
-        is JKClass -> resolvedClass.typeParameterList.typeParameters.size
-        else -> 0
-    }
+    this == JKJavaPrimitiveType.INT ||
+            this == JKJavaPrimitiveType.LONG ||
+            this == JKJavaPrimitiveType.FLOAT ||
+            this == JKJavaPrimitiveType.DOUBLE
 
 
 val primitiveTypes =

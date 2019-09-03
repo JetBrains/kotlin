@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaArrayTypeImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeElementImpl
+import org.jetbrains.kotlin.nj2k.types.JKClassType
+import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
 
 
 //TODO temporary

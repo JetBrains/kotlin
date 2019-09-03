@@ -23,7 +23,7 @@ class EqualsOperatorConversion(context: NewJ2kConverterContext) : RecursiveAppli
                     equalsExpression(
                         element::receiver.detached(),
                         argument::value.detached(),
-                        symbolProvider
+                        typeFactory
                     )
                 )
             )

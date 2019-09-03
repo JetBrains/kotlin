@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseFieldSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
+import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
@@ -32,7 +33,7 @@ class ArrayOperationsConversion(context: NewJ2kConverterContext) : RecursiveAppl
     }
 
     private fun JKExpression.isArrayOrVarargTypeParameter(): Boolean {
-        if (type(symbolProvider) is JKJavaArrayType) return true
+        if (type(typeFactory) is JKJavaArrayType) return true
         val parameter =
             safeAs<JKFieldAccessExpression>()
                 ?.identifier

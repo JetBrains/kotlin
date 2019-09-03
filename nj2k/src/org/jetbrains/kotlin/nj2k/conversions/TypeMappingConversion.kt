@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.toKotlinMutableTypesMap
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.kotlinTypeByName
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.*
+import org.jetbrains.kotlin.psi.KtClass
 
 class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -49,13 +50,7 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
         return when (val typeParametersCount = classSymbol.expectedTypeParametersCount()) {
             0 -> this
             else -> JKTypeArgumentListImpl(List(typeParametersCount) {
-                JKTypeElementImpl(
-                    kotlinTypeByName(
-                        KotlinBuiltIns.FQ_NAMES.any.toSafe().asString(),
-                        symbolProvider,
-                        Nullability.Nullable
-                    )
-                )
+                JKTypeElementImpl(typeFactory.types.nullableAny)
             })
         }
     }
@@ -65,26 +60,20 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
         when (typeElement?.parent) {
             is JKClassLiteralExpression -> this
             is JKKtIsExpression ->
-                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl())
+                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
                     .updateNullability(Nullability.NotNull)
             is JKTypeCastExpression ->
-                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl())
+                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
             else ->
-                addTypeParametersToRawProjectionType(
-                    JKStarProjectionTypeImpl()
-                )
+                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
         }
 
     private fun JKType.mapType(typeElement: JKTypeElement?): JKType =
         when (this) {
             is JKJavaPrimitiveType -> mapPrimitiveType()
             is JKClassType -> mapClassType(typeElement)
-            is JKJavaVoidType ->
-                kotlinTypeByName(
-                    KotlinBuiltIns.FQ_NAMES.unit.toSafe().asString(),
-                    symbolProvider,
-                    Nullability.NotNull
-                )
+            is JKJavaVoidType -> typeFactory.types.unit
+
             is JKJavaArrayType ->
                 JKClassTypeImpl(
                     symbolProvider.provideClassSymbol(type.arrayFqName()),
@@ -136,6 +125,25 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
             nullability = Nullability.NotNull
         )
     }
+
+    private inline fun <reified T : JKType> T.addTypeParametersToRawProjectionType(typeParameter: JKType): T =
+        if (this is JKClassType && parameters.isEmpty()) {
+            val parametersCount = classReference.expectedTypeParametersCount()
+            val typeParameters = List(parametersCount) { typeParameter }
+            JKClassTypeImpl(
+                classReference,
+                typeParameters,
+                nullability
+            ) as T
+        } else this
+
+    private fun JKClassSymbol.expectedTypeParametersCount(): Int =
+        when (val resolvedClass = target) {
+            is PsiClass -> resolvedClass.typeParameters.size
+            is KtClass -> resolvedClass.typeParameters.size
+            is JKClass -> resolvedClass.typeParameterList.typeParameters.size
+            else -> 0
+        }
 
     companion object {
         private val ktFunctionRegex = "kotlin\\.jvm\\.functions\\.Function\\d+".toRegex()

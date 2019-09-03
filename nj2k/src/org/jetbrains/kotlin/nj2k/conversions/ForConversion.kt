@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.deepestFqName
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
 import kotlin.math.abs
 
 
@@ -185,7 +186,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 start,
                 convertBound(bound, if (inclusiveComparison) 0 else -1),
                 JKKtSingleValueOperatorToken(KtTokens.RANGE),
-                symbolProvider
+                typeFactory
             )
         }
     }
@@ -203,7 +204,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
             bound,
             JKKtLiteralExpressionImpl(abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
             JKKtSingleValueOperatorToken(sign),
-            symbolProvider
+            typeFactory
         )
     }
 
@@ -255,7 +256,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
 
     private fun indicesByArrayLength(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKFieldAccessExpression ?: return null
-        val receiverType = javaSizeCall.receiver.type(symbolProvider)
+        val receiverType = javaSizeCall.receiver.type(typeFactory)
         if (methodCall.identifier.name == "length" && receiverType is JKJavaArrayType) {
             return toIndicesCall(javaSizeCall)
         }

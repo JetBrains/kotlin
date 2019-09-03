@@ -34,7 +34,7 @@ class OperatorExpressionConversion(context: NewJ2kConverterContext) : RecursiveA
             is JKPostfixExpression -> {
                 val operatorToken = operator.token.toKtToken()
                 val operand = applyToElement(element::expression.detached()) as JKExpression
-                recurse(kotlinPostfixExpression(operand, operatorToken, symbolProvider))
+                recurse(kotlinPostfixExpression(operand, operatorToken, typeFactory))
             }
             else -> TODO(element.javaClass.toString())
         }.withNonCodeElementsFrom(element)
@@ -43,7 +43,7 @@ class OperatorExpressionConversion(context: NewJ2kConverterContext) : RecursiveA
 
     private fun convertPrefixExpression(operand: JKExpression, javaOperator: JKJavaOperatorImpl) =
         convertTildeExpression(operand, javaOperator)
-            ?: kotlinPrefixExpression(operand, javaOperator.token.toKtToken(), symbolProvider)
+            ?: kotlinPrefixExpression(operand, javaOperator.token.toKtToken(), typeFactory)
 
     private fun convertTildeExpression(operand: JKExpression, javaOperator: JKJavaOperatorImpl): JKExpression? =
         if (javaOperator.token.psiToken == JavaTokenType.TILDE) {
@@ -61,14 +61,14 @@ class OperatorExpressionConversion(context: NewJ2kConverterContext) : RecursiveA
 
     private fun convertBinaryExpression(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression =
         convertStringImplicitConcatenation(left, right, token)
-            ?: kotlinBinaryExpression(left, right, token, symbolProvider)
+            ?: kotlinBinaryExpression(left, right, token, typeFactory)
 
 
     private fun convertStringImplicitConcatenation(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression? =
         if (token is JKKtSingleValueOperatorToken
             && token.psiToken == KtTokens.PLUS
-            && right.type(symbolProvider)?.isStringType() == true
-            && left.type(symbolProvider)?.isStringType() == false
+            && right.type(typeFactory)?.isStringType() == true
+            && left.type(typeFactory)?.isStringType() == false
         ) {
             val toStringCall =
                 JKKtCallExpressionImpl(
@@ -76,6 +76,6 @@ class OperatorExpressionConversion(context: NewJ2kConverterContext) : RecursiveA
                     JKArgumentListImpl()
                 )
             val qualifiedCall = JKQualifiedExpressionImpl(left, JKKtQualifierImpl.DOT, toStringCall)
-            kotlinBinaryExpression(qualifiedCall, right, KtTokens.PLUS, symbolProvider)
+            kotlinBinaryExpression(qualifiedCall, right, KtTokens.PLUS, typeFactory)
         } else null
 }

@@ -44,7 +44,7 @@ abstract class JKEmptyClassBody : JKClassBody() {
 }
 
 interface JKJavaNewExpression : JKExpression, JKTypeArgumentListOwner, PsiOwner {
-    val classSymbol: JKClassSymbol
+    var classSymbol: JKClassSymbol
     var arguments: JKArgumentList
     var classBody: JKClassBody
 }

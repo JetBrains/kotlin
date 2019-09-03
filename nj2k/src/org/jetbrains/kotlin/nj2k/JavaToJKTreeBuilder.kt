@@ -45,6 +45,9 @@ import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
+import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
@@ -53,10 +56,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 class JavaToJKTreeBuilder constructor(
-    var symbolProvider: JKSymbolProvider,
+    private val symbolProvider: JKSymbolProvider,
+    private val typeFactory: JKTypeFactory,
     converterServices: NewJavaToKotlinServices,
     private val importStorage: ImportStorage
 ) {
+    private fun PsiType.toJK() =
+        typeFactory.fromPsiType(this)
 
     private val expressionTreeMapper = ExpressionTreeMapper()
 
@@ -153,7 +159,7 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiClassObjectAccessExpressionImpl.toJK(): JKClassLiteralExpression {
-            val type = operand.type.toJK(symbolProvider).updateNullabilityRecursively(Nullability.NotNull)
+            val type = operand.type.toJK().updateNullabilityRecursively(Nullability.NotNull)
             return JKClassLiteralExpressionImpl(
                 JKTypeElementImpl(type),
                 when (type) {
@@ -167,7 +173,7 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiInstanceOfExpression.toJK(): JKKtIsExpression =
-            JKKtIsExpressionImpl(operand.toJK(), JKTypeElementImpl(checkType?.type?.toJK(symbolProvider) ?: JKNoTypeImpl))
+            JKKtIsExpressionImpl(operand.toJK(), JKTypeElementImpl(checkType?.type?.toJK() ?: JKNoTypeImpl))
                 .also {
                     it.assignNonCodeElements(this)
                 }
@@ -270,7 +276,7 @@ class JavaToJKTreeBuilder constructor(
             val target = methodExpression.resolve()
             val symbol = target?.let {
                 symbolProvider.provideDirectSymbol(it)
-            } ?: JKUnresolvedMethod(methodExpression)
+            } ?: JKUnresolvedMethod(methodExpression, typeFactory)
 
             return when {
                 methodExpression.referenceNameElement is PsiKeyword -> {
@@ -340,7 +346,7 @@ class JavaToJKTreeBuilder constructor(
 
                         else -> {
                             JKJavaMethodCallExpressionImpl(
-                                JKMultiverseMethodSymbol(target, symbolProvider),
+                                JKMultiverseMethodSymbol(target, typeFactory),
                                 arguments.toJK(),
                                 typeArguments
                             ).qualified(qualifier)
@@ -365,14 +371,14 @@ class JavaToJKTreeBuilder constructor(
                     type.safeAs<PsiClassType>()?.parameters?.any { it is PsiCapturedWildcardType } == true
                 }?.takeUnless { type ->
                     type.isKotlinFunctionalType
-                }?.toJK(symbolProvider)
+                }?.toJK()
                 ?.asTypeElement() ?: JKTypeElementImpl(JKNoTypeImpl)
 
         fun PsiMethodReferenceExpression.toJK(): JKMethodReferenceExpression {
             val symbol = symbolProvider.provideSymbolForReference<JKSymbol>(this).let { symbol ->
                 when {
-                    symbol.isUnresolved && isConstructor -> JKUnresolvedClassSymbol(qualifier?.text ?: text)
-                    symbol.isUnresolved && !isConstructor -> JKUnresolvedMethod(referenceName ?: text)
+                    symbol.isUnresolved && isConstructor -> JKUnresolvedClassSymbol(qualifier?.text ?: text, typeFactory)
+                    symbol.isUnresolved && !isConstructor -> JKUnresolvedMethod(referenceName ?: text, typeFactory)
                     else -> symbol
                 }
             }
@@ -412,7 +418,7 @@ class JavaToJKTreeBuilder constructor(
         fun PsiArrayInitializerExpression.toJK(): JKExpression {
             return JKJavaNewArrayImpl(
                 initializers.map { it.toJK() },
-                JKTypeElementImpl(type?.toJK(symbolProvider).safeAs<JKJavaArrayType>()?.type ?: JKContextType)
+                JKTypeElementImpl(type?.toJK().safeAs<JKJavaArrayType>()?.type ?: JKContextType)
             ).also {
                 it.assignNonCodeElements(this)
             }
@@ -438,7 +444,7 @@ class JavaToJKTreeBuilder constructor(
                         }
                         JKJavaNewEmptyArrayImpl(
                             dimensions.map { it?.toJK() ?: JKStubExpressionImpl() },
-                            JKTypeElementImpl(generateSequence(type?.toJK(symbolProvider)) { it.safeAs<JKJavaArrayType>()?.type }.last())
+                            JKTypeElementImpl(generateSequence(type?.toJK()) { it.safeAs<JKJavaArrayType>()?.type }.last())
                         ).also {
                             it.psi = this
                         }
@@ -447,14 +453,17 @@ class JavaToJKTreeBuilder constructor(
                     val classSymbol =
                         classOrAnonymousClassReference?.resolve()?.let {
                             symbolProvider.provideDirectSymbol(it) as JKClassSymbol
-                        } ?: JKUnresolvedClassSymbol(classOrAnonymousClassReference?.referenceName ?: throwCanNotConvertError())
+                        } ?: JKUnresolvedClassSymbol(
+                            classOrAnonymousClassReference?.referenceName ?: throwCanNotConvertError(),
+                            typeFactory
+                        )
                     val typeArgumentList =
                         this.typeArgumentList.toJK()
                             .takeIf { it.typeArguments.isNotEmpty() }
                             ?: classOrAnonymousClassReference
                                 ?.typeParameters
                                 ?.let { typeParameters ->
-                                    JKTypeArgumentListImpl(typeParameters.map { JKTypeElementImpl(it.toJK(symbolProvider)) })
+                                    JKTypeArgumentListImpl(typeParameters.map { JKTypeElementImpl(it.toJK()) })
                                 } ?: JKTypeArgumentListImpl()
                     JKJavaNewExpressionImpl(
                         classSymbol,
@@ -469,7 +478,7 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiReferenceParameterList.toJK(): JKTypeArgumentList =
-            JKTypeArgumentListImpl(this.typeArguments.map { JKTypeElementImpl(it.toJK(symbolProvider)) })
+            JKTypeArgumentListImpl(this.typeArguments.map { JKTypeElementImpl(it.toJK()) })
                 .also {
                     it.assignNonCodeElements(this)
                 }
@@ -487,7 +496,7 @@ class JavaToJKTreeBuilder constructor(
         fun PsiTypeCastExpression.toJK(): JKExpression {
             return JKTypeCastExpressionImpl(
                 operand?.toJK() ?: throwCanNotConvertError(),
-                castType?.type?.toJK(symbolProvider)?.asTypeElement() ?: throwCanNotConvertError()
+                castType?.type?.toJK()?.asTypeElement() ?: throwCanNotConvertError()
             ).also {
                 it.assignNonCodeElements(this)
             }
@@ -535,7 +544,7 @@ class JavaToJKTreeBuilder constructor(
         fun PsiTypeParameter.toJK(): JKTypeParameter =
             JKTypeParameterImpl(
                 nameIdentifier.toJK(),
-                extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }
+                extendsListTypes.map { JKTypeElementImpl(it.toJK()) }
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.assignNonCodeElements(this)
@@ -562,9 +571,9 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiClass.inheritanceInfo(): JKInheritanceInfo {
             val implTypes =
-                implementsList?.referencedTypes?.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }.orEmpty()
+                implementsList?.referencedTypes?.map { JKTypeElementImpl(it.toJK()) }.orEmpty()
             val extensionType =
-                extendsList?.referencedTypes?.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }.orEmpty()
+                extendsList?.referencedTypes?.map { JKTypeElementImpl(it.toJK()) }.orEmpty()
             return JKInheritanceInfoImpl(extensionType, implTypes)
                 .also {
                     if (implementsList != null) {
@@ -645,7 +654,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(
-                JKTypeElementImpl(type.toJK(symbolProvider)).withAssignedNonCodeElements(typeElement),
+                JKTypeElementImpl(type.toJK()).withAssignedNonCodeElements(typeElement),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 annotationList(this),
@@ -676,7 +685,7 @@ class JavaToJKTreeBuilder constructor(
                 symbolProvider.provideSymbolForReference<JKSymbol>(
                     nameReferenceElement ?: throwCanNotConvertError()
                 ).safeAs<JKClassSymbol>()
-                    ?: JKUnresolvedClassSymbol(nameReferenceElement?.text ?: throwCanNotConvertError()),
+                    ?: JKUnresolvedClassSymbol(nameReferenceElement?.text ?: throwCanNotConvertError(), typeFactory),
                 parameterList.attributes.map { parameter ->
                     if (parameter.nameIdentifier != null) {
                         JKAnnotationNameParameterImpl(
@@ -698,7 +707,7 @@ class JavaToJKTreeBuilder constructor(
                 JKAnnotationImpl(
                     symbolProvider.provideClassSymbol("kotlin.Deprecated"),
                     listOf(
-                        JKAnnotationParameterImpl(stringLiteral(tag.content(), symbolProvider))
+                        JKAnnotationParameterImpl(stringLiteral(tag.content(), typeFactory))
                     )
                 )
             }
@@ -718,7 +727,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAnnotationMethod.toJK(): JKJavaAnnotationMethod =
             JKJavaAnnotationMethodImpl(
-                returnType?.toJK(symbolProvider)?.asTypeElement()
+                returnType?.toJK()?.asTypeElement()
                     ?: JKTypeElementImpl(JKJavaVoidType).takeIf { isConstructor }
                     ?: throwCanNotConvertError("type of PsiAnnotationMethod can not be retrieved"),
                 nameIdentifier.toJK(),
@@ -733,7 +742,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiMethod.toJK(): JKJavaMethod {
             return JKJavaMethodImpl(
-                returnType?.toJK(symbolProvider)?.asTypeElement()
+                returnType?.toJK()?.asTypeElement()
                     ?: JKTypeElementImpl(JKJavaVoidType).takeIf { isConstructor }
                     ?: throwCanNotConvertError("type of PsiAnnotationMethod can not be retrieved"),
                 nameIdentifier.toJK(),
@@ -741,7 +750,7 @@ class JavaToJKTreeBuilder constructor(
                 body?.toJK() ?: JKBodyStubImpl,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
                 annotationList(this),
-                throwsList.referencedTypes.map { JKTypeElementImpl(it.toJK(symbolProvider)) },
+                throwsList.referencedTypes.map { JKTypeElementImpl(it.toJK()) },
                 otherModifiers(),
                 visibility(),
                 modality()
@@ -758,7 +767,7 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiParameter.toJK(): JKParameter {
-            val rawType = type.toJK(symbolProvider)
+            val rawType = type.toJK()
             val type =
                 if (isVarArgs && rawType is JKJavaArrayType) JKTypeElementImpl(rawType.type)
                 else rawType.asTypeElement()
@@ -786,7 +795,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiLocalVariable.toJK(): JKLocalVariable =
             JKLocalVariableImpl(
-                JKTypeElementImpl(type.toJK(symbolProvider)).withAssignedNonCodeElements(typeElement),
+                JKTypeElementImpl(type.toJK()).withAssignedNonCodeElements(typeElement),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 JKMutabilityModifierElementImpl(
@@ -944,7 +953,7 @@ class JavaToJKTreeBuilder constructor(
                 if (psi.parent is PsiReferenceList) {
                     val factory = JavaPsiFacade.getInstance(psi.project).elementFactory
                     val type = factory.createType(psi)
-                    JKTypeElementImpl(type.toJK(symbolProvider).updateNullabilityRecursively(Nullability.NotNull))
+                    JKTypeElementImpl(type.toJK().updateNullabilityRecursively(Nullability.NotNull))
                 } else null
             else -> null
         }?.let { JKTreeRootImpl(it) }

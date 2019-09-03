@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.nj2k.symbols
 
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 
 
 sealed class JKPackageSymbol : JKSymbol {
@@ -15,5 +16,5 @@ sealed class JKPackageSymbol : JKSymbol {
 
 class JKMultiversePackageSymbol(
     override val target: PsiPackage,
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKPackageSymbol(), JKMultiverseSymbol<PsiPackage>

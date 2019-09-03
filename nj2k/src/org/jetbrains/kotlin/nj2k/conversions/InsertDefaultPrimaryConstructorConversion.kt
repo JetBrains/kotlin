@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.JKClassType
 
 
 class InsertDefaultPrimaryConstructorConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {

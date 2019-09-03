@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.hasWritableUsages
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
+import org.jetbrains.kotlin.nj2k.types.JKVarianceTypeParameterType
 
 
 class ParameterModificationInMethodCallsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {

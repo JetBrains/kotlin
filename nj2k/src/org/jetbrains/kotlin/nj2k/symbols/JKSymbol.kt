@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.tree.JKDeclaration
 import org.jetbrains.kotlin.nj2k.tree.JKFile
 import org.jetbrains.kotlin.nj2k.tree.parentOfType
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -22,10 +23,14 @@ interface JKSymbol {
     val declaredIn: JKSymbol?
     val fqName: String
     val name: String
+
+    val typeFactory: JKTypeFactory
+    val symbolProvider: JKSymbolProvider
+        get() = typeFactory.symbolProvider
 }
 
+
 interface JKUniverseSymbol<T : JKDeclaration> : JKSymbol {
-    val symbolProvider: JKSymbolProvider
     override var target: T
     override val fqName: String
         get() {
@@ -47,8 +52,6 @@ interface JKUniverseSymbol<T : JKDeclaration> : JKSymbol {
 }
 
 interface JKMultiverseSymbol<T> : JKSymbol where T : PsiNamedElement, T : PsiElement {
-    val symbolProvider: JKSymbolProvider
-
     override val target: T
     override val declaredIn: JKSymbol?
         get() = target.getStrictParentOfType<PsiMember>()?.let { symbolProvider.provideDirectSymbol(it) }
@@ -59,8 +62,6 @@ interface JKMultiverseSymbol<T> : JKSymbol where T : PsiNamedElement, T : PsiEle
 }
 
 interface JKMultiverseKtSymbol<T : KtNamedDeclaration> : JKSymbol {
-    val symbolProvider: JKSymbolProvider
-
     override val target: T
     override val name: String
         get() = target.name!!

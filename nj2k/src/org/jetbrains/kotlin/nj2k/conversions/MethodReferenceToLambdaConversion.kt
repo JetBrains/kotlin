@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.lang.jvm.JvmModifier
+import org.jetbrains.kotlin.codegen.kotlinType
+import org.jetbrains.kotlin.codegen.optimization.common.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.nullIfStubExpression
 import org.jetbrains.kotlin.nj2k.qualified
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.JKClassType
+import org.jetbrains.kotlin.nj2k.types.JKTypeParameterType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -111,12 +116,12 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
                 .firstOrNull { !it.hasModifier(JvmModifier.STATIC) }
                 ?.parameterList
                 ?.parameters
-                ?.map { it.type.toJK(symbolProvider).substituteTypeParameters(this) }
+                ?.map { typeFactory.fromPsiType(it.type).substituteTypeParameters(this) }
             is JKMultiverseKtClassSymbol -> reference.target.body
                 ?.functions
                 ?.singleOrNull()
                 ?.valueParameters
-                ?.map { it.typeReference?.toJK(symbolProvider)?.substituteTypeParameters(this) ?: return null }
+                ?.map { typeFactory.fromKotlinType(it.kotlinType(it.analyze()) ?: return null).substituteTypeParameters(this) }
             is JKUniverseClassSymbol -> reference.target.classBody.declarations.firstIsInstanceOrNull<JKMethod>()
                 ?.parameters
                 ?.map { it.type.type.substituteTypeParameters(this) }

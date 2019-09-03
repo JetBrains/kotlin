@@ -267,7 +267,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             Method("java.lang.String.indexOf") convertTo Method("kotlin.text.indexOf"),
             Method("java.lang.String.lastIndexOf") convertTo Method("kotlin.text.lastIndexOf"),
             Method("java.lang.String.getBytes") convertTo Method("kotlin.text.toByteArray")
-                    withByArgumentsFilter { it.singleOrNull()?.type(symbolProvider)?.isStringType() == true }
+                    withByArgumentsFilter { it.singleOrNull()?.type(typeFactory)?.isStringType() == true }
                     withArgumentsProvider { arguments ->
                 val argument = arguments.arguments.single()::value.detached()
                 val call = JKKtCallExpressionImpl(
@@ -280,7 +280,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             Method("java.lang.String.valueOf")
                     convertTo ExtensionMethod("kotlin.Any.toString")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
-                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(symbolProvider)?.isArrayType() == false },
+                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(typeFactory)?.isArrayType() == false },
 
             Method("java.lang.String.getChars")
                     convertTo Method("kotlin.text.toCharArray")
@@ -296,12 +296,12 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             Method("java.lang.String.valueOf")
                     convertTo Method("kotlin.String")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
-                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(symbolProvider)?.isArrayType() == true },
+                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(typeFactory)?.isArrayType() == true },
 
             Method("java.lang.String.copyValueOf")
                     convertTo Method("kotlin.String")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
-                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(symbolProvider)?.isArrayType() == true },
+                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(typeFactory)?.isArrayType() == true },
 
             Method("java.lang.String.replaceAll")
                     convertTo Method("kotlin.text.replace")
@@ -370,7 +370,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                             firstArgument,
                             secondArgument,
                             KtTokens.PLUS,
-                            symbolProvider
+                            typeFactory
                         )
                     } withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
 
@@ -397,7 +397,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                                         JKFieldAccessExpressionImpl(
                                             JKUnresolvedField(//TODO replace with `it` parameter
                                                 "it",
-                                                symbolProvider
+                                                typeFactory
                                             )
                                         ).callOn(symbolProvider.provideMethodSymbol("kotlin.text.isEmpty"))
                                             .asStatement(),
@@ -432,12 +432,12 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                                 JKFieldAccessExpressionImpl(
                                     JKUnresolvedField(//TODO replace with `it` parameter
                                         "it",
-                                        symbolProvider
+                                        typeFactory
                                     )
                                 ),
                                 JKKtLiteralExpressionImpl("' '", JKLiteralExpression.LiteralType.CHAR),
                                 KtTokens.LTEQ,
-                                symbolProvider
+                                typeFactory
                             )
                         ),
                         emptyList()

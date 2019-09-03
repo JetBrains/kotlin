@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType
-import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
-import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.nj2k.types.*
 
 class JKTreeRootImpl(element: JKTreeElement) : JKTreeRoot, JKBranchElementBase() {
     override var element by child(element)
@@ -211,7 +210,7 @@ object JKNoTypeImpl : JKNoType {
     override val nullability: Nullability = Nullability.NotNull
 }
 
-class JKStarProjectionTypeImpl : JKStarProjectionType
+object JKStarProjectionTypeImpl : JKStarProjectionType
 
 val JKType.fqName: String?
     get() = when (this) {
@@ -224,7 +223,7 @@ class JKNullLiteral : JKLiteralExpression, JKElementBase(), PsiOwner by PsiOwner
     override val literal: String
         get() = "null"
     override val type: LiteralType
-        get() = NULL
+        get() = LiteralType.NULL
 
     override fun accept(visitor: JKVisitor) = visitor.visitLiteralExpression(this)
 }
@@ -233,29 +232,20 @@ class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(
     override val literal: String
         get() = value.toString()
     override val type: LiteralType
-        get() = BOOLEAN
+        get() = LiteralType.BOOLEAN
 
     override fun accept(visitor: JKVisitor) = visitor.visitLiteralExpression(this)
 }
 
-fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): JKType {
-    fun defaultTypeByName(name: String) =
-        JKClassTypeImpl(
-            symbolProvider.provideClassSymbol("kotlin.$name"), emptyList(), Nullability.NotNull
-        )
-
-    return when (this) {
-        JKLiteralExpression.LiteralType.CHAR -> defaultTypeByName("Char")
-        JKLiteralExpression.LiteralType.BOOLEAN -> defaultTypeByName("Boolean")
-        JKLiteralExpression.LiteralType.INT -> defaultTypeByName("Int")
-        JKLiteralExpression.LiteralType.LONG -> defaultTypeByName("Long")
-        JKLiteralExpression.LiteralType.FLOAT -> defaultTypeByName("Float")
-        JKLiteralExpression.LiteralType.DOUBLE -> defaultTypeByName("Double")
-        JKLiteralExpression.LiteralType.NULL ->
-            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()).toKtClassType(symbolProvider)
-        JKLiteralExpression.LiteralType.STRING ->
-            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.string.toSafe()).toKtClassType(symbolProvider)
-    }
+fun LiteralType.toJkType(typeFactory: JKTypeFactory): JKType = when (this) {
+    LiteralType.CHAR -> typeFactory.types.char
+    LiteralType.BOOLEAN -> typeFactory.types.boolean
+    LiteralType.INT -> typeFactory.types.int
+    LiteralType.LONG -> typeFactory.types.long
+    LiteralType.FLOAT -> typeFactory.types.float
+    LiteralType.DOUBLE -> typeFactory.types.double
+    LiteralType.NULL -> typeFactory.types.nullableAny
+    LiteralType.STRING -> typeFactory.types.string
 }
 
 class JKLocalVariableImpl(
@@ -553,7 +543,7 @@ class JKAnnotationImpl(
 
 class JKTypeArgumentListImpl(typeArguments: List<JKTypeElement> = emptyList()) : JKTypeArgumentList, JKBranchElementBase(),
     PsiOwner by PsiOwnerImpl() {
-    override val typeArguments: List<JKTypeElement> by children(typeArguments)
+    override var typeArguments: List<JKTypeElement> by children(typeArguments)
     override fun accept(visitor: JKVisitor) = visitor.visitTypeArgumentList(this)
 
 }

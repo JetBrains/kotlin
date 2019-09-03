@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
+import org.jetbrains.kotlin.nj2k.types.JKJavaDisjunctionType
+import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 class JKJavaFieldImpl(
@@ -288,7 +291,8 @@ object JKJavaVoidType : JKType {
         set(it) {}
 }
 
-data class JKJavaArrayTypeImpl(override val type: JKType, override var nullability: Nullability = Nullability.Default) : JKJavaArrayType {
+data class JKJavaArrayTypeImpl(override val type: JKType, override var nullability: Nullability = Nullability.Default) :
+    JKJavaArrayType {
 }
 
 class JKJavaDisjunctionTypeImpl(

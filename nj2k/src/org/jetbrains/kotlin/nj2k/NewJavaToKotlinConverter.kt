@@ -35,6 +35,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class NewJavaToKotlinConverter(
@@ -106,9 +107,11 @@ class NewJavaToKotlinConverter(
         val module = targetModule ?: error("Module should not be null for new J2K")
         val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
         val symbolProvider = JKSymbolProvider(project, module, contextElement)
+        val typeFactory = JKTypeFactory(symbolProvider)
+        symbolProvider.typeFactory = typeFactory
         symbolProvider.preBuildTree(inputElements)
         val importStorage = ImportStorage()
-        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, converterServices, importStorage)
+        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, typeFactory, converterServices, importStorage)
         val asts = processor.process {
             inputElements.mapIndexed { i, element ->
                 processor.updateState(i, 1, phaseDescription)
@@ -118,6 +121,7 @@ class NewJavaToKotlinConverter(
 
         val context = NewJ2kConverterContext(
             symbolProvider,
+            typeFactory,
             this,
             { it.containingFile in inputElements },
             importStorage,

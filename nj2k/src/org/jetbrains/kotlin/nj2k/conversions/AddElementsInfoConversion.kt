@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKCapturedType
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
+import org.jetbrains.kotlin.nj2k.types.JKParametrizedType
+import org.jetbrains.kotlin.nj2k.types.JKStarProjectionType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AddElementsInfoConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {

@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.nj2k.tree
+package org.jetbrains.kotlin.nj2k.types
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKTypeParameterSymbol
+import org.jetbrains.kotlin.nj2k.tree.JKType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 interface JKWildCardType : JKType

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.nj2k.conversions.JKResolver
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.*
 
 
@@ -24,6 +25,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
     private val resolver = JKResolver(project, module, contextElement)
 
     private val elementVisitor = ElementVisitor()
+    lateinit var typeFactory: JKTypeFactory
 
     fun preBuildTree(inputElements: List<PsiElement>) {
         inputElements.forEach { it.accept(elementVisitor) }
@@ -31,19 +33,19 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
 
     private fun symbolForNonKotlinElement(psi: PsiElement) =
         when (psi) {
-            is PsiTypeParameter -> JKMultiverseTypeParameterSymbol(psi, this)
-            is KtTypeParameter -> JKMultiverseKtTypeParameterSymbol(psi, this)
-            is KtEnumEntry -> JKMultiverseKtEnumEntrySymbol(psi, this)
-            is PsiClass -> JKMultiverseClassSymbol(psi, this)
-            is KtClassOrObject -> JKMultiverseKtClassSymbol(psi, this)
-            is PsiMethod -> JKMultiverseMethodSymbol(psi, this)
-            is PsiField -> JKMultiverseFieldSymbol(psi, this)
-            is KtFunction -> JKMultiverseFunctionSymbol(psi, this)
-            is KtProperty -> JKMultiversePropertySymbol(psi, this)
-            is KtParameter -> JKMultiversePropertySymbol(psi, this)
-            is PsiParameter -> JKMultiverseFieldSymbol(psi, this)
-            is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, this)
-            is PsiPackage -> JKMultiversePackageSymbol(psi, this)
+            is PsiTypeParameter -> JKMultiverseTypeParameterSymbol(psi, typeFactory)
+            is KtTypeParameter -> JKMultiverseKtTypeParameterSymbol(psi, typeFactory)
+            is KtEnumEntry -> JKMultiverseKtEnumEntrySymbol(psi, typeFactory)
+            is PsiClass -> JKMultiverseClassSymbol(psi, typeFactory)
+            is KtClassOrObject -> JKMultiverseKtClassSymbol(psi, typeFactory)
+            is PsiMethod -> JKMultiverseMethodSymbol(psi, typeFactory)
+            is PsiField -> JKMultiverseFieldSymbol(psi, typeFactory)
+            is KtFunction -> JKMultiverseFunctionSymbol(psi, typeFactory)
+            is KtProperty -> JKMultiversePropertySymbol(psi, typeFactory)
+            is KtParameter -> JKMultiversePropertySymbol(psi, typeFactory)
+            is PsiParameter -> JKMultiverseFieldSymbol(psi, typeFactory)
+            is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, typeFactory)
+            is PsiPackage -> JKMultiversePackageSymbol(psi, typeFactory)
             else -> TODO(psi::class.toString())
         }
 
@@ -62,8 +64,8 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
         if (target != null) return provideDirectSymbol(target) as T
         return (if (isAssignable<T, JKUnresolvedField>()) JKUnresolvedField(
             reference.canonicalText,
-            this
-        ) else JKUnresolvedMethod(reference)) as T
+            typeFactory
+        ) else JKUnresolvedMethod(reference, typeFactory)) as T
     }
 
     fun provideUniverseSymbol(psi: PsiElement, jk: JKDeclaration): JKSymbol = provideUniverseSymbol(psi).also {
@@ -79,10 +81,10 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
     fun provideUniverseSymbol(psi: PsiElement): JKSymbol =
         symbolsByPsi.getOrPut(psi) {
             when (psi) {
-                is PsiVariable -> JKUniverseFieldSymbol(this)
-                is PsiMethod -> JKUniverseMethodSymbol(this)
-                is PsiTypeParameter -> JKUniverseTypeParameterSymbol(this)
-                is PsiClass -> JKUniverseClassSymbol(this)
+                is PsiVariable -> JKUniverseFieldSymbol(typeFactory)
+                is PsiMethod -> JKUniverseMethodSymbol(typeFactory)
+                is PsiTypeParameter -> JKUniverseTypeParameterSymbol(typeFactory)
+                is PsiClass -> JKUniverseClassSymbol(typeFactory)
                 else -> TODO()
             }
         }
@@ -95,15 +97,15 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
     }
 
     fun provideUniverseSymbol(jk: JKClass): JKClassSymbol = symbolsByJK.getOrPut(jk) {
-        JKUniverseClassSymbol(this).also { it.target = jk }
+        JKUniverseClassSymbol(typeFactory).also { it.target = jk }
     } as JKClassSymbol
 
     fun provideUniverseSymbol(jk: JKVariable): JKFieldSymbol = symbolsByJK.getOrPut(jk) {
-        JKUniverseFieldSymbol(this).also { it.target = jk }
+        JKUniverseFieldSymbol(typeFactory).also { it.target = jk }
     } as JKFieldSymbol
 
     fun provideUniverseSymbol(jk: JKMethod): JKMethodSymbol = symbolsByJK.getOrPut(jk) {
-        JKUniverseMethodSymbol(this).also { it.target = jk }
+        JKUniverseMethodSymbol(typeFactory).also { it.target = jk }
     } as JKMethodSymbol
 
 
@@ -112,7 +114,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
             resolver.resolveClass(fqName)?.let {
                 provideDirectSymbol(it) as? JKClassSymbol
             }
-        } as? JKClassSymbol ?: JKUnresolvedClassSymbol(fqName.asString())
+        } as? JKClassSymbol ?: JKUnresolvedClassSymbol(fqName.asString(), typeFactory)
 
     fun provideClassSymbol(fqName: String): JKClassSymbol =
         provideClassSymbol(FqName(fqName.asSafeFqNameString()))
@@ -125,7 +127,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
             resolver.resolveMethod(fqName)?.let {
                 provideDirectSymbol(it) as? JKMethodSymbol
             }
-        } as? JKMethodSymbol ?: JKUnresolvedMethod(fqName.asString())
+        } as? JKMethodSymbol ?: JKUnresolvedMethod(fqName.asString(), typeFactory)
 
     fun provideMethodSymbol(fqName: String): JKMethodSymbol =
         provideMethodSymbol(FqName(fqName.asSafeFqNameString()))
@@ -135,7 +137,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
             resolver.resolveField(fqName)?.let {
                 provideDirectSymbol(it) as? JKFieldSymbol
             }
-        } as? JKFieldSymbol ?: JKUnresolvedField(fqName.asString(), this)
+        } as? JKFieldSymbol ?: JKUnresolvedField(fqName.asString(), typeFactory)
 
     fun provideFieldSymbol(fqName: String): JKFieldSymbol =
         provideFieldSymbol(FqName(fqName.asSafeFqNameString()))

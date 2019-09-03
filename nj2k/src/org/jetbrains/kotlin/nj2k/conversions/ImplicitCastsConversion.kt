@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.nj2k.symbols.isUnresolved
 import org.jetbrains.kotlin.nj2k.symbols.parameterTypesWithUnfoldedVarargs
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.JKClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -30,8 +31,8 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
 
     private fun convertBinaryExpression(binaryExpression: JKBinaryExpression): JKExpression {
         fun JKBinaryExpression.convertBinaryOperationWithChar(): JKBinaryExpression {
-            val leftType = left.type(symbolProvider)?.asPrimitiveType() ?: return this
-            val rightType = right.type(symbolProvider)?.asPrimitiveType() ?: return this
+            val leftType = left.type(typeFactory)?.asPrimitiveType() ?: return this
+            val rightType = right.type(typeFactory)?.asPrimitiveType() ?: return this
 
             val leftOperandCastedCasted by lazy {
                 JKBinaryExpressionImpl(
@@ -72,7 +73,7 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
     }
 
     private fun convertAssignmentStatement(statement: JKKtAssignmentStatement) {
-        val expressionType = statement.field.type(symbolProvider) ?: return
+        val expressionType = statement.field.type(typeFactory) ?: return
         statement.expression.castTo(expressionType)?.also {
             statement.expression = it
         }
@@ -99,7 +100,7 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
 
     private fun JKExpression.castStringToRegex(toType: JKType): JKExpression? {
         if (toType.safeAs<JKClassType>()?.classReference?.fqName != "java.util.regex.Pattern") return null
-        val expressionType = type(symbolProvider) ?: return null
+        val expressionType = type(typeFactory) ?: return null
         if (!expressionType.isStringType()) return null
         return JKQualifiedExpressionImpl(
             copyTreeAndDetach().parenthesizeIfBinaryExpression(),
@@ -120,7 +121,7 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
             val casted = expression.castToAsPrimitiveTypes(toType, strict) ?: return null
             return JKPrefixExpressionImpl(casted, operator)
         }
-        val expressionTypeAsPrimitive = type(symbolProvider)?.asPrimitiveType() ?: return null
+        val expressionTypeAsPrimitive = type(typeFactory)?.asPrimitiveType() ?: return null
         val toTypeAsPrimitive = toType.asPrimitiveType() ?: return null
         if (toTypeAsPrimitive == expressionTypeAsPrimitive) return null
 
@@ -155,7 +156,7 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
 
 
     private fun JKExpression.castTo(toType: JKType, strict: Boolean = false): JKExpression? {
-        val expressionType = type(symbolProvider)
+        val expressionType = type(typeFactory)
         if (expressionType == toType) return null
         castToAsPrimitiveTypes(toType, strict)?.also { return it }
         castStringToRegex(toType)?.also { return it }

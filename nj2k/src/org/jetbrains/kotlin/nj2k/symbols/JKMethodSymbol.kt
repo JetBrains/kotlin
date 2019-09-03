@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKClassTypeImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKNoTypeImpl
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -24,7 +25,7 @@ sealed class JKMethodSymbol : JKSymbol {
     abstract val returnType: JKType?
 }
 
-class JKUniverseMethodSymbol(override val symbolProvider: JKSymbolProvider) : JKMethodSymbol(), JKUniverseSymbol<JKMethod> {
+class JKUniverseMethodSymbol(override val typeFactory: JKTypeFactory) : JKMethodSymbol(), JKUniverseSymbol<JKMethod> {
     override val receiverType: JKType?
         get() = target.parent.safeAs<JKClass>()?.let {
             JKClassTypeImpl(symbolProvider.provideUniverseSymbol(it), emptyList()/*TODO*/)
@@ -39,16 +40,16 @@ class JKUniverseMethodSymbol(override val symbolProvider: JKSymbolProvider) : JK
 
 class JKMultiverseMethodSymbol(
     override val target: PsiMethod,
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKMethodSymbol(), JKMultiverseSymbol<PsiMethod> {
     override val receiverType: JKType?
         get() = target.containingClass?.let {
             JKClassTypeImpl(symbolProvider.provideDirectSymbol(it) as JKClassSymbol, emptyList()/*TODO*/)
         }
     override val parameterTypes: List<JKType>
-        get() = target.parameterList.parameters.map { it.type.toJK(symbolProvider) }
+        get() = target.parameterList.parameters.map { typeFactory.fromPsiType(it.type) }
     override val returnType: JKType
-        get() = target.returnType?.toJK(symbolProvider) // null for constructor call
+        get() = target.returnType?.let { typeFactory.fromPsiType(it) } // null for constructor call
             ?: symbolProvider.provideClassSymbol(target.getKotlinFqName()!!).asType(Nullability.NotNull)
 
     override val fqName: String
@@ -60,15 +61,15 @@ class JKMultiverseMethodSymbol(
 
 class JKMultiverseFunctionSymbol(
     override val target: KtFunction,
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKMethodSymbol(), JKMultiverseKtSymbol<KtFunction> {
     override val receiverType: JKType?
-        get() = target.receiverTypeReference?.toJK(symbolProvider)
+        get() = target.receiverTypeReference?.toJK(typeFactory)
 
     @Suppress("UNCHECKED_CAST")
     override val parameterTypes: List<JKType>?
         get() = target.valueParameters.map { parameter ->
-            val type = parameter.typeReference?.toJK(symbolProvider)
+            val type = parameter.typeReference?.toJK(typeFactory)
             type?.let {
                 if (parameter.isVarArg) {
                     JKClassTypeImpl(
@@ -80,14 +81,15 @@ class JKMultiverseFunctionSymbol(
         }.takeIf { parameters -> parameters.all { it != null } } as? List<JKType>
 
     override val returnType: JKType?
-        get() = target.typeReference?.toJK(symbolProvider)
+        get() = target.typeReference?.toJK(typeFactory)
 }
 
 class JKUnresolvedMethod(
     override val target: String,
+    override val typeFactory: JKTypeFactory,
     override val returnType: JKType = JKNoTypeImpl
 ) : JKMethodSymbol(), JKUnresolvedSymbol {
-    constructor(target: PsiReference) : this(target.canonicalText)
+    constructor(target: PsiReference, typeFactory: JKTypeFactory) : this(target.canonicalText, typeFactory)
 
     override val receiverType: JKType?
         get() = null

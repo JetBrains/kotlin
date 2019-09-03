@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKBooleanLiteral
 import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaLiteralExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKNullLiteral
+import org.jetbrains.kotlin.nj2k.types.JKClassType
+import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
+import org.jetbrains.kotlin.nj2k.types.JKTypeParameterType
 
 class ImplicitInitializerConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
 

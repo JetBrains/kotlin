@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.nj2k.tree.JKType
 import org.jetbrains.kotlin.nj2k.tree.JKVariable
 import org.jetbrains.kotlin.nj2k.tree.impl.JKClassTypeImpl
 import org.jetbrains.kotlin.nj2k.tree.toJK
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -22,7 +23,7 @@ sealed class JKFieldSymbol : JKSymbol {
     abstract val fieldType: JKType?
 }
 
-class JKUniverseFieldSymbol(override val symbolProvider: JKSymbolProvider) : JKFieldSymbol(), JKUniverseSymbol<JKVariable> {
+class JKUniverseFieldSymbol(    override val typeFactory: JKTypeFactory) : JKFieldSymbol(), JKUniverseSymbol<JKVariable> {
     override val fieldType: JKType
         get() = target.type.type
 
@@ -31,23 +32,23 @@ class JKUniverseFieldSymbol(override val symbolProvider: JKSymbolProvider) : JKF
 
 class JKMultiverseFieldSymbol(
     override val target: PsiVariable,
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKFieldSymbol(), JKMultiverseSymbol<PsiVariable> {
     override val fieldType: JKType
-        get() = target.type.toJK(symbolProvider)
+        get() = typeFactory.fromPsiType(target.type)
 }
 
 class JKMultiversePropertySymbol(
     override val target: KtCallableDeclaration,
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKFieldSymbol(), JKMultiverseKtSymbol<KtCallableDeclaration> {
     override val fieldType: JKType?
-        get() = target.typeReference?.toJK(symbolProvider)
+        get() = target.typeReference?.toJK(typeFactory)
 }
 
 class JKMultiverseKtEnumEntrySymbol(
     override val target: KtEnumEntry,
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKFieldSymbol(), JKMultiverseKtSymbol<KtEnumEntry> {
     override val fieldType: JKType?
         get() = JKClassTypeImpl(
@@ -59,10 +60,9 @@ class JKMultiverseKtEnumEntrySymbol(
 
 class JKUnresolvedField(
     override val target: String,
-    private val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKFieldSymbol(), JKUnresolvedSymbol {
     override val fieldType: JKType
-        get() =
-            JKClassTypeImpl(symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.nothing.toSafe()), emptyList())
+        get() = JKClassTypeImpl(symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.nothing.toSafe()), emptyList())
 }
 

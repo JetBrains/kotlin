@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.nj2k.symbols.getDisplayName
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
+import org.jetbrains.kotlin.nj2k.types.*
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 

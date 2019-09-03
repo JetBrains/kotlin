@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.JKClassType
 
 class JavaStandardMethodsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -31,7 +32,7 @@ class JavaStandardMethodsConversion(context: NewJ2kConverterContext) : Recursive
                     element.inheritance.implements +=
                         JKTypeElementImpl(
                             JKClassTypeImpl(
-                                JKUnresolvedClassSymbol("Cloneable"),
+                                JKUnresolvedClassSymbol("Cloneable", typeFactory),
                                 emptyList(), Nullability.NotNull
                             )
                         )

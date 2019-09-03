@@ -29,7 +29,7 @@ class AssertStatementConversion(context: NewJ2kConverterContext) : RecursiveAppl
                 kotlinAssert(
                     element::condition.detached(),
                     messageExpression,
-                    symbolProvider
+                    typeFactory
                 )
             )
         )
