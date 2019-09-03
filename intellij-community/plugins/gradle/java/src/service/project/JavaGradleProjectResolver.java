@@ -85,7 +85,7 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
     }
     BuildScriptClasspathData buildScriptClasspathData = new BuildScriptClasspathData(GradleConstants.SYSTEM_ID, classpathEntries);
     buildScriptClasspathData.setGradleHomeDir(buildScriptClasspathModel != null ? buildScriptClasspathModel.getGradleHomeDir() : null);
-    ideModule.createChild(BuildScriptClasspathData.KEY, GradleProjectResolverUtil.intern(resolverCtx, buildScriptClasspathData));
+    ideModule.createChild(BuildScriptClasspathData.KEY, buildScriptClasspathData);
 
     nextResolver.populateModuleExtraModels(gradleModule, ideModule);
   }

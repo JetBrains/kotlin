@@ -588,7 +588,7 @@ public class GradleProjectResolverUtil {
             for (File artifact: projectDependency.getProjectDependencyArtifacts()) {
               library.addPath(LibraryPathType.BINARY, artifact.getPath());
             }
-            depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, intern(resolverCtx, libraryDependencyData));
+            depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
           }
           else {
             depOwnerDataNode = ownerDataNode;
@@ -604,7 +604,7 @@ public class GradleProjectResolverUtil {
             moduleDependencyData.setOrder(mergedDependency.getClasspathOrder());
             moduleDependencyData.setExported(mergedDependency.getExported());
             moduleDependencyData.setModuleDependencyArtifacts(ContainerUtil.map(projectDependencyInfo.dependencyArtifacts, File::getPath));
-            depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.MODULE_DEPENDENCY, intern(resolverCtx, moduleDependencyData));
+            depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.MODULE_DEPENDENCY, moduleDependencyData);
           }
 
           // put transitive dependencies to the ownerDataNode,
@@ -640,7 +640,7 @@ public class GradleProjectResolverUtil {
         libraryDependencyData.setScope(dependencyScope);
         libraryDependencyData.setOrder(mergedDependency.getClasspathOrder());
         libraryDependencyData.setExported(mergedDependency.getExported());
-        depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, intern(resolverCtx, libraryDependencyData));
+        depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
       }
       else if (mergedDependency instanceof ExternalMultiLibraryDependency) {
         final LibraryLevel level = LibraryLevel.MODULE;
@@ -664,7 +664,7 @@ public class GradleProjectResolverUtil {
           library.addPath(LibraryPathType.DOC, file.getAbsolutePath());
         }
 
-        depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, intern(resolverCtx, libraryDependencyData));
+        depOwnerDataNode = ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
       }
       else if (mergedDependency instanceof FileCollectionDependency) {
         final LibraryLevel level = LibraryLevel.MODULE;
@@ -679,7 +679,7 @@ public class GradleProjectResolverUtil {
           library.addPath(LibraryPathType.BINARY, file.getAbsolutePath());
         }
 
-        ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, intern(resolverCtx, libraryDependencyData));
+        ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
       }
       else if (mergedDependency instanceof UnresolvedExternalDependency) {
         String libraryName = mergedDependency.getId().getPresentableName();
@@ -691,7 +691,7 @@ public class GradleProjectResolverUtil {
         LibraryLevel level = linkProjectLibrary(resolverCtx, ideProject, library) ? LibraryLevel.PROJECT : LibraryLevel.MODULE;
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
-        ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, intern(resolverCtx, libraryDependencyData));
+        ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);
       }
 
       if (depOwnerDataNode != null) {
@@ -731,20 +731,10 @@ public class GradleProjectResolverUtil {
     DataNode<LibraryData> libraryData = ExternalSystemApiUtil.find(ideProject, ProjectKeys.LIBRARY,
                                                                    node -> libraryName.equals(node.getData().getExternalName()));
     if (libraryData == null) {
-      ideProject.createChild(ProjectKeys.LIBRARY, intern(context, library));
+      ideProject.createChild(ProjectKeys.LIBRARY, library);
       return true;
     }
     return libraryData.getData().equals(library);
-  }
-
-  public static <T> T intern(ProjectResolverContext context, T value) {
-    // hot fix for hashing issue
-    return value;
-    //if (context == null) {
-    //  LOG.warn("ProjectResolverContext should not be null, it is used to intern objects");
-    //  return value;
-    //}
-    //return ((DefaultProjectResolverContext)context).intern(value);
   }
 
   public static boolean isIdeaTask(final String taskName, @Nullable String group) {
