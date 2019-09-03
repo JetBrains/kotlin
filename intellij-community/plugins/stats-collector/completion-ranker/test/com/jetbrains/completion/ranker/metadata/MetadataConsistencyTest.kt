@@ -2,15 +2,11 @@
 package com.jetbrains.completion.ranker.metadata
 
 import com.intellij.internal.ml.completion.RankingModelProvider
-import com.jetbrains.completion.ranker.JavaMLRankingProvider
 import com.jetbrains.completion.ranker.KotlinMLRankingProvider
 import com.jetbrains.completion.ranker.PythonMLRankingProvider
 import org.junit.Test
 
 class MetadataConsistencyTest {
-  @Test
-  fun testJavaMetadata() = doTest(JavaMLRankingProvider())
-
   @Test
   fun testKotlinMetadata() = doTest(KotlinMLRankingProvider())
 
