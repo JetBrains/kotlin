@@ -15,7 +15,6 @@
 #
 org.jetbrains.plugins.gradle.tooling.builder.WarModelBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.EarModelBuilderImpl
-org.jetbrains.plugins.gradle.tooling.builder.ModuleExtendedModelBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.ModelBuildScriptClasspathBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.ScalaModelBuilderImpl
 org.jetbrains.plugins.gradle.tooling.builder.ExternalProjectBuilderImpl

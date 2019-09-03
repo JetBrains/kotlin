@@ -551,9 +551,9 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   }
 
   @Nullable
-  private static File getGradleOutputDir(@NotNull ExternalProject externalProject,
-                                         @NotNull String sourceSetName,
-                                         @NotNull ExternalSystemSourceType sourceType) {
+  public static File getGradleOutputDir(@NotNull ExternalProject externalProject,
+                                        @NotNull String sourceSetName,
+                                        @NotNull ExternalSystemSourceType sourceType) {
     ExternalSourceSet sourceSet = externalProject.getSourceSets().get(sourceSetName);
     if (sourceSet == null) return null;
     return getGradleOutputDir(sourceSet.getSources().get(sourceType));
@@ -738,7 +738,6 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   public Set<Class> getExtraProjectModelClasses() {
     return set(
       BuildScriptClasspathModel.class,
-      ModuleExtendedModel.class,
       GradleExtensions.class,
       ExternalTestsModel.class,
       IntelliJProjectSettings.class,
