@@ -29,10 +29,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -58,15 +55,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class AbstractGotoSEContributor implements SearchEverywhereContributor<Object> {
   private static final Logger LOG = Logger.getInstance(AbstractGotoSEContributor.class);
+  private static final Key<Map<String, String>> SE_SELECTED_SCOPES = Key.create("SE_SELECTED_SCOPES");
 
   private static final Pattern ourPatternToDetectLinesAndColumns = Pattern.compile(
     "(.+?)" + // name, non-greedy matching
@@ -97,14 +93,34 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
     else {
       // just get the second scope, i.e. Attached Directories in DataGrip
       Ref<GlobalSearchScope> result = Ref.create();
-      ScopeChooserCombo.processScopes(myProject, SimpleDataContext.getProjectContext(myProject), 0, o -> {
-        if (o.scopeEquals(myEverywhereScope)) return true;
+      processScopes(SimpleDataContext.getProjectContext(myProject), o -> {
+        if (o.scopeEquals(myEverywhereScope) || o.scopeEquals(null)) return true;
         result.set((GlobalSearchScope)o.getScope());
         return false;
       });
       myProjectScope = ObjectUtils.notNull(result.get(), myEverywhereScope);
     }
-    myScopeDescriptor = new ScopeDescriptor(myProjectScope);
+    String selectedScope = myProject == null ? null : getSelectedScopes(myProject).get(getClass().getSimpleName());
+    if (Registry.is("search.everywhere.show.scopes") && Registry.is("search.everywhere.sticky.scopes") &&
+        StringUtil.isNotEmpty(selectedScope)) {
+      Ref<ScopeDescriptor> result = Ref.create();
+      processScopes(SimpleDataContext.getProjectContext(myProject), o -> {
+        if (!selectedScope.equals(o.getDisplayName()) || o.scopeEquals(null)) return true;
+        result.set(o);
+        return false;
+      });
+      myScopeDescriptor = !result.isNull() ? result.get() : new ScopeDescriptor(myProjectScope);
+    }
+    else {
+      myScopeDescriptor = new ScopeDescriptor(myProjectScope);
+    }
+  }
+
+  @NotNull
+  private static Map<String, String> getSelectedScopes(@NotNull Project project) {
+    Map<String, String> map = SE_SELECTED_SCOPES.get(project);
+    if (map == null) SE_SELECTED_SCOPES.set(project, map = new HashMap<>(3));
+    return map;
   }
 
   @NotNull
@@ -116,6 +132,11 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
   @Override
   public boolean isShownInSeparateTab() {
     return true;
+  }
+
+  private static void processScopes(@NotNull DataContext dataContext, @NotNull Processor<? super ScopeDescriptor> processor) {
+    Project project = ObjectUtils.notNull(CommonDataKeys.PROJECT.getData(dataContext));
+    ScopeChooserCombo.processScopes(project, dataContext, ScopeChooserCombo.OPT_LIBRARIES | ScopeChooserCombo.OPT_EMPTY_SCOPES, processor);
   }
 
   @NotNull
@@ -132,6 +153,9 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
         void onScopeSelected(@NotNull ScopeDescriptor o) {
           myScopeDescriptor = o;
           onChanged.run();
+          getSelectedScopes(myProject).put(
+            AbstractGotoSEContributor.this.getClass().getSimpleName(),
+            o.scopeEquals(myEverywhereScope) || o.scopeEquals(myProjectScope) ? null : o.getDisplayName());
         }
 
         @NotNull
@@ -475,16 +499,14 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
         }
       };
       List<ScopeDescriptor> items = new ArrayList<>();
-      ScopeChooserCombo.processScopes(e.getRequiredData(CommonDataKeys.PROJECT),
-                                      e.getDataContext(),
-                                      ScopeChooserCombo.OPT_LIBRARIES | ScopeChooserCombo.OPT_EMPTY_SCOPES, o -> {
-          Component c = renderer.getListCellRendererComponent(fakeList, o, -1, false, false);
-          if (c instanceof JSeparator || c instanceof TitledSeparator ||
-              !o.scopeEquals(null) && o.getScope() instanceof GlobalSearchScope) {
-            items.add(o);
-          }
-          return true;
-        });
+      processScopes(e.getDataContext(), o -> {
+        Component c = renderer.getListCellRendererComponent(fakeList, o, -1, false, false);
+        if (c instanceof JSeparator || c instanceof TitledSeparator ||
+            !o.scopeEquals(null) && o.getScope() instanceof GlobalSearchScope) {
+          items.add(o);
+        }
+        return true;
+      });
       BaseListPopupStep<ScopeDescriptor> step = new BaseListPopupStep<ScopeDescriptor>("", items) {
         @Nullable
         @Override
