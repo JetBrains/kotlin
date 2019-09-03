@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -220,7 +219,7 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
 }
 
 /** Builds a [HeaderInfo] for progressions built using the `indices` extension property. */
-internal abstract class IndicesHandler(private val context: CommonBackendContext) : ProgressionHandler {
+internal abstract class IndicesHandler(protected val context: CommonBackendContext) : ProgressionHandler {
 
     // TODO: Handle Collection<*>.indices
 
@@ -228,8 +227,7 @@ internal abstract class IndicesHandler(private val context: CommonBackendContext
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // `last = array.size - 1` (last is inclusive) for the loop `for (i in array.indices)`.
             val receiver = expression.extensionReceiver!!
-            val sizeProperty = receiver.type.getClass()!!.properties.first { it.name.asString() == sizePropertyName() }
-            val last = irCall(sizeProperty.getter!!).apply {
+            val last = irCall(receiver.type.sizePropertyGetter).apply {
                 dispatchReceiver = receiver
             }.decrement()
 
@@ -243,7 +241,7 @@ internal abstract class IndicesHandler(private val context: CommonBackendContext
             )
         }
 
-    internal abstract fun sizePropertyName() : String
+    abstract val IrType.sizePropertyGetter: IrSimpleFunction
 }
 
 internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
@@ -253,7 +251,8 @@ internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandl
         parameterCount { it == 0 }
     }
 
-    override fun sizePropertyName(): String = "size"
+    override val IrType.sizePropertyGetter
+        get() = getClass()!!.properties.first { it.name.asString() == "size" }.getter!!
 }
 
 internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
@@ -264,7 +263,13 @@ internal class CharSequenceIndicesHandler(context: CommonBackendContext) : Indic
         parameterCount { it == 0 }
     }
 
-    override fun sizePropertyName(): String = "length"
+    // The lowering operates on subtypes of CharSequence. Therefore, the IrType could be
+    // a type parameter bounded by CharSequence. When that is the case, we cannot get
+    // the class from the type and instead uses the CharSequence getter.
+    override val IrType.sizePropertyGetter
+        get() = getClass()?.properties?.first { it.name.asString() == "length" }?.let {
+            it.getter!!
+        } ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
 }
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
@@ -372,7 +377,7 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
     override fun match(expression: IrExpression) = expression.type.run { isArray() || isPrimitiveArray() }
 
     override val IrType.sizePropertyGetter
-        get() = getClass()!!.properties.first { it.name == Name.identifier("size") }.getter!!
+        get() = getClass()!!.properties.first { it.name.asString() == "size" }.getter!!
 
     override val IrType.getFunction
         get() = getClass()!!.functions.first { it.name.asString() == "get" }
@@ -382,9 +387,15 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
 internal class CharSequenceIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context) {
     override fun match(expression: IrExpression) = expression.type.isSubtypeOfClass(context.ir.symbols.charSequence)
 
+    // The lowering operates on subtypes of CharSequence. Therefore, the IrType could be
+    // a type parameter bounded by CharSequence. When that is the case, we cannot get
+    // the class from the type and instead uses the CharSequence getter and function.
     override val IrType.sizePropertyGetter
-        get() = context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+        get() = getClass()?.properties?.first { it.name.asString() == "length" }?.let {
+            it.getter!!
+        } ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction
-        get() = context.ir.symbols.charSequence.getSimpleFunction("get")!!.owner
+        get() = getClass()?.functions?.first { it.name.asString() == "get" }
+            ?: context.ir.symbols.charSequence.getSimpleFunction("get")!!.owner
 }
