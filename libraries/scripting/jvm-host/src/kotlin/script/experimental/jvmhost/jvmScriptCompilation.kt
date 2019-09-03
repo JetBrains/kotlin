@@ -30,7 +30,7 @@ open class JvmScriptCompiler(
         compilerProxy.compile(
             script,
             scriptCompilationConfiguration.with {
-                hostConfiguration(this@JvmScriptCompiler.hostConfiguration)
+                hostConfiguration.update { it.withDefaultsFrom(this@JvmScriptCompiler.hostConfiguration) }
             }
         )
 }

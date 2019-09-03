@@ -13,6 +13,7 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.api.hostConfiguration
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
@@ -40,13 +41,13 @@ class KotlinJsr223ScriptEngineImpl(
 
     val compilationConfiguration by lazy {
         ScriptCompilationConfiguration(baseCompilationConfiguration) {
-            hostConfiguration(jsr223HostConfiguration)
+            hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }
         }
     }
 
     val evaluationConfiguration by lazy {
         ScriptEvaluationConfiguration(baseEvaluationConfiguration) {
-            hostConfiguration(jsr223HostConfiguration)
+            hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }
         }
     }
 
