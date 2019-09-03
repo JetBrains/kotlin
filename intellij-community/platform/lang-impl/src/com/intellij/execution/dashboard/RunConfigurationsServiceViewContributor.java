@@ -11,6 +11,7 @@ import com.intellij.execution.dashboard.tree.FolderDashboardGroupingRule.FolderD
 import com.intellij.execution.dashboard.tree.GroupingNode;
 import com.intellij.execution.dashboard.tree.RunConfigurationNode;
 import com.intellij.execution.dashboard.tree.RunDashboardGroupImpl;
+import com.intellij.execution.dashboard.tree.RunDashboardStatusFilter;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.execution.runners.FakeRerunAction;
 import com.intellij.execution.services.*;
@@ -368,6 +369,13 @@ public class RunConfigurationsServiceViewContributor
       finally {
         runManager.fireEndUpdate();
       }
+    }
+
+    @Override
+    public boolean isVisible() {
+      RunDashboardStatusFilter statusFilter =
+        ((RunDashboardManagerImpl)RunDashboardManager.getInstance(myNode.getProject())).getStatusFilter();
+      return statusFilter.isVisible(myNode);
     }
   }
 

@@ -45,7 +45,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   @Override
   public List<?> getChildren(Object parent) {
     if (parent == myRoot) {
-      return myModel.getRoots();
+      return myModel.getVisibleRoots();
     }
     return myModel.getChildren(((ServiceViewItem)parent));
   }
@@ -62,7 +62,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   Promise<TreePath> findPath(@NotNull Object service, @NotNull Class<?> contributorClass) {
     AsyncPromise<TreePath> result = new AsyncPromise<>();
     getInvoker().runOrInvokeLater(() -> {
-      List<? extends ServiceViewItem> roots = myModel.getRoots();
+      List<? extends ServiceViewItem> roots = myModel.getVisibleRoots();
       ServiceViewItem serviceNode = JBTreeTraverser.from((Function<ServiceViewItem, List<ServiceViewItem>>)node ->
         contributorClass.isInstance(node.getRootContributor()) ? new ArrayList<>(myModel.getChildren(node)) : null)
         .withRoots(roots)

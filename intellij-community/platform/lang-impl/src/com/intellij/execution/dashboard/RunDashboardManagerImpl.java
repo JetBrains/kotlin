@@ -6,6 +6,7 @@ import com.intellij.execution.*;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.tree.RunConfigurationNode;
 import com.intellij.execution.dashboard.tree.RunDashboardGrouper;
+import com.intellij.execution.dashboard.tree.RunDashboardStatusFilter;
 import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -72,6 +73,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   private volatile List<List<RunDashboardServiceImpl>> myServices = Collections.emptyList();
   private final ReentrantReadWriteLock myServiceLock = new ReentrantReadWriteLock();
   private final List<RunDashboardGrouper> myGroupers;
+  private final RunDashboardStatusFilter myStatusFilter = new RunDashboardStatusFilter();
   private String myToolWindowId;
   private final Condition<Content> myReuseCondition;
   private final AtomicBoolean myListenersInitialized = new AtomicBoolean();
@@ -742,6 +744,11 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
       ui.setLeftToolbarVisible(visible);
       ui.setContentToolbarBefore(visible);
     }
+  }
+
+  @NotNull
+  public RunDashboardStatusFilter getStatusFilter() {
+    return myStatusFilter;
   }
 
   @Nullable

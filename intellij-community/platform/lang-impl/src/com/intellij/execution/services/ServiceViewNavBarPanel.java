@@ -94,7 +94,7 @@ class ServiceViewNavBarPanel extends NavBarPanel {
       List<Object> path = new ArrayList<>();
       if (object instanceof ServiceViewItem) {
         ServiceViewItem item = (ServiceViewItem)object;
-        List<? extends ServiceViewItem> roots = myViewModel.getRoots();
+        List<? extends ServiceViewItem> roots = myViewModel.getVisibleRoots();
 
         do {
           path.add(item);
@@ -115,7 +115,7 @@ class ServiceViewNavBarPanel extends NavBarPanel {
     @Override
     protected List<Object> getChildren(Object object) {
       if (object == myRoot) {
-        return new ArrayList<>(myViewModel.getRoots());
+        return new ArrayList<>(myViewModel.getVisibleRoots());
       }
       if (object instanceof ServiceViewItem) {
         if (object instanceof ServiceNode) {

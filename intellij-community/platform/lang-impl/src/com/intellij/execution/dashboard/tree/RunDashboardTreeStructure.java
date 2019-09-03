@@ -18,6 +18,7 @@ package com.intellij.execution.dashboard.tree;
 import com.intellij.execution.dashboard.RunDashboardGroup;
 import com.intellij.execution.dashboard.RunDashboardGroupingRule;
 import com.intellij.execution.dashboard.RunDashboardManager;
+import com.intellij.execution.dashboard.RunDashboardManagerImpl;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -35,16 +36,13 @@ import java.util.stream.Collectors;
 public class RunDashboardTreeStructure extends AbstractTreeStructureBase {
   private final Project myProject;
   private final List<? extends RunDashboardGrouper> myGroupers;
-  private final List<? extends RunDashboardFilter> myFilters;
   private final RunConfigurationsTreeRootNode myRootElement;
 
   public RunDashboardTreeStructure(@NotNull Project project,
-                                   @NotNull List<? extends RunDashboardGrouper> groupers,
-                                   @NotNull List<? extends RunDashboardFilter> filters) {
+                                   @NotNull List<? extends RunDashboardGrouper> groupers) {
     super(project);
     myProject = project;
     myGroupers = groupers;
-    myFilters = filters;
     myRootElement = new RunConfigurationsTreeRootNode();
   }
 
@@ -78,10 +76,11 @@ public class RunDashboardTreeStructure extends AbstractTreeStructureBase {
     @Override
     public Collection<? extends AbstractTreeNode> getChildren() {
       RunDashboardManager runDashboardManager = RunDashboardManager.getInstance(myProject);
+      RunDashboardStatusFilter statusFilter = ((RunDashboardManagerImpl)runDashboardManager).getStatusFilter();
       List<RunConfigurationNode> nodes = runDashboardManager.getRunConfigurations().stream()
         .map(value -> new RunConfigurationNode(myProject, value,
                                                runDashboardManager.getCustomizers(value.getSettings(), value.getDescriptor())))
-        .filter(node -> myFilters.stream().allMatch(filter -> filter.isVisible(node)))
+        .filter(statusFilter::isVisible)
         .collect(Collectors.toList());
 
       List<RunDashboardGroupingRule> enabledRules = myGroupers.stream()

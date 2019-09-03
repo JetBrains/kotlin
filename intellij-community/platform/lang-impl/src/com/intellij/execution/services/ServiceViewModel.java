@@ -36,14 +36,24 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
 
   @NotNull
   List<? extends ServiceViewItem> getRoots() {
-    List<? extends ServiceViewItem> roots = processGroups(doGetRoots());
+    return getRoots(false);
+  }
+
+  @NotNull
+  List<? extends ServiceViewItem> getVisibleRoots() {
+    return getRoots(true);
+  }
+
+  @NotNull
+  private List<? extends ServiceViewItem> getRoots(boolean visible) {
+    List<? extends ServiceViewItem> roots = processGroups(doGetRoots(), visible);
     if (roots.stream().anyMatch(ContributorNode.class::isInstance)) {
       if (myShowContributorRoots) {
-        roots = ContainerUtil.filter(roots, item -> !(item instanceof ContributorNode) || !getChildren(item).isEmpty());
+        roots = ContainerUtil.filter(roots, item -> !(item instanceof ContributorNode) || !getChildren(item, visible).isEmpty());
       }
       else {
         roots = roots.stream()
-          .flatMap(item -> item instanceof ContributorNode ? getChildren(item).stream() : Stream.of(item))
+          .flatMap(item -> item instanceof ContributorNode ? getChildren(item, visible).stream() : Stream.of(item))
           .collect(Collectors.toList());
       }
     }
@@ -71,7 +81,12 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
 
   @NotNull
   List<? extends ServiceViewItem> getChildren(@NotNull ServiceViewItem parent) {
-    return processGroups(myModelFilter.filter(parent.getChildren(), myFilter));
+    return getChildren(parent, true);
+  }
+
+  @NotNull
+  protected List<? extends ServiceViewItem> getChildren(@NotNull ServiceViewItem parent, boolean visible) {
+    return processGroups(myModelFilter.filter(parent.getChildren(), myFilter), visible);
   }
 
   @Nullable
@@ -130,18 +145,22 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
   }
 
   @NotNull
-  private List<? extends ServiceViewItem> processGroups(@NotNull List<? extends ServiceViewItem> items) {
+  private List<? extends ServiceViewItem> processGroups(@NotNull List<? extends ServiceViewItem> items, boolean visible) {
+    if (visible) {
+      items = ContainerUtil.filter(items, item -> item.getViewDescriptor().isVisible());
+    }
     if (myShowGroups) {
-      return filterEmptyGroups(items);
+      return filterEmptyGroups(items, visible);
     }
     return items.stream()
-      .flatMap(item -> item instanceof ServiceGroupNode ? getChildren(item).stream() : Stream.of(item))
+      .flatMap(item -> item instanceof ServiceGroupNode ? getChildren(item, visible).stream() : Stream.of(item))
       .collect(Collectors.toList());
   }
 
   @NotNull
-  private List<? extends ServiceViewItem> filterEmptyGroups(@NotNull List<? extends ServiceViewItem> items) {
-    return ContainerUtil.filter(items, item -> !(item instanceof ServiceGroupNode) || !filterEmptyGroups(getChildren(item)).isEmpty());
+  private List<? extends ServiceViewItem> filterEmptyGroups(@NotNull List<? extends ServiceViewItem> items, boolean visible) {
+    return ContainerUtil.filter(items, item -> !(item instanceof ServiceGroupNode) ||
+                                               !filterEmptyGroups(getChildren(item, visible), visible).isEmpty());
   }
 
   static ServiceViewModel createModel(@NotNull List<ServiceViewItem> items,
@@ -378,7 +397,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     @Override
     protected List<? extends ServiceViewItem> doGetRoots() {
       ServiceGroupNode group = myGroupRef.get();
-      return group == null ? Collections.emptyList() : getChildren(group);
+      return group == null ? Collections.emptyList() : getChildren(group, false);
     }
 
     @Override
