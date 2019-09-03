@@ -51,6 +51,8 @@ fun VirtualFile.addScriptDependenciesNotificationPanel(
 
 private fun VirtualFile.withSelectedEditor(project: Project, f: FileEditor.(FileEditorManager) -> Unit) {
     ApplicationManager.getApplication().invokeLater {
+        if (project.isDisposed) return@invokeLater
+
         val fileEditorManager = FileEditorManager.getInstance(project)
         (fileEditorManager.getSelectedEditor(this))?.let {
             f(it, fileEditorManager)
