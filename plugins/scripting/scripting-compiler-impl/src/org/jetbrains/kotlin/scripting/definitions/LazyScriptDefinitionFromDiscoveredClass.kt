@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptEvaluationConfiguration
-import kotlin.script.experimental.api.fileExtension
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     baseHostConfiguration: ScriptingHostConfiguration,
@@ -43,7 +38,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
 
     private val configurations by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageReporter(
-            CompilerMessageSeverity.LOGGING,
+            ScriptDiagnostic.Severity.DEBUG,
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
@@ -61,11 +56,11 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
                 )
             compileCfg to evalCfg
         } catch (ex: ClassNotFoundException) {
-            messageReporter(CompilerMessageSeverity.ERROR, "Cannot find script definition class $className")
+            messageReporter(ScriptDiagnostic.Severity.ERROR, "Cannot find script definition class $className")
             InvalidScriptDefinition
         } catch (ex: Exception) {
             messageReporter(
-                CompilerMessageSeverity.ERROR,
+                ScriptDiagnostic.Severity.ERROR,
                 "Error processing script definition class $className: ${ex.message}\nclasspath:\n${classpath.joinToString("\n", "    ")}"
             )
             InvalidScriptDefinition

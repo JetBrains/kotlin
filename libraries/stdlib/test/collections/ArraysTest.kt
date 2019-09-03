@@ -1500,7 +1500,82 @@ class ArraysTest {
         assertFailsWith<IndexOutOfBoundsException> { arrayOf<String>().elementAt(0) }
         assertFailsWith<IndexOutOfBoundsException> { longArrayOf(0, 1, 2).elementAt(-1) }
     }
+
+    @Test
+    fun fill() {
+        fun <A, E> testFailures(array: A, fill: A.(E, Int, Int) -> Unit, element: E, arraySize: Int) {
+            assertFailsWith<IndexOutOfBoundsException> {
+                array.fill(element, -1, arraySize)
+            }
+            assertFailsWith<IndexOutOfBoundsException> {
+                array.fill(element, 0, arraySize + 1)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                array.fill(element, 1, 0)
+            }
+        }
+
+        testFailures(BooleanArray(5) { it % 2 == 0 }, BooleanArray::fill, true, 5)
+        testFailures(ByteArray(5) { it.toByte() }, ByteArray::fill, 0.toByte(), 5)
+        testFailures(CharArray(5) { it.toChar() }, CharArray::fill, 0.toChar(), 5)
+        testFailures(FloatArray(5) { it.toFloat() }, FloatArray::fill, 0.0f, 5)
+        testFailures(DoubleArray(5) { it.toDouble() }, DoubleArray::fill, 0.0, 5)
+        testFailures(ShortArray(5) { it.toShort() }, ShortArray::fill, 0.toShort(), 5)
+        testFailures(IntArray(5) { it }, IntArray::fill, 0, 5)
+        testFailures(LongArray(5) { it.toLong() }, LongArray::fill, 0L, 5)
+        testFailures(Array(5) { it.toString() }, Array<String>::fill, "0", 5)
+
+        fun <A, E> test(
+            array: IntArray,
+            fill: A.(E, Int, Int) -> Unit,
+            operations: List<OperationOnRange<Int, IntArray>>,
+            arrayTransform: IntArray.() -> A,
+            elementTransform: Int.() -> E,
+            contentEquals: A.(A) -> Boolean
+        ) {
+            for (o in operations) {
+                val result = array.arrayTransform()
+                result.fill(o.element.elementTransform(), o.fromIndex, o.toIndex)
+                assertTrue(o.expectedResult.arrayTransform().contentEquals(result))
+            }
+        }
+
+        val array = IntArray(5) { it }
+
+        val operations = listOf(
+            OperationOnRange(5, 1, 4, intArrayOf(0, 5, 5, 5, 4)),
+            OperationOnRange(1, 0, 5, intArrayOf(1, 1, 1, 1, 1)),
+            OperationOnRange(2, 0, 3, intArrayOf(2, 2, 2, 3, 4)),
+            OperationOnRange(3, 2, 5, intArrayOf(0, 1, 3, 3, 3))
+        )
+
+        test(array, BooleanArray::fill, operations, IntArray::toBooleanArray, { this % 2 == 0 }, BooleanArray::contentEquals)
+        test(array, ByteArray::fill, operations, IntArray::toByteArray, Int::toByte, ByteArray::contentEquals)
+        test(array, CharArray::fill, operations, IntArray::toCharArray, Int::toChar, CharArray::contentEquals)
+        test(array, FloatArray::fill, operations, IntArray::toFloatArray, Int::toFloat, FloatArray::contentEquals)
+        test(array, DoubleArray::fill, operations, IntArray::toDoubleArray, Int::toDouble, DoubleArray::contentEquals)
+        test(array, ShortArray::fill, operations, IntArray::toShortArray, Int::toShort, ShortArray::contentEquals)
+        test(array, IntArray::fill, operations, IntArray::copyOf, { this }, IntArray::contentEquals)
+        test(array, LongArray::fill, operations, IntArray::toLongArray, Int::toLong, LongArray::contentEquals)
+        test(array, Array<String>::fill, operations, IntArray::toStringArray, Int::toString, { contentEquals(it) })
+    }
+
+    private class OperationOnRange<E, R>(
+        val element: E,
+        val fromIndex: Int,
+        val toIndex: Int,
+        val expectedResult: R
+    )
 }
+
+private fun IntArray.toBooleanArray() = BooleanArray(size) { get(it) % 2 == 0 }
+private fun IntArray.toByteArray() = ByteArray(size) { get(it).toByte() }
+private fun IntArray.toCharArray() = CharArray(size) { get(it).toChar() }
+private fun IntArray.toFloatArray() = FloatArray(size) { get(it).toFloat() }
+private fun IntArray.toDoubleArray() = DoubleArray(size) { get(it).toDouble() }
+private fun IntArray.toShortArray() = ShortArray(size) { get(it).toShort() }
+private fun IntArray.toLongArray() = LongArray(size) { get(it).toLong() }
+private fun IntArray.toStringArray() = Array(size) { get(it).toString() }
 
 
 fun <K : Comparable<K>> Array<out Sortable<K>>.assertStableSorted(descending: Boolean = false) =

@@ -46,12 +46,14 @@ class MockApplicationCreationTracingInstrumenter(private val debugInfo: Boolean)
             loader.getResource("org/jetbrains/kotlin/testFramework/MockComponentManagerCreationTracer.class") != null
 
     override fun transform(
-            loader: ClassLoader,
-            className: String,
+            loader: ClassLoader?,
+            className: String?,
             classBeingRedefined: Class<*>?,
-            protectionDomain: ProtectionDomain,
+            protectionDomain: ProtectionDomain?,
             classfileBuffer: ByteArray
     ): ByteArray? {
+        if (className == null || loader == null) return null
+
         if (loader::class.java.name == "org.jetbrains.kotlin.preloading.MemoryBasedClassLoader") return null
 
         if (className == "com/intellij/mock/MockComponentManager" && isMockComponentManagerCreationTracerCanBeLoaded(loader)) {

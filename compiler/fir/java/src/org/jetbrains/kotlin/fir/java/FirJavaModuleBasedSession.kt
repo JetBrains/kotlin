@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
+import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -33,24 +34,23 @@ class FirJavaModuleBasedSession(
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
-
-        _firSymbolProvider = FirCompositeSymbolProvider(
-            listOf(
-                service<FirProvider>(),
-                JavaSymbolProvider(this, sessionProvider.project, scope),
-                dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
-            )
-        )
+        val firProvider = FirProviderImpl(this)
+        registerComponent(FirProvider::class, firProvider)
 
         registerComponent(
             FirSymbolProvider::class,
-            _firSymbolProvider as FirSymbolProvider
+            FirCompositeSymbolProvider(
+                listOf(
+                    service<FirProvider>(),
+                    JavaSymbolProvider(this, sessionProvider.project, scope),
+                    dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
+                )
+            ) as FirSymbolProvider
         )
 
-        _correspondingSupertypesCache = FirCorrespondingSupertypesCache(this)
         registerComponent(
             FirCorrespondingSupertypesCache::class,
-            _correspondingSupertypesCache as FirCorrespondingSupertypesCache
+            FirCorrespondingSupertypesCache(this)
         )
     }
 }
@@ -68,7 +68,9 @@ class FirLibrarySession private constructor(
     init {
         sessionProvider.sessionCache[moduleInfo] = this
         val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
-        _firSymbolProvider =
+
+        registerComponent(
+            FirSymbolProvider::class,
             FirCompositeSymbolProvider(
                 listOf(
                     FirLibrarySymbolProviderImpl(this),
@@ -82,18 +84,13 @@ class FirLibrarySession private constructor(
                     javaSymbolProvider,
                     FirDependenciesSymbolProviderImpl(this)
                 )
-            )
-
-        registerComponent(
-            FirSymbolProvider::class,
-            _firSymbolProvider as FirSymbolProvider
+            ) as FirSymbolProvider
         )
         registerComponent(FirClassDeclaredMemberScopeProvider::class, FirClassDeclaredMemberScopeProvider())
 
-        _correspondingSupertypesCache = FirCorrespondingSupertypesCache(this)
         registerComponent(
             FirCorrespondingSupertypesCache::class,
-            _correspondingSupertypesCache as FirCorrespondingSupertypesCache
+            FirCorrespondingSupertypesCache(this)
         )
     }
 

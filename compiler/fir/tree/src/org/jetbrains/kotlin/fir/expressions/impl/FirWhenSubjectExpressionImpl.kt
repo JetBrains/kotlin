@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 
-class FirWhenSubjectExpressionImpl(
-    session: FirSession,
-    psi: PsiElement?,
-    override val whenSubject: FirWhenSubject
-) : FirWhenSubjectExpression(session, psi)
+class FirWhenSubjectExpressionImpl(psi: PsiElement?, override val whenSubject: FirWhenSubject) : FirWhenSubjectExpression(psi)

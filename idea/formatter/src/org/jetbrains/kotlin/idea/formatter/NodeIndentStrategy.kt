@@ -66,7 +66,7 @@ abstract class NodeIndentStrategy {
                 throw IllegalArgumentException("Empty token set is unexpected")
             }
 
-            fillTypes(within, types[0], Arrays.copyOfRange(types, 1, types.size))
+            fillTypes(within, types[0], types.copyOfRange(1, types.size))
             return this
         }
 

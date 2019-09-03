@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.scopes.processConstructors
-import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
-import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -25,7 +25,7 @@ class FirTopLevelDeclaredMemberScope(
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
     private val packageFqName = file.packageFqName
 
-    override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(packageFqName, name))
 
         if (processConstructors(
@@ -40,14 +40,14 @@ class FirTopLevelDeclaredMemberScope(
         }
         val symbols = provider.getTopLevelCallableSymbols(packageFqName, name)
         for (symbol in symbols) {
-            if (symbol is ConeFunctionSymbol && !processor(symbol)) {
+            if (symbol is FirFunctionSymbol<*> && !processor(symbol)) {
                 return STOP
             }
         }
         return NEXT
     }
 
-    override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         val symbols = provider.getTopLevelCallableSymbols(packageFqName, name)
         for (symbol in symbols) {
             if (symbol is ConePropertySymbol && !processor(symbol)) {

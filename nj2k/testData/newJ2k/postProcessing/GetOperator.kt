@@ -9,7 +9,7 @@ internal class X {
 }
 
 internal class C {
-    fun foo(map: HashMap<String, String?>): String? {
+    fun foo(map: HashMap<String, String>): String? {
         return map["a"]
     }
 

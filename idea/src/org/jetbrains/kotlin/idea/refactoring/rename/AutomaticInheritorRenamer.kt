@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.searches.ClassInheritorsSearch
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
@@ -49,8 +49,10 @@ class AutomaticInheritorRenamer(klass: KtClass, newName: String): AutomaticRenam
 class AutomaticInheritorRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement) = element is KtClass
     override fun getOptionName() = RefactoringBundle.message("rename.inheritors")
-    override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameInheritors
-    override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameInheritors(enabled)
+    override fun isEnabled() = KotlinRefactoringSettings.instance.renameInheritors
+    override fun setEnabled(enabled: Boolean) {
+        KotlinRefactoringSettings.instance.renameInheritors = enabled
+    }
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>): AutomaticRenamer {
         return AutomaticInheritorRenamer(element as KtClass, newName)

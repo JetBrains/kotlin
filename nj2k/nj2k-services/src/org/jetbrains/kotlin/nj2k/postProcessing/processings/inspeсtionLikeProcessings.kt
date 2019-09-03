@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -57,8 +57,7 @@ class RemoveExplicitPropertyTypeProcessing : ApplicabilityBasedInspectionLikePro
         val withoutExpectedType =
             initializer.analyzeInContext(initializer.getResolutionScope()).getType(initializer) ?: return false
         val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false
-        return if (element.isVar) withoutExpectedType == descriptor.returnType
-        else withoutExpectedType.makeNotNullable() == descriptor.returnType?.makeNotNullable()
+        return withoutExpectedType == descriptor.returnType
     }
 
     override fun apply(element: KtProperty) {
@@ -100,6 +99,26 @@ class RemoveExplicitTypeArgumentsProcessing : ApplicabilityBasedInspectionLikePr
         element.delete()
     }
 }
+
+// the types arguments for Stream.collect calls cannot be explicitly specified in Kotlin
+// but we need them in nullability inference, so we remove it here
+class RemoveJavaStreamsCollectCallTypeArgumentsProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<KtCallExpression>(KtCallExpression::class) {
+    override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean {
+        if (element.typeArgumentList == null) return false
+        val resolved = element.calleeExpression?.mainReference?.resolve() as? PsiMethod ?: return false
+        return resolved.getKotlinFqName()?.asString() == COLLECT_FQ_NAME
+    }
+
+    override fun apply(element: KtCallExpression) {
+        element.typeArgumentList?.delete()
+    }
+
+    companion object {
+        private const val COLLECT_FQ_NAME = "java.util.stream.Stream.collect"
+    }
+}
+
 
 class RemoveRedundantOverrideVisibilityProcessing : InspectionLikeProcessing {
     override val writeActionNeeded = true
@@ -199,12 +218,12 @@ class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing :
     override val writeActionNeeded = true
 
     override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtSimpleNameExpression || element.mainReference.resolve() == null) return null
+        if (element !is KtSimpleNameExpression) return null
+        val anonymousObject = element.getParentOfType<KtClassOrObject>(true)?.takeIf { it.name == null } ?: return null
 
         val resolved = element.mainReference.resolve() ?: return null
         if (resolved.isAncestor(element, strict = true)) {
             if (resolved is KtVariableDeclaration && resolved.hasInitializer()) {
-                val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
                 if (resolved.initializer!!.getChildOfType<KtClassOrObject>() == anonymousObject) {
                     return { element.replaced(KtPsiFactory(element).createThisExpression()) }
                 }
@@ -317,11 +336,11 @@ class RemoveRedundantConstructorKeywordProcessing :
 
 class RemoveRedundantModalityModifierProcessing : ApplicabilityBasedInspectionLikeProcessing<KtDeclaration>(KtDeclaration::class) {
     override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?): Boolean {
-        val modalityModifier = element.modalityModifier() ?: return false
-        val modalityModifierType = modalityModifier.node.elementType
-        val implicitModality = element.implicitModality()
-
-        return modalityModifierType == implicitModality
+        if (element.hasModifier(KtTokens.FINAL_KEYWORD)) {
+            return !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+        }
+        val modalityModifierType = element.modalityModifierType() ?: return false
+        return modalityModifierType == element.implicitModality()
     }
 
     override fun apply(element: KtDeclaration) {
@@ -331,16 +350,14 @@ class RemoveRedundantModalityModifierProcessing : ApplicabilityBasedInspectionLi
 
 
 class RemoveRedundantVisibilityModifierProcessing : ApplicabilityBasedInspectionLikeProcessing<KtDeclaration>(KtDeclaration::class) {
-    override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?): Boolean {
-        val visibilityModifier = element.visibilityModifier() ?: return false
-        val implicitVisibility = element.implicitVisibility()
-        return when {
-            visibilityModifier.node.elementType == implicitVisibility ->
-                true
-            element.hasModifier(KtTokens.INTERNAL_KEYWORD) && element.containingClassOrObject?.isLocal == true ->
-                true
-            else -> false
-        }
+    override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?) = when {
+        element.hasModifier(KtTokens.PUBLIC_KEYWORD) && element.hasModifier(KtTokens.OVERRIDE_KEYWORD) ->
+            false
+        element.hasModifier(KtTokens.INTERNAL_KEYWORD) && element.containingClassOrObject?.isLocal == true ->
+            true
+        element.visibilityModifierType() == element.implicitVisibility() ->
+            true
+        else -> false
     }
 
     override fun apply(element: KtDeclaration) {

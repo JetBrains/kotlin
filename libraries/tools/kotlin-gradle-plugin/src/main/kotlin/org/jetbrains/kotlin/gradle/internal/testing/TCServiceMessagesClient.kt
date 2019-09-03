@@ -39,9 +39,11 @@ internal open class TCServiceMessagesClient(
     inline fun root(operation: OperationIdentifier, actions: () -> Unit) {
         rootOperationId = operation
 
-        RootNode(operation).open {
-            actions()
-        }
+        val tsStart = System.currentTimeMillis()
+        val root = RootNode(operation)
+        open(tsStart, root)
+        actions()
+        ensureNodesClosed(root)
     }
 
     override fun parseException(e: ParseException, text: String) {
@@ -77,7 +79,13 @@ internal open class TCServiceMessagesClient(
     protected open fun getSuiteName(message: BaseTestSuiteMessage) = message.suiteName
 
     override fun regularText(text: String) {
-        val actualText = if (afterMessage && settings.ignoreLineEndingAfterMessage) text.removePrefix("\n") else text
+        val actualText = if (afterMessage && settings.ignoreLineEndingAfterMessage)
+            when {
+                text.startsWith("\r\n") -> text.removePrefix("\r\n")
+                else -> text.removePrefix("\n")
+            }
+        else text
+
         if (actualText.isNotEmpty()) {
             log.kotlinDebug { "TCSM stdout captured: $actualText" }
 
@@ -136,8 +144,8 @@ internal open class TCServiceMessagesClient(
             }
 
             if (settings.treatFailedTestOutputAsStacktrace) {
-                append(output)
-                output.setLength(0)
+                append(stackTraceOutput)
+                stackTraceOutput.setLength(0)
             }
         }
 
@@ -179,8 +187,9 @@ internal open class TCServiceMessagesClient(
         destination: TestOutputEvent.Destination,
         text: String
     ) {
+        allOutput.append(text)
         if (settings.treatFailedTestOutputAsStacktrace) {
-            output.append(text)
+            stackTraceOutput.append(text)
         } else {
             results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
         }
@@ -332,7 +341,7 @@ internal open class TCServiceMessagesClient(
             checkState(NodeState.created)
             reportingParent?.checkState(NodeState.started)
 
-            results.started(descriptor!!, TestStartEvent(ts, reportingParent?.descriptor?.id))
+            results.started(descriptor!!, TestStartEvent(ts, descriptor!!.parent?.id))
 
             state = NodeState.started
         }
@@ -445,7 +454,8 @@ internal open class TCServiceMessagesClient(
         localId: String,
         ignored: Boolean = false
     ) : Node(parent, localId) {
-        val output by lazy { StringBuilder() }
+        val stackTraceOutput by lazy { StringBuilder() }
+        val allOutput by lazy { StringBuilder() }
 
         private val parentDescriptor = (this@TestNode.parent as GroupNode).requireReportingNode()
 
@@ -460,6 +470,8 @@ internal open class TCServiceMessagesClient(
         }
 
         override fun markCompleted(ts: Long) {
+            stackTraceOutput.setLength(0)
+            allOutput.setLength(0)
             reportCompleted(ts)
         }
 
@@ -476,12 +488,51 @@ internal open class TCServiceMessagesClient(
     private fun push(node: Node) = node.also { leaf = node }
     private fun pop() = leaf!!.also { leaf = it.parent }
 
-    fun closeAll() {
+    fun ensureNodesClosed(root: RootNode? = null, cause: Throwable? = null, throwError: Boolean = true): Error? {
         val ts = System.currentTimeMillis()
 
-        while (leaf != null) {
-            close(ts, leaf!!.localId)
+        when (leaf) {
+            null -> return null
+            root -> close(ts, leaf!!.localId)
+            else -> {
+                val output = StringBuilder()
+                var currentTest: TestNode? = null
+
+                while (leaf != null) {
+                    val currentLeaf = leaf!!
+
+                    if (currentLeaf is TestNode) {
+                        currentTest = currentLeaf
+                        output.append(currentLeaf.allOutput)
+                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null))
+                    }
+
+                    close(ts, currentLeaf.localId)
+                }
+
+                @Suppress("ThrowableNotThrown")
+                val error = Error(
+                    buildString {
+                        append("Test running process exited unexpectedly.\n")
+                        if (currentTest != null) {
+                            append("Current test: ${currentTest.cleanName}\n")
+                        }
+                        if (output.toString().isNotBlank()) {
+                            append("Process output:\n $output")
+                        }
+                    },
+                    cause
+                )
+
+                if (throwError) {
+                    throw error
+                } else {
+                    return error
+                }
+            }
         }
+
+        return null
     }
 
     private fun requireLeaf() = leaf ?: error("test out of group")

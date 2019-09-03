@@ -8,21 +8,14 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.*
 
 internal val removeDeclarationsThatWouldBeInlined = makeIrFilePhase(
     ::RemoveDeclarationsThatWouldBeInlinedLowering,
@@ -30,26 +23,22 @@ internal val removeDeclarationsThatWouldBeInlined = makeIrFilePhase(
     description = "Rename declaration that should be inlined"
 )
 
+// Removes all functions which are only used as arguments to inline functions. It's
+// important that this phase runs right before codegen, since we need the bodies of lambdas to
+// be lowered for inline codegen. Conversely, since this phase runs right before codegen we can
+// assume that all remaining function references are only used as arguments to inline functions -
+// otherwise they would have been lowered.
 private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val loweredLambdasToDelete = hashSetOf<IrDeclaration>()
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-                val owner = expression.symbol.owner
-                if (expression.symbol.owner.isInlineFunctionCall(context)) {
-                    owner.valueParameters.filter {
-                        !it.isNoinline && it.type.isFunction() && !it.type.isNullable()
-                    }.forEach {
-                        val valueArgument = expression.getValueArgument(it.index) as? IrContainerExpression ?: return@forEach
-                        if (isInlineIrExpression(valueArgument)) {
-                            val reference =
-                                valueArgument.statements.firstIsInstanceOrNull<IrFunctionReference>() ?: return@forEach
-                            loweredLambdasToDelete.add(reference.symbol.owner)
-                        }
-                    }
+        val loweredLambdasToDelete = mutableSetOf<IrFunction>()
 
-                }
-                return super.visitFunctionAccess(expression)
+        irFile.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+
+            override fun visitFunctionReference(expression: IrFunctionReference) {
+                assert(expression.origin == IrStatementOrigin.LAMBDA || expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
+                loweredLambdasToDelete.add(expression.symbol.owner)
+                expression.acceptChildrenVoid(this)
             }
         })
 

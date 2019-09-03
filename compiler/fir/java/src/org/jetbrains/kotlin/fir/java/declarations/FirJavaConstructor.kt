@@ -5,26 +5,30 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl.Companion.NAME
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 class FirJavaConstructor(
     session: FirSession,
-    override val symbol: FirFunctionSymbol,
+    psi: PsiElement?,
+    override val symbol: FirConstructorSymbol,
     visibility: Visibility,
+    override val isPrimary: Boolean,
     delegatedSelfTypeRef: FirTypeRef
-) : FirAbstractCallableMember(
+) : FirAbstractCallableMember<FirConstructor>(
     session,
-    psi = null,
+    psi,
     name = NAME,
     visibility = visibility,
     modality = Modality.FINAL,
@@ -37,6 +41,7 @@ class FirJavaConstructor(
 
     init {
         symbol.bind(this)
+        resolvePhase = FirResolvePhase.DECLARATIONS
     }
 
     override val delegatedConstructor: FirDelegatedConstructorCall?

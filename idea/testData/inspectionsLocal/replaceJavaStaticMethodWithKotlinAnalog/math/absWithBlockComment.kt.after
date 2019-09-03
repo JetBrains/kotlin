@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+import java.lang.Math.abs
+
+fun x() {
+    /*dd*/kotlin.math.abs(5/*s*/)
+}

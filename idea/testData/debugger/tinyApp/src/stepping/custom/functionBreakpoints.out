@@ -1,0 +1,49 @@
+FunctionBreakpoint created at functionBreakpoints.kt:4
+FunctionBreakpoint created at functionBreakpoints.kt:7
+FunctionBreakpoint created at functionBreakpoints.kt:10
+FunctionBreakpoint created at functionBreakpoints.kt:13
+FunctionBreakpoint created at functionBreakpoints.kt:16
+FunctionBreakpoint created at functionBreakpoints.kt:27
+FunctionBreakpoint created at functionBreakpoints.kt:30
+FunctionBreakpoint created at functionBreakpoints.kt:34
+FunctionBreakpoint created at functionBreakpoints.kt:36
+FunctionBreakpoint created at functionBreakpoints.kt:40
+FunctionBreakpoint created at functionBreakpoints.kt:42
+FunctionBreakpoint created at functionBreakpoints.kt:45
+FunctionBreakpoint created at functionBreakpoints.kt:49
+FunctionBreakpoint created at functionBreakpoints.kt:55
+FunctionBreakpoint created at functionBreakpoints.kt:58
+FunctionBreakpoint created at functionBreakpoints.kt:63
+FunctionBreakpoint created at functionBreakpoints.kt:66
+FunctionBreakpoint created at functionBreakpoints.kt:71
+FunctionBreakpoint created at functionBreakpoints.kt:75
+FunctionBreakpoint created at functionBreakpoints.kt:77
+Run Java
+Connected to the target VM
+functionBreakpoints.kt:4
+resuming functionBreakpoints.kt:7
+resuming functionBreakpoints.kt:10
+resuming functionBreakpoints.kt:13
+resuming functionBreakpoints.kt:16
+resuming functionBreakpoints.kt:27
+resuming functionBreakpoints.kt:30
+resuming functionBreakpoints.kt:36
+resuming functionBreakpoints.kt:34
+resuming functionBreakpoints.kt:34
+resuming functionBreakpoints.kt:40
+resuming functionBreakpoints.kt:42
+resuming functionBreakpoints.kt:46
+resuming functionBreakpoints.kt:50
+resuming functionBreakpoints.kt:46
+resuming functionBreakpoints.kt:51
+resuming functionBreakpoints.kt:55
+resuming functionBreakpoints.kt:60
+resuming functionBreakpoints.kt:66
+resuming functionBreakpoints.kt:63
+resuming functionBreakpoints.kt:71
+resuming functionBreakpoints.kt:75
+resuming functionBreakpoints.kt:77
+resuming functionBreakpoints.kt:60
+Disconnected from the target VM
+
+Process finished with exit code 0

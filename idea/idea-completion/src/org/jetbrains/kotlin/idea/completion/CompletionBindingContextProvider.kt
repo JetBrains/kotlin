@@ -104,8 +104,6 @@ class CompletionBindingContextProvider(project: Project) {
     }
 
     private fun _getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext {
-        assert(!position.isPhysical) // position is in synthetic file
-
         val inStatement = position.findStatementInBlock()
         val block = inStatement?.parent as KtBlockExpression?
         val prevStatement = inStatement?.siblings(forward = false, withItself = false)?.firstIsInstanceOrNull<KtExpression>()

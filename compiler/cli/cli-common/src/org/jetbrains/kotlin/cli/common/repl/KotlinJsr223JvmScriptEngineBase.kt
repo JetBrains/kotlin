@@ -53,18 +53,15 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
                         createState()
                     }) as IReplStageState<*>
 
+    open fun getInvokeWrapper(context: ScriptContext): InvokeWrapper? = null
+
     open fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = null
 
     open fun compileAndEval(script: String, context: ScriptContext): Any? {
         val codeLine = nextCodeLine(context, script)
         val state = getCurrentState(context)
-        val result = replEvaluator.compileAndEval(state, codeLine, scriptArgs = overrideScriptArgs(context))
-        return when (result) {
-            is ReplEvalResult.ValueResult -> result.value
-            is ReplEvalResult.UnitResult -> null
-            is ReplEvalResult.Error -> throw ScriptException(result.message)
-            is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
-            is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
+        return asJsr223EvalResult {
+            replEvaluator.compileAndEval(state, codeLine, overrideScriptArgs(context), getInvokeWrapper(context))
         }
     }
 
@@ -83,17 +80,29 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
 
     open fun eval(compiledScript: CompiledKotlinScript, context: ScriptContext): Any? {
         val state = getCurrentState(context)
-        val result = try {
-            replEvaluator.eval(state, compiledScript.compiledData, scriptArgs = overrideScriptArgs(context))
+        return asJsr223EvalResult {
+            replEvaluator.eval(state, compiledScript.compiledData, overrideScriptArgs(context), getInvokeWrapper(context))
         }
-        catch (e: Exception) {
+    }
+
+    private fun asJsr223EvalResult(body: () -> ReplEvalResult): Any? {
+        val result = try {
+            body()
+        } catch (e: Exception) {
             throw ScriptException(e)
         }
 
         return when (result) {
             is ReplEvalResult.ValueResult -> result.value
             is ReplEvalResult.UnitResult -> null
-            is ReplEvalResult.Error -> throw ScriptException(result.message)
+            is ReplEvalResult.Error ->
+                when {
+                    result is ReplEvalResult.Error.Runtime && result.cause != null ->
+                        throw ScriptException(result.cause)
+                    result is ReplEvalResult.Error.CompileTime && result.location != null ->
+                        throw ScriptException(result.message, result.location.path, result.location.line, result.location.column)
+                    else -> throw ScriptException(result.message)
+                }
             is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
             is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
         }

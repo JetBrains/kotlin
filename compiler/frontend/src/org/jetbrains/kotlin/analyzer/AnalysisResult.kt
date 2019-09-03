@@ -67,10 +67,11 @@ open class AnalysisResult protected constructor(
         val exception: Throwable
     ) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
 
-    class RetryWithAdditionalJavaRoots(
+    class RetryWithAdditionalRoots(
         bindingContext: BindingContext,
         moduleDescriptor: ModuleDescriptor,
         val additionalJavaRoots: List<File>,
+        val additionalKotlinRoots: List<File>,
         val addToEnvironment: Boolean = true
     ) : AnalysisResult(bindingContext, moduleDescriptor)
 

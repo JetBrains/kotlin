@@ -188,10 +188,8 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
-        LABEL (L2)
-        LINENUMBER (13)
           RETURN
-        LABEL (L3)
+        LABEL (L2)
     }
 
     public void serialize(kotlinx.serialization.Encoder encoder, java.lang.Object obj) {
@@ -493,10 +491,8 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
-        LABEL (L7)
-        LINENUMBER (10)
           RETURN
-        LABEL (L8)
+        LABEL (L7)
     }
 
     public void serialize(kotlinx.serialization.Encoder encoder, java.lang.Object obj) {
@@ -625,6 +621,7 @@ public final class OptionalUser : java/lang/Object {
         LABEL (L0)
           ALOAD (0)
           ACONST_NULL
+          CHECKCAST
           ICONST_1
           ACONST_NULL
           INVOKESPECIAL (OptionalUser, <init>, (LUser;ILkotlin/jvm/internal/DefaultConstructorMarker;)V)
@@ -840,10 +837,8 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, endStructure, (Lkotlinx/serialization/SerialDescriptor;)V)
-        LABEL (L2)
-        LINENUMBER (7)
           RETURN
-        LABEL (L3)
+        LABEL (L2)
     }
 
     public void serialize(kotlinx.serialization.Encoder encoder, java.lang.Object obj) {

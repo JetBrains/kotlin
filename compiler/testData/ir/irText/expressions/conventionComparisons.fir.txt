@@ -1,59 +1,63 @@
 FILE fqName:<root> fileName:/conventionComparisons.kt
   CLASS INTERFACE name:IA modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IA 
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IA
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IB modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IB 
-    FUN name:compareTo visibility:public modality:ABSTRACT <> ($this:<root>.IB, other:<root>.IA) returnType:kotlin.Int 
-      $this: VALUE_PARAMETER name:<this> type:<root>.IB 
-      VALUE_PARAMETER name:other index:0 type:<root>.IA 
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IB
+    FUN name:compareTo visibility:public modality:ABSTRACT <> ($this:<root>.IB, $receiver:<root>.IA, other:<root>.IA) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.IB
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.IA
+      VALUE_PARAMETER name:other index:0 type:<root>.IA
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test1 visibility:public modality:FINAL <> (a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a1 index:0 type:<root>.IA 
-    VALUE_PARAMETER name:a2 index:1 type:<root>.IA 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test1 visibility:public modality:FINAL <> ($receiver:<root>.IB, a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.IB
+    VALUE_PARAMETER name:a1 index:0 type:<root>.IA
+    VALUE_PARAMETER name:a2 index:1 type:<root>.IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
-  FUN name:test2 visibility:public modality:FINAL <> (a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a1 index:0 type:<root>.IA 
-    VALUE_PARAMETER name:a2 index:1 type:<root>.IA 
+  FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.IB, a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.IB
+    VALUE_PARAMETER name:a1 index:0 type:<root>.IA
+    VALUE_PARAMETER name:a2 index:1 type:<root>.IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
-  FUN name:test3 visibility:public modality:FINAL <> (a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a1 index:0 type:<root>.IA 
-    VALUE_PARAMETER name:a2 index:1 type:<root>.IA 
+  FUN name:test3 visibility:public modality:FINAL <> ($receiver:<root>.IB, a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.IB
+    VALUE_PARAMETER name:a1 index:0 type:<root>.IA
+    VALUE_PARAMETER name:a2 index:1 type:<root>.IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
-  FUN name:test4 visibility:public modality:FINAL <> (a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a1 index:0 type:<root>.IA 
-    VALUE_PARAMETER name:a2 index:1 type:<root>.IA 
+  FUN name:test4 visibility:public modality:FINAL <> ($receiver:<root>.IB, a1:<root>.IA, a2:<root>.IA) returnType:kotlin.Boolean
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.IB
+    VALUE_PARAMETER name:a1 index:0 type:<root>.IA
+    VALUE_PARAMETER name:a2 index:1 type:<root>.IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a1: <root>.IA, a2: <root>.IA): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: /IA' type=kotlin.Boolean
-

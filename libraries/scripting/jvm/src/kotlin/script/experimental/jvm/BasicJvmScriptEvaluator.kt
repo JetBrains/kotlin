@@ -5,6 +5,7 @@
 
 package kotlin.script.experimental.jvm
 
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.impl.getConfigurationWithClassloader
@@ -30,26 +31,22 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                 }.onSuccess { importedScriptsEvalResults ->
 
                     val refinedEvalConfiguration =
-                        configuration[ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate]
-                            ?.handler?.invoke(
-                            ScriptEvaluationConfigurationRefinementContext(
-                                compiledScript,
-                                configuration
-                            )
-                        )
-                            ?.onFailure {
-                                return@invoke ResultWithDiagnostics.Failure(it.reports)
-                            }
-                            ?.valueOrNull()
-                            ?: configuration
+                        configuration.refineBeforeEvaluation(compiledScript).valueOr {
+                            return@invoke ResultWithDiagnostics.Failure(it.reports)
+                        }
 
-                    val instance =
-                        scriptClass.evalWithConfigAndOtherScriptsResults(refinedEvalConfiguration, importedScriptsEvalResults)
+                    val resultValue = try {
+                        val instance =
+                            scriptClass.evalWithConfigAndOtherScriptsResults(refinedEvalConfiguration, importedScriptsEvalResults)
 
-                    val resultValue = compiledScript.resultField?.let { (resultFieldName, resultType) ->
-                        val resultField = scriptClass.java.getDeclaredField(resultFieldName).apply { isAccessible = true }
-                        ResultValue.Value(resultFieldName, resultField.get(instance), resultType.typeName, instance)
-                    } ?: ResultValue.Value("", instance, "", instance)
+                        compiledScript.resultField?.let { (resultFieldName, resultType) ->
+                            val resultField = scriptClass.java.getDeclaredField(resultFieldName).apply { isAccessible = true }
+                            ResultValue.Value(resultFieldName, resultField.get(instance), resultType.typeName, scriptClass, instance)
+                        } ?: ResultValue.Unit(scriptClass, instance)
+
+                    } catch (e: InvocationTargetException) {
+                        ResultValue.Error(e.targetException ?: e, e, scriptClass)
+                    }
 
                     EvaluationResult(resultValue, refinedEvalConfiguration).let {
                         sharedScripts?.put(scriptClass, it)
@@ -59,10 +56,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         }
     } catch (e: Throwable) {
         ResultWithDiagnostics.Failure(
-            e.asDiagnostics(
-                "Error evaluating script",
-                path = compiledScript.sourceLocationId
-            )
+            e.asDiagnostics(path = compiledScript.sourceLocationId)
         )
     }
 
@@ -89,13 +83,12 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         }
 
         importedScriptsEvalResults.forEach {
-            args.add((it.returnValue as ResultValue.Value).scriptInstance)
+            args.add(it.returnValue.scriptInstance)
         }
 
         val ctor = java.constructors.single()
-        val instance = ctor.newInstance(*args.toArray())
 
-        return instance
+        return ctor.newInstance(*args.toArray())
     }
 }
 

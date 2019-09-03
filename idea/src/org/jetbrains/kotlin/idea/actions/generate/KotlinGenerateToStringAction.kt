@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 private fun ClassDescriptor.findDeclaredToString(checkSupers: Boolean): FunctionDescriptor? {
@@ -118,7 +119,10 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
         protected fun renderVariableValue(variableDescriptor: VariableDescriptor, ref: String): String {
             val type = variableDescriptor.type
             return when {
-                KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) -> "\${java.util.Arrays.toString($ref)}"
+                KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) -> {
+                    val dot = if (type.isNullable()) "?." else "."
+                    "\${$ref${dot}contentToString()}"
+                }
                 KotlinBuiltIns.isString(type) -> "'$$ref'"
                 else -> "$$ref"
             }

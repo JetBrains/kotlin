@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internals
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.w3c.dom.Document
 
@@ -16,3 +17,9 @@ const val MULTIPLATFORM_PROJECT_METADATA_FILE_NAME =
 
 const val GRADLE_NO_METADATA_WARNING =
     org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.GRADLE_NO_METADATA_WARNING
+
+const val DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME =
+    DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME
+
+const val DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX: String =
+    DisabledNativeTargetsReporter.WARNING_PREFIX

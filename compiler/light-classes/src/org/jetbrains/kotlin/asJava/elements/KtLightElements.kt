@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
 interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiElement {
@@ -47,6 +48,14 @@ interface KtLightMember<out D : PsiMember> : PsiMember, KtLightDeclaration<KtDec
 }
 
 interface KtLightField : PsiField, KtLightMember<PsiField>, PsiVariableEx
+
+interface KtLightParameter : PsiParameter, KtLightDeclaration<KtParameter, PsiParameter> {
+    val method: KtLightMethod
+}
+
+interface KtLightFieldForSourceDeclarationSupport : PsiField {
+    val kotlinOrigin: KtDeclaration?
+}
 
 interface KtLightMethod : PsiAnnotationMethod, KtLightMember<PsiMethod> {
     val isDelegated: Boolean

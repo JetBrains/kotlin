@@ -3,7 +3,7 @@ internal open class A {
 }
 
 internal open class B : A() {
-    override fun foo() {}
+    public override fun foo() {}
 }
 
 internal class C : B() {

@@ -542,6 +542,11 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             runTest("compiler/testData/writeSignature/inlineClasses/genericInlineClassWithNotNullTypeParameter.kt");
         }
 
+        @TestMetadata("genericMethodInsideClass.kt")
+        public void testGenericMethodInsideClass() throws Exception {
+            runTest("compiler/testData/writeSignature/inlineClasses/genericMethodInsideClass.kt");
+        }
+
         @TestMetadata("inlineClassAsGenericArgument.kt")
         public void testInlineClassAsGenericArgument() throws Exception {
             runTest("compiler/testData/writeSignature/inlineClasses/inlineClassAsGenericArgument.kt");

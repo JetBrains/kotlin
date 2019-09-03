@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 class B<M>
 
 interface A<T, Y : B<T>> {

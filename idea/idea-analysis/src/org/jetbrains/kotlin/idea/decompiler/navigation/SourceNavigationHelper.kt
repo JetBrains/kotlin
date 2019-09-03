@@ -269,8 +269,8 @@ object SourceNavigationHelper {
         if (DumbService.isDumb(from.project)) return from
 
         when (navigationKind) {
-            SourceNavigationHelper.NavigationKind.CLASS_FILES_TO_SOURCES -> if (!from.containingKtFile.isCompiled) return from
-            SourceNavigationHelper.NavigationKind.SOURCES_TO_CLASS_FILES -> {
+            NavigationKind.CLASS_FILES_TO_SOURCES -> if (!from.containingKtFile.isCompiled) return from
+            NavigationKind.SOURCES_TO_CLASS_FILES -> {
                 val file = from.containingFile
                 if (file is KtFile && file.isCompiled) return from
                 if (!ProjectRootsUtil.isInContent(

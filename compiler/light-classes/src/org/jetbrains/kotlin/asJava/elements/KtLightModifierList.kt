@@ -1,33 +1,15 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightElementWithNullabilityAnnotation
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightNullabilityAnnotation
-import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.toLightAnnotation
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -67,16 +49,29 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 
     override fun toString() = "Light modifier list of $owner"
 
+    protected open fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> {
+
+        val annotations = parent.clsDelegate.modifierList?.annotations
+
+        if (annotations.isNullOrEmpty()) return emptyList()
+
+        return annotations.map { KtLightNonSourceAnnotation(this, it) }
+    }
+
     private fun computeAnnotations(): List<KtLightAbstractAnnotation> {
-        val annotationsForEntries =
-            owner.givenAnnotations ?: lightAnnotationsForEntries(this)
+        val annotationsForEntries = owner.givenAnnotations ?: lightAnnotationsForEntries(this)
         val modifierListOwner = parent
         if (modifierListOwner is KtLightClassForSourceDeclaration && modifierListOwner.isAnnotationType) {
-            val sourceAnnotationNames = annotationsForEntries.mapTo(mutableSetOf()) { it.qualifiedName }
-            val specialAnnotationsOnAnnotationClass = modifierListOwner.clsDelegate.modifierList?.annotations.orEmpty().filter {
-                it.qualifiedName !in sourceAnnotationNames
-            }.map { KtLightNonSourceAnnotation(this, it) }
-            return annotationsForEntries + specialAnnotationsOnAnnotationClass
+
+            val nonSourceAnnotations = nonSourceAnnotationsForAnnotationType(annotationsForEntries)
+
+            val filteredNonSourceAnnotations = nonSourceAnnotations.filter { nonSourceAnnotation ->
+                annotationsForEntries.all { sourceAnnotation ->
+                    nonSourceAnnotation.qualifiedName != sourceAnnotation.qualifiedName
+                }
+            }
+
+            return annotationsForEntries + filteredNonSourceAnnotations
         }
         if ((modifierListOwner is KtLightMember<*> && modifierListOwner !is KtLightFieldImpl.KtLightEnumConstant)
             || modifierListOwner is LightParameter
@@ -90,19 +85,22 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
         }
         return annotationsForEntries
     }
-
 }
 
 open class KtUltraLightSimpleModifierList(
-    owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>, private val modifiers: Set<String>
-) : KtUltraLightModifierList<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
+    owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>,
+    private val modifiers: Set<String>,
+    private val support: KtUltraLightSupport
+) : KtUltraLightModifierList<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner, support) {
     override fun hasModifierProperty(name: String) = name in modifiers
 
-    override fun copy() = KtUltraLightSimpleModifierList(owner, modifiers)
+    override fun copy() = KtUltraLightSimpleModifierList(owner, modifiers, support)
 }
 
-abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner: T) :
-    KtLightModifierList<T>(owner) {
+abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
+    owner: T,
+    private val support: KtUltraLightSupport
+) : KtLightModifierList<T>(owner) {
 
     override val clsDelegate: PsiModifierList
         get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
@@ -114,6 +112,24 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
     override fun checkSetModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
 
     override fun addAnnotation(qualifiedName: String): PsiAnnotation = throwInvalidOperation()
+
+    override fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> {
+
+        if (sourceAnnotations.isEmpty()) return listOf(createRetentionRuntimeAnnotation(support, this))
+
+        return mutableListOf<KtLightAbstractAnnotation>().also { result ->
+
+            sourceAnnotations.mapNotNullTo(result) { sourceAnnotation ->
+                sourceAnnotation.tryConvertAsTarget(support)
+                    ?: sourceAnnotation.tryConvertAsRetention(support)
+                    ?: sourceAnnotation.tryConvertAsMustBeDocumented(support)
+            }
+
+            if (!result.any { it.qualifiedName == "java.lang.annotation.Retention" }) {
+                result.add(createRetentionRuntimeAnnotation(support, this))
+            }
+        }
+    }
 }
 
 open class KtLightSimpleModifierList(
@@ -168,7 +184,10 @@ fun isFromSources(lightElement: KtLightElement<*, *>): Boolean {
     return true
 }
 
-private fun getAnnotationDescriptors(declaration: KtAnnotated, annotatedLightElement: KtLightElement<*, *>): List<AnnotationDescriptor> {
+private fun getAnnotationDescriptors(
+    declaration: KtAnnotated,
+    annotatedLightElement: KtLightElement<*, *>
+): List<AnnotationDescriptor> {
     val context = LightClassGenerationSupport.getInstance(declaration.project).analyze(declaration)
 
     val descriptor = if (declaration is KtParameter && declaration.isPropertyParameter()) {
@@ -215,4 +234,3 @@ private fun hasAnnotationsInSource(declaration: KtAnnotated): Boolean {
 
     return false
 }
-

@@ -2,7 +2,7 @@ import java.util.HashMap
 
 internal class A {
     fun foo() {
-        val map1: Map<String, Int> = getMap1()
+        val map1 = getMap1<String, Int>()
         val map2 = getMap2("a", 1)
     }
 
@@ -11,7 +11,7 @@ internal class A {
     }
 
     fun <K, V> getMap2(k: K, v: V): Map<K, V> {
-        val map: HashMap<K, V> = HashMap()
+        val map = HashMap<K, V>()
         map[k] = v
         return map
     }

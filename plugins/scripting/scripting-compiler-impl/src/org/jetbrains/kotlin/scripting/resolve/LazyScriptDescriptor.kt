@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassMemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
@@ -90,14 +91,23 @@ class LazyScriptDescriptor(
     }
 
     fun resultFieldName(): String? {
-        val scriptPriority = scriptInfo.script.getUserData(ScriptPriorities.PRIORITY_KEY)
-        if (scriptPriority != null) {
-            return "res$scriptPriority"
+        // TODO: implement robust REPL/script selection
+        val replSnippetId =
+            scriptInfo.script.getUserData(ScriptPriorities.PRIORITY_KEY)?.toString()
+                ?: run {
+                    val scriptName = name.asString()
+                    if (scriptName.startsWith("Line_"))
+                        scriptName.split("_")[1]
+                    else null
+                }
+        return if (replSnippetId != null) {
+            // assuming repl
+            scriptCompilationConfiguration()[ScriptCompilationConfiguration.repl.resultFieldPrefix]?.takeIf { it.isNotBlank() }?.let {
+                "$it$replSnippetId"
+            }
+        } else {
+            scriptCompilationConfiguration()[ScriptCompilationConfiguration.resultField]?.takeIf { it.isNotBlank() }
         }
-        val scriptName = name.asString()
-        return if (scriptName.startsWith("Line_")) {
-            "res${scriptName.split("_")[1]}"
-        } else "\$\$result"
     }
 
     private val sourceElement = scriptInfo.script.toSourceElement()
@@ -135,14 +145,19 @@ class LazyScriptDescriptor(
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
         visitor.visitScriptDescriptor(this, data)
 
-    override fun createMemberScope(c: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider): LazyScriptClassMemberScope =
-        LazyScriptClassMemberScope(
-            // Must be a ResolveSession for scripts
-            c as ResolveSession,
-            declarationProvider,
-            this,
-            c.trace
-        )
+    override fun createMemberScope(
+        c: LazyClassContext,
+        declarationProvider: ClassMemberDeclarationProvider
+    ): ScopesHolderForClass<LazyClassMemberScope> =
+        ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeChecker.kotlinTypeRefiner) {
+            LazyScriptClassMemberScope(
+                // Must be a ResolveSession for scripts
+                c as ResolveSession,
+                declarationProvider,
+                this,
+                c.trace
+            )
+        }
 
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 

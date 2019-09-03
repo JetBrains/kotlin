@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.impl.FirLoopJump
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirContinueExpression(
-    session: FirSession,
-    psi: PsiElement?
-) : FirLoopJump(session, psi) {
+abstract class FirContinueExpression(psi: PsiElement?) : FirLoopJump(psi) {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitContinueExpression(this, data)
 }

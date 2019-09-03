@@ -1,1 +1,1 @@
-list as List<*>?
+list as List<*>

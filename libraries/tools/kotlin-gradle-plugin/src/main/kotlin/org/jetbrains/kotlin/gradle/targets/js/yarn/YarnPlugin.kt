@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
 open class YarnPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -15,7 +15,7 @@ open class YarnPlugin : Plugin<Project> {
             "YarnPlugin can be applied only to root project"
         }
 
-        val nodeJs = NodeJsPlugin.apply(this).root
+        val nodeJs = NodeJsRootPlugin.apply(this)
 
         this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
         tasks.create(YarnSetupTask.NAME, YarnSetupTask::class.java) {

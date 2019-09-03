@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 
 private typealias SubstitutionMap = Map<String, Pair<KtTypeParameter, KtTypeProjection>>
 
@@ -145,7 +146,7 @@ class ErrorTypeCorrector(
             RETURN_TYPE -> TypeMappingMode.getOptimalModeForReturnType(kotlinType, false)
             METHOD_PARAMETER_TYPE -> TypeMappingMode.getOptimalModeForValueParameter(kotlinType)
             SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
-        }.updateArgumentModeFromAnnotations(kotlinType)
+        }.updateArgumentModeFromAnnotations(kotlinType, SimpleClassicTypeSystemContext)
 
         val typeParameters = (target as? ClassifierDescriptor)?.typeConstructor?.parameters
         return treeMaker.TypeApply(baseExpression, mapJListIndexed(arguments) { index, projection ->

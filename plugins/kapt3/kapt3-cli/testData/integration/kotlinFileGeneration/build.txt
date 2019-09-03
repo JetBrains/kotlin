@@ -1,0 +1,32 @@
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/sources
+output/kotlin-sources
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# copy
+ap/META-INF/services/javax.annotation.processing.Processor
+output/ap/META-INF/services/javax.annotation.processing.Processor
+
+# kapt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-option:kapt.kotlin.generated=output/kotlin-sources
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# java
+-cp output/classes:output/ap:%KOTLIN_STDLIB%
+test.TestKt
+
+# after
+Generated class: generated.Test

@@ -1,6 +1,0 @@
-fun <T, E, S> foo (x: T?, y: List<E?>, z: S) {}
-
-fun bar() {
-    val lst: List<Int?> = listOf<Int?>(null)
-    foo<Int, Int, String>(null, lst, "nya")
-}

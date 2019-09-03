@@ -12,19 +12,13 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractProviderBasedScope
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -42,7 +36,7 @@ class JavaClassUseSiteScope(
         if (klass is FirJavaClass) klass.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
 
     //base symbol as key, overridden as value
-    internal val overriddenByBase = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol?>()
+    internal val overriddenByBase = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>?>()
 
     private val context: ConeTypeContext = session.typeContext
 
@@ -64,9 +58,8 @@ class JavaClassUseSiteScope(
             substitutor
         )
 
-    private fun isOverriddenFunCheck(overriddenInJava: FirFunction, base: FirFunction): Boolean {
-        overriddenInJava as FirCallableMemberDeclaration
-        val receiverTypeRef = (base as FirCallableMemberDeclaration).receiverTypeRef
+    private fun isOverriddenFunCheck(overriddenInJava: FirNamedFunction, base: FirNamedFunction): Boolean {
+        val receiverTypeRef = base.receiverTypeRef
         val baseParameterTypes = listOfNotNull(receiverTypeRef) + base.valueParameters.map { it.returnTypeRef }
 
         if (overriddenInJava.valueParameters.size != baseParameterTypes.size) return false
@@ -75,7 +68,7 @@ class JavaClassUseSiteScope(
         val types = base.typeParameters.map {
             ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
         }
-        val substitution = ConeSubstitutorByMap(overriddenInJava.typeParameters.map { it.symbol }.zip(types).toMap())
+        val substitution = substitutorByMap(overriddenInJava.typeParameters.map { it.symbol }.zip(types).toMap())
         if (!overriddenInJava.typeParameters.zip(base.typeParameters).all { (a, b) ->
                 a.bounds.size == b.bounds.size && a.bounds.zip(b.bounds).all { (aBound, bBound) ->
                     isEqualTypes(aBound, bBound, substitution)
@@ -111,7 +104,7 @@ class JavaClassUseSiteScope(
     }
 
     internal fun bindOverrides(name: Name) {
-        val overrideCandidates = mutableSetOf<ConeFunctionSymbol>()
+        val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
         declaredMemberScope.processFunctionsByName(name) {
             overrideCandidates += it
             NEXT
@@ -124,29 +117,31 @@ class JavaClassUseSiteScope(
         }
     }
 
-    private fun ConeCallableSymbol.getOverridden(candidates: Set<ConeCallableSymbol>): ConeCallableSymbol? {
+    private fun FirCallableSymbol<*>.getOverridden(candidates: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {
         if (overriddenByBase.containsKey(this)) return overriddenByBase[this]
 
         val overriding = when (this) {
-            is FirFunctionSymbol -> {
-                val self = firUnsafe<FirFunction>()
-                self as FirCallableMemberDeclaration
+            is FirNamedFunctionSymbol -> {
+                val self = this.fir
                 candidates.firstOrNull {
-                    val overridden = (it as? FirFunctionSymbol)?.fir as? FirFunction
+                    val overridden = (it as? FirNamedFunctionSymbol)?.fir
                     overridden != null && self.modality != Modality.FINAL && isOverriddenFunCheck(overridden, self)
                 }
             }
+            is FirConstructorSymbol, is FirFieldSymbol -> {
+                null
+            }
             is FirPropertySymbol -> {
-                val self = fir as? FirProperty ?: return null
+                val self = fir
                 candidates.firstOrNull {
                     when (it) {
-                        is FirFunctionSymbol -> {
-                            val overridden = it.fir as FirNamedFunction
+                        is FirNamedFunctionSymbol -> {
+                            val overridden = it.fir
                             self.modality != Modality.FINAL && isOverriddenPropertyCheck(overridden, self)
                         }
                         is FirPropertySymbol -> {
                             val overridden = it.fir
-                            overridden is FirProperty && self.modality != Modality.FINAL && isOverriddenPropertyCheck(overridden, self)
+                            self.modality != Modality.FINAL && isOverriddenPropertyCheck(overridden, self)
                         }
                         else -> false
                     }
@@ -154,9 +149,9 @@ class JavaClassUseSiteScope(
                 }
             }
             is FirAccessorSymbol -> {
-                val self = fir as FirNamedFunction
+                val self = fir
                 candidates.firstOrNull {
-                    val overridden = (it as? FirFunctionSymbol)?.fir as? FirNamedFunction
+                    val overridden = (it as? FirNamedFunctionSymbol)?.fir
                     overridden != null && self.modality != Modality.FINAL && isOverriddenFunCheck(overridden, self)
                 }
             }
@@ -167,8 +162,8 @@ class JavaClassUseSiteScope(
         return overriding
     }
 
-    override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
-        val overrideCandidates = mutableSetOf<ConeFunctionSymbol>()
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+        val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
         if (!declaredMemberScope.processFunctionsByName(name) {
                 overrideCandidates += it
                 processor(it)
@@ -190,9 +185,9 @@ class JavaClassUseSiteScope(
         propertyName: Name,
         accessorName: Name,
         isGetter: Boolean,
-        processor: (ConeVariableSymbol) -> ProcessorAction
+        processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
-        val overrideCandidates = mutableSetOf<ConeCallableSymbol>()
+        val overrideCandidates = mutableSetOf<FirCallableSymbol<*>>()
         val klass = symbol.fir
         if (!declaredMemberScope.processPropertiesByName(propertyName) { variableSymbol ->
                 overrideCandidates += variableSymbol
@@ -201,19 +196,17 @@ class JavaClassUseSiteScope(
         ) return STOP
         if (klass is FirJavaClass) {
             if (!declaredMemberScope.processFunctionsByName(accessorName) { functionSymbol ->
-                    if (functionSymbol is FirFunctionSymbol) {
+                    if (functionSymbol is FirNamedFunctionSymbol) {
                         val fir = functionSymbol.fir
-                        if (fir is FirNamedFunction) {
-                            if (fir.isStatic) {
+                        if (fir.isStatic) {
+                            return@processFunctionsByName NEXT
+                        }
+                        when (isGetter) {
+                            true -> if (fir.valueParameters.isNotEmpty()) {
                                 return@processFunctionsByName NEXT
                             }
-                            when (isGetter) {
-                                true -> if (fir.valueParameters.isNotEmpty()) {
-                                    return@processFunctionsByName NEXT
-                                }
-                                false -> if (fir.valueParameters.size != 1) {
-                                    return@processFunctionsByName NEXT
-                                }
+                            false -> if (fir.valueParameters.size != 1) {
+                                return@processFunctionsByName NEXT
                             }
                         }
                     }
@@ -222,8 +215,8 @@ class JavaClassUseSiteScope(
                         accessorId = functionSymbol.callableId,
                         callableId = CallableId(functionSymbol.callableId.packageName, functionSymbol.callableId.className, propertyName)
                     )
-                    if (functionSymbol is FirBasedSymbol<*>) {
-                        (functionSymbol.fir as? FirCallableMemberDeclaration)?.let { callableMember -> accessorSymbol.bind(callableMember) }
+                    if (functionSymbol is FirNamedFunctionSymbol) {
+                        functionSymbol.fir.let { callableMember -> accessorSymbol.bind(callableMember) }
                     }
                     processor(accessorSymbol)
                 }
@@ -231,12 +224,12 @@ class JavaClassUseSiteScope(
         }
 
         return superTypesScope.processPropertiesByName(propertyName) {
-            val firCallableMember = (it as FirBasedSymbol<*>).fir as? FirCallableMemberDeclaration
+            val firCallableMember = it.fir as? FirCallableMemberDeclaration<*>
             if (firCallableMember?.isStatic == true) {
                 NEXT
             } else {
                 val overriddenBy = it.getOverridden(overrideCandidates)
-                if (overriddenBy == null && it is ConePropertySymbol) {
+                if (overriddenBy == null && it is FirVariableSymbol<*>) {
                     processor(it)
                 } else {
                     NEXT
@@ -245,7 +238,7 @@ class JavaClassUseSiteScope(
         }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         val getterName = Name.identifier(getterPrefix + name.asString().capitalize())
         return processAccessorFunctionsAndPropertiesByName(name, getterName, isGetter = true, processor = processor)
     }

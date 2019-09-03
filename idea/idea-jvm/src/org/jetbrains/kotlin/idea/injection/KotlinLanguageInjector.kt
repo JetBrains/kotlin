@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.injection
@@ -29,7 +18,6 @@ import com.intellij.patterns.PatternConditionPlus
 import com.intellij.patterns.PsiClassNamePatternCondition
 import com.intellij.patterns.ValuePatternCondition
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.CachedValueProvider
@@ -65,10 +53,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinLanguageInjector(
-        private val configuration: Configuration,
-        private val project: Project,
-        private val temporaryPlacesRegistry: TemporaryPlacesRegistry
+    private val project: Project
 ) : MultiHostInjector {
+    private val configuration get() = Configuration.getProjectInstance(project)
+
     companion object {
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
         private val ABSENT_KOTLIN_INJECTION = BaseInjection("ABSENT_KOTLIN_BASE_INJECTION")
@@ -81,7 +69,8 @@ class KotlinLanguageInjector(
     private data class KotlinCachedInjection(val modificationCount: Long, val baseInjection: BaseInjection)
 
     private var KtStringTemplateExpression.cachedInjectionWithModification: KotlinCachedInjection? by UserDataProperty(
-            Key.create<KotlinCachedInjection>("CACHED_INJECTION_WITH_MODIFICATION"))
+        Key.create<KotlinCachedInjection>("CACHED_INJECTION_WITH_MODIFICATION")
+    )
 
     override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
         val ktHost: KtStringTemplateExpression = context as? KtStringTemplateExpression ?: return
@@ -113,9 +102,9 @@ class KotlinLanguageInjector(
                 if (ApplicationManager.getApplication().isReadAccessAllowed && ProgressManager.getInstance().progressIndicator == null) {
                     // The action cannot be canceled by caller and by internal checkCanceled() calls.
                     // Force creating new indicator that is canceled on write action start, otherwise there might be lags in typing.
-                    runInReadActionWithWriteActionPriority(::computeAndCache) ?: kotlinCachedInjection?.baseInjection ?: ABSENT_KOTLIN_INJECTION
-                }
-                else {
+                    runInReadActionWithWriteActionPriority(::computeAndCache) ?: kotlinCachedInjection?.baseInjection
+                    ?: ABSENT_KOTLIN_INJECTION
+                } else {
                     computeAndCache()
                 }
             }
@@ -138,23 +127,23 @@ class KotlinLanguageInjector(
             InjectorUtils.putInjectedFileUserData(
                 ktHost,
                 language,
-                InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
+                com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
                 if (parts.isUnparsable) java.lang.Boolean.TRUE else null
             )
-        }
-        else {
+        } else {
             InjectorUtils.registerInjectionSimple(ktHost, baseInjection, support, registrar)
         }
     }
 
     @Suppress("FoldInitializerAndIfToElvis")
     private fun computeBaseInjection(
-            ktHost: KtStringTemplateExpression,
-            support: KotlinLanguageInjectionSupport,
-            registrar: MultiHostRegistrar): BaseInjection? {
+        ktHost: KtStringTemplateExpression,
+        support: KotlinLanguageInjectionSupport,
+        registrar: MultiHostRegistrar
+    ): BaseInjection? {
         val containingFile = ktHost.containingFile
 
-        val tempInjectedLanguage = temporaryPlacesRegistry.getLanguageFor(ktHost, containingFile)
+        val tempInjectedLanguage = TemporaryPlacesRegistry.getInstance(project).getLanguageFor(ktHost, containingFile)
         if (tempInjectedLanguage != null) {
             InjectorUtils.putInjectedFileUserData(registrar, LanguageInjectionSupport.TEMPORARY_INJECTED_LANGUAGE, tempInjectedLanguage)
             return BaseInjection(support.id).apply {
@@ -173,11 +162,11 @@ class KotlinLanguageInjector(
 
     private fun findInjectionInfo(place: KtElement, originalHost: Boolean = true): InjectionInfo? {
         return injectWithExplicitCodeInstruction(place)
-                ?: injectWithCall(place)
-                ?: injectReturnValue(place)
-                ?: injectInAnnotationCall(place)
-                ?: injectWithReceiver(place)
-                ?: injectWithVariableUsage(place, originalHost)
+            ?: injectWithCall(place)
+            ?: injectReturnValue(place)
+            ?: injectInAnnotationCall(place)
+            ?: injectWithReceiver(place)
+            ?: injectWithVariableUsage(place, originalHost)
     }
 
     private fun injectReturnValue(place: KtElement): InjectionInfo? {
@@ -288,8 +277,7 @@ class KotlinLanguageInjector(
                 if (injectionForJavaMethod != null) {
                     return injectionForJavaMethod
                 }
-            }
-            else if (resolvedTo is KtFunction) {
+            } else if (resolvedTo is KtFunction) {
                 val injectionForJavaMethod = injectionForKotlinCall(argument, resolvedTo, reference)
                 if (injectionForJavaMethod != null) {
                     return injectionForJavaMethod
@@ -336,9 +324,10 @@ class KotlinLanguageInjector(
         }
 
         val annotations = AnnotationUtilEx.getAnnotationFrom(
-                psiParameter,
-                configuration.advancedConfiguration.languageAnnotationPair,
-                true)
+            psiParameter,
+            configuration.advancedConfiguration.languageAnnotationPair,
+            true
+        )
 
         if (annotations.isNotEmpty()) {
             return processAnnotationInjectionInner(annotations)
@@ -400,25 +389,18 @@ class KotlinLanguageInjector(
         return InjectionInfo(id, prefix, suffix)
     }
 
-    private val injectableTargetClassShortNames = CachedValuesManager.getManager(project)
-            .createCachedValue({
-                                   CachedValueProvider.Result.create(HashSet<String>().apply {
-                                       for (injection in configuration.getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)) {
-                                           for (injectionPlace in injection.injectionPlaces) {
-                                               for (targetClassFQN in retrieveJavaPlaceTargetClassesFQNs(injectionPlace)) {
-                                                   add(StringUtilRt.getShortName(targetClassFQN))
-                                               }
-                                           }
-                                       }
-                                       for (injection in configuration.getInjections(KOTLIN_SUPPORT_ID)) {
-                                           for (injectionPlace in injection.injectionPlaces) {
-                                               for (targetClassFQN in retrieveKotlinPlaceTargetClassesFQNs(injectionPlace)) {
-                                                   add(StringUtilRt.getShortName(targetClassFQN))
-                                               }
-                                           }
-                                       }
-                                   }, configuration)
-                               }, false)
+    private fun createCachedValue(): CachedValueProvider.Result<HashSet<String>>? = with(configuration) {
+        CachedValueProvider.Result.create(
+            (getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID) + getInjections(KOTLIN_SUPPORT_ID))
+                .asSequence()
+                .flatMap { it.injectionPlaces.asSequence() }
+                .flatMap { retrieveJavaPlaceTargetClassesFQNs(it).asSequence() + retrieveKotlinPlaceTargetClassesFQNs(it).asSequence() }
+                .map { StringUtilRt.getShortName(it) }
+                .toHashSet()
+            , this)
+    }
+
+    private val injectableTargetClassShortNames = CachedValuesManager.getManager(project).createCachedValue(::createCachedValue, false)
 
     private fun fastCheckInjectionsExists(annotationEntry: KtCallElement): Boolean {
         val referencedName = getNameReference(annotationEntry.calleeExpression)?.getReferencedName() ?: return false
@@ -428,10 +410,12 @@ class KotlinLanguageInjector(
 
     private fun retrieveJavaPlaceTargetClassesFQNs(place: InjectionPlace): Collection<String> {
         val classCondition = place.elementPattern.condition.conditions.firstOrNull { it.debugMethodName == "definedInClass" }
-                                     as? PatternConditionPlus<*, *> ?: return emptyList()
-        val psiClassNamePatternCondition = classCondition.valuePattern.condition.conditions.
-                firstIsInstanceOrNull<PsiClassNamePatternCondition>() ?: return emptyList()
-        val valuePatternCondition = psiClassNamePatternCondition.namePattern.condition.conditions.firstIsInstanceOrNull<ValuePatternCondition<String>>() ?: return emptyList()
+                as? PatternConditionPlus<*, *> ?: return emptyList()
+        val psiClassNamePatternCondition =
+            classCondition.valuePattern.condition.conditions.firstIsInstanceOrNull<PsiClassNamePatternCondition>() ?: return emptyList()
+        val valuePatternCondition =
+            psiClassNamePatternCondition.namePattern.condition.conditions.firstIsInstanceOrNull<ValuePatternCondition<String>>()
+                ?: return emptyList()
         return valuePatternCondition.values
     }
 

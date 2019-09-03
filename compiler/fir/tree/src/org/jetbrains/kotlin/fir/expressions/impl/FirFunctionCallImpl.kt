@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirFunctionCallImpl(
-    session: FirSession,
     psi: PsiElement?,
     override var safe: Boolean = false
-) : FirFunctionCall(session, psi), FirModifiableQualifiedAccess<FirNamedReference> {
+) : FirFunctionCall(psi), FirModifiableQualifiedAccess<FirNamedReference> {
     override val typeArguments = mutableListOf<FirTypeProjection>()
 
     override lateinit var calleeReference: FirNamedReference

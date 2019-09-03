@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
-import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
@@ -71,7 +69,9 @@ fun <T : Any> mapType(
         )
     }
 
-    mapBuiltInType(kotlinType, factory, mode)?.let { builtInType ->
+    with(SimpleClassicTypeSystemContext) {
+        mapBuiltInType(kotlinType, factory, mode)
+    }?.let { builtInType ->
         val jvmType = factory.boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
         writeGenericType(kotlinType, jvmType, mode)
         return jvmType
@@ -139,7 +139,7 @@ fun <T : Any> mapType(
         descriptor is ClassDescriptor -> {
             // NB if inline class is recursive, it's ok to map it as wrapped
             if (descriptor.isInline && !mode.needInlineClassWrapping) {
-                val expandedType = computeExpandedTypeForInlineClass(kotlinType)
+                val expandedType = SimpleClassicTypeSystemContext.computeExpandedTypeForInlineClass(kotlinType) as KotlinType?
                 if (expandedType != null) {
                     return mapType(
                         expandedType,
@@ -205,97 +205,37 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
             && descriptor !is PropertyGetterDescriptor
 }
 
-private fun <T : Any> mapBuiltInType(
-    type: KotlinType,
+fun <T : Any> TypeSystemCommonBackendContext.mapBuiltInType(
+    type: KotlinTypeMarker,
     typeFactory: JvmTypeFactory<T>,
     mode: TypeMappingMode
 ): T? {
-    val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+    val constructor = type.typeConstructor()
+    if (!constructor.isClassTypeConstructor()) return null
 
-    val primitiveType = KotlinBuiltIns.getPrimitiveType(descriptor)
+    val primitiveType = constructor.getPrimitiveType()
     if (primitiveType != null) {
         val jvmType = typeFactory.createFromString(JvmPrimitiveType.get(primitiveType).desc)
-        val isNullableInJava = TypeUtils.isNullableType(type) || type.hasEnhancedNullability()
+        val isNullableInJava = type.isNullableType() || hasEnhancedNullability(type)
         return typeFactory.boxTypeIfNeeded(jvmType, isNullableInJava)
     }
 
-    val arrayElementType = KotlinBuiltIns.getPrimitiveArrayType(descriptor)
+    val arrayElementType = constructor.getPrimitiveArrayType()
     if (arrayElementType != null) {
         return typeFactory.createFromString("[" + JvmPrimitiveType.get(arrayElementType).desc)
     }
 
-    if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
-        val classId = JavaToKotlinClassMap.mapKotlinToJava(descriptor.fqNameUnsafe)
+    if (constructor.isUnderKotlinPackage()) {
+        val classId = constructor.getClassFqNameUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava)
         if (classId != null) {
-            if (!mode.kotlinCollectionsToJavaCollections &&
-                JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }
-            ) return null
+            if (!mode.kotlinCollectionsToJavaCollections && JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId })
+                return null
 
             return typeFactory.createObjectType(JvmClassName.byClassId(classId).internalName)
         }
     }
 
     return null
-}
-
-internal fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
-    if (!shouldUseUnderlyingType(inlineClassType)) return null
-
-    val descriptor = inlineClassType.unsubstitutedUnderlyingType()?.constructor?.declarationDescriptor ?: return null
-    return if (descriptor is TypeParameterDescriptor)
-        descriptor.representativeUpperBound
-    else
-        inlineClassType.substitutedUnderlyingType()
-}
-
-internal fun computeExpandedTypeForInlineClass(inlineClassType: KotlinType): KotlinType? =
-    computeExpandedTypeInner(inlineClassType, hashSetOf())
-
-internal fun computeExpandedTypeInner(kotlinType: KotlinType, visitedClassifiers: HashSet<ClassifierDescriptor>): KotlinType? {
-    val classifier = kotlinType.constructor.declarationDescriptor
-        ?: throw AssertionError("Type with a declaration expected: $kotlinType")
-    if (!visitedClassifiers.add(classifier)) return null
-
-    return when {
-        classifier is TypeParameterDescriptor ->
-            computeExpandedTypeInner(classifier.representativeUpperBound, visitedClassifiers)
-                ?.let { expandedUpperBound ->
-                    if (expandedUpperBound.isNullable() || !kotlinType.isMarkedNullable)
-                        expandedUpperBound
-                    else
-                        expandedUpperBound.makeNullable()
-                }
-
-        classifier is ClassDescriptor && classifier.isInline -> {
-            // kotlinType is the boxed inline class type
-
-            val underlyingType = kotlinType.substitutedUnderlyingType() ?: return null
-            val expandedUnderlyingType = computeExpandedTypeInner(underlyingType, visitedClassifiers) ?: return null
-            when {
-                !kotlinType.isNullable() -> expandedUnderlyingType
-
-                // Here inline class type is nullable. Apply nullability to the expandedUnderlyingType.
-
-                // Nullable types become inline class boxes
-                expandedUnderlyingType.isNullable() -> kotlinType
-
-                // Primitives become inline class boxes
-                KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType) -> kotlinType
-
-                // Non-null reference types become nullable reference types
-                else -> expandedUnderlyingType.makeNullable()
-            }
-        }
-
-        else -> kotlinType
-    }
-}
-
-internal fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
-    val underlyingType = inlineClassType.unsubstitutedUnderlyingType() ?: return false
-
-    return !inlineClassType.isMarkedNullable ||
-            !TypeUtils.isNullableType(underlyingType) && !KotlinBuiltIns.isPrimitiveType(underlyingType)
 }
 
 fun computeInternalName(

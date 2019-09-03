@@ -41,5 +41,6 @@ class CodeToInline(
     companion object {
         val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
         val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")
+        val SIDE_RECEIVER_USAGE_KEY: Key<Unit> = Key("SIDE_RECEIVER_USAGE")
     }
 }

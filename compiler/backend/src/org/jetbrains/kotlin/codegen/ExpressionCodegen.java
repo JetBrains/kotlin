@@ -92,6 +92,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
@@ -364,23 +365,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private void putStackValue(@Nullable KtElement expr, @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull StackValue value) {
         // for repl store the result of the last line into special field
-        if (value.type != Type.VOID_TYPE && state.getReplSpecific().getShouldGenerateScriptResultValue()) {
+        if (value.type != Type.VOID_TYPE) {
             ScriptContext context = getScriptContext();
-            if (expr == context.getLastStatement()) {
-                StackValue.Field resultValue = StackValue.field(context.getResultFieldInfo(), StackValue.LOCAL_0);
-                resultValue.store(value, v);
-                state.getReplSpecific().setHasResult(true);
-                return;
+            if (context != null && expr == context.getLastStatement()) {
+                FieldInfo resultFieldInfo = context.getResultFieldInfo();
+                if (resultFieldInfo != null) {
+                    StackValue.Field resultValue = StackValue.field(resultFieldInfo, StackValue.LOCAL_0);
+                    resultValue.store(value, v);
+                    state.getScriptSpecific().setResultType(resultFieldInfo.getFieldKotlinType());
+                    state.getScriptSpecific().setResultFieldName(resultFieldInfo.getFieldName());
+                    return;
+                }
             }
         }
 
         value.put(type, kotlinType, v);
     }
 
-    @NotNull
+    @Nullable
     private ScriptContext getScriptContext() {
         CodegenContext context = getContext();
-        while (!(context instanceof ScriptContext)) {
+        while (context != null && !(context instanceof ScriptContext)) {
             context = context.getParentContext();
         }
         return (ScriptContext) context;
@@ -1027,7 +1032,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public StackValue putClosureInstanceOnStack(
+    private StackValue putClosureInstanceOnStack(
             @NotNull ClosureCodegen closureCodegen,
             @Nullable StackValue functionReferenceReceiver
     ) {
@@ -2529,8 +2534,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (isSuspendNoInlineCall) {
-            addReturnsUnitMarkerIfNecessary(v, resolvedCall);
-
             addSuspendMarker(v, false);
             addInlineMarker(v, false);
         }
@@ -3805,6 +3808,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.goTo(end);
 
             v.mark(ifNull);
+            Integer leftLineNumber = CodegenUtil.getLineNumberForElement(left, false);
+            Integer rightLineNumber = CodegenUtil.getLineNumberForElement(expression.getRight(), false);
+            if (rightLineNumber != null && rightLineNumber.equals(leftLineNumber)) {
+                v.visitLineNumber(rightLineNumber, ifNull);
+            }
             v.pop();
             gen(expression.getRight(), exprType, exprKotlinType);
             v.mark(end);
@@ -4832,16 +4840,16 @@ The "returned" value of try expression with no finally is either the last expres
         putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(type, operationKind, v, null);
     }
 
-    public static void putReifiedOperationMarkerIfTypeIsReifiedParameter(
+    private static void putReifiedOperationMarkerIfTypeIsReifiedParameter(
             @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
-            @NotNull BaseExpressionCodegen codegen
+            @NotNull ExpressionCodegen codegen
     ) {
         putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(type, operationKind, v, codegen);
     }
 
     private static void putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(
             @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
-            @Nullable BaseExpressionCodegen codegen
+            @Nullable ExpressionCodegen codegen
     ) {
         Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
         if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.getFirst().isReified()) {
@@ -4855,7 +4863,11 @@ The "returned" value of try expression with no finally is either the last expres
 
     @Override
     public void propagateChildReifiedTypeParametersUsages(@NotNull ReifiedTypeParametersUsages usages) {
-        parentCodegen.getReifiedTypeParametersUsages().propagateChildUsagesWithinContext(usages, context);
+        parentCodegen.getReifiedTypeParametersUsages().propagateChildUsagesWithinContext(
+                usages,
+                () -> context.getContextDescriptor().getTypeParameters().stream().filter(TypeParameterDescriptor::isReified).map(
+                        it -> it.getName().asString()).collect(Collectors.toSet())
+        );
     }
 
     @Override
@@ -5072,8 +5084,7 @@ The "returned" value of try expression with no finally is either the last expres
         return v;
     }
 
-    @Override
-    public void consumeReifiedOperationMarker(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+    private void consumeReifiedOperationMarker(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
         if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
             parentCodegen.getReifiedTypeParametersUsages().
                     addUsedReifiedParameter(typeParameterDescriptor.getName().asString());

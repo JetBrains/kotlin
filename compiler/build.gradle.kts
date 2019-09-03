@@ -1,6 +1,5 @@
-import java.io.File
-import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import java.io.File
 
 plugins {
     kotlin("jvm")
@@ -51,7 +50,7 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
-    testCompile(project(":kotlin-scripting-compiler-impl"))
+    testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":kotlin-script-util"))
     testCompileOnly(projectRuntimeJar(":kotlin-daemon-client-new"))
     testCompileOnly(project(":kotlin-reflect-api"))
@@ -66,6 +65,10 @@ dependencies {
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
+
+    Platform[192].orHigher {
+        testRuntimeOnly(intellijPluginDep("java"))
+    }
 
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-daemon-client-new"))

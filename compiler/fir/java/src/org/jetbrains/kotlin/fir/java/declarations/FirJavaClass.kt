@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirJavaClass internal constructor(
     session: FirSession,
+    psi: PsiElement?,
     override val symbol: FirClassSymbol,
     name: Name,
     visibility: Visibility,
@@ -29,8 +32,8 @@ class FirJavaClass internal constructor(
     isStatic: Boolean,
     internal val javaTypeParameterStack: JavaTypeParameterStack
 ) : FirAbstractMemberDeclaration(
-    session, psi = null, name = name,
-    visibility = visibility, modality = modality,
+    session, psi, name,
+    visibility, modality,
     isExpect = false, isActual = false
 ), FirRegularClass, FirModifiableClass {
     init {
@@ -39,6 +42,7 @@ class FirJavaClass internal constructor(
         status.isCompanion = false
         status.isData = false
         status.isInline = false
+        resolvePhase = FirResolvePhase.DECLARATIONS
     }
 
     override val superTypeRefs = mutableListOf<FirTypeRef>()

@@ -82,14 +82,14 @@ private fun JavaType?.enhancePossiblyFlexible(
             )
 
             FirResolvedTypeRefImpl(
-                session, psi = null,
+                psi = null,
                 type = coneFlexibleOrSimpleType(session, lowerResult, upperResult),
                 annotations = annotations
             )
         }
         else -> {
             val enhanced = type.toNotNullConeKotlinType(session, javaTypeParameterStack)
-            FirResolvedTypeRefImpl(session, psi = null, type = enhanced, annotations = annotations)
+            FirResolvedTypeRefImpl(psi = null, type = enhanced, annotations = annotations)
         }
     }
 }
@@ -163,7 +163,7 @@ private fun JavaClassifierType.enhanceInflexibleType(
             arg.toConeProjection(
                 session,
                 javaTypeParameterStack,
-                ((originalTag as? FirBasedSymbol<*>)?.fir as? FirCallableMemberDeclaration)?.typeParameters?.getOrNull(localArgIndex)
+                ((originalTag as? FirBasedSymbol<*>)?.fir as? FirCallableMemberDeclaration<*>)?.typeParameters?.getOrNull(localArgIndex)
             )
         } else {
             val argEnhancedTypeRef = arg.enhancePossiblyFlexible(session, javaTypeParameterStack, annotations, qualifiers, globalArgIndex)
@@ -245,18 +245,18 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
         val name = Name.identifier(value)
         val firEnumEntry = firElement.declarations.filterIsInstance<FirEnumEntry>().find { it.name == name }
 
-        return if (firEnumEntry != null) FirQualifiedAccessExpressionImpl(session, null).apply {
+        return if (firEnumEntry != null) FirQualifiedAccessExpressionImpl(null).apply {
             calleeReference = FirSimpleNamedReference(
-                session, null, name // TODO: , firEnumEntry.symbol
+                null, name // TODO: , firEnumEntry.symbol
             )
         } else if (firElement is FirJavaClass) {
             val firStaticProperty = firElement.declarations.filterIsInstance<FirJavaField>().find {
                 it.isStatic && it.modality == Modality.FINAL && it.name == name
             }
             if (firStaticProperty != null) {
-                FirQualifiedAccessExpressionImpl(session, null).apply {
+                FirQualifiedAccessExpressionImpl(null).apply {
                     calleeReference = FirResolvedCallableReferenceImpl(
-                        session, null, name, firStaticProperty.symbol as ConeCallableSymbol
+                        null, name, firStaticProperty.symbol as ConeCallableSymbol
                     )
                 }
             } else null
@@ -269,15 +269,15 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
 
     val (number, radix) = extractRadix(value)
     return when (classId.relativeClassName.asString()) {
-        "Boolean" -> FirConstExpressionImpl(session, null, IrConstKind.Boolean, value.toBoolean())
-        "Char" -> FirConstExpressionImpl(session, null, IrConstKind.Char, value.singleOrNull() ?: return null)
-        "Byte" -> FirConstExpressionImpl(session, null, IrConstKind.Byte, number.toByteOrNull(radix) ?: return null)
-        "Short" -> FirConstExpressionImpl(session, null, IrConstKind.Short, number.toShortOrNull(radix) ?: return null)
-        "Int" -> FirConstExpressionImpl(session, null, IrConstKind.Int, number.toIntOrNull(radix) ?: return null)
-        "Long" -> FirConstExpressionImpl(session, null, IrConstKind.Long, number.toLongOrNull(radix) ?: return null)
-        "Float" -> FirConstExpressionImpl(session, null, IrConstKind.Float, value.toFloatOrNull() ?: return null)
-        "Double" -> FirConstExpressionImpl(session, null, IrConstKind.Double, value.toDoubleOrNull() ?: return null)
-        "String" -> FirConstExpressionImpl(session, null, IrConstKind.String, value)
+        "Boolean" -> FirConstExpressionImpl(null, IrConstKind.Boolean, value.toBoolean())
+        "Char" -> FirConstExpressionImpl(null, IrConstKind.Char, value.singleOrNull() ?: return null)
+        "Byte" -> FirConstExpressionImpl(null, IrConstKind.Byte, number.toByteOrNull(radix) ?: return null)
+        "Short" -> FirConstExpressionImpl(null, IrConstKind.Short, number.toShortOrNull(radix) ?: return null)
+        "Int" -> FirConstExpressionImpl(null, IrConstKind.Int, number.toIntOrNull(radix) ?: return null)
+        "Long" -> FirConstExpressionImpl(null, IrConstKind.Long, number.toLongOrNull(radix) ?: return null)
+        "Float" -> FirConstExpressionImpl(null, IrConstKind.Float, value.toFloatOrNull() ?: return null)
+        "Double" -> FirConstExpressionImpl(null, IrConstKind.Double, value.toDoubleOrNull() ?: return null)
+        "String" -> FirConstExpressionImpl(null, IrConstKind.String, value)
         else -> null
     }
 }

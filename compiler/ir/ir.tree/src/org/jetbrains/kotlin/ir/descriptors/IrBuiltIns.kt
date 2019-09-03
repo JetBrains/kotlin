@@ -130,27 +130,27 @@ class IrBuiltIns(
     val throwableType = builtIns.throwable.defaultType.toIrType()
     val throwableClass = builtIns.throwable.toIrSymbol()
 
-    private class IrTypeMapper(val type: IrType) {
+    private class BuiltInIrTypePair(val type: IrType) {
         val nType: IrType = with(type as IrSimpleType) {
             IrSimpleTypeImpl(classifier, true, arguments, annotations)
         }
     }
 
     private val primitiveTypesMapping = mapOf(
-        builtIns.any to IrTypeMapper(anyType),
-        builtIns.boolean to IrTypeMapper(booleanType),
-        builtIns.char to IrTypeMapper(charType),
-        builtIns.number to IrTypeMapper(numberType),
-        builtIns.byte to IrTypeMapper(byteType),
-        builtIns.short to IrTypeMapper(shortType),
-        builtIns.int to IrTypeMapper(intType),
-        builtIns.long to IrTypeMapper(longType),
-        builtIns.float to IrTypeMapper(floatType),
-        builtIns.double to IrTypeMapper(doubleType),
-        builtIns.nothing to IrTypeMapper(nothingType),
-        builtIns.unit to IrTypeMapper(unitType),
-        builtIns.string to IrTypeMapper(stringType),
-        builtIns.throwable to IrTypeMapper(throwableType)
+        builtIns.any to BuiltInIrTypePair(anyType),
+        builtIns.boolean to BuiltInIrTypePair(booleanType),
+        builtIns.char to BuiltInIrTypePair(charType),
+        builtIns.number to BuiltInIrTypePair(numberType),
+        builtIns.byte to BuiltInIrTypePair(byteType),
+        builtIns.short to BuiltInIrTypePair(shortType),
+        builtIns.int to BuiltInIrTypePair(intType),
+        builtIns.long to BuiltInIrTypePair(longType),
+        builtIns.float to BuiltInIrTypePair(floatType),
+        builtIns.double to BuiltInIrTypePair(doubleType),
+        builtIns.nothing to BuiltInIrTypePair(nothingType),
+        builtIns.unit to BuiltInIrTypePair(unitType),
+        builtIns.string to BuiltInIrTypePair(stringType),
+        builtIns.throwable to BuiltInIrTypePair(throwableType)
     )
 
     fun getPrimitiveTypeOrNullByDescriptor(descriptor: ClassifierDescriptor, isNullable: Boolean) =

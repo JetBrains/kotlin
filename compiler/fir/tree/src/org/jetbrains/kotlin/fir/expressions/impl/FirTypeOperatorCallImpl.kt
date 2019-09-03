@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.transformSingle
@@ -15,11 +14,10 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirTypeOperatorCallImpl(
-    session: FirSession,
     psi: PsiElement?,
     operation: FirOperation,
     override var conversionTypeRef: FirTypeRef
-) : FirTypeOperatorCall(session, psi, operation) {
+) : FirTypeOperatorCall(psi, operation) {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         conversionTypeRef = conversionTypeRef.transformSingle(transformer, data)
         return super.transformChildren(transformer, data)

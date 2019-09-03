@@ -17,12 +17,13 @@ class Identifier<T> {
         myHasDollar = hasDollar
         myNullable = isNullable
     }
+
 }
 
 object User {
     fun main() {
-        val i1: Identifier<*> = Identifier<String?>("name", false, true)
-        val i2: Identifier<*> = Identifier<String?>("name", false)
-        val i3: Identifier<*> = Identifier<String?>("name")
+        val i1: Identifier<*> = Identifier("name", false, true)
+        val i2: Identifier<*> = Identifier("name", false)
+        val i3: Identifier<*> = Identifier("name")
     }
 }

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -141,7 +140,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             )
             valueMap[constructor.constructedClass.thisReceiver!!.symbol] = thisVar
 
-            constructor.body?.contents?.forEach { statement ->
+            constructor.body?.statements?.forEach { statement ->
                 +statement
                     .transform(object : IrElementTransformerVoid() {
                         // Don't recurse under nested class declarations
@@ -214,14 +213,6 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
-    private fun buildReplacementCall(
-        originalFunction: IrFunction,
-        original: IrFunctionAccessExpression,
-        replacement: IrReplacementFunction
-    ) = context.createIrBuilder(original.symbol)
-        .irCall(replacement.function)
-        .apply { buildReplacement(originalFunction, original, replacement) }
-
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         val replacement = manager.getReplacementFunction(expression.symbol.owner)
             ?: return super.visitFunctionReference(expression)
@@ -234,14 +225,16 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             expression.origin
         ).apply {
             buildReplacement(expression.symbol.owner, expression, replacement)
-        }
+        }.copyAttributes(expression)
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
         val replacement = manager.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)
-        return buildReplacementCall(function, expression, replacement)
+        return context.createIrBuilder(expression.symbol).irCall(replacement.function).apply {
+            buildReplacement(function, expression, replacement)
+        }
     }
 
     private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType) =
@@ -378,11 +371,3 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         irClass.declarations += function
     }
 }
-
-private val IrBody.contents: List<IrStatement>
-    get() = when (this) {
-        is IrBlockBody -> statements
-        is IrExpressionBody -> listOf(expression)
-        is IrSyntheticBody -> error("Synthetic body contains no statements $this")
-        else -> throw IllegalStateException()
-    }

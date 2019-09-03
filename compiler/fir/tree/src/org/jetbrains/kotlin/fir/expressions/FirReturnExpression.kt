@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirReturnExpression(
-    session: FirSession,
-    psi: PsiElement?
-) : FirJump<FirFunction>(session, psi) {
+abstract class FirReturnExpression(psi: PsiElement?) : FirJump<FirFunction>(psi) {
     abstract val result: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

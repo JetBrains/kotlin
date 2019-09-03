@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.callUtil
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
@@ -245,6 +246,9 @@ val KtElement.isFakeElement: Boolean
         val file = containingFile
         return file is KtFile && file.doNotAnalyze != null
     }
+
+val PsiElement.isFakePsiElement: Boolean
+    get() = this is KtElement && isFakeElement
 
 fun Call.isSafeCall(): Boolean {
     if (this is CallTransformer.CallForImplicitInvoke) {

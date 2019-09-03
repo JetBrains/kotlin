@@ -92,6 +92,7 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
         targetCompatibility = "1.6"
     }
 
+    @get:Internal
     abstract val compilation: KotlinNativeCompilation
 
     // region inputs/outputs
@@ -104,6 +105,7 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
     @get:Input
     abstract val debuggable: Boolean
 
+    @get:Internal
     abstract val baseName: String
 
     // Inputs and outputs

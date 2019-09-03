@@ -1,6 +1,6 @@
 class NullableArray {
     fun createArrayFailure(size: Int): Array<String?> {
-        return arrayOfNulls(size)
+        return arrayOfNulls<String?>(size)
     }
 
     fun createArraySuccess(size: Int): Array<String> {

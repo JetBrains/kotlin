@@ -175,6 +175,8 @@ public class IntrinsicMethods {
             intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "compareTo", 1, java8UIntCompare);
             intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintCompare", 2, java8UIntCompare);
 
+            intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "toString", 0, new Java8UIntToString());
+
             Java8ULongDivide java8ULongDivide = new Java8ULongDivide();
             intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "div", 1, java8ULongDivide);
             intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongDivide", 2, java8ULongDivide);
@@ -186,6 +188,8 @@ public class IntrinsicMethods {
             Java8ULongCompare java8ULongCompare = new Java8ULongCompare();
             intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "compareTo", 1, java8ULongCompare);
             intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongCompare", 2, java8ULongCompare);
+
+            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "toString", 0, new Java8ULongToString());
         }
     }
 

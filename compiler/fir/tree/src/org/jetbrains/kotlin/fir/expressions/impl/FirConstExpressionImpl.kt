@@ -6,16 +6,14 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 
 class FirConstExpressionImpl<T>(
-    session: FirSession,
     psi: PsiElement?,
     override val kind: IrConstKind<T>,
     override val value: T
-) : FirConstExpression<T>(session, psi)
+) : FirConstExpression<T>(psi)
 
-fun <T> FirConstExpressionImpl(session: FirSession, psi: PsiElement?, kind: IrConstKind<T>, value: T?, errorReason: String) =
-    value?.let { FirConstExpressionImpl(session, psi, kind, it) } ?: FirErrorExpressionImpl(session, psi, errorReason)
+fun <T> FirConstExpressionImpl(psi: PsiElement?, kind: IrConstKind<T>, value: T?, errorReason: String) =
+    value?.let { FirConstExpressionImpl(psi, kind, it) } ?: FirErrorExpressionImpl(psi, errorReason)

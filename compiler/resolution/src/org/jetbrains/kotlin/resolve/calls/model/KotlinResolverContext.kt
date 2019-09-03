@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.isDynamic
 
 
@@ -42,7 +43,8 @@ class KotlinCallComponents(
     val reflectionTypes: ReflectionTypes,
     val builtIns: KotlinBuiltIns,
     val languageVersionSettings: LanguageVersionSettings,
-    val samConversionTransformer: SamConversionTransformer
+    val samConversionTransformer: SamConversionTransformer,
+    val kotlinTypeChecker: NewKotlinTypeChecker
 )
 
 class SimpleCandidateFactory(

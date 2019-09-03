@@ -28,12 +28,8 @@ import org.jetbrains.org.objectweb.asm.Type
 
 interface IrCallGenerator {
 
-    fun genCall(callableMethod: Callable, callDefault: Boolean, codegen: ExpressionCodegen, expression: IrFunctionAccessExpression) {
-        if (!callDefault) {
-            callableMethod.genInvokeInstruction(codegen.mv)
-        } else {
-            (callableMethod as CallableMethod).genInvokeDefaultInstruction(codegen.mv)
-        }
+    fun genCall(callableMethod: Callable, codegen: ExpressionCodegen, expression: IrFunctionAccessExpression) {
+        callableMethod.genInvokeInstruction(codegen.mv)
     }
 
     fun beforeValueParametersStart() {

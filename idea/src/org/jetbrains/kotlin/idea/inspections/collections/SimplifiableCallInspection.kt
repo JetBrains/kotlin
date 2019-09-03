@@ -11,13 +11,18 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SimplifiableCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
@@ -103,6 +108,19 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
                         if (statement.isNegated) return null
                         if (!statement.leftHandSide.isNameReferenceTo(lambdaParameterName)) return null
                         val rightTypeReference = statement.typeReference ?: return null
+
+                        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
+                        val rightType = bindingContext[BindingContext.TYPE, rightTypeReference]
+                        val resolvedCall = callExpression.getResolvedCall(bindingContext)
+
+                        if (resolvedCall != null && rightType != null) {
+                            val resultingElementType = resolvedCall.resultingDescriptor.returnType
+                                ?.arguments?.singleOrNull()?.takeIf { !it.isStarProjection }?.type
+                            if (resultingElementType != null && !rightType.isSubtypeOf(resultingElementType)) {
+                                return null
+                            }
+                        }
+
                         return "filterIsInstance<${rightTypeReference.text}>()"
                     }
                 }

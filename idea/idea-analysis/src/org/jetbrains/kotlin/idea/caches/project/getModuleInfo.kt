@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
@@ -27,8 +28,10 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinitionByFileName
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.types.typeUtil.lazyClosure
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
@@ -39,6 +42,18 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.collectInfos(ModuleInfoCol
 fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.collectInfos(ModuleInfoCollector.NullableTakeFirst)
 
 fun PsiElement.getModuleInfos(): Sequence<IdeaModuleInfo> = this.collectInfos(ModuleInfoCollector.ToSequence)
+
+private fun ModuleInfo.doFindSdk(): SdkInfo? = dependencies().lazyClosure { it.dependencies() }.firstIsInstanceOrNull<SdkInfo>()
+
+fun ModuleInfo.findSdkAcrossDependencies(): SdkInfo? {
+    return when (this) {
+        // It is important to check for cases of test/production explicitly, because we're using lambda's class
+        // of 'cacheInvalidatingOnRootModifications' as key for cache, and it should be different for Production/Source
+        is ModuleProductionSourceInfo -> module.cacheInvalidatingOnRootModifications { doFindSdk() }
+        is ModuleTestSourceInfo -> module.cacheInvalidatingOnRootModifications { doFindSdk() }
+        else -> doFindSdk()
+    }
+}
 
 fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): IdeaModuleInfo? =
     collectInfosByVirtualFile(
@@ -174,8 +189,10 @@ private fun <T> PsiElement.collectInfos(c: ModuleInfoCollector<T>): T {
             return c.onResult(it)
         }
         containingKtFile.script?.let {
-            val definition = findScriptDefinitionByFileName(project, containingKtFile.name)
-            return c.onResult(ScriptModuleInfo(project, virtualFile, definition))
+            val definition = containingKtFile.findScriptDefinition()
+            if (definition != null) {
+                return c.onResult(ScriptModuleInfo(project, virtualFile, definition))
+            }
         }
     }
 

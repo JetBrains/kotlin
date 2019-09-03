@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.NoSubstitute
 import org.jetbrains.kotlin.idea.configuration.DependencySubstitute.YesSubstitute
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.lite.LiteKonanLibraryFacade
 import org.jetbrains.plugins.gradle.ExternalDependencyId
@@ -130,7 +131,7 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
                     Example:
 
                     plugins {
-                        kotlin("multiplatform") version "1.3.30"
+                        kotlin("multiplatform") version "${bundledRuntimeVersion()}"
                     }
                 """.trimIndent()
             )

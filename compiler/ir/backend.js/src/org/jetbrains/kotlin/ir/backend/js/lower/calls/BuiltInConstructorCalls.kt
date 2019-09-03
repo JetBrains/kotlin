@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.irConstructorCall
 
 
@@ -17,9 +17,12 @@ class BuiltInConstructorCalls(val context: JsIrBackendContext) : CallsTransforme
     val intrinsics = context.intrinsics
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression =
-        when (call.symbol) {
-            intrinsics.stringConstructorSymbol -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "")
-            intrinsics.anyConstructorSymbol -> irConstructorCall(call, intrinsics.jsObjectConstructorSymbol)
-            else -> call
-        }
+        if (call is IrConstructorCall) {
+            // Do not transform Delegation calls
+            when (call.symbol) {
+                intrinsics.stringConstructorSymbol -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "")
+                intrinsics.anyConstructorSymbol -> irConstructorCall(call, intrinsics.jsObjectConstructorSymbol)
+                else -> call
+            }
+        } else call
 }

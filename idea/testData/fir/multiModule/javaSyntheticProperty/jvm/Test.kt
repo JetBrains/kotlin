@@ -1,0 +1,1 @@
+val x = JavaClass().foo

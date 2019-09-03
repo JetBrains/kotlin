@@ -1,5 +1,48 @@
 # CHANGELOG
 
+## 1.3.41
+
+### Compiler
+
+- [`KT-31981`](https://youtrack.jetbrains.com/issue/KT-31981) New type inference asks to use ?. on non-null local variable
+- [`KT-32029`](https://youtrack.jetbrains.com/issue/KT-32029) Exception when callable reference is resolved against unresolved type
+- [`KT-32037`](https://youtrack.jetbrains.com/issue/KT-32037) No coercion to Unit for last expression with lambda in code block
+- [`KT-32038`](https://youtrack.jetbrains.com/issue/KT-32038) Unsubstituted stub type cause type mismatch later for builder inference
+- [`KT-32051`](https://youtrack.jetbrains.com/issue/KT-32051) NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER on matching Nothing with generic type parameter
+- [`KT-32081`](https://youtrack.jetbrains.com/issue/KT-32081) New type inference fails involving Either and Nothing
+- [`KT-32089`](https://youtrack.jetbrains.com/issue/KT-32089) False positive IMPLICIT_NOTHING_AS_TYPE_PARAMETER with lambdas
+- [`KT-32094`](https://youtrack.jetbrains.com/issue/KT-32094) NI: member from star import has higher resolution priority than member imported by FQN
+- [`KT-32116`](https://youtrack.jetbrains.com/issue/KT-32116) Type inference for HashMap<*,*> fails but compiles
+- [`KT-32123`](https://youtrack.jetbrains.com/issue/KT-32123) Wrong unused import for extension method
+- [`KT-32133`](https://youtrack.jetbrains.com/issue/KT-32133) Regression in Kotlin 1.3.40 new inference engine
+- [`KT-32134`](https://youtrack.jetbrains.com/issue/KT-32134) `java.lang.Throwable: Resolution error of this type shouldn't occur for resolve try as a call` for incomplete try-construction
+- [`KT-32143`](https://youtrack.jetbrains.com/issue/KT-32143) 1.3.40 new inference: backward incompatibility in method calls with multiple SAM arguments
+- [`KT-32154`](https://youtrack.jetbrains.com/issue/KT-32154) setOf(Map.Entry<*, *>::key) gives error on IDE
+- [`KT-32157`](https://youtrack.jetbrains.com/issue/KT-32157) Issue with new type inference in unbounded generics
+- [`KT-32175`](https://youtrack.jetbrains.com/issue/KT-32175) New Type Inference Algorithm, RxJava and IDE-Compiler Inconsistency
+- [`KT-32184`](https://youtrack.jetbrains.com/issue/KT-32184) NI: Argument for @NotNull parameter 'type' of org/jetbrains/kotlin/types/CommonSupertypes.depth must not be null
+- [`KT-32187`](https://youtrack.jetbrains.com/issue/KT-32187) Exception when using callable reference with an unresolved LHS
+- [`KT-32218`](https://youtrack.jetbrains.com/issue/KT-32218) Cannot call get on a Map<out Any,Any> with new type system
+- [`KT-32230`](https://youtrack.jetbrains.com/issue/KT-32230) New inference not working with RxJava combineLatest
+- [`KT-32235`](https://youtrack.jetbrains.com/issue/KT-32235) New type inference failure with `in` check
+
+### JavaScript
+
+- [`KT-32215`](https://youtrack.jetbrains.com/issue/KT-32215) Reified generic doesn't work with `ByteArray` on js
+
+### Tools. CLI
+
+- [`KT-32272`](https://youtrack.jetbrains.com/issue/KT-32272) kotlinc - no main manifest attribute, in hello.jar
+
+### Tools. REPL
+
+- [`KT-32085`](https://youtrack.jetbrains.com/issue/KT-32085) Kotlinc REPL: "java.lang.NoClassDefFoundError: org/jline/reader/LineReaderBuilder"
+
+### Tools. Scripts
+
+- [`KT-32169`](https://youtrack.jetbrains.com/issue/KT-32169) Kotlin 1.3.40 - Crash on running *.main.kts script: "NoSuchMethodError: kotlin.script.templates.standard.ScriptTemplateWithArgs.<init>"
+- [`KT-32206`](https://youtrack.jetbrains.com/issue/KT-32206) Custom script definitions not loaded in the cli compiler
+
 ## 1.3.40
 
 ### Android

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.types.Variance
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
+    if (psi is PsiCompiledElement) return f(-1, -1)
     val startOffset = psi?.startOffsetSkippingComments ?: -1
     val endOffset = psi?.endOffset ?: -1
     return f(startOffset, endOffset)
@@ -104,10 +106,12 @@ fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbo
 fun FirNamedReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? {
     if (this is FirResolvedCallableReference) {
         when (val callableSymbol = this.coneSymbol) {
-            is FirFunctionSymbol -> return callableSymbol.toFunctionSymbol(declarationStorage)
+            is FirFunctionSymbol<*> -> return callableSymbol.toFunctionSymbol(declarationStorage)
             is FirPropertySymbol -> return callableSymbol.toPropertyOrFieldSymbol(declarationStorage)
-            is FirBackingFieldSymbol -> return callableSymbol.toPropertyOrFieldSymbol(declarationStorage)
-            is FirVariableSymbol -> return callableSymbol.toValueSymbol(declarationStorage)
+            is FirFieldSymbol -> return callableSymbol.toPropertyOrFieldSymbol(declarationStorage)
+            is FirBackingFieldSymbol -> return callableSymbol.toBackingFieldSymbol(declarationStorage)
+            is FirDelegateFieldSymbol<*> -> return callableSymbol.toBackingFieldSymbol(declarationStorage)
+            is FirVariableSymbol<*> -> return callableSymbol.toValueSymbol(declarationStorage)
         }
     }
     return null
@@ -121,14 +125,18 @@ fun FirTypeParameterSymbol.toTypeParameterSymbol(declarationStorage: Fir2IrDecla
     return declarationStorage.getIrTypeParameterSymbol(this)
 }
 
-fun FirFunctionSymbol.toFunctionSymbol(declarationStorage: Fir2IrDeclarationStorage): IrFunctionSymbol {
+fun FirFunctionSymbol<*>.toFunctionSymbol(declarationStorage: Fir2IrDeclarationStorage): IrFunctionSymbol {
     return declarationStorage.getIrFunctionSymbol(this)
 }
 
-fun FirVariableSymbol.toPropertyOrFieldSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
+fun FirVariableSymbol<*>.toPropertyOrFieldSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
     return declarationStorage.getIrPropertyOrFieldSymbol(this)
 }
 
-fun FirVariableSymbol.toValueSymbol(declarationStorage: Fir2IrDeclarationStorage): IrValueSymbol {
+fun FirVariableSymbol<*>.toBackingFieldSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
+    return declarationStorage.getIrBackingFieldSymbol(this)
+}
+
+fun FirVariableSymbol<*>.toValueSymbol(declarationStorage: Fir2IrDeclarationStorage): IrValueSymbol {
     return declarationStorage.getIrValueSymbol(this)
 }

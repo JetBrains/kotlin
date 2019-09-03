@@ -325,7 +325,7 @@ object ExpectedActualResolver {
         if (a == null) return b == null
         if (b == null) return false
 
-        with(NewKotlinTypeChecker) {
+        with(NewKotlinTypeChecker.Default) {
             val context = object : ClassicTypeCheckerContext(false) {
                 override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
                     return isExpectedClassAndActualTypeAlias(a, b, platformModule) ||

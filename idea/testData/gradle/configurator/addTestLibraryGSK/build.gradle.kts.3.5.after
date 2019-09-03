@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     compile(kotlinModule("stdlib-jre8"))
-    testCompile("junit:junit:4.12")
-    testCompile(kotlinModule("test", "1.1.2"))
+    testImplementation("junit:junit:4.12")
+    testImplementation(kotlinModule("test", "1.1.2"))
 }

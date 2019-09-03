@@ -61,6 +61,8 @@ public class DataFlowAnalyzer {
     private final LanguageVersionSettings languageVersionSettings;
     private final EffectSystem effectSystem;
     private final DataFlowValueFactory dataFlowValueFactory;
+    private final SmartCastManager smartCastManager;
+    private final KotlinTypeChecker kotlinTypeChecker;
 
     public DataFlowAnalyzer(
             @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
@@ -70,7 +72,9 @@ public class DataFlowAnalyzer {
             @NotNull ExpressionTypingFacade facade,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull EffectSystem effectSystem,
-            @NotNull DataFlowValueFactory factory
+            @NotNull DataFlowValueFactory factory,
+            @NotNull SmartCastManager smartCastManager,
+            @NotNull KotlinTypeChecker kotlinTypeChecker
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
@@ -80,6 +84,8 @@ public class DataFlowAnalyzer {
         this.languageVersionSettings = languageVersionSettings;
         this.effectSystem = effectSystem;
         this.dataFlowValueFactory = factory;
+        this.smartCastManager = smartCastManager;
+        this.kotlinTypeChecker = kotlinTypeChecker;
     }
 
     // NB: use this method only for functions from 'Any'
@@ -282,7 +288,7 @@ public class DataFlowAnalyzer {
             boolean reportErrorForTypeMismatch
     ) {
         if (noExpectedType(c.expectedType) || !c.expectedType.getConstructor().isDenotable() ||
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, c.expectedType)) {
+            kotlinTypeChecker.isSubtypeOf(expressionType, c.expectedType)) {
             return expressionType;
         }
 
@@ -349,7 +355,7 @@ public class DataFlowAnalyzer {
     ) {
         DataFlowValue dataFlowValue = dataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
-        return SmartCastManager.Companion.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, null, false);
+        return smartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, null, false, null);
     }
 
     public void recordExpectedType(@NotNull BindingTrace trace, @NotNull KtExpression expression, @NotNull KotlinType expectedType) {

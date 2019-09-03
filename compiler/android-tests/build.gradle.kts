@@ -4,8 +4,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
@@ -55,3 +53,7 @@ projectTest {
 
     workingDir = rootDir
 }
+
+val generateTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator")
+
+generateTests.workingDir = rootDir

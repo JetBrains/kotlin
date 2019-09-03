@@ -28,7 +28,9 @@ private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.tes
 
 class TCServiceMessagesTestExecutor(
     val execHandleFactory: ExecHandleFactory,
-    val buildOperationExecutor: BuildOperationExecutor
+    val buildOperationExecutor: BuildOperationExecutor,
+    val runListeners: MutableList<KotlinTestRunnerListener>,
+    val ignoreRunFailures: Boolean
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
     var execHandle: ExecHandle? = null
     var outputReaderThread: Thread? = null
@@ -54,13 +56,22 @@ class TCServiceMessagesTestExecutor(
                 }
 
                 if (spec.checkExitCode && result.exitValue != 0) {
-                    spec.showSuppressedOutput()
                     error("$execHandle exited with errors (exit code: ${result.exitValue})")
                 }
             } catch (e: Throwable) {
-                client.closeAll()
                 spec.showSuppressedOutput()
-                throw e
+
+                val wrappedError = client.ensureNodesClosed(null, e, false) ?: if (e is Error) e else Error(e)
+
+                runListeners.forEach {
+                    it.runningFailure(wrappedError)
+                }
+
+                if (ignoreRunFailures) {
+                    log.error(wrappedError.message)
+                } else {
+                    throw e
+                }
             }
         }
     }

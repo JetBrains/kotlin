@@ -160,7 +160,6 @@ class SubpluginsIT : BaseGradleIT() {
                     assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
                 }
             } else {
-                assertFailed()
                 val usedGradleVersion =
                     GradleVersion.version(
                         System.getProperty("kotlin.gradle.version.for.tests")

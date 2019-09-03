@@ -124,7 +124,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         fun Project.isIncrementalKapt(): Boolean {
-            return hasProperty(INCREMENTAL_APT) && property(INCREMENTAL_APT) == "true"
+            return !(hasProperty(INCREMENTAL_APT) && property(INCREMENTAL_APT) == "false")
         }
 
         fun Project.isInfoAsWarnings(): Boolean {
@@ -391,6 +391,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.isIncremental = project.isIncrementalKapt()
         if (kaptTask.isIncremental) {
             kaptTask.incAptCache = getKaptIncrementalAnnotationProcessingCache()
+            if (isGradleVersionAtLeast(4, 3)) {
+                kaptTask.localState.register(kaptTask.incAptCache)
+            } else {
+                kaptTask.outputs.files(kaptTask.incAptCache).withPropertyName("incrementalAptCache")
+            }
 
             maybeRegisterTransform(project)
             val classStructure = project.configurations.create("_classStructure${taskName}")

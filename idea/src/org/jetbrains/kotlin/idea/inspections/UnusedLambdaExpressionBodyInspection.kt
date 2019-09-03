@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl
@@ -31,7 +32,7 @@ class UnusedLambdaExpressionBodyInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor(fun(expression) {
             val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-            if (expression.used(context)) {
+            if (expression.isUsedAsExpression(context)) {
                 return
             }
 
@@ -53,8 +54,6 @@ class UnusedLambdaExpressionBodyInspection : AbstractKotlinInspection() {
                                    RemoveEqTokenFromFunctionDeclarationFix(function))
         })
     }
-
-    private fun KtExpression.used(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this] ?: true
 
     private fun CallableDescriptor.returnsFunction() = returnType?.isFunctionType ?: false
 

@@ -6,18 +6,14 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirWhenExpression(
-    session: FirSession,
-    psi: PsiElement?
-) : FirUnknownTypeExpression(session, psi) {
+abstract class FirWhenExpression(psi: PsiElement?) : FirUnknownTypeExpression(psi) {
     abstract val subject: FirExpression?
 
     // when (val subjectVariable = subject()) { ... }
-    abstract val subjectVariable: FirVariable?
+    abstract val subjectVariable: FirVariable<*>?
 
     abstract val branches: List<FirWhenBranch>
 

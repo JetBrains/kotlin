@@ -16,11 +16,10 @@ import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirWhenBranchImpl(
-    session: FirSession,
     psi: PsiElement?,
     override var condition: FirExpression,
     override var result: FirBlock
-) : FirAbstractElement(session, psi), FirWhenBranch {
+) : FirAbstractElement(psi), FirWhenBranch {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         condition = condition.transformSingle(transformer, data)
         result = result.transformSingle(transformer, data)

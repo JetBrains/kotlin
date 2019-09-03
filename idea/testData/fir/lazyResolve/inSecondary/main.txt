@@ -1,0 +1,11 @@
+FILE: main.kt
+    public final class Foo : R|kotlin/Any| {
+        public final val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+            R|/Foo.x| = Int(42)
+        }
+
+    }

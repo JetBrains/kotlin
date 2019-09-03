@@ -45,7 +45,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private val isInterfaceSymbol get() = context.intrinsics.isInterfaceSymbol
     private val isArraySymbol get() = context.intrinsics.isArraySymbol
-    private val isSuspenfFunctionSymbol = context.intrinsics.isSuspendFunctionSymbol
+    private val isSuspendFunctionSymbol = context.intrinsics.isSuspendFunctionSymbol
     //    private val isCharSymbol get() = context.intrinsics.isCharSymbol
     private val isObjectSymbol get() = context.intrinsics.isObjectSymbol
 
@@ -188,14 +188,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
             }
 
             private fun generateTypeCheck(argument: () -> IrExpressionWithCopy, toType: IrType): IrExpression {
-
-                // TODO: Fix unbound symbols (in inline)
-                toType.classifierOrNull?.apply {
-                    if (!isBound) {
-                        return argument()
-                    }
-                }
-
                 val toNotNullable = toType.makeNotNull()
                 val argumentInstance = argument()
                 val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable)
@@ -248,11 +240,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 val typeParameterSymbol =
                     (toType.classifierOrNull as? IrTypeParameterSymbol) ?: error("expected type parameter, but $toType")
 
-                // TODO: Stop creating unbound symbols inline:
-                // DeepCopyIrTreeWithDescriptors.copy() -> ... -> ClassifierDescriptor.getSymbol()
-                if (!typeParameterSymbol.isBound) {
-                    return argument
-                }
                 val typeParameter = typeParameterSymbol.owner
 
                 // TODO either remove functions with reified type parameters or support this case
@@ -270,7 +257,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 val arity = (toType.classifierOrFail.owner as IrClass).typeParameters.size - 1 // drop return type
 
                 val irBuiltIns = context.irBuiltIns
-                return JsIrBuilder.buildCall(isSuspenfFunctionSymbol, irBuiltIns.booleanType).apply {
+                return JsIrBuilder.buildCall(isSuspendFunctionSymbol, irBuiltIns.booleanType).apply {
                     putValueArgument(0, argument)
                     putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, arity))
                 }

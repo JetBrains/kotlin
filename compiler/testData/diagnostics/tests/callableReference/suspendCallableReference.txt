@@ -1,0 +1,27 @@
+package
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract suspend fun foo(/*0*/ input: kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B</*0*/ T : kotlin.Any> {
+    public constructor B</*0*/ T : kotlin.Any>()
+    public final fun </*0*/ U, /*1*/ R : kotlin.Any, /*2*/ T> call(/*0*/ function: suspend T.(U) -> R): R
+    public final fun </*0*/ U, /*1*/ R : kotlin.Any, /*2*/ T> call(/*0*/ function: suspend T.(U) -> kotlin.collections.List<R>): kotlin.collections.List<R>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MyService : A, B<A> {
+    public constructor MyService()
+    public final override /*1*/ /*fake_override*/ fun </*0*/ U, /*1*/ R : kotlin.Any, /*2*/ T> call(/*0*/ function: suspend T.(U) -> R): R
+    public final override /*1*/ /*fake_override*/ fun </*0*/ U, /*1*/ R : kotlin.Any, /*2*/ T> call(/*0*/ function: suspend T.(U) -> kotlin.collections.List<R>): kotlin.collections.List<R>
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ suspend fun foo(/*0*/ input: kotlin.String): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

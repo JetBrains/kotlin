@@ -1,1 +1,1 @@
-val d2: Array<IntArray> = arrayOf()
+val d2 = arrayOf<IntArray>()

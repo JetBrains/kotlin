@@ -17,8 +17,9 @@ package kotlin.collections
 public inline operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
 
 /**
- * Returns an [Iterator] wrapping each value produced by this [Iterator] with the [IndexedValue],
- * containing value and it's index.
+ * Returns an [Iterator] that wraps each element produced by the original iterator
+ * into an [IndexedValue] containing the index of that element and the element itself.
+ *
  * @sample samples.collections.Iterators.withIndexIterator
  */
 public fun <T> Iterator<T>.withIndex(): Iterator<IndexedValue<T>> = IndexingIterator(this)

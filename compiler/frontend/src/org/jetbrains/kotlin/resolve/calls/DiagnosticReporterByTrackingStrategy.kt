@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
@@ -39,7 +39,8 @@ class DiagnosticReporterByTrackingStrategy(
     val context: BasicCallResolutionContext,
     val psiKotlinCall: PSIKotlinCall,
     val dataFlowValueFactory: DataFlowValueFactory,
-    val allDiagnostics: List<KotlinCallDiagnostic>
+    val allDiagnostics: List<KotlinCallDiagnostic>,
+    private val smartCastManager: SmartCastManager
 ) : DiagnosticReporter {
     private val trace = context.trace as TrackingBindingTrace
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
@@ -147,6 +148,21 @@ class DiagnosticReporterByTrackingStrategy(
                     }
                 }
             }
+
+            CallableReferencesDefaultArgumentUsed::class.java -> {
+                require(diagnostic is CallableReferencesDefaultArgumentUsed) {
+                    "diagnostic ($diagnostic) should have type CallableReferencesDefaultArgumentUsed"
+                }
+
+                diagnostic.argument.psiExpression?.let {
+                    trace.report(
+                        UNSUPPORTED_FEATURE.on(
+                            it, LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType to context.languageVersionSettings
+                        )
+                    )
+                }
+
+            }
         }
     }
 
@@ -195,7 +211,7 @@ class DiagnosticReporterByTrackingStrategy(
                 )
                 val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
                 val call = if (call.callElement is KtBinaryExpression) null else call
-                SmartCastManager.checkAndRecordPossibleCast(
+                smartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
                     recordExpressionType = true
                 )
@@ -204,7 +220,7 @@ class DiagnosticReporterByTrackingStrategy(
                 trace.markAsReported()
                 val receiverValue = expressionArgument.receiver.receiverValue
                 val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverValue, context)
-                SmartCastManager.checkAndRecordPossibleCast(
+                smartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, (receiverValue as? ExpressionReceiver)?.expression, context, call,
                     recordExpressionType = true
                 )
@@ -339,7 +355,6 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
 }
-
 
 val NewConstraintError.upperKotlinType get() = upperType as KotlinType
 val NewConstraintError.lowerKotlinType get() = lowerType as KotlinType

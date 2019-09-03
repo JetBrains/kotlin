@@ -6,7 +6,10 @@
 package kotlin.script.experimental.jsr223
 
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
+import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
 import java.io.File
+import javax.script.Bindings
+import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.jvm.JvmScriptCompilationConfigurationBuilder
@@ -50,6 +53,6 @@ class KotlinJsr223DefaultScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
                 }
             },
             evaluationConfiguration
-        )
+        ) { ScriptArgsWithTypes(arrayOf(it.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()), arrayOf(Bindings::class)) }
 }
 

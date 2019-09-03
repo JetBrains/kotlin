@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -73,6 +74,13 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
 
         irClass.declarations.removeAll {
             it is IrFunction && removedFunctions.containsKey(it.symbol)
+        }
+
+        // Move metadata for local delegated properties from the interface to DefaultImpls, since this is where kotlin-reflect looks for it.
+        val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId as IrClass]
+        if (localDelegatedProperties != null) {
+            context.localDelegatedProperties[defaultImplsIrClass.attributeOwnerId as IrClass] = localDelegatedProperties
+            context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] = emptyList<IrLocalDelegatedPropertySymbol>()
         }
     }
 
@@ -140,6 +148,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
                         origin
                     ).apply {
                         copyTypeAndValueArgumentsFrom(expression, receiversAsArguments = true)
+                        copyAttributes(expression)
                     }
                 }
             } else {

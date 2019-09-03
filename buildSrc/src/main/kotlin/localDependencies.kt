@@ -26,7 +26,10 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-private fun Project.kotlinBuildLocalRepoDir() = File("${project.rootDir.absoluteFile}/dependencies/repo")
+private fun Project.kotlinBuildLocalDependenciesDir(): File =
+    (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File) ?: project.rootDir.absoluteFile.resolve("dependencies")
+
+private fun Project.kotlinBuildLocalRepoDir(): File = kotlinBuildLocalDependenciesDir().resolve("repo")
 
 private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"

@@ -1,6 +1,7 @@
 syntax = "proto2";
-package org.jetbrains.kotlin.backend.common.serialization;
+package org.jetbrains.kotlin.backend.common.serialization.proto;
 
+option java_multiple_files = true;
 option java_outer_classname = "KotlinIr";
 option optimize_for = LITE_RUNTIME;
 
@@ -126,6 +127,7 @@ enum IrSymbolKind {
   RECEIVER_PARAMETER_SYMBOL = 12; // ReceiverParameterDescriptor rather than ValueParameterDescriptor.
   PROPERTY_SYMBOL = 13;
   LOCAL_DELEGATED_PROPERTY_SYMBOL = 14;
+  TYPEALIAS_SYMBOL = 15;
 }
 
 message IrSymbolData {
@@ -179,6 +181,14 @@ message IrTypeArgument {
 message IrSimpleType {
   required Annotations annotations = 1;
   required IrSymbol classifier = 2;
+  required bool has_question_mark = 3;
+  repeated IrTypeArgument argument = 4;
+  optional IrTypeAbbreviation abbreviation = 5;
+}
+
+message IrTypeAbbreviation {
+  required Annotations annotations = 1;
+  required IrSymbol type_alias = 2;
   required bool has_question_mark = 3;
   repeated IrTypeArgument argument = 4;
 }
@@ -409,6 +419,11 @@ message IrWhile {
   required Loop loop = 1;
 }
 
+message IrFunctionExpression {
+  required IrFunction function = 1;
+  required IrStatementOrigin origin = 2;
+}
+
 /* ------ Dynamic expression --------------------------------------------- */
 
 message IrDynamicMemberExpression {
@@ -493,6 +508,7 @@ message IrOperation {
     IrDynamicOperatorExpression dynamic_operator = 30;
     IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;
     IrConstructorCall constructor_call = 32;
+    IrFunctionExpression function_expression = 33;
   }
 }
 
@@ -662,6 +678,15 @@ message IrClass {
   repeated IrTypeIndex super_type = 14;
 }
 
+message IrTypeAlias {
+  required IrDeclarationBase base = 1;
+  required String name = 2;
+  required Visibility visibility = 3;
+  required IrTypeParameterContainer type_parameters = 4;
+  required IrTypeIndex expanded_type = 5;
+  required bool is_actual = 6;
+}
+
 message IrEnumEntry {
   required IrDeclarationBase base = 1;
   optional IrExpression initializer = 2;
@@ -690,6 +715,7 @@ message IrDeclaration {
     IrVariable ir_variable = 9;
     IrValueParameter ir_value_parameter = 10;
     IrLocalDelegatedProperty ir_local_delegated_property = 11;
+    IrTypeAlias ir_type_alias = 12;
   }
 }
 

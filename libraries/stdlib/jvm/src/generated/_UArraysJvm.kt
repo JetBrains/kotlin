@@ -257,39 +257,3 @@ public fun UShortArray.binarySearch(element: UShort, fromIndex: Int = 0, toIndex
     return -(low + 1)  // key not found
 }
 
-/**
- * Fills original array with the provided value.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-public fun UIntArray.fill(element: UInt, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    storage.fill(element.toInt(), fromIndex, toIndex)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-public fun ULongArray.fill(element: ULong, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    storage.fill(element.toLong(), fromIndex, toIndex)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-public fun UByteArray.fill(element: UByte, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    storage.fill(element.toByte(), fromIndex, toIndex)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
-public fun UShortArray.fill(element: UShort, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    storage.fill(element.toShort(), fromIndex, toIndex)
-}
-

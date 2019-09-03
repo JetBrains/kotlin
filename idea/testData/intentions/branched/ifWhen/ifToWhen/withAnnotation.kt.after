@@ -8,7 +8,11 @@ fun println(s: String) {}
 
 fun foo() {
     when {
-        @Ann b -> println("!")
-        else -> println("")
+        @Ann b -> {
+            println("!")
+        }
+        else -> {
+            println("")
+        }
     }
 }

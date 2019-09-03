@@ -6,17 +6,15 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.impl.FirOperationBasedCall
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // is/!is/as/as?
 abstract class FirTypeOperatorCall(
-    session: FirSession,
     psi: PsiElement?,
     operation: FirOperation
-) : FirOperationBasedCall(session, psi, operation) {
+) : FirOperationBasedCall(psi, operation) {
     val argument: FirExpression get() = arguments.first()
 
     abstract val conversionTypeRef: FirTypeRef

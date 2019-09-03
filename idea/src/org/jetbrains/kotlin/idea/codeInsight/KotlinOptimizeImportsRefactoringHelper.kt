@@ -36,31 +36,64 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 
 // Based on com.intellij.refactoring.OptimizeImportsRefactoringHelper
 class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
-    internal class OptimizeImportsTask(
-            private val task: SequentialModalProgressTask,
-            pointers: Set<SmartPsiElementPointer<KtImportDirective>>
+    internal class CollectUnusedImportsTask(
+        private val task: SequentialModalProgressTask,
+        private val dumbService: DumbService,
+        private val unusedImports: MutableSet<SmartPsiElementPointer<KtImportDirective>>,
+        operationData: Set<KtFile>
     ) : SequentialTask {
-        private val pointerIterator = pointers.iterator()
+        private val myTotalCount = operationData.size
+        private val operationIterator = operationData.withIndex().iterator()
+
+        override fun prepare() {}
+
+        override fun stop() {}
+
+        override fun isDone(): Boolean = !operationIterator.hasNext()
+
+        override fun iteration(): Boolean {
+            val (counter, file) = operationIterator.next()
+            if (!file.isValid) return isDone
+            val virtualFile = file.virtualFile ?: return isDone
+
+            with(task.indicator) {
+                text2 = virtualFile.presentableUrl
+                fraction = counter.toDouble() / myTotalCount
+            }
+
+            dumbService.runReadActionInSmartMode {
+                KotlinUnusedImportInspection.analyzeImports(file)?.unusedImports?.mapTo(unusedImports) { it.createSmartPointer() }
+            }
+            return isDone
+        }
+    }
+
+    internal class OptimizeImportsTask(
+        private val task: SequentialModalProgressTask,
+        pointers: Set<SmartPsiElementPointer<KtImportDirective>>
+    ) : SequentialTask {
+        private val pointerIterator = pointers.withIndex().iterator()
         private val myTotal: Int = pointers.size
-        private var myCount: Int = 0
 
         override fun prepare() {}
 
         override fun isDone() = !pointerIterator.hasNext()
 
         override fun iteration(): Boolean {
-            task.indicator?.fraction = myCount++.toDouble() / myTotal
+            val (counter, pointer) = pointerIterator.next()
 
-            val pointer = pointerIterator.next()
+            task.indicator?.fraction = counter.toDouble() / myTotal
 
             val directive = pointer.element
-            if (directive == null || !directive.isValid) return isDone
-
-            try {
-                directive.delete()
-            }
-            catch (e: IncorrectOperationException) {
-                LOG.error(e)
+            if (directive?.isValid == true) {
+                task.indicator?.text2 = directive.containingFile.virtualFile.presentableUrl
+                runWriteAction {
+                    try {
+                        directive.delete()
+                    } catch (e: IncorrectOperationException) {
+                        LOG.error(e)
+                    }
+                }
             }
 
             return isDone
@@ -74,7 +107,8 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
     }
 
     companion object {
-        private val REMOVING_REDUNDANT_IMPORTS_TITLE = "Removing redundant imports"
+        private const val COLLECT_UNUSED_IMPORTS_TITLE = "Collect unused imports"
+        private const val REMOVING_REDUNDANT_IMPORTS_TITLE = "Removing redundant imports"
     }
 
     override fun prepareOperation(usages: Array<UsageInfo>): Set<KtFile> {
@@ -90,33 +124,26 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
 
         if (operationData.isEmpty()) return
 
-        val unusedImports = LinkedHashSet<SmartPsiElementPointer<KtImportDirective>>()
-        val findRedundantImports = {
-            DumbService.getInstance(project).runReadActionInSmartMode {
-                val progressIndicator = ProgressManager.getInstance().progressIndicator
-                val fileCount = operationData.size
-                for ((i, file) in operationData.withIndex()) {
-                    if (!file.isValid) continue
-                    val virtualFile = file.virtualFile ?: continue
+        val unusedImports = mutableSetOf<SmartPsiElementPointer<KtImportDirective>>()
 
-                    progressIndicator?.text2 = virtualFile.presentableUrl
-                    progressIndicator?.fraction = i.toDouble() / fileCount
+        val progressManager = ProgressManager.getInstance()
 
-                    val fileImportData = KotlinUnusedImportInspection.analyzeImports(file) ?: continue
-                    fileImportData.unusedImports.mapTo(unusedImports) { it.createSmartPointer() }
+        val dumbService = DumbService.getInstance(project)
+
+        val collectTask = object : SequentialModalProgressTask(project, COLLECT_UNUSED_IMPORTS_TITLE, false) {
+            override fun onSuccess() {
+                val progressTask = SequentialModalProgressTask(project, REMOVING_REDUNDANT_IMPORTS_TITLE, false)
+                with(progressTask) {
+                    setMinIterationTime(200)
+                    setTask(OptimizeImportsTask(this, unusedImports))
                 }
+                progressManager.run(progressTask)
             }
         }
-        if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                findRedundantImports, REMOVING_REDUNDANT_IMPORTS_TITLE, false, project
-        )) return
-
-        runWriteAction {
-            val progressTask = SequentialModalProgressTask(project, REMOVING_REDUNDANT_IMPORTS_TITLE, false).apply {
-                setMinIterationTime(200)
-                setTask(OptimizeImportsTask(this, unusedImports))
-            }
-            ProgressManager.getInstance().run(progressTask)
+        with(collectTask) {
+            setMinIterationTime(200)
+            setTask(CollectUnusedImportsTask(this, dumbService, unusedImports, operationData))
         }
+        progressManager.run(collectTask)
     }
 }

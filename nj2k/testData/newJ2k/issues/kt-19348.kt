@@ -14,7 +14,7 @@ class TestMutltipleCtorsWithJavadoc
      * @param x
      * @param y
      */
-    constructor(x: String?, y: String?) : this(x!!) {
+    constructor(x: String, y: String?) : this(x) {
         this.y = y
     }
 

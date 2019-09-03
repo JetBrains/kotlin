@@ -86,7 +86,9 @@ class ResultTypeResolver(
         val lowerConstraints = variableWithConstraints.constraints.filter { it.kind == ConstraintKind.LOWER && isProperType(it.type) }
         if (lowerConstraints.isNotEmpty()) {
             val types = sinkIntegerLiteralTypes(lowerConstraints.map { it.type })
-            val commonSuperType = with(NewCommonSuperTypeCalculator) { commonSuperType(types) }
+            val commonSuperType = with(NewCommonSuperTypeCalculator) {
+                this@findSubType.commonSuperType(types)
+            }
             /**
              *
              * fun <T> Array<out T>.intersect(other: Iterable<T>) {

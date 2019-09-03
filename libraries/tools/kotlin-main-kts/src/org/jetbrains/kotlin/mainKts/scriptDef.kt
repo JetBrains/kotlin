@@ -21,9 +21,16 @@ import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvm.dependenciesFromClassContext
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
+import kotlin.script.experimental.jvmhost.jsr223.configureProvidedPropertiesFromJsr223Context
+import kotlin.script.experimental.jvmhost.jsr223.importAllBindings
+import kotlin.script.experimental.jvmhost.jsr223.jsr223
 
 @Suppress("unused")
-@KotlinScript(fileExtension = "main.kts", compilationConfiguration = MainKtsScriptDefinition::class)
+@KotlinScript(
+    fileExtension = "main.kts",
+    compilationConfiguration = MainKtsScriptDefinition::class,
+    evaluationConfiguration = MainKtsEvaluationConfiguration::class
+)
 abstract class MainKtsScript(val args: Array<String>)
 
 object MainKtsScriptDefinition : ScriptCompilationConfiguration(
@@ -38,12 +45,29 @@ object MainKtsScriptDefinition : ScriptCompilationConfiguration(
         ide {
             acceptedLocations(ScriptAcceptedLocation.Everywhere)
         }
+        jsr223 {
+            importAllBindings(true)
+        }
     })
+
+object MainKtsEvaluationConfiguration : ScriptEvaluationConfiguration(
+    {
+        scriptsInstancesSharing(true)
+        refineConfigurationBeforeEvaluate(::configureProvidedPropertiesFromJsr223Context)
+    }
+)
 
 class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
     private val resolver = FilesAndIvyResolver()
 
-    override operator fun invoke(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    override operator fun invoke(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+        processAnnotations(context).onSuccess { updatedConfiguration ->
+            configureProvidedPropertiesFromJsr223Context(
+                ScriptConfigurationRefinementContext(context.script, updatedConfiguration, context.collectedData)
+            )
+        }
+
+    fun processAnnotations(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
         val diagnostics = arrayListOf<ScriptDiagnostic>()
 
         fun report(severity: ScriptDependenciesResolver.ReportSeverity, message: String, position: ScriptContents.Position?) {

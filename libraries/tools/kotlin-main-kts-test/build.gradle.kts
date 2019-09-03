@@ -7,8 +7,10 @@ plugins {
 
 dependencies {
     testCompile(project(":kotlin-main-kts"))
-    testCompile(project(":kotlin-scripting-jvm-host-embeddable"))
+    testCompileOnly(project(":compiler:cli"))
+    testCompileOnly(project(":kotlin-scripting-jvm-host"))
     testCompile(commonDep("junit"))
+    testCompile(projectTests(":kotlin-scripting-compiler")) { isTransitive = false }
 }
 
 sourceSets {

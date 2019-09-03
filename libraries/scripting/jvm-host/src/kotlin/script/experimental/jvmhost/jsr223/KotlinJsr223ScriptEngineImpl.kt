@@ -7,7 +7,6 @@ package kotlin.script.experimental.jvmhost.jsr223
 
 import org.jetbrains.kotlin.cli.common.repl.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -26,7 +25,8 @@ import kotlin.script.experimental.jvmhost.repl.JvmReplEvaluatorState
 class KotlinJsr223ScriptEngineImpl(
     factory: ScriptEngineFactory,
     baseCompilationConfiguration: ScriptCompilationConfiguration,
-    baseEvaluationConfiguration: ScriptEvaluationConfiguration
+    baseEvaluationConfiguration: ScriptEvaluationConfiguration,
+    val getScriptArgs: (context: ScriptContext) -> ScriptArgsWithTypes?
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223InvocableScriptEngine {
 
     @Volatile
@@ -64,14 +64,13 @@ class KotlinJsr223ScriptEngineImpl(
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
-    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? =
-        ScriptArgsWithTypes(arrayOf(context.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()), arrayOf(Bindings::class))
+    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context)
 
     override val invokeWrapper: InvokeWrapper?
         get() = null
 
     override val backwardInstancesHistory: Sequence<Any>
-        get() = getCurrentState(getContext()).asState(JvmReplEvaluatorState::class.java).history.asReversed().asSequence().map { it.item }
+        get() = getCurrentState(getContext()).asState(JvmReplEvaluatorState::class.java).history.asReversed().asSequence().map { it.item.second }.filterNotNull()
 
     override val baseClassLoader: ClassLoader
         get() = evaluationConfiguration[ScriptEvaluationConfiguration.jvm.baseClassLoader]!!

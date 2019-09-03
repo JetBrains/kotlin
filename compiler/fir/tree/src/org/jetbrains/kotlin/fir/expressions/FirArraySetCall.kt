@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirArraySetCall(
-    session: FirSession,
     psi: PsiElement?
-) : @VisitedSupertype FirCall(session, psi), FirAssignment {
+) : @VisitedSupertype FirCall(psi), FirAssignment {
     // NB: arguments of this thing are indexes AND rvalue
     abstract val indexes: List<FirExpression>
 

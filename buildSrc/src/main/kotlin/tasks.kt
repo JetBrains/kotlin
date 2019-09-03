@@ -31,7 +31,12 @@ import java.lang.Character.isUpperCase
 import java.nio.file.Files
 import java.nio.file.Path
 
-fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, body: Test.() -> Unit = {}): Test = getOrCreateTask(taskName) {
+fun Project.projectTest(
+    taskName: String = "test",
+    parallel: Boolean = false,
+    shortenTempRootName: Boolean = false,
+    body: Test.() -> Unit = {}
+): Test = getOrCreateTask(taskName) {
     doFirst {
         val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet()
         val patterns = filter.includePatterns + commandLineIncludePatterns
@@ -87,7 +92,6 @@ fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, bo
     jvmArgs(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
-        "-Xmx1600m",
         "-XX:+UseCodeCacheFlushing",
         "-XX:ReservedCodeCacheSize=128m",
         "-Djna.nosys=true"
@@ -111,7 +115,8 @@ fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, bo
             (teamcity?.get("teamcity.build.tempDir") as? String)
                 ?: System.getProperty("java.io.tmpdir")
         systemTempRoot.let {
-            subProjectTempRoot = Files.createTempDirectory(File(systemTempRoot).toPath(), project.name + "Project_" + taskName + "_")
+            val prefix = (project.name + "Project_" + taskName + "_").takeUnless { shortenTempRootName }
+            subProjectTempRoot = Files.createTempDirectory(File(systemTempRoot).toPath(), prefix)
             systemProperty("java.io.tmpdir", subProjectTempRoot.toString())
         }
     }

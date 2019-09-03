@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.fir.java.types
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
 import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class FirJavaTypeRef(
-    session: FirSession,
     annotations: List<FirAnnotationCall>,
     val type: JavaType
-) : FirUserTypeRefImpl(session, psi = null, isMarkedNullable = false) {
+) : FirUserTypeRefImpl(psi = null, isMarkedNullable = false) {
     init {
         this.annotations += annotations
     }

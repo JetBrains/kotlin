@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
 
-class FirContinueExpressionImpl(
-    session: FirSession,
-    psi: PsiElement?
-) : FirContinueExpression(session, psi)
+class FirContinueExpressionImpl(psi: PsiElement?) : FirContinueExpression(psi)

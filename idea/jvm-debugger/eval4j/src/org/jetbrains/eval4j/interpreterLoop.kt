@@ -28,7 +28,7 @@ interface InterpreterResult {
     override fun toString(): String
 }
 
-class ExceptionThrown(val exception: ObjectValue, val kind: ExceptionKind): InterpreterResult {
+class ExceptionThrown(val exception: ObjectValue, val kind: ExceptionKind) : InterpreterResult {
     override fun toString(): String = "Thrown $exception: $kind"
 
     enum class ExceptionKind {
@@ -38,11 +38,11 @@ class ExceptionThrown(val exception: ObjectValue, val kind: ExceptionKind): Inte
     }
 }
 
-data class ValueReturned(val result: Value): InterpreterResult {
+data class ValueReturned(val result: Value) : InterpreterResult {
     override fun toString(): String = "Returned $result"
 }
 
-class AbnormalTermination(val message: String): InterpreterResult {
+class AbnormalTermination(val message: String) : InterpreterResult {
     override fun toString(): String = "Terminated abnormally: $message"
 }
 
@@ -60,7 +60,7 @@ interface InterpretationEventHandler {
     fun exceptionCaught(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult?
 }
 
-abstract class ThrownFromEvalExceptionBase(cause: Throwable): RuntimeException(cause) {
+abstract class ThrownFromEvalExceptionBase(cause: Throwable) : RuntimeException(cause) {
     override fun toString(): String = "Thrown by evaluator: ${cause}"
 }
 
@@ -69,15 +69,15 @@ class BrokenCode(cause: Throwable) : ThrownFromEvalExceptionBase(cause)
 // Interpreting exceptions should not be sent to EA
 class Eval4JInterpretingException(override val cause: Throwable) : RuntimeException(cause)
 
-class ThrownFromEvaluatedCodeException(val exception: ObjectValue): RuntimeException() {
+class ThrownFromEvaluatedCodeException(val exception: ObjectValue) : RuntimeException() {
     override fun toString(): String = "Thrown from evaluated code: $exception"
 }
 
 fun interpreterLoop(
-        m: MethodNode,
-        initialState: Frame<Value>,
-        eval: Eval,
-        handler: InterpretationEventHandler = InterpretationEventHandler.NONE
+    m: MethodNode,
+    initialState: Frame<Value>,
+    eval: Eval,
+    handler: InterpretationEventHandler = InterpretationEventHandler.NONE
 ): InterpreterResult {
     val firstInsn = m.instructions.first
     if (firstInsn == null) throw IllegalArgumentException("Empty method")
@@ -93,7 +93,7 @@ fun interpreterLoop(
     val frame = Frame(initialState)
     val handlers = computeHandlers(m)
 
-    class ResultException(val result: InterpreterResult): RuntimeException()
+    class ResultException(val result: InterpreterResult) : RuntimeException()
 
     fun exceptionCaught(exceptionValue: Value, instanceOf: (Type) -> Boolean): Boolean {
         val catchBlocks = handlers[m.instructions.indexOf(currentInsn)] ?: listOf()
@@ -114,23 +114,21 @@ fun interpreterLoop(
         return false
     }
 
-    fun exceptionCaught(exceptionValue: Value): Boolean = exceptionCaught(exceptionValue) {
-        exceptionType -> eval.isInstanceOf(exceptionValue, exceptionType)
+    fun exceptionCaught(exceptionValue: Value): Boolean = exceptionCaught(exceptionValue) { exceptionType ->
+        eval.isInstanceOf(exceptionValue, exceptionType)
     }
 
     fun exceptionFromEvalCaught(exception: Throwable, exceptionValue: Value): Boolean {
-        return exceptionCaught(exceptionValue) {
-            exceptionType ->
+        return exceptionCaught(exceptionValue) { exceptionType ->
             try {
                 val exceptionClass = exception::class.java
                 val _class = Class.forName(
-                        exceptionType.internalName.replace('/', '.'),
-                        true,
-                        exceptionClass.classLoader
+                    exceptionType.internalName.replace('/', '.'),
+                    true,
+                    exceptionClass.classLoader
                 )
                 _class.isAssignableFrom(exceptionClass)
-            }
-            catch (e: ClassNotFoundException) {
+            } catch (e: ClassNotFoundException) {
                 // If the class is not available in this VM, it can not be a superclass of an exception trown in it
                 false
             }
@@ -164,16 +162,16 @@ fun interpreterLoop(
                         }
 
                         // TODO: switch
-                        LOOKUPSWITCH -> UnsupportedByteCodeException("LOOKUPSWITCH is not supported yet")
-                        TABLESWITCH -> UnsupportedByteCodeException("TABLESWITCH is not supported yet")
+                        LOOKUPSWITCH -> throw UnsupportedByteCodeException("LOOKUPSWITCH is not supported yet")
+                        TABLESWITCH -> throw UnsupportedByteCodeException("TABLESWITCH is not supported yet")
 
                         IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
                             val value = frame.getStackTop()
                             val expectedType = Type.getReturnType(m.desc)
                             if (expectedType.sort == Type.OBJECT || expectedType.sort == Type.ARRAY) {
                                 val coerced = if (value != NULL_VALUE && value.asmType != expectedType)
-                                                    ObjectValue(value.obj(), expectedType)
-                                              else value
+                                    ObjectValue(value.obj(), expectedType)
+                                else value
                                 return ValueReturned(coerced)
                             }
                             if (value.asmType != expectedType) {
@@ -216,24 +214,25 @@ fun interpreterLoop(
                         }
 
                         // Workaround for a bug in Kotlin: NoPatterMatched exception is thrown otherwise!
-                        else -> {}
+                        else -> {
+                        }
                     }
 
                     try {
                         frame.execute(currentInsn, interpreter)
-                    }
-                    catch (e: ThrownFromEvalExceptionBase) {
+                    } catch (e: ThrownFromEvalExceptionBase) {
                         val exception = e.cause!!
                         val exceptionValue = ObjectValue(exception, Type.getType(exception::class.java))
-                        val handled = handler.exceptionThrown(frame, currentInsn,
-                                exceptionValue)
+                        val handled = handler.exceptionThrown(
+                            frame, currentInsn,
+                            exceptionValue
+                        )
                         if (handled != null) return handled
                         if (exceptionFromEvalCaught(exception, exceptionValue)) continue@loop
 
                         val exceptionType = if (e is BrokenCode) ExceptionKind.BROKEN_CODE else ExceptionKind.FROM_EVALUATOR
                         return ExceptionThrown(exceptionValue, exceptionType)
-                    }
-                    catch (e: ThrownFromEvaluatedCodeException) {
+                    } catch (e: ThrownFromEvaluatedCodeException) {
                         val handled = handler.exceptionThrown(frame, currentInsn, e.exception)
                         if (handled != null) return handled
                         if (exceptionCaught(e.exception)) continue@loop
@@ -247,23 +246,24 @@ fun interpreterLoop(
 
             goto(currentInsn.next)
         }
-    }
-    catch(e: ResultException) {
+    } catch (e: ResultException) {
         return e.result
     }
 }
 
-private fun <T: Value> Frame<T>.getStackTop(i: Int = 0) = this.getStack(this.stackSize - 1 - i) ?: throwBrokenCodeException(IllegalArgumentException("Couldn't get value with index = $i from top of stack"))
+private fun <T : Value> Frame<T>.getStackTop(i: Int = 0) = this.getStack(this.stackSize - 1 - i) ?: throwBrokenCodeException(
+    IllegalArgumentException("Couldn't get value with index = $i from top of stack")
+)
 
 // Copied from org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer.analyze()
 fun computeHandlers(m: MethodNode): Array<out List<TryCatchBlockNode>?> {
     val insns = m.instructions
-    val handlers = Array<MutableList<TryCatchBlockNode>?>(insns.size()) {null}
+    val handlers = Array<MutableList<TryCatchBlockNode>?>(insns.size()) { null }
     for (tcb in m.tryCatchBlocks) {
         val begin = insns.indexOf(tcb.start)
         val end = insns.indexOf(tcb.end)
-        for (i in begin..end - 1) {
-            val insnHandlers = handlers[i] ?: ArrayList<TryCatchBlockNode>()
+        for (i in begin until end) {
+            val insnHandlers = handlers[i] ?: ArrayList()
             handlers[i] = insnHandlers
 
             insnHandlers.add(tcb)

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SafeCastWithReturnInspection : AbstractKotlinInspection() {
@@ -30,11 +31,11 @@ class SafeCastWithReturnInspection : AbstractKotlinInspection() {
             if (KtPsiUtil.deparenthesize(parent.right) !is KtReturnExpression) return
 
             val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-            if (context[BindingContext.USED_AS_EXPRESSION, parent] == true) {
+            if (parent.isUsedAsExpression(context)) {
                 val lambda = expression.getStrictParentOfType<KtLambdaExpression>() ?: return
                 if (lambda.functionLiteral.bodyExpression?.statements?.lastOrNull() != parent) return
                 val call = lambda.getStrictParentOfType<KtCallExpression>() ?: return
-                if (context[BindingContext.USED_AS_EXPRESSION, call] == true) return
+                if (call.isUsedAsExpression(context)) return
             }
             if (context.diagnostics.forElement(expression.operationReference).any { it.factory == Errors.CAST_NEVER_SUCCEEDS }) return
 

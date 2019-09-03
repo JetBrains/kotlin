@@ -6,12 +6,15 @@ plugins {
 }
 
 dependencies {
-    testCompile(project(":kotlin-scripting-compiler-impl"))
+    testCompile(project(":kotlin-scripting-compiler"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(projectTests(":generators:test-generator"))
     testRuntime(project(":kotlin-reflect"))
     testRuntime(intellijDep())
+    Platform[192].orHigher {
+        testRuntimeOnly(intellijPluginDep("java"))
+    }
 }
 
 sourceSets {

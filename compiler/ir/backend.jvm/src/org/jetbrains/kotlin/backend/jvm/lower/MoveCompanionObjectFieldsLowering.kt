@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
@@ -69,31 +71,39 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         val companion = irClass.declarations.find {
             it is IrClass && it.isCompanion
         } as IrClass? ?: return
-        if ((irClass.isInterface || irClass.isAnnotationClass) && !companion.allFieldsAreJvmField()) return
-        companion.declarations.forEach {
+
+        // We don't move fields to interfaces unless all fields are annotated with @JvmField.
+        // It is an error to annotate only some of the fields of an interface companion with @JvmField.
+        val newParent = if (irClass.isJvmInterface && !companion.allFieldsAreJvmField()) companion else irClass
+
+        val newDeclarations = companion.declarations.mapNotNull {
             when (it) {
-                is IrProperty -> {
-                    val newField = movePropertyFieldToStaticParent(it, companion, irClass, fieldReplacementMap)
-                    if (newField != null) irClass.declarations.add(newField)
-                }
-                is IrAnonymousInitializer -> {
-                    val newInitializer = moveAnonymousInitializerToStaticParent(it, companion, irClass)
-                    irClass.declarations.add(newInitializer)
-                }
-                else -> Unit
+                is IrProperty ->
+                    movePropertyFieldToStaticParent(it, companion, newParent, fieldReplacementMap)
+                is IrAnonymousInitializer ->
+                    moveAnonymousInitializerToStaticParent(it, companion, newParent)
+                else ->
+                    null
             }
         }
-        companion.declarations.removeAll { it is IrAnonymousInitializer }
+
+        // Move declarations to parent if required
+        if (newParent !== companion) {
+            companion.declarations.removeAll { it is IrAnonymousInitializer }
+            newParent.declarations += newDeclarations
+        }
     }
 
     private fun copyConsts(irClass: IrClass) {
         val companion = irClass.declarations.find {
             it is IrClass && it.isCompanion
         } as IrClass? ?: return
-        companion.declarations.filter { it is IrProperty && it.isConst }.mapNotNullTo(irClass.declarations) {
-            copyPropertyFieldToStaticParent(it as IrProperty, companion, irClass)
-        }
+        companion.declarations.filter { it is IrProperty && it.isConst && it.hasPublicVisibility }
+            .mapNotNullTo(irClass.declarations) { copyPropertyFieldToStaticParent(it as IrProperty, companion, irClass) }
     }
+
+    private val IrProperty.hasPublicVisibility: Boolean
+        get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.PROTECTED
 
     private fun IrClass.allFieldsAreJvmField() =
         declarations.filterIsInstance<IrProperty>()

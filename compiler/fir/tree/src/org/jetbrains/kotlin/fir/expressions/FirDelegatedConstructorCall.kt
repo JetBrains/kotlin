@@ -6,16 +6,14 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirDelegatedConstructorCall(
-    session: FirSession,
     psi: PsiElement?
-) : @VisitedSupertype FirCallWithArgumentList(session, psi), FirQualifiedAccess {
+) : @VisitedSupertype FirCallWithArgumentList(psi), FirQualifiedAccess {
     // Do we need 'constructedType: FirType' here?
     abstract val constructedTypeRef: FirTypeRef
 

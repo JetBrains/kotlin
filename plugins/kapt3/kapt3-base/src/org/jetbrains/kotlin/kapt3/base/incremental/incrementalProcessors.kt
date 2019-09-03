@@ -19,12 +19,15 @@ import javax.tools.JavaFileObject
 
 private val ALLOWED_RUNTIME_TYPES = setOf(RuntimeProcType.AGGREGATING.name, RuntimeProcType.ISOLATING.name)
 
-class IncrementalProcessor(private val processor: Processor, val kind: DeclaredProcType) : Processor by processor {
+class IncrementalProcessor(private val processor: Processor, private val kind: DeclaredProcType) : Processor by processor {
 
     private var dependencyCollector = lazy { createDependencyCollector() }
 
+    val processorName: String = processor.javaClass.name
+    val incrementalSupportType: String = kind.name
+
     override fun init(processingEnv: ProcessingEnvironment) {
-        if (kind == DeclaredProcType.NON_INCREMENTAL) {
+        if (!kind.canRunIncrementally) {
             processor.init(processingEnv)
         } else {
             val originalFiler = processingEnv.filer
@@ -56,6 +59,12 @@ class IncrementalProcessor(private val processor: Processor, val kind: DeclaredP
         return AnnotationProcessorDependencyCollector(type)
     }
 
+    fun isMissingIncrementalSupport(): Boolean {
+        if (kind == DeclaredProcType.NON_INCREMENTAL) return true
+
+        return kind == DeclaredProcType.DYNAMIC && getRuntimeType() == RuntimeProcType.NON_INCREMENTAL
+    }
+    fun isUnableToRunIncrementally() = !kind.canRunIncrementally
     fun getGeneratedToSources() = dependencyCollector.value.getGeneratedToSources()
     fun getRuntimeType(): RuntimeProcType = dependencyCollector.value.getRuntimeType()
 }
@@ -135,19 +144,23 @@ private fun getSrcFiles(elements: Array<out Element?>): Set<File> {
     }.toSet()
 }
 
-enum class DeclaredProcType {
-    AGGREGATING {
+enum class DeclaredProcType(val canRunIncrementally: Boolean) {
+    AGGREGATING(true) {
         override fun toRuntimeType() = RuntimeProcType.AGGREGATING
     },
-    ISOLATING {
+    ISOLATING(true) {
         override fun toRuntimeType() = RuntimeProcType.ISOLATING
     },
-    DYNAMIC {
+    DYNAMIC(true) {
         override fun toRuntimeType() = throw IllegalStateException("This should not be used")
     },
-    NON_INCREMENTAL {
+    NON_INCREMENTAL(false) {
         override fun toRuntimeType() = RuntimeProcType.NON_INCREMENTAL
-    };
+    },
+    INCREMENTAL_BUT_OTHER_APS_ARE_NOT(false) {
+        override fun toRuntimeType() = RuntimeProcType.NON_INCREMENTAL
+    },
+    ;
 
     abstract fun toRuntimeType(): RuntimeProcType
 }

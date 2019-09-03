@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 // IGNORE_BACKEND: JS, JVM_IR
 
 fun foo(vararg l: Long, s: String = "OK"): String =

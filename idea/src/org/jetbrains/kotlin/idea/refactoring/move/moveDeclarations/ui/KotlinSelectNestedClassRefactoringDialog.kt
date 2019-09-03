@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui
@@ -29,10 +18,10 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import java.awt.BorderLayout
 import javax.swing.*
 
-internal class KotlinSelectNestedClassRefactoringDialog private constructor (
-        project: Project,
-        private val nestedClass: KtClassOrObject,
-        private val targetContainer: PsiElement?
+internal class KotlinSelectNestedClassRefactoringDialog private constructor(
+    project: Project,
+    private val nestedClass: KtClassOrObject,
+    private val targetContainer: PsiElement?
 ) : DialogWrapper(project, true) {
     private val moveToUpperLevelButton = JRadioButton()
     private val moveMembersButton = JRadioButton()
@@ -83,32 +72,34 @@ internal class KotlinSelectNestedClassRefactoringDialog private constructor (
 
     companion object {
         private fun MoveKotlinNestedClassesToUpperLevelDialog(
-                nestedClass: KtClassOrObject,
-                targetContainer: PsiElement?
+            nestedClass: KtClassOrObject,
+            targetContainer: PsiElement?
         ): MoveKotlinNestedClassesToUpperLevelDialog? {
             val outerClass = nestedClass.containingClassOrObject ?: return null
             val newTarget = targetContainer
-                            ?: outerClass.containingClassOrObject
-                            ?: outerClass.containingFile.let { it.containingDirectory ?: it }
+                ?: outerClass.containingClassOrObject
+                ?: outerClass.containingFile.let { it.containingDirectory ?: it }
             return MoveKotlinNestedClassesToUpperLevelDialog(nestedClass.project, nestedClass, newTarget)
         }
 
         private fun MoveKotlinNestedClassesDialog(
-                nestedClass: KtClassOrObject,
-                targetContainer: PsiElement?
+            nestedClass: KtClassOrObject,
+            targetContainer: PsiElement?
         ): MoveKotlinNestedClassesDialog {
-            return MoveKotlinNestedClassesDialog(nestedClass.project,
-                                                 listOf(nestedClass),
-                                                 nestedClass.containingClassOrObject!!,
-                                                 targetContainer as? KtClassOrObject ?: nestedClass.containingClassOrObject!!,
-                                                 null)
+            return MoveKotlinNestedClassesDialog(
+                nestedClass.project,
+                listOf(nestedClass),
+                nestedClass.containingClassOrObject!!,
+                targetContainer as? KtClassOrObject ?: nestedClass.containingClassOrObject!!,
+                null
+            )
         }
 
         fun chooseNestedClassRefactoring(nestedClass: KtClassOrObject, targetContainer: PsiElement?) {
             val project = nestedClass.project
             val dialog = when {
                 targetContainer != null && targetContainer !is KtClassOrObject ||
-                nestedClass is KtClass && nestedClass.isInner() -> {
+                        nestedClass is KtClass && nestedClass.isInner() -> {
                     MoveKotlinNestedClassesToUpperLevelDialog(nestedClass, targetContainer)
                 }
                 nestedClass is KtEnumEntry -> return

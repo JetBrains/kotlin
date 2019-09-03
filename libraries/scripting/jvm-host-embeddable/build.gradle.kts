@@ -21,6 +21,8 @@ sourceSets {
 
 publish()
 
+noDefaultJar()
+
 val jar = tasks.getByName<Jar>("jar")
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()

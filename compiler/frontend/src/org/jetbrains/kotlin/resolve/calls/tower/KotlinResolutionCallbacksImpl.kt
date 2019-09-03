@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -130,8 +131,22 @@ class KotlinResolutionCallbacksImpl(
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
+
+        // We have to refine receiverType because resolve inside lambda needs proper scope from receiver,
+        // and for implicit receivers there are no expression which type would've been refined in ExpTypingVisitor
+        // Relevant test: multiplatformTypeRefinement/lambdas
+        //
+        // It doesn't happen in similar cases with other implicit receivers (e.g., with scope of extension receiver
+        // inside extension function) because during resolution of types we correctly discriminate headers
+        //
+        // Also note that refining the whole type might be undesired because sometimes it contains NO_EXPECTED_TYPE
+        // which throws exceptions on attempt to call equals
+        val refinedReceiverType = receiverType?.let {
+            @UseExperimental(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
+        }
+
         val expectedType = createFunctionType(
-            builtIns, annotations, receiverType, parameters, null,
+            builtIns, annotations, refinedReceiverType, parameters, null,
             lambdaInfo.expectedType, isSuspend
         )
 
@@ -146,7 +161,7 @@ class KotlinResolutionCallbacksImpl(
                     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
                     callComponents, builtIns, topLevelCallContext, stubsForPostponedVariables, trace,
                     kotlinToResolvedCallTransformer, expressionTypingServices, argumentTypeResolver,
-                    doubleColonExpressionResolver, deprecationResolver, moduleDescriptor
+                    doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, typeApproximator
                 )
             } else {
                 null

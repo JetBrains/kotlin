@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirClassDeclaredMemberScopeProvider {
@@ -37,11 +38,11 @@ fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
 }
 
 class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
-    private val callablesIndex: Map<Name, List<FirCallableSymbol>> = run {
-        val result = mutableMapOf<Name, MutableList<FirCallableSymbol>>()
+    private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
+        val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
         for (declaration in klass.declarations) {
             when (declaration) {
-                is FirCallableMemberDeclaration -> {
+                is FirCallableMemberDeclaration<*> -> {
                     val name = if (declaration is FirConstructor) klass.name else declaration.name
                     result.getOrPut(name) { mutableListOf() } += declaration.symbol
                 }
@@ -66,20 +67,20 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
         result
     }
 
-    override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
-            if (symbol is ConeFunctionSymbol && !processor(symbol)) {
+            if (symbol is FirFunctionSymbol<*> && !processor(symbol)) {
                 return STOP
             }
         }
         return NEXT
     }
 
-    override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
-            if (symbol is ConePropertySymbol && !processor(symbol)) {
+            if (symbol is ConeVariableSymbol && !processor(symbol)) {
                 return STOP
             }
         }

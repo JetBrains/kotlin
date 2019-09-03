@@ -69,9 +69,9 @@ abstract class JKElementBase : JKTreeElement, Cloneable {
 
     }
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTreeElement(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitTreeElement(this)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
+    override fun acceptChildren(visitor: JKVisitor) {}
 
     override fun copy(): JKTreeElement =
         clone() as JKTreeElement
@@ -96,8 +96,8 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
         return JKListChild(childNum++)
     }
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        forEachChild { it.accept(visitor, data) }
+    override fun acceptChildren(visitor: JKVisitor) {
+        forEachChild { it.accept(visitor) }
     }
 
     protected inline fun forEachChild(block: (JKTreeElement) -> Unit) {

@@ -51,6 +51,7 @@ interface SymbolRenamer {
     fun getVariableName(symbol: IrVariableSymbol): Name = symbol.owner.name
     fun getTypeParameterName(symbol: IrTypeParameterSymbol): Name = symbol.owner.name
     fun getValueParameterName(symbol: IrValueParameterSymbol): Name = symbol.owner.name
+    fun getTypeAliasName(symbol: IrTypeAliasSymbol): Name = symbol.owner.name
 
     object DEFAULT : SymbolRenamer
 }
@@ -138,6 +139,7 @@ open class DeepCopyIrTreeWithSymbols(
             }
             thisReceiver = declaration.thisReceiver?.transform()
             declaration.transformDeclarationsTo(this)
+            copyAttributes(declaration)
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
@@ -330,6 +332,20 @@ open class DeepCopyIrTreeWithSymbols(
         ).apply {
             transformAnnotations(declaration)
             defaultValue = declaration.defaultValue?.transform()
+        }
+
+    override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
+        IrTypeAliasImpl(
+            declaration.startOffset, declaration.endOffset,
+            symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
+            symbolRenamer.getTypeAliasName(declaration.symbol),
+            declaration.visibility,
+            declaration.expandedType.remapType(),
+            declaration.isActual,
+            mapDeclarationOrigin(declaration.origin)
+        ).apply {
+            transformAnnotations(declaration)
+            copyTypeParametersFrom(declaration)
         }
 
     override fun visitBody(body: IrBody): IrBody =
@@ -586,6 +602,14 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRemapper.getReferencedSimpleFunction(expression.getter),
             expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
             mapStatementOrigin(expression.origin)
+        )
+
+    override fun visitFunctionExpression(expression: IrFunctionExpression): IrFunctionExpression =
+        IrFunctionExpressionImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.function.transform(),
+            mapStatementOrigin(expression.origin)!!
         )
 
     override fun visitClassReference(expression: IrClassReference): IrClassReference =

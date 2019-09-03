@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolve
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -66,7 +67,7 @@ class InferenceComponents(
     }
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle(ctx)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle)
-    private val injector = ConstraintInjector(incorporator, approximator)
+    private val injector = ConstraintInjector(incorporator, approximator, KotlinTypeRefiner.Default)
     val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)
 
     fun createConstraintSystem(): NewConstraintSystemImpl {

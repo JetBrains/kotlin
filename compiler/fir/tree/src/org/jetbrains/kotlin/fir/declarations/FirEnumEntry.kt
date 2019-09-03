@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
 abstract class FirEnumEntry(
-    session: FirSession,
+    final override val session: FirSession,
     psi: PsiElement?
-) : @VisitedSupertype FirRegularClass, FirCall(session, psi) {
+) : @VisitedSupertype FirRegularClass, FirCall(psi) {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitEnumEntry(this, data)
 

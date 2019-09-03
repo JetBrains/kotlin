@@ -5,9 +5,8 @@ buildscript {
         google()
         jcenter()
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-
+    dependencies {        
+        classpath 'com.android.tools.build:gradle:3.3.2'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -31,7 +30,6 @@ android {
         versionName "1.0"
         testApplicationId "org.jetbrains.kotlin.android.tests.gradle"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
     }
     buildTypes {
         debug {
@@ -62,6 +60,19 @@ android {
         resultsDir = "build/test/results"
     }
 
+
+    flavorDimensions "box"
+
+    productFlavors {
+        ktest0 {
+            dimension "box"
+        }
+
+        ktest1 {
+            dimension "box"
+        }
+    }
+
 }
 
 task jarTestFolders() {
@@ -81,7 +92,8 @@ tasks.withType(JavaCompile) {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:multidex:1.0.3'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation fileTree(dir: 'libs/test', include: ['*.jar'])
+
+    ktest0Implementation fileTree(dir: 'libs/test', include: ['libtest0.jar'])
+    ktest1Implementation fileTree(dir: 'libs/test', include: ['libtest1.jar'])
 }

@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.stream.JsonWriter
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.StringWriter
@@ -17,10 +18,11 @@ import java.nio.file.Files
  * Handles simple case, when there are no npm depenencies required, but some tasks steel needs
  * node_modules with symlinked packages and packages_imported
  */
-class NpmSimpleLinker(val rootProject: Project) {
-    private val rootProjectNodeModules = rootProject.nodeJs.root.rootPackageDir.resolve(NpmProject.NODE_MODULES)
+class NpmSimpleLinker(val nodeJs: NodeJsRootExtension) {
+    private val rootProject = nodeJs.rootProject
+    private val rootProjectNodeModules = nodeJs.rootPackageDir.resolve(NpmProject.NODE_MODULES)
 
-    fun link(projects: Collection<NpmProjectPackage>) {
+    fun link(projects: Collection<KotlinCompilationNpmResolution>) {
         rootProjectNodeModules.listFiles()?.forEach {
             val path = it.toPath()
             when {
@@ -42,7 +44,7 @@ class NpmSimpleLinker(val rootProject: Project) {
 
         // packages_imported
         projects.flatMapTo(mutableSetOf()) {
-            it.gradleDependencies.externalModules.map { gradleNodeModule -> gradleNodeModule }
+            it.externalGradleDependencies
         }.forEach {
             fsLinker.link(getNodeModulePath(it.name), it.path.canonicalFile)
         }
@@ -58,10 +60,10 @@ class NpmSimpleLinker(val rootProject: Project) {
     }
 
     fun createFSLinker(): FSLinker =
-        if (rootProject.nodeJs.root.environment.isWindows) WindowsJunctionFsLinker(rootProject, rootProjectNodeModules)
+        if (nodeJs.environment.isWindows) WindowsJunctionFsLinker(rootProject, rootProjectNodeModules, nodeJs)
         else JavaFsLinker()
 
-    class WindowsJunctionFsLinker(val project: Project, val dir: File) : FSLinker {
+    class WindowsJunctionFsLinker(val project: Project, val dir: File, val nodeJs: NodeJsRootExtension) : FSLinker {
         val js = StringBuilder()
 
         init {
@@ -83,7 +85,7 @@ class NpmSimpleLinker(val rootProject: Project) {
         override fun execute() {
             val result = project.exec { exec ->
                 exec.workingDir = dir
-                exec.executable = project.nodeJs.root.environment.nodeExecutable
+                exec.executable = nodeJs.environment.nodeExecutable
                 exec.standardInput = ByteArrayInputStream(js.toString().toByteArray())
                 exec.standardOutput = System.`out`
                 exec.errorOutput = System.err

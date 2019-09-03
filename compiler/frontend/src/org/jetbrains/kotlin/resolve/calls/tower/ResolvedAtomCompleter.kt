@@ -50,7 +50,8 @@ class ResolvedAtomCompleter(
     private val builtIns: KotlinBuiltIns,
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val typeApproximator: TypeApproximator
 ) {
     private val topLevelCallCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
     private val topLevelTrace = topLevelCallCheckerContext.trace
@@ -142,7 +143,7 @@ class ResolvedAtomCompleter(
         }
 
         val approximatedReturnType =
-            TypeApproximator(builtIns).approximateDeclarationType(
+            typeApproximator.approximateDeclarationType(
                 returnType,
                 local = true,
                 languageVersionSettings = topLevelCallContext.languageVersionSettings

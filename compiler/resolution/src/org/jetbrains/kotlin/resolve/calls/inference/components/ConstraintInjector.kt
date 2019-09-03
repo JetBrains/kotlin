@@ -21,15 +21,18 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.LOWER
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.UPPER
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import java.util.*
 import kotlin.math.max
 
-class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val typeApproximator: AbstractTypeApproximator) {
+class ConstraintInjector(
+    val constraintIncorporator: ConstraintIncorporator,
+    val typeApproximator: AbstractTypeApproximator,
+    val kotlinTypeRefiner: KotlinTypeRefiner
+) {
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
     interface Context : TypeSystemInferenceExtensionContext {
@@ -135,6 +138,15 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
         override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
             return baseContext.prepareType(type)
+        }
+
+        @UseExperimental(TypeRefinement::class)
+        override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
+            return if (type is KotlinType) {
+                kotlinTypeRefiner.refineType(type)
+            } else {
+                type
+            }
         }
 
         fun runIsSubtypeOf(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {

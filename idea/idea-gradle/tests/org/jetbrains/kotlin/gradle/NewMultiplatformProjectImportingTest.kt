@@ -265,25 +265,25 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("app") {
                 libraryDependency("Gradle: android-android-26", DependencyScope.COMPILE)
                 libraryDependency("Gradle: android.arch.core:common:1.1.0@jar", DependencyScope.COMPILE)
-                libraryDependency("Gradle: android.arch.core:runtime-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.core:runtime:1.1.0@aar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: android.arch.lifecycle:common:1.1.0@jar", DependencyScope.COMPILE)
-                libraryDependency("Gradle: android.arch.lifecycle:livedata-core-1.1.0", DependencyScope.COMPILE)
-                libraryDependency("Gradle: android.arch.lifecycle:runtime-1.1.0", DependencyScope.COMPILE)
-                libraryDependency("Gradle: android.arch.lifecycle:viewmodel-1.1.0", DependencyScope.COMPILE)
-                libraryDependency("Gradle: com.android.support.constraint:constraint-layout-1.1.3", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:livedata-core:1.1.0@aar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:runtime:1.1.0@aar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:viewmodel:1.1.0@aar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support.constraint:constraint-layout:1.1.3@aar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: com.android.support.constraint:constraint-layout-solver:1.1.3@jar", DependencyScope.COMPILE)
-                libraryDependency("Gradle: com.android.support.test.espresso:espresso-core-3.0.2", DependencyScope.TEST)
-                libraryDependency("Gradle: com.android.support.test.espresso:espresso-idling-resource-3.0.2", DependencyScope.TEST)
-                libraryDependency("Gradle: com.android.support.test:monitor-1.0.2", DependencyScope.TEST)
-                libraryDependency("Gradle: com.android.support.test:runner-1.0.2", DependencyScope.TEST)
-                libraryDependency("Gradle: com.android.support:animated-vector-drawable-27.1.1", DependencyScope.COMPILE)
-                libraryDependency("Gradle: com.android.support:appcompat-v7-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support.test.espresso:espresso-core:3.0.2@aar", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test.espresso:espresso-idling-resource:3.0.2@aar", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test:monitor:1.0.2@aar", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test:runner:1.0.2@aar", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support:animated-vector-drawable:27.1.1@aar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:appcompat-v7:27.1.1@aar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: com.android.support:support-annotations:27.1.1@jar", DependencyScope.COMPILE)
-                libraryDependency("Gradle: com.android.support:support-compat-27.1.1", DependencyScope.COMPILE)
-                libraryDependency("Gradle: com.android.support:support-core-ui-27.1.1", DependencyScope.COMPILE)
-                libraryDependency("Gradle: com.android.support:support-core-utils-27.1.1", DependencyScope.COMPILE)
-                libraryDependency("Gradle: com.android.support:support-fragment-27.1.1", DependencyScope.COMPILE)
-                libraryDependency("Gradle: com.android.support:support-vector-drawable-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-compat:27.1.1@aar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-core-ui:27.1.1@aar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-core-utils:27.1.1@aar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-fragment:27.1.1@aar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-vector-drawable:27.1.1@aar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: com.google.code.findbugs:jsr305:2.0.1@jar", DependencyScope.TEST)
                 libraryDependency("Gradle: com.squareup:javawriter:2.1.1@jar", DependencyScope.TEST)
                 libraryDependency("Gradle: javax.inject:javax.inject:1@jar", DependencyScope.TEST)
@@ -578,6 +578,132 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
+    /**
+     * Test case for issue https://youtrack.jetbrains.com/issue/KT-29757
+     */
+    @Test
+    fun testJavaTransitiveOnMPP() {
+        configureByFiles()
+        importProject(true)
+
+        checkProjectStructure(true, false, true) {
+            module("project") {}
+            module("project.jvm") {}
+            module("project.jvm.main") {
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
+            }
+            module("project.jvm.test") {
+                moduleDependency("project.jvm.main", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
+            }
+            module("project.mpp") {}
+            module("project.mpp.commonMain") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
+            }
+            module("project.mpp.commonTest") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
+            }
+            module("project.mpp.jvmMain") {
+                moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
+            }
+            module("project.mpp.jvmTest") {
+                moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp.commonTest", DependencyScope.TEST, true)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp.jvmMain", DependencyScope.TEST)
+            }
+
+            module("project.mpp-base") {}
+            module("project.mpp-base.commonMain") {}
+            module("project.mpp-base.commonTest") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+            }
+            module("project.mpp-base.jvmMain") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
+            }
+            module("project.mpp-base.jvmTest") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.commonTest", DependencyScope.TEST, true)
+            }
+        }
+    }
+
+    /**
+     * Test case for issue https://youtrack.jetbrains.com/issue/KT-28822
+     */
+    @Test
+    fun testImportBeforeBuild() {
+        configureByFiles()
+        importProject(true)
+
+        checkProjectStructure(true, false, true) {
+            module("mpp-jardep") {}
+            module("mpp-jardep.java-project") {}
+            module("mpp-jardep.java-project.main") {
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
+
+            }
+            module("mpp-jardep.java-project.test") {
+                moduleDependency("mpp-jardep.java-project.main", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
+            }
+
+            module("mpp-jardep.library1") {}
+            module("mpp-jardep.library1.commonMain") {}
+            module("mpp-jardep.library1.commonTest") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
+
+            }
+            module("mpp-jardep.library1.jvmMain") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+
+            }
+            module("mpp-jardep.library1.jvmTest") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.commonTest", DependencyScope.TEST, true)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
+            }
+
+            module("mpp-jardep.library2") {}
+            module("mpp-jardep.library2.commonMain") {}
+            module("mpp-jardep.library2.commonTest") {
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
+
+            }
+            module("mpp-jardep.library2.jvmMain") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
+
+            }
+            module("mpp-jardep.library2.jvmTest") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library2.commonTest", DependencyScope.TEST, true)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.TEST)
+            }
+        }
+    }
+
+
     @Test
     fun testProductionOnTestFlag() {
         configureByFiles()
@@ -585,10 +711,62 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
         checkProjectStructure(false, false, false ) {
             module("project.javaModule.test") {
-                moduleDependency("project.mppModule.jvmTest", DependencyScope.TEST, true)
-                moduleDependency("project.mppModule.jvmMain", DependencyScope.TEST, false)
+                moduleDependency("project.mppModule.jvmTest", DependencyScope.COMPILE, true)
             }
         }
+    }
+
+    @Test
+    fun testJvmWithJava() {
+        configureByFiles()
+        importProject(true)
+
+        checkProjectStructure(true, false, true) {
+            module("jvm-on-mpp") {}
+            module("jvm-on-mpp.jvm-mod") {}
+            module("jvm-on-mpp.jvm-mod.main") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
+            }
+            module("jvm-on-mpp.jvm-mod.test") {
+                moduleDependency("jvm-on-mpp.jvm-mod.main", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
+            }
+
+            module("jvm-on-mpp.mpp-mod-a") {
+            }
+            module("jvm-on-mpp.mpp-mod-a.commonMain") {
+            }
+            module("jvm-on-mpp.mpp-mod-a.commonTest") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
+            }
+            module("jvm-on-mpp.mpp-mod-a.jsMain") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
+            }
+            module("jvm-on-mpp.mpp-mod-a.jsTest") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
+            }
+            module("jvm-on-mpp.mpp-mod-a.jvmMain") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
+            }
+            module("jvm-on-mpp.mpp-mod-a.jvmTest") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.TEST, false)
+            }
+
+            //At the moment this is 'fake' source roots and they have no explicit dependencies.
+            module("jvm-on-mpp.mpp-mod-a.main") {
+            }
+            module("jvm-on-mpp.mpp-mod-a.test") {
+            }
+        }
+
     }
 
     private fun checkProjectStructure(

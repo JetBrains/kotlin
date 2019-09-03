@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchPanelListener
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_EXT
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.psi.KtFile
@@ -67,8 +68,13 @@ class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
                     DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
                 }
 
-                val module = ktFile.virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
-                if (module != null) {
+                if (file.isKotlinWorksheet) {
+                    panel.hideModuleSelector()
+
+                    val module = file.getModule(project) ?: return
+                    panel.setModule(module)
+                } else {
+                    val module = file.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) } ?: return
                     panel.setModule(module)
                 }
             }

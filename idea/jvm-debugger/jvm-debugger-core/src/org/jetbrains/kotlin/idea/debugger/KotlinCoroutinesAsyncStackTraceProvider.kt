@@ -25,8 +25,6 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
     private companion object {
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
 
-        private val LOG = Logger.getInstance(this::class.java)
-
         tailrec fun findBaseContinuationSuperSupertype(type: ClassType): ClassType? {
             if (type.name() == "kotlin.coroutines.jvm.internal.BaseContinuationImpl") {
                 return type
@@ -37,18 +35,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
     }
 
     override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
-        return try {
-            getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext)
-        } catch (e: ObjectCollectedException) {
-            null
-        } catch (e: IncompatibleThreadStateException) {
-            null
-        } catch (e: VMDisconnectedException) {
-            null
-        } catch (e: EvaluateException) {
-            LOG.debug("Cannot evaluate async stack trace", e)
-            null
-        }
+        return hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) }
     }
 
     fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
@@ -97,6 +84,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         val frameProxy = context.frameProxy
         val continuationVariable = frameProxy.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME) ?: return null
         val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
+        context.keepReference(continuation)
 
         return collectFrames(continuation)
     }
@@ -134,6 +122,8 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         val stackTraceElement = context.invokeMethod(debugMetadataKtType, getStackTraceElementMethod, args) as? ObjectReference
             ?: return null
 
+        context.keepReference(stackTraceElement)
+
         val stackTraceElementType = stackTraceElement.referenceType().takeIf { it.name() == StackTraceElement::class.java.name }
             ?: return null
 
@@ -160,6 +150,8 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
 
         val rawSpilledVariables = context.invokeMethod(debugMetadataKtType, getSpilledVariableFieldMappingMethod, args) as? ArrayReference
             ?: return null
+
+        context.keepReference(rawSpilledVariables)
 
         val length = rawSpilledVariables.length() / 2
         val spilledVariables = ArrayList<XNamedValue>(length)

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
@@ -38,7 +38,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
         val types = self.typeParameters.map {
             ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
         }
-        val substitution = ConeSubstitutorByMap(member.typeParameters.map { it.symbol }.zip(types).toMap())
+        val substitution = substitutorByMap(member.typeParameters.map { it.symbol }.zip(types).toMap())
         if (!member.typeParameters.zip(self.typeParameters).all { (a, b) ->
                 a.bounds.size == b.bounds.size &&
                         a.bounds.zip(b.bounds).all { (aBound, bBound) -> isEqualTypes(aBound, bBound, substitution) }
@@ -61,7 +61,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
     protected fun ConeCallableSymbol.isOverridden(seen: Set<ConeCallableSymbol>): ConeCallableSymbol? {
         if (overrides.containsKey(this)) return overrides[this]
 
-        fun similarFunctionsOrBothProperties(declaration: FirCallableDeclaration, self: FirCallableDeclaration): Boolean {
+        fun similarFunctionsOrBothProperties(declaration: FirCallableDeclaration<*>, self: FirCallableDeclaration<*>): Boolean {
             return when (declaration) {
                 is FirNamedFunction -> self is FirNamedFunction && isOverriddenFunCheck(declaration, self)
                 is FirConstructor -> false
@@ -75,9 +75,9 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
             }
         }
 
-        val self = (this as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration
+        val self = (this as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration<*>
         val overriding = seen.firstOrNull {
-            val member = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration
+            val member = (it as AbstractFirBasedSymbol<*>).fir as FirCallableMemberDeclaration<*>
             self.modality != Modality.FINAL
                     && similarFunctionsOrBothProperties(member, self)
         } // TODO: two or more overrides for one fun?

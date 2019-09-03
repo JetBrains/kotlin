@@ -152,6 +152,10 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
             super.equals(other) && other is FromCompilationConfiguration && configuration == other.configuration
 
         override fun hashCode(): Int = super.hashCode() + 23 * (configuration?.hashCode() ?: 1)
+
+        override fun toString(): String {
+            return "FromCompilationConfiguration($configuration)"
+        }
     }
 
     @Suppress("OverridingDeprecatedMember", "DEPRECATION")
@@ -200,6 +204,10 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
             super.equals(other) && other is FromLegacy && legacyDependencies == other.legacyDependencies
 
         override fun hashCode(): Int = super.hashCode() + 31 * (legacyDependencies?.hashCode() ?: 1)
+
+        override fun toString(): String {
+            return "FromLegacy($legacyDependencies)"
+        }
     }
 }
 
@@ -211,6 +219,7 @@ fun refineScriptCompilationConfiguration(
     definition: ScriptDefinition,
     project: Project
 ): ScriptCompilationConfigurationResult {
+    // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
     val legacyDefinition = definition.asLegacyOrNull<KotlinScriptDefinition>()
     if (legacyDefinition == null) {
@@ -218,15 +227,12 @@ fun refineScriptCompilationConfiguration(
         val collectedData =
             getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, project, definition.contextClassLoader)
 
-        return compilationConfiguration.refineWith(
-            compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler, collectedData, script
-        ).onSuccess {
-            it.refineWith(
-                compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeCompiling]?.handler, collectedData, script
-            )
-        }.onSuccess {
-            ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(ktFileSource, it).asSuccess()
-        }
+        return compilationConfiguration.refineOnAnnotations(script, collectedData)
+            .onSuccess {
+                it.refineBeforeCompiling(script, collectedData)
+            }.onSuccess {
+                ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(ktFileSource, it).asSuccess()
+            }
     } else {
         val file = script.getVirtualFile(definition)
         val scriptContents =
@@ -326,8 +332,10 @@ fun getScriptCollectedData(
     val jvmGetScriptingClass = (getScriptingClass as? JvmGetScriptingClass)
         ?: throw IllegalArgumentException("Expecting JvmGetScriptingClass in the hostConfiguration[getScriptingClass], got $getScriptingClass")
     val acceptedAnnotations =
-        compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.annotations?.mapNotNull {
-            jvmGetScriptingClass(it, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
+        compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
+            it.annotations.mapNotNull { ann ->
+                jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
+            }
         }.orEmpty()
     val annotations = scriptFile.annotationEntries.construct(contextClassLoader, acceptedAnnotations, project)
     return ScriptCollectedData(

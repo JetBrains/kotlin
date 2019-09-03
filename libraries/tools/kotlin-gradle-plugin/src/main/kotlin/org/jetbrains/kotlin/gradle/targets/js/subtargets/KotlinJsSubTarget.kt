@@ -11,25 +11,29 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 abstract class KotlinJsSubTarget(
     val target: KotlinJsTarget,
     private val disambiguationClassifier: String
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
+    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     val runTaskName = disambiguateCamelCased("run")
     val testTaskName = disambiguateCamelCased("test")
 
     fun configure() {
+        NpmResolverPlugin.apply(project)
+
         configureTests()
         configureRun()
 
@@ -39,20 +43,8 @@ abstract class KotlinJsSubTarget(
         }
     }
 
-    private fun disambiguate(name: String): MutableList<String> {
-        val components = mutableListOf<String>()
-
-        components.addIfNotNull(target.disambiguationClassifier)
-        components.add(disambiguationClassifier)
-        components.add(name)
-        return components
-    }
-
-    protected fun disambiguateCamelCased(name: String): String {
-        val components = disambiguate(name)
-
-        return components.first() + components.drop(1).joinToString("") { it.capitalize() }
-    }
+    protected fun disambiguateCamelCased(name: String): String =
+        lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, name)
 
     private fun configureTests() {
         target.compilations.all { compilation ->
@@ -65,16 +57,13 @@ abstract class KotlinJsSubTarget(
     abstract val testTaskDescription: String
 
     private fun configureTests(compilation: KotlinJsCompilation) {
-        // apply plugin (cannot be done at task instantiation time)
-        val nodeJs = NodeJsPlugin.apply(target.project).root
-
         val testJs = project.createOrRegisterTask<KotlinJsTest>(testTaskName) { testJs ->
             val compileTask = compilation.compileKotlinTask
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            testJs.dependsOn(target.project.nodeJs.root.npmResolveTask, compileTask, nodeJs.nodeJsSetupTask)
+            testJs.dependsOn(nodeJs.npmInstallTask, compileTask, nodeJs.nodeJsSetupTask)
 
             testJs.onlyIf {
                 compileTask.outputFile.exists()

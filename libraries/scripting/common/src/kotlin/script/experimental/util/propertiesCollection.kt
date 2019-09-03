@@ -5,15 +5,20 @@
 
 package kotlin.script.experimental.util
 
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.KotlinType
 
-open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = emptyMap()) : Serializable {
+open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = emptyMap()) : Serializable {
 
-    class Key<T>(val name: String, @Transient val getDefaultValue: PropertiesCollection.() -> T?) : Serializable {
+    open class Key<T>(
+        val name: String,
+        @Transient val getDefaultValue: PropertiesCollection.() -> T?
+    ) : Serializable {
 
         constructor(name: String, defaultValue: T? = null) : this(name, { defaultValue })
 
@@ -27,11 +32,17 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
         }
     }
 
-    class PropertyKeyDelegate<T>(private val getDefaultValue: PropertiesCollection.() -> T?) {
-        constructor(defaultValue: T?) : this({ defaultValue })
+    class TransientKey<T>(
+        name: String,
+        getDefaultValue: PropertiesCollection.() -> T?
+    ) : Key<T>(name, getDefaultValue)
+
+    class PropertyKeyDelegate<T>(private val getDefaultValue: PropertiesCollection.() -> T?, val isTransient: Boolean = false) {
+        constructor(defaultValue: T?, isTransient: Boolean = false) : this({ defaultValue }, isTransient)
 
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Key<T> =
-            Key(property.name, getDefaultValue)
+            if (isTransient) TransientKey(property.name, getDefaultValue)
+            else Key(property.name, getDefaultValue)
     }
 
     class PropertyKeyCopyDelegate<T>(val source: Key<T>) {
@@ -51,14 +62,31 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
 
     fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
 
+    val notTransientData: Map<Key<*>, Any?> get() = properties.filterKeys { it !is TransientKey<*>}
+
+    fun isEmpty(): Boolean = properties.isEmpty()
+
     override fun equals(other: Any?): Boolean =
         (other as? PropertiesCollection)?.let { it.properties == properties } == true
 
     override fun hashCode(): Int = properties.hashCode()
 
+    private fun writeObject(outputStream: ObjectOutputStream) {
+        outputStream.writeObject(notTransientData)
+    }
+
+    private fun readObject(inputStream: ObjectInputStream) {
+        @Suppress("UNCHECKED_CAST")
+        properties = inputStream.readObject() as Map<Key<*>, Any?>
+    }
+
     companion object {
-        fun <T> key(defaultValue: T? = null): PropertyKeyDelegate<T> = PropertyKeyDelegate(defaultValue)
-        fun <T> key(getDefaultValue: PropertiesCollection.() -> T?): PropertyKeyDelegate<T> = PropertyKeyDelegate(getDefaultValue)
+        fun <T> key(defaultValue: T? = null, isTransient: Boolean = false): PropertyKeyDelegate<T> =
+            PropertyKeyDelegate(defaultValue, isTransient)
+
+        fun <T> key(getDefaultValue: PropertiesCollection.() -> T?, isTransient: Boolean = false): PropertyKeyDelegate<T> =
+            PropertyKeyDelegate(getDefaultValue, isTransient)
+
         fun <T> keyCopy(source: Key<T>): PropertyKeyCopyDelegate<T> = PropertyKeyCopyDelegate(source)
 
         @JvmStatic
@@ -89,11 +117,25 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
             }
         }
 
+        fun <T> PropertiesCollection.Key<T>.replaceOnlyDefault(v: T?) {
+            if (!data.containsKey(this) || data[this] == this.getDefaultValue(PropertiesCollection(data))) {
+                data[this] = v
+            }
+        }
+
+        // generic for lists
+
         fun <T> PropertiesCollection.Key<in List<T>>.putIfAny(vals: Iterable<T>?) {
             if (vals?.any() == true) {
                 data[this] = if (vals is List) vals else vals.toList()
             }
         }
+
+        operator fun <T> PropertiesCollection.Key<in List<T>>.invoke(vararg vals: T) {
+            append(vals.asIterable())
+        }
+
+        // generic for maps:
 
         @JvmName("putIfAny_map")
         fun <K, V> PropertiesCollection.Key<in Map<K, V>>.putIfAny(vals: Iterable<Pair<K, V>>?) {
@@ -107,14 +149,6 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
                 data[this] = vals
             }
         }
-
-        // generic for lists
-
-        operator fun <T> PropertiesCollection.Key<in List<T>>.invoke(vararg vals: T) {
-            data[this] = vals.toList()
-        }
-
-        // generic for maps:
 
         operator fun <K, V> PropertiesCollection.Key<Map<K, V>>.invoke(vararg vs: Pair<K, V>) {
             append(vs.asIterable())

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.frontend.di
 
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
@@ -57,13 +59,26 @@ fun StorageComponentContainer.configureModule(
 
     useInstance(platform)
     useInstance(analyzerServices)
-    useInstance(platform.componentPlatforms.singleOrNull()?.targetPlatformVersion ?: TargetPlatformVersion.NoVersion)
+
+    val nonTrivialPlatformVersion = platform
+        .mapNotNull { it.targetPlatformVersion.takeIf { it != TargetPlatformVersion.NoVersion } }
+        .singleOrNull()
+
+    useInstance(nonTrivialPlatformVersion ?: TargetPlatformVersion.NoVersion)
 
     analyzerServices.platformConfigurator.configureModuleComponents(this)
     analyzerServices.platformConfigurator.configureModuleDependentCheckers(this)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
         extension.registerModuleComponents(this, platform, moduleContext.module)
+    }
+
+    useImpl<NewKotlinTypeCheckerImpl>()
+
+    if (languageVersionSettings.isTypeRefinementEnabled) {
+        useImpl<KotlinTypeRefinerImpl>()
+    } else {
+        useInstance(KotlinTypeRefiner.Default)
     }
 
     configurePlatformIndependentComponents()

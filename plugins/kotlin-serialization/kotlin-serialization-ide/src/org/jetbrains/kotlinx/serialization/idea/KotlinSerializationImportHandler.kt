@@ -16,14 +16,20 @@
 
 package org.jetbrains.kotlinx.serialization.idea
 
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 internal object KotlinSerializationImportHandler {
+    private const val pluginJpsJarName = "kotlinx-serialization-compiler-plugin.jar"
+
     val PLUGIN_JPS_JAR: String
-        get() = File(PathUtil.kotlinPathsForIdeaPlugin.libPath, "kotlinx-serialization-compiler-plugin.jar").absolutePath
+        get() = File(PathUtil.kotlinPathsForIdeaPlugin.libPath, pluginJpsJarName).absolutePath
+
+    fun isPluginJarPath(path: String): Boolean {
+        return path.endsWith(pluginJpsJarName)
+    }
 
     fun modifyCompilerArguments(facet: KotlinFacet, buildSystemPluginJar: String) {
         val facetSettings = facet.configuration.settings

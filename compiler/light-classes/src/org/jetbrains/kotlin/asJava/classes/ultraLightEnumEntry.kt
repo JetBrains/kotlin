@@ -14,7 +14,7 @@ internal class KtUltraLightEnumEntry(
     containingClass: KtLightClass,
     support: KtUltraLightSupport,
     modifiers: Set<String>
-) : KtUltraLightField(declaration, name, containingClass, support, modifiers), PsiEnumConstant {
+) : KtUltraLightFieldImpl(declaration, name, containingClass, support, modifiers), PsiEnumConstant {
 
     private val enumEntry get() = declaration as KtEnumEntry
 

@@ -37,11 +37,15 @@ class FieldToPropertyProcessing(
             if (field.name != propertyName || replaceReadWithFieldReference || replaceWriteWithFieldReference) MyConvertedCodeProcessor() else null
 
     override var javaCodeProcessors =
-            when {
-                field.hasModifierProperty(PsiModifier.PRIVATE) -> emptyList()
-                field.name != propertyName -> listOf(ElementRenamedCodeProcessor(propertyName), UseAccessorsJavaCodeProcessor())
-                else -> listOf(UseAccessorsJavaCodeProcessor())
-            }
+        when {
+            field.hasModifierProperty(PsiModifier.PRIVATE) -> emptyList()
+            field.name != propertyName ->
+                listOf(
+                    ElementRenamedCodeProcessor(propertyName),
+                    UseAccessorsJavaCodeProcessor(PsiElementFactory.SERVICE.getInstance(field.project), propertyName)
+                )
+            else -> listOf(UseAccessorsJavaCodeProcessor(PsiElementFactory.SERVICE.getInstance(field.project), propertyName))
+        }
 
     override val kotlinCodeProcessors =
             if (field.name != propertyName)
@@ -77,86 +81,91 @@ class FieldToPropertyProcessing(
             }
         }
     }
+}
 
-    private inner class UseAccessorsJavaCodeProcessor : ExternalCodeProcessor {
-        private val factory = PsiElementFactory.SERVICE.getInstance(field.project)
+class UseAccessorsJavaCodeProcessor(private val factory: PsiElementFactory, private val propertyName: String) : ExternalCodeProcessor {
+    override fun processUsage(reference: PsiReference): Array<PsiReference>? {
+        val refExpr = reference.element as? PsiReferenceExpression ?: return null
+        val qualifier = refExpr.qualifierExpression
 
-        override fun processUsage(reference: PsiReference): Array<PsiReference>? {
-            val refExpr = reference.element as? PsiReferenceExpression ?: return null
-            val qualifier = refExpr.qualifierExpression
-
-            val parent = refExpr.parent
-            when (parent) {
-                is PsiAssignmentExpression -> {
-                    if (refExpr == parent.lExpression) {
-                        if (parent.operationTokenType == JavaTokenType.EQ) {
-                            val callExpr = parent.replace(generateSetterCall(qualifier, parent.rExpression ?: return null)) as PsiMethodCallExpression
-                            return arrayOf(callExpr.methodExpression)
-                        }
-                        else {
-                            val assignmentOpText = parent.operationSign.text
-                            assert(assignmentOpText.endsWith("="))
-                            val opText = assignmentOpText.substring(0, assignmentOpText.length - 1)
-                            return parent.replaceWithModificationCalls(qualifier, opText, parent.rExpression ?: return null)
-                        }
-                    }
-                }
-
-                is PsiPrefixExpression, is PsiPostfixExpression -> {
-                    //TODO: what if it's used as value?
-                    val operationType = (parent as? PsiPrefixExpression)?.operationTokenType
-                                        ?: (parent as PsiPostfixExpression).operationTokenType
-                    val opText = when (operationType) {
-                        JavaTokenType.PLUSPLUS -> "+"
-                        JavaTokenType.MINUSMINUS -> "-"
-                        else -> null
-                    }
-                    if (opText != null) {
-                        return (parent as PsiExpression).replaceWithModificationCalls(qualifier, opText, factory.createExpressionFromText("1", null))
+        when (val parent = refExpr.parent) {
+            is PsiAssignmentExpression -> {
+                if (refExpr == parent.lExpression) {
+                    if (parent.operationTokenType == JavaTokenType.EQ) {
+                        val callExpr =
+                            parent.replace(generateSetterCall(qualifier, parent.rExpression ?: return null)) as PsiMethodCallExpression
+                        return arrayOf(callExpr.methodExpression)
+                    } else {
+                        val assignmentOpText = parent.operationSign.text
+                        assert(assignmentOpText.endsWith("="))
+                        val opText = assignmentOpText.substring(0, assignmentOpText.length - 1)
+                        return parent.replaceWithModificationCalls(qualifier, opText, parent.rExpression ?: return null)
                     }
                 }
             }
 
-            val callExpr = refExpr.replace(generateGetterCall(qualifier)) as PsiMethodCallExpression
-            return arrayOf(callExpr.methodExpression)
+            is PsiPrefixExpression, is PsiPostfixExpression -> {
+                //TODO: what if it's used as value?
+                val operationType = (parent as? PsiPrefixExpression)?.operationTokenType
+                    ?: (parent as PsiPostfixExpression).operationTokenType
+                val opText = when (operationType) {
+                    JavaTokenType.PLUSPLUS -> "+"
+                    JavaTokenType.MINUSMINUS -> "-"
+                    else -> null
+                }
+                if (opText != null) {
+                    return (parent as PsiExpression).replaceWithModificationCalls(
+                        qualifier,
+                        opText,
+                        factory.createExpressionFromText("1", null)
+                    )
+                }
+            }
         }
 
-        //TODO: what if qualifier has side effects?
-        private fun PsiExpression.replaceWithModificationCalls(qualifier: PsiExpression?, op: String, value: PsiExpression): Array<PsiReference> {
-            var getCall = generateGetterCall(qualifier)
-
-            var binary = factory.createExpressionFromText("x $op y", null) as PsiBinaryExpression
-            binary.lOperand.replace(getCall)
-            binary.rOperand!!.replace(value)
-
-            var setCall = generateSetterCall(qualifier, binary) as PsiMethodCallExpression
-            setCall = this.replace(setCall) as PsiMethodCallExpression
-
-            binary = setCall.argumentList.expressions.single() as PsiBinaryExpression
-            getCall = binary.lOperand as PsiMethodCallExpression
-
-            return arrayOf(getCall.methodExpression, setCall.methodExpression)
-        }
-
-        private fun generateGetterCall(qualifier: PsiExpression?): PsiMethodCallExpression {
-            val text = accessorName(AccessorKind.GETTER) + "()"
-            val expressionText = if (qualifier != null)
-                "${qualifier.text}.$text"
-            else
-                text
-            return factory.createExpressionFromText(expressionText, null) as PsiMethodCallExpression
-        }
-
-        private fun generateSetterCall(qualifier: PsiExpression?, value: PsiExpression): PsiExpression {
-            val text = accessorName(AccessorKind.SETTER) + "(" + value.text + ")"
-            val expressionText = if (qualifier != null)
-                "${qualifier.text}.$text"
-            else
-                text
-            return factory.createExpressionFromText(expressionText, null)
-        }
+        val callExpr = refExpr.replace(generateGetterCall(qualifier)) as PsiMethodCallExpression
+        return arrayOf(callExpr.methodExpression)
     }
 
-    private fun accessorName(kind: AccessorKind)
-            = (if (kind == AccessorKind.GETTER) "get" else "set") + propertyName.capitalize()
+    //TODO: what if qualifier has side effects?
+    private fun PsiExpression.replaceWithModificationCalls(
+        qualifier: PsiExpression?,
+        op: String,
+        value: PsiExpression
+    ): Array<PsiReference> {
+        var getCall = generateGetterCall(qualifier)
+
+        var binary = factory.createExpressionFromText("x $op y", null) as PsiBinaryExpression
+        binary.lOperand.replace(getCall)
+        binary.rOperand!!.replace(value)
+
+        var setCall = generateSetterCall(qualifier, binary) as PsiMethodCallExpression
+        setCall = this.replace(setCall) as PsiMethodCallExpression
+
+        binary = setCall.argumentList.expressions.single() as PsiBinaryExpression
+        getCall = binary.lOperand as PsiMethodCallExpression
+
+        return arrayOf(getCall.methodExpression, setCall.methodExpression)
+    }
+
+    private fun generateGetterCall(qualifier: PsiExpression?): PsiMethodCallExpression {
+        val text = accessorName(AccessorKind.GETTER) + "()"
+        val expressionText = if (qualifier != null)
+            "${qualifier.text}.$text"
+        else
+            text
+        return factory.createExpressionFromText(expressionText, null) as PsiMethodCallExpression
+    }
+
+    private fun generateSetterCall(qualifier: PsiExpression?, value: PsiExpression): PsiExpression {
+        val text = accessorName(AccessorKind.SETTER) + "(" + value.text + ")"
+        val expressionText = if (qualifier != null)
+            "${qualifier.text}.$text"
+        else
+            text
+        return factory.createExpressionFromText(expressionText, null)
+    }
+
+    private fun accessorName(kind: AccessorKind) =
+        (if (kind == AccessorKind.GETTER) "get" else "set") + propertyName.capitalize()
 }

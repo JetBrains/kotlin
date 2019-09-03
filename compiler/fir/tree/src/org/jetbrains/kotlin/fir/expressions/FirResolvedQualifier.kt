@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-abstract class FirResolvedQualifier(
-    session: FirSession,
-    psi: PsiElement?
-) : FirUnknownTypeExpression(session, psi) {
+abstract class FirResolvedQualifier(psi: PsiElement?) : FirUnknownTypeExpression(psi) {
     abstract val packageFqName: FqName
 
     abstract val relativeClassFqName: FqName?

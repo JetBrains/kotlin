@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
-  FUN name:test0 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test0) returnType:kotlin.Boolean 
+  FUN name:test0 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test0) returnType:kotlin.Boolean
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:T of <root>.test0 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test0
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test0 <T> (x: kotlin.Any, y: T of <root>.test0): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -15,10 +15,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test1 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test1) returnType:kotlin.Boolean 
+  FUN name:test1 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test1) returnType:kotlin.Boolean
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:T of <root>.test1 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test1
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 <T> (x: kotlin.Any, y: T of <root>.test1): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -31,10 +31,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test2 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test2) returnType:kotlin.Boolean 
+  FUN name:test2 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test2) returnType:kotlin.Boolean
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:T of <root>.test2 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test2
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 <T> (x: kotlin.Any, y: T of <root>.test2): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -47,10 +47,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test3) returnType:kotlin.Boolean 
+  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test3) returnType:kotlin.Boolean
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:T of <root>.test3 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test3
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any, y: T of <root>.test3): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -63,10 +63,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test4) returnType:kotlin.Boolean 
+  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test4) returnType:kotlin.Boolean
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:T of <root>.test4 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test4
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any, y: T of <root>.test4): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -79,11 +79,11 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test5 visibility:public modality:FINAL <T, R> (x:kotlin.Any, y:R of <root>.test5) returnType:kotlin.Boolean 
+  FUN name:test5 visibility:public modality:FINAL <T, R> (x:kotlin.Any, y:R of <root>.test5) returnType:kotlin.Boolean
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     TYPE_PARAMETER name:R index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:R of <root>.test5 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:R of <root>.test5
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 <T, R> (x: kotlin.Any, y: R of <root>.test5): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -96,10 +96,10 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:test6 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test6) returnType:kotlin.Boolean 
+  FUN name:test6 visibility:public modality:FINAL <T> (x:kotlin.Any, y:T of <root>.test6) returnType:kotlin.Boolean
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:T of <root>.test6 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:T of <root>.test6
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test6 <T> (x: kotlin.Any, y: T of <root>.test6): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -113,16 +113,16 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.F<T of <uninitialized parent>> [primary] 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.F<T of <uninitialized parent>> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:testCapturedType visibility:public modality:FINAL <> ($this:<root>.F, x:T of <root>.F, y:kotlin.Any) returnType:kotlin.Boolean 
-      $this: VALUE_PARAMETER name:<this> type:<root>.F 
-      VALUE_PARAMETER name:x index:0 type:T of <root>.F 
-      VALUE_PARAMETER name:y index:1 type:kotlin.Any 
+    FUN name:testCapturedType visibility:public modality:FINAL <> ($this:<root>.F, x:T of <root>.F, y:kotlin.Any) returnType:kotlin.Boolean
+      $this: VALUE_PARAMETER name:<this> type:<root>.F
+      VALUE_PARAMETER name:x index:0 type:T of <root>.F
+      VALUE_PARAMETER name:y index:1 type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun testCapturedType (x: T of <root>.F, y: kotlin.Any): kotlin.Boolean declared in <root>.F'
           WHEN type=kotlin.Boolean origin=ANDAND
@@ -135,17 +135,16 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Boolean type=kotlin.Boolean value=false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

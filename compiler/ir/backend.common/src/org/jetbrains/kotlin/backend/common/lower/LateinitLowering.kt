@@ -52,6 +52,7 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
                         name = oldField.name
                     }.also { newField ->
                         newField.parent = oldField.parent
+                        newField.correspondingPropertySymbol = declaration.symbol
                         declaration.backingField = newField
                     }
 

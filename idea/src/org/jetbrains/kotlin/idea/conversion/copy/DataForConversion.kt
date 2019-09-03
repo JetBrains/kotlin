@@ -29,15 +29,18 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.range
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
+
 data class DataForConversion private constructor(
-        val elementsAndTexts: ElementAndTextList /* list consisting of PsiElement's to convert and plain String's */,
-        val importsAndPackage: String,
-        val file: PsiJavaFile
+    val elementsAndTexts: ElementAndTextList /* list consisting of PsiElement's to convert and plain String's */,
+    val importsAndPackage: String,
+    val file: PsiJavaFile
 ) {
     companion object {
-        fun prepare(copiedCode: CopiedJavaCode, project: Project): DataForConversion  {
+        fun prepare(copiedCode: CopiedJavaCode, project: Project): DataForConversion {
             val startOffsets = copiedCode.startOffsets.clone()
             val endOffsets = copiedCode.endOffsets.clone()
             assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
@@ -121,8 +124,7 @@ data class DataForConversion private constructor(
                         val offset = this[i]
                         if (offset >= range.end) {
                             this[i] = offset - range.length
-                        }
-                        else {
+                        } else {
                             assert(offset <= range.start)
                         }
                     }
@@ -136,7 +138,10 @@ data class DataForConversion private constructor(
         }
 
         private fun PsiElement.maximalParentToClip(range: TextRange): PsiElement? {
-            val firstNotInRange = parentsWithSelf.takeWhile { it !is PsiDirectory }.firstOrNull { it.range !in range } ?: return null
+            val firstNotInRange = parentsWithSelf
+                .takeWhile { it !is PsiDirectory }
+                .firstOrNull { it.range !in range }
+                ?: return null
             return firstNotInRange.parentsWithSelf.lastOrNull { it.minimizedTextRange() in range }
         }
 
@@ -150,41 +155,42 @@ data class DataForConversion private constructor(
         private fun canDropElementFromText(element: PsiElement): Boolean {
             return when (element) {
                 is PsiWhiteSpace, is PsiComment, is PsiModifierList, is PsiAnnotation -> true
-
                 is PsiJavaToken -> {
                     when (element.tokenType) {
                         // modifiers
                         JavaTokenType.PUBLIC_KEYWORD, JavaTokenType.PROTECTED_KEYWORD, JavaTokenType.PRIVATE_KEYWORD,
                         JavaTokenType.STATIC_KEYWORD, JavaTokenType.ABSTRACT_KEYWORD, JavaTokenType.FINAL_KEYWORD,
                         JavaTokenType.NATIVE_KEYWORD, JavaTokenType.SYNCHRONIZED_KEYWORD, JavaTokenType.STRICTFP_KEYWORD,
-                        JavaTokenType.TRANSIENT_KEYWORD, JavaTokenType.VOLATILE_KEYWORD, JavaTokenType.DEFAULT_KEYWORD -> element.getParent() is PsiModifierList
-
+                        JavaTokenType.TRANSIENT_KEYWORD, JavaTokenType.VOLATILE_KEYWORD, JavaTokenType.DEFAULT_KEYWORD ->
+                            element.getParent() is PsiModifierList
                         JavaTokenType.SEMICOLON -> true
-
                         else -> false
                     }
                 }
-
                 is PsiCodeBlock -> element.getParent() is PsiMethod
-
                 else -> element.firstChild == null
             }
         }
 
-        private fun tryClipLeftSide(element: PsiElement, leftBound: Int)
-                = tryClipSide(element, leftBound, { range }, { allChildren })
+        private fun tryClipLeftSide(element: PsiElement, leftBound: Int) =
+            tryClipSide(element, leftBound, { range }, { allChildren })
 
         private fun tryClipRightSide(element: PsiElement, rightBound: Int): Int? {
             fun Int.transform() = Int.MAX_VALUE - this
             fun TextRange.transform() = TextRange(end.transform(), start.transform())
-            return tryClipSide(element, rightBound.transform(), { range.transform() }, { lastChild.siblings(forward = false) })?.transform()
+            return tryClipSide(
+                element,
+                rightBound.transform(),
+                { range.transform() },
+                { lastChild.siblings(forward = false) }
+            )?.transform()
         }
 
         private fun tryClipSide(
-                element: PsiElement,
-                rangeBound: Int,
-                rangeFunction: PsiElement.() -> TextRange,
-                childrenFunction: PsiElement.() -> Sequence<PsiElement>
+            element: PsiElement,
+            rangeBound: Int,
+            rangeFunction: PsiElement.() -> TextRange,
+            childrenFunction: PsiElement.() -> Sequence<PsiElement>
         ): Int? {
             if (element.firstChild == null) return null
 
@@ -197,12 +203,10 @@ data class DataForConversion private constructor(
 
                 if (childRange.start >= rangeBound) { // we have cut enough already
                     break
-                }
-                else if (childRange.end <= rangeBound) { // need to drop the whole element
+                } else if (childRange.end <= rangeBound) { // need to drop the whole element
                     if (!canDropElementFromText(child)) return null
                     clipTo = childRange.end
-                }
-                else { // rangeBound is inside child's range
+                } else { // rangeBound is inside child's range
                     if (child is PsiWhiteSpace) break // no need to cut whitespace - we can leave it as is
                     return tryClipSide(child, rangeBound, rangeFunction, childrenFunction)
                 }
@@ -212,15 +216,14 @@ data class DataForConversion private constructor(
         }
 
         private fun ElementAndTextList.collectElementsToConvert(
-                file: PsiJavaFile,
-                fileText: String,
-                range: TextRange
+            file: PsiJavaFile,
+            fileText: String,
+            range: TextRange
         ) {
             val elements = file.elementsInRange(range)
             if (elements.isEmpty()) {
                 add(fileText.substring(range.start, range.end))
-            }
-            else {
+            } else {
                 add(fileText.substring(range.start, elements.first().range.start))
                 elements.forEach {
                     if (shouldExpandToChildren(it))
@@ -238,7 +241,7 @@ data class DataForConversion private constructor(
         private fun buildImportsAndPackage(sourceFile: PsiJavaFile): String {
             return buildString {
                 val packageName = sourceFile.packageName
-                if (!packageName.isEmpty()) {
+                if (packageName.isNotEmpty()) {
                     append("package $packageName\n")
                 }
 
@@ -248,8 +251,7 @@ data class DataForConversion private constructor(
                         val qualifiedName = import.qualifiedName ?: continue
                         if (import.isOnDemand) {
                             append("import $qualifiedName.*\n")
-                        }
-                        else {
+                        } else {
                             val fqName = FqNameUnsafe(qualifiedName)
                             // skip explicit imports of platform classes mapped into Kotlin classes
                             if (fqName.isSafe && JavaToKotlinClassMap.isJavaPlatformClass(fqName.toSafe())) continue

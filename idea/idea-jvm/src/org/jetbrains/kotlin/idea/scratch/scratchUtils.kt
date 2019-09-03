@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
+import com.intellij.ide.scratch.ScratchFileService
+import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.TextEditor
@@ -13,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchPanelListener
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.jetbrains.kotlin.idea.syncPublisherWithDisposeCheck
@@ -22,6 +25,12 @@ internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.scratch")
 internal fun Logger.printDebugMessage(str: String) {
     if (isDebugEnabled) debug("SCRATCH: $str")
 }
+
+val VirtualFile.isKotlinWorksheet: Boolean
+    get() = name.endsWith(".$KOTLIN_WORKSHEET_EXTENSION")
+
+val VirtualFile.isKotlinScratch: Boolean
+    get() = ScratchFileService.getInstance().getRootType(this) is ScratchRootType
 
 fun getEditorWithoutScratchPanel(fileManager: FileEditorManager, virtualFile: VirtualFile): TextEditor? {
     val editor = fileManager.getSelectedEditor(virtualFile) as? TextEditor

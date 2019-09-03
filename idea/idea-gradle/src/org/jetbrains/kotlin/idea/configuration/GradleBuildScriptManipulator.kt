@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.psi.PsiElement
@@ -53,6 +54,7 @@ interface GradleBuildScriptManipulator<out Psi : PsiFile> {
     fun changeApiVersion(version: String, forTests: Boolean): PsiElement?
 
     fun addKotlinLibraryToModuleBuildScript(
+        targetModule: Module,
         scope: DependencyScope,
         libraryDescriptor: ExternalLibraryDescriptor
     )
@@ -90,6 +92,16 @@ fun GradleBuildScriptManipulator<*>.useNewSyntax(kotlinPluginName: String, gradl
     val hasOldApply = fileText.contains("apply plugin:")
 
     return !hasOldApply
+}
+
+fun GradleBuildScriptManipulator<*>.usesNewMultiplatform(): Boolean {
+    val fileText = runReadAction { scriptFile.text }
+    return fileText.contains("multiplatform")
+}
+
+fun LanguageFeature.State.assertApplicableInMultiplatform() {
+    if (this == LanguageFeature.State.ENABLED_WITH_ERROR || this == LanguageFeature.State.DISABLED)
+        throw UnsupportedOperationException("Disabling the language feature is unsupported for multiplatform")
 }
 
 private val MIN_GRADLE_VERSION_FOR_API_AND_IMPLEMENTATION = GradleVersion.version("3.4")

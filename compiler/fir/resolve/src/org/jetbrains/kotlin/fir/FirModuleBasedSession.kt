@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScopeProvider
 abstract class FirModuleBasedSession(override val moduleInfo: ModuleInfo, sessionProvider: FirSessionProvider?) :
     FirSessionBase(sessionProvider) {
     init {
-        val firProvider = FirProviderImpl(this)
-        registerComponent(FirProvider::class, firProvider)
         registerComponent(FirQualifierResolver::class, FirQualifierResolverImpl(this))
         registerComponent(FirTypeResolver::class, FirTypeResolverImpl(this))
         registerComponent(FirClassDeclaredMemberScopeProvider::class, FirClassDeclaredMemberScopeProvider())

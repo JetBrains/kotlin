@@ -10,13 +10,20 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.highlighter.OutsidersPsiFileSupportUtils
 import org.jetbrains.kotlin.idea.highlighter.OutsidersPsiFileSupportWrapper
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
 class OutsiderFileDependenciesLoader(project: Project) : ScriptDependenciesLoader(project) {
-    override fun isApplicable(file: VirtualFile): Boolean {
+    override fun isApplicable(
+        file: VirtualFile,
+        scriptDefinition: ScriptDefinition
+    ): Boolean {
         return OutsidersPsiFileSupportWrapper.isOutsiderFile(file)
     }
 
-    override fun loadDependencies(file: VirtualFile) {
+    override fun loadDependencies(
+        file: VirtualFile,
+        scriptDefinition: ScriptDefinition
+    ) {
         val fileOrigin = OutsidersPsiFileSupportUtils.getOutsiderFileOrigin(project, file) ?: return
         val compilationConfiguration = ScriptDependenciesManager.getInstance(project).getRefinedCompilationConfiguration(fileOrigin) ?: return
         saveToCache(file, compilationConfiguration)

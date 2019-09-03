@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
-import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.junit.AfterClass
 
 /**
  * inspired by @see AbstractHighlightingTest
@@ -24,10 +23,9 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         @JvmStatic
         val stats: Stats = Stats("highlight")
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            stats.close()
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
         }
     }
 
@@ -71,17 +69,16 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         }
     }
 
-    private fun innerPerfTest(name: String, setUpBody: () -> Unit) {
-        stats.perfTest(
+    private fun innerPerfTest(name: String, setUpBody: (TestData<Unit, MutableList<HighlightInfo>>) -> Unit) {
+        stats.perfTest<Unit, MutableList<HighlightInfo>>(
             testName = name,
-            setUp = { setUpBody() },
-            test = { perfTestCore() },
+            setUp = { setUpBody(it) },
+            test = { it.value = perfTestCore() },
             tearDown = {
-                assertNotNull("no reasons to validate output as it is a performance test", it)
-
-                FileDocumentManager.getInstance().reloadFromDisk(editor.document)
-                myFixture.configureByText(KotlinFileType.INSTANCE, "")
-                commitAllDocuments()
+                assertNotNull("no reasons to validate output as it is a performance test", it.value)
+                runWriteAction {
+                    myFixture.file.delete()
+                }
             }
         )
     }

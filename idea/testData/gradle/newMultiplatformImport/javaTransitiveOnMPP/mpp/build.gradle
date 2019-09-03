@@ -1,0 +1,17 @@
+apply plugin: 'kotlin-multiplatform'
+apply plugin: 'maven-publish'
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                api project(':mpp-base')
+            }
+        }
+
+        jvmMain {
+        }
+    }
+}

@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirVariable : @VisitedSupertype FirDeclaration, FirTypedDeclaration, FirCallableDeclaration, FirNamedDeclaration, FirStatement {
+interface FirVariable<F : FirVariable<F>> :
+    @VisitedSupertype FirDeclaration, FirTypedDeclaration, FirCallableDeclaration<F>, FirNamedDeclaration, FirStatement {
     val isVar: Boolean
 
     val isVal: Boolean
@@ -20,7 +23,15 @@ interface FirVariable : @VisitedSupertype FirDeclaration, FirTypedDeclaration, F
 
     val delegate: FirExpression?
 
-    override val symbol: FirVariableSymbol
+    override val symbol: FirVariableSymbol<F>
+
+    val getter: FirPropertyAccessor? get() = null
+
+    val setter: FirPropertyAccessor? get() = null
+
+    val delegateFieldSymbol: FirDelegateFieldSymbol<F>?
+
+    fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D)
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)
@@ -28,6 +39,8 @@ interface FirVariable : @VisitedSupertype FirDeclaration, FirTypedDeclaration, F
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
+        getter?.accept(visitor, data)
+        setter?.accept(visitor, data)
         super<FirCallableDeclaration>.acceptChildren(visitor, data)
     }
 }

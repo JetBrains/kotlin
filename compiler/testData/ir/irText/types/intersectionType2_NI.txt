@@ -86,14 +86,14 @@ FILE fqName:<root> fileName:/intersectionType2_NI.kt
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Any declared in <root>'
         CALL 'public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>' type=kotlin.Any origin=null
           <T>: kotlin.Any
-          fn: BLOCK type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
               BLOCK_BODY
-                VAR name:mm type:<root>.B [val] 
+                VAR name:mm type:<root>.B [val]
                   CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
                 VAR name:nn type:<root>.C [val]
                   CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
-                VAR name:c type:kotlin.Any [val] 
+                VAR name:c type:kotlin.Any [val]
                   WHEN type=kotlin.Any origin=IF
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
@@ -103,4 +103,3 @@ FILE fqName:<root> fileName:/intersectionType2_NI.kt
                       then: GET_VAR 'val nn: <root>.C [val] declared in <root>.foo.<anonymous>' type=<root>.C origin=null
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.foo'
                   GET_VAR 'val c: kotlin.Any [val] declared in <root>.foo.<anonymous>' type=kotlin.Any origin=null
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Any declared in <root>.foo' type=kotlin.Function0<kotlin.Any> origin=LAMBDA

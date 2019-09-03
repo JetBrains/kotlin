@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -25,7 +26,7 @@ open class FirValueParameterImpl(
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
-    override val symbol: FirVariableSymbol = FirVariableSymbol(name)
+    override val symbol: FirVariableSymbol<FirValueParameter> = FirVariableSymbol(name)
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirValueParameter {
 
     init {
@@ -39,6 +40,8 @@ open class FirValueParameterImpl(
     override val delegate: FirExpression?
         get() = null
     override val receiverTypeRef: FirTypeRef?
+        get() = null
+    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>?
         get() = null
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {

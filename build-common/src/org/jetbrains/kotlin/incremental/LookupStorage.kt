@@ -75,12 +75,13 @@ open class LookupStorage(
     }
 
     @Synchronized
-    fun addAll(lookups: Set<Map.Entry<LookupSymbol, Collection<String>>>, allPaths: Set<String>) {
-        val pathToId = allPaths.keysToMap { addFileIfNeeded(File(it)) }
+    fun addAll(lookups: MultiMap<LookupSymbol, String>, allPaths: Set<String>) {
+        val pathToId = allPaths.sorted().keysToMap { addFileIfNeeded(File(it)) }
 
-        for ((lookupSymbol, paths) in lookups) {
+        for (lookupSymbol in lookups.keySet().sorted()) {
             val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
-            val fileIds = paths.mapTo(HashSet<Int>()) { pathToId[it]!! }
+            val paths = lookups[lookupSymbol]!!
+            val fileIds = paths.mapTo(TreeSet()) { pathToId[it]!! }
             fileIds.addAll(lookupMap[key] ?: emptySet())
             lookupMap[key] = fileIds
         }
@@ -227,4 +228,11 @@ class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
     }
 }
 
-data class LookupSymbol(val name: String, val scope: String)
+data class LookupSymbol(val name: String, val scope: String) : Comparable<LookupSymbol> {
+    override fun compareTo(other: LookupSymbol): Int {
+        val scopeCompare = scope.compareTo(other.scope)
+        if (scopeCompare != 0) return scopeCompare
+
+        return name.compareTo(other.name)
+    }
+}

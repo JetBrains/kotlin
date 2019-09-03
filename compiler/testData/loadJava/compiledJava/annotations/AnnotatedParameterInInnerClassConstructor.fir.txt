@@ -1,4 +1,4 @@
 public/*package*/ open class AnnotatedParameterInInnerClassConstructor : R|kotlin/Any| {
-    public constructor(): R|test/AnnotatedParameterInInnerClassConstructor|
+    public/*package*/ constructor(): R|test/AnnotatedParameterInInnerClassConstructor|
 
 }

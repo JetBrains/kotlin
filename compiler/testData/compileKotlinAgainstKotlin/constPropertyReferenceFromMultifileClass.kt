@@ -16,13 +16,10 @@ import a.OK
 fun box(): String {
     val okRef = ::OK
 
-    // TODO: see KT-10892
-//    val annotations = okRef.annotations
-//    val numAnnotations = annotations.size
-//    if (numAnnotations != 1) {
-//        throw AssertionError("Failed, annotations: $annotations")
-//    }
+    val annotations = okRef.annotations
+    if (annotations.size != 1) {
+        throw AssertionError("Failed, annotations: $annotations")
+    }
 
-    val result = okRef.get()
-    return result
+    return okRef.get()
 }

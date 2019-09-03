@@ -6,6 +6,7 @@
 package kotlin.script.experimental.api
 
 import java.io.Serializable
+import kotlin.script.experimental.util.PropertiesCollection
 
 const val REPL_SNIPPET_FIRST_NO = 1
 const val REPL_SNIPPET_FIRST_GEN = 1
@@ -29,3 +30,21 @@ data class ReplSnippetIdImpl(override val no: Int, override val generation: Int,
         private val serialVersionUID: Long = 1L
     }
 }
+
+interface ReplScriptCompilationConfigurationKeys
+
+open class ReplScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(),
+    ReplScriptCompilationConfigurationKeys {
+    companion object : ReplScriptCompilationConfigurationKeys
+}
+
+val ScriptCompilationConfigurationKeys.repl
+    get() = ReplScriptCompilationConfigurationBuilder()
+
+
+/**
+ * The prefix of the name of the generated script class field to assign the snipped results to, empty means disabled
+ * see also ScriptCompilationConfigurationKeys.resultField
+ */
+val ReplScriptCompilationConfigurationKeys.resultFieldPrefix by PropertiesCollection.key<String>("res")
+

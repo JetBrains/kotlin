@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.conversions.RecursiveApplicableConversionBase
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -68,38 +69,6 @@ private fun JKKtOperatorToken.arithmeticMethodType(
         is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodReturnType()
         is JKMultiverseClassSymbol -> classSymbol.target.methodReturnType()
         else -> null
-    }
-}
-
-private fun JKKtOperatorToken.unaryExpressionMethodType(
-    operandType: JKType?,
-    symbolProvider: JKSymbolProvider
-): JKType {
-    if (operandType is JKNoType) {
-        return operandType
-    }
-    if (this == KtTokens.EXCLEXCL) {
-        return operandType!!
-    }
-    if (this == KtTokens.EXCL) {
-        return symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES._boolean.toSafe()).asType()
-    }
-    if (this == KtTokens.MINUS || this == KtTokens.PLUS) {
-        return operandType!!
-    }
-    if (this == KtTokens.EXCL) {
-        return operandType!!
-    }
-    val classSymbol = operandType!!.classSymbol(symbolProvider)
-    return when (classSymbol) {
-        is JKMultiverseKtClassSymbol ->// todo look for extensions
-            classSymbol.target.declarations.asSequence()
-                .filterIsInstance<KtNamedFunction>()
-                .filter { it.name == operatorName }
-                .mapNotNull { it.typeReference?.toJK(symbolProvider) }
-                .firstOrNull() ?: TODO(classSymbol::class.toString() + this.operatorName)
-        null -> TODO(" No class symbol")
-        else -> TODO(classSymbol::class.toString())
     }
 }
 
@@ -192,9 +161,8 @@ fun kotlinPrefixExpression(
     token: JKKtOperatorToken,
     symbolProvider: JKSymbolProvider
 ): JKPrefixExpression {
-    val operandType = operand.type(symbolProvider)
-    val methodSymbol = token.unaryExpressionMethodType(operandType, symbolProvider)
-    return JKPrefixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
+    val operandType = operand.type(symbolProvider) ?: JKNoTypeImpl
+    return JKPrefixExpressionImpl(operand, JKKtOperatorImpl(token, operandType))
 }
 
 fun kotlinPostfixExpression(
@@ -202,9 +170,8 @@ fun kotlinPostfixExpression(
     token: JKKtOperatorToken,
     symbolProvider: JKSymbolProvider
 ): JKPostfixExpression {
-    val operandType = operand.type(symbolProvider)
-    val methodSymbol = token.unaryExpressionMethodType(operandType, symbolProvider)
-    return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
+    val operandType = operand.type(symbolProvider) ?: JKNoTypeImpl
+    return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, operandType))
 }
 
 fun untilToExpression(

@@ -99,7 +99,6 @@ class IrInlineCodegen(
 
     override fun genCall(
         callableMethod: Callable,
-        callDefault: Boolean,
         codegen: ExpressionCodegen,
         expression: IrFunctionAccessExpression
     ) {
@@ -107,7 +106,7 @@ class IrInlineCodegen(
         // TODO port inlining cycle detection to IrFunctionAccessExpression & pass it
         state.globalInlineContext.enterIntoInlining(null)
         try {
-            performInline(typeArguments, callDefault, codegen)
+            performInline(typeArguments, false, codegen)
         } finally {
             state.globalInlineContext.exitFromInliningOf(null)
         }
@@ -157,6 +156,7 @@ class IrExpressionLambdaImpl(
                     when (ir) {
                         is IrGetValue -> capturedParamDesc(ir.descriptor.name.asString(), typeMapper.mapType(ir.type))
                         is IrConst<*> -> capturedParamDesc(BOUND_REFERENCE_RECEIVER, typeMapper.mapType(ir.type))
+                        is IrGetField -> capturedParamDesc(ir.descriptor.name.asString(), typeMapper.mapType(ir.type))
                         else -> error("Unrecognized expression: ${ir.dump()}")
                     }
                 )

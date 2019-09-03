@@ -16,6 +16,7 @@ import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.jvm.util.classPathFromTypicalResourceUrls
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
 
 class ClassPathTest : TestCase() {
 
@@ -55,6 +56,28 @@ class ClassPathTest : TestCase() {
         Assert.assertTrue(cp.contains(jar.canonicalFile))
         for (el in emulatedClasspath) {
             Assert.assertTrue(cp.contains(File(root1, el).canonicalFile))
+        }
+    }
+
+    @Test
+    fun testFilterClasspath() {
+        val tempDir = createTempDir().canonicalFile
+        try {
+            val files = listOf(
+                File(tempDir, "projX/classes"),
+                File(tempDir, "projX/test-classes"),
+                File(tempDir, "projY/classes")
+            )
+            files.forEach { it.mkdirs() }
+
+            val classloader = URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), null)
+
+            val classpath =
+                scriptCompilationClasspathFromContextOrNull("projX", classLoader = classloader)!!.map { it.toRelativeString(tempDir) }
+
+            Assert.assertEquals(files.dropLast(1).map { it.toRelativeString(tempDir) }, classpath)
+        } finally {
+            tempDir.deleteRecursively()
         }
     }
 }

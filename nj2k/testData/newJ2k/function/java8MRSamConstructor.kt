@@ -122,10 +122,10 @@ internal class Java8Class {
     }
 
     fun testGenericFunctions() {
-        val emptyList: JFunction1<List<String>> = JFunction1 { emptyList() }
+        val emptyList = JFunction1<List<String>> { emptyList() }
         emptyList.foo()
-        MethodReferenceHelperClass.staticFun1(JFunction1<List<String>> { emptyList() })
-        h.memberFun1(JFunction1<List<String>> { emptyList() })
+        MethodReferenceHelperClass.staticFun1<List<String>> { emptyList() }
+        h.memberFun1<List<String>> { emptyList() }
     }
 
     fun memberFun(): Int {

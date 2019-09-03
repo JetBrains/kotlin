@@ -9,6 +9,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
@@ -65,10 +66,11 @@ class JavaStandardMethodsConversion(private val context: NewJ2kConverterContext)
         if (method.name.value != "finalize") return false
         if (method.parameters.isNotEmpty()) return false
         if (method.returnType.type != JKJavaVoidType) return false
-        if (method.modality == Modality.OVERRIDE) {
+        if (method.hasOtherModifier(OtherModifier.OVERRIDE)) {
             method.modality =
                 if (containingClass.modality == Modality.OPEN) Modality.OPEN
                 else Modality.FINAL
+            method.otherModifierElements -= method.otherModifierElements.first { it.otherModifier == OtherModifier.OVERRIDE }
         }
         return true
     }

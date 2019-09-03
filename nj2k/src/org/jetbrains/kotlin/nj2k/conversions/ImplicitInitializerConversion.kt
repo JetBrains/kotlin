@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.findUsages
+import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKBooleanLiteral
+import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaLiteralExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaPrimitiveTypeImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKNullLiteral
 
 class ImplicitInitializerConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
 
@@ -32,9 +36,8 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
                 return recurse(element)
         }
 
-        val fieldType = element.type.type
-        val newInitializer = when (fieldType) {
-            is JKClassType -> JKNullLiteral()
+        val newInitializer = when (val fieldType = element.type.type) {
+            is JKClassType, is JKTypeParameterType -> JKNullLiteral()
             is JKJavaPrimitiveType -> createPrimitiveTypeInitializer(fieldType)
             else -> null
         }
@@ -112,7 +115,7 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
 
     private fun createPrimitiveTypeInitializer(primitiveType: JKJavaPrimitiveType): JKLiteralExpression =
         when (primitiveType) {
-            is JKJavaPrimitiveTypeImpl.BOOLEAN ->
+            JKJavaPrimitiveTypeImpl.BOOLEAN ->
                 JKBooleanLiteral(false)
             else ->
                 JKJavaLiteralExpressionImpl("0", JKLiteralExpression.LiteralType.INT)

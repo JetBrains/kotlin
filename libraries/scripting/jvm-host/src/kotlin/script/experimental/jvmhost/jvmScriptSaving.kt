@@ -5,16 +5,20 @@
 
 package kotlin.script.experimental.jvmhost
 
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemory
 import org.jetbrains.kotlin.utils.KotlinPaths
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.impl.*
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.impl.copyWithoutModule
+import kotlin.script.experimental.jvm.impl.scriptMetadataPath
+import kotlin.script.experimental.jvm.impl.toBytes
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
-import kotlin.script.experimental.jvmhost.impl.KJvmCompiledModuleInMemory
 
 // TODO: generate execution code (main)
 
@@ -37,7 +41,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
                     writeBytes(bytes)
                 }
             }
-            return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Unit, scriptEvaluationConfiguration))
+            return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
                 e.asDiagnostics("Cannot generate script classes: ${e.message}", path = compiledScript.sourceLocationId)
@@ -66,19 +70,23 @@ fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
             putValue("Created-By", "JetBrains Kotlin")
             if (dependencies.isNotEmpty()) {
                 // TODO: implement options for various cases - paths as is (now), absolute paths (local execution only), names only (most likely as a hint only), fat jar
-                putValue("Class-Path", dependencies.joinToString(" "))
+                putValue("Class-Path", dependencies.joinToString(" ") { it.toURI().toURL().toExternalForm() })
             }
             putValue("Main-Class", scriptClassFQName)
         }
-        // TODO: fat jar/dependencies
-        val jarStream = JarOutputStream(fileStream, manifest)
-        jarStream.putNextEntry(JarEntry(scriptMetadataPath(scriptClassFQName)))
-        jarStream.write(copyWithoutModule().toBytes())
-        for ((path, bytes) in module.compilerOutputFiles) {
-            jarStream.putNextEntry(JarEntry(path))
-            jarStream.write(bytes)
+        JarOutputStream(fileStream, manifest).use { jarStream ->
+            jarStream.putNextEntry(JarEntry(scriptMetadataPath(scriptClassFQName)))
+            jarStream.write(copyWithoutModule().toBytes())
+            jarStream.closeEntry()
+            for ((path, bytes) in module.compilerOutputFiles) {
+                jarStream.putNextEntry(JarEntry(path))
+                jarStream.write(bytes)
+                jarStream.closeEntry()
+            }
+            jarStream.finish()
+            jarStream.flush()
         }
-        jarStream.finish()
+        fileStream.flush()
     }
 }
 
@@ -92,7 +100,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
             if (compiledScript !is KJvmCompiledScript<*>)
                 return failure("Cannot generate jar: unsupported compiled script type $compiledScript")
             compiledScript.saveToJar(outputJar)
-            return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Unit, scriptEvaluationConfiguration))
+            return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))
         } catch (e: Throwable) {
             return ResultWithDiagnostics.Failure(
                 e.asDiagnostics("Cannot generate script jar: ${e.message}", path = compiledScript.sourceLocationId)

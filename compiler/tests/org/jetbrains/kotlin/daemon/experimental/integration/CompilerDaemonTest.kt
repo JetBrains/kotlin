@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.experimental.integration
 
+import junit.framework.Assert
 import junit.framework.TestCase
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
@@ -230,16 +231,16 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         try {
             System.setProperty(
                 COMPILE_DAEMON_JVM_OPTIONS_PROPERTY,
-                "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy"
+                "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxMetaspaceSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy"
             )
             val opts =
                 configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("200m", opts.maxMemory)
-            assertEquals("10k", opts.maxPermSize)
+            assertEquals("10k", opts.maxMetaspaceSize)
             assertEquals("100", opts.reservedCodeCacheSize)
-            assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy"), opts.jvmParams)
+            assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy", "ea"), opts.jvmParams)
 
-            System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-Xmx300m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100")
+            System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-Xmx300m,-XX:MaxMetaspaceSize=10k,-XX:ReservedCodeCacheSize=100")
             val opts2 =
                 configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
             assertEquals("300m", opts2.maxMemory)
@@ -262,6 +263,53 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 backupJvmOptions
             )
         }
+    }
+
+    fun ignore_testDaemonAssertsOptions() {
+        val allAssetionsArgs = setOf(
+            "-ea", "-enableassertions",
+            "-da", "-disableassertions",
+            "-esa", "-enablesystemassertions",
+            "-dsa", "-disablesystemassertions"
+        )
+
+        fun assertionsJvmArgs() = configureDaemonJVMOptions(
+            inheritMemoryLimits = true,
+            inheritOtherJvmOptions = false,
+            inheritAdditionalProperties = true
+        ).mappers.flatMap { it.toArgs("-") }.filter { it in allAssetionsArgs }.joinToString(", ")
+
+        for (assertArgValue in allAssetionsArgs) {
+            withDaemonJvmOptionsSetTo(assertArgValue) {
+                Assert.assertEquals(assertArgValue, assertionsJvmArgs())
+            }
+        }
+
+        withDaemonJvmOptionsSetTo(null) {
+            Assert.assertEquals("-ea", assertionsJvmArgs())
+        }
+    }
+
+    private fun withDaemonJvmOptionsSetTo(newValue: String?, fn: () -> Unit) {
+        val backup = getAndSetSystemProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, newValue)
+
+        try {
+            fn()
+        } finally {
+            getAndSetSystemProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, backup)
+        }
+    }
+
+    private fun getAndSetSystemProperty(property: String, newValue: String?): String? {
+        val oldValue = System.getProperty(property)
+
+        if (newValue != null) {
+            System.setProperty(property, newValue)
+        } else {
+            System.clearProperty(property)
+        }
+
+        return oldValue
     }
 
     fun ignore_testDaemonOptionsParsing() {

@@ -23,13 +23,16 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotifications
+import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
-import kotlin.script.experimental.dependencies.ScriptReport
+import kotlin.script.experimental.api.ScriptDiagnostic
 
 class IdeScriptReportSink(val project: Project) : ScriptReportSink {
-    override fun attachReports(scriptFile: VirtualFile, reports: List<ScriptReport>) {
+    override fun attachReports(scriptFile: VirtualFile, reports: List<ScriptDiagnostic>) {
+        if (getReports(scriptFile) == reports) return
+
         // TODO: persist errors between launches?
-        scriptFile.putUserData(Reports, reports)
+        scriptFile.scriptDiagnostics = reports
 
         ApplicationManager.getApplication().invokeLater {
             if (scriptFile.isValid && !project.isDisposed) {
@@ -41,5 +44,11 @@ class IdeScriptReportSink(val project: Project) : ScriptReportSink {
         }
     }
 
-    object Reports : Key<List<ScriptReport>>("KOTLIN_SCRIPT_REPORTS")
+    companion object {
+        fun getReports(file: VirtualFile): List<ScriptDiagnostic> {
+            return file.scriptDiagnostics ?: emptyList()
+        }
+
+        private var VirtualFile.scriptDiagnostics: List<ScriptDiagnostic>? by UserDataProperty(Key.create("KOTLIN_SCRIPT_DIAGNOSTICS"))
+    }
 }

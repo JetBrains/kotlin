@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.module.ModuleUtilCore
@@ -95,7 +96,7 @@ object KeywordCompletion {
         SET_KEYWORD
     ).map { it.value } + "companion object"
 
-    fun complete(position: PsiElement, prefix: String, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
+    fun complete(position: PsiElement, prefixMatcher: PrefixMatcher, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
         val parserFilter = buildFilter(position)
@@ -122,8 +123,7 @@ object KeywordCompletion {
 
             if (keywordToken == DYNAMIC_KEYWORD && isJvmModule) continue // not supported for JVM
 
-            // we use simple matching by prefix, not prefix matcher from completion
-            if (!keyword.startsWith(prefix) && keywordToken !in KEYWORDS_TO_IGNORE_PREFIX) continue
+            if (keywordToken !in KEYWORDS_TO_IGNORE_PREFIX && !prefixMatcher.isStartMatch(keyword)) continue
 
             if (!parserFilter(keywordToken)) continue
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.ModulesOrderEnumerator
@@ -36,8 +37,13 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
         ) {
             module("project")
 
-            module("project_main")
-            module("project_test")
+            // Importing module per source set is not supported in Android Studio
+            if (KaptImportingTest().isAndroidStudio()) {
+                module("project")
+            } else {
+                module("project_main")
+                module("project_test")
+            }
 
             module("project_commonMain")
             module("project_commonTest") {
@@ -90,7 +96,7 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
         val enumerator = ModulesOrderEnumerator(listOf(jvmMainModule))
         val roots = enumerator.classesRoots
 
-        fun isRootPresent(file: File) = roots.any { it.path == file.path }
+        fun isRootPresent(file: File) = roots.any { it.path == ExternalSystemApiUtil.toCanonicalPath(file.path) }
 
         val missingRoots = expectedRoots.filter { !isRootPresent(it) }
 

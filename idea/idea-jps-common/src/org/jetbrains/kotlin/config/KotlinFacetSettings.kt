@@ -240,6 +240,8 @@ class KotlinFacetSettings {
 
     var externalProjectId: String = ""
     var isHmppEnabled: Boolean = false
+
+    var pureKotlinSourceFolders: List<String> = emptyList()
 }
 
 interface KotlinFacetSettingsProvider {

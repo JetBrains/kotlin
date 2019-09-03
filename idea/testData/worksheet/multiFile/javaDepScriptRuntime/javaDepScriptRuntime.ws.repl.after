@@ -1,0 +1,5 @@
+// REPL_MODE: true
+
+import myTest.MyJavaClass
+
+MyJavaClass().test()         // RESULT: res1: kotlin.Int = 1

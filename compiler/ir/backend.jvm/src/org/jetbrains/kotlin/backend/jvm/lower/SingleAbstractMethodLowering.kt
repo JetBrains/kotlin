@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -38,7 +37,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal val singleAbstractMethodPhase = makeIrFilePhase(
     ::SingleAbstractMethodLowering,
     name = "SingleAbstractMethod",
-    description = "Replace SAM conversions with instances of interface-implementing classes"
+    description = "Replace SAM conversions with instances of interface-implementing classes",
+    prerequisite = setOf(localDeclarationsPhase)
 )
 
 class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLoweringPass {
@@ -65,7 +65,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                         +createFunctionProxyInstance(superType, invokable.statements.last() as IrFunctionReference)
                     } else {
                         // Fall back to materializing an invokable object.
-                        +createObjectProxyInstance(superType, invokable)
+                        +createObjectProxyInstance(superType, invokable, expression)
                     }
                 }
             }
@@ -76,6 +76,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
             private fun implement(
                 superType: IrType,
                 parameters: List<IrType>,
+                attributeOwner: IrAttributeContainer,
                 buildOverride: IrSimpleFunction.(List<IrField>) -> IrBody
             ): IrClass {
                 val superClass = superType.classifierOrFail.owner as IrClass
@@ -83,17 +84,15 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                 // the `irDelegatingConstructorCall` in the constructor below would need to be modified.
                 assert(superClass.kind == ClassKind.INTERFACE) { "SAM conversion to an abstract class not allowed" }
 
-                val superClassName = superClass.fqNameWhenAvailable!!.pathSegments().joinToString("_") { it.toString() }
                 val subclass = buildClass {
-                    // TODO this is not the name some tests (e.g. kt11519) expect
-                    name = Name.identifier("sam\$$superClassName\$${cachedImplementations.size + localImplementations.size}")
+                    name = Name.special("<sam adapter for ${superClass.fqNameWhenAvailable}>")
                     origin = JvmLoweredDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
                 }.apply {
                     createImplicitParameterDeclarationWithWrappedDescriptor()
                     parent = irClass
                     // TODO convert all type parameters to upper bounds? See the kt11696 test.
                     superTypes += superType
-                }
+                }.copyAttributes(attributeOwner)
 
                 val fields = parameters.mapIndexed { i, fieldType ->
                     subclass.addField {
@@ -141,8 +140,8 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
 
             // Construct a class that wraps an invokable object into an implementation of an interface:
             //     class sam$n(private val invokable: F) : Interface { override fun method(...) = invokable(...) }
-            private fun createObjectProxy(superType: IrType, invokableType: IrType): IrClass =
-                implement(superType, listOf(invokableType)) { fields ->
+            private fun createObjectProxy(superType: IrType, invokableType: IrType, attributeOwner: IrAttributeContainer): IrClass =
+                implement(superType, listOf(invokableType), attributeOwner) { fields ->
                     context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                         val invokableClass = invokableType.classifierOrFail.owner as IrClass
                         +irReturn(irCall(invokableClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
@@ -152,12 +151,14 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
                     }
                 }
 
-            private fun IrBlockBuilder.createObjectProxyInstance(superType: IrType, invokable: IrExpression): IrExpression {
+            private fun IrBlockBuilder.createObjectProxyInstance(
+                superType: IrType, invokable: IrExpression, attributeOwner: IrAttributeContainer
+            ): IrExpression {
                 // Do not generate a wrapper class for null, it has no invoke() anyway.
                 if (invokable.isNullConst())
                     return invokable
                 val implementation = cachedImplementations.getOrPut(superType to invokable.type) {
-                    createObjectProxy(superType, invokable.type)
+                    createObjectProxy(superType, invokable.type, attributeOwner)
                 }
                 return if (superType.isNullable() && invokable.type.isNullable()) {
                     val invokableVariable = irTemporary(invokable)
@@ -184,7 +185,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : ClassLow
             // common, as `Interface { something }` is a local function + a SAM-conversion of a reference
             // to it into an implementation.
             private fun createFunctionProxy(superType: IrType, reference: IrFunctionReference): IrClass =
-                implement(superType, reference.arguments.mapNotNull { it?.type }) { fields ->
+                implement(superType, reference.arguments.mapNotNull { it?.type }, reference) { fields ->
                     context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                         +irReturn(irCall(reference.symbol).apply {
                             var boundOffset = 0

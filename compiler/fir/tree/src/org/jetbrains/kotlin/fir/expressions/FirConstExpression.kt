@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 
-abstract class FirConstExpression<T>(
-    session: FirSession,
-    psi: PsiElement?
-) : FirUnknownTypeExpression(session, psi) {
+abstract class FirConstExpression<T>(psi: PsiElement?) : FirUnknownTypeExpression(psi) {
     abstract val kind: IrConstKind<T>
 
     abstract val value: T

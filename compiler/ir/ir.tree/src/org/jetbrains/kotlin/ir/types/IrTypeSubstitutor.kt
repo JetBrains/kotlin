@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 
 class IrTypeSubstitutor(
     typeParameters: List<IrTypeParameterSymbol>,
     typeArguments: List<IrTypeArgument>,
     private val irBuiltIns: IrBuiltIns
-) {
+): TypeSubstitutorMarker {
     init {
         assert(typeParameters.size == typeArguments.size) {
             "Unexpected number of type arguments: ${typeArguments.size}\n" +

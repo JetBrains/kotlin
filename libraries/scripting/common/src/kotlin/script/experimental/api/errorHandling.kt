@@ -7,7 +7,10 @@
 
 package kotlin.script.experimental.api
 
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintStream
+import java.lang.RuntimeException
 
 /**
  * The single script diagnostic report
@@ -28,11 +31,28 @@ data class ScriptDiagnostic(
      */
     enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
 
-    override fun toString(): String = buildString {
-        append(severity.name)
-        append(' ')
+    override fun toString(): String = render()
+
+    /**
+     * Render diagnostics message as a string in a form:
+     * "[SEVERITY ]message[ (file:line:column)][: exception message[\n exception stacktrace]]"
+     * @param withSeverity add severity prefix, true by default
+     * @param withLocation add error location in the compiled script, if present, true by default
+     * @param withException add exception message, if present, true by default
+     * @param withStackTrace add exception stacktrace, if exception is present and [withException] is true, false by default
+     */
+    fun render(
+        withSeverity: Boolean = true,
+        withLocation: Boolean = true,
+        withException: Boolean = true,
+        withStackTrace: Boolean = false
+    ): String = buildString {
+        if (withSeverity) {
+            append(severity.name)
+            append(' ')
+        }
         append(message)
-        if (sourcePath != null || location != null) {
+        if (withLocation && (sourcePath != null || location != null)) {
             append(" (")
             sourcePath?.let { append(it.substringAfterLast(File.separatorChar)) }
             location?.let {
@@ -43,9 +63,18 @@ data class ScriptDiagnostic(
             }
             append(')')
         }
-        if (exception != null) {
+        if (withException && exception != null) {
             append(": ")
             append(exception)
+            if (withStackTrace) {
+                ByteArrayOutputStream().use { os ->
+                    val ps = PrintStream(os)
+                    exception.printStackTrace(ps)
+                    ps.flush()
+                    append("\n")
+                    append(os.toString())
+                }
+            }
         }
     }
 }
@@ -192,3 +221,14 @@ inline fun <R> ResultWithDiagnostics<R>.valueOr(body: (ResultWithDiagnostics.Fai
     is ResultWithDiagnostics.Success<R> -> value
     is ResultWithDiagnostics.Failure -> body(this)
 }
+
+/**
+ * Extracts the result value from the receiver wrapper or throw RuntimeException with diagnostics
+ */
+fun <R> ResultWithDiagnostics<R>.valueOrThrow(): R = valueOr {
+    throw RuntimeException(
+        reports.joinToString("\n") { it.exception?.toString() ?: it.message },
+        reports.find { it.exception != null }?.exception
+    )
+}
+

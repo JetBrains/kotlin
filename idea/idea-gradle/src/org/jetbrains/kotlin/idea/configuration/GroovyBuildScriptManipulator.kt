@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
@@ -150,7 +140,7 @@ class GroovyBuildScriptManipulator(
 
     override fun changeCoroutineConfiguration(coroutineOption: String): PsiElement? {
         val snippet = "coroutines \"$coroutineOption\""
-        val kotlinBlock = scriptFile.getBlockOrCreate("kotlin")
+        val kotlinBlock = scriptFile.getKotlinBlock()
         kotlinBlock.getBlockOrCreate("experimental").apply {
             addOrReplaceExpression(snippet) { stmt ->
                 (stmt as? GrMethodCall)?.invokedExpression?.text == "coroutines"
@@ -165,6 +155,15 @@ class GroovyBuildScriptManipulator(
         state: LanguageFeature.State,
         forTests: Boolean
     ): PsiElement? {
+        if (usesNewMultiplatform()) {
+            state.assertApplicableInMultiplatform()
+            val kotlinBlock = scriptFile.getKotlinBlock()
+            val sourceSetsBlock = kotlinBlock.getSourceSetsBlock()
+            val allBlock = sourceSetsBlock.getBlockOrCreate("all")
+            allBlock.addLastExpressionInBlockIfNeeded("languageSettings.enableLanguageFeature(\"${feature.name}\")")
+            return allBlock.statements.lastOrNull()
+        }
+
         val featureArgumentString = feature.buildArgumentString(state)
         val parameterName = "freeCompilerArgs"
         return addOrReplaceKotlinTaskParameter(
@@ -186,6 +185,7 @@ class GroovyBuildScriptManipulator(
         changeKotlinTaskParameter(scriptFile, "apiVersion", version, forTests)
 
     override fun addKotlinLibraryToModuleBuildScript(
+        targetModule: Module,
         scope: DependencyScope,
         libraryDescriptor: ExternalLibraryDescriptor
     ) {
@@ -197,8 +197,17 @@ class GroovyBuildScriptManipulator(
             libraryDescriptor.maxVersion
         )
 
-        scriptFile.getDependenciesBlock().apply {
-            addLastExpressionInBlockIfNeeded(dependencyString)
+        if (usesNewMultiplatform()) {
+            scriptFile
+                .getKotlinBlock()
+                .getSourceSetsBlock()
+                .getBlockOrCreate(targetModule.name.takeLastWhile { it != '.' })
+                .getDependenciesBlock()
+                .addLastExpressionInBlockIfNeeded(dependencyString)
+        } else {
+            scriptFile.getDependenciesBlock().apply {
+                addLastExpressionInBlockIfNeeded(dependencyString)
+            }
         }
     }
 
@@ -253,11 +262,6 @@ class GroovyBuildScriptManipulator(
             )
     }
 
-    private fun usesNewMultiplatform(): Boolean {
-        val fileText = runReadAction { scriptFile.text }
-        return fileText.contains("kotlin-multiplatform")
-    }
-
     private fun GrClosableBlock.addParameterAssignment(
         parameterName: String,
         defaultValue: String,
@@ -289,7 +293,7 @@ class GroovyBuildScriptManipulator(
         replaceIt: GrStatement.(Boolean) -> GrStatement
     ): PsiElement? {
         if (usesNewMultiplatform()) {
-            val kotlinBlock = gradleFile.getBlockOrCreate("kotlin")
+            val kotlinBlock = gradleFile.getKotlinBlock()
             val kotlinTargets = kotlinBlock.getBlockOrCreate("targets")
             val targetNames = mutableListOf<String>()
 
@@ -385,10 +389,10 @@ class GroovyBuildScriptManipulator(
     }
 
     private fun GrStatementOwner.getBuildScriptRepositoriesBlock(): GrClosableBlock =
-        getBuildScriptBlock().getBlockOrCreate("repositories")
+        getBuildScriptBlock().getRepositoriesBlock()
 
     private fun GrStatementOwner.getBuildScriptDependenciesBlock(): GrClosableBlock =
-        getBuildScriptBlock().getBlockOrCreate("dependencies")
+        getBuildScriptBlock().getDependenciesBlock()
 
     private fun GrClosableBlock.addMavenCentralIfMissing(): Boolean =
         if (!isRepositoryConfigured(text)) addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL) else false
@@ -396,6 +400,10 @@ class GroovyBuildScriptManipulator(
     private fun GrStatementOwner.getRepositoriesBlock() = getBlockOrCreate("repositories")
 
     private fun GrStatementOwner.getDependenciesBlock(): GrClosableBlock = getBlockOrCreate("dependencies")
+
+    private fun GrStatementOwner.getKotlinBlock(): GrClosableBlock = getBlockOrCreate("kotlin")
+
+    private fun GrStatementOwner.getSourceSetsBlock(): GrClosableBlock = getBlockOrCreate("sourceSets")
 
     private fun GrClosableBlock.addOrReplaceExpression(snippet: String, predicate: (GrStatement) -> Boolean) {
         statements.firstOrNull(predicate)?.let { stmt ->

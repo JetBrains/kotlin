@@ -1,5 +1,6 @@
-// IGNORE_BACKEND: JS_IR, JS, NATIVE, JVM_IR
+// IGNORE_BACKEND: JS_IR, JS, NATIVE
 // WITH_REFLECT
+
 import kotlin.reflect.KCallable
 import kotlin.test.assertEquals
 

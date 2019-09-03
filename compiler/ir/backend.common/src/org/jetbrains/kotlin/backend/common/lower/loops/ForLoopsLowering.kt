@@ -44,22 +44,24 @@ val forLoopsPhase = makeIrFilePhase(
  *   }
  * ```
  * We transform it into one of the following loops:
- *
  * ```
  *   // 1. If the induction variable cannot overflow, i.e., `B` is const and != MAX_VALUE (if increasing, or MIN_VALUE if decreasing).
  *
  *   var inductionVar = A
- *   var last = B
- *   while (inductionVar <= last) {  // (`inductionVar >= last` if the progression is decreasing)
- *       val loopVar = inductionVar
- *       inductionVar++  // (`inductionVar--` if the progression is decreasing)
- *       // Loop body
+ *   val last = B
+ *   if (inductionVar <= last) {  // (`inductionVar >= last` if the progression is decreasing)
+ *       // Loop is not empty
+ *       do {
+ *           val loopVar = inductionVar
+ *           inductionVar++  // (`inductionVar--` if the progression is decreasing)
+ *           // Loop body
+ *       } while (inductionVar <= last)
  *   }
  *
  *   // 2. If the induction variable CAN overflow, i.e., `last` is not const or is MAX/MIN_VALUE:
  *
  *   var inductionVar = A
- *   var last = B
+ *   val last = B
  *   if (inductionVar <= last) {  // (`inductionVar >= last` if the progression is decreasing)
  *       // Loop is not empty
  *       do {
@@ -68,15 +70,18 @@ val forLoopsPhase = makeIrFilePhase(
  *           // Loop body
  *       } while (loopVar != last)
  *   }
- *
- *   // 3. If loop is an until loop (e.g., `for (i in A until B)`), it cannot overflow and we use `<` for comparisons:
- *
+ * ```
+ * If loop is an until loop (e.g., `for (i in A until B)`), it is transformed into:
+ * ```
  *   var inductionVar = A
- *   var last = B
- *   while (inductionVar < last) {
- *       val loopVar = inductionVar
- *       inductionVar++
- *       // Loop body
+ *   val last = B - 1
+ *   if (inductionVar <= last && B != MIN_VALUE) {
+ *       // Loop is not empty
+ *       do {
+ *           val loopVar = inductionVar
+ *           inductionVar++
+ *           // Loop body
+ *       } while (inductionVar <= last)
  *   }
  * ```
  * In case of iteration over an array (e.g., `for (i in array)`), we transform it into the following:
@@ -221,7 +226,7 @@ private class RangeLoopTransformer(
         //   inductionVariable = inductionVariable + step
         return with(context.createIrBuilder(getScopeOwnerSymbol(), initializer.startOffset, initializer.endOffset)) {
             variable.initializer = forLoopInfo.initializeLoopVariable(symbols, this)
-            val increment = forLoopInfo.buildIncrementInductionVariableExpression(this)
+            val increment = forLoopInfo.incrementInductionVariable(this)
             IrCompositeImpl(
                 variable.startOffset,
                 variable.endOffset,

@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import com.intellij.lang.jvm.JvmModifier
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.nullIfStubExpression
 import org.jetbrains.kotlin.nj2k.qualified
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
@@ -18,10 +21,34 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
         if (element !is JKMethodReferenceExpression) return recurse(element)
         val symbol = element.identifier
 
+        val parametersTypesByFunctionalInterface = element
+            .functionalType
+            .type
+            .safeAs<JKClassType>()
+            ?.singleFunctionParameterTypes()
+
+        val receiverParameter = element.qualifier
+            .nullIfStubExpression()
+            ?.safeAs<JKClassAccessExpression>()
+            ?.takeIf { symbol.safeAs<JKMethodSymbol>()?.isStatic == false && !element.isConstructorCall }
+            ?.let { classAccessExpression ->
+                JKParameterImpl(
+                    JKTypeElementImpl(
+                        parametersTypesByFunctionalInterface?.firstOrNull() ?: JKClassTypeImpl(classAccessExpression.identifier)
+                    ),
+                    JKNameIdentifierImpl(RECEIVER_NAME),
+                    isVarArgs = false
+                )
+            }
+
+        val explicitParameterTypesByFunctionalInterface =
+            if (receiverParameter != null) parametersTypesByFunctionalInterface?.drop(1)
+            else parametersTypesByFunctionalInterface
+
         val parameters =
             if (symbol is JKMethodSymbol) {
                 (symbol.parameterNames ?: return recurse(element)).zip(
-                    symbol.parameterTypes ?: return recurse(element)
+                    explicitParameterTypesByFunctionalInterface ?: symbol.parameterTypes ?: return recurse(element)
                 ) { name, type ->
                     JKParameterImpl(
                         JKTypeElementImpl(type),
@@ -31,17 +58,6 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
                 }
             } else emptyList()
 
-        val receiverParameter = element.qualifier
-            .nullIfStubExpression()
-            ?.safeAs<JKClassAccessExpression>()
-            ?.takeIf { symbol.safeAs<JKMethodSymbol>()?.isStatic == false && !element.isConstructorCall }
-            ?.let { classAccessExpression ->
-                JKParameterImpl(
-                    JKTypeElementImpl(JKClassTypeImpl(classAccessExpression.identifier)),
-                    JKNameIdentifierImpl(RECEIVER_NAME),
-                    isVarArgs = false
-                )
-            }
         val arguments = parameters.map { parameter ->
             val parameterSymbol = context.symbolProvider.provideUniverseSymbol(parameter)
             JKArgumentImpl(JKFieldAccessExpressionImpl(parameterSymbol))
@@ -80,6 +96,32 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
         )
 
         return recurse(lambda)
+    }
+
+    private fun JKType.substituteTypeParameters(classType: JKClassType) = applyRecursive { type ->
+        if (type is JKTypeParameterType && type.identifier.declaredIn == classType.classReference)
+            classType.parameters.getOrNull(type.identifier.index)
+        else null
+    }
+
+
+    private fun JKClassType.singleFunctionParameterTypes(): List<JKType>? {
+        return when (val reference = classReference) {
+            is JKMultiverseClassSymbol -> reference.target.methods
+                .firstOrNull { !it.hasModifier(JvmModifier.STATIC) }
+                ?.parameterList
+                ?.parameters
+                ?.map { it.type.toJK(context.symbolProvider).substituteTypeParameters(this) }
+            is JKMultiverseKtClassSymbol -> reference.target.body
+                ?.functions
+                ?.singleOrNull()
+                ?.valueParameters
+                ?.map { it.typeReference?.toJK(context.symbolProvider)?.substituteTypeParameters(this) ?: return null }
+            is JKUniverseClassSymbol -> reference.target.classBody.declarations.firstIsInstanceOrNull<JKMethod>()
+                ?.parameters
+                ?.map { it.type.type.substituteTypeParameters(this) }
+            else -> null
+        }
     }
 
     companion object {

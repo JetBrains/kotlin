@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.synthetic.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
+import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.util.*
 import kotlin.collections.HashSet
@@ -126,7 +127,7 @@ fun LookupStorage.update(
 
     removeLookupsFrom(filesToCompile.asSequence() + removedFiles.asSequence())
 
-    addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
+    addAll(lookupTracker.lookups, lookupTracker.pathInterner.values)
 }
 
 data class DirtyData(

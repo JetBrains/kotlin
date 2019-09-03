@@ -405,7 +405,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         val RENDER_DIAGNOSTICS_MESSAGES = "RENDER_DIAGNOSTICS_MESSAGES"
 
-        private fun parseDiagnosticFilterDirective(
+        fun parseDiagnosticFilterDirective(
             directiveMap: Map<String, String>,
             allowUnderscoreUsage: Boolean
         ): Condition<Diagnostic> {

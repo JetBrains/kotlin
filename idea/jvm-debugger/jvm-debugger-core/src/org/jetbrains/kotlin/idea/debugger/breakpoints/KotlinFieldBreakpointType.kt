@@ -41,18 +41,27 @@ import org.jetbrains.kotlin.idea.debugger.breakpoints.dialog.AddFieldBreakpointD
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtDeclarationContainer
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import javax.swing.JComponent
 
-class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointProperties>, XLineBreakpointType<KotlinPropertyBreakpointProperties>(
-        "kotlin-field", KotlinBundle.message("debugger.field.watchpoints.tab.title")
-) {
+class KotlinFieldBreakpointType :
+    JavaBreakpointType<KotlinPropertyBreakpointProperties>,
+    XLineBreakpointType<KotlinPropertyBreakpointProperties>("kotlin-field", KotlinBundle.message("debugger.field.watchpoints.tab.title")),
+    KotlinBreakpointType
+{
     override fun createJavaBreakpoint(project: Project, breakpoint: XBreakpoint<KotlinPropertyBreakpointProperties>): Breakpoint<KotlinPropertyBreakpointProperties> {
         return KotlinFieldBreakpoint(project, breakpoint)
     }
 
     override fun canPutAt(file: VirtualFile, line: Int, project: Project): Boolean {
-        return canPutAt(file, line, project, this::class.java)
+        return isBreakpointApplicable(file, line, project) { element ->
+            when (element) {
+                is KtProperty -> ApplicabilityResult.definitely(!element.isLocal)
+                is KtParameter -> ApplicabilityResult.definitely(element.hasValOrVar())
+                else -> ApplicabilityResult.UNKNOWN
+            }
+        }
     }
 
     override fun getPriority() = 120

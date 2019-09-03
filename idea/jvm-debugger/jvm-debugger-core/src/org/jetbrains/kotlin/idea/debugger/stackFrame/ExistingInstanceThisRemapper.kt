@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.idea.debugger.stackFrame
 
 import com.intellij.debugger.engine.JavaValue
-import com.intellij.debugger.ui.impl.watch.*
+import com.intellij.debugger.ui.impl.watch.ThisDescriptorImpl
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.xdebugger.frame.XValue
 import com.intellij.xdebugger.frame.XValueChildrenList
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 import org.jetbrains.kotlin.utils.getSafe
 import java.lang.reflect.Modifier
-import java.util.*
 
 // Very Dirty Work-around.
 // We should stop delegating to the Java stack frame and generate our trace elements from scratch.
@@ -90,7 +88,7 @@ class ExistingInstanceThisRemapper(
 
         LOG.error(
             "Can't find name/value lists, existing fields: "
-                    + Arrays.toString(XValueChildrenList::class.java.declaredFields)
+                    + XValueChildrenList::class.java.declaredFields?.contentToString()
         )
 
         return null

@@ -85,7 +85,7 @@ fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder
 private fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteScope: FirScope,
-    declaration: FirClassLikeDeclaration,
+    declaration: FirClassLikeDeclaration<*>,
     builder: ScopeSession
 ): FirScope {
     if (this.typeArguments.isEmpty()) return useSiteScope

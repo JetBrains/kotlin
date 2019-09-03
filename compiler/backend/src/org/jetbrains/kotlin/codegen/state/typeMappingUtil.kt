@@ -15,10 +15,12 @@
  */
 
 @file:JvmName("TypeMappingUtil")
+
 package org.jetbrains.kotlin.codegen.state
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
@@ -29,33 +31,39 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.getEffectiveVariance
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 
-fun KotlinType.isMostPreciseContravariantArgument(parameter: TypeParameterDescriptor): Boolean =
-        // TODO: probably class upper bound should be used
-        KotlinBuiltIns.isAnyOrNullableAny(this)
+// TODO: probably class upper bound should be used
+@Suppress("UNUSED_PARAMETER")
+fun TypeSystemCommonBackendContext.isMostPreciseContravariantArgument(type: KotlinTypeMarker, parameter: TypeParameterMarker): Boolean =
+    type.typeConstructor().isAnyConstructor()
 
-fun KotlinType.isMostPreciseCovariantArgument(): Boolean = !canHaveSubtypesIgnoringNullability()
+fun TypeSystemCommonBackendContext.isMostPreciseCovariantArgument(type: KotlinTypeMarker): Boolean =
+    !canHaveSubtypesIgnoringNullability(type)
 
-private fun KotlinType.canHaveSubtypesIgnoringNullability(): Boolean {
-    val constructor = constructor
-    val descriptor = constructor.declarationDescriptor
+private fun TypeSystemCommonBackendContext.canHaveSubtypesIgnoringNullability(kotlinType: KotlinTypeMarker): Boolean {
+    val constructor = kotlinType.typeConstructor()
 
-    when (descriptor) {
-        is TypeParameterDescriptor -> return true
-        is ClassDescriptor -> if (!descriptor.isFinalClass) return true
-    }
+    if (!constructor.isClassTypeConstructor() || !constructor.isFinalClassOrEnumEntryOrAnnotationClassConstructor()) return true
 
-    for ((parameter, argument) in constructor.parameters.zip(arguments)) {
-        if (argument.isStarProjection) return true
-        val projectionKind = argument.projectionKind
-        val type = argument.type
+    for (i in 0 until constructor.parametersCount()) {
+        val parameter = constructor.getParameter(i)
+        val argument = kotlinType.getArgument(i)
+        if (argument.isStarProjection()) return true
 
-        val effectiveVariance = getEffectiveVariance(parameter.variance, projectionKind)
-        if (effectiveVariance == Variance.OUT_VARIANCE && !type.isMostPreciseCovariantArgument()) return true
-        if (effectiveVariance == Variance.IN_VARIANCE && !type.isMostPreciseContravariantArgument(parameter)) return true
+        val projectionKind = argument.getVariance().convertVariance()
+        val type = argument.getType()
+
+        val effectiveVariance = getEffectiveVariance(parameter.getVariance().convertVariance(), projectionKind)
+        if (effectiveVariance == Variance.OUT_VARIANCE && !isMostPreciseCovariantArgument(type)) return true
+        if (effectiveVariance == Variance.IN_VARIANCE && !isMostPreciseContravariantArgument(type, parameter)) return true
     }
 
     return false
@@ -76,8 +84,10 @@ private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
         BUILTIN_NAMES.mutableMap.child("putAll")
 )
 
-fun TypeMappingMode.updateArgumentModeFromAnnotations(type: KotlinType): TypeMappingMode {
-    type.suppressWildcardsMode()?.let {
+fun TypeMappingMode.updateArgumentModeFromAnnotations(
+    type: KotlinTypeMarker, typeSystem: TypeSystemCommonBackendContext
+): TypeMappingMode {
+    type.suppressWildcardsMode(typeSystem)?.let {
         return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
                 skipDeclarationSiteWildcards = it,
                 isForAnnotationParameter = isForAnnotationParameter,
@@ -85,12 +95,12 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(type: KotlinType): TypeMap
         )
     }
 
-    if (type.annotations.hasAnnotation(JVM_WILDCARD_ANNOTATION_FQ_NAME)) {
+    if (with(typeSystem) { type.hasAnnotation(JVM_WILDCARD_ANNOTATION_FQ_NAME) }) {
         return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
-                skipDeclarationSiteWildcards = false,
-                isForAnnotationParameter = isForAnnotationParameter,
-                fallbackMode = this,
-                needInlineClassWrapping = needInlineClassWrapping
+            skipDeclarationSiteWildcards = false,
+            isForAnnotationParameter = isForAnnotationParameter,
+            fallbackMode = this,
+            needInlineClassWrapping = needInlineClassWrapping
         )
     }
 
@@ -102,7 +112,7 @@ internal fun extractTypeMappingModeFromAnnotation(
         outerType: KotlinType,
         isForAnnotationParameter: Boolean
 ): TypeMappingMode? =
-        (outerType.suppressWildcardsMode() ?: callableDescriptor?.suppressWildcardsMode())?.let {
+        (outerType.suppressWildcardsMode(SimpleClassicTypeSystemContext) ?: callableDescriptor?.suppressWildcardsMode())?.let {
             if (outerType.arguments.isNotEmpty())
                 TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
                         skipDeclarationSiteWildcards = it,
@@ -116,14 +126,17 @@ internal fun extractTypeMappingModeFromAnnotation(
 private fun DeclarationDescriptor.suppressWildcardsMode(): Boolean? =
         parentsWithSelf.mapNotNull {
             it.annotations.findAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)
-        }.firstOrNull().suppressWildcardsMode()
+        }.firstOrNull()?.suppressWildcardsMode()
 
-private fun KotlinType.suppressWildcardsMode(): Boolean? =
-        annotations.findAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME).suppressWildcardsMode()
+private fun KotlinTypeMarker.suppressWildcardsMode(typeSystem: TypeSystemCommonBackendContext): Boolean? =
+    with(typeSystem) {
+        if (hasAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME))
+            getAnnotationFirstArgumentValue(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME) as? Boolean ?: true
+        else null
+    }
 
-private fun AnnotationDescriptor?.suppressWildcardsMode(): Boolean? {
-    return (this ?: return null).allValueArguments.values.firstOrNull()?.value as? Boolean ?: true
-}
+private fun AnnotationDescriptor.suppressWildcardsMode(): Boolean? =
+    allValueArguments.values.firstOrNull()?.value as? Boolean ?: true
 
 val JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSuppressWildcards")
 val JVM_WILDCARD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmWildcard")

@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/stringComparisons.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.String 
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
@@ -9,9 +9,9 @@ FILE fqName:<root> fileName:/stringComparisons.kt
             $this: GET_VAR 'a: kotlin.String declared in <root>.test1' type=kotlin.String origin=null
             other: GET_VAR 'b: kotlin.String declared in <root>.test1' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.String 
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
@@ -19,9 +19,9 @@ FILE fqName:<root> fileName:/stringComparisons.kt
             $this: GET_VAR 'a: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
             other: GET_VAR 'b: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.String 
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         CALL 'public final fun greaterOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GTEQ
@@ -29,9 +29,9 @@ FILE fqName:<root> fileName:/stringComparisons.kt
             $this: GET_VAR 'a: kotlin.String declared in <root>.test3' type=kotlin.String origin=null
             other: GET_VAR 'b: kotlin.String declared in <root>.test3' type=kotlin.String origin=null
           arg1: CONST Int type=kotlin.Int value=0
-  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.String 
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         CALL 'public final fun lessOrEqual (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LTEQ

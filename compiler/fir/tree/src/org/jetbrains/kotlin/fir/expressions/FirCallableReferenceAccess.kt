@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirCallableReferenceAccess(
-    session: FirSession,
-    psi: PsiElement?
-) : FirQualifiedAccessExpression(session, psi) {
+abstract class FirCallableReferenceAccess(psi: PsiElement?) : FirQualifiedAccessExpression(psi) {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitCallableReferenceAccess(this, data)
 }

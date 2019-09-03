@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSaf
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
@@ -69,7 +69,9 @@ class KotlinToResolvedCallTransformer(
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
     private val builtIns: KotlinBuiltIns,
-    private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate
+    private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate,
+    private val smartCastManager: SmartCastManager,
+    private val typeApproximator: TypeApproximator
 ) {
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
@@ -126,7 +128,8 @@ class KotlinToResolvedCallTransformer(
 
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context, this, expressionTypingServices, argumentTypeResolver,
-                    doubleColonExpressionResolver, builtIns, deprecationResolver, moduleDescriptor, dataFlowValueFactory
+                    doubleColonExpressionResolver, builtIns, deprecationResolver, moduleDescriptor, dataFlowValueFactory,
+                    typeApproximator
                 )
 
                 if (!ErrorUtils.isError(candidate.candidateDescriptor)) {
@@ -207,7 +210,7 @@ class KotlinToResolvedCallTransformer(
                 return storedResolvedCall
             }
         }
-        return NewResolvedCallImpl(completedSimpleAtom, resultSubstitutor, diagnostics)
+        return NewResolvedCallImpl(completedSimpleAtom, resultSubstitutor, diagnostics, typeApproximator)
     }
 
     fun runCallCheckers(resolvedCall: ResolvedCall<*>, callCheckerContext: CallCheckerContext) {
@@ -471,7 +474,8 @@ class KotlinToResolvedCallTransformer(
             newContext,
             completedCallAtom.atom.psiKotlinCall,
             context.dataFlowValueFactory,
-            allDiagnostics
+            allDiagnostics,
+            smartCastManager
         )
 
         for (diagnostic in allDiagnostics) {
@@ -606,7 +610,8 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
 class NewResolvedCallImpl<D : CallableDescriptor>(
     val resolvedCallAtom: ResolvedCallAtom,
     substitutor: NewTypeSubstitutor?,
-    private var diagnostics: Collection<KotlinCallDiagnostic>
+    private var diagnostics: Collection<KotlinCallDiagnostic>,
+    private val typeApproximator: TypeApproximator
 ) : NewAbstractResolvedCall<D>() {
     var isCompleted = false
         private set
@@ -699,7 +704,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
                     // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
                     // but it seems like temporary solution.
                     candidateDescriptor.substitute(resolvedCallAtom.substitutor).substituteAndApproximateCapturedTypes(
-                        substitutor ?: FreshVariableNewTypeSubstitutor.Empty
+                        substitutor ?: FreshVariableNewTypeSubstitutor.Empty, typeApproximator
                     )
                 else ->
                     candidateDescriptor
@@ -708,7 +713,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
         typeArguments = resolvedCallAtom.substitutor.freshVariables.map {
             val substituted = (substitutor ?: FreshVariableNewTypeSubstitutor.Empty).safeSubstitute(it.defaultType)
-            TypeApproximator(substituted.constructor.builtIns)
+            typeApproximator
                 .approximateToSuperType(substituted, TypeApproximatorConfiguration.IntegerLiteralsTypesApproximation)
                 ?: substituted
         }

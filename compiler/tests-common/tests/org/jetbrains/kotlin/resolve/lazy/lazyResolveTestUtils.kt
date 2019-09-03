@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
@@ -38,20 +40,23 @@ fun createResolveSessionForFiles(
         addBuiltIns: Boolean
 ): ResolveSession {
     val projectContext = ProjectContext(project, "lazy resolve test utils")
-    val testModule = TestModule(project, addBuiltIns)
+    val testModule =
+        TestModule(project, addBuiltIns)
+    val platformParameters = JvmPlatformParameters(
+        packagePartProviderFactory = { PackagePartProvider.Empty },
+        moduleByJavaClass = { testModule }
+    )
     val resolverForProject = ResolverForProjectImpl(
         "test",
         projectContext, listOf(testModule),
         { ModuleContent(it, syntheticFiles, GlobalSearchScope.allScope(project)) },
         invalidateOnOOCB = false,
         moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-        resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
-        platformParameters = { _ ->
-            JvmPlatformParameters(
-                packagePartProviderFactory = { PackagePartProvider.Empty },
-                moduleByJavaClass = { testModule }
-            )
-        }
+        resolverForModuleFactoryByPlatform = {
+            JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, JvmPlatforms.defaultJvmPlatform)
+        },
+        builtInsProvider = { DefaultBuiltIns.Instance },
+        sdkDependency = { null }
     )
     return resolverForProject.resolverForModule(testModule).componentProvider.get<ResolveSession>()
 }
@@ -61,10 +66,11 @@ private class TestModule(val project: Project, val dependsOnBuiltIns: Boolean) :
 
     override fun dependencies() = listOf(this)
     override fun dependencyOnBuiltIns() =
-            if (dependsOnBuiltIns)
-                ModuleInfo.DependencyOnBuiltIns.LAST
-            else
-                ModuleInfo.DependencyOnBuiltIns.NONE
+        if (dependsOnBuiltIns)
+            ModuleInfo.DependencyOnBuiltIns.LAST
+        else
+            ModuleInfo.DependencyOnBuiltIns.NONE
+
     override val platform: TargetPlatform
         get() = JvmPlatforms.unspecifiedJvmPlatform
 

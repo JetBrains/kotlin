@@ -3,10 +3,14 @@ fun test() {
     loop@ for (i in -2..2) {
         // Some comment
         when {
-            i < 0 -> // Very important comment
+            i < 0 -> {
+                // Very important comment
                 break@loop
-            else -> // More comments
+            }
+            else -> {
+                // More comments
                 i.hashCode()
+            }
         }
     }
 }

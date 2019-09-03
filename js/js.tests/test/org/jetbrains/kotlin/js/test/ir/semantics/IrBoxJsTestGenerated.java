@@ -2697,6 +2697,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/try/nestedTryCatchInCatch.kt");
             }
 
+            @TestMetadata("overrideThrowableProperties.kt")
+            public void testOverrideThrowableProperties() throws Exception {
+                runTest("js/js.translator/testData/box/expression/try/overrideThrowableProperties.kt");
+            }
+
             @TestMetadata("rethrowExceptionIfNotCaught.kt")
             public void testRethrowExceptionIfNotCaught() throws Exception {
                 runTest("js/js.translator/testData/box/expression/try/rethrowExceptionIfNotCaught.kt");
@@ -6492,6 +6497,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("packagePropertySet.kt")
         public void testPackagePropertySet() throws Exception {
             runTest("js/js.translator/testData/box/propertyAccess/packagePropertySet.kt");
+        }
+
+        @TestMetadata("privateClassesWithPrivateMembers.kt")
+        public void testPrivateClassesWithPrivateMembers() throws Exception {
+            runTest("js/js.translator/testData/box/propertyAccess/privateClassesWithPrivateMembers.kt");
         }
 
         @TestMetadata("privatePropertyAccessFromMethod.kt")

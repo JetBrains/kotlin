@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/implicitCastToNonNull.kt
-  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:kotlin.Int 
-    VALUE_PARAMETER name:x index:0 type:kotlin.String? 
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:kotlin.Int
+    VALUE_PARAMETER name:x index:0 type:kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.String?): kotlin.Int declared in <root>'
         WHEN type=kotlin.Int origin=IF
@@ -13,9 +13,9 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'x: kotlin.String? declared in <root>.test1' type=kotlin.String? origin=null
-  FUN name:test2 visibility:public modality:FINAL <T> (x:T of <root>.test2) returnType:kotlin.Int 
+  FUN name:test2 visibility:public modality:FINAL <T> (x:T of <root>.test2) returnType:kotlin.Int
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?]
-    VALUE_PARAMETER name:x index:0 type:T of <root>.test2 
+    VALUE_PARAMETER name:x index:0 type:T of <root>.test2
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 <T> (x: T of <root>.test2): kotlin.Int declared in <root>'
         WHEN type=kotlin.Int origin=IF
@@ -28,9 +28,9 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'x: T of <root>.test2 declared in <root>.test2' type=T of <root>.test2 origin=null
-  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int [inline] 
+  FUN name:test3 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Int [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 <T> (x: kotlin.Any): kotlin.Int [inline] declared in <root>'
         WHEN type=kotlin.Int origin=IF
@@ -43,9 +43,9 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
               $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
                 GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
-  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int [inline] 
+  FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence]
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any? 
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 <T> (x: kotlin.Any?): kotlin.Int [inline] declared in <root>'
         WHEN type=kotlin.Int origin=IF
@@ -58,11 +58,11 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
               $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
                 GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
-  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1<S of <root>.test5, kotlin.Unit>) returnType:kotlin.Unit 
+  FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1<S of <root>.test5, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[S of <root>.test5?]
     TYPE_PARAMETER name:S index:1 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:x index:0 type:T of <root>.test5 
-    VALUE_PARAMETER name:fn index:1 type:kotlin.Function1<S of <root>.test5, kotlin.Unit> 
+    VALUE_PARAMETER name:x index:0 type:T of <root>.test5
+    VALUE_PARAMETER name:fn index:1 type:kotlin.Function1<S of <root>.test5, kotlin.Unit>
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH

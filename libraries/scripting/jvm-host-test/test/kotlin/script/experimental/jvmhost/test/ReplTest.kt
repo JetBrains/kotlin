@@ -9,6 +9,7 @@ import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.BasicReplStageHistory
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerImpl
 import org.junit.Assert
 import org.junit.Test
 import kotlin.script.experimental.annotations.KotlinScript
@@ -16,7 +17,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
-import kotlin.script.experimental.jvmhost.impl.KJvmReplCompilerImpl
 
 class ReplTest : TestCase() {
 
@@ -27,7 +27,7 @@ class ReplTest : TestCase() {
     @Test
     fun testCompileAndEval() {
         val out = captureOut {
-            chechEvaluateInReplNoErrors(
+            chechEvaluateInRepl(
                 simpleScriptompilationConfiguration,
                 simpleScriptEvaluationConfiguration,
                 sequenceOf(
@@ -41,12 +41,74 @@ class ReplTest : TestCase() {
         Assert.assertEquals("x = 3", out)
     }
 
+    @Test
+    fun testEvalWithResult() {
+        chechEvaluateInRepl(
+            simpleScriptompilationConfiguration,
+            simpleScriptEvaluationConfiguration,
+            sequenceOf(
+                "val x = 5",
+                "x + 6",
+                "res1 * 2"
+            ),
+            sequenceOf(null, 11, 22)
+        )
+    }
+
+    @Test
+    fun testEvalWithIfResult() {
+        chechEvaluateInRepl(
+            simpleScriptompilationConfiguration,
+            simpleScriptEvaluationConfiguration,
+            sequenceOf(
+                "val x = 5",
+                "x + 6",
+                "if (x < 10) res1 * 2 else x"
+            ),
+            sequenceOf(null, 11, 22)
+        )
+    }
+
+    @Test
+    fun testImplicitReceiver() {
+        val receiver = TestReceiver()
+        chechEvaluateInRepl(
+            simpleScriptompilationConfiguration.with {
+                implicitReceivers(TestReceiver::class)
+            },
+            simpleScriptEvaluationConfiguration.with {
+                implicitReceivers(receiver)
+            },
+            sequenceOf(
+                "val x = 4",
+                "x + prop1",
+                "res1 * 3"
+            ),
+            sequenceOf(null, 7, 21)
+        )
+    }
+
+    @Test
+    fun testEvalWithError() {
+        chechEvaluateInRepl(
+            simpleScriptompilationConfiguration,
+            simpleScriptEvaluationConfiguration,
+            sequenceOf(
+                "throw RuntimeException(\"abc\")",
+                "val x = 3",
+                "x + 1"
+            ),
+            sequenceOf(RuntimeException("abc"), null, 4)
+        )
+    }
+
     fun evaluateInRepl(
         compilationConfiguration: ScriptCompilationConfiguration,
         evaluationConfiguration: ScriptEvaluationConfiguration,
         snippets: Sequence<String>
     ): Sequence<ResultWithDiagnostics<EvaluationResult>> {
-        val replCompilerProxy = KJvmReplCompilerImpl(defaultJvmScriptingHostConfiguration)
+        val replCompilerProxy =
+            KJvmReplCompilerImpl(defaultJvmScriptingHostConfiguration)
         val compilationState = replCompilerProxy.createReplCompilationState(compilationConfiguration)
         val compilationHistory = BasicReplStageHistory<ScriptDescriptor>()
         val replEvaluator = BasicJvmScriptEvaluator()
@@ -61,15 +123,13 @@ class ReplTest : TestCase() {
                     }
                 }
                 .onSuccess {
-                    val snippetInstance = when (val retVal = it.returnValue) {
-                        is ResultValue.Value -> retVal.scriptInstance
-                        is ResultValue.UnitValue -> retVal.scriptInstance
-                        else -> throw IllegalStateException("Expecting value with script instance, got $it")
-                    }
+                    val snippetClass = it.returnValue.scriptClass
                     currentEvalConfig = ScriptEvaluationConfiguration(currentEvalConfig) {
-                        previousSnippets.append(snippetInstance)
-                        jvm {
-                            baseClassLoader(snippetInstance::class.java.classLoader)
+                        previousSnippets.append(it.returnValue.scriptInstance)
+                        if (snippetClass != null) {
+                            jvm {
+                                baseClassLoader(snippetClass.java.classLoader)
+                            }
                         }
                     }
                     it.asSuccess()
@@ -77,7 +137,7 @@ class ReplTest : TestCase() {
         }
     }
 
-    fun chechEvaluateInReplNoErrors(
+    fun chechEvaluateInRepl(
         compilationConfiguration: ScriptCompilationConfiguration,
         evaluationConfiguration: ScriptEvaluationConfiguration,
         snippets: Sequence<String>,
@@ -89,11 +149,19 @@ class ReplTest : TestCase() {
                 is ResultWithDiagnostics.Failure -> Assert.fail("#$index: Expected result, got $res")
                 is ResultWithDiagnostics.Success -> {
                     val expectedVal = expectedIter.next()
-                    val resVal = res.value.returnValue
-                    if (resVal is ResultValue.Value && resVal.type.isNotBlank()) // TODO: the latter check is temporary while the result is used to return the instance too
-                        Assert.assertEquals("#$index: Expected $expectedVal, got $resVal", expectedVal, resVal.value)
-                    else
-                        Assert.assertTrue("#$index: Expected $expectedVal, got Unit", expectedVal == null)
+                    when (val resVal = res.value.returnValue) {
+                        is ResultValue.Value -> Assert.assertEquals(
+                            "#$index: Expected $expectedVal, got $resVal",
+                            expectedVal,
+                            resVal.value
+                        )
+                        is ResultValue.Unit -> Assert.assertTrue("#$index: Expected $expectedVal, got Unit", expectedVal == null)
+                        is ResultValue.Error -> Assert.assertTrue(
+                            "#$index: Expected $expectedVal, got Error: ${resVal.error}",
+                            expectedVal is Throwable && expectedVal.message == resVal.error.message
+                        )
+                        else -> Assert.assertTrue("#$index: Expected $expectedVal, got unknown result $resVal", expectedVal == null)
+                    }
                 }
             }
         }
@@ -110,3 +178,5 @@ val simpleScriptompilationConfiguration = createJvmCompilationConfigurationFromT
 }
 
 val simpleScriptEvaluationConfiguration = ScriptEvaluationConfiguration()
+
+class TestReceiver(val prop1: Int = 3)

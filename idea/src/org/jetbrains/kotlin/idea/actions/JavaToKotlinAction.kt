@@ -49,14 +49,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
-import org.jetbrains.kotlin.j2k.ConversionType
-import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.FilesResult
-import org.jetbrains.kotlin.j2k.logJ2kConversionStatistics
+import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import java.io.File
@@ -86,12 +83,17 @@ class JavaToKotlinAction : AnAction() {
             for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
                 try {
                     val document = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)
-                    if (document == null) {
-                        MessagesEx.error(psiFile.project, "Failed to save conversion result: couldn't find document for " + psiFile.name)
+                    val errorMessage = when {
+                        document == null -> "couldn't find document for ${psiFile.name}"
+                        !document.isWritable -> "file `${psiFile.name}` is read-only"
+                        else -> null
+                    }
+                    if (errorMessage != null) {
+                        MessagesEx.error(psiFile.project, "Failed to save conversion result: $errorMessage")
                             .showLater()
                         continue
                     }
-                    document.replaceString(0, document.textLength, text)
+                    document!!.replaceString(0, document.textLength, text)
                     FileDocumentManager.getInstance().saveDocument(document)
 
                     val virtualFile = psiFile.virtualFile
@@ -115,12 +117,17 @@ class JavaToKotlinAction : AnAction() {
             project: Project,
             module: Module,
             enableExternalCodeProcessing: Boolean = true,
-            askExternalCodeProcessing: Boolean = true
+            askExternalCodeProcessing: Boolean = true,
+            forceUsingOldJ2k: Boolean = false
         ): List<KtFile> {
             var converterResult: FilesResult? = null
             fun convert() {
                 val converter =
-                    JavaToKotlinConverterFactory.createJavaToKotlinConverter(
+                    if (forceUsingOldJ2k) OldJavaToKotlinConverter(
+                        project,
+                        ConverterSettings.defaultSettings,
+                        IdeaJavaToKotlinServices
+                    ) else J2kConverterExtension.extension().createJavaToKotlinConverter(
                         project,
                         module,
                         ConverterSettings.defaultSettings,
@@ -128,7 +135,8 @@ class JavaToKotlinAction : AnAction() {
                     )
                 converterResult = converter.filesToKotlin(
                     javaFiles,
-                    JavaToKotlinConverterFactory.createPostProcessor(formatCode = true),
+                    if (forceUsingOldJ2k) J2kPostProcessor(formatCode = true)
+                    else J2kConverterExtension.extension().createPostProcessor(formatCode = true),
                     progress = ProgressManager.getInstance().progressIndicator!!
                 )
             }
@@ -140,7 +148,7 @@ class JavaToKotlinAction : AnAction() {
                 val linesCount = javaFiles.sumBy { StringUtil.getLineBreakCount(it.text) }
                 logJ2kConversionStatistics(
                     ConversionType.FILES,
-                    JavaToKotlinConverterFactory.isNewJ2k,
+                    J2kConverterExtension.isNewJ2k,
                     conversionTime,
                     linesCount,
                     javaFiles.size
@@ -216,7 +224,7 @@ class JavaToKotlinAction : AnAction() {
 
 
         val module = e.getData(LangDataKeys.MODULE)!!
-        if (!JavaToKotlinConverterFactory.doCheckBeforeConversion(project, module)) return
+        if (!J2kConverterExtension.extension().doCheckBeforeConversion(project, module)) return
 
         val firstSyntaxError = javaFiles.asSequence().map { PsiTreeUtil.findChildOfType(it, PsiErrorElement::class.java) }.firstOrNull()
 

@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -45,6 +48,8 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
     override fun fixText(element: KtIfExpression) =
         element.getKotlinFunction()?.let { "Replace with '${it.functionName}()' call" } ?: defaultFixText
 
+    override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.ifKeyword.textRangeIn(element)
+
     override fun isApplicable(element: KtIfExpression): Boolean {
         val languageVersionSettings = element.languageVersionSettings
         if (!languageVersionSettings.supportsFeature(LanguageFeature.UseReturnsEffect)) return false
@@ -54,9 +59,10 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
         val valueArguments = call.valueArguments
         if (valueArguments.size > 1) return false
         if (calleeText != ILLEGAL_STATE_EXCEPTION && calleeText != ILLEGAL_ARGUMENT_EXCEPTION) return false
-        val context = call.analyze(BodyResolveMode.PARTIAL)
+        val context = call.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val argumentType = valueArguments.firstOrNull()?.getArgumentExpression()?.getType(context)
         if (argumentType != null && !KotlinBuiltIns.isStringOrNullableString(argumentType)) return false
+        if (element.isUsedAsExpression(context)) return false
         val fqName = call.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe?.parent()
         return fqName == FqName("kotlin.$calleeText") || fqName == FqName("java.lang.$calleeText")
     }
@@ -79,7 +85,7 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
                 } else {
                     psiFactory.createExpressionByPattern("${kotlinFunction.fqName}($excl$0) { $1 }", newCondition, argument)
                 }
-                val replaced = element.replaced(newExpression)
+                val replaced = element.replaceWith(newExpression, psiFactory)
                 val newCall = (replaced as? KtDotQualifiedExpression)?.callExpression
                 val negatedExpression = newCall?.valueArguments?.firstOrNull()?.getArgumentExpression() as? KtPrefixExpression
                 if (negatedExpression != null) {
@@ -94,12 +100,26 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
                 } else {
                     psiFactory.createExpressionByPattern("${kotlinFunction.fqName}($0) { $1 }", nullCheckedExpression, argument)
                 }
-                element.replaced(newExpression)
+                element.replaceWith(newExpression, psiFactory)
             }
             else -> return
         }
         commentSaver.restore(replaced)
+        editor?.caretModel?.moveToOffset(replaced.startOffset) 
         ShortenReferences.DEFAULT.process(replaced)
+    }
+    
+    private fun KtIfExpression.replaceWith(newExpression: KtExpression, psiFactory: KtPsiFactory): KtExpression {
+        val parent = parent
+        val elseBranch = `else`
+        return if (elseBranch != null) {
+            val added = parent.addBefore(newExpression, this) as KtExpression
+            parent.addBefore(psiFactory.createNewLine(), this)
+            replaceWithBranch(elseBranch, isUsedAsExpression = false, keepBraces = false)
+            added
+        } else {
+            replaced(newExpression)
+        }
     }
 
     private fun KtIfExpression.getCallExpression(): KtCallExpression? {

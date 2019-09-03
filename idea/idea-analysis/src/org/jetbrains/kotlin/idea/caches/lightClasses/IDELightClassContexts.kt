@@ -187,6 +187,8 @@ internal object IDELightClassContexts {
 
         if (isDataClassWithGeneratedMembersOverridden(classOrObject)) return false
 
+        if (isDataClassWhichExtendsOtherClass(classOrObject)) return false
+
         if (hasMembersOverridingInternalMembers(classOrObject)) return false
 
         if (hasSerializationLikeAnnotations(classOrObject)) return false
@@ -230,6 +232,11 @@ internal object IDELightClassContexts {
                 name == FunctionsFromAny.HASH_CODE_METHOD_NAME ||
                 name == FunctionsFromAny.TO_STRING_METHOD_NAME ||
                 DataClassDescriptorResolver.isComponentLike(name)
+    }
+
+    private fun isDataClassWhichExtendsOtherClass(classOrObject: KtClassOrObject): Boolean {
+        return classOrObject.hasModifier(KtTokens.DATA_KEYWORD) &&
+                classOrObject.superTypeListEntries.isNotEmpty()
     }
 
     private fun hasMembersOverridingInternalMembers(classOrObject: KtClassOrObject): Boolean {

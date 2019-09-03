@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 class Fir2IrCallableCache {
     private val parameterCache = mutableMapOf<FirValueParameter, IrValueParameter>()
 
-    private val variableCache = mutableMapOf<FirVariable, IrVariable>()
+    private val variableCache = mutableMapOf<FirVariable<*>, IrVariable>()
 
     private val localClassCache = mutableMapOf<FirClass, IrClass>()
 
@@ -25,9 +25,9 @@ class Fir2IrCallableCache {
         parameterCache[firParameter] = irParameter
     }
 
-    fun getVariable(variable: FirVariable): IrVariable? = variableCache[variable]
+    fun getVariable(variable: FirVariable<*>): IrVariable? = variableCache[variable]
 
-    fun putVariable(firVariable: FirVariable, irVariable: IrVariable) {
+    fun putVariable(firVariable: FirVariable<*>, irVariable: IrVariable) {
         variableCache[firVariable] = irVariable
     }
 

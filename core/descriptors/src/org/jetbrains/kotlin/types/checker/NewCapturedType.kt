@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.DO_NOTHING_2
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.utils.DO_NOTHING_2
 // if input type is capturedType, then we approximate it to UpperBound
 // null means that type should be leaved as is
 fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): UnwrappedType? {
-    val simpleType = NewKotlinTypeChecker.transformToNewType(argumentType.lowerIfFlexible())
+    val simpleType = NewKotlinTypeChecker.Default.transformToNewType(argumentType.lowerIfFlexible())
     if (simpleType.constructor is IntersectionTypeConstructor) {
         var changed = false
         val preparedSuperTypes = simpleType.constructor.supertypes.map {
@@ -97,10 +98,10 @@ fun captureFromArguments(
 
         if (oldProjection.projectionKind == Variance.INVARIANT) continue
         var upperBounds = type.constructor.parameters[index].upperBounds.map {
-            NewKotlinTypeChecker.transformToNewType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
+            NewKotlinTypeChecker.Default.transformToNewType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
         }
         if (!oldProjection.isStarProjection && oldProjection.projectionKind == Variance.OUT_VARIANCE) {
-            upperBounds += NewKotlinTypeChecker.transformToNewType(oldProjection.type.unwrap())
+            upperBounds += NewKotlinTypeChecker.Default.transformToNewType(oldProjection.type.unwrap())
         }
 
         val capturedType = newProjection.type as NewCapturedType
@@ -139,18 +140,42 @@ class NewCapturedType(
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         NewCapturedType(captureStatus, constructor, lowerType, annotations, newNullability)
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
+        NewCapturedType(
+            captureStatus,
+            constructor.refine(kotlinTypeRefiner),
+            lowerType?.let { kotlinTypeRefiner.refineType(it).unwrap() },
+            annotations,
+            isMarkedNullable
+        )
 }
 
-class NewCapturedTypeConstructor(override val projection: TypeProjection, private var supertypes: List<UnwrappedType>? = null) :
-    CapturedTypeConstructor {
-    fun initializeSupertypes(supertypes: List<UnwrappedType>) {
-        assert(this.supertypes == null) {
-            "Already initialized! oldValue = ${this.supertypes}, newValue = $supertypes"
-        }
-        this.supertypes = supertypes
+class NewCapturedTypeConstructor(
+    override val projection: TypeProjection,
+    private var supertypesComputation: (() -> List<UnwrappedType>)? = null,
+    private val original: NewCapturedTypeConstructor? = null
+) : CapturedTypeConstructor {
+
+    constructor(
+        projection: TypeProjection,
+        supertypes: List<UnwrappedType>,
+        original: NewCapturedTypeConstructor? = null
+    ) : this(projection, { supertypes }, original)
+
+    private val _supertypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        supertypesComputation?.invoke()
     }
 
-    override fun getSupertypes() = supertypes ?: emptyList()
+    fun initializeSupertypes(supertypes: List<UnwrappedType>) {
+        assert(this.supertypesComputation == null) {
+            "Already initialized! oldValue = ${this.supertypesComputation}, newValue = $supertypes"
+        }
+        this.supertypesComputation = { supertypes }
+    }
+
+    override fun getSupertypes() = _supertypes ?: emptyList()
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
 
     override fun isFinal() = false
@@ -158,5 +183,27 @@ class NewCapturedTypeConstructor(override val projection: TypeProjection, privat
     override fun getDeclarationDescriptor(): ClassifierDescriptor? = null
     override fun getBuiltIns(): KotlinBuiltIns = projection.type.builtIns
 
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
+        NewCapturedTypeConstructor(
+            projection.refine(kotlinTypeRefiner),
+            supertypesComputation?.let {
+                {
+                    supertypes.map { it.refine(kotlinTypeRefiner) }
+                }
+            },
+            original ?: this
+        )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as NewCapturedTypeConstructor
+
+        return (original ?: this) === (other.original ?: other)
+    }
+
+    override fun hashCode(): Int = original?.hashCode() ?: super.hashCode()
     override fun toString() = "CapturedType($projection)"
 }

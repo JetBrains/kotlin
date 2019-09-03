@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/smartCastOnFieldReceiverOfGenericType.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
           GET_VAR 'b: kotlin.Any declared in <root>.testSetField' type=kotlin.Any origin=null
-      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:T of <root>.JCell? visibility:public ' type=kotlin.Unit origin=EQ
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:T of <root>.JCell? visibility:public' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'a: kotlin.Any declared in <root>.testSetField' type=kotlin.Any origin=null
         value: TYPE_OP type=T of <root>.JCell origin=IMPLICIT_CAST typeOperand=T of <root>.JCell
           GET_VAR 'b: kotlin.Any declared in <root>.testSetField' type=kotlin.Any origin=null
@@ -20,5 +20,5 @@ FILE fqName:<root> fileName:/smartCastOnFieldReceiverOfGenericType.kt
         TYPE_OP type=<root>.JCell<kotlin.String> origin=CAST typeOperand=<root>.JCell<kotlin.String>
           GET_VAR 'a: kotlin.Any declared in <root>.testGetField' type=kotlin.Any origin=null
       RETURN type=kotlin.Nothing from='public final fun testGetField (a: kotlin.Any): kotlin.String declared in <root>'
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:T of <root>.JCell? visibility:public ' type=kotlin.String? origin=GET_PROPERTY
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:T of <root>.JCell? visibility:public' type=kotlin.String? origin=GET_PROPERTY
           receiver: GET_VAR 'a: kotlin.Any declared in <root>.testGetField' type=kotlin.Any origin=null

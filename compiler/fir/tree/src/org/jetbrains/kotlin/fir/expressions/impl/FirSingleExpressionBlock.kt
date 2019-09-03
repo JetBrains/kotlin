@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-class FirSingleExpressionBlock(
-    session: FirSession,
-    private var statement: FirStatement
-) : FirBlock(session, statement.psi) {
+class FirSingleExpressionBlock(private var statement: FirStatement) : FirBlock(statement.psi) {
     override val statements
         get() = listOf(statement)
 

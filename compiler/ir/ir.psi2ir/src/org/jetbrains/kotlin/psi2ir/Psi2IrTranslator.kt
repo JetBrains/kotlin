@@ -77,7 +77,7 @@ class Psi2IrTranslator(
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
 
         // This is required for implicit casts insertion on IrTypes (work-in-progress).
-        moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer)
+        moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer, facadeClassGenerator)
         irModule.patchDeclarationParents()
 
         postprocess(context, irModule)

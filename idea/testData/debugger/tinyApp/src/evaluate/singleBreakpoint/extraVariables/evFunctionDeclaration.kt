@@ -1,7 +1,7 @@
 package evFunctionDeclaration
 
 class A(val a: Int) {
-    //Breakpoint!
+    //FunctionBreakpoint!
     fun foo() = a
 }
 

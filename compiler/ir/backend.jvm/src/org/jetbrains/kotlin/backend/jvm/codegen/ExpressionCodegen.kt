@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.intrinsics.Not
-import org.jetbrains.kotlin.backend.jvm.lower.CrIrType
+import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE_AS
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -122,6 +120,8 @@ class ExpressionCodegen(
 
     override var lastLineNumber: Int = -1
 
+    private val closureReifiedMarkers = hashMapOf<IrClass, ReifiedTypeParametersUsages>()
+
     private val IrType.asmType: Type
         get() = typeMapper.mapType(this)
 
@@ -143,11 +143,13 @@ class ExpressionCodegen(
         if (offset < 0) {
             return
         }
-        val lineNumber = fileEntry.getLineNumber(offset) + 1
-        assert(lineNumber > 0)
-        if (lastLineNumber != lineNumber) {
-            lastLineNumber = lineNumber
-            mv.visitLineNumber(lineNumber, markNewLabel())
+        if (fileEntry != null) {
+            val lineNumber = fileEntry.getLineNumber(offset) + 1
+            assert(lineNumber > 0)
+            if (lastLineNumber != lineNumber) {
+                lastLineNumber = lineNumber
+                mv.visitLineNumber(lineNumber, markNewLabel())
+            }
         }
     }
 
@@ -191,7 +193,8 @@ class ExpressionCodegen(
                 // Although these are accessible from Java, the functions they bridge to already have the assertions.
                 irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
+                irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
+                irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
         if (!isInlineLambda && !isSyntheticOrBridge && !Visibilities.isPrivate(irFunction.visibility)) {
             irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
             irFunction.valueParameters.forEach(::generateNonNullAssertion)
@@ -321,14 +324,28 @@ class ExpressionCodegen(
 
         when {
             expression is IrConstructorCall -> {
+                closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
+                    if (it.wereUsedReifiedParameters()) {
+                        putNeedClassReificationMarker(v)
+                        propagateChildReifiedTypeParametersUsages(it)
+                    }
+                }
+
                 // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
                 // instance methods named <init>.
                 mv.anew(asmType)
                 mv.dup()
             }
-            expression is IrDelegatingConstructorCall ->
+            expression is IrDelegatingConstructorCall -> {
                 // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
                 mv.load(0, OBJECT_TYPE)
+
+                for (argumentIndex in 0 until expression.typeArgumentsCount) {
+                    expression.getTypeArgument(argumentIndex)?.getTypeParameterOrNull()?.takeIf { it.isReified }?.let {
+                        consumeReifiedOperationMarker(it)
+                    }
+                }
+            }
             expression.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
             callee.isSuspend && !irFunction.isInvokeSuspendInContinuation() -> addInlineMarker(mv, isStartNotEnd = true)
@@ -357,13 +374,6 @@ class ExpressionCodegen(
         }
 
         callGenerator.beforeValueParametersStart()
-        val extraArgsShift =
-            when {
-                callee is IrConstructor && callee.parentAsClass.isEnumClass -> 2
-                callee is IrConstructor && callee.parentAsClass.isInner -> 1 // skip the `$outer` parameter
-                else -> 0
-            }
-        val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size - extraArgsShift)
         val typeParameters = if (callee is IrConstructor)
             callee.parentAsClass.typeParameters + callee.typeParameters
         else
@@ -376,16 +386,6 @@ class ExpressionCodegen(
             when {
                 arg != null -> {
                     callGenerator.genValueAndPut(irParameter, arg, parameterType, this@ExpressionCodegen, data)
-                }
-                irParameter.hasDefaultValue() -> {
-                    callGenerator.putValueIfNeeded(
-                        parameterType,
-                        StackValue.createDefaultValue(parameterType),
-                        ValueKind.DEFAULT_PARAMETER,
-                        i,
-                        this@ExpressionCodegen
-                    )
-                    defaultMask.mark(i - extraArgsShift/*TODO switch to separate lower*/)
                 }
                 else -> {
                     assert(irParameter.varargElementType != null)
@@ -413,7 +413,6 @@ class ExpressionCodegen(
 
         callGenerator.genCall(
             callable,
-            defaultMask.generateOnStackIfNeeded(callGenerator, callee is IrConstructor, this),
             this,
             expression
         )
@@ -577,9 +576,10 @@ class ExpressionCodegen(
                     "is not implemented, or it should have been lowered: ${element.render()}"
         )
 
-    // TODO maybe remove?
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
-        classCodegen.generateLocalClass(declaration)
+        classCodegen.generateLocalClass(declaration, irFunction.isInline).also {
+            closureReifiedMarkers[declaration] = it
+        }
         return immaterialUnitValue
     }
 
@@ -679,7 +679,11 @@ class ExpressionCodegen(
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
-        val owner = expression.returnTargetSymbol.owner
+        val returnTarget = expression.returnTargetSymbol.owner
+        val owner =
+            returnTarget as? IrFunction
+                ?: (returnTarget as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
+                ?: error("Unsupported IrReturnTarget: $returnTarget")
         //TODO: should be owner != irFunction
         val isNonLocalReturn =
             typeMapper.mapFunctionName(owner, OwnerKind.IMPLEMENTATION) != typeMapper.mapFunctionName(irFunction, OwnerKind.IMPLEMENTATION)
@@ -695,7 +699,7 @@ class ExpressionCodegen(
         val target = data.findBlock<ReturnableBlockInfo> { it.returnSymbol == expression.returnTargetSymbol }
         val returnType = typeMapper.mapReturnType(owner)
         val afterReturnLabel = Label()
-        expression.value.accept(this, data).coerce(returnType, owner.returnType(context)).materialize()
+        expression.value.accept(this, data).coerce(returnType, owner.returnType).materialize()
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
         expression.markLineNumber(startOffset = true)
         if (target != null) {
@@ -703,7 +707,7 @@ class ExpressionCodegen(
             mv.fixStackAndJump(target.returnLabel)
         } else {
             if (isNonLocalReturn) {
-                generateGlobalReturnFlag(mv, (owner as IrFunction).name.asString())
+                generateGlobalReturnFlag(mv, owner.name.asString())
             }
             mv.areturn(returnType)
         }
@@ -1080,18 +1084,15 @@ class ExpressionCodegen(
             JavaClassProperty.invokeWith(classReference.argument.accept(this, data))
         } else if (classReference is IrClassReference) {
             val classType = classReference.classType
-            if (classType is CrIrType) {
-                putJavaLangClassInstance(mv, classType.type, null, typeMapper.kotlinTypeMapper)
-                return classReference.onStack
-            } else {
-                val classifier = classType.classifierOrNull
-                if (classifier is IrTypeParameterSymbol) {
-                    assert(classifier.owner.isReified) { "Non-reified type parameter under ::class should be rejected by type checker: ${classifier.owner.dump()}" }
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
+            val classifier = classType.classifierOrNull
+            if (classifier is IrTypeParameterSymbol) {
+                assert(classifier.owner.isReified) {
+                    "Non-reified type parameter under ::class should be rejected by type checker: ${classifier.owner.dump()}"
                 }
-
-                putJavaLangClassInstance(mv, typeMapper.mapType(classType), classType.toKotlinType(), typeMapper.kotlinTypeMapper)
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
             }
+
+            putJavaLangClassInstance(mv, typeMapper.mapType(classType), classType.toKotlinType(), typeMapper.kotlinTypeMapper)
         } else {
             throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
         }
@@ -1106,7 +1107,9 @@ class ExpressionCodegen(
         typeMapper.mapToCallableMethod(irCall.symbol.owner, isSuper)
 
     private fun getOrCreateCallGenerator(element: IrFunctionAccessExpression, data: BlockInfo): IrCallGenerator {
-        if (!element.symbol.owner.isInlineFunctionCall(context)) {
+        if (!element.symbol.owner.isInlineFunctionCall(context) ||
+            classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry
+        ) {
             return IrCallGenerator.DefaultCallGenerator
         }
 
@@ -1142,12 +1145,16 @@ class ExpressionCodegen(
         return IrInlineCodegen(this, state, original.descriptor, mappings, IrSourceCompilerForInline(state, element, this, data))
     }
 
-    override fun consumeReifiedOperationMarker(typeParameterDescriptor: TypeParameterDescriptor) {
-        //TODO
+    private fun consumeReifiedOperationMarker(typeParameter: IrTypeParameter) {
+        if (typeParameter.parent != irFunction) {
+            classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.name.asString())
+        }
     }
 
     override fun propagateChildReifiedTypeParametersUsages(reifiedTypeParametersUsages: ReifiedTypeParametersUsages) {
-        //TODO
+        classCodegen.reifiedTypeParametersUsages.propagateChildUsagesWithinContext(reifiedTypeParametersUsages) {
+            irFunction.typeParameters.filter { it.isReified }.map { it.name.asString() }.toSet()
+        }
     }
 
     override fun pushClosureOnStack(
@@ -1222,36 +1229,17 @@ class ExpressionCodegen(
     /* From ExpressionCodegen.java */
     private fun putReifiedOperationMarkerIfTypeIsReifiedParameter(
         type: IrType, operationKind: ReifiedTypeInliner.OperationKind, v: InstructionAdapter,
-        codegen: BaseExpressionCodegen?
+        codegen: ExpressionCodegen?
     ) {
         val typeParameterAndReificationArgument = extractReificationArgumentWithParameter(type)
         if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.first.isReified) {
             val irTypeParameter = typeParameterAndReificationArgument.first
-            codegen?.consumeReifiedOperationMarker(irTypeParameter.descriptor)
+            codegen?.consumeReifiedOperationMarker(irTypeParameter)
             ReifiedTypeInliner.putReifiedOperationMarker(
                 operationKind, typeParameterAndReificationArgument.second.toReificationArgument(), v
             )
         }
     }
-}
-
-fun DefaultCallArgs.generateOnStackIfNeeded(callGenerator: IrCallGenerator, isConstructor: Boolean, codegen: ExpressionCodegen): Boolean {
-    val toInts = toInts()
-    if (toInts.isNotEmpty()) {
-        for (mask in toInts) {
-            callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE), ValueKind.DEFAULT_MASK, -1, codegen)
-        }
-
-        val parameterType = if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else OBJECT_TYPE
-        callGenerator.putValueIfNeeded(
-            parameterType,
-            StackValue.constant(null, parameterType),
-            ValueKind.METHOD_HANDLE_IN_DEFAULT,
-            -1,
-            codegen
-        )
-    }
-    return toInts.isNotEmpty()
 }
 
 val IrType.isReifiedTypeParameter: Boolean

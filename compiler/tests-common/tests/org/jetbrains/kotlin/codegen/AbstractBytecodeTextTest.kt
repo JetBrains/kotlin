@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
@@ -30,7 +31,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
         } else {
             val expected = readExpectedOccurrences(wholeFile.path)
             val actual = generateToText("helpers/")
-            checkGeneratedTextAgainstExpectedOccurrences(actual, expected)
+            checkGeneratedTextAgainstExpectedOccurrences(actual, expected, getBackend())
         }
     }
 
@@ -45,25 +46,28 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             assertTextWasGenerated(expectedOutputFile, generated)
             val generatedText = generated[expectedOutputFile]!!
             val expectedOccurrences = expectedOccurrencesByOutputFile[expectedOutputFile]!!
-            checkGeneratedTextAgainstExpectedOccurrences(generatedText, expectedOccurrences)
+            checkGeneratedTextAgainstExpectedOccurrences(generatedText, expectedOccurrences, getBackend())
         }
     }
 
     protected fun readExpectedOccurrences(filename: String): List<OccurrenceInfo> {
         val result = ArrayList<OccurrenceInfo>()
         val lines = File(filename).readLines().dropLastWhile(String::isEmpty)
-
+        var backend = TargetBackend.ANY
         for (line in lines) {
+            if (line.contains(JVM_TEMPLATES)) backend = TargetBackend.JVM
+            else if (line.contains(JVM_IR_TEMPLATES)) backend = TargetBackend.JVM_IR
+
             val matcher = EXPECTED_OCCURRENCES_PATTERN.matcher(line)
             if (matcher.matches()) {
-                result.add(parseOccurrenceInfo(matcher))
+                result.add(parseOccurrenceInfo(matcher, backend))
             }
         }
 
         return result
     }
 
-    class OccurrenceInfo constructor(private val numberOfOccurrences: Int, private val needle: String) {
+    class OccurrenceInfo constructor(private val numberOfOccurrences: Int, private val needle: String, val backend: TargetBackend) {
         fun getActualOccurrence(text: String): String? {
             val actualCount = StringUtil.findMatches(text, Pattern.compile("($needle)")).size
             return "$actualCount $needle"
@@ -88,13 +92,29 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             return kotlinFiles > 1
         }
 
-        fun checkGeneratedTextAgainstExpectedOccurrences(text: String, expectedOccurrences: List<OccurrenceInfo>) {
+        fun checkGeneratedTextAgainstExpectedOccurrences(text: String, expectedOccurrences: List<OccurrenceInfo>, currentBackend: TargetBackend) {
             val expected = StringBuilder()
             val actual = StringBuilder()
-
+            var lastBackend = TargetBackend.ANY
             for (info in expectedOccurrences) {
+                if (lastBackend != info.backend) {
+                    when (info.backend) {
+                        TargetBackend.JVM -> JVM_TEMPLATES
+                        TargetBackend.JVM_IR -> JVM_IR_TEMPLATES
+                        else -> error("Common part should be first one: ${expectedOccurrences.joinToString("\n")}")
+                    }.also {
+                        actual.append("\n$it\n")
+                        expected.append("\n$it\n")
+                    }
+                    lastBackend = info.backend
+                }
+
                 expected.append(info).append("\n")
-                actual.append(info.getActualOccurrence(text)).append("\n")
+                if (info.backend == TargetBackend.ANY || info.backend == currentBackend) {
+                    actual.append(info.getActualOccurrence(text)).append("\n")
+                } else {
+                    actual.append(info).append("\n")
+                }
             }
 
             try {
@@ -117,9 +137,17 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             }
         }
 
+        private const val JVM_TEMPLATES = "// JVM_TEMPLATES"
+
+        private const val JVM_IR_TEMPLATES = "// JVM_IR_TEMPLATES"
+
         private fun readExpectedOccurrencesForMultiFileTest(file: TestFile, occurrenceMap: MutableMap<String, List<OccurrenceInfo>>) {
             var currentOccurrenceInfos: MutableList<OccurrenceInfo>? = null
+            var backend = TargetBackend.ANY
             for (line in file.content.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+                if (line.contains(JVM_TEMPLATES)) backend = TargetBackend.JVM
+                else if (line.contains(JVM_IR_TEMPLATES)) backend = TargetBackend.JVM_IR
+
                 val atOutputFileMatcher = AT_OUTPUT_FILE_PATTERN.matcher(line)
                 if (atOutputFileMatcher.matches()) {
                     val outputFileName = atOutputFileMatcher.group(1)
@@ -135,16 +163,20 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
                     if (currentOccurrenceInfos == null) {
                         throw AssertionError("${file.name}: Should specify output file with '// @<OUTPUT_FILE_NAME>:' before expectations")
                     }
-                    val occurrenceInfo = parseOccurrenceInfo(expectedOccurrencesMatcher)
+                    val occurrenceInfo = parseOccurrenceInfo(expectedOccurrencesMatcher, backend)
                     currentOccurrenceInfos.add(occurrenceInfo)
                 }
             }
         }
 
-        private fun parseOccurrenceInfo(matcher: Matcher): OccurrenceInfo {
+        private fun parseOccurrenceInfo(matcher: Matcher, backend: TargetBackend): OccurrenceInfo {
             val numberOfOccurrences = Integer.parseInt(matcher.group(1))
             val needle = matcher.group(2)
-            return OccurrenceInfo(numberOfOccurrences, needle)
+            return OccurrenceInfo(numberOfOccurrences, needle, backend)
         }
+    }
+
+    protected open fun getBackend(): TargetBackend {
+        return TargetBackend.JVM
     }
 }

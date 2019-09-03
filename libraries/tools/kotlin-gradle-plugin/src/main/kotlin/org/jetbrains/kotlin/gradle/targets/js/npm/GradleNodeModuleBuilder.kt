@@ -18,7 +18,7 @@ import java.io.File
 internal class GradleNodeModuleBuilder(
     val project: Project,
     val dependency: ResolvedDependency,
-    val artifacts: Set<ResolvedArtifact>,
+    val artifacts: Collection<ResolvedArtifact>,
     val cache: GradleNodeModulesCache
 ) {
     var srcPackageJsonFile: File? = null
@@ -39,7 +39,7 @@ internal class GradleNodeModuleBuilder(
         }
     }
 
-    fun rebuild(): PackageJson? {
+    fun rebuild(): File? {
         if (files.isEmpty()) return null
 
         val packageJson = srcPackageJsonFile?.reader()?.use {
@@ -79,7 +79,7 @@ fun makeNodeModule(
     container: File,
     packageJson: PackageJson,
     files: (File) -> Unit
-): PackageJson {
+): File {
     val dir = importedPackageDir(container, packageJson.name, packageJson.version)
 
     if (dir.exists()) dir.deleteRecursively()
@@ -98,8 +98,10 @@ fun makeNodeModule(
         gson.toJson(packageJson, it)
     }
 
-    return packageJson
+    return dir
 }
 
 fun importedPackageDir(container: File, name: String, version: String): File =
     container.resolve(name).resolve(version)
+
+fun GradleNodeModule(dir: File) = GradleNodeModule(dir.parentFile.name, dir.name, dir)

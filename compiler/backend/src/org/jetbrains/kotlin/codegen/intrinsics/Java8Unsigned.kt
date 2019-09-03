@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 abstract class UnsignedIntrinsic(private val targetDescriptor: String) : IntrinsicMethod() {
     override fun isApplicableToOverload(descriptor: CallableMemberDescriptor): Boolean {
         if (descriptor.containingDeclaration is PackageFragmentDescriptor) return true
-        val singleValueParameterTypeDescriptor = descriptor.valueParameters.single().type.constructor.declarationDescriptor
+        val valueParameter = descriptor.valueParameters.singleOrNull() ?: return true
+        val singleValueParameterTypeDescriptor = valueParameter.type.constructor.declarationDescriptor
             ?: throw AssertionError("Unexpected descriptor for unsigned intrinsic: $descriptor")
         return singleValueParameterTypeDescriptor.name.asString() == targetDescriptor
     }
@@ -40,6 +41,13 @@ class Java8UIntCompare : UnsignedIntrinsic("UInt") {
         }
 }
 
+class Java8UIntToString : UnsignedIntrinsic("UInt") {
+    override fun toCallable(method: CallableMethod): Callable =
+        createIntrinsicCallable(method) {
+            it.invokestatic("java/lang/Integer", "toUnsignedString", "(I)Ljava/lang/String;", false)
+        }
+}
+
 class Java8ULongDivide : UnsignedIntrinsic("ULong") {
     override fun toCallable(method: CallableMethod): Callable =
         createIntrinsicCallable(method) {
@@ -58,5 +66,12 @@ class Java8ULongCompare : UnsignedIntrinsic("ULong") {
     override fun toCallable(method: CallableMethod): Callable =
         createIntrinsicCallable(method) {
             it.invokestatic("java/lang/Long", "compareUnsigned", "(JJ)I", false)
+        }
+}
+
+class Java8ULongToString : UnsignedIntrinsic("ULong") {
+    override fun toCallable(method: CallableMethod): Callable =
+        createIntrinsicCallable(method) {
+            it.invokestatic("java/lang/Long", "toUnsignedString", "(J)Ljava/lang/String;", false)
         }
 }

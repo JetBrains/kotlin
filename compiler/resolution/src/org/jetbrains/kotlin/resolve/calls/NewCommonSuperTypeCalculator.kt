@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
@@ -181,7 +178,7 @@ object NewCommonSuperTypeCalculator {
             nullable = false
         )
 
-        val typeCheckerContext = ClassicTypeCheckerContext(false)
+        val typeCheckerContext = newBaseTypeCheckerContext(false)
 
         /**
          * Sometimes one type can have several supertypes with given type constructor, suppose A <: List<Int> and A <: List<Double>.
@@ -208,18 +205,23 @@ object NewCommonSuperTypeCalculator {
                 }
             }
 
+            // This is used for folding recursive types like Inv<Inv<*>> into Inv<*>
+            fun collapseRecursiveArgumentIfPossible(argument: TypeArgumentMarker): TypeArgumentMarker {
+                if (argument.isStarProjection()) return argument
+                val argumentType = argument.getType().asSimpleType()
+                val argumentConstructor = argumentType?.typeConstructor()
+                return if (argument.getVariance() == TypeVariance.OUT && argumentConstructor == constructor && argumentType.asArgumentList()[index].isStarProjection()) {
+                    createStarProjection(parameter)
+                } else {
+                    argument
+                }
+            }
+
             val argument =
                 if (thereIsStar || typeProjections.isEmpty()) {
                     createStarProjection(parameter)
                 } else {
-                    val argument = calculateArgument(parameter, typeProjections, depth)
-                    val argumentType = argument.getType().asSimpleType()
-                    val argumentConstructor = argumentType?.typeConstructor()
-                    if (argument.getVariance() == TypeVariance.OUT && argumentConstructor == constructor && argumentType.asArgumentList()[index].isStarProjection()) {
-                        createStarProjection(parameter)
-                    } else {
-                        argument
-                    }
+                    collapseRecursiveArgumentIfPossible(calculateArgument(parameter, typeProjections, depth))
                 }
 
             arguments.add(argument)

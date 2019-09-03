@@ -40,6 +40,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: D) = visitDeclaration(declaration, data)
     fun visitTypeParameter(declaration: IrTypeParameter, data: D) = visitDeclaration(declaration, data)
     fun visitValueParameter(declaration: IrValueParameter, data: D) = visitDeclaration(declaration, data)
+    fun visitTypeAlias(declaration: IrTypeAlias, data: D) = visitDeclaration(declaration, data)
 
     fun visitBody(body: IrBody, data: D) = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D) = visitBody(body, data)
@@ -83,6 +84,8 @@ interface IrElementVisitor<out R, in D> {
     fun visitPropertyReference(expression: IrPropertyReference, data: D) = visitCallableReference(expression, data)
     fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D) =
         visitCallableReference(expression, data)
+
+    fun visitFunctionExpression(expression: IrFunctionExpression, data: D) = visitExpression(expression, data)
 
     fun visitClassReference(expression: IrClassReference, data: D) = visitDeclarationReference(expression, data)
 

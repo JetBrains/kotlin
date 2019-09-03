@@ -35,8 +35,8 @@ open class KtLightIdentifier(
         get() = when (ktDeclaration) {
             is KtSecondaryConstructor -> ktDeclaration.getConstructorKeyword()
             is KtPrimaryConstructor -> ktDeclaration.getConstructorKeyword()
-                                       ?: ktDeclaration.valueParameterList
-                                       ?: ktDeclaration.containingClassOrObject?.nameIdentifier
+                ?: ktDeclaration.valueParameterList
+                ?: ktDeclaration.containingClassOrObject?.nameIdentifier
             else -> ktDeclaration?.nameIdentifier
         }
 

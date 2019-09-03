@@ -84,6 +84,9 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitVariable(declaration: IrVariable) = visitDeclaration(declaration)
     final override fun visitVariable(declaration: IrVariable, data: Nothing?) = visitVariable(declaration)
 
+    open fun visitTypeAlias(declaration: IrTypeAlias) = visitDeclaration(declaration)
+    final override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) = visitTypeAlias(declaration)
+
     open fun visitBody(body: IrBody): IrBody = body.transformChildren()
     final override fun visitBody(body: IrBody, data: Nothing?): IrBody = visitBody(body)
 
@@ -193,6 +196,10 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) = visitCallableReference(expression)
     final override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?) =
         visitLocalDelegatedPropertyReference(expression)
+
+    open fun visitFunctionExpression(expression: IrFunctionExpression) = visitExpression(expression)
+    final override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): IrElement =
+        visitFunctionExpression(expression)
 
     open fun visitClassReference(expression: IrClassReference) = visitDeclarationReference(expression)
     final override fun visitClassReference(expression: IrClassReference, data: Nothing?) = visitClassReference(expression)

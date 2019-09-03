@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 
-class FirDoWhileLoopImpl(
-    session: FirSession,
-    psi: PsiElement?,
-    condition: FirExpression
-) : FirAbstractLoop(session, psi, condition), FirDoWhileLoop
+class FirDoWhileLoopImpl(psi: PsiElement?, condition: FirExpression) : FirAbstractLoop(psi, condition), FirDoWhileLoop

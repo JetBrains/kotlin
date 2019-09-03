@@ -179,12 +179,14 @@ fun classpathFromClasspathProperty(): List<File>? =
 fun classpathFromClass(classLoader: ClassLoader, klass: KClass<out Any>): List<File>? =
     classpathFromFQN(classLoader, klass.qualifiedName!!)
 
+fun classpathFromClass(klass: KClass<out Any>): List<File>? =
+    classpathFromClass(klass.java.classLoader, klass)
+
+inline fun <reified T: Any> classpathFromClass(): List<File>? = classpathFromClass(T::class)
+
 fun classpathFromFQN(classLoader: ClassLoader, fqn: String): List<File>? {
     val clp = "${fqn.replace('.', '/')}.class"
-    val url = classLoader.getResource(clp)
-    return url?.toURI()?.path?.removeSuffix(clp)?.let {
-        listOf(File(it))
-    }
+    return classLoader.rawClassPathFromKeyResourcePath(clp).filter { it.isValidClasspathFile() }.toList().takeIf { it.isNotEmpty() }
 }
 
 fun File.matchMaybeVersionedFile(baseName: String) =
@@ -226,19 +228,18 @@ internal fun List<File>.takeIfContainsAll(vararg keyNames: String): List<File>? 
     }
 
 internal fun List<File>.filterIfContainsAll(vararg keyNames: String): List<File>? {
-    val res = hashMapOf<String, File>()
+    val foundKeys = mutableSetOf<String>()
+    val res = arrayListOf<File>()
     for (cpentry in this) {
         for (prefix in keyNames) {
-            if (!res.containsKey(prefix) &&
-                (cpentry.matchMaybeVersionedFile(prefix) || (cpentry.isDirectory && cpentry.hasParentNamed(prefix)))
-            ) {
-                res[prefix] = cpentry
+            if (cpentry.matchMaybeVersionedFile(prefix) || (cpentry.isDirectory && cpentry.hasParentNamed(prefix))) {
+                foundKeys.add(prefix)
+                res.add(cpentry)
                 break
             }
         }
     }
-    return if (keyNames.all { res.containsKey(it) }) res.values.toList()
-    else null
+    return res.takeIf { foundKeys.containsAll(keyNames.asList()) }
 }
 
 internal fun List<File>.takeIfContainsAny(vararg keyNames: String): List<File>? =
@@ -407,5 +408,12 @@ object KotlinJars {
         get() = listOf(
             stdlibOrNull,
             scriptRuntimeOrNull
+        ).filterNotNull()
+
+    val kotlinScriptStandardJarsWithReflect
+        get() = listOf(
+            stdlibOrNull,
+            scriptRuntimeOrNull,
+            reflectOrNull
         ).filterNotNull()
 }

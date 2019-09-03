@@ -2,7 +2,11 @@ fun println(s: String) {}
 
 fun test(a: Boolean, b: Boolean) {
     when {
-        a -> println("a")
+        a -> {
+            // comment
+            // comment
+            println("a")
+        }
         b -> println("b")
         else -> println("none")
     }

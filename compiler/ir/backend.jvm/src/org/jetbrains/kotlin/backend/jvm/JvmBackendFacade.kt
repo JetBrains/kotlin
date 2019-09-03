@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
+import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -15,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -58,7 +62,7 @@ object JvmBackendFacade {
         phaseConfig: PhaseConfig,
         firMode: Boolean = false
     ) {
-        val jvmBackendContext = JvmBackendContext(
+        val context = JvmBackendContext(
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, firMode
         )
         //TODO
@@ -70,22 +74,38 @@ object JvmBackendFacade {
             facadeClassGenerator = ::facadeClassGenerator
         ).generateUnboundSymbolsAsDependencies()
 
-        val jvmBackend = JvmBackend(jvmBackendContext)
-
         for (irFile in irModuleFragment.files) {
-            try {
-                jvmBackend.lowerFile(irFile)
-            } catch (e: Throwable) {
-                errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+            for (extension in IrGenerationExtension.getInstances(context.state.project)) {
+                extension.generate(irFile, context, context.state.bindingContext)
             }
         }
 
-        for (irFile in irModuleFragment.files) {
-            try {
-                jvmBackend.generateLoweredFile(irFile)
-                state.afterIndependentPart()
-            } catch (e: Throwable) {
-                errorHandler.reportException(e, null)
+        try {
+            JvmLower(context).lower(irModuleFragment)
+        } catch (e: Throwable) {
+            errorHandler.reportException(e, null)
+        }
+
+        for (generateMultifileFacade in listOf(true, false)) {
+            for (irFile in irModuleFragment.files) {
+                // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
+                // when serializing metadata in the multifile parts.
+                // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
+                val isMultifileFacade = irFile.fileEntry is MultifileFacadeFileEntry
+                if (isMultifileFacade != generateMultifileFacade) continue
+
+                try {
+                    for (loweredClass in irFile.declarations) {
+                        if (loweredClass !is IrClass) {
+                            throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
+                        }
+
+                        ClassCodegen.generate(loweredClass, context)
+                    }
+                    state.afterIndependentPart()
+                } catch (e: Throwable) {
+                    errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+                }
             }
         }
     }

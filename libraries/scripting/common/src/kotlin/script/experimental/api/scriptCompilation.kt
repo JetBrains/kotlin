@@ -1,9 +1,9 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "RemoveExplicitTypeArguments")
 
 package kotlin.script.experimental.api
 
@@ -35,26 +35,44 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
 
     object Default : ScriptCompilationConfiguration()
 
-    /**
-     * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
-     * to the original one, otherwise returns original
-     */
-    fun withUpdates(body: Builder.() -> Unit = {}): ScriptCompilationConfiguration {
-        val newConfiguration = ScriptCompilationConfiguration(this, body = body)
-        return if (newConfiguration == this) this
-        else newConfiguration
+    override fun toString(): String {
+        return "ScriptCompilationConfiguration($properties)"
     }
+}
+
+
+/**
+ * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
+ * to the original one, otherwise returns original
+ */
+fun ScriptCompilationConfiguration?.with(body: ScriptCompilationConfiguration.Builder.() -> Unit): ScriptCompilationConfiguration {
+    val newConfiguration =
+        if (this == null) ScriptCompilationConfiguration(body = body)
+        else ScriptCompilationConfiguration(this, body = body)
+    return if (newConfiguration == this) this else newConfiguration
 }
 
 /**
  * The script type display name
  */
-val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>("Kotlin script")
+val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>()
 
 /**
  * The script filename extension
+ * Used for the primary script definition selection as well as to assign a kotlin-specific file type to the files with the extension in Intellij IDEA
+ * For Intellij IDEA support, it is important to have this extension set to a non-ambiguous name.
+ * See also {@link ScriptCompilationConfigurationKeys#filePathPattern} parameter for more fine-grained script definition selection
  */
 val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key<String>("kts")
+
+/**
+ * Additional (to the filename extension) RegEx pattern with that the script file path is checked
+ * It is used in the hosts that may have several script definitions registered and need to distinguish script file types not only by extension
+ * The argument passed to the RegEx matcher is equivalent to the File.path, taken relatively from a base path defined by the host
+ * (usually should be the project root or the current directory)
+ * See also {@link ScriptCompilationConfigurationKeys#fileExtension} parameter for the primary script definition selection
+ */
+val ScriptCompilationConfigurationKeys.filePathPattern by PropertiesCollection.key<String>()
 
 /**
  * The superclass for target script class
@@ -94,6 +112,12 @@ val ScriptCompilationConfigurationKeys.defaultImports by PropertiesCollection.ke
 val ScriptCompilationConfigurationKeys.importScripts by PropertiesCollection.key<List<SourceCode>>()
 
 /**
+ * The name of the generated script class field to assign the script results to, empty means disabled
+ * see also ReplScriptCompilationConfigurationKeys.resultFieldPrefix
+ */
+val ScriptCompilationConfigurationKeys.resultField by PropertiesCollection.key<String>("\$\$result")
+
+/**
  * The list of script dependencies - platform specific
  */
 val ScriptCompilationConfigurationKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
@@ -106,17 +130,17 @@ val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.k
 /**
  * The callback that will be called on the script compilation before parsing the script
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<RefineConfigurationUnconditionallyData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>(isTransient = true)
 
 /**
  * The callback that will be called on the script compilation after parsing script file annotations
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<RefineConfigurationOnAnnotationsData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<List<RefineConfigurationOnAnnotationsData>>(isTransient = true)
 
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by PropertiesCollection.key<RefineConfigurationUnconditionallyData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>(isTransient = true)
 
 /**
  * The list of script fragments that should be compiled intead of the whole text
@@ -127,7 +151,7 @@ val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.k
 /**
  * Scripting host configuration
  */
-val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>()
+val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>(isTransient = true)
 
 /**
  * The sub-builder DSL for configuring refinement callbacks
@@ -142,7 +166,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param handler the callback that will be called
      */
     fun beforeParsing(handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptCompilationConfiguration.refineConfigurationBeforeParsing, RefineConfigurationUnconditionallyData(handler))
+        ScriptCompilationConfiguration.refineConfigurationBeforeParsing.append(RefineConfigurationUnconditionallyData(handler))
     }
 
     /**
@@ -152,7 +176,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      */
     fun onAnnotations(annotations: List<KotlinType>, handler: RefineScriptCompilationConfigurationHandler) {
         // TODO: implement handlers composition
-        set(ScriptCompilationConfiguration.refineConfigurationOnAnnotations, RefineConfigurationOnAnnotationsData(annotations, handler))
+        ScriptCompilationConfiguration.refineConfigurationOnAnnotations.append(RefineConfigurationOnAnnotationsData(annotations, handler))
     }
 
     /**
@@ -196,7 +220,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param handler the callback that will be called
      */
     fun beforeCompiling(handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptCompilationConfiguration.refineConfigurationBeforeCompiling, RefineConfigurationUnconditionallyData(handler))
+        ScriptCompilationConfiguration.refineConfigurationBeforeCompiling.append(RefineConfigurationUnconditionallyData(handler))
     }
 }
 
@@ -206,19 +230,71 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
 typealias RefineScriptCompilationConfigurationHandler =
             (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptCompilationConfiguration>
 
+/**
+ * The refinement callback function signature for simple handlers (without diagnostics or errors)
+ */
+typealias SimpleRefineScriptCompilationConfigurationHandler =
+            (ScriptConfigurationRefinementContext) -> ScriptCompilationConfiguration
+
 data class RefineConfigurationUnconditionallyData(
     val handler: RefineScriptCompilationConfigurationHandler
 ) : Serializable {
-    companion object { private const val serialVersionUID: Long = 1L }
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
 }
 
 data class RefineConfigurationOnAnnotationsData(
     val annotations: List<KotlinType>,
     val handler: RefineScriptCompilationConfigurationHandler
 ) : Serializable {
-    companion object { private const val serialVersionUID: Long = 1L }
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
 }
 
+
+fun ScriptCompilationConfiguration.refineBeforeParsing(
+    script: SourceCode,
+    collectedData: ScriptCollectedData? = null
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationBeforeParsing) { config, refineData ->
+        refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
+    }
+
+fun ScriptCompilationConfiguration.refineOnAnnotations(
+    script: SourceCode,
+    collectedData: ScriptCollectedData
+): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    val foundAnnotationNames = collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }
+    if (foundAnnotationNames.isNullOrEmpty()) return this.asSuccess()
+
+    val refinedConfig = this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
+        ?.fold(this) { config, (annotations, handler) ->
+            // checking that the collected data contains expected annotations
+            if (annotations.none { foundAnnotationNames.contains(it.typeName) }) config
+            else handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData)).valueOr { return it }
+        }
+    return (refinedConfig ?: this).asSuccess()
+}
+
+fun ScriptCompilationConfiguration.refineBeforeCompiling(
+    script: SourceCode,
+    collectedData: ScriptCollectedData? = null
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationBeforeCompiling) { config, refineData ->
+        refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
+    }
+
+internal inline fun <Configuration: PropertiesCollection, RefineData> Configuration.simpleRefineImpl(
+    key: PropertiesCollection.Key<List<RefineData>>,
+    refineFn: (Configuration, RefineData) -> ResultWithDiagnostics<Configuration>
+): ResultWithDiagnostics<Configuration> = (
+        this[key]
+            ?.fold(this) { config, refineData ->
+                refineFn(config, refineData).valueOr { return it }
+            } ?: this
+        ).asSuccess()
 
 /**
  * The functional interface to the script compiler

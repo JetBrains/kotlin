@@ -397,6 +397,41 @@ class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.Until("4.10.2")
+
+    @Test
+    fun testOmittedStdlibVersion() = Project(
+        "AndroidProject",
+        defaultGradleVersion.maxVersion?.let { GradleVersionRequired.InRange("4.4", it) } ?: GradleVersionRequired.AtLeast("4.4")
+    ).run {
+        setupWorkingDir()
+
+        gradleBuildScript("Lib").modify {
+            it.checkedReplace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib") + "\n" + """
+            apply plugin: 'maven'
+            group 'com.example'
+            version '1.0'
+            android {
+                defaultPublishConfig 'flavor1Debug'
+            }
+            uploadArchives {
+                repositories {
+                    mavenDeployer {
+                        repository(url: "file://${'$'}buildDir/repo")
+                    }
+                }
+            }
+            """.trimIndent()
+        }
+
+        build(":Lib:assembleFlavor1Debug", ":Lib:uploadArchives") {
+            assertSuccessful()
+            assertTasksExecuted(":Lib:compileFlavor1DebugKotlin", ":Lib:uploadArchives")
+            val pomLines = File(projectDir, "Lib/build/repo/com/example/Lib/1.0/Lib-1.0.pom").readLines()
+            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
+            val versionLine = pomLines[stdlibVersionLineNumber]
+            assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
+        }
+    }
 }
 
 abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {

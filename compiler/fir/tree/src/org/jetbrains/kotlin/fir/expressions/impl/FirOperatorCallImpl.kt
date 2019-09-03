@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 
 class FirOperatorCallImpl(
-    session: FirSession,
     psi: PsiElement?,
     operation: FirOperation
-) : FirOperationBasedCall(session, psi, operation)
+) : FirOperationBasedCall(psi, operation)

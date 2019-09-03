@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -214,15 +215,15 @@ class GenerationState private constructor(
     val factory: ClassFileFactory
     private lateinit var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics
 
-    val replSpecific = ForRepl()
+    val scriptSpecific = ForScript()
 
-    //TODO: should be refactored out
-    class ForRepl {
+    // TODO: review usages and consider replace mutability with explicit passing of input and output
+    class ForScript {
+        // quite a mess, this one is an input from repl interpreter
         var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
-        var scriptResultFieldName: String? = null
-        val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
+        // and the rest is an output from the codegen
+        var resultFieldName: String? = null
         var resultType: KotlinType? = null
-        var hasResult: Boolean = false
     }
 
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
@@ -255,6 +256,8 @@ class GenerationState private constructor(
     val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
 
     val metadataVersion = configuration.get(CommonConfigurationKeys.METADATA_VERSION) ?: JvmMetadataVersion.INSTANCE
+
+    val globalSerializationBindings = JvmSerializationBindings()
 
     init {
         this.interceptedBuilderFactory = builderFactory

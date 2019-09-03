@@ -1,15 +1,15 @@
 FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
-  FUN name:testDD visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Double?) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Double? 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Double? 
+  FUN name:testDD visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Double?) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double?
+    VALUE_PARAMETER name:y index:1 type:kotlin.Double?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDD (x: kotlin.Double?, y: kotlin.Double?): kotlin.Boolean declared in <root>'
         CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
           arg0: GET_VAR 'x: kotlin.Double? declared in <root>.testDD' type=kotlin.Double? origin=null
           arg1: GET_VAR 'y: kotlin.Double? declared in <root>.testDD' type=kotlin.Double? origin=null
-  FUN name:testDF visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Any?) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Double? 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any? 
+  FUN name:testDF visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Any?) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double?
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDF (x: kotlin.Double?, y: kotlin.Any?): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Double? declared in <root>.testDF' type=kotlin.Double? origin=null
               arg1: BLOCK type=kotlin.Double? origin=SAFE_CALL
-                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val] 
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val]
                   GET_VAR 'y: kotlin.Any? declared in <root>.testDF' type=kotlin.Any? origin=null
                 WHEN type=kotlin.Double? origin=null
                   BRANCH
@@ -35,9 +35,9 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:testDI visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Any?) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Double? 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any? 
+  FUN name:testDI visibility:public modality:FINAL <> (x:kotlin.Double?, y:kotlin.Any?) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Double?
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDI (x: kotlin.Double?, y: kotlin.Any?): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Double? declared in <root>.testDI' type=kotlin.Double? origin=null
               arg1: BLOCK type=kotlin.Double? origin=SAFE_CALL
-                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val] 
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val]
                   GET_VAR 'y: kotlin.Any? declared in <root>.testDI' type=kotlin.Any? origin=null
                 WHEN type=kotlin.Double? origin=null
                   BRANCH
@@ -63,9 +63,9 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:testDI2 visibility:public modality:FINAL <> (x:kotlin.Any?, y:kotlin.Any?) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any? 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any? 
+  FUN name:testDI2 visibility:public modality:FINAL <> (x:kotlin.Any?, y:kotlin.Any?) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any?
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDI2 (x: kotlin.Any?, y: kotlin.Any?): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: BLOCK type=kotlin.Double? origin=SAFE_CALL
-                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val] 
+                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val]
                   GET_VAR 'x: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
                 WHEN type=kotlin.Double? origin=null
                   BRANCH

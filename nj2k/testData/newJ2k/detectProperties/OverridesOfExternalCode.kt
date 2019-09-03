@@ -82,9 +82,9 @@ internal class C : A() {
 }
 
 internal class D : JavaClassDerivedFromKotlinClassWithProperties() {
-    override fun getSomeVar1(): String? {
+    override fun getSomeVar1(): String {
         return "a"
     }
 
-    override fun setSomeVar2(value: String?) {}
+    override fun setSomeVar2(value: String) {}
 }

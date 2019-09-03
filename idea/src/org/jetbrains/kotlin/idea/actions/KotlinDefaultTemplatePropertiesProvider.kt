@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.idea.actions
 import com.intellij.ide.fileTemplates.DefaultTemplatePropertiesProvider
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.psi.PsiDirectory
-import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
+import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefixOrRoot
 import java.util.*
 
 class KotlinDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
     override fun fillProperties(directory: PsiDirectory, props: Properties) {
         props.setProperty(
             FileTemplate.ATTRIBUTE_PACKAGE_NAME,
-            directory.getFqNameWithImplicitPrefix().asString()
+            directory.getFqNameWithImplicitPrefixOrRoot().asString()
         )
     }
 }

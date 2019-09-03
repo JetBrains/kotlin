@@ -135,34 +135,33 @@ class BuildCacheIT : BaseGradleIT() {
     }
 
     @Test
-    fun testKaptCachingEnabledByDefault() = with(Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")) {
-        prepareLocalBuildCache()
+    fun testKaptCachingWithIncrementalApt() {
+        with(Project("kaptAvoidance", GRADLE_VERSION, directoryPrefix = "kapt2")) {
+            prepareLocalBuildCache()
 
-        build("clean", "build") {
-            assertSuccessful()
-            assertContains("Packing task ':kaptGenerateStubsKotlin'")
-            assertContains("Packing task ':kaptKotlin'")
-        }
-
-        build("clean", "build") {
-            assertSuccessful()
-            assertContains(":kaptGenerateStubsKotlin FROM-CACHE")
-            assertContains(":kaptKotlin FROM-CACHE")
-        }
-
-        File(projectDir, "build.gradle").appendText(
-            "\n" + """
-            afterEvaluate {
-                kaptKotlin.useBuildCache = false
+            val options = defaultBuildOptions().copy(
+                kaptOptions = KaptOptions(
+                    verbose = true,
+                    useWorkers = false,
+                    incrementalKapt = true,
+                    includeCompileClasspath = false
+                )
+            )
+            build(options = options, params = *arrayOf("clean", ":app:build")) {
+                assertSuccessful()
+                assertContains("Packing task ':app:kaptGenerateStubsKotlin'")
+                assertContains("Packing task ':app:kaptKotlin'")
             }
-            """.trimIndent()
-        )
 
-        build("clean", "build") {
-            assertSuccessful()
-            assertContains(":kaptGenerateStubsKotlin FROM-CACHE")
-            assertNotContains(":kaptKotlin FROM-CACHE")
-            assertContains("Caching disabled for task ':kaptKotlin': 'Caching is disabled for kapt")
+            // copy project to a new location
+            val copyProject = projectDir.resolveSibling("copy_${projectDir.name}").also { it.mkdirs() }
+            copyRecursively(projectDir, copyProject)
+
+            build(options = options, projectDir = copyProject.resolve(projectName), params = *arrayOf("clean", "build")) {
+                assertSuccessful()
+                assertContains(":app:kaptGenerateStubsKotlin FROM-CACHE")
+                assertContains(":app:kaptKotlin FROM-CACHE")
+            }
         }
     }
 }

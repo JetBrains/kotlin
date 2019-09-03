@@ -28,6 +28,7 @@ import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.MergingUpdateQueue.ANY_COMPONENT
 import com.intellij.util.ui.update.Update
 import org.jetbrains.plugins.gradle.service.project.GradleAutoImportAware
+import java.io.File
 
 fun initializeScriptModificationListener(project: Project) {
     ServiceManager.getService(project, ScriptModificationListener::class.java)
@@ -114,7 +115,7 @@ class ScriptModificationListener(private val project: Project) {
 
         val contributor = ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project) ?: return false
         return ScriptDefinitionsManager.getInstance(project).getDefinitionsBy(contributor).any {
-            it.isScript(file.name)
+            it.isScript(File(file.path))
         }
     }
 }

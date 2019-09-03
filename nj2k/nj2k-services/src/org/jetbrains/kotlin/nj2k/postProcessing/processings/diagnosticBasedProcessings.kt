@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -55,6 +56,13 @@ val fixTypeMismatchDiagnosticBasedProcessing =
                     && expectedType.isSignedOrUnsignedNumberType() -> {
                 val fix = NumberConversionFix(element, expectedType, disableIfAvailable = null)
                 fix.invoke(element.project, null, element.containingFile)
+            }
+            element is KtLambdaExpression
+                    && expectedType.isNothing() -> {
+                for (valueParameter in element.valueParameters) {
+                    valueParameter.typeReference?.delete()
+                    valueParameter.colon?.delete()
+                }
             }
         }
     }

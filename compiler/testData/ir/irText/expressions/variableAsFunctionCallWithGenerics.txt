@@ -1,39 +1,37 @@
 FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
-  PROPERTY name:gk visibility:public modality:FINAL [val] 
-    FUN name:<get-gk> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-gk>) returnType:kotlin.Function0<T of <root>.<get-gk>> 
-      correspondingProperty: PROPERTY name:gk visibility:public modality:FINAL [val] 
+  PROPERTY name:gk visibility:public modality:FINAL [val]
+    FUN name:<get-gk> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-gk>) returnType:kotlin.Function0<T of <root>.<get-gk>>
+      correspondingProperty: PROPERTY name:gk visibility:public modality:FINAL [val]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence]
-      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-gk> 
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-gk>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-gk> <T> (): kotlin.Function0<T of <root>.<get-gk>> declared in <root>'
-          BLOCK type=kotlin.Function0<T of <root>.<get-gk>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:T of <root>.<get-gk> 
+          FUN_EXPR type=kotlin.Function0<T of <root>.<get-gk>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:T of <root>.<get-gk>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): T of <root>.<get-gk> declared in <root>.<get-gk>'
                   GET_VAR '<this>: T of <root>.<get-gk> declared in <root>.<get-gk>' type=T of <root>.<get-gk> origin=null
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): T of <root>.<get-gk> declared in <root>.<get-gk>' type=kotlin.Function0<T of <root>.<get-gk>> origin=LAMBDA
-  FUN name:testGeneric1 visibility:public modality:FINAL <> (x:kotlin.String) returnType:kotlin.String 
-    VALUE_PARAMETER name:x index:0 type:kotlin.String 
+  FUN name:testGeneric1 visibility:public modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testGeneric1 (x: kotlin.String): kotlin.String declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
           $this: CALL 'public final fun <get-gk> <T> (): kotlin.Function0<T of <root>.<get-gk>> declared in <root>' type=kotlin.Function0<kotlin.String> origin=GET_PROPERTY
             <T>: kotlin.String
             $receiver: GET_VAR 'x: kotlin.String declared in <root>.testGeneric1' type=kotlin.String origin=null
-  PROPERTY name:kt26531Val visibility:public modality:FINAL [val] 
-    FUN name:<get-kt26531Val> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-kt26531Val>) returnType:kotlin.Function0<T of <root>.<get-kt26531Val>> 
-      correspondingProperty: PROPERTY name:kt26531Val visibility:public modality:FINAL [val] 
+  PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
+    FUN name:<get-kt26531Val> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-kt26531Val>) returnType:kotlin.Function0<T of <root>.<get-kt26531Val>>
+      correspondingProperty: PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-kt26531Val> 
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-kt26531Val>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-kt26531Val> <T> (): kotlin.Function0<T of <root>.<get-kt26531Val>> declared in <root>'
-          BLOCK type=kotlin.Function0<T of <root>.<get-kt26531Val>> origin=ANONYMOUS_FUNCTION
-            FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-kt26531Val> 
+          FUN_EXPR type=kotlin.Function0<T of <root>.<get-kt26531Val>> origin=ANONYMOUS_FUNCTION
+            FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:T of <root>.<get-kt26531Val>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <no name provided> (): T of <root>.<get-kt26531Val> declared in <root>.<get-kt26531Val>'
                   GET_VAR '<this>: T of <root>.<get-kt26531Val> declared in <root>.<get-kt26531Val>' type=T of <root>.<get-kt26531Val> origin=null
-            FUNCTION_REFERENCE 'local final fun <no name provided> (): T of <root>.<get-kt26531Val> declared in <root>.<get-kt26531Val>' type=kotlin.Function0<T of <root>.<get-kt26531Val>> origin=ANONYMOUS_FUNCTION
-  FUN name:kt26531 visibility:public modality:FINAL <> () returnType:kotlin.Int 
+  FUN name:kt26531 visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun kt26531 (): kotlin.Int declared in <root>'
         CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Int origin=INVOKE

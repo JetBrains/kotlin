@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/kt27933.kt
-  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String 
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      VAR name:r type:kotlin.String [var] 
+      VAR name:r type:kotlin.String [var]
         CONST String type=kotlin.String value=""
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/kt27933.kt
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: GET_VAR 'var r: kotlin.String [var] declared in <root>.box' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value=""
-          then: BLOCK type=kotlin.Nothing origin=IF
+          then: BLOCK type=kotlin.Unit origin=IF
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: SET_VAR 'var r: kotlin.String [var] declared in <root>.box' type=kotlin.Unit origin=PLUSEQ

@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirAbstractElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
 
 open class FirDeclarationStatusImpl(
-    session: FirSession,
     override val visibility: Visibility,
     override val modality: Modality?
-) : FirAbstractElement(session, null), FirDeclarationStatus {
+) : FirAbstractElement(null), FirDeclarationStatus {
     protected var flags: Int = 0
 
     private operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
@@ -138,6 +136,6 @@ open class FirDeclarationStatusImpl(
     }
 
     fun resolved(visibility: Visibility, modality: Modality): FirDeclarationStatus {
-        return FirResolvedDeclarationStatusImpl(session, visibility, modality, flags)
+        return FirResolvedDeclarationStatusImpl(visibility, modality, flags)
     }
 }

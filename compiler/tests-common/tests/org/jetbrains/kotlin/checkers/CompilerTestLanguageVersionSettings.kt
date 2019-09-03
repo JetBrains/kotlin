@@ -68,15 +68,19 @@ fun parseLanguageVersionSettings(directives: Map<String, String>): CompilerTestL
         analysisFlag(JvmAnalysisFlags.sanitizeParentheses, if (SANITIZE_PARENTHESES in directives) true else null),
         analysisFlag(AnalysisFlags.constraintSystemForOverloadResolution, directives[CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION]?.let {
             ConstraintSystemForOverloadResolutionMode.valueOf(it)
-        })
+        }),
+        analysisFlag(AnalysisFlags.explicitApiVersion, if (apiVersionString != null) true else null)
     )
 
     if (apiVersionString == null && languageFeaturesString == null && analysisFlags.isEmpty()) {
         return null
     }
 
-    val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
-        ?: error("Unknown API version: $apiVersionString")
+    val apiVersion = when (apiVersionString) {
+        null -> ApiVersion.LATEST_STABLE
+        "LATEST" -> ApiVersion.LATEST
+        else -> ApiVersion.parse(apiVersionString) ?: error("Unknown API version: $apiVersionString")
+    }
 
     val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.*;
@@ -76,7 +77,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public MemberScope getUnsubstitutedMemberScope() {
+    public MemberScope getUnsubstitutedMemberScope(@NotNull KotlinTypeRefiner kotlinTypeRefiner) {
         return scope;
     }
 
@@ -244,7 +245,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         ) {
             final Set<D> result = new LinkedHashSet<D>();
 
-            OverridingUtil.generateOverridesInFunctionGroup(
+            OverridingUtil.DEFAULT.generateOverridesInFunctionGroup(
                     name, fromSupertypes, Collections.<D>emptySet(), EnumEntrySyntheticClassDescriptor.this,
                     new NonReportingOverrideStrategy() {
                         @Override

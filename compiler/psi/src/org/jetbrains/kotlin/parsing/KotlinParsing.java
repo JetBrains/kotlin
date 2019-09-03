@@ -509,24 +509,36 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private boolean parseTypeModifierList() {
-        return doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, DEFAULT, TokenSet.EMPTY);
+        return doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, TYPE_CONTEXT, TokenSet.EMPTY);
     }
 
     private boolean parseTypeArgumentModifierList() {
         return doParseModifierList(null, TYPE_ARGUMENT_MODIFIER_KEYWORDS, NO_ANNOTATIONS, TokenSet.create(COMMA, COLON, GT));
     }
 
-    private boolean doParseModifierList(
+    private boolean doParseModifierListBody(
             @Nullable Consumer<IElementType> tokenConsumer,
             @NotNull TokenSet modifierKeywords,
             @NotNull AnnotationParsingMode annotationParsingMode,
             @NotNull TokenSet noModifiersBefore
     ) {
-        PsiBuilder.Marker list = mark();
         boolean empty = true;
+        PsiBuilder.Marker beforeAnnotationMarker;
         while (!eof()) {
             if (at(AT) && annotationParsingMode.allowAnnotations) {
-                parseAnnotationOrList(annotationParsingMode);
+                beforeAnnotationMarker = mark();
+
+                boolean isAnnotationParsed = parseAnnotationOrList(annotationParsingMode);
+
+                if (!isAnnotationParsed && !annotationParsingMode.withSignificantWhitespaceBeforeArguments) {
+                    beforeAnnotationMarker.rollbackTo();
+                    // try parse again, but with significant whitespace
+                    doParseModifierListBody(tokenConsumer, modifierKeywords, WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS, noModifiersBefore);
+                    empty = false;
+                    break;
+                } else {
+                    beforeAnnotationMarker.drop();
+                }
             }
             else if (tryParseModifier(tokenConsumer, noModifiersBefore, modifierKeywords)) {
                 // modifier advanced
@@ -536,6 +548,25 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
             empty = false;
         }
+
+        return empty;
+    }
+
+    private boolean doParseModifierList(
+            @Nullable Consumer<IElementType> tokenConsumer,
+            @NotNull TokenSet modifierKeywords,
+            @NotNull AnnotationParsingMode annotationParsingMode,
+            @NotNull TokenSet noModifiersBefore
+    ) {
+        PsiBuilder.Marker list = mark();
+
+        boolean empty = doParseModifierListBody(
+                tokenConsumer,
+                modifierKeywords,
+                annotationParsingMode,
+                noModifiersBefore
+        );
+
         if (empty) {
             list.drop();
         }
@@ -796,8 +827,27 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         parseTypeArgumentList();
 
-        if (at(LPAR)) {
+        boolean whitespaceAfterAnnotation = WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1));
+        boolean shouldBeParsedNextAsFunctionalType = at(LPAR) && whitespaceAfterAnnotation && mode.withSignificantWhitespaceBeforeArguments;
+
+        if (at(LPAR) && !shouldBeParsedNextAsFunctionalType) {
             myExpressionParsing.parseValueArgumentList();
+
+            /*
+             * There are two problem cases relating to parsing of annotations on a functional type:
+             *  - Annotation on a functional type was parsed correctly with the capture parentheses of the functional type,
+             *      e.g. @Anno () -> Unit
+             *                    ^ Parse error only here: Type expected
+             *  - It wasn't parsed, e.g. @Anno (x: kotlin.Any) -> Unit
+             *                                           ^ Parse error: Expecting ')'
+             *
+             * In both cases, parser should rollback to start parsing of annotation and tries parse it with significant whitespace.
+             * A marker is set here which means that we must to rollback.
+             */
+            if (mode.typeContext && (getLastToken() != RPAR || at(ARROW))) {
+                annotation.done(ANNOTATION_ENTRY);
+                return false;
+            }
         }
         annotation.done(ANNOTATION_ENTRY);
 
@@ -1995,7 +2045,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
 
-            // This may be a function parameter list or just a prenthesized type
+            // This may be a function parameter list or just a parenthesized type
             advance(); // LPAR
             parseTypeRefContents(TokenSet.EMPTY).drop(); // parenthesized types, no reference element around it is needed
 
@@ -2423,20 +2473,28 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     enum AnnotationParsingMode {
-        DEFAULT(false, true),
-        FILE_ANNOTATIONS_BEFORE_PACKAGE(true, true),
-        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(true, true),
-        NO_ANNOTATIONS(false, false);
+        DEFAULT(false, true, false, false),
+        FILE_ANNOTATIONS_BEFORE_PACKAGE(true, true, false, false),
+        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(true, true, false, false),
+        TYPE_CONTEXT(false, true, true, false),
+        WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS(false, true, true, true),
+        NO_ANNOTATIONS(false, false, false, false);
 
         boolean isFileAnnotationParsingMode;
         boolean allowAnnotations;
+        boolean withSignificantWhitespaceBeforeArguments;
+        boolean typeContext;
 
         AnnotationParsingMode(
                 boolean isFileAnnotationParsingMode,
-                boolean allowAnnotations
+                boolean allowAnnotations,
+                boolean typeContext,
+                boolean withSignificantWhitespaceBeforeArguments
         ) {
             this.isFileAnnotationParsingMode = isFileAnnotationParsingMode;
             this.allowAnnotations = allowAnnotations;
+            this.typeContext = typeContext;
+            this.withSignificantWhitespaceBeforeArguments = withSignificantWhitespaceBeforeArguments;
         }
     }
 }

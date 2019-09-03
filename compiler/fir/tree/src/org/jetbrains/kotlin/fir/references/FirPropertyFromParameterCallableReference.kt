@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirPropertyFromParameterCallableReference(
-    session: FirSession,
     psi: PsiElement?,
     override val name: Name,
-    override val coneSymbol: FirVariableSymbol
-) : FirAbstractElement(session, psi), FirResolvedCallableReference
+    override val coneSymbol: FirVariableSymbol<*>
+) : FirAbstractElement(psi), FirResolvedCallableReference

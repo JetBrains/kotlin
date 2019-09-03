@@ -16,7 +16,10 @@ import java.io.File
  */
 internal open class NpmProjectModules(
     val dir: File,
-    private val nodeModulesDir: File = dir.resolve(NODE_MODULES)
+    val nodeModulesDir: File = dir.resolve(NODE_MODULES),
+    val packageJsonEntries: Collection<String> = listOf("main", "module", "browser"),
+    val indexFileNames: Collection<String> = listOf(INDEX_FILE_NAME),
+    val indexFileSuffixes: Collection<String> = listOf(JS_SUFFIX)
 ) {
     /**
      * Require [request] nodejs module and return canonical path to it's main js file.
@@ -27,6 +30,15 @@ internal open class NpmProjectModules(
 
     open val parent: NpmProjectModules?
         get() = null
+
+    fun copy(
+        packageJsonEntries: Collection<String> = this.packageJsonEntries,
+        indexFileNames: Collection<String> = this.indexFileNames,
+        indexFileSuffixes: Collection<String> = this.indexFileSuffixes
+    ): NpmProjectModules = object : NpmProjectModules(dir, nodeModulesDir, packageJsonEntries, indexFileNames, indexFileSuffixes) {
+        override val parent: NpmProjectModules?
+            get() = this@NpmProjectModules.parent?.copy(packageJsonEntries, indexFileNames, indexFileSuffixes)
+    }
 
     /**
      * Find node module according to https://nodejs.org/api/modules.html#modules_all_together,
@@ -55,14 +67,18 @@ internal open class NpmProjectModules(
 
     private fun resolveAsDirectory(dir: File): File? {
         val packageJsonFile = dir.resolve(PACKAGE_JSON)
+
         val main: String? = if (packageJsonFile.isFile) {
             val packageJson = packageJsonFile.reader().use {
                 Gson().fromJson(it, JsonObject::class.java)
             }
 
-            packageJson.getStringOrNull("main")
-                ?: packageJson.getStringOrNull("module")
-                ?: packageJson.getStringOrNull("browser")
+            var result: String? = null
+            for (key in packageJsonEntries) {
+                result = packageJson.getStringOrNull(key)
+                if (result != null) break
+            }
+            result
         } else null
 
         return if (main != null) {
@@ -80,13 +96,21 @@ internal open class NpmProjectModules(
         return null
     }
 
-    private fun resolveIndex(dir: File): File? = resolveAsFile(dir.resolve(INDEX_FILE_NAME))
+    private fun resolveIndex(dir: File): File? {
+        for (it in indexFileNames) {
+            return resolveAsFile(dir.resolve(it)) ?: continue
+        }
+
+        return null
+    }
 
     private fun resolveAsFile(file: File): File? {
         if (file.isFile) return file
 
-        val js = File(file.path + JS_SUFFIX)
-        if (js.isFile) return js
+        indexFileSuffixes.forEach {
+            val js = File(file.path + it)
+            if (js.isFile) return js
+        }
 
         return null
     }

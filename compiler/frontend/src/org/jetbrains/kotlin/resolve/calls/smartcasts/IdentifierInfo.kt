@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
@@ -59,9 +60,10 @@ interface IdentifierInfo {
         override val canBeBound
             get() = kind == STABLE_VALUE
 
-        override fun equals(other: Any?) = other is Variable && variable == other.variable
+        override fun equals(other: Any?) =
+            other is Variable && DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(variable, other.variable)
 
-        override fun hashCode() = variable.hashCode()
+        override fun hashCode() = variable.name.hashCode() * 31 + variable.containingDeclaration.original.hashCode()
 
         override fun toString() = variable.toString()
     }

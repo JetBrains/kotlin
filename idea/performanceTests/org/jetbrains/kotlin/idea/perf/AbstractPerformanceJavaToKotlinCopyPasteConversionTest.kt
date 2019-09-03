@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.AfterClass
 import java.io.File
 
 abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private val newJ2K: Boolean = false) :
@@ -25,10 +26,9 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
 
         val stats: Array<Stats> = arrayOf(Stats("old j2k"), Stats("new j2k"))
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            stats.forEach { it.close() }
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.forEach { it.close() } }))
         }
     }
 
@@ -44,13 +44,8 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
         }
     }
 
-    override fun tearDown() {
-        commitAllDocuments()
-        super.tearDown()
-    }
-
     private fun doWarmUpPerfTest() {
-        stats().perfTest(
+        stats().perfTest<Unit, Unit>(
             testName = "warm-up",
             setUp = {
                 with(myFixture) {
@@ -64,9 +59,13 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
                 myFixture.performEditorAction(IdeActions.ACTION_PASTE)
             },
             tearDown = {
-                commitAllDocuments()
+                val document = myFixture.getDocument(myFixture.file)
+                PsiDocumentManager.getInstance(project).commitDocument(document)
                 kotlin.test.assertFalse(!ConvertJavaCopyPasteProcessor.conversionPerformed, "No conversion to Kotlin suggested")
                 assertEquals("class Foo {\n    private val value: String? = null\n}", myFixture.file.text)
+                runWriteAction {
+                    myFixture.file.delete()
+                }
             }
         )
     }
@@ -85,7 +84,7 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
         val fileText = myFixture.editor.document.text
         val noConversionExpected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// NO_CONVERSION_EXPECTED").isNotEmpty()
 
-        stats().perfTest(
+        stats().perfTest<Unit, Unit>(
             testName = testName,
             setUp = {
                 myFixture.configureByFiles("$testName.java")

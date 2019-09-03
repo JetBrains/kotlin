@@ -1,0 +1,16 @@
+apply plugin: 'kotlin-multiplatform'
+apply plugin: 'maven-publish'
+
+kotlin {
+    jvm()
+
+    sourceSets {
+        commonMain {
+        }
+
+        jvmMain {
+        }
+    }
+}
+
+version = "0.1.0-${System.currentTimeMillis()}"

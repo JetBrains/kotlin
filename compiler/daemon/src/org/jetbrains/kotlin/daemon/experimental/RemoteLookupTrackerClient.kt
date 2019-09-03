@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.daemon.experimental
 import com.intellij.util.containers.StringInterner
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.EventManager
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerCallbackServicesFacadeClientSide
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
-import org.jetbrains.kotlin.daemon.common.withMeasure
-import org.jetbrains.kotlin.daemon.common.withMeasureBlocking
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
@@ -20,7 +17,7 @@ import org.jetbrains.kotlin.incremental.components.ScopeKind
 
 
 class RemoteLookupTrackerClient(
-    val facade: CompilerCallbackServicesFacadeClientSide,
+    val facade: CompilerCallbackServicesFacadeAsync,
     eventManager: EventManager,
     val profiler: Profiler = DummyProfiler()
 ) : LookupTracker {

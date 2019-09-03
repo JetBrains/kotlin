@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-interface FirConstructor : @VisitedSupertype FirFunction, FirCallableMemberDeclaration {
+interface FirConstructor : @VisitedSupertype FirMemberFunction<FirConstructor> {
 
     val isPrimary: Boolean get() = false
 

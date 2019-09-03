@@ -13,18 +13,22 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.types.typeUtil.closure
 import java.util.concurrent.ConcurrentHashMap
 
-fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform): List<IdeaModuleInfo> {
-    val modelInfosCache = project.cached(CachedValueProvider {
-        CachedValueProvider.Result(collectModuleInfosFromIdeaModel(project), ProjectRootModificationTracker.getInstance(project))
-    })
-    return modelInfosCache.forPlatform(platform)
+/** null-platform means that we should get all modules */
+fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform? = null): List<IdeaModuleInfo> {
+    val modelInfosCache = project.cacheInvalidatingOnRootModifications {
+        collectModuleInfosFromIdeaModel(project)
+    }
+
+    return if (platform != null)
+        modelInfosCache.forPlatform(platform)
+    else
+        modelInfosCache.allModules()
 }
 
 private class IdeaModelInfosCache(
@@ -39,6 +43,8 @@ private class IdeaModelInfosCache(
             mergePlatformModules(moduleSourceInfos, platform) + libraryInfos + sdkInfos
         }
     }
+
+    fun allModules(): List<IdeaModuleInfo> = moduleSourceInfos + libraryInfos + sdkInfos
 }
 
 
@@ -79,7 +85,7 @@ private fun mergePlatformModules(
                 listOf(module to module.expectedBy)
             else emptyList()
         }.map { (module, expectedBys) ->
-            PlatformModuleInfo(module, expectedBys.closure { it.expectedBy }.toList())
+            PlatformModuleInfo(module, expectedBys.closure(preserveOrder = true) { it.expectedBy }.toList())
         }
 
     val rest = allModules - platformModules.flatMap { it.containedModules }

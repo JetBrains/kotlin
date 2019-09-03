@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.bindingContextUtil
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 
 fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
@@ -43,7 +44,7 @@ fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): Fun
 
     val declarationDescriptor = context[DECLARATION_TO_DESCRIPTOR, getNonStrictParentOfType<KtDeclarationWithBody>()]
     val containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, FunctionDescriptor::class.java, false)
-    if (containingFunctionDescriptor == null) return null
+        ?: return null
 
     return generateSequence(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, FunctionDescriptor::class.java) }
         .dropWhile { it is AnonymousFunctionDescriptor }
@@ -54,26 +55,26 @@ fun KtReturnExpression.getTargetFunction(context: BindingContext): KtCallableDec
     return getTargetFunctionDescriptor(context)?.let { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtCallableDeclaration }
 }
 
-fun KtExpression.isUsedAsExpression(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this]!!
-fun KtExpression.isUsedAsResultOfLambda(context: BindingContext): Boolean = context[BindingContext.USED_AS_RESULT_OF_LAMBDA, this]!!
+fun KtExpression.isUsedAsExpression(context: BindingContext): Boolean = context[USED_AS_EXPRESSION, this]!!
+fun KtExpression.isUsedAsResultOfLambda(context: BindingContext): Boolean = context[USED_AS_RESULT_OF_LAMBDA, this]!!
 fun KtExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
 
 
 fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(expression: KtExpression?) {
     if (expression == null) return
 
-    val typeInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)
+    val typeInfo = trace.get(EXPRESSION_TYPE_INFO, expression)
     if (typeInfo != null) {
-        trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo.replaceDataFlowInfo(dataFlowInfo))
+        trace.record(EXPRESSION_TYPE_INFO, expression, typeInfo.replaceDataFlowInfo(dataFlowInfo))
     } else if (dataFlowInfo != DataFlowInfo.EMPTY) {
         // Don't store anything in BindingTrace if it's simply an empty DataFlowInfo
-        trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, noTypeInfo(dataFlowInfo))
+        trace.record(EXPRESSION_TYPE_INFO, expression, noTypeInfo(dataFlowInfo))
     }
 }
 
 fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
     if (element != null) {
-        record(BindingContext.LEXICAL_SCOPE, element, scope.takeSnapshot() as LexicalScope)
+        record(LEXICAL_SCOPE, element, scope.takeSnapshot() as LexicalScope)
     }
 }
 
@@ -83,7 +84,7 @@ fun BindingContext.getDataFlowInfoAfter(position: PsiElement): DataFlowInfo {
             val parent = it.parent
             //TODO: it's a hack because KotlinTypeInfo with wrong DataFlowInfo stored for call expression after qualifier
             if (parent is KtQualifiedExpression && it == parent.selectorExpression) return@let null
-            this[BindingContext.EXPRESSION_TYPE_INFO, it]
+            this[EXPRESSION_TYPE_INFO, it]
         }?.let { return it.dataFlowInfo }
     }
     return DataFlowInfo.EMPTY
@@ -92,30 +93,61 @@ fun BindingContext.getDataFlowInfoAfter(position: PsiElement): DataFlowInfo {
 fun BindingContext.getDataFlowInfoBefore(position: PsiElement): DataFlowInfo {
     for (element in position.parentsWithSelf) {
         (element as? KtExpression)
-            ?.let { this[BindingContext.DATA_FLOW_INFO_BEFORE, it] }
+            ?.let { this[DATA_FLOW_INFO_BEFORE, it] }
             ?.let { return it }
     }
     return DataFlowInfo.EMPTY
 }
 
-fun KtExpression.isUnreachableCode(context: BindingContext): Boolean = context[BindingContext.UNREACHABLE_CODE, this]!!
-
 fun KtExpression.getReferenceTargets(context: BindingContext): Collection<DeclarationDescriptor> {
-    val targetDescriptor = if (this is KtReferenceExpression) context[BindingContext.REFERENCE_TARGET, this] else null
-    return targetDescriptor?.let { listOf(it) } ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
+    val targetDescriptor = if (this is KtReferenceExpression) context[REFERENCE_TARGET, this] else null
+    return targetDescriptor?.let { listOf(it) } ?: context[AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
 }
 
 fun KtTypeReference.getAbbreviatedTypeOrType(context: BindingContext) =
-    context[BindingContext.ABBREVIATED_TYPE, this] ?: context[BindingContext.TYPE, this]
+    context[ABBREVIATED_TYPE, this] ?: context[TYPE, this]
 
 fun KtTypeElement.getAbbreviatedTypeOrType(context: BindingContext): KotlinType? {
-    val parent = parent
-    return when (parent) {
+    return when (val parent = parent) {
         is KtTypeReference -> parent.getAbbreviatedTypeOrType(context)
         is KtNullableType -> {
             val outerType = parent.getAbbreviatedTypeOrType(context)
             if (this is KtNullableType) outerType else outerType?.makeNotNullable()
         }
         else -> null
+    }
+}
+
+fun <T : PsiElement> KtElement.getParentOfTypeCodeFragmentAware(vararg parentClasses: Class<out T>): T? {
+    PsiTreeUtil.getParentOfType(this, *parentClasses)?.let { return it }
+
+    val containingFile = this.containingFile
+    if (containingFile is KtCodeFragment) {
+        val context = containingFile.context
+        if (context != null) {
+            return PsiTreeUtil.getParentOfType(context, *parentClasses)
+        }
+    }
+
+    return null
+}
+
+fun getEnclosingDescriptor(context: BindingContext, element: KtElement): DeclarationDescriptor {
+    val declaration = element.getParentOfTypeCodeFragmentAware(KtNamedDeclaration::class.java)
+    return if (declaration is KtFunctionLiteral) {
+        getEnclosingDescriptor(context, declaration)
+    } else {
+        context.get(DECLARATION_TO_DESCRIPTOR, declaration)
+            ?: error("No descriptor for named declaration: " + declaration?.text + "\n(of type " + declaration?.javaClass + ")")
+    }
+}
+
+fun getEnclosingFunctionDescriptor(context: BindingContext, element: KtElement): FunctionDescriptor? {
+    val functionOrClass = element.getParentOfTypeCodeFragmentAware(KtFunction::class.java, KtClassOrObject::class.java)
+    val descriptor = context.get(DECLARATION_TO_DESCRIPTOR, functionOrClass)
+    return if (functionOrClass is KtFunction) {
+        if (descriptor is FunctionDescriptor) descriptor else null
+    } else {
+        if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else null
     }
 }

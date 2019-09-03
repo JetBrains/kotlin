@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.util.allowedValOrVar
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -131,8 +132,9 @@ class CreateExpectedClassFix(
 })
 
 private fun KtDeclaration.canAddActualModifier() = when (this) {
-    is KtEnumEntry -> false
-    is KtParameter -> this.hasValOrVar()
+    is KtEnumEntry, is KtClassInitializer -> false
+    is KtParameter -> hasValOrVar()
+    is KtProperty -> !hasModifier(KtTokens.LATEINIT_KEYWORD) && !hasModifier(KtTokens.CONST_KEYWORD)
     else -> true
 }
 
@@ -140,7 +142,9 @@ private fun KtDeclaration.canAddActualModifier() = when (this) {
  * @return null if close without OK
  */
 private fun chooseMembers(project: Project, collection: Collection<KtDeclaration>, prefixToRemove: String): List<KtDeclaration>? {
-    val classMembers = collection.map { Member(prefixToRemove, it, it.resolveToDescriptorIfAny()!!) }
+    val classMembers = collection.mapNotNull {
+        it.resolveToDescriptorIfAny()?.let { descriptor -> Member(prefixToRemove, it, descriptor) }
+    }
     val filter = if (collection.any(KtDeclaration::hasActualModifier)) {
         { declaration: KtDeclaration -> declaration.hasActualModifier() }
     } else {

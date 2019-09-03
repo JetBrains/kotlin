@@ -1039,6 +1039,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                     runTest("compiler/testData/writeFlags/property/classObject/trait/noBackingField.kt");
                 }
 
+                @TestMetadata("privateConstVal.kt")
+                public void testPrivateConstVal() throws Exception {
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/privateConstVal.kt");
+                }
+
                 @TestMetadata("privateVal.kt")
                 public void testPrivateVal() throws Exception {
                     runTest("compiler/testData/writeFlags/property/classObject/trait/privateVal.kt");

@@ -1,29 +1,29 @@
 FILE fqName:<root> fileName:/when.kt
   CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
-    CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary] 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:testWithSubject visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any? 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:testWithSubject visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testWithSubject (x: kotlin.Any?): kotlin.String declared in <root>'
         BLOCK type=kotlin.String origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? [val] 
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? [val]
             GET_VAR 'x: kotlin.Any? declared in <root>.testWithSubject' type=kotlin.Any? origin=null
           WHEN type=kotlin.String origin=WHEN
             BRANCH
@@ -56,8 +56,8 @@ FILE fqName:<root> fileName:/when.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST String type=kotlin.String value="something"
-  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any? 
+  FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (x: kotlin.Any?): kotlin.String declared in <root>'
         WHEN type=kotlin.String origin=WHEN
@@ -90,12 +90,12 @@ FILE fqName:<root> fileName:/when.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST String type=kotlin.String value="something"
-  FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Int 
+  FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testComma (x: kotlin.Int): kotlin.String declared in <root>'
         BLOCK type=kotlin.String origin=WHEN
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int [val] 
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int [val]
             GET_VAR 'x: kotlin.Int declared in <root>.testComma' type=kotlin.Int origin=null
           WHEN type=kotlin.String origin=WHEN
             BRANCH

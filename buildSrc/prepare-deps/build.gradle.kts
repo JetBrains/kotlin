@@ -65,6 +65,23 @@ repositories {
                 artifact()
             }
         }
+
+        ivy {
+            url = URI("https://dl.bintray.com/kotlin/as/")
+
+            patternLayout {
+                artifact("[artifact]-[revision]-$androidStudioOs.[ext]")
+            }
+
+            credentials {
+                username = System.getenv("AS_BINTRAY_USER_NAME") ?: findProperty("bintray.user") as String?
+                password = System.getenv("AS_BINTRAY_API_KEY") ?: findProperty("bintray.apikey") as String?
+            }
+
+            metadataSources {
+                artifact()
+            }
+        }
     }
 
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
@@ -87,14 +104,19 @@ val nodeJSPlugin by configurations.creating
  */
 val intellijRuntimeAnnotations = "intellij-runtime-annotations"
 
-val customDepsRepoDir = rootProject.rootDir.parentFile.resolve("dependencies/repo")
+val dependenciesDir = (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File)
+    ?: rootProject.rootDir.parentFile.resolve("dependencies")
+
+val customDepsRepoDir = dependenciesDir.resolve("repo")
+
 val customDepsOrg: String by rootProject.extra
 val customDepsRevision = intellijVersion
 val repoDir = File(customDepsRepoDir, customDepsOrg)
 
 dependencies {
     if (androidStudioRelease != null) {
-        val extension = if (androidStudioOs == "linux" && androidStudioRelease.startsWith("3.5"))
+        val extension = if (androidStudioOs == "linux" &&
+            (androidStudioRelease.startsWith("3.5") || androidStudioRelease.startsWith("3.6")))
             "tar.gz"
         else
             "zip"

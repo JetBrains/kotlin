@@ -452,6 +452,8 @@ class DescriptorSerializer private constructor(
             builder.addAnnotation(extension.annotationSerializer.serializeAnnotation(annotation))
         }
 
+        extension.serializeTypeAlias(descriptor, builder)
+
         return builder
     }
 

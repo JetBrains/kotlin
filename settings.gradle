@@ -39,6 +39,7 @@ include ":kotlin-build-common",
         ":compiler:fir:tree",
         ":compiler:fir:tree:visitors-generator",
         ":compiler:fir:psi2fir",
+        ":compiler:fir:lightTree",
         ":compiler:fir:fir2ir",
         ":compiler:fir:resolve",
         ":compiler:fir:java",
@@ -209,6 +210,7 @@ include ":kotlin-build-common",
         ":libraries:tools:mutability-annotations-compat",
         ":include:kotlin-compiler",
         ":plugins:jvm-abi-gen",
+        ":plugins:jvm-abi-gen-embeddable",
 
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
@@ -226,7 +228,8 @@ def flags = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 
 if (flags.includeCidrPlugins) {
     logger.info("Including CIDR plugins in settings.gradle")
-    include ":kotlin-ultimate:ide:cidr-native",
+    include ":kotlin-ultimate:ide:common-native",
+            ":kotlin-ultimate:ide:cidr-native",
             ":kotlin-ultimate:ide:clion-native",
             ":kotlin-ultimate:ide:appcode-native",
             ":kotlin-ultimate:prepare:cidr-plugin",
@@ -236,12 +239,11 @@ if (flags.includeCidrPlugins) {
     logger.info("NOT including CIDR plugins in settings.gradle")
 }
 
-def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-if (flags.kotlinUltimateExists && (isTeamcityBuild || flags.intellijUltimateEnabled)) {
-    include(
-            ":kotlin-ultimate:ultimate",
-            ":kotlin-ultimate:ultimate:ultimate-runner"
-    )
+if (flags.includeUltimate) {
+    include ":kotlin-ultimate:ultimate",
+            ":kotlin-ultimate:ultimate:ultimate-runner",
+            ":kotlin-ultimate:ide:common-native",
+            ":kotlin-ultimate:ide:ultimate-native"
     logger.info("Including extension for IJ Ultimate in settings.gradle")
 } else {
     logger.info("NOT including extension for IJ Ultimate in settings.gradle")
@@ -391,6 +393,7 @@ project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate
 project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
+project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-abi-gen/embeddable" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")

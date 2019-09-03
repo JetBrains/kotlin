@@ -3,4 +3,4 @@ fun box() {
     println("bar")
 }
 
-// LINES: 4 2 2 3 3
+// LINES: 1 4 2 2 3 3

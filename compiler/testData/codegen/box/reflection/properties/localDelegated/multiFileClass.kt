@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-
 // FILE: 1.kt
 
 @file:JvmMultifileClass

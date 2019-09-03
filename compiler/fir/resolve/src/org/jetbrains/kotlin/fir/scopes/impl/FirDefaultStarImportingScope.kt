@@ -18,8 +18,7 @@ class FirDefaultStarImportingScope(session: FirSession, lookupInFir: Boolean = f
         ?.filter { it.isAllUnder }
         ?.map {
             FirResolvedImportImpl(
-                session,
-                FirImportImpl(session, null, it.fqName, isAllUnder = true, aliasName = null),
+                FirImportImpl(null, it.fqName, isAllUnder = true, aliasName = null),
                 it.fqName,
                 null
             )

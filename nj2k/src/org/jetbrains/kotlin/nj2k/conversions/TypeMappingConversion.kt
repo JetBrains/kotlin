@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.kotlinTypeByName
+import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
@@ -111,6 +113,12 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
                     variance,
                     boundType.mapType(null)
                 )
+            is JKCapturedType -> {
+                JKCapturedType(
+                    wildcardType.mapType(null) as JKWildCardType,
+                    nullability
+                )
+            }
             else -> this
         }.fixRawType(typeElement)
 

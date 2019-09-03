@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirComponentCall(
-    session: FirSession,
-    psi: PsiElement?
-) : FirFunctionCall(session, psi) {
+abstract class FirComponentCall(psi: PsiElement?) : FirFunctionCall(psi) {
     // Starting from 1, not from 0
     abstract val componentIndex: Int
 

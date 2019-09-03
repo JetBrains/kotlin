@@ -153,7 +153,11 @@ fun IrValueParameter.copyTo(
     isCrossinline: Boolean = this.isCrossinline,
     isNoinline: Boolean = this.isNoinline
 ): IrValueParameter {
-    val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
+    val descriptor = if (index < 0) {
+        WrappedReceiverParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
+    } else {
+        WrappedValueParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
+    }
     val symbol = IrValueParameterSymbolImpl(descriptor)
     val defaultValueCopy = defaultValue?.deepCopyWithVariables()
     defaultValueCopy?.patchDeclarationParents(irFunction)
@@ -346,8 +350,11 @@ val IrFunction.isStatic: Boolean
     get() = parent is IrClass && dispatchReceiverParameter == null
 
 val IrDeclaration.isTopLevel: Boolean
-    get() = parent is IrPackageFragment
-
+    get() {
+        if (parent is IrPackageFragment) return true
+        val parentClass = parent as? IrClass
+        return parentClass?.origin == IrDeclarationOrigin.FILE_CLASS && parentClass.parent is IrPackageFragment
+    }
 
 fun Scope.createTemporaryVariableWithWrappedDescriptor(
     irExpression: IrExpression,
@@ -519,7 +526,8 @@ fun createStaticFunctionWithReceivers(
         oldFunction.visibility,
         Modality.FINAL,
         oldFunction.returnType,
-        isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+        isInline = oldFunction.isInline,
+        isExternal = false, isTailrec = false, isSuspend = false
     ).apply {
         descriptor.bind(this)
         parent = irParent
@@ -544,15 +552,19 @@ fun createStaticFunctionWithReceivers(
                                        oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
         )
 
-        val mapping: Map<IrValueParameter, IrValueParameter> =
-            (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
-                .zip(valueParameters).toMap()
         if (copyBody) {
-            body = oldFunction.body
-                ?.transform(VariableRemapper(mapping), null)
-                ?.patchDeclarationParents(this)
+            copyBodyToStatic(oldFunction, this)
         }
 
         metadata = oldFunction.metadata
     }
+}
+
+fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
+    val mapping: Map<IrValueParameter, IrValueParameter> =
+        (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
+            .zip(staticFunction.valueParameters).toMap()
+    staticFunction.body = oldFunction.body
+            ?.transform(VariableRemapper(mapping), null)
+            ?.patchDeclarationParents(staticFunction)
 }

@@ -38,6 +38,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 class JvmSerializerExtension(private val bindings: JvmSerializationBindings, state: GenerationState) : SerializerExtension() {
+    private val globalBindings = state.globalSerializationBindings
     private val codegenBinding = state.bindingContext
     private val typeMapper = state.typeMapper
     override val stringTable = JvmCodegenStringTable(typeMapper)
@@ -151,10 +152,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         }
     }
 
-    override fun serializeConstructor(descriptor: ConstructorDescriptor,
-                                      proto: ProtoBuf.Constructor.Builder,
-                                      childSerializer: DescriptorSerializer) {
-        val method = bindings.get(METHOD_FOR_FUNCTION, descriptor)
+    override fun serializeConstructor(
+        descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder, childSerializer: DescriptorSerializer
+    ) {
+        val method = getBinding(METHOD_FOR_FUNCTION, descriptor)
         if (method != null) {
             val signature = SignatureSerializer().methodSignature(descriptor, method)
             if (signature != null) {
@@ -163,10 +164,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         }
     }
 
-    override fun serializeFunction(descriptor: FunctionDescriptor,
-                                   proto: ProtoBuf.Function.Builder,
-                                   childSerializer: DescriptorSerializer) {
-        val method = bindings.get(METHOD_FOR_FUNCTION, descriptor)
+    override fun serializeFunction(
+        descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder, childSerializer: DescriptorSerializer
+    ) {
+        val method = getBinding(METHOD_FOR_FUNCTION, descriptor)
         if (method != null) {
             val signature = SignatureSerializer().methodSignature(descriptor, method)
             if (signature != null) {
@@ -176,20 +177,20 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     }
 
     override fun serializeProperty(
-            descriptor: PropertyDescriptor,
-            proto: ProtoBuf.Property.Builder,
-            versionRequirementTable: MutableVersionRequirementTable?,
-            childSerializer: DescriptorSerializer
+        descriptor: PropertyDescriptor,
+        proto: ProtoBuf.Property.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: DescriptorSerializer
     ) {
         val signatureSerializer = SignatureSerializer()
 
         val getter = descriptor.getter
         val setter = descriptor.setter
-        val getterMethod = if (getter == null) null else bindings.get(METHOD_FOR_FUNCTION, getter)
-        val setterMethod = if (setter == null) null else bindings.get(METHOD_FOR_FUNCTION, setter)
+        val getterMethod = if (getter == null) null else getBinding(METHOD_FOR_FUNCTION, getter)
+        val setterMethod = if (setter == null) null else getBinding(METHOD_FOR_FUNCTION, setter)
 
-        val field = bindings.get(FIELD_FOR_PROPERTY, descriptor)
-        val syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor)
+        val field = getBinding(FIELD_FOR_PROPERTY, descriptor)
+        val syntheticMethod = getBinding(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor)
 
         val signature = signatureSerializer.propertySignature(
             descriptor,
@@ -231,6 +232,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
 
         super.serializeErrorType(type, builder)
     }
+
+    private fun <K, V> getBinding(slice: SerializationMappingSlice<K, V>, key: K): V? =
+        bindings.get(slice, key) ?: globalBindings.get(slice, key)
 
     private inner class SignatureSerializer {
         fun methodSignature(descriptor: FunctionDescriptor?, method: Method): JvmProtoBuf.JvmMethodSignature? {

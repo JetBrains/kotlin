@@ -21,10 +21,13 @@ import kotlin.script.experimental.api.ScriptEvaluationConfiguration
  * optimal discovery and definitions loading performance.
  *
  * @param displayName script definition display name, stored as {@link ScriptCompilationConfigurationKeys#displayName},
- *        default - "Kotlin script"
+ *        default - empty - use annotated class name
  * @param fileExtension distinct filename extension for the script type being defined, stored in the configuration
  *        as {@link ScriptCompilationConfigurationKeys#fileExtension},
  *        default - "kts"
+ * @param filePathPattern additional (to the filename extension) RegEx pattern with that the script file path is checked
+ *        as {@link ScriptCompilationConfigurationKeys#filePathPattern},
+ *        default - empty - pattern is not used
  * @param compilationConfiguration an object or a class with default constructor containing initial script compilation configuration
  *        default - {@link ScriptCompilationConfiguration#Default}
  * @param evaluationConfiguration an object or a class with default constructor containing initial script evaluation configuration
@@ -45,8 +48,9 @@ import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class KotlinScript(
-    val displayName: String = "Kotlin script",
+    val displayName: String = "",
     val fileExtension: String = "kts",
+    val filePathPattern: String = "",
     val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class,
     val evaluationConfiguration: KClass<out ScriptEvaluationConfiguration> = ScriptEvaluationConfiguration.Default::class
 )

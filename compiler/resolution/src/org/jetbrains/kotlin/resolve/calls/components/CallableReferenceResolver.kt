@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.SimpleConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
@@ -93,6 +92,7 @@ class CallableReferenceResolver(
                 )
             }
             diagnosticsHolder.addDiagnosticIfNotNull(diagnostic)
+            chosenCandidate.diagnostics.forEach { diagnosticsHolder.addDiagnostic(it) }
             chosenCandidate.freshSubstitutor = toFreshSubstitutor
         } else {
             if (candidates.isEmpty()) {

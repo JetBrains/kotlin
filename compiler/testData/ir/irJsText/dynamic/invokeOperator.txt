@@ -1,41 +1,41 @@
 FILE fqName:<root> fileName:/invokeOperator.kt
-  FUN name:invoke visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  FUN name:invoke visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-  FUN name:test1 visibility:public modality:FINAL <> (a:dynamic) returnType:dynamic 
-    VALUE_PARAMETER name:a index:0 type:dynamic 
+  FUN name:test1 visibility:public modality:FINAL <> (a:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:a index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: dynamic): dynamic declared in <root>'
         DYN_OP operator=INVOKE type=dynamic
           receiver: GET_VAR 'a: dynamic declared in <root>.test1' type=dynamic origin=VARIABLE_AS_FUNCTION
           0: CONST Int type=kotlin.Int value=1
-  FUN name:test2 visibility:public modality:FINAL <> (a:dynamic) returnType:dynamic 
-    VALUE_PARAMETER name:a index:0 type:dynamic 
+  FUN name:test2 visibility:public modality:FINAL <> (a:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:a index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: dynamic): dynamic declared in <root>'
         DYN_OP operator=INVOKE type=dynamic
           receiver: DYN_MEMBER memberName='invoke' type=dynamic
             GET_VAR 'a: dynamic declared in <root>.test2' type=dynamic origin=null
           0: CONST Int type=kotlin.Int value=1
-  FUN name:test3 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic 
-    VALUE_PARAMETER name:a index:0 type:dynamic 
-    VALUE_PARAMETER name:b index:1 type:dynamic 
+  FUN name:test3 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:a index:0 type:dynamic
+    VALUE_PARAMETER name:b index:1 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a: dynamic, b: dynamic): dynamic declared in <root>'
         DYN_OP operator=INVOKE type=dynamic
           receiver: GET_VAR 'a: dynamic declared in <root>.test3' type=dynamic origin=VARIABLE_AS_FUNCTION
           0: GET_VAR 'b: dynamic declared in <root>.test3' type=dynamic origin=null
-  FUN name:test4 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic 
-    VALUE_PARAMETER name:a index:0 type:dynamic 
-    VALUE_PARAMETER name:b index:1 type:dynamic 
+  FUN name:test4 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:a index:0 type:dynamic
+    VALUE_PARAMETER name:b index:1 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a: dynamic, b: dynamic): dynamic declared in <root>'
         DYN_OP operator=INVOKE type=dynamic
           receiver: DYN_MEMBER memberName='invoke' type=dynamic
             GET_VAR 'a: dynamic declared in <root>.test4' type=dynamic origin=null
           0: GET_VAR 'b: dynamic declared in <root>.test4' type=dynamic origin=null
-  FUN name:test5 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic 
-    VALUE_PARAMETER name:a index:0 type:dynamic 
-    VALUE_PARAMETER name:b index:1 type:dynamic 
+  FUN name:test5 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:a index:0 type:dynamic
+    VALUE_PARAMETER name:b index:1 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 (a: dynamic, b: dynamic): dynamic declared in <root>'
         DYN_OP operator=INVOKE type=dynamic
@@ -43,9 +43,9 @@ FILE fqName:<root> fileName:/invokeOperator.kt
             receiver: GET_VAR 'a: dynamic declared in <root>.test5' type=dynamic origin=VARIABLE_AS_FUNCTION
             0: GET_VAR 'b: dynamic declared in <root>.test5' type=dynamic origin=null
           0: GET_VAR 'b: dynamic declared in <root>.test5' type=dynamic origin=null
-  FUN name:test6 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic 
-    VALUE_PARAMETER name:a index:0 type:dynamic 
-    VALUE_PARAMETER name:b index:1 type:dynamic 
+  FUN name:test6 visibility:public modality:FINAL <> (a:dynamic, b:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:a index:0 type:dynamic
+    VALUE_PARAMETER name:b index:1 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test6 (a: dynamic, b: dynamic): dynamic declared in <root>'
         DYN_OP operator=INVOKE type=dynamic
@@ -54,8 +54,8 @@ FILE fqName:<root> fileName:/invokeOperator.kt
               receiver: GET_VAR 'a: dynamic declared in <root>.test6' type=dynamic origin=VARIABLE_AS_FUNCTION
               0: GET_VAR 'b: dynamic declared in <root>.test6' type=dynamic origin=null
           0: GET_VAR 'b: dynamic declared in <root>.test6' type=dynamic origin=null
-  FUN name:test7 visibility:public modality:FINAL <> (a:dynamic) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:dynamic 
+  FUN name:test7 visibility:public modality:FINAL <> (a:dynamic) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test7 (a: dynamic): kotlin.Unit declared in <root>'
         CALL 'public final fun invoke (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null

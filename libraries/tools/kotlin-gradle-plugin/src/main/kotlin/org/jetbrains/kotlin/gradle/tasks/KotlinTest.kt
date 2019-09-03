@@ -12,6 +12,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.process.internal.ExecHandleFactory
+import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
@@ -46,8 +47,19 @@ abstract class KotlinTest : AbstractTestTask() {
     open val execHandleFactory: ExecHandleFactory
         get() = injected
 
+    private val runListeners = mutableListOf<KotlinTestRunnerListener>()
+
+    @Input
+    var ignoreRunFailures: Boolean = false
+
+    fun addRunListener(listener: KotlinTestRunnerListener) {
+        runListeners.add(listener)
+    }
+
     override fun createTestExecuter() = TCServiceMessagesTestExecutor(
         execHandleFactory,
-        buildOperationExecutor
+        buildOperationExecutor,
+        runListeners,
+        ignoreRunFailures
     )
 }

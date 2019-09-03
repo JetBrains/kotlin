@@ -2,213 +2,144 @@ package org.jetbrains.kotlin.nj2k.tree.visitors
 
 import org.jetbrains.kotlin.nj2k.tree.*
 
-interface JKVisitor<out R, in D> {
-    fun visitTreeElement(treeElement: JKTreeElement, data: D): R
-    fun visitTreeRoot(treeRoot: JKTreeRoot, data: D): R = visitTreeElement(treeRoot, data)
-    fun visitDeclaration(declaration: JKDeclaration, data: D): R = visitTreeElement(declaration, data)
-    fun visitImportStatement(importStatement: JKImportStatement, data: D): R = visitTreeElement(importStatement, data)
-    fun visitImportList(importList: JKImportList, data: D): R = visitTreeElement(importList, data)
-    fun visitFile(file: JKFile, data: D): R = visitTreeElement(file, data)
-    fun visitClass(klass: JKClass, data: D): R = visitDeclaration(klass, data)
-    fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo, data: D): R = visitTreeElement(inheritanceInfo, data)
-    fun visitAnnotationList(annotationList: JKAnnotationList, data: D): R = visitTreeElement(annotationList, data)
-    fun visitAnnotation(annotation: JKAnnotation, data: D): R = visitAnnotationMemberValue(annotation, data)
-    fun visitAnnotationParameter(annotationParameter: JKAnnotationParameter, data: D): R = visitTreeElement(annotationParameter, data)
-    fun visitAnnotationNameParameter(annotationNameParameter: JKAnnotationNameParameter, data: D): R =
-        visitAnnotationParameter(annotationNameParameter, data)
-
-    fun visitAnnotationListOwner(annotationListOwner: JKAnnotationListOwner, data: D): R = visitTreeElement(annotationListOwner, data)
-    fun visitMethod(method: JKMethod, data: D): R = visitDeclaration(method, data)
-    fun visitVariable(variable: JKVariable, data: D): R = visitDeclaration(variable, data)
-    fun visitForLoopVariable(forLoopVariable: JKForLoopVariable, data: D): R = visitVariable(forLoopVariable, data)
-    fun visitLocalVariable(localVariable: JKLocalVariable, data: D): R = visitVariable(localVariable, data)
-    fun visitModifierElement(modifierElement: JKModifierElement, data: D): R = visitTreeElement(modifierElement, data)
-    fun visitMutabilityModifierElement(mutabilityModifierElement: JKMutabilityModifierElement, data: D): R =
-        visitModifierElement(mutabilityModifierElement, data)
-
-    fun visitModalityModifierElement(modalityModifierElement: JKModalityModifierElement, data: D): R =
-        visitModifierElement(modalityModifierElement, data)
-
-    fun visitVisibilityModifierElement(visibilityModifierElement: JKVisibilityModifierElement, data: D): R =
-        visitModifierElement(visibilityModifierElement, data)
-
-    fun visitExtraModifierElement(extraModifierElement: JKExtraModifierElement, data: D): R =
-        visitModifierElement(extraModifierElement, data)
-
-    fun visitExtraModifiersOwner(extraModifiersOwner: JKExtraModifiersOwner, data: D): R =
-        visitModifiersListOwner(extraModifiersOwner, data)
-
-    fun visitVisibilityOwner(visibilityOwner: JKVisibilityOwner, data: D): R = visitModifiersListOwner(visibilityOwner, data)
-    fun visitModalityOwner(modalityOwner: JKModalityOwner, data: D): R = visitModifiersListOwner(modalityOwner, data)
-    fun visitMutabilityOwner(mutabilityOwner: JKMutabilityOwner, data: D): R = visitModifiersListOwner(mutabilityOwner, data)
-    fun visitModifiersListOwner(modifiersListOwner: JKModifiersListOwner, data: D): R = visitTreeElement(modifiersListOwner, data)
-    fun visitTypeElement(typeElement: JKTypeElement, data: D): R = visitTreeElement(typeElement, data)
-    fun visitStatement(statement: JKStatement, data: D): R = visitTreeElement(statement, data)
-    fun visitBlock(block: JKBlock, data: D): R = visitTreeElement(block, data)
-    fun visitBodyStub(bodyStub: JKBodyStub, data: D): R = visitBlock(bodyStub, data)
-    fun visitIdentifier(identifier: JKIdentifier, data: D): R = visitTreeElement(identifier, data)
-    fun visitNameIdentifier(nameIdentifier: JKNameIdentifier, data: D): R = visitIdentifier(nameIdentifier, data)
-    fun visitExpression(expression: JKExpression, data: D): R = visitTreeElement(expression, data)
-    fun visitMethodReferenceExpression(methodReferenceExpression: JKMethodReferenceExpression, data: D): R =
-        visitExpression(methodReferenceExpression, data)
-
-    fun visitExpressionStatement(expressionStatement: JKExpressionStatement, data: D): R = visitStatement(expressionStatement, data)
-    fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement, data: D): R = visitStatement(declarationStatement, data)
-    fun visitOperatorExpression(operatorExpression: JKOperatorExpression, data: D): R = visitExpression(operatorExpression, data)
-    fun visitBinaryExpression(binaryExpression: JKBinaryExpression, data: D): R = visitOperatorExpression(binaryExpression, data)
-    fun visitUnaryExpression(unaryExpression: JKUnaryExpression, data: D): R = visitOperatorExpression(unaryExpression, data)
-    fun visitPrefixExpression(prefixExpression: JKPrefixExpression, data: D): R = visitUnaryExpression(prefixExpression, data)
-    fun visitPostfixExpression(postfixExpression: JKPostfixExpression, data: D): R = visitUnaryExpression(postfixExpression, data)
-    fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression, data: D): R = visitExpression(qualifiedExpression, data)
-    fun visitTypeArgumentList(typeArgumentList: JKTypeArgumentList, data: D): R = visitTreeElement(typeArgumentList, data)
-    fun visitTypeArgumentListOwner(typeArgumentListOwner: JKTypeArgumentListOwner, data: D): R =
-        visitTreeElement(typeArgumentListOwner, data)
-
-    fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression, data: D): R = visitExpression(methodCallExpression, data)
-    fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression, data: D): R =
-        visitAssignableExpression(fieldAccessExpression, data)
-
-    fun visitPackageAccessExpression(packageAccessExpression: JKPackageAccessExpression, data: D): R =
-        visitAssignableExpression(packageAccessExpression, data)
-
-    fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression, data: D): R =
-        visitExpression(classAccessExpression, data)
-
-    fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression, data: D): R =
-        visitAssignableExpression(arrayAccessExpression, data)
-
-    fun visitParenthesizedExpression(parenthesizedExpression: JKParenthesizedExpression, data: D): R =
-        visitExpression(parenthesizedExpression, data)
-
-    fun visitTypeCastExpression(typeCastExpression: JKTypeCastExpression, data: D): R = visitExpression(typeCastExpression, data)
-    fun visitExpressionList(expressionList: JKExpressionList, data: D): R = visitTreeElement(expressionList, data)
-    fun visitArgument(argument: JKArgument, data: D): R = visitTreeElement(argument, data)
-    fun visitNamedArgument(namedArgument: JKNamedArgument, data: D): R = visitArgument(namedArgument, data)
-    fun visitArgumentList(argumentList: JKArgumentList, data: D): R = visitTreeElement(argumentList, data)
-    fun visitLiteralExpression(literalExpression: JKLiteralExpression, data: D): R = visitExpression(literalExpression, data)
-    fun visitParameter(parameter: JKParameter, data: D): R = visitVariable(parameter, data)
-    fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression, data: D): R =
-        visitLiteralExpression(stringLiteralExpression, data)
-
-    fun visitStubExpression(stubExpression: JKStubExpression, data: D): R = visitExpression(stubExpression, data)
-    fun visitLoopStatement(loopStatement: JKLoopStatement, data: D): R = visitStatement(loopStatement, data)
-    fun visitBlockStatement(blockStatement: JKBlockStatement, data: D): R = visitStatement(blockStatement, data)
-    fun visitBlockStatementWithoutBrackets(blockStatementWithoutBrackets: JKBlockStatementWithoutBrackets, data: D): R =
-        visitStatement(blockStatementWithoutBrackets, data)
-
-    fun visitThisExpression(thisExpression: JKThisExpression, data: D): R = visitExpression(thisExpression, data)
-    fun visitSuperExpression(superExpression: JKSuperExpression, data: D): R = visitExpression(superExpression, data)
-    fun visitWhileStatement(whileStatement: JKWhileStatement, data: D): R = visitLoopStatement(whileStatement, data)
-    fun visitDoWhileStatement(doWhileStatement: JKDoWhileStatement, data: D): R = visitLoopStatement(doWhileStatement, data)
-    fun visitBreakStatement(breakStatement: JKBreakStatement, data: D): R = visitStatement(breakStatement, data)
-    fun visitBreakWithLabelStatement(breakWithLabelStatement: JKBreakWithLabelStatement, data: D): R =
-        visitBreakStatement(breakWithLabelStatement, data)
-
-    fun visitIfStatement(ifStatement: JKIfStatement, data: D): R = visitStatement(ifStatement, data)
-    fun visitIfElseStatement(ifElseStatement: JKIfElseStatement, data: D): R = visitIfStatement(ifElseStatement, data)
-    fun visitIfElseExpression(ifElseExpression: JKIfElseExpression, data: D): R = visitExpression(ifElseExpression, data)
-    fun visitAssignableExpression(assignableExpression: JKAssignableExpression, data: D): R = visitExpression(assignableExpression, data)
-    fun visitLambdaExpression(lambdaExpression: JKLambdaExpression, data: D): R = visitExpression(lambdaExpression, data)
-    fun visitDelegationConstructorCall(delegationConstructorCall: JKDelegationConstructorCall, data: D): R =
-        visitMethodCallExpression(delegationConstructorCall, data)
-
-    fun visitLabel(label: JKLabel, data: D): R = visitTreeElement(label, data)
-    fun visitLabelEmpty(labelEmpty: JKLabelEmpty, data: D): R = visitLabel(labelEmpty, data)
-    fun visitLabelText(labelText: JKLabelText, data: D): R = visitLabel(labelText, data)
-    fun visitContinueStatement(continueStatement: JKContinueStatement, data: D): R = visitStatement(continueStatement, data)
-    fun visitLabeledStatement(labeledStatement: JKLabeledStatement, data: D): R = visitExpression(labeledStatement, data)
-    fun visitEmptyStatement(emptyStatement: JKEmptyStatement, data: D): R = visitStatement(emptyStatement, data)
-    fun visitTypeParameterList(typeParameterList: JKTypeParameterList, data: D): R = visitTreeElement(typeParameterList, data)
-    fun visitTypeParameter(typeParameter: JKTypeParameter, data: D): R = visitTreeElement(typeParameter, data)
-    fun visitTypeParameterListOwner(typeParameterListOwner: JKTypeParameterListOwner, data: D): R =
-        visitTreeElement(typeParameterListOwner, data)
-
-    fun visitEnumConstant(enumConstant: JKEnumConstant, data: D): R = visitVariable(enumConstant, data)
-    fun visitForInStatement(forInStatement: JKForInStatement, data: D): R = visitStatement(forInStatement, data)
-    fun visitPackageDeclaration(packageDeclaration: JKPackageDeclaration, data: D): R = visitDeclaration(packageDeclaration, data)
-    fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression, data: D): R =
-        visitExpression(classLiteralExpression, data)
-
-    fun visitAnnotationMemberValue(annotationMemberValue: JKAnnotationMemberValue, data: D): R =
-        visitTreeElement(annotationMemberValue, data)
-
-    fun visitField(field: JKField, data: D): R = visitVariable(field, data)
-    fun visitJavaField(javaField: JKJavaField, data: D): R = visitField(javaField, data)
-    fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitMethod(javaMethod, data)
-    fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression, data: D): R =
-        visitMethodCallExpression(javaMethodCallExpression, data)
-
-    fun visitClassBody(classBody: JKClassBody, data: D): R = visitTreeElement(classBody, data)
-    fun visitEmptyClassBody(emptyClassBody: JKEmptyClassBody, data: D): R = visitClassBody(emptyClassBody, data)
-    fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression, data: D): R = visitExpression(javaNewExpression, data)
-    fun visitJavaDefaultNewExpression(javaDefaultNewExpression: JKJavaDefaultNewExpression, data: D): R =
-        visitExpression(javaDefaultNewExpression, data)
-
-    fun visitJavaNewEmptyArray(javaNewEmptyArray: JKJavaNewEmptyArray, data: D): R = visitExpression(javaNewEmptyArray, data)
-    fun visitJavaNewArray(javaNewArray: JKJavaNewArray, data: D): R = visitExpression(javaNewArray, data)
-    fun visitJavaLiteralExpression(javaLiteralExpression: JKJavaLiteralExpression, data: D): R =
-        visitLiteralExpression(javaLiteralExpression, data)
-
-    fun visitReturnStatement(returnStatement: JKReturnStatement, data: D): R = visitStatement(returnStatement, data)
-    fun visitJavaAssertStatement(javaAssertStatement: JKJavaAssertStatement, data: D): R = visitStatement(javaAssertStatement, data)
-    fun visitJavaForLoopStatement(javaForLoopStatement: JKJavaForLoopStatement, data: D): R = visitLoopStatement(javaForLoopStatement, data)
-    fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression, data: D): R =
-        visitExpression(javaPolyadicExpression, data)
-
-    fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): R =
-        visitExpression(javaAssignmentExpression, data)
-
-    fun visitJavaThrowStatement(javaThrowStatement: JKJavaThrowStatement, data: D): R = visitStatement(javaThrowStatement, data)
-    fun visitJavaTryStatement(javaTryStatement: JKJavaTryStatement, data: D): R = visitStatement(javaTryStatement, data)
-    fun visitJavaTryCatchSection(javaTryCatchSection: JKJavaTryCatchSection, data: D): R = visitTreeElement(javaTryCatchSection, data)
-    fun visitJavaSwitchStatement(javaSwitchStatement: JKJavaSwitchStatement, data: D): R = visitStatement(javaSwitchStatement, data)
-    fun visitJavaSwitchCase(javaSwitchCase: JKJavaSwitchCase, data: D): R = visitTreeElement(javaSwitchCase, data)
-    fun visitJavaDefaultSwitchCase(javaDefaultSwitchCase: JKJavaDefaultSwitchCase, data: D): R =
-        visitJavaSwitchCase(javaDefaultSwitchCase, data)
-
-    fun visitJavaLabelSwitchCase(javaLabelSwitchCase: JKJavaLabelSwitchCase, data: D): R = visitJavaSwitchCase(javaLabelSwitchCase, data)
-    fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement, data: D): R = visitStatement(javaContinueStatement, data)
-    fun visitJavaSynchronizedStatement(javaSynchronizedStatement: JKJavaSynchronizedStatement, data: D): R =
-        visitStatement(javaSynchronizedStatement, data)
-
-    fun visitJavaAnnotationMethod(javaAnnotationMethod: JKJavaAnnotationMethod, data: D): R = visitMethod(javaAnnotationMethod, data)
-    fun visitJavaStaticInitDeclaration(javaStaticInitDeclaration: JKJavaStaticInitDeclaration, data: D): R =
-        visitDeclaration(javaStaticInitDeclaration, data)
-
-    fun visitKtGetterOrSetter(ktGetterOrSetter: JKKtGetterOrSetter, data: D): R = visitTreeElement(ktGetterOrSetter, data)
-    fun visitKtEmptyGetterOrSetter(ktEmptyGetterOrSetter: JKKtEmptyGetterOrSetter, data: D): R =
-        visitKtGetterOrSetter(ktEmptyGetterOrSetter, data)
-
-    fun visitKtProperty(ktProperty: JKKtProperty, data: D): R = visitField(ktProperty, data)
-    fun visitKtFunction(ktFunction: JKKtFunction, data: D): R = visitMethod(ktFunction, data)
-    fun visitKtConstructor(ktConstructor: JKKtConstructor, data: D): R = visitMethod(ktConstructor, data)
-    fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor, data: D): R = visitKtConstructor(ktPrimaryConstructor, data)
-    fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement, data: D): R = visitStatement(ktAssignmentStatement, data)
-    fun visitKtCall(ktCall: JKKtCall, data: D): R = visitMethodCallExpression(ktCall, data)
-    fun visitKtMethodCallExpression(ktMethodCallExpression: JKKtMethodCallExpression, data: D): R =
-        visitMethodCallExpression(ktMethodCallExpression, data)
-
-    fun visitKtAlsoCallExpression(ktAlsoCallExpression: JKKtAlsoCallExpression, data: D): R =
-        visitKtMethodCallExpression(ktAlsoCallExpression, data)
-
-    fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression, data: D): R = visitLiteralExpression(ktLiteralExpression, data)
-    fun visitKtWhenStatement(ktWhenStatement: JKKtWhenStatement, data: D): R = visitStatement(ktWhenStatement, data)
-    fun visitKtWhenCase(ktWhenCase: JKKtWhenCase, data: D): R = visitTreeElement(ktWhenCase, data)
-    fun visitKtWhenLabel(ktWhenLabel: JKKtWhenLabel, data: D): R = visitTreeElement(ktWhenLabel, data)
-    fun visitKtElseWhenLabel(ktElseWhenLabel: JKKtElseWhenLabel, data: D): R = visitKtWhenLabel(ktElseWhenLabel, data)
-    fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel, data: D): R = visitKtWhenLabel(ktValueWhenLabel, data)
-    fun visitKtIsExpression(ktIsExpression: JKKtIsExpression, data: D): R = visitExpression(ktIsExpression, data)
-    fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration, data: D): R = visitDeclaration(ktInitDeclaration, data)
-    fun visitKtConvertedFromForLoopSyntheticWhileStatement(
-        ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement,
-        data: D
-    ): R = visitStatement(ktConvertedFromForLoopSyntheticWhileStatement, data)
-
-    fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression, data: D): R = visitExpression(ktThrowExpression, data)
-    fun visitKtTryExpression(ktTryExpression: JKKtTryExpression, data: D): R = visitExpression(ktTryExpression, data)
-    fun visitKtTryCatchSection(ktTryCatchSection: JKKtTryCatchSection, data: D): R = visitTreeElement(ktTryCatchSection, data)
-    fun visitKtAnnotationArrayInitializerExpression(
-        ktAnnotationArrayInitializerExpression: JKKtAnnotationArrayInitializerExpression,
-        data: D
-    ): R = visitExpression(ktAnnotationArrayInitializerExpression, data)
+abstract class JKVisitor {
+    abstract fun visitTreeElement(treeElement: JKTreeElement) 
+    open fun visitTreeRoot(treeRoot: JKTreeRoot) = visitTreeElement(treeRoot)
+    open fun visitDeclaration(declaration: JKDeclaration) = visitTreeElement(declaration)
+    open fun visitImportStatement(importStatement: JKImportStatement) = visitTreeElement(importStatement)
+    open fun visitImportList(importList: JKImportList) = visitTreeElement(importList)
+    open fun visitFile(file: JKFile) = visitTreeElement(file)
+    open fun visitClass(klass: JKClass) = visitDeclaration(klass)
+    open fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo) = visitTreeElement(inheritanceInfo)
+    open fun visitAnnotationList(annotationList: JKAnnotationList) = visitTreeElement(annotationList)
+    open fun visitAnnotation(annotation: JKAnnotation) = visitAnnotationMemberValue(annotation)
+    open fun visitAnnotationParameter(annotationParameter: JKAnnotationParameter) = visitTreeElement(annotationParameter)
+    open fun visitAnnotationNameParameter(annotationNameParameter: JKAnnotationNameParameter) = visitAnnotationParameter(annotationNameParameter)
+    open fun visitAnnotationListOwner(annotationListOwner: JKAnnotationListOwner) = visitTreeElement(annotationListOwner)
+    open fun visitMethod(method: JKMethod) = visitDeclaration(method)
+    open fun visitVariable(variable: JKVariable) = visitDeclaration(variable)
+    open fun visitForLoopVariable(forLoopVariable: JKForLoopVariable) = visitVariable(forLoopVariable)
+    open fun visitLocalVariable(localVariable: JKLocalVariable) = visitVariable(localVariable)
+    open fun visitModifierElement(modifierElement: JKModifierElement) = visitTreeElement(modifierElement)
+    open fun visitMutabilityModifierElement(mutabilityModifierElement: JKMutabilityModifierElement) = visitModifierElement(mutabilityModifierElement)
+    open fun visitModalityModifierElement(modalityModifierElement: JKModalityModifierElement) = visitModifierElement(modalityModifierElement)
+    open fun visitVisibilityModifierElement(visibilityModifierElement: JKVisibilityModifierElement) = visitModifierElement(visibilityModifierElement)
+    open fun visitOtherModifierElement(otherModifierElement: JKOtherModifierElement) = visitModifierElement(otherModifierElement)
+    open fun visitOtherModifiersOwner(otherModifiersOwner: JKOtherModifiersOwner) = visitModifiersListOwner(otherModifiersOwner)
+    open fun visitVisibilityOwner(visibilityOwner: JKVisibilityOwner) = visitModifiersListOwner(visibilityOwner)
+    open fun visitModalityOwner(modalityOwner: JKModalityOwner) = visitModifiersListOwner(modalityOwner)
+    open fun visitMutabilityOwner(mutabilityOwner: JKMutabilityOwner) = visitModifiersListOwner(mutabilityOwner)
+    open fun visitModifiersListOwner(modifiersListOwner: JKModifiersListOwner) = visitTreeElement(modifiersListOwner)
+    open fun visitTypeElement(typeElement: JKTypeElement) = visitTreeElement(typeElement)
+    open fun visitStatement(statement: JKStatement) = visitTreeElement(statement)
+    open fun visitBlock(block: JKBlock) = visitTreeElement(block)
+    open fun visitBodyStub(bodyStub: JKBodyStub) = visitBlock(bodyStub)
+    open fun visitIdentifier(identifier: JKIdentifier) = visitTreeElement(identifier)
+    open fun visitNameIdentifier(nameIdentifier: JKNameIdentifier) = visitIdentifier(nameIdentifier)
+    open fun visitExpression(expression: JKExpression) = visitTreeElement(expression)
+    open fun visitMethodReferenceExpression(methodReferenceExpression: JKMethodReferenceExpression) = visitExpression(methodReferenceExpression)
+    open fun visitExpressionStatement(expressionStatement: JKExpressionStatement) = visitStatement(expressionStatement)
+    open fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement) = visitStatement(declarationStatement)
+    open fun visitOperatorExpression(operatorExpression: JKOperatorExpression) = visitExpression(operatorExpression)
+    open fun visitBinaryExpression(binaryExpression: JKBinaryExpression) = visitOperatorExpression(binaryExpression)
+    open fun visitUnaryExpression(unaryExpression: JKUnaryExpression) = visitOperatorExpression(unaryExpression)
+    open fun visitPrefixExpression(prefixExpression: JKPrefixExpression) = visitUnaryExpression(prefixExpression)
+    open fun visitPostfixExpression(postfixExpression: JKPostfixExpression) = visitUnaryExpression(postfixExpression)
+    open fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression) = visitExpression(qualifiedExpression)
+    open fun visitTypeArgumentList(typeArgumentList: JKTypeArgumentList) = visitTreeElement(typeArgumentList)
+    open fun visitTypeArgumentListOwner(typeArgumentListOwner: JKTypeArgumentListOwner) = visitTreeElement(typeArgumentListOwner)
+    open fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) = visitExpression(methodCallExpression)
+    open fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) = visitAssignableExpression(fieldAccessExpression)
+    open fun visitPackageAccessExpression(packageAccessExpression: JKPackageAccessExpression) = visitAssignableExpression(packageAccessExpression)
+    open fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) = visitExpression(classAccessExpression)
+    open fun visitArrayAccessExpression(arrayAccessExpression: JKArrayAccessExpression) = visitAssignableExpression(arrayAccessExpression)
+    open fun visitParenthesizedExpression(parenthesizedExpression: JKParenthesizedExpression) = visitExpression(parenthesizedExpression)
+    open fun visitTypeCastExpression(typeCastExpression: JKTypeCastExpression) = visitExpression(typeCastExpression)
+    open fun visitExpressionList(expressionList: JKExpressionList) = visitTreeElement(expressionList)
+    open fun visitArgument(argument: JKArgument) = visitTreeElement(argument)
+    open fun visitNamedArgument(namedArgument: JKNamedArgument) = visitArgument(namedArgument)
+    open fun visitArgumentList(argumentList: JKArgumentList) = visitTreeElement(argumentList)
+    open fun visitLiteralExpression(literalExpression: JKLiteralExpression) = visitExpression(literalExpression)
+    open fun visitParameter(parameter: JKParameter) = visitVariable(parameter)
+    open fun visitStringLiteralExpression(stringLiteralExpression: JKStringLiteralExpression) = visitLiteralExpression(stringLiteralExpression)
+    open fun visitStubExpression(stubExpression: JKStubExpression) = visitExpression(stubExpression)
+    open fun visitLoopStatement(loopStatement: JKLoopStatement) = visitStatement(loopStatement)
+    open fun visitBlockStatement(blockStatement: JKBlockStatement) = visitStatement(blockStatement)
+    open fun visitBlockStatementWithoutBrackets(blockStatementWithoutBrackets: JKBlockStatementWithoutBrackets) = visitStatement(blockStatementWithoutBrackets)
+    open fun visitThisExpression(thisExpression: JKThisExpression) = visitExpression(thisExpression)
+    open fun visitSuperExpression(superExpression: JKSuperExpression) = visitExpression(superExpression)
+    open fun visitWhileStatement(whileStatement: JKWhileStatement) = visitLoopStatement(whileStatement)
+    open fun visitDoWhileStatement(doWhileStatement: JKDoWhileStatement) = visitLoopStatement(doWhileStatement)
+    open fun visitBreakStatement(breakStatement: JKBreakStatement) = visitStatement(breakStatement)
+    open fun visitBreakWithLabelStatement(breakWithLabelStatement: JKBreakWithLabelStatement) = visitBreakStatement(breakWithLabelStatement)
+    open fun visitIfStatement(ifStatement: JKIfStatement) = visitStatement(ifStatement)
+    open fun visitIfElseStatement(ifElseStatement: JKIfElseStatement) = visitIfStatement(ifElseStatement)
+    open fun visitIfElseExpression(ifElseExpression: JKIfElseExpression) = visitExpression(ifElseExpression)
+    open fun visitAssignableExpression(assignableExpression: JKAssignableExpression) = visitExpression(assignableExpression)
+    open fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) = visitExpression(lambdaExpression)
+    open fun visitDelegationConstructorCall(delegationConstructorCall: JKDelegationConstructorCall) = visitMethodCallExpression(delegationConstructorCall)
+    open fun visitLabel(label: JKLabel) = visitTreeElement(label)
+    open fun visitLabelEmpty(labelEmpty: JKLabelEmpty) = visitLabel(labelEmpty)
+    open fun visitLabelText(labelText: JKLabelText) = visitLabel(labelText)
+    open fun visitContinueStatement(continueStatement: JKContinueStatement) = visitStatement(continueStatement)
+    open fun visitLabeledStatement(labeledStatement: JKLabeledStatement) = visitExpression(labeledStatement)
+    open fun visitEmptyStatement(emptyStatement: JKEmptyStatement) = visitStatement(emptyStatement)
+    open fun visitTypeParameterList(typeParameterList: JKTypeParameterList) = visitTreeElement(typeParameterList)
+    open fun visitTypeParameter(typeParameter: JKTypeParameter) = visitTreeElement(typeParameter)
+    open fun visitTypeParameterListOwner(typeParameterListOwner: JKTypeParameterListOwner) = visitTreeElement(typeParameterListOwner)
+    open fun visitEnumConstant(enumConstant: JKEnumConstant) = visitVariable(enumConstant)
+    open fun visitForInStatement(forInStatement: JKForInStatement) = visitStatement(forInStatement)
+    open fun visitPackageDeclaration(packageDeclaration: JKPackageDeclaration) = visitDeclaration(packageDeclaration)
+    open fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) = visitExpression(classLiteralExpression)
+    open fun visitAnnotationMemberValue(annotationMemberValue: JKAnnotationMemberValue) = visitTreeElement(annotationMemberValue)
+    open fun visitField(field: JKField) = visitVariable(field)
+    open fun visitJavaField(javaField: JKJavaField) = visitField(javaField)
+    open fun visitJavaMethod(javaMethod: JKJavaMethod) = visitMethod(javaMethod)
+    open fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression) = visitMethodCallExpression(javaMethodCallExpression)
+    open fun visitClassBody(classBody: JKClassBody) = visitTreeElement(classBody)
+    open fun visitEmptyClassBody(emptyClassBody: JKEmptyClassBody) = visitClassBody(emptyClassBody)
+    open fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) = visitExpression(javaNewExpression)
+    open fun visitJavaDefaultNewExpression(javaDefaultNewExpression: JKJavaDefaultNewExpression) = visitExpression(javaDefaultNewExpression)
+    open fun visitJavaNewEmptyArray(javaNewEmptyArray: JKJavaNewEmptyArray) = visitExpression(javaNewEmptyArray)
+    open fun visitJavaNewArray(javaNewArray: JKJavaNewArray) = visitExpression(javaNewArray)
+    open fun visitJavaLiteralExpression(javaLiteralExpression: JKJavaLiteralExpression) = visitLiteralExpression(javaLiteralExpression)
+    open fun visitReturnStatement(returnStatement: JKReturnStatement) = visitStatement(returnStatement)
+    open fun visitJavaAssertStatement(javaAssertStatement: JKJavaAssertStatement) = visitStatement(javaAssertStatement)
+    open fun visitJavaForLoopStatement(javaForLoopStatement: JKJavaForLoopStatement) = visitLoopStatement(javaForLoopStatement)
+    open fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression) = visitExpression(javaPolyadicExpression)
+    open fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression) = visitExpression(javaAssignmentExpression)
+    open fun visitJavaThrowStatement(javaThrowStatement: JKJavaThrowStatement) = visitStatement(javaThrowStatement)
+    open fun visitJavaTryStatement(javaTryStatement: JKJavaTryStatement) = visitStatement(javaTryStatement)
+    open fun visitJavaTryCatchSection(javaTryCatchSection: JKJavaTryCatchSection) = visitTreeElement(javaTryCatchSection)
+    open fun visitJavaSwitchStatement(javaSwitchStatement: JKJavaSwitchStatement) = visitStatement(javaSwitchStatement)
+    open fun visitJavaSwitchCase(javaSwitchCase: JKJavaSwitchCase) = visitTreeElement(javaSwitchCase)
+    open fun visitJavaDefaultSwitchCase(javaDefaultSwitchCase: JKJavaDefaultSwitchCase) = visitJavaSwitchCase(javaDefaultSwitchCase)
+    open fun visitJavaLabelSwitchCase(javaLabelSwitchCase: JKJavaLabelSwitchCase) = visitJavaSwitchCase(javaLabelSwitchCase)
+    open fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement) = visitStatement(javaContinueStatement)
+    open fun visitJavaSynchronizedStatement(javaSynchronizedStatement: JKJavaSynchronizedStatement) = visitStatement(javaSynchronizedStatement)
+    open fun visitJavaAnnotationMethod(javaAnnotationMethod: JKJavaAnnotationMethod) = visitMethod(javaAnnotationMethod)
+    open fun visitJavaStaticInitDeclaration(javaStaticInitDeclaration: JKJavaStaticInitDeclaration) = visitDeclaration(javaStaticInitDeclaration)
+    open fun visitKtGetterOrSetter(ktGetterOrSetter: JKKtGetterOrSetter) = visitTreeElement(ktGetterOrSetter)
+    open fun visitKtEmptyGetterOrSetter(ktEmptyGetterOrSetter: JKKtEmptyGetterOrSetter) = visitKtGetterOrSetter(ktEmptyGetterOrSetter)
+    open fun visitKtProperty(ktProperty: JKKtProperty) = visitField(ktProperty)
+    open fun visitKtFunction(ktFunction: JKKtFunction) = visitMethod(ktFunction)
+    open fun visitKtConstructor(ktConstructor: JKKtConstructor) = visitMethod(ktConstructor)
+    open fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) = visitKtConstructor(ktPrimaryConstructor)
+    open fun visitKtAssignmentStatement(ktAssignmentStatement: JKKtAssignmentStatement) = visitStatement(ktAssignmentStatement)
+    open fun visitKtCall(ktCall: JKKtCall) = visitMethodCallExpression(ktCall)
+    open fun visitKtMethodCallExpression(ktMethodCallExpression: JKKtMethodCallExpression) = visitMethodCallExpression(ktMethodCallExpression)
+    open fun visitKtAlsoCallExpression(ktAlsoCallExpression: JKKtAlsoCallExpression) = visitKtMethodCallExpression(ktAlsoCallExpression)
+    open fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression) = visitLiteralExpression(ktLiteralExpression)
+    open fun visitKtWhenStatement(ktWhenStatement: JKKtWhenStatement) = visitStatement(ktWhenStatement)
+    open fun visitKtWhenCase(ktWhenCase: JKKtWhenCase) = visitTreeElement(ktWhenCase)
+    open fun visitKtWhenLabel(ktWhenLabel: JKKtWhenLabel) = visitTreeElement(ktWhenLabel)
+    open fun visitKtElseWhenLabel(ktElseWhenLabel: JKKtElseWhenLabel) = visitKtWhenLabel(ktElseWhenLabel)
+    open fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel) = visitKtWhenLabel(ktValueWhenLabel)
+    open fun visitKtIsExpression(ktIsExpression: JKKtIsExpression) = visitExpression(ktIsExpression)
+    open fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration) = visitDeclaration(ktInitDeclaration)
+    open fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement) = visitStatement(ktConvertedFromForLoopSyntheticWhileStatement)
+    open fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression) = visitExpression(ktThrowExpression)
+    open fun visitKtTryExpression(ktTryExpression: JKKtTryExpression) = visitExpression(ktTryExpression)
+    open fun visitKtTryCatchSection(ktTryCatchSection: JKKtTryCatchSection) = visitTreeElement(ktTryCatchSection)
+    open fun visitKtAnnotationArrayInitializerExpression(ktAnnotationArrayInitializerExpression: JKKtAnnotationArrayInitializerExpression) = visitExpression(ktAnnotationArrayInitializerExpression)
 }

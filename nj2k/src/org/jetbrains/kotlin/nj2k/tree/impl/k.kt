@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.nj2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -30,12 +31,12 @@ class JKKtPropertyImpl(
     getter: JKKtGetterOrSetter,
     setter: JKKtGetterOrSetter,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement,
     mutabilityElement: JKMutabilityModifierElement
 ) : JKKtProperty(), PsiOwner by PsiOwnerImpl() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtProperty(this)
 
     override var annotationList: JKAnnotationList by child(annotationList)
     override var type by child(type)
@@ -44,7 +45,7 @@ class JKKtPropertyImpl(
     override var getter: JKKtGetterOrSetter by child(getter)
     override var setter: JKKtGetterOrSetter by child(setter)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
     override var mutabilityElement by child(mutabilityElement)
@@ -59,11 +60,11 @@ class JKKtFunctionImpl(
     block: JKBlock,
     typeParameterList: JKTypeParameterList,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKKtFunction(), PsiOwner by PsiOwnerImpl() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtFunction(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtFunction(this)
 
     override var returnType: JKTypeElement by child(returnType)
     override var name: JKNameIdentifier by child(name)
@@ -73,7 +74,7 @@ class JKKtFunctionImpl(
     override var annotationList: JKAnnotationList by child(annotationList)
 
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 }
@@ -88,7 +89,7 @@ class JKKtCallExpressionImpl(
     arguments: JKArgumentList,
     typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
 ) : JKKtMethodCallExpression, JKBranchElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtMethodCallExpression(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtMethodCallExpression(this)
 
     override var arguments: JKArgumentList by child(arguments)
     override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
@@ -99,7 +100,7 @@ class JKKtLiteralExpressionImpl(
     override val type: JKLiteralExpression.LiteralType
 ) : JKKtLiteralExpression,
     JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtLiteralExpression(this)
 }
 
 class JKKtSingleValueOperatorToken(val psiToken: KtSingleValueToken) : JKKtOperatorToken {
@@ -141,7 +142,7 @@ class JKKtAlsoCallExpressionImpl(
     override val identifier: JKMethodSymbol,
     typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
 ) : JKKtAlsoCallExpression, JKBranchElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAlsoCallExpression(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtAlsoCallExpression(this)
     override var statement
         get() = arguments.arguments.first().value.cast<JKLambdaExpressionImpl>().statement
         set(it) {
@@ -162,7 +163,7 @@ class JKKtAssignmentStatementImpl(
 ) : JKKtAssignmentStatement() {
     override var field: JKAssignableExpression by child(field)
     override var expression by child(expression)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAssignmentStatement(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtAssignmentStatement(this)
 
     override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
 }
@@ -178,7 +179,7 @@ class JKKtConstructorImpl(
     block: JKBlock,
     delegationCall: JKExpression,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKKtConstructor() {
@@ -191,11 +192,11 @@ class JKKtConstructorImpl(
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
     override var annotationList: JKAnnotationList by child(annotationList)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtConstructor(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtConstructor(this)
 }
 
 class JKKtPrimaryConstructorImpl(
@@ -203,7 +204,7 @@ class JKKtPrimaryConstructorImpl(
     parameters: List<JKParameter>,
     delegationCall: JKExpression,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKKtPrimaryConstructor() {
@@ -216,11 +217,11 @@ class JKKtPrimaryConstructorImpl(
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
     override var annotationList: JKAnnotationList by child(annotationList)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtPrimaryConstructor(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtPrimaryConstructor(this)
 }
 
 class JKKtWhenStatementImpl(
@@ -229,23 +230,23 @@ class JKKtWhenStatementImpl(
 ) : JKKtWhenStatement() {
     override var expression: JKExpression by child(expression)
     override var cases: List<JKKtWhenCase> by children(cases)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtWhenStatement(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtWhenStatement(this)
 }
 
 class JKKtWhenCaseImpl(labels: List<JKKtWhenLabel>, statement: JKStatement) : JKKtWhenCase, JKBranchElementBase() {
     override var labels: List<JKKtWhenLabel> by children(labels)
     override var statement: JKStatement by child(statement)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtWhenCase(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtWhenCase(this)
 
 }
 
 class JKKtElseWhenLabelImpl : JKKtElseWhenLabel, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtElseWhenLabel(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtElseWhenLabel(this)
 }
 
 class JKKtValueWhenLabelImpl(expression: JKExpression) : JKKtValueWhenLabel, JKBranchElementBase() {
     override var expression: JKExpression by child(expression)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtValueWhenLabel(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtValueWhenLabel(this)
 }
 
 
@@ -254,12 +255,13 @@ class JKKtIsExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKKt
     override var type by child(type)
     override var expression by child(expression)
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtIsExpression(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtIsExpression(this)
 }
 
 class JKKtInitDeclarationImpl(block: JKBlock) : JKKtInitDeclaration() {
     override var block: JKBlock by child(block)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtInitDeclaration(this, data)
+    override val name: JKNameIdentifier by child(JKNameIdentifierImpl("<name>"))
+    override fun accept(visitor: JKVisitor) = visitor.visitKtInitDeclaration(this)
 }
 
 
@@ -269,13 +271,13 @@ class JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
 ) : JKKtConvertedFromForLoopSyntheticWhileStatement(), PsiOwner by PsiOwnerImpl() {
     override var variableDeclaration: JKStatement by child(variableDeclaration)
     override var whileStatement: JKWhileStatement by child(whileStatement)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R =
-        visitor.visitKtConvertedFromForLoopSyntheticWhileStatement(this, data)
+    override fun accept(visitor: JKVisitor) =
+        visitor.visitKtConvertedFromForLoopSyntheticWhileStatement(this)
 }
 
 class JKKtThrowExpressionImpl(exception: JKExpression) : JKKtThrowExpression, JKBranchElementBase() {
     override var exception: JKExpression by child(exception)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtThrowExpression(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtThrowExpression(this)
 }
 
 class JKKtTryExpressionImpl(
@@ -286,7 +288,7 @@ class JKKtTryExpressionImpl(
     override var tryBlock: JKBlock by child(tryBlock)
     override var finallyBlock: JKBlock by child(finallyBlock)
     override var catchSections: List<JKKtTryCatchSection> by children(catchSections)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtTryExpression(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtTryExpression(this)
 }
 
 class JKKtTryCatchSectionImpl(
@@ -295,7 +297,7 @@ class JKKtTryCatchSectionImpl(
 ) : JKKtTryCatchSection, JKBranchElementBase() {
     override var parameter: JKParameter by child(parameter)
     override var block: JKBlock by child(block)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtTryCatchSection(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtTryCatchSection(this)
 }
 
 class JKKtGetterOrSetterImpl(
@@ -307,7 +309,7 @@ class JKKtGetterOrSetterImpl(
 
     override var visibilityElement by child(visibilityElement)
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtGetterOrSetter(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtGetterOrSetter(this)
 }
 
 class JKKtEmptyGetterOrSetterImpl : JKKtEmptyGetterOrSetter, JKBranchElementBase() {
@@ -317,5 +319,5 @@ class JKKtEmptyGetterOrSetterImpl : JKKtEmptyGetterOrSetter, JKBranchElementBase
 
     override var visibilityElement by child(JKVisibilityModifierElementImpl(Visibility.PUBLIC))
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtEmptyGetterOrSetter(this, data)
+    override fun accept(visitor: JKVisitor) = visitor.visitKtEmptyGetterOrSetter(this)
 }

@@ -22,12 +22,12 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @TestMetadata("idea/testData/scratch")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Compiling extends AbstractScratchRunActionTest {
+    public static class ScratchCompiling extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doCompilingTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doScratchCompilingTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        public void testAllFilesPresentInCompiling() throws Exception {
+        public void testAllFilesPresentInScratchCompiling() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
         }
 
@@ -110,12 +110,12 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @TestMetadata("idea/testData/scratch")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Repl extends AbstractScratchRunActionTest {
+    public static class ScratchRepl extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doReplTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doScratchReplTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        public void testAllFilesPresentInRepl() throws Exception {
+        public void testAllFilesPresentInScratchRepl() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
         }
 
@@ -198,12 +198,12 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @TestMetadata("idea/testData/scratch/multiFile")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class MultiFile extends AbstractScratchRunActionTest {
+    public static class ScratchMultiFile extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doMultiFileTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doScratchMultiFileTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        public void testAllFilesPresentInMultiFile() throws Exception {
+        public void testAllFilesPresentInScratchMultiFile() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
@@ -215,6 +215,65 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("javaDep")
         public void testJavaDep() throws Exception {
             runTest("idea/testData/scratch/multiFile/javaDep/");
+        }
+    }
+
+    @TestMetadata("idea/testData/worksheet")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WorksheetCompiling extends AbstractScratchRunActionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doWorksheetCompilingTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInWorksheetCompiling() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("simpleScriptRuntime.ws.kts")
+        public void testSimpleScriptRuntime() throws Exception {
+            runTest("idea/testData/worksheet/simpleScriptRuntime.ws.kts");
+        }
+    }
+
+    @TestMetadata("idea/testData/worksheet")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WorksheetRepl extends AbstractScratchRunActionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doWorksheetReplTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInWorksheetRepl() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("simpleScriptRuntime.ws.kts")
+        public void testSimpleScriptRuntime() throws Exception {
+            runTest("idea/testData/worksheet/simpleScriptRuntime.ws.kts");
+        }
+    }
+
+    @TestMetadata("idea/testData/worksheet/multiFile")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WorksheetMultiFile extends AbstractScratchRunActionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doWorksheetMultiFileTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInWorksheetMultiFile() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/worksheet/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("inlineFunScriptRuntime")
+        public void testInlineFunScriptRuntime() throws Exception {
+            runTest("idea/testData/worksheet/multiFile/inlineFunScriptRuntime/");
+        }
+
+        @TestMetadata("javaDepScriptRuntime")
+        public void testJavaDepScriptRuntime() throws Exception {
+            runTest("idea/testData/worksheet/multiFile/javaDepScriptRuntime/");
         }
     }
 }

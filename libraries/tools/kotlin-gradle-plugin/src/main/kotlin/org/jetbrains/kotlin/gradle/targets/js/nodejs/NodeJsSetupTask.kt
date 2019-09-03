@@ -7,11 +7,12 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.utils.patternLayoutCompatible
 import java.io.File
 import java.net.URI
 
 open class NodeJsSetupTask : DefaultTask() {
-    private val settings = project.nodeJs.root
+    private val settings get() = NodeJsRootPlugin.apply(project.rootProject)
     private val env by lazy { settings.environment }
 
     val ivyDependency: String
@@ -21,6 +22,7 @@ open class NodeJsSetupTask : DefaultTask() {
         @OutputDirectory get() = env.nodeDir
 
     init {
+        @Suppress("LeakingThis")
         onlyIf {
             settings.download && !env.nodeBinDir.isDirectory
         }
@@ -34,14 +36,9 @@ open class NodeJsSetupTask : DefaultTask() {
             repo.name = "Node Distributions at ${settings.nodeDownloadBaseUrl}"
             repo.url = URI(settings.nodeDownloadBaseUrl)
 
-            if (isGradleVersionAtLeast(5, 0)) {
-                repo.patternLayout { layout ->
-                    configureNodeJsIvyPatternLayout(layout)
-                }
-            } else {
-                repo.layout("pattern") { layout ->
-                    configureNodeJsIvyPatternLayout(layout as IvyPatternRepositoryLayout)
-                }
+            repo.patternLayoutCompatible {
+                artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                ivy("v[revision]/ivy.xml")
             }
             repo.metadataSources { it.artifact() }
 
@@ -63,11 +60,6 @@ open class NodeJsSetupTask : DefaultTask() {
         if (!env.isWindows) {
             File(env.nodeExecutable).setExecutable(true)
         }
-    }
-
-    private fun configureNodeJsIvyPatternLayout(layout: IvyPatternRepositoryLayout) {
-        layout.artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-        layout.ivy("v[revision]/ivy.xml")
     }
 
     private fun unpackNodeArchive(archive: File, destination: File) {

@@ -1,0 +1,16 @@
+FILE: simpleLazy.kt
+    public final val x: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
+        String(Hello)
+    }
+    )
+        public get(): R|kotlin/String| {
+            ^ D|/x|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/x|)
+        }
+    public final fun foo(): R|kotlin/Unit| {
+        R|/x|.R|kotlin/String.length|
+        lval y: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
+            String(Bye)
+        }
+        )
+        R|<local>/y|.R|kotlin/String.length|
+    }

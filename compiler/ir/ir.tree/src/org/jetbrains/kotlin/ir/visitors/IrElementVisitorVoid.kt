@@ -77,6 +77,9 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitValueParameter(declaration: IrValueParameter) = visitDeclaration(declaration)
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) = visitValueParameter(declaration)
 
+    fun visitTypeAlias(declaration: IrTypeAlias) = visitDeclaration(declaration)
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) = visitTypeAlias(declaration)
+
     fun visitBody(body: IrBody) = visitElement(body)
     override fun visitBody(body: IrBody, data: Nothing?) = visitBody(body)
 
@@ -183,6 +186,9 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) = visitCallableReference(expression)
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?) =
         visitLocalDelegatedPropertyReference(expression)
+
+    fun visitFunctionExpression(expression: IrFunctionExpression) = visitExpression(expression)
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?) = visitFunctionExpression(expression)
 
     fun visitClassReference(expression: IrClassReference) = visitDeclarationReference(expression)
     override fun visitClassReference(expression: IrClassReference, data: Nothing?) = visitClassReference(expression)

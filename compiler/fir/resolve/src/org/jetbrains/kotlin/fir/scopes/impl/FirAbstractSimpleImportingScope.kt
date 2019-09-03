@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
 import org.jetbrains.kotlin.fir.scopes.FirPosition
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -41,10 +41,10 @@ abstract class FirAbstractSimpleImportingScope(session: FirSession) : FirAbstrac
         return true
     }
 
-    override fun <T : ConeCallableSymbol> processCallables(
+    override fun <T : FirCallableSymbol<*>> processCallables(
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (ConeCallableSymbol) -> ProcessorAction
+        processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
 
 

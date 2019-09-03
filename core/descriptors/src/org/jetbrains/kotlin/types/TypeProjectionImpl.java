@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 
 public class TypeProjectionImpl extends TypeProjectionBase {
     private final Variance projection;
@@ -46,5 +48,12 @@ public class TypeProjectionImpl extends TypeProjectionBase {
     @Override
     public boolean isStarProjection() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    @TypeRefinement
+    public TypeProjection refine(@NotNull KotlinTypeRefiner kotlinTypeRefiner) {
+        return new TypeProjectionImpl(projection, kotlinTypeRefiner.refineType(type));
     }
 }

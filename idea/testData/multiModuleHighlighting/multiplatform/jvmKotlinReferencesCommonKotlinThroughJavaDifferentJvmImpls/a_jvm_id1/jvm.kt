@@ -6,6 +6,6 @@ actual class A {
 
 
 fun use() {
-    j2.Use.acceptA(j2.Use.returnA())
-    j2.Use.returnA().id2()
+    j1.Use.acceptA(j1.Use.returnA())
+    j1.Use.returnA().id1()
 }

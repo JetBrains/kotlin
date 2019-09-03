@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 
-class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
+class FirStatusResolveTransformer : FirAbstractTreeTransformer(phase = FirResolvePhase.STATUS) {
     private val declarationsWithStatuses = mutableListOf<FirDeclaration>()
 
     private val classes = mutableListOf<FirRegularClass>()
@@ -33,7 +34,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
         return when (this) {
             is FirEnumEntry -> Modality.FINAL
             is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
-            is FirCallableMemberDeclaration -> {
+            is FirCallableMemberDeclaration<*> -> {
                 val containingClass = classes.lastOrNull()
                 when {
                     containingClass == null -> Modality.FINAL
@@ -43,7 +44,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
                                 Modality.FINAL
                             this is FirNamedFunction && body == null ->
                                 Modality.ABSTRACT
-                            this is FirProperty && initializer == null && getter.body == null && setter?.body == null ->
+                            this is FirProperty && initializer == null && getter?.body == null && setter?.body == null ->
                                 Modality.ABSTRACT
                             else ->
                                 Modality.OPEN
@@ -56,6 +57,13 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
             }
             else -> Modality.FINAL
         }
+    }
+
+    override lateinit var session: FirSession
+
+    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+        session = file.fileSession
+        return super.transformFile(file, data)
     }
 
     override fun transformDeclarationStatus(

@@ -101,6 +101,6 @@ fun box() : String {
             checkContinuation(savedContinuation!!)
         }
     }
-    if (!continuationChanged) return "FAIL 5"
+    if (continuationChanged) return "FAIL 5"
     return "OK"
 }

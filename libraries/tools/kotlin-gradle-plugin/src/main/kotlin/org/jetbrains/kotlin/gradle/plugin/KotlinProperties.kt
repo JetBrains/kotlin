@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import org.jetbrains.kotlin.gradle.plugin.mpp.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -92,6 +93,9 @@ internal class PropertiesProvider(private val project: Project) {
     val enableGranularSourceSetsMetadata: Boolean?
         get() = booleanProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
 
+    val ignoreDisabledNativeTargets: Boolean?
+        get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
+
     /**
      * Enables parallel tasks execution within a project with Workers API.
      * Does not enable using actual worker proccesses
@@ -135,6 +139,18 @@ internal class PropertiesProvider(private val project: Project) {
      */
     val nativeJvmArgs: String?
         get() = propertyWithDeprecatedVariant("kotlin.native.jvmArgs", "org.jetbrains.kotlin.native.jvmArgs")
+
+    /**
+     * Generate kotlin/js external declarations from all .d.ts files found in npm modules
+     */
+    val jsGenerateExternals: Boolean?
+        get() = booleanProperty("kotlin.js.experimental.generateKotlinExternals")
+
+    /**
+     * Automaticaly discover external .d.ts declarations
+     */
+    val jsDiscoverTypes: Boolean?
+        get() = booleanProperty("kotlin.js.experimental.discoverTypes")
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)

@@ -184,7 +184,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
              (K2JSCompilerArguments) Kotlin2JsCompilerArgumentsHolder.Companion.getInstance(project).getSettings().unfrozen(),
              (K2JVMCompilerArguments) Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(project).getSettings().unfrozen(),
              (CompilerSettings) KotlinCompilerSettings.Companion.getInstance(project).getSettings().unfrozen(),
-             ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
+             KotlinCompilerWorkspaceSettings.getInstance(project),
              true,
              false);
     }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
@@ -37,17 +38,24 @@ class FirMemberPropertyImpl(
     returnTypeRef: FirTypeRef,
     override val isVar: Boolean,
     override var initializer: FirExpression?,
-    override var getter: FirPropertyAccessor,
-    override var setter: FirPropertyAccessor?,
     override var delegate: FirExpression?
-) : FirAbstractCallableMember(
+) : FirAbstractCallableMember<FirProperty>(
     session, psi, name, visibility, modality, isExpect, isActual, isOverride, receiverTypeRef, returnTypeRef
-), FirProperty {
+), FirProperty, FirModifiableAccessorsOwner {
+    // TODO: backing field may not exist
     override val backingFieldSymbol = FirBackingFieldSymbol(symbol.callableId)
+
+    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>? =
+        delegate?.let { FirDelegateFieldSymbol(symbol.callableId) }
+
+    override var getter: FirPropertyAccessor? = null
+
+    override var setter: FirPropertyAccessor? = null
 
     init {
         symbol.bind(this)
         backingFieldSymbol.bind(this)
+        delegateFieldSymbol?.bind(this)
         status.isConst = isConst
         status.isLateInit = isLateInit
     }
@@ -63,7 +71,7 @@ class FirMemberPropertyImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        getter = getter.transformSingle(transformer, data)
+        getter = getter?.transformSingle(transformer, data)
         setter = setter?.transformSingle(transformer, data)
         transformChildrenWithoutAccessors(transformer, data)
         // Everything other (annotations, etc.) is done above

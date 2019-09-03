@@ -48,9 +48,7 @@ abstract class IrLazyDeclarationBase(
     }
 
     override val annotations: MutableList<IrConstructorCall> by lazy {
-        descriptor.annotations.map {
-            typeTranslator.constantValueGenerator.generateAnnotationConstructorCall(it)
-        }.toMutableList()
+        descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
 
     override var metadata: Nothing?

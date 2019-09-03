@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -198,6 +199,14 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
 val IrFunction.explicitParameters: List<IrValueParameter>
     get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters)
 
+val IrBody.statements: List<IrStatement>
+    get() = when (this) {
+        is IrBlockBody -> statements
+        is IrExpressionBody -> listOf(expression)
+        is IrSyntheticBody -> error("Synthetic body contains no statements: $this")
+        else -> error("Unknown subclass of IrBody: $this")
+    }
+
 val IrClass.defaultType: IrSimpleType
     get() = this.thisReceiver!!.type as IrSimpleType
 
@@ -303,6 +312,17 @@ val IrDeclarationWithName.fqNameWhenAvailable: FqName?
     }
 
 val IrDeclaration.parentAsClass get() = parent as IrClass
+
+fun IrClass.isLocalClass(): Boolean {
+    var current: IrDeclarationParent? = this
+    while (current != null && current !is IrPackageFragment) {
+        if (current is IrDeclarationWithVisibility && current.visibility == Visibilities.LOCAL)
+            return true
+        current = (current as? IrDeclaration)?.parent
+    }
+
+    return false
+}
 
 tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     if (this is IrPackageFragment) return this

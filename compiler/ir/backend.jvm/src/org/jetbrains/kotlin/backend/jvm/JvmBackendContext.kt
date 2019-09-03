@@ -8,25 +8,27 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.coroutines.coroutinesJvmInternalPackageFqName
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 class JvmBackendContext(
     val state: GenerationState,
@@ -41,10 +43,29 @@ class JvmBackendContext(
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(state)
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
 
+    val typeMapper = IrTypeMapper(this)
+
     private val symbolTable = symbolTable.lazyWrapper
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
     val irIntrinsics = IrIntrinsicMethods(irBuiltIns, ir.symbols)
+
+    // TODO: also store info for EnclosingMethod
+    internal class LocalClassInfo(val internalName: String)
+
+    private val localClassInfo = mutableMapOf<IrAttributeContainer, LocalClassInfo>()
+
+    internal fun getLocalClassInfo(container: IrAttributeContainer): LocalClassInfo? =
+        localClassInfo[container.attributeOwnerId]
+
+    internal fun putLocalClassInfo(container: IrAttributeContainer, value: LocalClassInfo) {
+        localClassInfo[container.attributeOwnerId] = value
+    }
+
+    internal val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
+
+    internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
+    internal val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
 
     override var inVerbosePhase: Boolean = false
 
@@ -55,6 +76,8 @@ class JvmBackendContext(
     val suspendFunctionContinuations = mutableMapOf<IrFunction, IrClass>()
     val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrClass, IrFunction>()
     val continuationClassBuilders = mutableMapOf<IrClass, ClassBuilder>()
+
+    val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
 
     internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
         val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
@@ -80,6 +103,10 @@ class JvmBackendContext(
         symbolTable: ReferenceSymbolTable
     ) : Ir<JvmBackendContext>(this, irModuleFragment) {
         override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable, firMode)
+
+        override fun unfoldInlineClassType(irType: IrType): IrType? {
+            return InlineClassAbi.unboxType(irType)
+        }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }

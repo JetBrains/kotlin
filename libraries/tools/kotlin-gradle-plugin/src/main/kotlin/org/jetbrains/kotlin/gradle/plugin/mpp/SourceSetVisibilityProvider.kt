@@ -15,43 +15,29 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 
-internal data class DependencySourceSetVisibilityResult(
-    val sourceSetsVisibleByThisSourceSet: Set<String>,
-    val sourceSetsVisibleThroughDependsOn: Set<String>
-)
-
 internal class SourceSetVisibilityProvider(
     private val project: Project
 ) {
-    fun getVisibleSourceSets(
+    /**
+     * Determine which source sets of the [resolvedMppDependency] are visible in the [visibleFrom] source set.
+     *
+     * This requires resolving dependencies of the compilations which [visibleFrom] takes part in, in order to find which variants the
+     * [resolvedMppDependency] got resolved to for those compilations. The [resolvedMppDependency] should therefore be the dependency
+     * on the 'root' module of the MPP (such as 'com.example:lib-foo', not 'com.example:lib-foo-metadata').
+     *
+     * Once the variants are known, they are checked against the [dependencyProjectStructureMetadata], and the
+     * source sets of the dependency are determined that are compiled for all those variants and thus should be visible here.
+     *
+     * If the [resolvedMppDependency] is a project dependency, its project should be passed as [resolvedToOtherProject], as
+     * the Gradle API for dependency variants behaves differently for project dependencies and published ones.
+     */
+    @Suppress("UnstableApiUsage")
+    fun getVisibleSourceSetNames(
         visibleFrom: KotlinSourceSet,
         dependencyScopes: Iterable<KotlinDependencyScope>,
         resolvedMppDependency: ResolvedDependency,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
         resolvedToOtherProject: Project?
-    ): DependencySourceSetVisibilityResult {
-        val visibleByThisSourceSet =
-            getVisibleSourceSetsImpl(
-                visibleFrom, dependencyScopes, resolvedMppDependency, dependencyProjectStructureMetadata, resolvedToOtherProject
-            )
-
-        val visibleByParents = visibleFrom.dependsOn
-            .flatMapTo(mutableSetOf()) {
-                getVisibleSourceSetsImpl(
-                    it, dependencyScopes, resolvedMppDependency, dependencyProjectStructureMetadata, resolvedToOtherProject
-                )
-            }
-
-        return DependencySourceSetVisibilityResult(visibleByThisSourceSet, visibleByParents)
-    }
-
-    @Suppress("UnstableApiUsage")
-    private fun getVisibleSourceSetsImpl(
-        visibleFrom: KotlinSourceSet,
-        dependencyScopes: Iterable<KotlinDependencyScope>,
-        mppDependency: ResolvedDependency,
-        dependencyProjectMetadata: KotlinProjectStructureMetadata,
-        otherProject: Project?
     ): Set<String> {
         val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(visibleFrom)
 
@@ -66,7 +52,8 @@ internal class SourceSetVisibilityProvider(
                         // Resolve the configuration but don't trigger artifacts download, only download component metadata:
                         configuration.incoming.resolutionResult.allComponents
                             .find {
-                                it.moduleVersion?.group == mppDependency.moduleGroup && it.moduleVersion?.name == mppDependency.moduleName
+                                it.moduleVersion?.group == resolvedMppDependency.moduleGroup &&
+                                        it.moduleVersion?.name == resolvedMppDependency.moduleName
                             }
                             ?.variant?.displayName
                     }
@@ -76,15 +63,15 @@ internal class SourceSetVisibilityProvider(
             return emptySet()
         }
 
-        if (otherProject != null) {
-            val publishedVariants = getPublishedPlatformCompilations(otherProject).keys
+        if (resolvedToOtherProject != null) {
+            val publishedVariants = getPublishedPlatformCompilations(resolvedToOtherProject).keys
 
             visiblePlatformVariantNames = visiblePlatformVariantNames.mapTo(mutableSetOf()) { configurationName ->
                 publishedVariants.first { it.dependencyConfigurationName == configurationName }.name
             }
         }
 
-        return dependencyProjectMetadata.sourceSetNamesByVariantName
+        return dependencyProjectStructureMetadata.sourceSetNamesByVariantName
             .filterKeys { it in visiblePlatformVariantNames }
             .values.let { if (it.isEmpty()) emptySet() else it.reduce { acc, item -> acc intersect item } }
     }

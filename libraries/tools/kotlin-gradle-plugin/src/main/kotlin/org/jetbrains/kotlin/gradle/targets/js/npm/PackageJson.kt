@@ -31,6 +31,9 @@ class PackageJson(
 
     val devDependencies = mutableMapOf<String, String>()
     val dependencies = mutableMapOf<String, String>()
+    val peerDependencies = mutableMapOf<String, String>()
+    val optionalDependencies = mutableMapOf<String, String>()
+    val bundledDependencies = mutableListOf<String>()
 
     companion object {
         fun scopedName(name: String): ScopedName = if (name.contains("/")) ScopedName(

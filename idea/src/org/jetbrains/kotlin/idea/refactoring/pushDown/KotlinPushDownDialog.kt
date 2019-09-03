@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.pushDown
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNamedElement
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.classMembers.*
 import com.intellij.refactoring.ui.RefactoringDialog
@@ -106,7 +106,7 @@ class KotlinPushDownDialog(
     override fun doAction() {
         if (!isOKActionEnabled) return
 
-        JavaRefactoringSettings.getInstance().PUSH_DOWN_PREVIEW_USAGES = isPreviewUsages
+        KotlinRefactoringSettings.instance.PUSH_DOWN_PREVIEW_USAGES = isPreviewUsages
 
         invokeRefactoring(KotlinPushDownProcessor(project, sourceClass, selectedMemberInfos))
     }

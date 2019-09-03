@@ -42,7 +42,9 @@ class KotlinBytecodeDecompilerTask(val file: KtFile) : Task.Backgroundable(file.
                 if (!file.isValid || file.project.isDisposed) return@runWriteAction
 
                 if (decompiledText == null) {
-                    Messages.showErrorDialog("Cannot decompile ${file.name}", "Decompiler error")
+                    ApplicationManager.getApplication().invokeLater {
+                        Messages.showErrorDialog("Cannot decompile ${file.name}", "Decompiler error")
+                    }
                     return@runWriteAction
                 }
 

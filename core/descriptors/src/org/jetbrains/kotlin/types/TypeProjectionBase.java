@@ -46,7 +46,11 @@ public abstract class TypeProjectionBase implements TypeProjection {
     @Override
     public int hashCode() {
         int result = getProjectionKind().hashCode();
-        result = 31 * result + (isStarProjection() ? 17 : getType().hashCode());
+        if (TypeUtils.noExpectedType(getType())) {
+            result = 31 * result +19;
+        } else {
+            result = 31 * result + (isStarProjection() ? 17 : getType().hashCode());
+        }
         return result;
     }
 }

@@ -25,6 +25,10 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
         return type
     }
 
+    open fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
+        return type
+    }
+
     abstract val isErrorTypeEqualsToAnything: Boolean
 
     protected var argumentsDepth = 0
@@ -157,19 +161,21 @@ object AbstractTypeChecker {
 
     fun isSubtypeOf(context: AbstractTypeCheckerContext, subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
         if (subType === superType) return true
-        return context.completeIsSubTypeOf(context.prepareType(subType), context.prepareType(superType))
+        return with(context) { completeIsSubTypeOf(prepareType(refineType(subType)), prepareType(refineType(superType))) }
     }
 
     fun equalTypes(context: AbstractTypeCheckerContext, a: KotlinTypeMarker, b: KotlinTypeMarker): Boolean = with(context) {
         if (a === b) return true
 
         if (isCommonDenotableType(a) && isCommonDenotableType(b)) {
-            val simpleA = a.lowerBoundIfFlexible()
-            if (!areEqualTypeConstructors(a.typeConstructor(), b.typeConstructor())) return false
+            val refinedA = refineType(a)
+            val refinedB = refineType(b)
+            val simpleA = refinedA.lowerBoundIfFlexible()
+            if (!areEqualTypeConstructors(refinedA.typeConstructor(), refinedB.typeConstructor())) return false
             if (simpleA.argumentsCount() == 0) {
-                if (a.hasFlexibleNullability() || b.hasFlexibleNullability()) return true
+                if (refinedA.hasFlexibleNullability() || refinedB.hasFlexibleNullability()) return true
 
-                return simpleA.isMarkedNullable() == b.lowerBoundIfFlexible().isMarkedNullable()
+                return simpleA.isMarkedNullable() == refinedB.lowerBoundIfFlexible().isMarkedNullable()
             }
         }
 

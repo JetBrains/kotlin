@@ -14,9 +14,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 interface FirElement {
     val psi: PsiElement?
 
-    @Deprecated("It's generally better to obtain use-site session from external source")
-    val session: FirSession
-
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitElement(this, data)
 

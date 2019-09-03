@@ -8,7 +8,7 @@ Resolved o.methodWithType()()
 Resolved o.methodWithType()()
 Searched references to GroovyClass
 Searched references to GroovyClass.fieldWithType in non-Java files
-Searched references to GroovyClass.methodWithType in non-Java files
+Searched references to GroovyClass.methodWithType() in non-Java files
 Searched references to JavaWithGroovyInvoke_0
 Searched references to JavaWithGroovyInvoke_0.OtherJavaClass
 Searched references to parameter c of f(c: JavaWithGroovyInvoke_0) in non-Java files

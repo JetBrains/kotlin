@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.StubTypeMarker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 // This type is used as a stub for postponed type variables, which are important for coroutine inference
 class StubType(
@@ -37,4 +39,7 @@ class StubType(
     override fun toString(): String {
         return "NonFixed: $originalTypeVariable"
     }
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) = this
 }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.calls.hasNullableSuperType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.model.*
 
 class ErrorTypeConstructor(reason: String) : TypeConstructorMarker
 
-interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
+interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext {
     val session: FirSession
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
@@ -277,8 +277,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 
     override fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean {
-        val classSymbol = this as? ConeClassSymbol ?: return false
-        val fir = (classSymbol as FirClassSymbol).fir
+        val classSymbol = this as? FirClassSymbol ?: return false
+        val fir = classSymbol.fir
         return fir.modality == Modality.FINAL &&
                 fir.classKind != ClassKind.ENUM_ENTRY &&
                 fir.classKind != ClassKind.ANNOTATION_CLASS
@@ -435,7 +435,7 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
                     parameter.symbol as ConeTypeParameterSymbol to ((argument as? ConeTypedProjection)?.type
                         ?: StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
-            ConeSubstitutorByMap(substitution)
+            substitutorByMap(substitution)
         } else {
             ConeSubstitutor.Empty
         }
@@ -459,5 +459,11 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = this is ConeKotlinType && this is ConeTypeVariableType
+
+    override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext =
+        if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything)
+            this
+        else
+            ConeTypeCheckerContext(errorTypesEqualToAnything, session)
 
 }

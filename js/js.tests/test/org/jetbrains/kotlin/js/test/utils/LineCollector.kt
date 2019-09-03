@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.isFakePsiElement
 
 class LineCollector : RecursiveJsVisitor() {
     val lines = mutableListOf<Int?>()
@@ -34,10 +35,12 @@ class LineCollector : RecursiveJsVisitor() {
         val source = node.source
         val line = when (source) {
             is PsiElement -> {
-                val file = source.containingFile
-                val offset = source.node.startOffset
-                val document = file.viewProvider.document!!
-                document.getLineNumber(offset)
+                if (!source.isFakePsiElement) {
+                    val file = source.containingFile
+                    val offset = source.node.startOffset
+                    val document = file.viewProvider.document!!
+                    document.getLineNumber(offset)
+                } else null
             }
             is JsLocationWithSource -> {
                 source.startLine

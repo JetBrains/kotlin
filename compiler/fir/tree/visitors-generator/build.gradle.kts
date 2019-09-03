@@ -21,6 +21,10 @@ dependencies {
     compileOnly(intellijDep()) {
         includeJars("trove4j", "picocontainer", rootProject = rootProject)
     }
+
+    Platform[192].orHigher {
+        runtimeOnly(intellijCoreDep()) { includeJars("jdom") }
+    }
 }
 
 val writeCopyright by task<WriteCopyrightToFile> {

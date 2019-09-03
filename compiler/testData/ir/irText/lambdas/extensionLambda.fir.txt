@@ -1,11 +1,11 @@
 FILE fqName:<root> fileName:/extensionLambda.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int 
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Int declared in <root>'
         CALL 'public final fun run (block: kotlin.Function1<T of <uninitialized parent>, R of <uninitialized parent>>): R of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Int origin=null
-          block: BLOCK type=kotlin.Function2<kotlin.String, kotlin.String, kotlin.Int> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Int 
-              VALUE_PARAMETER name:it index:0 type:kotlin.String 
+          $receiver: CONST String type=kotlin.String value="42"
+          block: FUN_EXPR type=kotlin.Function2<kotlin.String, kotlin.String, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Int
+              VALUE_PARAMETER name:it index:0 type:kotlin.String
               BLOCK_BODY
                 ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
-            FUNCTION_REFERENCE 'local final fun <anonymous> (it: kotlin.String): kotlin.Int declared in <root>.test1' type=kotlin.Function2<kotlin.String, kotlin.String, kotlin.Int> origin=LAMBDA

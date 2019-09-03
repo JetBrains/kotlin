@@ -2,18 +2,22 @@ fun test() {
     loop@ while (true) {
         loop1@ for (i in -10..10) {
             when {
-                i < 0 -> if (i < -5) {
-                    break@loop1
-                } else {
-                    continue@loop
+                i < 0 -> {
+                    if (i < -5) {
+                        break@loop1
+                    } else {
+                        continue@loop
+                    }
                 }
-                else -> if (i == 0) {
-                    i.hashCode()
-                    break@loop1
-                } else if (i > 5) {
-                    i.hashCode()
-                } else {
-                    continue@loop1
+                else -> {
+                    if (i == 0) {
+                        i.hashCode()
+                        break@loop1
+                    } else if (i > 5) {
+                        i.hashCode()
+                    } else {
+                        continue@loop1
+                    }
                 }
             }
         }

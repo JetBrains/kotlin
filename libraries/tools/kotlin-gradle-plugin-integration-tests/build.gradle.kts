@@ -44,46 +44,15 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
 }
 
-val jpsIncrementalTestsClass = "**/KotlinGradlePluginJpsParametrizedIT.class"
+// Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
+val shortenTempRootName = System.getProperty("os.name")!!.contains("Windows")
 
-projectTest {
-    executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
-    dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
-    dependsOn(
-        ":kotlin-allopen:install",
-        ":kotlin-allopen:plugin-marker:install",
-        ":kotlin-noarg:install",
-        ":kotlin-allopen:plugin-marker:install",
-        ":kotlin-sam-with-receiver:install",
-        ":kotlin-android-extensions:install",
-        ":kotlin-build-common:install",
-        ":kotlin-compiler-embeddable:install",
-        ":kotlin-gradle-plugin:install",
-        ":kotlin-gradle-plugin:plugin-marker:install",
-        ":kotlin-reflect:install",
-        ":kotlin-annotation-processing-gradle:install",
-        ":kotlin-test:kotlin-test-jvm:install",
-        ":kotlin-gradle-subplugin-example:install",
-        ":kotlin-stdlib-jdk8:install",
-        ":examples:annotation-processor-example:install",
-        ":kotlin-scripting-common:install",
-        ":kotlin-scripting-jvm:install",
-        ":kotlin-scripting-compiler-embeddable:install",
-        ":kotlin-test-nodejs-runner:install"
-    )
-    exclude(jpsIncrementalTestsClass)
-}
+// additional configuration in tasks.withType<Test> below
+projectTest("test", shortenTempRootName = shortenTempRootName) {}
 
-tasks.register<Test>("testsFromJps") {
-    include(jpsIncrementalTestsClass)
-    dependsOn(tasks.getByName("test").dependsOn)
-}
-
-tasks.register<Test>("testAdvanceGradleVersion") {
+projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootName) {
     val gradleVersionForTests = "5.3-rc-2"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
-    dependsOn(tasks.getByName("test").dependsOn)
-    exclude(jpsIncrementalTestsClass)
 }
 
 tasks.named<Task>("check") {
@@ -121,6 +90,30 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     onlyIf { !project.hasProperty("noTest") }
 
+    dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
+    dependsOn(
+        ":kotlin-allopen:install",
+        ":kotlin-allopen:plugin-marker:install",
+        ":kotlin-noarg:install",
+        ":kotlin-allopen:plugin-marker:install",
+        ":kotlin-sam-with-receiver:install",
+        ":kotlin-android-extensions:install",
+        ":kotlin-build-common:install",
+        ":kotlin-compiler-embeddable:install",
+        ":kotlin-gradle-plugin:install",
+        ":kotlin-gradle-plugin:plugin-marker:install",
+        ":kotlin-reflect:install",
+        ":kotlin-annotation-processing-gradle:install",
+        ":kotlin-test:kotlin-test-jvm:install",
+        ":kotlin-gradle-subplugin-example:install",
+        ":kotlin-stdlib-jdk8:install",
+        ":examples:annotation-processor-example:install",
+        ":kotlin-scripting-common:install",
+        ":kotlin-scripting-jvm:install",
+        ":kotlin-scripting-compiler-embeddable:install",
+        ":kotlin-test-nodejs-runner:install"
+    )
+
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
@@ -134,6 +127,8 @@ tasks.withType<Test> {
     }
 
     useAndroidSdk()
+
+    maxHeapSize = "512m"
 
     testLogging {
         // set options for log level LIFECYCLE

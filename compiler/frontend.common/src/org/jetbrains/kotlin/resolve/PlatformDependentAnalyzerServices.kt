@@ -53,7 +53,7 @@ abstract class PlatformDependentAnalyzerServices {
             )
         )
 
-    protected abstract fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>)
+    abstract fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>)
 
     open val excludedImports: List<FqName> get() = emptyList()
 

@@ -32,4 +32,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val constraintSystemForOverloadResolution by AnalysisFlag.Delegates.ConstraintSystemForOverloadResolution
+
+    @JvmStatic
+    val useTypeRefinement by AnalysisFlag.Delegates.Boolean
 }

@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // May be should not inherit FirVariable
 @BaseTransformedType
-interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMemberDeclaration, FirVariable, FirMemberDeclaration {
+interface FirProperty :
+    @VisitedSupertype FirDeclaration, FirCallableMemberDeclaration<FirProperty>, FirVariable<FirProperty>, FirMemberDeclaration {
     val isConst: Boolean get() = status.isConst
 
     val isLateInit: Boolean get() = status.isLateInit
@@ -22,13 +23,12 @@ interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMemberDecla
     override val isOverride: Boolean get() = status.isOverride
 
     // Should it be nullable or have some default?
-    val getter: FirPropertyAccessor
+    override val getter: FirPropertyAccessor?
 
-    val setter: FirPropertyAccessor?
+    override val setter: FirPropertyAccessor?
 
+    // TODO: it should be probably nullable
     val backingFieldSymbol: FirBackingFieldSymbol
-
-    fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D)
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitProperty(this, data)
@@ -37,7 +37,7 @@ interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMemberDecla
         super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
-        getter.accept(visitor, data)
+        getter?.accept(visitor, data)
         setter?.accept(visitor, data)
     }
 }

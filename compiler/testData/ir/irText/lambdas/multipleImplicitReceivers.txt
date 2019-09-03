@@ -1,116 +1,116 @@
 FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
   CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
-    CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary] 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B 
-    CONSTRUCTOR visibility:private <> () returnType:<root>.B [primary] 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:private <> () returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo 
-    PROPERTY name:foo visibility:public modality:OPEN [val] 
-      FUN name:<get-foo> visibility:public modality:OPEN <> ($this:<root>.IFoo, $receiver:<root>.A) returnType:<root>.B 
-        correspondingProperty: PROPERTY name:foo visibility:public modality:OPEN [val] 
-        $this: VALUE_PARAMETER name:<this> type:<root>.IFoo 
-        $receiver: VALUE_PARAMETER name:<this> type:<root>.A 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo
+    PROPERTY name:foo visibility:public modality:OPEN [val]
+      FUN name:<get-foo> visibility:public modality:OPEN <> ($this:<root>.IFoo, $receiver:<root>.A) returnType:<root>.B
+        correspondingProperty: PROPERTY name:foo visibility:public modality:OPEN [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
+        $receiver: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-foo> (): <root>.B declared in <root>.IFoo'
             GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.B
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:IInvoke modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IInvoke 
-    FUN name:invoke visibility:public modality:OPEN <> ($this:<root>.IInvoke, $receiver:<root>.B) returnType:kotlin.Int 
-      $this: VALUE_PARAMETER name:<this> type:<root>.IInvoke 
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.B 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IInvoke
+    FUN name:invoke visibility:public modality:OPEN <> ($this:<root>.IInvoke, $receiver:<root>.B) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.IInvoke
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun invoke (): kotlin.Int declared in <root>.IInvoke'
           CONST Int type=kotlin.Int value=42
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test visibility:public modality:FINAL <> (fooImpl:<root>.IFoo, invokeImpl:<root>.IInvoke) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:fooImpl index:0 type:<root>.IFoo 
-    VALUE_PARAMETER name:invokeImpl index:1 type:<root>.IInvoke 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test visibility:public modality:FINAL <> (fooImpl:<root>.IFoo, invokeImpl:<root>.IInvoke) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fooImpl index:0 type:<root>.IFoo
+    VALUE_PARAMETER name:invokeImpl index:1 type:<root>.IInvoke
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with [inline] declared in kotlin' type=kotlin.Int origin=null
           <T>: <root>.A
           <R>: kotlin.Int
           receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
-          block: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.A) returnType:kotlin.Int 
-              $receiver: VALUE_PARAMETER name:<this> type:<root>.A 
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.A) returnType:kotlin.Int
+              $receiver: VALUE_PARAMETER name:<this> type:<root>.A
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test'
                   CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with [inline] declared in kotlin' type=kotlin.Int origin=null
                     <T>: <root>.IFoo
                     <R>: kotlin.Int
                     receiver: GET_VAR 'fooImpl: <root>.IFoo declared in <root>.test' type=<root>.IFoo origin=null
-                    block: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<<root>.IFoo, kotlin.Int> origin=LAMBDA
-                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.IFoo) returnType:kotlin.Int 
-                        $receiver: VALUE_PARAMETER name:<this> type:<root>.IFoo 
+                    block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.IFoo, kotlin.Int> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.IFoo) returnType:kotlin.Int
+                        $receiver: VALUE_PARAMETER name:<this> type:<root>.IFoo
                         BLOCK_BODY
                           RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test.<anonymous>'
                             CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with [inline] declared in kotlin' type=kotlin.Int origin=null
                               <T>: <root>.IInvoke
                               <R>: kotlin.Int
                               receiver: GET_VAR 'invokeImpl: <root>.IInvoke declared in <root>.test' type=<root>.IInvoke origin=null
-                              block: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<<root>.IInvoke, kotlin.Int> origin=LAMBDA
-                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.IInvoke) returnType:kotlin.Int 
-                                  $receiver: VALUE_PARAMETER name:<this> type:<root>.IInvoke 
+                              block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.IInvoke, kotlin.Int> origin=LAMBDA
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.IInvoke) returnType:kotlin.Int
+                                  $receiver: VALUE_PARAMETER name:<this> type:<root>.IInvoke
                                   BLOCK_BODY
                                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test.<anonymous>.<anonymous>'
                                       CALL 'public open fun invoke (): kotlin.Int declared in <root>.IInvoke' type=kotlin.Int origin=INVOKE
@@ -118,6 +118,3 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                                         $receiver: CALL 'public open fun <get-foo> (): <root>.B declared in <root>.IFoo' type=<root>.B origin=GET_PROPERTY
                                           $this: GET_VAR '<this>: <root>.IFoo declared in <root>.test.<anonymous>.<anonymous>' type=<root>.IFoo origin=null
                                           $receiver: GET_VAR '<this>: <root>.A declared in <root>.test.<anonymous>' type=<root>.A origin=null
-                                FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Int declared in <root>.test.<anonymous>.<anonymous>' type=@[ExtensionFunctionType] kotlin.Function1<<root>.IInvoke, kotlin.Int> origin=LAMBDA
-                      FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Int declared in <root>.test.<anonymous>' type=@[ExtensionFunctionType] kotlin.Function1<<root>.IFoo, kotlin.Int> origin=LAMBDA
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Int declared in <root>.test' type=@[ExtensionFunctionType] kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA

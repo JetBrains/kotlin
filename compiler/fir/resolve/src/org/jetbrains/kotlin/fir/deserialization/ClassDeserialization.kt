@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -46,7 +46,7 @@ fun deserializeClassToSymbol(
         Flags.IS_DATA.get(classProto.flags),
         Flags.IS_INLINE_CLASS.get(classProto.flags)
     ).apply {
-
+        resolvePhase = FirResolvePhase.DECLARATIONS
         val context =
             parentContext?.childContext(
                 classProto.typeParameterList,
@@ -57,7 +57,7 @@ fun deserializeClassToSymbol(
                 classId, classProto, nameResolver, session,
                 defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
             )
-        typeParameters += context.typeDeserializer.ownTypeParameters.map { it.firUnsafe() }
+        typeParameters += context.typeDeserializer.ownTypeParameters.map { it.fir }
         annotations += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
         val typeDeserializer = context.typeDeserializer
@@ -69,7 +69,7 @@ fun deserializeClassToSymbol(
 
         superTypesDeserialized.mapNotNullTo(superTypeRefs) {
             if (it == null) return@mapNotNullTo null
-            FirResolvedTypeRefImpl(session, null, it)
+            FirResolvedTypeRefImpl(null, it)
         }
 
         addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))
@@ -95,8 +95,8 @@ fun deserializeClassToSymbol(
 
                 val symbol = FirClassSymbol(enumEntryId)
                 FirEnumEntryImpl(session, null, symbol, enumEntryId.shortClassName).apply {
+                    resolvePhase = FirResolvePhase.DECLARATIONS
                     superTypeRefs += FirResolvedTypeRefImpl(
-                        session,
                         null,
                         ConeClassTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false),
                         emptyList()

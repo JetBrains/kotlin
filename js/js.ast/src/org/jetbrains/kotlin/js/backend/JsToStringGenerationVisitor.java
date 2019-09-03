@@ -605,6 +605,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitFunction(@NotNull JsFunction x) {
+        pushSourceInfo(x.getSource());
+
         p.print(CHARS_FUNCTION);
         space();
         if (x.getName() != null) {
@@ -624,10 +626,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         lineBreakAfterBlock = false;
 
         sourceLocationConsumer.pushSourceInfo(null);
-        printJsBlock(x.getBody(), true, x.getSource());
+        printJsBlock(x.getBody(), true, x.getBody().getSource());
         sourceLocationConsumer.popSourceInfo();
 
         needSemi = true;
+
+        popSourceInfo();
     }
 
     @Override

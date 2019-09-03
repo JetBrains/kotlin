@@ -484,7 +484,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     protected void generateInitializers(@NotNull Function0<ExpressionCodegen> createCodegen) {
         NotNullLazyValue<ExpressionCodegen> codegen = LockBasedStorageManager.NO_LOCKS.createLazyValue(createCodegen);
 
-        for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {
+        List<KtDeclaration> declarations = ((KtDeclarationContainer) element).getDeclarations();
+        for (int i = 0; i < declarations.size(); i++) {
+            KtDeclaration declaration = declarations.get(i);
             if (declaration instanceof KtProperty) {
                 if (shouldInitializeProperty((KtProperty) declaration)) {
                     generateNopSeparatorIfNeeded(codegen);
@@ -501,7 +503,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     generateNopSeparatorIfNeeded(codegen);
 
                     ExpressionCodegen expressionCodegen = codegen.invoke();
-                    expressionCodegen.gen(body, Type.VOID_TYPE);
+                    Type bodyExpressionType = Type.VOID_TYPE;
+                    if (i == declarations.size() - 1 && this instanceof ScriptCodegen) {
+                        bodyExpressionType = expressionCodegen.expressionType(body);
+                    }
+                    expressionCodegen.gen(body, bodyExpressionType);
                     expressionCodegen.markLineNumber(declaration, true);
                     nopSeparatorNeeded = true;
                 }

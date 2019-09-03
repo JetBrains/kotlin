@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -38,7 +38,19 @@ class ConstantValueGenerator(
         endOffset: Int,
         constantValue: ConstantValue<*>,
         varargElementType: KotlinType? = null
-    ): IrExpression {
+    ): IrExpression =
+        // Assertion is safe here because annotation calls are not allowed in constant initializers
+        generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, constantValue, varargElementType)!!
+
+    /**
+     * @return null if the constant value is an unresolved annotation
+     */
+    private fun generateConstantOrAnnotationValueAsExpression(
+        startOffset: Int,
+        endOffset: Int,
+        constantValue: ConstantValue<*>,
+        varargElementType: KotlinType? = null
+    ): IrExpression? {
         val constantKtType = constantValue.getType(moduleDescriptor)
         val constantType = constantKtType.toIrType()
 
@@ -103,10 +115,11 @@ class ConstantValueGenerator(
         }
     }
 
-    fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor): IrConstructorCall {
+    fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor): IrConstructorCall? {
         val annotationType = annotationDescriptor.type
-        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor as? ClassDescriptor
-            ?: throw AssertionError("No declaration descriptor for annotation $annotationDescriptor")
+        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor
+        if (annotationClassDescriptor !is ClassDescriptor) return null
+        if (annotationClassDescriptor is NotFoundClasses.MockClassDescriptor) return null
 
         assert(DescriptorUtils.isAnnotationClass(annotationClassDescriptor)) {
             "Annotation class expected: $annotationClassDescriptor"

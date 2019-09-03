@@ -6,44 +6,42 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
 object YarnWorkspaces : YarnBasics() {
-    override fun resolveProject(resolvedNpmProject: NpmProjectPackage) = Unit
+    override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) = Unit
 
-    override fun resolveRootProject(rootProject: Project, subProjects: MutableList<NpmProjectPackage>) {
+    override fun resolveRootProject(
+        rootProject: Project,
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        skipExecution: Boolean
+    ) {
         check(rootProject == rootProject.rootProject)
-        setup(rootProject)
-        resolveWorkspaces(rootProject, subProjects)
+        if (!skipExecution) setup(rootProject)
+        return resolveWorkspaces(rootProject, subProjects, skipExecution)
     }
 
     private fun resolveWorkspaces(
         rootProject: Project,
-        npmProjects: MutableList<NpmProjectPackage>
+        npmProjects: Collection<KotlinCompilationNpmResolution>,
+        skipExecution: Boolean
     ) {
-        val upToDateChecks = npmProjects.map {
-            YarnUpToDateCheck(it.npmProject)
+        val nodeJsWorldDir = NodeJsRootPlugin.apply(rootProject).rootPackageDir
+
+        if (!skipExecution) {
+            saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
+            yarnExec(rootProject, nodeJsWorldDir, NpmApi.resolveOperationDescription("yarn"))
         }
 
-        if (upToDateChecks.all { it.upToDate }) return
-
-        val nodeJsWorldDir = rootProject.nodeJs.root.rootPackageDir
-
-        saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
-
-        yarnExec(rootProject, nodeJsWorldDir, NpmApi.resolveOperationDescription("yarn"))
-        yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.npmDependencies })
-
-        upToDateChecks.forEach {
-            it.commit()
-        }
+        yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.externalNpmDependencies })
     }
 
     private fun saveRootProjectWorkspacesPackageJson(
         rootProject: Project,
-        npmProjects: MutableList<NpmProjectPackage>,
+        npmProjects: Collection<KotlinCompilationNpmResolution>,
         nodeJsWorldDir: File
     ) {
         val rootPackageJson = PackageJson(rootProject.name, rootProject.version.toString())
@@ -53,11 +51,6 @@ object YarnWorkspaces : YarnBasics() {
         val importedProjectWorkspaces = YarnImportedPackagesVersionResolver(rootProject, npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
-
-        rootProject.nodeJs.packageJsonHandlers.forEach {
-            it(rootPackageJson)
-        }
-
         rootPackageJson.saveTo(
             nodeJsWorldDir.resolve(NpmProject.PACKAGE_JSON)
         )

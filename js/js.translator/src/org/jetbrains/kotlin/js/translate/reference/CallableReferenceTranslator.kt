@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.reference
 
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -204,7 +205,7 @@ object CallableReferenceTranslator {
             translator: (TranslationContext, ResolvedCall<out PropertyDescriptor>, JsExpression, JsExpression?) -> JsExpression
     ): JsExpression {
         val accessorFunction = JsFunction(context.scope(), JsBlock(), "")
-        accessorFunction.source = expression.finalElement
+        accessorFunction.source = expression
         val accessorContext = context.innerBlock(accessorFunction.body)
         val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
             val name = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
@@ -226,6 +227,7 @@ object CallableReferenceTranslator {
 
         val accessorResult = translator(accessorContext, call, valueParam, receiverParam)
         accessorFunction.body.statements += if (isSetter) accessorResult.makeStmt() else JsReturn(accessorResult)
+        accessorFunction.body.source = expression.finalElement as? LeafPsiElement
         return bindIfNecessary(accessorFunction, receiver)
     }
 

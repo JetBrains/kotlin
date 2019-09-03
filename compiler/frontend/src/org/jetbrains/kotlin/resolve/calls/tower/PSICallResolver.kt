@@ -106,7 +106,10 @@ class PSICallResolver(
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
-        return convertToOverloadResolutionResults(context, result, tracingStrategy)
+        val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
+        return overloadResolutionResults.also {
+            clearCacheForApproximationResults()
+        }
     }
 
     // actually, `D` is at least FunctionDescriptor, but right now because of CallResolver it isn't possible change upper bound for `D`
@@ -133,7 +136,16 @@ class PSICallResolver(
         val result = kotlinCallResolver.resolveGivenCandidates(
             scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates, context.collectAllCandidates
         )
-        return convertToOverloadResolutionResults(context, result, tracingStrategy)
+        val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
+        return overloadResolutionResults.also {
+            clearCacheForApproximationResults()
+        }
+    }
+
+    private fun clearCacheForApproximationResults() {
+        // Mostly, we approximate captured or some other internal types that don't live longer than resolve for a call,
+        // so it's quite useless to preserve cache for longer time
+        typeApproximator.clearCache()
     }
 
     private fun resolveToDeprecatedMod(
@@ -375,6 +387,7 @@ class PSICallResolver(
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
         override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
         override val lexicalScope: LexicalScope get() = context.scope
+        override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
         private val cache = HashMap<ReceiverParameterDescriptor, ReceiverValueWithSmartCastInfo>()
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? {

@@ -11,7 +11,9 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.valueOr
+import kotlin.script.experimental.api.valueOrNull
 
 fun PsiFile.findScriptCompilationConfiguration(): ScriptCompilationConfiguration? {
     // Do not use psiFile.script, see comments in findScriptDefinition
@@ -20,7 +22,8 @@ fun PsiFile.findScriptCompilationConfiguration(): ScriptCompilationConfiguration
     if (file.isNonScript()) return null
 
     val provider = ScriptDependenciesProvider.getInstance(project)
-    return provider?.getScriptConfigurationResult(this)?.valueOrError()?.configuration
+    // Ignoring the error here, assuming that it will be reported elsewhere anyway (this is important scenario in IDE)
+    return provider?.getScriptConfigurationResult(this)?.valueOrNull()?.configuration
         ?: findScriptDefinition()?.compilationConfiguration
 }
 
@@ -35,8 +38,12 @@ fun VirtualFile.findScriptCompilationConfiguration(project: Project): ScriptComp
 }
 
 private fun ScriptCompilationConfigurationResult.valueOrError() = valueOr { failure ->
-    throw IllegalArgumentException(
-        "Error retrieving script compilation configuration: ${failure.reports.joinToString { it.message }}",
-        failure.reports.find { it.exception != null }?.exception
-    )
+    val singleCause = failure.reports.singleOrNull { it.severity == ScriptDiagnostic.Severity.ERROR }
+    if (singleCause != null)
+        throw IllegalStateException(singleCause.message, singleCause.exception)
+    else
+        throw IllegalStateException(
+            "Error retrieving script compilation configuration: ${failure.reports.joinToString { it.message }}",
+            failure.reports.find { it.exception != null }?.exception
+        )
 }

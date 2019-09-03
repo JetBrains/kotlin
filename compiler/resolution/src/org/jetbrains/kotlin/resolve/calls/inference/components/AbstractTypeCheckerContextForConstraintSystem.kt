@@ -100,10 +100,14 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
             return null
         }
 
-        return if (projection.getVariance() == TypeVariance.OUT)
-            projection.getType().takeIf { it is SimpleTypeMarker && isMyTypeVariable(it) }?.asSimpleType()
-        else
-            null
+        return if (projection.getVariance() == TypeVariance.OUT) {
+            val type = projection.getType()
+            when {
+                type is SimpleTypeMarker && isMyTypeVariable(type) -> type.asSimpleType()
+                type is FlexibleTypeMarker && isMyTypeVariable(type.lowerBound()) -> type.asFlexibleType()?.lowerBound()
+                else -> null
+            }
+        } else null
     }
 
     /**

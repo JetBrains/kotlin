@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.junit.AfterClass
 
 /**
  * inspired by @see AbstractCompletionIncrementalResolveTest
@@ -32,10 +32,9 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
         @JvmStatic
         val stats: Stats = Stats("completion-incremental")
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            stats.close()
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
         }
     }
 
@@ -97,20 +96,19 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
         }
     }
 
-    private fun innerPerfTest(name: String, setUpBody: () -> Unit) {
+    private fun innerPerfTest(name: String, setUpBody: (TestData<Unit, Array<LookupElement>>) -> Unit) {
         CompletionBindingContextProvider.ENABLED = true
         try {
             stats.perfTest(
                 testName = name,
                 setUp = setUpBody,
-                test = { perfTestCore() },
+                test = { it.value = perfTestCore() },
                 tearDown = {
                     // no reasons to validate output as it is a performance test
-                    assertNotNull(it)
-
-                    FileDocumentManager.getInstance().reloadFromDisk(editor.document)
-                    myFixture.configureByText(KotlinFileType.INSTANCE, "")
-                    commitAllDocuments()
+                    assertNotNull(it.value)
+                    runWriteAction {
+                        myFixture.file.delete()
+                    }
                 }
             )
         } finally {

@@ -67,8 +67,9 @@ class DeclarationStubGenerator(
     }
 
     fun generateOrGetFacadeClass(descriptor: DeclarationDescriptor): IrClass? {
-        val packageFragment = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return null
-        val containerSource = descriptor.safeAs<DescriptorWithContainerSource>()?.containerSource ?: return null
+        val directMember = descriptor.safeAs<PropertyAccessorDescriptor>()?.correspondingProperty ?: descriptor
+        val packageFragment = directMember.containingDeclaration as? PackageFragmentDescriptor ?: return null
+        val containerSource = directMember.safeAs<DescriptorWithContainerSource>()?.containerSource ?: return null
         return facadeClassMap.getOrPut(containerSource) {
             facadeClassGenerator(containerSource)?.also { facade ->
                 val packageStub = generateOrGetEmptyExternalPackageFragmentStub(packageFragment)
@@ -240,6 +241,21 @@ class DeclarationStubGenerator(
         val origin = computeOrigin(descriptor)
         return symbolTable.declareScopedTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
             IrLazyTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+        }
+    }
+
+    internal fun generateTypeAliasStub(descriptor: TypeAliasDescriptor): IrTypeAlias {
+        val referenced = symbolTable.referenceTypeAlias(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
+        val origin = computeOrigin(descriptor)
+        return symbolTable.declareTypeAlias(descriptor) {
+            IrLazyTypeAlias(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                it, it.descriptor.name, it.descriptor.visibility, it.descriptor.isActual,
+                this, typeTranslator
+            )
         }
     }
 }

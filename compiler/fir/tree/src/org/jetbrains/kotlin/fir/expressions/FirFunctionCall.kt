@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjectionContainer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirFunctionCall(
-    session: FirSession,
     psi: PsiElement?
-) : @VisitedSupertype FirUnknownTypeCallWithArgumentList(session, psi), FirQualifiedAccess, FirTypeProjectionContainer {
+) : @VisitedSupertype FirUnknownTypeCallWithArgumentList(psi), FirQualifiedAccess, FirTypeProjectionContainer {
     abstract override val calleeReference: FirNamedReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

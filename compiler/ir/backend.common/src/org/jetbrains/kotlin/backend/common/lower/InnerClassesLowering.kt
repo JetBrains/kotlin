@@ -33,11 +33,14 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     private val IrValueSymbol.classForImplicitThis: IrClass?
         // TODO: is this the correct way to get the class?
-        // -1 means value is either IMPLICIT or EXTENSION receiver
-        get() = if (this is IrValueParameterSymbol && owner.index == -1 && owner.name.isSpecial /* <this> */)
-            owner.type.classOrNull?.owner
-        else
-            null
+        get() =
+            if (this is IrValueParameterSymbol && owner.index == -1 &&
+                (owner == (owner.parent as? IrFunction)?.dispatchReceiverParameter ||
+                        owner == (owner.parent as? IrClass)?.thisReceiver)
+            ) {
+                owner.type.classOrNull?.owner
+            } else
+                null
 
     override fun lower(irClass: IrClass) {
         if (!irClass.isInner) return

@@ -37,15 +37,22 @@ def createFrameworkTest(def name) {
     return tasks.create("test$name", NpmTask) {
         dependsOn(compileTestKotlin2Js, populateNodeModules, npmInstall)
         def lowerName = name.toLowerCase()
+        def tcOutput = "$buildDir/tc-${lowerName}.log"
+        def stdOutput = "$buildDir/test-${lowerName}.log"
+        def errOutput = "$buildDir/test-${lowerName}.err.log"
+        inputs.files(sourceSets.test.output)
+        inputs.dir("${buildDir}/node_modules")
+        outputs.files(tcOutput, stdOutput, errOutput)
+
         args = ['run', "test-$lowerName"]
         group = 'verification'
         execOverrides {
             it.ignoreExitValue = true
-            it.standardOutput = new FileOutputStream("$buildDir/test-${lowerName}.log")
-            it.errorOutput = new FileOutputStream("$buildDir/test-${lowerName}.err.log")
+            it.standardOutput = new FileOutputStream(stdOutput)
+            it.errorOutput = new FileOutputStream(errOutput)
         }
         doLast {
-            println file("$buildDir/tc-${lowerName}.log").text
+            println file(tcOutput).text
             if (result.exitValue != 0 && !rootProject.ignoreTestFailures) {
                 throw new GradleException("$name integration test failed")
             }

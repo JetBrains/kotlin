@@ -11,15 +11,20 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirAbstractLoop(
-    session: FirSession,
     psi: PsiElement?,
     override var condition: FirExpression
-) : FirAnnotatedStatement(session, psi), FirLoop {
+) : FirAnnotatedStatement(psi), FirLoop {
     override lateinit var block: FirBlock
 
     override var label: FirLabel? = null
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        super<FirAnnotatedStatement>.acceptChildren(visitor, data)
+        super<FirLoop>.acceptChildren(visitor, data)
+    }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         condition = condition.transformSingle(transformer, data)

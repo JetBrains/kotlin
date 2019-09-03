@@ -25,14 +25,12 @@ import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageBase
@@ -71,19 +69,17 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
-import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.rename.canonicalRender
+import org.jetbrains.kotlin.idea.roots.isOutsideKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
-import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -95,7 +91,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
-import java.io.File
 import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
@@ -111,14 +106,14 @@ const val CHECK_SUPER_METHODS_YES_NO_DIALOG = "CHECK_SUPER_METHODS_YES_NO_DIALOG
 fun getOrCreateKotlinFile(
     fileName: String,
     targetDir: PsiDirectory,
-    packageName: String? = targetDir.getPackage()?.qualifiedName
+    packageName: String? = targetDir.getFqNameWithImplicitPrefix()?.asString()
 ): KtFile? =
     (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir, packageName)) as? KtFile
 
 fun createKotlinFile(
     fileName: String,
     targetDir: PsiDirectory,
-    packageName: String? = targetDir.getPackage()?.qualifiedName
+    packageName: String? = targetDir.getFqNameWithImplicitPrefix()?.asString()
 ): KtFile {
     targetDir.checkCreateFile(fileName)
     val packageFqName = packageName?.let(::FqName) ?: FqName.ROOT
@@ -143,8 +138,8 @@ fun PsiElement.getUsageContext(): PsiElement {
     }
 }
 
-fun PsiElement.isInJavaSourceRoot(): Boolean =
-    !JavaProjectRootsUtil.isOutsideJavaSourceRoot(containingFile)
+fun PsiElement.isInKotlinAwareSourceRoot(): Boolean =
+    !isOutsideKotlinAwareSourceRoot(containingFile)
 
 fun KtFile.createTempCopy(text: String? = null): KtFile {
     val tmpFile = KtPsiFactory(this).createAnalyzableFile(name, text ?: this.text ?: "", this)
@@ -313,6 +308,36 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
     }
 }
 
+@Deprecated(
+    "Use org.jetbrains.kotlin.idea.core.util.getLineStartOffset() instead",
+    ReplaceWith("this.getLineStartOffset(line)", "org.jetbrains.kotlin.idea.core.util.getLineStartOffset"),
+    DeprecationLevel.ERROR
+)
+fun PsiFile.getLineStartOffset(line: Int): Int? {
+    val doc = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
+    if (doc != null && line >= 0 && line < doc.lineCount) {
+        val startOffset = doc.getLineStartOffset(line)
+        val element = findElementAt(startOffset) ?: return startOffset
+
+        if (element is PsiWhiteSpace || element is PsiComment) {
+            return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+        }
+        return startOffset
+    }
+
+    return null
+}
+
+@Deprecated(
+    "Use org.jetbrains.kotlin.idea.core.util.getLineEndOffset() instead",
+    ReplaceWith("this.getLineEndOffset(line)", "org.jetbrains.kotlin.idea.core.util.getLineEndOffset"),
+    DeprecationLevel.ERROR
+)
+fun PsiFile.getLineEndOffset(line: Int): Int? {
+    val document = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
+    return document?.getLineEndOffset(line)
+}
+
 fun PsiElement.getLineNumber(start: Boolean = true): Int {
     val document = containingFile.viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(containingFile)
     val index = if (start) this.startOffset else this.endOffset
@@ -332,7 +357,7 @@ fun <T> chooseContainerElement(
     toPsi: (T) -> PsiElement,
     onSelect: (T) -> Unit
 ) {
-    return getPsiElementPopup(
+    val popup = getPsiElementPopup(
         editor,
         containers,
         object : PsiElementListCellRenderer<PsiElement>() {
@@ -397,7 +422,10 @@ fun <T> chooseContainerElement(
             onSelect(it)
             true
         }
-    ).showInBestPositionFor(editor)
+    )
+    ApplicationManager.getApplication().invokeLater {
+        popup.showInBestPositionFor(editor)
+    }
 }
 
 fun <T> chooseContainerElementIfNecessary(

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoop
@@ -16,13 +15,10 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-abstract class FirLoopJump(
-    session: FirSession,
-    psi: PsiElement?
-) : FirJump<FirLoop>(session, psi) {
+abstract class FirLoopJump(psi: PsiElement?) : FirJump<FirLoop>(psi) {
     override lateinit var target: FirTarget<FirLoop>
 
-    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(session, psi)
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(psi)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 

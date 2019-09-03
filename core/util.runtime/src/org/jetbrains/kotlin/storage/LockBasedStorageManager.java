@@ -91,6 +91,12 @@ public class LockBasedStorageManager implements StorageManager {
         return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " (" + debugText + ")";
     }
 
+    public LockBasedStorageManager replaceExceptionHandling(
+            @NotNull String debugText, @NotNull ExceptionHandlingStrategy exceptionHandlingStrategy
+    ) {
+        return new LockBasedStorageManager(debugText, exceptionHandlingStrategy, lock);
+    }
+
     @NotNull
     @Override
     public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<? super K, ? extends V> compute) {

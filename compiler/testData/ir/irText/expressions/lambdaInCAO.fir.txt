@@ -1,41 +1,43 @@
 FILE fqName:<root> fileName:/lambdaInCAO.kt
-  FUN name:plusAssign visibility:public modality:FINAL <> (lambda:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:lambda index:0 type:kotlin.Function0<kotlin.Unit> 
+  FUN name:plusAssign visibility:public modality:FINAL <> ($receiver:kotlin.Any, lambda:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+    VALUE_PARAMETER name:lambda index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-  FUN name:get visibility:public modality:FINAL <> (index:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Int 
-    VALUE_PARAMETER name:index index:0 type:kotlin.Function0<kotlin.Unit> 
+  FUN name:get visibility:public modality:FINAL <> ($receiver:kotlin.Any, index:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Int
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+    VALUE_PARAMETER name:index index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=42
-  FUN name:set visibility:public modality:FINAL <> (index:kotlin.Function0<kotlin.Unit>, value:kotlin.Int) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:index index:0 type:kotlin.Function0<kotlin.Unit> 
-    VALUE_PARAMETER name:value index:1 type:kotlin.Int 
+  FUN name:set visibility:public modality:FINAL <> ($receiver:kotlin.Any, index:kotlin.Function0<kotlin.Unit>, value:kotlin.Int) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+    VALUE_PARAMETER name:index index:0 type:kotlin.Function0<kotlin.Unit>
+    VALUE_PARAMETER name:value index:1 type:kotlin.Int
     BLOCK_BODY
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any 
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: R|<local>/a|' type=IrErrorType
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any 
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any 
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      VAR name:<unary> type:kotlin.Int [val] 
+      VAR name:<unary> type:kotlin.Int [val]
         CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          index: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
+          $receiver: GET_VAR 'a: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+          index: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
       CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        index: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
+        $receiver: GET_VAR 'a: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+        index: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
       GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
-

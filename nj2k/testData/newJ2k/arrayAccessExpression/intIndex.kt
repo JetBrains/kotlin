@@ -1,1 +1,1 @@
-myArray[10]
+myArray.get(10)

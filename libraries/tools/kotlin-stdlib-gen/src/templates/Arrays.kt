@@ -6,8 +6,8 @@
 package templates
 
 import templates.Family.*
-import templates.Ordering.stableSortNote
 import templates.Ordering.appendStableSortNote
+import templates.Ordering.stableSortNote
 
 object ArrayOps : TemplateGroupBase() {
 
@@ -1016,8 +1016,12 @@ object ArrayOps : TemplateGroupBase() {
         typeParam("T : Comparable<T>")
         doc { "Sorts the array in-place according to the natural order of its elements." }
         appendStableSortNote()
+        specialFor(ArraysOfObjects) {
+            sample("samples.collections.Arrays.Sorting.sortArrayOfComparable")
+        }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {
             doc { "Sorts the array in-place." }
+            sample("samples.collections.Arrays.Sorting.sortArray")
         }
 
         returns("Unit")
@@ -1142,6 +1146,10 @@ object ArrayOps : TemplateGroupBase() {
         doc { "Sorts a range in the array in-place." }
         specialFor(ArraysOfObjects) {
             appendStableSortNote()
+            sample("samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable")
+        }
+        specialFor(ArraysOfPrimitives) {
+            sample("samples.collections.Arrays.Sorting.sortRangeOfArray")
         }
         returns("Unit")
         body {
@@ -1265,21 +1273,54 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_fill = fn("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
-        platforms(Platform.JVM)
         include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
-        doc { "Fills original array with the provided value." }
-        returns("Unit")
-        body {
+        doc {
             """
-            java.util.Arrays.fill(this, fromIndex, toIndex, element)
+            Fills this array or its subrange with the specified [element] value.
+            
+            @param fromIndex the start of the range (inclusive), 0 by default.
+            @param toIndex the end of the range (exclusive), size of this array by default.
+            
+            @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
+            @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
             """
         }
+        returns("Unit")
 
         specialFor(ArraysOfUnsigned) {
             val signedPrimitiveName = primitive!!.name.drop(1)
             body {
                 "storage.fill(element.to$signedPrimitiveName(), fromIndex, toIndex)"
+            }
+        }
+
+        specialFor(InvariantArraysOfObjects, ArraysOfPrimitives) {
+            on(Platform.JVM) {
+                suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+                body {
+                    "java.util.Arrays.fill(this, fromIndex, toIndex, element)"
+                }
+            }
+            on(Platform.JS) {
+                suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+                since("1.3")
+                body {
+                    """
+                    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                    this.asDynamic().fill(element, fromIndex, toIndex);
+                    """
+                }
+            }
+            on(Platform.Native) {
+                suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+                since("1.3")
+                body {
+                    "arrayFill(this, fromIndex, toIndex, element)"
+                }
+            }
+            on(Platform.Common) {
+                since("1.3")
             }
         }
     }

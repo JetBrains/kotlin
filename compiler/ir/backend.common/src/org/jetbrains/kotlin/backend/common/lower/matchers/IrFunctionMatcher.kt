@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.backend.common.lower.matchers
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.SimpleType
 
 internal interface IrFunctionMatcher : (IrFunction) -> Boolean
 
@@ -91,9 +90,9 @@ internal fun createIrFunctionRestrictions(restrictions: IrFunctionMatcherContain
 
 internal fun IrFunctionMatcherContainer.singleArgumentExtension(
     fqName: FqName,
-    types: Collection<SimpleType>
+    types: Collection<IrType>
 ): IrFunctionMatcherContainer {
-    extensionReceiver { it != null && it.type.toKotlinType() in types }
+    extensionReceiver { it != null && it.type in types }
     parameterCount { it == 1 }
     fqName { it == fqName }
     return this

@@ -646,6 +646,8 @@ internal open class KotlinAndroidPlugin(
 
         applyUserDefinedAttributes(androidTarget)
 
+        configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
+
         registry.register(KotlinModelBuilder(kotlinPluginVersion, androidTarget))
 
         project.whenEvaluated { project.components.addAll(androidTarget.components) }

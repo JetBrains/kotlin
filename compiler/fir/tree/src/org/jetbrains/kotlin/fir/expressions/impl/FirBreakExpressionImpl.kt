@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
 
-class FirBreakExpressionImpl(
-    session: FirSession,
-    psi: PsiElement?
-) : FirBreakExpression(session, psi)
+class FirBreakExpressionImpl(psi: PsiElement?) : FirBreakExpression(psi)
