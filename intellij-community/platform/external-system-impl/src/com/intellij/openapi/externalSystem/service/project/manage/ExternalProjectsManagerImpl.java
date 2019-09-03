@@ -26,6 +26,7 @@ import com.intellij.openapi.externalSystem.view.ExternalProjectsViewImpl;
 import com.intellij.openapi.externalSystem.view.ExternalProjectsViewState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.ExternalStorageConfigurationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -149,6 +150,8 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
   }
 
   public void init() {
+    ProgressManager.checkCanceled();
+
     if (isInitializationStarted.getAndSet(true)) {
       return;
     }
