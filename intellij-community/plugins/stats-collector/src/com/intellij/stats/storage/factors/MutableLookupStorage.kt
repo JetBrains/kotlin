@@ -3,11 +3,17 @@ package com.intellij.stats.storage.factors
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.sorting.RankingSupport
+import com.intellij.lang.Language
 import com.intellij.openapi.util.Key
 import com.intellij.stats.completion.idString
 import com.intellij.stats.personalization.session.LookupSessionFactorsStorage
 
-class MutableLookupStorage(override val startedTimestamp: Long) : LookupStorage {
+class MutableLookupStorage(
+  override val startedTimestamp: Long,
+  override val language: Language,
+  override val model: RankingSupport.LanguageRanker?)
+  : LookupStorage {
   override var userFactors: Map<String, String?> = emptyMap()
   override var contextFactors: Map<String, String> = emptyMap()
 
@@ -18,8 +24,8 @@ class MutableLookupStorage(override val startedTimestamp: Long) : LookupStorage 
       return lookup.getUserData(LOOKUP_STORAGE)
     }
 
-    fun initLookupStorage(lookup: LookupImpl, startedTimestamp: Long): MutableLookupStorage {
-      val storage = MutableLookupStorage(startedTimestamp)
+    fun initLookupStorage(lookup: LookupImpl, language: Language, startedTimestamp: Long): MutableLookupStorage {
+      val storage = MutableLookupStorage(startedTimestamp, language, RankingSupport.getRanker(language))
       lookup.putUserData(LOOKUP_STORAGE, storage)
       return storage
     }

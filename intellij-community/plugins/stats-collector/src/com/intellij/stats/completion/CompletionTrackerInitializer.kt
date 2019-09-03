@@ -49,8 +49,9 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
     }
     else if (lookup is LookupImpl) {
       if (isUnitTestMode() && !isEnabledInTests) return@PropertyChangeListener
+      val language = lookup.language() ?: return@PropertyChangeListener
 
-      val lookupStorage = MutableLookupStorage.initLookupStorage(lookup, System.currentTimeMillis())
+      val lookupStorage = MutableLookupStorage.initLookupStorage(lookup, language, System.currentTimeMillis())
 
       processContextFactors(lookup, lookupStorage)
       processUserFactors(lookup, lookupStorage)
@@ -100,7 +101,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
     val file = lookup.psiFile
     if (file != null) {
       val result = mutableMapOf<String, MLFeatureValue>()
-      for (provider in ContextFeatureProvider.forLanguage(file.language)) {
+      for (provider in ContextFeatureProvider.forLanguage(lookupStorage.language)) {
         val providerName = provider.name
         for ((featureName, value) in provider.calculateFeatures(lookup)) {
           result["ml_ctx_${providerName}_$featureName"] = value

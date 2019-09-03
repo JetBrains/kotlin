@@ -71,6 +71,7 @@ class MLSorter : CompletionFinalSorter() {
   override fun sort(items: MutableIterable<LookupElement>, parameters: CompletionParameters): Iterable<LookupElement?> {
     val startedTimestamp = System.currentTimeMillis()
     val lookup = LookupManager.getActiveLookup(parameters.editor) as? LookupImpl ?: return items
+    val lookupStorage = MutableLookupStorage.get(lookup) ?: return items
     val prefixLength = lookup.prefixLength()
 
     val element2score = mutableMapOf<LookupElement, Double?>()
@@ -79,14 +80,15 @@ class MLSorter : CompletionFinalSorter() {
     val positionsBefore = elements.withIndex().associate { it.value to it.index }
 
     fillCachedScores(element2score, elements, prefixLength)
-    calculateScores(element2score, elements.filter { it !in element2score }, positionsBefore, prefixLength, lookup, parameters)
-    val ranking = rankByMlScores(elements, element2score, positionsBefore)
+    calculateScores(element2score, elements.filter { it !in element2score }, positionsBefore,
+                    prefixLength, lookup, lookupStorage, parameters)
+    val finalRanking = sortByMlScores(elements, element2score, positionsBefore)
 
     val timeSpent = System.currentTimeMillis() - startedTimestamp
     val totalTime = timeSpent + (lookup.getUserData(CompletionUtil.ML_SORTING_CONTRIBUTION_KEY) ?: 0)
     lookup.putUserData(CompletionUtil.ML_SORTING_CONTRIBUTION_KEY, totalTime)
 
-    return ranking
+    return finalRanking
   }
 
   private fun fillCachedScores(element2score: MutableMap<LookupElement, Double?>,
@@ -105,17 +107,16 @@ class MLSorter : CompletionFinalSorter() {
                               positionsBefore: Map<LookupElement, Int>,
                               prefixLength: Int,
                               lookup: LookupImpl,
+                              lookupStorage: MutableLookupStorage,
                               parameters: CompletionParameters) {
     if (items.isEmpty()) return
 
     val relevanceObjects = lookup.getRelevanceObjects(items, false)
 
-    val ranker = RankingSupport.getRanker(parameters.originalFile.language)
+    val ranker = lookupStorage.model
 
-    val lookupStorage = MutableLookupStorage.get(lookup)
-
-    val userFactors = lookupStorage?.userFactors ?: emptyMap()
-    val contextFactors = lookupStorage?.contextFactors ?: emptyMap()
+    val userFactors = lookupStorage.userFactors
+    val contextFactors = lookupStorage.contextFactors
     SessionFactorsUtils.updateSessionFactors(lookup, items)
     // TODO: Utilize session, context and user factors
     for (element in items) {
@@ -127,11 +128,11 @@ class MLSorter : CompletionFinalSorter() {
       // only log the session features because the ML current models know nothing about sessions features
       SessionFactorsUtils.saveSessionFactorsTo(relevanceMap, lookup, element)
 
-      lookupStorage?.fireElementScored(element, relevanceMap, score)
+      lookupStorage.fireElementScored(element, relevanceMap, score)
     }
   }
 
-  private fun rankByMlScores(items: List<LookupElement>,
+  private fun sortByMlScores(items: List<LookupElement>,
                              element2score: Map<LookupElement, Double?>,
                              positionsBefore: Map<LookupElement, Int>): Iterable<LookupElement> {
     if (element2score.values.none { it == null }) {

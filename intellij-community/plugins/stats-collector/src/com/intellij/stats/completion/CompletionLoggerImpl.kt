@@ -3,7 +3,6 @@ package com.intellij.stats.completion
 
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.completion.sorting.RankingSupport
 import com.intellij.completion.tracker.LookupElementPositionTracker
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.stats.completion.events.*
@@ -22,11 +21,11 @@ class CompletionFileLogger(private val installationUID: String,
 
         val language = lookup.language()
 
+        val lookupStorage = LookupStorage.get(lookup)
         val ideVersion = PluginManagerCore.BUILD_NUMBER ?: "ideVersion"
         val pluginVersion = calcPluginVersion() ?: "pluginVersion"
-        val mlRankingVersion = RankingSupport.getRanker(language)?.version() ?: "NONE"
+        val mlRankingVersion = lookupStorage?.model?.version() ?: "NONE"
 
-        val lookupStorage = LookupStorage.get(lookup)
         val userFactors = lookupStorage?.userFactors ?: emptyMap()
 
         val event = CompletionStartedEvent(
