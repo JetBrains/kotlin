@@ -77,6 +77,7 @@ public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
 
   public void testBeforeAfterBuildTasks() {
     Module module = ModuleManager.getInstance(myProject).findModuleByName(TEST_MODULE_NAME);
+    ExternalProjectsManagerImpl.getInstance(myProject).init();
     addTaskTrigger("beforeBuildTask1", BEFORE_COMPILE, module);
     addTaskTrigger("beforeBuildTask2", BEFORE_COMPILE, module);
     addTaskTrigger("afterBuildTask1", AFTER_COMPILE, module);
