@@ -93,7 +93,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     });
     myProjectSettings = new GradleProjectSettings().withQualifiedModuleNames();
     System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, String.valueOf(GRADLE_DAEMON_TTL_MS));
-    PathAssembler.LocalDistribution distribution = configureWrapper();
+    PathAssembler.LocalDistribution distribution = WriteAction.computeAndWait(() -> configureWrapper());
 
     List<String> allowedRoots = new ArrayList<>();
     collectAllowedRoots(allowedRoots, distribution);
