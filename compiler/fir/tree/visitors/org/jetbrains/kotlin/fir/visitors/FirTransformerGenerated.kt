@@ -6,11 +6,10 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
 
 
@@ -314,16 +313,16 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformUnknownTypeExpression(errorExpression, data)
     }
 
-    open fun transformExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): CompositeTransformResult<FirStatement> {
-        return transformUnknownTypeExpression(expressionWithSmartcast, data)
-    }
-
     open fun transformQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformUnknownTypeExpression(qualifiedAccessExpression, data)
     }
 
     open fun transformCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: D): CompositeTransformResult<FirStatement> {
         return transformQualifiedAccessExpression(callableReferenceAccess, data)
+    }
+
+    open fun transformExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): CompositeTransformResult<FirStatement> {
+        return transformQualifiedAccessExpression(expressionWithSmartcast, data)
     }
 
     open fun transformResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): CompositeTransformResult<FirStatement> {

@@ -6,11 +6,10 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
 
 
@@ -314,16 +313,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitUnknownTypeExpression(errorExpression, null)
     }
 
-    open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
-        visitUnknownTypeExpression(expressionWithSmartcast, null)
-    }
-
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
         visitUnknownTypeExpression(qualifiedAccessExpression, null)
     }
 
     open fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
         visitQualifiedAccessExpression(callableReferenceAccess, null)
+    }
+
+    open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
+        visitQualifiedAccessExpression(expressionWithSmartcast, null)
     }
 
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
