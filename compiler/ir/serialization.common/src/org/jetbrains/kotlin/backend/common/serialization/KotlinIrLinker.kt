@@ -329,8 +329,8 @@ abstract class KotlinIrLinker(
 
             override fun deserializeDescriptorReference(proto: ProtoDescriptorReference) =
                 descriptorReferenceDeserializer.deserializeDescriptorReference(
-                    deserializeFqName(proto.packageFqName),
-                    deserializeFqName(proto.classFqName),
+                    deserializeFqName(proto.packageFqNameList),
+                    deserializeFqName(proto.classFqNameList),
                     deserializeString(proto.name),
                     if (proto.hasUniqId()) proto.uniqId.index else null,
                     isEnumEntry = proto.isEnumEntry,
@@ -404,7 +404,7 @@ abstract class KotlinIrLinker(
 
             val fileDeserializer = IrDeserializerForFile(fileProto.annotations, fileIndex, !deserializationStrategy.needBodies)
 
-            val fqName = fileDeserializer.deserializeFqName(fileProto.fqName)
+            val fqName = fileDeserializer.deserializeFqName(fileProto.fqNameList)
 
             val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
 

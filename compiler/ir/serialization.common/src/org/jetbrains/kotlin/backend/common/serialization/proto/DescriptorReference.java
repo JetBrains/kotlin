@@ -53,40 +53,56 @@ public final class DescriptorReference extends
             }
             break;
           }
+          case 8: {
+            if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+              packageFqName_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000001;
+            }
+            packageFqName_.add(input.readInt32());
+            break;
+          }
           case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = packageFqName_.toBuilder();
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
+              packageFqName_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000001;
             }
-            packageFqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FqName.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(packageFqName_);
-              packageFqName_ = subBuilder.buildPartial();
+            while (input.getBytesUntilLimit() > 0) {
+              packageFqName_.add(input.readInt32());
             }
-            bitField0_ |= 0x00000001;
+            input.popLimit(limit);
+            break;
+          }
+          case 16: {
+            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+              classFqName_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000002;
+            }
+            classFqName_.add(input.readInt32());
             break;
           }
           case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = classFqName_.toBuilder();
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
+              classFqName_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000002;
             }
-            classFqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FqName.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(classFqName_);
-              classFqName_ = subBuilder.buildPartial();
+            while (input.getBytesUntilLimit() > 0) {
+              classFqName_.add(input.readInt32());
             }
-            bitField0_ |= 0x00000002;
+            input.popLimit(limit);
             break;
           }
           case 24: {
-            bitField0_ |= 0x00000004;
+            bitField0_ |= 0x00000001;
             name_ = input.readInt32();
             break;
           }
           case 34: {
             org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000008) == 0x00000008)) {
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
               subBuilder = uniqId_.toBuilder();
             }
             uniqId_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.PARSER, extensionRegistry);
@@ -94,46 +110,46 @@ public final class DescriptorReference extends
               subBuilder.mergeFrom(uniqId_);
               uniqId_ = subBuilder.buildPartial();
             }
-            bitField0_ |= 0x00000008;
+            bitField0_ |= 0x00000002;
             break;
           }
           case 40: {
-            bitField0_ |= 0x00000010;
+            bitField0_ |= 0x00000004;
             isGetter_ = input.readBool();
             break;
           }
           case 48: {
-            bitField0_ |= 0x00000020;
+            bitField0_ |= 0x00000008;
             isSetter_ = input.readBool();
             break;
           }
           case 56: {
-            bitField0_ |= 0x00000040;
+            bitField0_ |= 0x00000010;
             isBackingField_ = input.readBool();
             break;
           }
           case 64: {
-            bitField0_ |= 0x00000080;
+            bitField0_ |= 0x00000020;
             isFakeOverride_ = input.readBool();
             break;
           }
           case 72: {
-            bitField0_ |= 0x00000100;
+            bitField0_ |= 0x00000040;
             isDefaultConstructor_ = input.readBool();
             break;
           }
           case 80: {
-            bitField0_ |= 0x00000200;
+            bitField0_ |= 0x00000080;
             isEnumEntry_ = input.readBool();
             break;
           }
           case 88: {
-            bitField0_ |= 0x00000400;
+            bitField0_ |= 0x00000100;
             isEnumSpecial_ = input.readBool();
             break;
           }
           case 96: {
-            bitField0_ |= 0x00000800;
+            bitField0_ |= 0x00000200;
             isTypeParameter_ = input.readBool();
             break;
           }
@@ -145,6 +161,12 @@ public final class DescriptorReference extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+        packageFqName_ = java.util.Collections.unmodifiableList(packageFqName_);
+      }
+      if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+        classFqName_ = java.util.Collections.unmodifiableList(classFqName_);
+      }
       try {
         unknownFieldsCodedOutput.flush();
       } catch (java.io.IOException e) {
@@ -172,45 +194,69 @@ public final class DescriptorReference extends
 
   private int bitField0_;
   public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.FqName packageFqName_;
+  private java.util.List<java.lang.Integer> packageFqName_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1;</code>
    */
-  public boolean hasPackageFqName() {
-    return ((bitField0_ & 0x00000001) == 0x00000001);
+  public java.util.List<java.lang.Integer>
+      getPackageFqNameList() {
+    return packageFqName_;
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getPackageFqName() {
-    return packageFqName_;
+  public int getPackageFqNameCount() {
+    return packageFqName_.size();
+  }
+  /**
+   * <code>repeated int32 package_fq_name = 1;</code>
+   */
+  public int getPackageFqName(int index) {
+    return packageFqName_.get(index);
   }
 
   public static final int CLASS_FQ_NAME_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.FqName classFqName_;
+  private java.util.List<java.lang.Integer> classFqName_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2;</code>
    */
-  public boolean hasClassFqName() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
+  public java.util.List<java.lang.Integer>
+      getClassFqNameList() {
+    return classFqName_;
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getClassFqName() {
-    return classFqName_;
+  public int getClassFqNameCount() {
+    return classFqName_.size();
+  }
+  /**
+   * <code>repeated int32 class_fq_name = 2;</code>
+   */
+  public int getClassFqName(int index) {
+    return classFqName_.get(index);
   }
 
   public static final int NAME_FIELD_NUMBER = 3;
   private int name_;
   /**
    * <code>required int32 name = 3;</code>
+   *
+   * <pre>
+   *  required FqName package_fq_name = 1;
+   *  required FqName class_fq_name = 2;
+   * </pre>
    */
   public boolean hasName() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
+    return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
    * <code>required int32 name = 3;</code>
+   *
+   * <pre>
+   *  required FqName package_fq_name = 1;
+   *  required FqName class_fq_name = 2;
+   * </pre>
    */
   public int getName() {
     return name_;
@@ -222,7 +268,7 @@ public final class DescriptorReference extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
    */
   public boolean hasUniqId() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
+    return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
@@ -237,7 +283,7 @@ public final class DescriptorReference extends
    * <code>optional bool is_getter = 5 [default = false];</code>
    */
   public boolean hasIsGetter() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
+    return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
    * <code>optional bool is_getter = 5 [default = false];</code>
@@ -252,7 +298,7 @@ public final class DescriptorReference extends
    * <code>optional bool is_setter = 6 [default = false];</code>
    */
   public boolean hasIsSetter() {
-    return ((bitField0_ & 0x00000020) == 0x00000020);
+    return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
    * <code>optional bool is_setter = 6 [default = false];</code>
@@ -267,7 +313,7 @@ public final class DescriptorReference extends
    * <code>optional bool is_backing_field = 7 [default = false];</code>
    */
   public boolean hasIsBackingField() {
-    return ((bitField0_ & 0x00000040) == 0x00000040);
+    return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
    * <code>optional bool is_backing_field = 7 [default = false];</code>
@@ -282,7 +328,7 @@ public final class DescriptorReference extends
    * <code>optional bool is_fake_override = 8 [default = false];</code>
    */
   public boolean hasIsFakeOverride() {
-    return ((bitField0_ & 0x00000080) == 0x00000080);
+    return ((bitField0_ & 0x00000020) == 0x00000020);
   }
   /**
    * <code>optional bool is_fake_override = 8 [default = false];</code>
@@ -297,7 +343,7 @@ public final class DescriptorReference extends
    * <code>optional bool is_default_constructor = 9 [default = false];</code>
    */
   public boolean hasIsDefaultConstructor() {
-    return ((bitField0_ & 0x00000100) == 0x00000100);
+    return ((bitField0_ & 0x00000040) == 0x00000040);
   }
   /**
    * <code>optional bool is_default_constructor = 9 [default = false];</code>
@@ -312,7 +358,7 @@ public final class DescriptorReference extends
    * <code>optional bool is_enum_entry = 10 [default = false];</code>
    */
   public boolean hasIsEnumEntry() {
-    return ((bitField0_ & 0x00000200) == 0x00000200);
+    return ((bitField0_ & 0x00000080) == 0x00000080);
   }
   /**
    * <code>optional bool is_enum_entry = 10 [default = false];</code>
@@ -327,7 +373,7 @@ public final class DescriptorReference extends
    * <code>optional bool is_enum_special = 11 [default = false];</code>
    */
   public boolean hasIsEnumSpecial() {
-    return ((bitField0_ & 0x00000400) == 0x00000400);
+    return ((bitField0_ & 0x00000100) == 0x00000100);
   }
   /**
    * <code>optional bool is_enum_special = 11 [default = false];</code>
@@ -342,7 +388,7 @@ public final class DescriptorReference extends
    * <code>optional bool is_type_parameter = 12 [default = false];</code>
    */
   public boolean hasIsTypeParameter() {
-    return ((bitField0_ & 0x00000800) == 0x00000800);
+    return ((bitField0_ & 0x00000200) == 0x00000200);
   }
   /**
    * <code>optional bool is_type_parameter = 12 [default = false];</code>
@@ -352,8 +398,8 @@ public final class DescriptorReference extends
   }
 
   private void initFields() {
-    packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-    classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+    packageFqName_ = java.util.Collections.emptyList();
+    classFqName_ = java.util.Collections.emptyList();
     name_ = 0;
     uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
     isGetter_ = false;
@@ -371,14 +417,6 @@ public final class DescriptorReference extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasPackageFqName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasClassFqName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!hasName()) {
       memoizedIsInitialized = 0;
       return false;
@@ -396,40 +434,40 @@ public final class DescriptorReference extends
   public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     getSerializedSize();
+    for (int i = 0; i < packageFqName_.size(); i++) {
+      output.writeInt32(1, packageFqName_.get(i));
+    }
+    for (int i = 0; i < classFqName_.size(); i++) {
+      output.writeInt32(2, classFqName_.get(i));
+    }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeMessage(1, packageFqName_);
-    }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, classFqName_);
-    }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeInt32(3, name_);
     }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeMessage(4, uniqId_);
     }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeBool(5, isGetter_);
     }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeBool(6, isSetter_);
     }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
       output.writeBool(7, isBackingField_);
     }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
       output.writeBool(8, isFakeOverride_);
     }
-    if (((bitField0_ & 0x00000100) == 0x00000100)) {
+    if (((bitField0_ & 0x00000040) == 0x00000040)) {
       output.writeBool(9, isDefaultConstructor_);
     }
-    if (((bitField0_ & 0x00000200) == 0x00000200)) {
+    if (((bitField0_ & 0x00000080) == 0x00000080)) {
       output.writeBool(10, isEnumEntry_);
     }
-    if (((bitField0_ & 0x00000400) == 0x00000400)) {
+    if (((bitField0_ & 0x00000100) == 0x00000100)) {
       output.writeBool(11, isEnumSpecial_);
     }
-    if (((bitField0_ & 0x00000800) == 0x00000800)) {
+    if (((bitField0_ & 0x00000200) == 0x00000200)) {
       output.writeBool(12, isTypeParameter_);
     }
     output.writeRawBytes(unknownFields);
@@ -441,51 +479,61 @@ public final class DescriptorReference extends
     if (size != -1) return size;
 
     size = 0;
+    {
+      int dataSize = 0;
+      for (int i = 0; i < packageFqName_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(packageFqName_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getPackageFqNameList().size();
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < classFqName_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(classFqName_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getClassFqNameList().size();
+    }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, packageFqName_);
-    }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, classFqName_);
-    }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(3, name_);
     }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(4, uniqId_);
     }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(5, isGetter_);
     }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(6, isSetter_);
     }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(7, isBackingField_);
     }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(8, isFakeOverride_);
     }
-    if (((bitField0_ & 0x00000100) == 0x00000100)) {
+    if (((bitField0_ & 0x00000040) == 0x00000040)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(9, isDefaultConstructor_);
     }
-    if (((bitField0_ & 0x00000200) == 0x00000200)) {
+    if (((bitField0_ & 0x00000080) == 0x00000080)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(10, isEnumEntry_);
     }
-    if (((bitField0_ & 0x00000400) == 0x00000400)) {
+    if (((bitField0_ & 0x00000100) == 0x00000100)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(11, isEnumSpecial_);
     }
-    if (((bitField0_ & 0x00000800) == 0x00000800)) {
+    if (((bitField0_ & 0x00000200) == 0x00000200)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(12, isTypeParameter_);
     }
@@ -583,9 +631,9 @@ public final class DescriptorReference extends
 
     public Builder clear() {
       super.clear();
-      packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+      packageFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
-      classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+      classFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
       name_ = 0;
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -630,52 +678,54 @@ public final class DescriptorReference extends
       org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference result = new org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-        to_bitField0_ |= 0x00000001;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        packageFqName_ = java.util.Collections.unmodifiableList(packageFqName_);
+        bitField0_ = (bitField0_ & ~0x00000001);
       }
       result.packageFqName_ = packageFqName_;
-      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-        to_bitField0_ |= 0x00000002;
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        classFqName_ = java.util.Collections.unmodifiableList(classFqName_);
+        bitField0_ = (bitField0_ & ~0x00000002);
       }
       result.classFqName_ = classFqName_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-        to_bitField0_ |= 0x00000004;
+        to_bitField0_ |= 0x00000001;
       }
       result.name_ = name_;
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-        to_bitField0_ |= 0x00000008;
+        to_bitField0_ |= 0x00000002;
       }
       result.uniqId_ = uniqId_;
       if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-        to_bitField0_ |= 0x00000010;
+        to_bitField0_ |= 0x00000004;
       }
       result.isGetter_ = isGetter_;
       if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000020;
+        to_bitField0_ |= 0x00000008;
       }
       result.isSetter_ = isSetter_;
       if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-        to_bitField0_ |= 0x00000040;
+        to_bitField0_ |= 0x00000010;
       }
       result.isBackingField_ = isBackingField_;
       if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-        to_bitField0_ |= 0x00000080;
+        to_bitField0_ |= 0x00000020;
       }
       result.isFakeOverride_ = isFakeOverride_;
       if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
-        to_bitField0_ |= 0x00000100;
+        to_bitField0_ |= 0x00000040;
       }
       result.isDefaultConstructor_ = isDefaultConstructor_;
       if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
-        to_bitField0_ |= 0x00000200;
+        to_bitField0_ |= 0x00000080;
       }
       result.isEnumEntry_ = isEnumEntry_;
       if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
-        to_bitField0_ |= 0x00000400;
+        to_bitField0_ |= 0x00000100;
       }
       result.isEnumSpecial_ = isEnumSpecial_;
       if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
-        to_bitField0_ |= 0x00000800;
+        to_bitField0_ |= 0x00000200;
       }
       result.isTypeParameter_ = isTypeParameter_;
       result.bitField0_ = to_bitField0_;
@@ -684,11 +734,25 @@ public final class DescriptorReference extends
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance()) return this;
-      if (other.hasPackageFqName()) {
-        mergePackageFqName(other.getPackageFqName());
+      if (!other.packageFqName_.isEmpty()) {
+        if (packageFqName_.isEmpty()) {
+          packageFqName_ = other.packageFqName_;
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          ensurePackageFqNameIsMutable();
+          packageFqName_.addAll(other.packageFqName_);
+        }
+        
       }
-      if (other.hasClassFqName()) {
-        mergeClassFqName(other.getClassFqName());
+      if (!other.classFqName_.isEmpty()) {
+        if (classFqName_.isEmpty()) {
+          classFqName_ = other.classFqName_;
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          ensureClassFqNameIsMutable();
+          classFqName_.addAll(other.classFqName_);
+        }
+        
       }
       if (other.hasName()) {
         setName(other.getName());
@@ -726,14 +790,6 @@ public final class DescriptorReference extends
     }
 
     public final boolean isInitialized() {
-      if (!hasPackageFqName()) {
-        
-        return false;
-      }
-      if (!hasClassFqName()) {
-        
-        return false;
-      }
       if (!hasName()) {
         
         return false;
@@ -766,141 +822,168 @@ public final class DescriptorReference extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.FqName packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
-     */
-    public boolean hasPackageFqName() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
+    private java.util.List<java.lang.Integer> packageFqName_ = java.util.Collections.emptyList();
+    private void ensurePackageFqNameIsMutable() {
+      if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+        packageFqName_ = new java.util.ArrayList<java.lang.Integer>(packageFqName_);
+        bitField0_ |= 0x00000001;
+       }
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getPackageFqName() {
-      return packageFqName_;
+    public java.util.List<java.lang.Integer>
+        getPackageFqNameList() {
+      return java.util.Collections.unmodifiableList(packageFqName_);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1;</code>
      */
-    public Builder setPackageFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      packageFqName_ = value;
-
-      bitField0_ |= 0x00000001;
-      return this;
+    public int getPackageFqNameCount() {
+      return packageFqName_.size();
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1;</code>
+     */
+    public int getPackageFqName(int index) {
+      return packageFqName_.get(index);
+    }
+    /**
+     * <code>repeated int32 package_fq_name = 1;</code>
      */
     public Builder setPackageFqName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder builderForValue) {
-      packageFqName_ = builderForValue.build();
-
-      bitField0_ |= 0x00000001;
+        int index, int value) {
+      ensurePackageFqNameIsMutable();
+      packageFqName_.set(index, value);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1;</code>
      */
-    public Builder mergePackageFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          packageFqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance()) {
-        packageFqName_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.FqName.newBuilder(packageFqName_).mergeFrom(value).buildPartial();
-      } else {
-        packageFqName_ = value;
-      }
-
-      bitField0_ |= 0x00000001;
+    public Builder addPackageFqName(int value) {
+      ensurePackageFqNameIsMutable();
+      packageFqName_.add(value);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+     * <code>repeated int32 package_fq_name = 1;</code>
+     */
+    public Builder addAllPackageFqName(
+        java.lang.Iterable<? extends java.lang.Integer> values) {
+      ensurePackageFqNameIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, packageFqName_);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int32 package_fq_name = 1;</code>
      */
     public Builder clearPackageFqName() {
-      packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-
+      packageFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
+      
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.FqName classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
-     */
-    public boolean hasClassFqName() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
+    private java.util.List<java.lang.Integer> classFqName_ = java.util.Collections.emptyList();
+    private void ensureClassFqNameIsMutable() {
+      if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+        classFqName_ = new java.util.ArrayList<java.lang.Integer>(classFqName_);
+        bitField0_ |= 0x00000002;
+       }
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getClassFqName() {
-      return classFqName_;
+    public java.util.List<java.lang.Integer>
+        getClassFqNameList() {
+      return java.util.Collections.unmodifiableList(classFqName_);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2;</code>
      */
-    public Builder setClassFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      classFqName_ = value;
-
-      bitField0_ |= 0x00000002;
-      return this;
+    public int getClassFqNameCount() {
+      return classFqName_.size();
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2;</code>
+     */
+    public int getClassFqName(int index) {
+      return classFqName_.get(index);
+    }
+    /**
+     * <code>repeated int32 class_fq_name = 2;</code>
      */
     public Builder setClassFqName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder builderForValue) {
-      classFqName_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
+        int index, int value) {
+      ensureClassFqNameIsMutable();
+      classFqName_.set(index, value);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2;</code>
      */
-    public Builder mergeClassFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          classFqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance()) {
-        classFqName_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.FqName.newBuilder(classFqName_).mergeFrom(value).buildPartial();
-      } else {
-        classFqName_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
+    public Builder addClassFqName(int value) {
+      ensureClassFqNameIsMutable();
+      classFqName_.add(value);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+     * <code>repeated int32 class_fq_name = 2;</code>
+     */
+    public Builder addAllClassFqName(
+        java.lang.Iterable<? extends java.lang.Integer> values) {
+      ensureClassFqNameIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, classFqName_);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int32 class_fq_name = 2;</code>
      */
     public Builder clearClassFqName() {
-      classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-
+      classFqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
+      
       return this;
     }
 
     private int name_ ;
     /**
      * <code>required int32 name = 3;</code>
+     *
+     * <pre>
+     *  required FqName package_fq_name = 1;
+     *  required FqName class_fq_name = 2;
+     * </pre>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
      * <code>required int32 name = 3;</code>
+     *
+     * <pre>
+     *  required FqName package_fq_name = 1;
+     *  required FqName class_fq_name = 2;
+     * </pre>
      */
     public int getName() {
       return name_;
     }
     /**
      * <code>required int32 name = 3;</code>
+     *
+     * <pre>
+     *  required FqName package_fq_name = 1;
+     *  required FqName class_fq_name = 2;
+     * </pre>
      */
     public Builder setName(int value) {
       bitField0_ |= 0x00000004;
@@ -910,6 +993,11 @@ public final class DescriptorReference extends
     }
     /**
      * <code>required int32 name = 3;</code>
+     *
+     * <pre>
+     *  required FqName package_fq_name = 1;
+     *  required FqName class_fq_name = 2;
+     * </pre>
      */
     public Builder clearName() {
       bitField0_ = (bitField0_ & ~0x00000004);

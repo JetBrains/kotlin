@@ -119,7 +119,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind as P
 //import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoStringIndex
 import org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments as ProtoTypeArguments
 import org.jetbrains.kotlin.backend.common.serialization.proto.Visibility as ProtoVisibility
-import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
+//import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 
 // TODO: This code still has some uses of descriptors:
 // 1. We use descriptors as keys for symbolTable -- probably symbol table related code should be refactored out from
@@ -143,8 +143,8 @@ abstract class IrFileDeserializer(
 
     private val parentsStack = mutableListOf<IrDeclarationParent>()
 
-    fun deserializeFqName(proto: ProtoFqName): FqName {
-        return proto.segmentList.run {
+    fun deserializeFqName(fqn: List<Int>): FqName {
+        return fqn.run {
             if (isEmpty()) FqName.ROOT else FqName.fromSegments(map { deserializeString(it) })
         }
     }

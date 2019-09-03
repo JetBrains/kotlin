@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
     val serializeString: (String) -> Int,
-    val serializeFqName: (FqName) -> ProtoFqName
+    val serializeFqName: (FqName) -> List<Int>
 ) {
 
     private fun isEnumSpecialMember(descriptor: DeclarationDescriptor): Boolean {
@@ -112,8 +111,8 @@ open class DescriptorReferenceSerializer(
         val uniqId = discoverableDescriptorsDeclaration?.let { declarationTable.uniqIdByDeclaration(it) }
 
         val proto = ProtoDescriptorReference.newBuilder()
-            .setPackageFqName(serializeFqName(packageFqName))
-            .setClassFqName(serializeFqName(classFqName))
+            .addAllPackageFqName(serializeFqName(packageFqName))
+            .addAllClassFqName(serializeFqName(classFqName))
             .setName(serializeString(nameString))
 
         if (uniqId != null) proto.setUniqId(protoUniqId(uniqId))

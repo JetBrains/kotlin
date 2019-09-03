@@ -8,29 +8,47 @@ public interface DescriptorReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1;</code>
    */
-  boolean hasPackageFqName();
+  java.util.List<java.lang.Integer> getPackageFqNameList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getPackageFqName();
+  int getPackageFqNameCount();
+  /**
+   * <code>repeated int32 package_fq_name = 1;</code>
+   */
+  int getPackageFqName(int index);
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2;</code>
    */
-  boolean hasClassFqName();
+  java.util.List<java.lang.Integer> getClassFqNameList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getClassFqName();
+  int getClassFqNameCount();
+  /**
+   * <code>repeated int32 class_fq_name = 2;</code>
+   */
+  int getClassFqName(int index);
 
   /**
    * <code>required int32 name = 3;</code>
+   *
+   * <pre>
+   *  required FqName package_fq_name = 1;
+   *  required FqName class_fq_name = 2;
+   * </pre>
    */
   boolean hasName();
   /**
    * <code>required int32 name = 3;</code>
+   *
+   * <pre>
+   *  required FqName package_fq_name = 1;
+   *  required FqName class_fq_name = 2;
+   * </pre>
    */
   int getName();
 

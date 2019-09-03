@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind as Prot
 import org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates as ProtoCoordinates
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
-import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
@@ -303,14 +302,13 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeFqName(fqName: FqName): ProtoFqName {
-        val proto = ProtoFqName.newBuilder()
-        fqName.pathSegments().forEach {
-            proto.addSegment(serializeString(it.identifier))
-        }
+    private fun serializeFqName(fqName: FqName): List<Int> {
+//        val proto = ProtoFqName.newBuilder()
+//        fqName.pathSegments().forEach {
+//            proto.addSegment(serializeString(it.identifier))
+//        }
 
-        return proto.build()
-    }
+    private fun serializeFqName(fqName: FqName) = fqName.pathSegments().map { serializeString(it.identifier) }
 
     private fun serializeIrTypeProjection(argument: IrTypeProjection): ProtoTypeProjection = ProtoTypeProjection.newBuilder()
         .setVariance(serializeIrTypeVariance(argument.variance))
@@ -1279,7 +1277,7 @@ open class IrFileSerializer(
 
         val proto = ProtoFile.newBuilder()
             .setFileEntry(serializeFileEntry(file.fileEntry))
-            .setFqName(serializeFqName(file.fqName))
+            .addAllFqName(serializeFqName(file.fqName))
             .setAnnotations(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {

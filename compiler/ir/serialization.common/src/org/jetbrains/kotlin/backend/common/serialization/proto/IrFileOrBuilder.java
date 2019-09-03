@@ -31,20 +31,32 @@ public interface IrFileOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3;</code>
    */
-  boolean hasFqName();
+  java.util.List<java.lang.Integer> getFqNameList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqName();
+  int getFqNameCount();
+  /**
+   * <code>repeated int32 fq_name = 3;</code>
+   */
+  int getFqName(int index);
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+   *
+   * <pre>
+   *  required FqName fq_name = 3;
+   * </pre>
    */
   boolean hasAnnotations();
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+   *
+   * <pre>
+   *  required FqName fq_name = 3;
+   * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
 

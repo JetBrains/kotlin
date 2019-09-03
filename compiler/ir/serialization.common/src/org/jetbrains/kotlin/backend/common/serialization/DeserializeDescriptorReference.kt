@@ -109,8 +109,8 @@ abstract class DescriptorReferenceDeserializer(
         }
 
         // TODO: This is still native specific. Eliminate.
-        val rootSegment = packageFqName.pathSegments().firstOrNull()?.identifier ?: ""
-        if (rootSegment == "cnames" || rootSegment == "objcnames") {
+        val fqnString = packageFqName.asString()
+        if (fqnString.startsWith("cnames.") || fqnString.startsWith("objcnames.")) {
             val descriptor =
                 currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, FqName(name), false))!!
             if (!descriptor.fqNameUnsafe.asString().startsWith("cnames") && !descriptor.fqNameUnsafe.asString().startsWith(

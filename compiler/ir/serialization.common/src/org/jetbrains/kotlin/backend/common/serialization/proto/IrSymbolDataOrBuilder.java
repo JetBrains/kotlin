@@ -35,20 +35,32 @@ public interface IrSymbolDataOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getTopLevelUniqId();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+   * <code>repeated int32 fq_name = 4;</code>
    */
-  boolean hasFqname();
+  java.util.List<java.lang.Integer> getFqNameList();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+   * <code>repeated int32 fq_name = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqname();
+  int getFqNameCount();
+  /**
+   * <code>repeated int32 fq_name = 4;</code>
+   */
+  int getFqName(int index);
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+   *
+   * <pre>
+   *  optional FqName fqname = 4;
+   * </pre>
    */
   boolean hasDescriptorReference();
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+   *
+   * <pre>
+   *  optional FqName fqname = 4;
+   * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference getDescriptorReference();
 }

@@ -74,22 +74,30 @@ public final class IrFile extends
             bitField0_ |= 0x00000001;
             break;
           }
+          case 24: {
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+              fqName_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000004;
+            }
+            fqName_.add(input.readInt32());
+            break;
+          }
           case 26: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = fqName_.toBuilder();
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+              fqName_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000004;
             }
-            fqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FqName.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(fqName_);
-              fqName_ = subBuilder.buildPartial();
+            while (input.getBytesUntilLimit() > 0) {
+              fqName_.add(input.readInt32());
             }
-            bitField0_ |= 0x00000002;
+            input.popLimit(limit);
             break;
           }
           case 34: {
             org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000004) == 0x00000004)) {
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
               subBuilder = annotations_.toBuilder();
             }
             annotations_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.PARSER, extensionRegistry);
@@ -97,7 +105,7 @@ public final class IrFile extends
               subBuilder.mergeFrom(annotations_);
               annotations_ = subBuilder.buildPartial();
             }
-            bitField0_ |= 0x00000004;
+            bitField0_ |= 0x00000002;
             break;
           }
           case 40: {
@@ -131,6 +139,9 @@ public final class IrFile extends
     } finally {
       if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
         declarationId_ = java.util.Collections.unmodifiableList(declarationId_);
+      }
+      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+        fqName_ = java.util.Collections.unmodifiableList(fqName_);
       }
       if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
         explicitlyExportedToCompiler_ = java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
@@ -212,30 +223,45 @@ public final class IrFile extends
   }
 
   public static final int FQ_NAME_FIELD_NUMBER = 3;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqName_;
+  private java.util.List<java.lang.Integer> fqName_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3;</code>
    */
-  public boolean hasFqName() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
+  public java.util.List<java.lang.Integer>
+      getFqNameList() {
+    return fqName_;
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqName() {
-    return fqName_;
+  public int getFqNameCount() {
+    return fqName_.size();
+  }
+  /**
+   * <code>repeated int32 fq_name = 3;</code>
+   */
+  public int getFqName(int index) {
+    return fqName_.get(index);
   }
 
   public static final int ANNOTATIONS_FIELD_NUMBER = 4;
   private org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations_;
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+   *
+   * <pre>
+   *  required FqName fq_name = 3;
+   * </pre>
    */
   public boolean hasAnnotations() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
+    return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+   *
+   * <pre>
+   *  required FqName fq_name = 3;
+   * </pre>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations() {
     return annotations_;
@@ -266,7 +292,7 @@ public final class IrFile extends
   private void initFields() {
     declarationId_ = java.util.Collections.emptyList();
     fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
-    fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+    fqName_ = java.util.Collections.emptyList();
     annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
     explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
   }
@@ -277,10 +303,6 @@ public final class IrFile extends
     if (isInitialized == 0) return false;
 
     if (!hasFileEntry()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasFqName()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -315,10 +337,10 @@ public final class IrFile extends
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       output.writeMessage(2, fileEntry_);
     }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(3, fqName_);
+    for (int i = 0; i < fqName_.size(); i++) {
+      output.writeInt32(3, fqName_.get(i));
     }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeMessage(4, annotations_);
     }
     for (int i = 0; i < explicitlyExportedToCompiler_.size(); i++) {
@@ -341,11 +363,16 @@ public final class IrFile extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(2, fileEntry_);
     }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(3, fqName_);
+    {
+      int dataSize = 0;
+      for (int i = 0; i < fqName_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(fqName_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getFqNameList().size();
     }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(4, annotations_);
     }
@@ -456,7 +483,7 @@ public final class IrFile extends
       bitField0_ = (bitField0_ & ~0x00000001);
       fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
-      fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+      fqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000004);
       annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -494,12 +521,13 @@ public final class IrFile extends
         to_bitField0_ |= 0x00000001;
       }
       result.fileEntry_ = fileEntry_;
-      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-        to_bitField0_ |= 0x00000002;
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        fqName_ = java.util.Collections.unmodifiableList(fqName_);
+        bitField0_ = (bitField0_ & ~0x00000004);
       }
       result.fqName_ = fqName_;
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-        to_bitField0_ |= 0x00000004;
+        to_bitField0_ |= 0x00000002;
       }
       result.annotations_ = annotations_;
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
@@ -526,8 +554,15 @@ public final class IrFile extends
       if (other.hasFileEntry()) {
         mergeFileEntry(other.getFileEntry());
       }
-      if (other.hasFqName()) {
-        mergeFqName(other.getFqName());
+      if (!other.fqName_.isEmpty()) {
+        if (fqName_.isEmpty()) {
+          fqName_ = other.fqName_;
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          ensureFqNameIsMutable();
+          fqName_.addAll(other.fqName_);
+        }
+        
       }
       if (other.hasAnnotations()) {
         mergeAnnotations(other.getAnnotations());
@@ -549,10 +584,6 @@ public final class IrFile extends
 
     public final boolean isInitialized() {
       if (!hasFileEntry()) {
-        
-        return false;
-      }
-      if (!hasFqName()) {
         
         return false;
       }
@@ -781,81 +812,99 @@ public final class IrFile extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
-     */
-    public boolean hasFqName() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+    private java.util.List<java.lang.Integer> fqName_ = java.util.Collections.emptyList();
+    private void ensureFqNameIsMutable() {
+      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+        fqName_ = new java.util.ArrayList<java.lang.Integer>(fqName_);
+        bitField0_ |= 0x00000004;
+       }
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqName() {
-      return fqName_;
+    public java.util.List<java.lang.Integer>
+        getFqNameList() {
+      return java.util.Collections.unmodifiableList(fqName_);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3;</code>
      */
-    public Builder setFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      fqName_ = value;
-
-      bitField0_ |= 0x00000004;
-      return this;
+    public int getFqNameCount() {
+      return fqName_.size();
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3;</code>
+     */
+    public int getFqName(int index) {
+      return fqName_.get(index);
+    }
+    /**
+     * <code>repeated int32 fq_name = 3;</code>
      */
     public Builder setFqName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder builderForValue) {
-      fqName_ = builderForValue.build();
-
-      bitField0_ |= 0x00000004;
+        int index, int value) {
+      ensureFqNameIsMutable();
+      fqName_.set(index, value);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3;</code>
      */
-    public Builder mergeFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
-      if (((bitField0_ & 0x00000004) == 0x00000004) &&
-          fqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance()) {
-        fqName_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.FqName.newBuilder(fqName_).mergeFrom(value).buildPartial();
-      } else {
-        fqName_ = value;
-      }
-
-      bitField0_ |= 0x00000004;
+    public Builder addFqName(int value) {
+      ensureFqNameIsMutable();
+      fqName_.add(value);
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+     * <code>repeated int32 fq_name = 3;</code>
+     */
+    public Builder addAllFqName(
+        java.lang.Iterable<? extends java.lang.Integer> values) {
+      ensureFqNameIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, fqName_);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int32 fq_name = 3;</code>
      */
     public Builder clearFqName() {
-      fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-
+      fqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000004);
+      
       return this;
     }
 
     private org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
     /**
      * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+     *
+     * <pre>
+     *  required FqName fq_name = 3;
+     * </pre>
      */
     public boolean hasAnnotations() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
      * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+     *
+     * <pre>
+     *  required FqName fq_name = 3;
+     * </pre>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations() {
       return annotations_;
     }
     /**
      * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+     *
+     * <pre>
+     *  required FqName fq_name = 3;
+     * </pre>
      */
     public Builder setAnnotations(org.jetbrains.kotlin.backend.common.serialization.proto.Annotations value) {
       if (value == null) {
@@ -868,6 +917,10 @@ public final class IrFile extends
     }
     /**
      * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+     *
+     * <pre>
+     *  required FqName fq_name = 3;
+     * </pre>
      */
     public Builder setAnnotations(
         org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.Builder builderForValue) {
@@ -878,6 +931,10 @@ public final class IrFile extends
     }
     /**
      * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+     *
+     * <pre>
+     *  required FqName fq_name = 3;
+     * </pre>
      */
     public Builder mergeAnnotations(org.jetbrains.kotlin.backend.common.serialization.proto.Annotations value) {
       if (((bitField0_ & 0x00000008) == 0x00000008) &&
@@ -893,6 +950,10 @@ public final class IrFile extends
     }
     /**
      * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+     *
+     * <pre>
+     *  required FqName fq_name = 3;
+     * </pre>
      */
     public Builder clearAnnotations() {
       annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();

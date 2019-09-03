@@ -91,22 +91,30 @@ public final class IrSymbolData extends
             bitField0_ |= 0x00000004;
             break;
           }
+          case 32: {
+            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+              fqName_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000008;
+            }
+            fqName_.add(input.readInt32());
+            break;
+          }
           case 34: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000008) == 0x00000008)) {
-              subBuilder = fqname_.toBuilder();
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008) && input.getBytesUntilLimit() > 0) {
+              fqName_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000008;
             }
-            fqname_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FqName.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(fqname_);
-              fqname_ = subBuilder.buildPartial();
+            while (input.getBytesUntilLimit() > 0) {
+              fqName_.add(input.readInt32());
             }
-            bitField0_ |= 0x00000008;
+            input.popLimit(limit);
             break;
           }
           case 42: {
             org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000010) == 0x00000010)) {
+            if (((bitField0_ & 0x00000008) == 0x00000008)) {
               subBuilder = descriptorReference_.toBuilder();
             }
             descriptorReference_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.PARSER, extensionRegistry);
@@ -114,7 +122,7 @@ public final class IrSymbolData extends
               subBuilder.mergeFrom(descriptorReference_);
               descriptorReference_ = subBuilder.buildPartial();
             }
-            bitField0_ |= 0x00000010;
+            bitField0_ |= 0x00000008;
             break;
           }
         }
@@ -125,6 +133,9 @@ public final class IrSymbolData extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+        fqName_ = java.util.Collections.unmodifiableList(fqName_);
+      }
       try {
         unknownFieldsCodedOutput.flush();
       } catch (java.io.IOException e) {
@@ -196,31 +207,46 @@ public final class IrSymbolData extends
     return topLevelUniqId_;
   }
 
-  public static final int FQNAME_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname_;
+  public static final int FQ_NAME_FIELD_NUMBER = 4;
+  private java.util.List<java.lang.Integer> fqName_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+   * <code>repeated int32 fq_name = 4;</code>
    */
-  public boolean hasFqname() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
+  public java.util.List<java.lang.Integer>
+      getFqNameList() {
+    return fqName_;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+   * <code>repeated int32 fq_name = 4;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqname() {
-    return fqname_;
+  public int getFqNameCount() {
+    return fqName_.size();
+  }
+  /**
+   * <code>repeated int32 fq_name = 4;</code>
+   */
+  public int getFqName(int index) {
+    return fqName_.get(index);
   }
 
   public static final int DESCRIPTOR_REFERENCE_FIELD_NUMBER = 5;
   private org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptorReference_;
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+   *
+   * <pre>
+   *  optional FqName fqname = 4;
+   * </pre>
    */
   public boolean hasDescriptorReference() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
+    return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+   *
+   * <pre>
+   *  optional FqName fqname = 4;
+   * </pre>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference getDescriptorReference() {
     return descriptorReference_;
@@ -230,7 +256,7 @@ public final class IrSymbolData extends
     kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolKind.FUNCTION_SYMBOL;
     uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
     topLevelUniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
-    fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+    fqName_ = java.util.Collections.emptyList();
     descriptorReference_ = org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -281,10 +307,10 @@ public final class IrSymbolData extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeMessage(3, topLevelUniqId_);
     }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeMessage(4, fqname_);
+    for (int i = 0; i < fqName_.size(); i++) {
+      output.writeInt32(4, fqName_.get(i));
     }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeMessage(5, descriptorReference_);
     }
     output.writeRawBytes(unknownFields);
@@ -308,11 +334,16 @@ public final class IrSymbolData extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(3, topLevelUniqId_);
     }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(4, fqname_);
+    {
+      int dataSize = 0;
+      for (int i = 0; i < fqName_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(fqName_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getFqNameList().size();
     }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(5, descriptorReference_);
     }
@@ -416,7 +447,7 @@ public final class IrSymbolData extends
       bitField0_ = (bitField0_ & ~0x00000002);
       topLevelUniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
-      fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+      fqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
       descriptorReference_ = org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000010);
@@ -455,12 +486,13 @@ public final class IrSymbolData extends
         to_bitField0_ |= 0x00000004;
       }
       result.topLevelUniqId_ = topLevelUniqId_;
-      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-        to_bitField0_ |= 0x00000008;
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        fqName_ = java.util.Collections.unmodifiableList(fqName_);
+        bitField0_ = (bitField0_ & ~0x00000008);
       }
-      result.fqname_ = fqname_;
+      result.fqName_ = fqName_;
       if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-        to_bitField0_ |= 0x00000010;
+        to_bitField0_ |= 0x00000008;
       }
       result.descriptorReference_ = descriptorReference_;
       result.bitField0_ = to_bitField0_;
@@ -478,8 +510,15 @@ public final class IrSymbolData extends
       if (other.hasTopLevelUniqId()) {
         mergeTopLevelUniqId(other.getTopLevelUniqId());
       }
-      if (other.hasFqname()) {
-        mergeFqname(other.getFqname());
+      if (!other.fqName_.isEmpty()) {
+        if (fqName_.isEmpty()) {
+          fqName_ = other.fqName_;
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          ensureFqNameIsMutable();
+          fqName_.addAll(other.fqName_);
+        }
+        
       }
       if (other.hasDescriptorReference()) {
         mergeDescriptorReference(other.getDescriptorReference());
@@ -693,81 +732,99 @@ public final class IrSymbolData extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
-     */
-    public boolean hasFqname() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+    private java.util.List<java.lang.Integer> fqName_ = java.util.Collections.emptyList();
+    private void ensureFqNameIsMutable() {
+      if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+        fqName_ = new java.util.ArrayList<java.lang.Integer>(fqName_);
+        bitField0_ |= 0x00000008;
+       }
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+     * <code>repeated int32 fq_name = 4;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqname() {
-      return fqname_;
+    public java.util.List<java.lang.Integer>
+        getFqNameList() {
+      return java.util.Collections.unmodifiableList(fqName_);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+     * <code>repeated int32 fq_name = 4;</code>
      */
-    public Builder setFqname(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      fqname_ = value;
-
-      bitField0_ |= 0x00000008;
+    public int getFqNameCount() {
+      return fqName_.size();
+    }
+    /**
+     * <code>repeated int32 fq_name = 4;</code>
+     */
+    public int getFqName(int index) {
+      return fqName_.get(index);
+    }
+    /**
+     * <code>repeated int32 fq_name = 4;</code>
+     */
+    public Builder setFqName(
+        int index, int value) {
+      ensureFqNameIsMutable();
+      fqName_.set(index, value);
+      
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+     * <code>repeated int32 fq_name = 4;</code>
      */
-    public Builder setFqname(
-        org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder builderForValue) {
-      fqname_ = builderForValue.build();
-
-      bitField0_ |= 0x00000008;
+    public Builder addFqName(int value) {
+      ensureFqNameIsMutable();
+      fqName_.add(value);
+      
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+     * <code>repeated int32 fq_name = 4;</code>
      */
-    public Builder mergeFqname(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
-      if (((bitField0_ & 0x00000008) == 0x00000008) &&
-          fqname_ != org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance()) {
-        fqname_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.FqName.newBuilder(fqname_).mergeFrom(value).buildPartial();
-      } else {
-        fqname_ = value;
-      }
-
-      bitField0_ |= 0x00000008;
+    public Builder addAllFqName(
+        java.lang.Iterable<? extends java.lang.Integer> values) {
+      ensureFqNameIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, fqName_);
+      
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
+     * <code>repeated int32 fq_name = 4;</code>
      */
-    public Builder clearFqname() {
-      fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
-
+    public Builder clearFqName() {
+      fqName_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
+      
       return this;
     }
 
     private org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptorReference_ = org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance();
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+     *
+     * <pre>
+     *  optional FqName fqname = 4;
+     * </pre>
      */
     public boolean hasDescriptorReference() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+     *
+     * <pre>
+     *  optional FqName fqname = 4;
+     * </pre>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference getDescriptorReference() {
       return descriptorReference_;
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+     *
+     * <pre>
+     *  optional FqName fqname = 4;
+     * </pre>
      */
     public Builder setDescriptorReference(org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference value) {
       if (value == null) {
@@ -780,6 +837,10 @@ public final class IrSymbolData extends
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+     *
+     * <pre>
+     *  optional FqName fqname = 4;
+     * </pre>
      */
     public Builder setDescriptorReference(
         org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.Builder builderForValue) {
@@ -790,6 +851,10 @@ public final class IrSymbolData extends
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+     *
+     * <pre>
+     *  optional FqName fqname = 4;
+     * </pre>
      */
     public Builder mergeDescriptorReference(org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference value) {
       if (((bitField0_ & 0x00000010) == 0x00000010) &&
@@ -805,6 +870,10 @@ public final class IrSymbolData extends
     }
     /**
      * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
+     *
+     * <pre>
+     *  optional FqName fqname = 4;
+     * </pre>
      */
     public Builder clearDescriptorReference() {
       descriptorReference_ = org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance();

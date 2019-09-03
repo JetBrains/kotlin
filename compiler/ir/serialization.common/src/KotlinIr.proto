@@ -6,8 +6,8 @@ option java_outer_classname = "KotlinIr";
 option optimize_for = LITE_RUNTIME;
 
 message DescriptorReference {
-  required FqName package_fq_name = 1;
-  required FqName class_fq_name = 2;
+  repeated int32 package_fq_name = 1;
+  repeated int32 class_fq_name = 2;
   required int32 name = 3;
   optional UniqId uniq_id = 4;
   optional bool is_getter = 5 [default = false];
@@ -76,10 +76,6 @@ message IrDeclarationOrigin {
   }
 }
 
-message FqName {
-  repeated int32 segment = 1;
-}
-
 /* ------ Top Level---------------------------------------------- */
 
 message IrDeclarationContainer {
@@ -94,7 +90,7 @@ message FileEntry {
 message IrFile {
   repeated UniqId declaration_id = 1;
   required FileEntry file_entry = 2;
-  required FqName fq_name = 3;
+  repeated int32 fq_name = 3;
   required Annotations annotations = 4;
   repeated int32 explicitly_exported_to_compiler = 5;
 }
@@ -123,7 +119,7 @@ message IrSymbolData {
   required IrSymbolKind kind = 1;
   required UniqId uniq_id = 2;
   required UniqId top_level_uniq_id = 3;
-  optional FqName fqname = 4;
+  repeated int32 fq_name = 4;
   optional DescriptorReference descriptor_reference = 5;
 }
 
