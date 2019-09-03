@@ -2,6 +2,8 @@
 
 package com.intellij.execution.ui.layout.impl;
 
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.*;
 import com.intellij.execution.ui.layout.actions.CloseViewAction;
@@ -10,11 +12,17 @@ import com.intellij.execution.ui.layout.actions.RestoreViewAction;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.CloseAction;
+import com.intellij.ide.actions.ShowContentAction;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.AbstractPainter;
+import com.intellij.openapi.ui.ShadowAction;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.ActiveRunnable;
 import com.intellij.openapi.util.Disposer;
@@ -25,6 +33,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.IdeGlassPaneUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.impl.ToolWindowsPane;
+import com.intellij.openapi.wm.impl.content.SelectContentStep;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.awt.RelativeRectangle;
@@ -41,6 +50,7 @@ import com.intellij.ui.tabs.JBTabs;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
+import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.containers.ContainerUtil;
@@ -67,6 +77,8 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
+import static com.intellij.ui.tabs.JBTabsEx.NAVIGATION_ACTIONS_KEY;
+
 public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Facade, ViewContextEx, PropertyChangeListener,
                                         QuickActionProvider, DockContainer.Dialog {
   public static final DataKey<RunnerContentUi> KEY = DataKey.create("DebuggerContentUI");
@@ -76,6 +88,8 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
   @NonNls private static final String SETTINGS = "XDebugger.Settings";
   @NonNls private static final String VIEW_POPUP = "Runner.View.Popup";
   @NonNls static final String VIEW_TOOLBAR = "Runner.View.Toolbar";
+
+  private ShowDebugContentAction myShowDebugContentAction = null;
 
   private ContentManager myManager;
   private final RunnerLayout myLayoutSettings;
@@ -319,6 +333,11 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     final ActionGroup focusPlaceholder = (ActionGroup)myActionManager.getAction("Runner.Focus");
 
     DefaultActionGroup group = new DefaultActionGroup(VIEW_POPUP, original.isPopup());
+
+    if (myShowDebugContentAction == null) {
+      myShowDebugContentAction = new ShowDebugContentAction(this, myTabs.getComponent(), this);
+    }
+    group.add(myShowDebugContentAction);
 
     final AnActionEvent event = new AnActionEvent(null, DataManager.getInstance().getDataContext(), place, new Presentation(),
                                                   ActionManager.getInstance(), 0);
@@ -583,6 +602,45 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     myCurrentPainter.processDropOver(this, dockable, dropTarget);
 
     return myCurrentOverImg;
+  }
+
+  public void toggleContentPopup(JBTabs tabs) {
+    if (myOriginal != null) {
+      myOriginal.toggleContentPopup(tabs);
+      return;
+    }
+
+    List<Content> contents = getPopupContents();
+    final Content selectedContent = myManager.getSelectedContent();
+    final SelectContentStep step = new SelectContentStep(contents);
+    if (selectedContent != null) {
+      step.setDefaultOptionIndex(myManager.getIndexOfContent(selectedContent));
+    }
+
+    final ListPopup popup = JBPopupFactory.getInstance().createListPopup(step);
+    popup.showUnderneathOf(tabs.getTabLabel(tabs.getSelectedInfo()));
+
+    if (selectedContent instanceof TabbedContent) {
+      new Alarm(Alarm.ThreadToUse.SWING_THREAD, popup).addRequest(() -> popup.handleSelect(false), 50);
+    }
+  }
+
+  public List<Content> getPopupContents() {
+    if (myOriginal != null) return myOriginal.getPopupContents();
+
+    List<Content> contents = new ArrayList<>(Arrays.asList(myManager.getContents()));
+    myChildren.stream()
+      .flatMap(child -> Arrays.stream(child.myManager.getContents()))
+      .forEachOrdered(contents::add);
+
+    RunContentManager contentManager = RunContentManager.getInstance(myProject);
+    RunContentDescriptor selectedDescriptor = contentManager.getSelectedContent();
+
+    contentManager.getAllDescriptors().stream()
+      .filter(descriptor -> descriptor != selectedDescriptor)
+      .map(descriptor -> descriptor.getAttachedContent())
+      .forEachOrdered(contents::add);
+    return contents;
   }
 
   @NotNull
@@ -1886,6 +1944,34 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
     public int getWindow() {
       return myWindow;
+    }
+  }
+
+  public class ShowDebugContentAction extends AnAction implements DumbAware {
+    public static final String ACTION_ID = "ShowDebugContent";
+
+    private RunnerContentUi myContentUi;
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public ShowDebugContentAction() {
+    }
+
+    public ShowDebugContentAction(RunnerContentUi runner, JComponent component, @NotNull Disposable parentDisposable) {
+      myContentUi = runner;
+      AnAction original = ActionManager.getInstance().getAction(ShowContentAction.ACTION_ID);
+      new ShadowAction(this, original, component, parentDisposable);
+      ActionUtil.copyFrom(this, ShowContentAction.ACTION_ID);
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      e.getPresentation().setEnabledAndVisible(myContentUi != null && myContentUi.getPopupContents().size() > 1);
+      e.getPresentation().setText("Show List of Tabs");
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+      myContentUi.toggleContentPopup(e.getData(NAVIGATION_ACTIONS_KEY));
     }
   }
 
