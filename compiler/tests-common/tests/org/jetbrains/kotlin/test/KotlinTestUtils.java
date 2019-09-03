@@ -1047,6 +1047,10 @@ public class KotlinTestUtils {
         runTest0(test, targetBackend, testDataFile);
     }
 
+    public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) throws Exception {
+        runTest0WithCustomIgnoreDirective(test, targetBackend, testDataFile, ignoreDirective);
+    }
+
     // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
     // So DevKit will use test name to determine related files in navigation actions, like "Navigate to testdata" and "Related Symbol..."
     //
@@ -1056,9 +1060,13 @@ public class KotlinTestUtils {
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
     public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
+        runTest0WithCustomIgnoreDirective(test, targetBackend, testDataFilePath, IGNORE_BACKEND_DIRECTIVE_PREFIX);
+    }
+
+    private static void runTest0WithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String testDataFilePath, String ignoreDirective) throws Exception {
         File testDataFile = new File(testDataFilePath);
 
-        boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile);
+        boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirective);
 
         if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
             // Only ignore if it is ignored for both backends

@@ -45,6 +45,7 @@ public class SimpleTestClassModel implements TestClassModel {
 
     private final boolean skipIgnored;
     private final String testRunnerMethodName;
+    private final List<String> additionalRunnerArguments;
 
     public SimpleTestClassModel(
             @NotNull File rootFile,
@@ -58,6 +59,7 @@ public class SimpleTestClassModel implements TestClassModel {
             @NotNull Collection<String> excludeDirs,
             boolean skipIgnored,
             String testRunnerMethodName,
+            List<String> additionalRunnerArguments,
             Integer deep
     ) {
         this.rootFile = rootFile;
@@ -71,6 +73,7 @@ public class SimpleTestClassModel implements TestClassModel {
         this.excludeDirs = excludeDirs.isEmpty() ? Collections.emptySet() : new LinkedHashSet<>(excludeDirs);
         this.skipIgnored = skipIgnored;
         this.testRunnerMethodName = testRunnerMethodName;
+        this.additionalRunnerArguments = additionalRunnerArguments;
         this.deep = deep;
     }
 
@@ -91,7 +94,7 @@ public class SimpleTestClassModel implements TestClassModel {
                         children.add(new SimpleTestClassModel(
                                 file, true, excludeParentDirs, filenamePattern, checkFilenameStartsLowerCase,
                                 doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
-                                skipIgnored, testRunnerMethodName, deep != null ? deep - 1 : null)
+                                skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null)
                         );
                     }
                 }
@@ -153,7 +156,7 @@ public class SimpleTestClassModel implements TestClassModel {
             else {
                 List<MethodModel> result = new ArrayList<>();
 
-                result.add(new RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName));
+                result.add(new RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments));
 
                 result.add(new TestAllFilesPresentMethodModel());
 
@@ -186,7 +189,7 @@ public class SimpleTestClassModel implements TestClassModel {
 
                 if (hasCoroutines) {
                     String methodName = doTestMethodName + "WithCoroutinesPackageReplacement";
-                    result.add(new RunTestMethodWithPackageReplacementModel(targetBackend, methodName, testRunnerMethodName));
+                    result.add(new RunTestMethodWithPackageReplacementModel(targetBackend, methodName, testRunnerMethodName, additionalRunnerArguments));
                 }
 
                 result.sort(BY_NAME);

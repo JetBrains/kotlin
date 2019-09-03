@@ -170,10 +170,6 @@ fun main(args: Array<String>) {
             model("codegen/boxInline", targetBackend = TargetBackend.JVM)
         }
 
-        testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
-            model("codegen/boxInline", targetBackend = TargetBackend.JVM)
-        }
-
         testClass<AbstractBlackBoxAgainstJavaCodegenTest> {
             model("codegen/boxAgainstJava")
         }
@@ -430,6 +426,20 @@ fun main(args: Array<String>) {
             model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR)
         }
     }
+
+    testGroup(
+        "compiler/tests", "compiler/testData",
+        testRunnerMethodName = "runTestWithCustomIgnoreDirective",
+        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE:\"")
+    ) {
+        testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM)
+        }
+        testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
+        }
+    }
+
 
     testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
         testClass<AbstractRawFirBuilderTestCase> {

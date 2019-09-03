@@ -11,7 +11,12 @@ import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 
-class TestGroup(private val testsRoot: String, val testDataRoot: String, val testRunnerMethodName: String) {
+class TestGroup(
+    private val testsRoot: String,
+    val testDataRoot: String,
+    val testRunnerMethodName: String,
+    val additionalRunnerArguments: List<String> = emptyList()
+) {
     inline fun <reified T : TestCase> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
         noinline init: TestClass.() -> Unit
@@ -58,13 +63,13 @@ class TestGroup(private val testsRoot: String, val testDataRoot: String, val tes
                     if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
                     SingleClassTestModel(
                         rootFile, compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend,
-                        skipIgnored, testRunnerMethodName
+                        skipIgnored, testRunnerMethodName, additionalRunnerArguments
                     )
                 } else {
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, filenameStartsLowerCase, testMethod, className,
-                        targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, deep
+                        targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep
                     )
                 }
             )
@@ -76,9 +81,10 @@ fun testGroup(
     testsRoot: String,
     testDataRoot: String,
     testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
+    additionalRunnerArguments: List<String> = emptyList(),
     init: TestGroup.() -> Unit
 ) {
-    TestGroup(testsRoot, testDataRoot, testRunnerMethodName).init()
+    TestGroup(testsRoot, testDataRoot, testRunnerMethodName, additionalRunnerArguments).init()
 }
 
 fun getDefaultSuiteTestClassName(baseTestClassName: String): String {

@@ -890,9 +890,13 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     protected void printReport(File wholeFile) {
-        boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
+        boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile, getIgnoreBackendDirectivePrefix());
         if (!isIgnored) {
             System.out.println(generateToText());
         }
+    }
+
+    protected String getIgnoreBackendDirectivePrefix() {
+        return InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX;
     }
 }

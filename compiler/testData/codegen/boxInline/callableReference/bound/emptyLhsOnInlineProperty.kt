@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM
+// IGNORE_BACKEND_MULTI_MODULE: JVM
 // FILE: 1.kt
 package test
 

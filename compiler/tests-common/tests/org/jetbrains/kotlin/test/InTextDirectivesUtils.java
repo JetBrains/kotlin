@@ -229,11 +229,15 @@ public final class InTextDirectivesUtils {
         return backends.isEmpty() || backends.contains(targetBackend.name()) || backends.contains(targetBackend.getCompatibleWith().name());
     }
 
-    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
+    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file, String ignoreBackendDirectivePrefix) {
         if (targetBackend == TargetBackend.ANY) return false;
 
-        List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), IGNORE_BACKEND_DIRECTIVE_PREFIX);
+        List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), ignoreBackendDirectivePrefix);
         return ignoredBackends.contains(targetBackend.name());
+    }
+
+    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
+        return isIgnoredTarget(targetBackend, file, IGNORE_BACKEND_DIRECTIVE_PREFIX);
     }
 
     public static boolean dontRunGeneratedCode(TargetBackend targetBackend, File file) {
