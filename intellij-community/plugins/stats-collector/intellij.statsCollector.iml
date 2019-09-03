@@ -14,7 +14,6 @@
     <orderEntry type="library" name="http-client" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="module" module-name="intellij.statsCollector.features" />
     <orderEntry type="module" module-name="intellij.statsCollector.logEvents" />
     <orderEntry type="library" name="fluent-hc" level="project" />
     <orderEntry type="module" module-name="intellij.statsCollector.completionRanker" />
