@@ -45,8 +45,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.VfsPresentationUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.openapi.wm.impl.IdeGlassPaneImpl;
+import com.intellij.openapi.wm.impl.ProjectFrame;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
@@ -241,7 +241,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
       }
       if (parent != null && showPoint == null) {
         int height = UISettings.getInstance().getShowNavigationBar() ? 135 : 115;
-        if (parent instanceof IdeFrameImpl && ((IdeFrameImpl)parent).isInFullScreen()) {
+        if (parent instanceof ProjectFrame && ((ProjectFrame)parent).isInFullScreen()) {
           height -= 20;
         }
         showPoint = new RelativePoint(parent, new Point((parent.getSize().width - getPreferredSize().width) / 2, height));

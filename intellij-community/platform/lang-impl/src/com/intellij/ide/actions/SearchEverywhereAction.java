@@ -80,7 +80,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFilePathWrapper;
 import com.intellij.openapi.wm.*;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.impl.ProjectFrame;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -766,7 +766,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
     final RelativePoint showPoint;
     if (parent != null) {
       int height = UISettings.getInstance().getShowMainToolbar() ? 135 : 115;
-      if (parent instanceof IdeFrameImpl && ((IdeFrameImpl)parent).isInFullScreen()) {
+      if (parent instanceof ProjectFrame && ((ProjectFrame)parent).isInFullScreen()) {
         height -= 20;
       }
       showPoint = new RelativePoint(parent, new Point((parent.getSize().width - showingContent.getPreferredSize().width) / 2, height));

@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.navigationToolbar;
 
@@ -12,7 +12,7 @@ import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeRootPaneNorthExtension;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.impl.ProjectFrame;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.util.ui.JBSwingUtilities;
 import com.intellij.util.ui.JBUI;
@@ -141,7 +141,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
 
   private boolean isUndocked() {
     final Window ancestor = SwingUtilities.getWindowAncestor(myWrapperPanel);
-    return (ancestor != null && !(ancestor instanceof IdeFrameImpl))
+    return (ancestor != null && !(ancestor instanceof ProjectFrame))
            || !UISettings.getInstance().getShowMainToolbar()
            || !UISettings.getInstance().getPresentationMode();
   }
