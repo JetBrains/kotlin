@@ -14,11 +14,19 @@ enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSu
                   val staticPrefix: String, val staticSuffix: String) {
     OSX     ("kexe", "lib", "dylib", "lib", "a"),
     IOS     ("kexe", "lib", "dylib", "lib", "a"),
+    TVOS    ("kexe", "lib", "dylib", "lib", "a"),
+    WATCHOS ("kexe", "lib", "dylib", "lib", "a"),
     LINUX   ("kexe", "lib", "so"   , "lib", "a"),
     MINGW   ("exe" , ""   , "dll"  , "lib", "a"),
     ANDROID ("so"  , "lib", "so"   , "lib", "a"),
     WASM    ("wasm", ""   , "wasm" , "",    "wasm"),
-    ZEPHYR  ("o"   , "lib", "a"    , "lib", "a")
+    ZEPHYR  ("o"   , "lib", "a"    , "lib", "a");
+
+    val isAppleFamily: Boolean
+        get() = this == OSX
+                || this == IOS
+                || this == TVOS
+                || this == WATCHOS
 }
 
 enum class Architecture(val bitness: Int) {
@@ -33,15 +41,18 @@ enum class Architecture(val bitness: Int) {
 
 sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named {
     object ANDROID_X64 :    KonanTarget( "android_x64",     Family.ANDROID, Architecture.X64)
+    object ANDROID_X86 :    KonanTarget( "android_x86",     Family.ANDROID, Architecture.X86)
     object ANDROID_ARM32 :  KonanTarget( "android_arm32",   Family.ANDROID, Architecture.ARM32)
     object ANDROID_ARM64 :  KonanTarget( "android_arm64",   Family.ANDROID, Architecture.ARM64)
     object IOS_ARM32 :      KonanTarget( "ios_arm32",       Family.IOS,     Architecture.ARM32)
     object IOS_ARM64 :      KonanTarget( "ios_arm64",       Family.IOS,     Architecture.ARM64)
     object IOS_X64 :        KonanTarget( "ios_x64",         Family.IOS,     Architecture.X64)
-    object WATCHOS_ARM64 :  KonanTarget( "watchos_arm64",   Family.IOS,     Architecture.ARM64)
-    object WATCHOS_X64 :    KonanTarget( "watchos_x64",     Family.IOS,     Architecture.X64)
-    object TVOS_ARM64 :     KonanTarget( "tvos_arm64",      Family.IOS,     Architecture.ARM64)
-    object TVOS_X64 :       KonanTarget( "tvos_x64",        Family.IOS,     Architecture.X64)
+    object WATCHOS_ARM32 :  KonanTarget( "watchos_arm32",   Family.WATCHOS, Architecture.ARM32)
+    object WATCHOS_ARM64 :  KonanTarget( "watchos_arm64",   Family.WATCHOS, Architecture.ARM64)
+    object WATCHOS_X86 :    KonanTarget( "watchos_x86",     Family.WATCHOS, Architecture.X86)
+    object WATCHOS_X64 :    KonanTarget( "watchos_x64",     Family.WATCHOS, Architecture.X64)
+    object TVOS_ARM64 :     KonanTarget( "tvos_arm64",      Family.TVOS,    Architecture.ARM64)
+    object TVOS_X64 :       KonanTarget( "tvos_x64",        Family.TVOS,    Architecture.X64)
     object LINUX_X64 :      KonanTarget( "linux_x64",       Family.LINUX,   Architecture.X64)
     object MINGW_X86 :      KonanTarget( "mingw_x86",       Family.MINGW,   Architecture.X86)
     object MINGW_X64 :      KonanTarget( "mingw_x64",       Family.MINGW,   Architecture.X64)
@@ -127,11 +138,12 @@ open class HostManager(protected val distribution: Distribution = Distribution()
 
     // TODO: need a better way to enumerated predefined targets.
     private val predefinedTargets = listOf(
-        ANDROID_ARM32, ANDROID_ARM64, ANDROID_X64,
+        ANDROID_ARM32, ANDROID_ARM64, ANDROID_X86, ANDROID_X64,
         IOS_ARM32, IOS_ARM64, IOS_X64,
-        WATCHOS_ARM64, WATCHOS_X64,
+        WATCHOS_ARM32, WATCHOS_ARM64,
+        WATCHOS_X86, WATCHOS_X64,
         TVOS_ARM64, TVOS_X64,
-        LINUX_X64, LINUX_ARM32_HFP, LINUX_ARM64, LINUX_MIPS32,  LINUX_MIPSEL32,
+        LINUX_X64, LINUX_ARM32_HFP, LINUX_ARM64, LINUX_MIPS32, LINUX_MIPSEL32,
         MINGW_X64, MINGW_X86,
         MACOS_X64,
         WASM32)
@@ -176,6 +188,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             LINUX_ARM64,
             LINUX_MIPS32,
             LINUX_MIPSEL32,
+            ANDROID_X86,
             ANDROID_X64,
             ANDROID_ARM32,
             ANDROID_ARM64,
@@ -187,6 +200,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             LINUX_X64,
             LINUX_ARM32_HFP,
             LINUX_ARM64,
+            ANDROID_X86,
             ANDROID_X64,
             ANDROID_ARM32,
             ANDROID_ARM64,
@@ -197,13 +211,16 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             IOS_ARM32,
             IOS_ARM64,
             IOS_X64,
+            WATCHOS_ARM32,
             WATCHOS_ARM64,
+            WATCHOS_X86,
             WATCHOS_X64,
             TVOS_ARM64,
             TVOS_X64,
             LINUX_X64,
             LINUX_ARM32_HFP,
             LINUX_ARM64,
+            ANDROID_X86,
             ANDROID_X64,
             ANDROID_ARM32,
             ANDROID_ARM64,
@@ -331,6 +348,7 @@ val KonanTarget.presetName: String
     get() = when (this) {
         ANDROID_ARM32 -> "androidNativeArm32"
         ANDROID_ARM64 -> "androidNativeArm64"
+        ANDROID_X86 -> "androidNativeX86"
         ANDROID_X64 -> "androidNativeX64"
         else -> evaluatePresetName(this.name)
     }

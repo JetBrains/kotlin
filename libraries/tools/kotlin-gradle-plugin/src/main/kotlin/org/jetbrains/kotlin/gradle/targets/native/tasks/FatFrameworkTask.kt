@@ -170,8 +170,8 @@ open class FatFrameworkTask: DefaultTask() {
             KonanTarget.IOS_X64 -> "iPhoneSimulator"
             KonanTarget.TVOS_ARM64 -> "appletvos"
             KonanTarget.TVOS_X64 -> "appletvsimulator"
-            KonanTarget.WATCHOS_ARM64 -> "watchos"
-            KonanTarget.WATCHOS_X64 -> "watchsimulator"
+            KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "watchos"
+            KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64 -> "watchsimulator"
             else -> error("Fat frameworks are not supported for target `${target.konanTarget.visibleName}`")
         }
 
