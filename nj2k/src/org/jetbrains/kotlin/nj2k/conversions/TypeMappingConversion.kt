@@ -23,14 +23,13 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 
 class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        return when (element) {
+        when (element) {
             is JKTypeElement -> {
-                val newType = element.type.mapType(element)
-                JKTypeElementImpl(newType).withNonCodeElementsFrom(element)
+                element.type = element.type.mapType(element)
             }
             is JKJavaNewExpression -> {
                 val newClassSymbol = element.classSymbol.mapClassSymbol(null)
-                recurse(
+                return recurse(
                     JKJavaNewExpressionImpl(
                         newClassSymbol,
                         element::arguments.detached(),
@@ -39,8 +38,8 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
                     ).withNonCodeElementsFrom(element)
                 )
             }
-            else -> recurse(element)
         }
+        return recurse(element)
     }
 
     private fun JKTypeArgumentList.fixTypeArguments(classSymbol: JKClassSymbol): JKTypeArgumentList {

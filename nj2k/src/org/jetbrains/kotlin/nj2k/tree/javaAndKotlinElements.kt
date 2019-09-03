@@ -256,7 +256,7 @@ fun JKModifiersListOwner.modifierElements(): List<JKModifierElement> =
 
 
 interface JKTypeElement : JKTreeElement {
-    val type: JKType
+    var type: JKType
 }
 
 abstract class JKStatement : JKTreeElement, JKBranchElementBase() {
@@ -322,7 +322,7 @@ interface JKQualifiedExpression : JKExpression, JKAssignableExpression {
 }
 
 interface JKTypeArgumentList : JKTreeElement {
-    val typeArguments: List<JKTypeElement>
+    var typeArguments: List<JKTypeElement>
 }
 
 interface JKTypeArgumentListOwner : JKTreeElement {
