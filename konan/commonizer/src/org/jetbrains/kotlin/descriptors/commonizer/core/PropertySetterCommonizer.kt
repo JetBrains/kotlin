@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.ir.Setter
 
 interface PropertySetterCommonizer : Commonizer<PropertySetterDescriptor?, Setter?> {
@@ -14,38 +15,11 @@ interface PropertySetterCommonizer : Commonizer<PropertySetterDescriptor?, Sette
     }
 }
 
-private class DefaultPropertySetterCommonizer : PropertySetterCommonizer {
-    private enum class State {
-        EMPTY,
-        ERROR,
-        WITH_SETTER,
-        WITHOUT_SETTER
-    }
-
-    private var state = State.EMPTY
-    private var setterVisibility: VisibilityCommonizer? = null
-
-    override val result: Setter?
-        get() = when (state) {
-            State.EMPTY, State.ERROR -> error("Property setter can't be commonized")
-            State.WITH_SETTER -> Setter.createDefaultNoAnnotations(setterVisibility!!.result)
-            State.WITHOUT_SETTER -> null // null visibility means there is no setter
-        }
-
-    override fun commonizeWith(next: PropertySetterDescriptor?): Boolean {
-        state = when (state) {
-            State.ERROR -> State.ERROR
-            State.EMPTY -> next?.let {
-                setterVisibility = VisibilityCommonizer.equalizing()
-                doCommonizeWith(next)
-            } ?: State.WITHOUT_SETTER
-            State.WITH_SETTER -> next?.let(::doCommonizeWith) ?: State.ERROR
-            State.WITHOUT_SETTER -> next?.let { State.ERROR } ?: State.WITHOUT_SETTER
-        }
-
-        return state != State.ERROR
-    }
-
-    private fun doCommonizeWith(setter: PropertySetterDescriptor) =
-        if (setterVisibility!!.commonizeWith(setter.visibility)) State.WITH_SETTER else State.ERROR
-}
+private class DefaultPropertySetterCommonizer :
+    PropertySetterCommonizer,
+    NullableWrappedCommonizer<PropertySetterDescriptor, Setter, Visibility, Visibility>(
+        subject = "Property",
+        wrappedCommonizerFactory = { VisibilityCommonizer.equalizing() },
+        extractor = { it.visibility },
+        builder = { Setter.createDefaultNoAnnotations(it) }
+    )

@@ -39,6 +39,7 @@ class PackageNode(
     override val common: Package?
 ) : Node<Package> {
     val properties: MutableList<PropertyNode> = ArrayList()
+    val functions: MutableList<FunctionNode> = ArrayList()
 
     override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T) =
         visitor.visitPackageNode(this, data)
@@ -50,6 +51,14 @@ class PropertyNode(
 ) : Node<Property> {
     override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T) =
         visitor.visitPropertyNode(this, data)
+}
+
+class FunctionNode(
+    override val target: List<Function?>,
+    override val common: Function?
+) : Node<Function> {
+    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T) =
+        visitor.visitFunctionNode(this, data)
 }
 
 internal val <D : Declaration> Node<D>.indexOfCommon: Int

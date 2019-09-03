@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.TargetId
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedMemberScope.Companion.plusAssign
@@ -86,6 +83,9 @@ internal class DeclarationsBuilderVisitor(
         for (propertyNode in node.properties) {
             packageMemberScopes += propertyNode.accept(this, packageFragments)
         }
+        for (functionNode in node.functions) {
+            packageMemberScopes += functionNode.accept(this, packageFragments)
+        }
 
         // initialize package fragments:
         packageFragments.forEachIndexed { index, packageFragment ->
@@ -101,7 +101,14 @@ internal class DeclarationsBuilderVisitor(
 
         return propertyDescriptorsGroup.toList()
     }
-    
+
+    override fun visitFunctionNode(node: FunctionNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
+        val functionDescriptorsGroup = CommonizedGroup<SimpleFunctionDescriptor>(node.dimension)
+        node.buildDescriptors(functionDescriptorsGroup, data)
+
+        return functionDescriptorsGroup.toList()
+    }
+
     companion object {
         inline fun <reified T : DeclarationDescriptor> noContainingDeclarations() = emptyList<T?>()
         inline fun <reified T : DeclarationDescriptor> noReturningDeclarations() = emptyList<T?>()

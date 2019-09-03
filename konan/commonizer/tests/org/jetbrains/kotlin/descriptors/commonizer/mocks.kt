@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.commonizer.ir.FunctionModifiers
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -177,6 +178,93 @@ internal fun mockProperty(
     propertyDescriptor.initialize(getter, setter)
 
     return propertyDescriptor
+}
+
+internal data class TestFunctionModifiers(
+    override val isOperator: Boolean = false,
+    override val isInfix: Boolean = false,
+    override val isInline: Boolean = false,
+    override val isTailrec: Boolean = false,
+    override val isSuspend: Boolean = false,
+    override val isExternal: Boolean = false
+) : FunctionModifiers {
+    companion object {
+        fun areEqual(a: FunctionModifiers, b: FunctionModifiers) =
+            a.isOperator == b.isOperator && a.isInfix == b.isInfix && a.isInline == b.isInline
+                    && a.isTailrec == b.isTailrec && a.isSuspend == b.isSuspend && a.isExternal == b.isExternal
+    }
+}
+
+internal fun mockFunction(
+    name: String,
+    returnType: KotlinType,
+    modifiers: FunctionModifiers
+): SimpleFunctionDescriptor {
+    val functionName = Name.identifier(name)
+
+    val containingDeclaration = object : DeclarationDescriptorImpl(Annotations.EMPTY, Name.special("<fake containing declaration>")) {
+        override fun getContainingDeclaration() = error("not supported")
+        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D) = error("not supported")
+    }
+
+    val functionDescriptor = SimpleFunctionDescriptorImpl.create(
+        /*containingDeclaration =*/ containingDeclaration,
+        /*annotations =*/ Annotations.EMPTY,
+        /*name =*/ functionName,
+        /*kind =*/ CallableMemberDescriptor.Kind.DECLARATION,
+        /*source =*/ SourceElement.NO_SOURCE
+    )
+
+    functionDescriptor.isOperator = modifiers.isOperator
+    functionDescriptor.isInfix = modifiers.isInfix
+    functionDescriptor.isInline = modifiers.isInline
+    functionDescriptor.isTailrec = modifiers.isTailrec
+    functionDescriptor.isSuspend = modifiers.isSuspend
+    functionDescriptor.isExternal = modifiers.isExternal
+
+    val dispatchReceiverDescriptor = DescriptorUtils.getDispatchReceiverParameterIfNeeded(containingDeclaration)
+
+    functionDescriptor.initialize(
+        /*extensionReceiverParameter =*/ null,
+        /*dispatchReceiverDescriptor =*/ dispatchReceiverDescriptor,
+        /*typeParameters =*/ emptyList(),
+        /*unsubstitutedValueParameters =*/ emptyList(),
+        /*returnType =*/ returnType,
+        /*modality =*/ Modality.FINAL,
+        /*visibility =*/ Visibilities.PUBLIC
+    )
+
+    return functionDescriptor
+}
+
+internal fun mockValueParameter(
+    containingDeclaration: CallableDescriptor? = null,
+    name: String,
+    index: Int,
+    returnType: KotlinType,
+    varargElementType: KotlinType?,
+    declaresDefaultValue: Boolean,
+    isCrossinline: Boolean,
+    isNoinline: Boolean
+): ValueParameterDescriptor {
+    check(index >= 0)
+
+    val effectiveContainingDeclaration = containingDeclaration
+        ?: mockFunction("fakeFunction", returnType, TestFunctionModifiers()) // use fake function if no real containing declaration specified
+
+    return ValueParameterDescriptorImpl(
+        containingDeclaration = effectiveContainingDeclaration,
+        original = null,
+        index = index,
+        annotations = Annotations.EMPTY,
+        name = Name.identifier(name),
+        outType = returnType,
+        declaresDefaultValue = declaresDefaultValue,
+        isCrossinline = isCrossinline,
+        isNoinline = isNoinline,
+        varargElementType = varargElementType,
+        source = SourceElement.NO_SOURCE
+    )
 }
 
 //private fun mockTypeParameterType(

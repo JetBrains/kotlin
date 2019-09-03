@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.descriptors.commonizer.ir
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.core.Commonizer
 import org.jetbrains.kotlin.descriptors.commonizer.core.PropertyCommonizer
+import org.jetbrains.kotlin.descriptors.commonizer.core.FunctionCommonizer
 import org.jetbrains.kotlin.descriptors.commonizer.firstNonNull
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -39,6 +41,13 @@ internal fun buildPropertyNode(properties: List<PropertyDescriptor?>): PropertyN
     { TargetProperty(it) },
     { commonize(it, PropertyCommonizer()) },
     ::PropertyNode
+)
+
+internal fun buildFunctionNode(functions: List<SimpleFunctionDescriptor?>): FunctionNode = buildNode(
+    functions,
+    { TargetFunction(it) },
+    { commonize(it, FunctionCommonizer()) },
+    ::FunctionNode
 )
 
 private fun <T : Any, D : Declaration, N : Node<D>> buildNode(

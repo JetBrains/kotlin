@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer
 import junit.framework.TestCase.fail
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.PropertyKey
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.collectNonEmptyPackageMemberScopes
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.collectProperties
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -92,12 +90,6 @@ private class ComparingDeclarationsVisitor(
         }
     }
 
-    override fun visitPackageViewDescriptor(expected: PackageViewDescriptor, context: Context) =
-        fail("Comparison of package views not supported")
-
-    override fun visitPackageFragmentDescriptor(expected: PackageFragmentDescriptor, context: Context) =
-        fail("Comparison of package fragments not supported")
-
     fun visitMemberScopes(expected: MemberScope, actual: MemberScope, context: Context) {
         fun collectProperties(memberScope: MemberScope): Map<PropertyKey, PropertyDescriptor> =
             mutableMapOf<PropertyKey, PropertyDescriptor>().also {
@@ -116,15 +108,78 @@ private class ComparingDeclarationsVisitor(
             expectedProperty.accept(this, context.nextLevel(actualProperty))
         }
 
-        // FIXME: traverse the rest - functions, classes, typealiases
+        fun collectFunctions(memberScope: MemberScope): Map<FunctionKey, SimpleFunctionDescriptor> =
+            mutableMapOf<FunctionKey, SimpleFunctionDescriptor>().also {
+                memberScope.collectFunctions { functionKey, function ->
+                    it[functionKey] = function
+                }
+            }
+
+        val expectedFunctions = collectFunctions(expected)
+        val actualFunctions = collectFunctions(actual)
+
+        context.assertEquals(expectedFunctions.keys, actualFunctions.keys, "sets of functions")
+
+        expectedFunctions.forEach { (functionKey, expectedFunction) ->
+            val actualFunction = actualFunctions.getValue(functionKey)
+            expectedFunction.accept(this, context.nextLevel(actualFunction))
+        }
+
+        // FIXME: traverse the rest - classes, typealiases
     }
 
-    override fun visitVariableDescriptor(expected: VariableDescriptor, context: Context) {
-        TODO("not implemented")
-    }
 
     override fun visitFunctionDescriptor(expected: FunctionDescriptor, context: Context) {
-        TODO("not implemented")
+        @Suppress("NAME_SHADOWING")
+        val expected = expected as SimpleFunctionDescriptor
+        val actual = context.getActualAs<SimpleFunctionDescriptor>()
+
+        visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Function annotations"))
+        context.assertFieldsEqual(expected::getName, actual::getName)
+        context.assertFieldsEqual(expected::getVisibility, actual::getVisibility)
+        context.assertFieldsEqual(expected::getModality, actual::getModality)
+        context.assertFieldsEqual(expected::getKind, actual::getKind)
+        context.assertFieldsEqual(expected::isOperator, actual::isOperator)
+        context.assertFieldsEqual(expected::isInfix, actual::isInfix)
+        context.assertFieldsEqual(expected::isInline, actual::isInline)
+        context.assertFieldsEqual(expected::isTailrec, actual::isTailrec)
+        context.assertFieldsEqual(expected::isSuspend, actual::isSuspend)
+        context.assertFieldsEqual(expected::isExternal, actual::isExternal)
+        context.assertFieldsEqual(expected::isExpect, actual::isExpect)
+        context.assertFieldsEqual(expected::isActual, actual::isActual)
+
+        visitType(expected.returnType, actual.returnType, context.nextLevel("Function type"))
+
+        visitValueParameterDescriptorList(expected.valueParameters, actual.valueParameters, context.nextLevel("Function value parameters"))
+
+        visitReceiverParameterDescriptor(expected.extensionReceiverParameter, context.nextLevel(actual.extensionReceiverParameter))
+        visitReceiverParameterDescriptor(expected.dispatchReceiverParameter, context.nextLevel(actual.dispatchReceiverParameter))
+    }
+
+    fun visitValueParameterDescriptorList(
+        expected: List<ValueParameterDescriptor>,
+        actual: List<ValueParameterDescriptor>,
+        context: Context
+    ) {
+        context.assertEquals(expected.size, actual.size, "Size of value parameters list")
+
+        expected.forEachIndexed { index, expectedParam ->
+            val actualParam = actual[index]
+            expectedParam.accept(this, context.nextLevel(actualParam))
+        }
+    }
+
+    override fun visitValueParameterDescriptor(expected: ValueParameterDescriptor, context: Context) {
+        val actual = context.getActualAs<ValueParameterDescriptor>()
+
+        visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Value parameter annotations"))
+        context.assertEquals(expected.name, actual.name, "Name")
+        context.assertEquals(expected.index, actual.index, "Index")
+        context.assertEquals(expected.declaresDefaultValue(), actual.declaresDefaultValue(), "Declares default value")
+        context.assertEquals(expected.isCrossinline, actual.isCrossinline, "Crossinline")
+        context.assertEquals(expected.isNoinline, actual.isNoinline, "Noinline")
+        visitType(expected.type, actual.type, context.nextLevel("Value parameter type"))
+        visitType(expected.varargElementType, actual.varargElementType, context.nextLevel("Value parameter vararg element type"))
     }
 
     override fun visitTypeParameterDescriptor(expected: TypeParameterDescriptor, context: Context) {
@@ -135,11 +190,11 @@ private class ComparingDeclarationsVisitor(
         TODO("not implemented")
     }
 
-    override fun visitTypeAliasDescriptor(expected: TypeAliasDescriptor, context: Context) {
+    override fun visitConstructorDescriptor(expected: ConstructorDescriptor, context: Context) {
         TODO("not implemented")
     }
 
-    override fun visitConstructorDescriptor(expected: ConstructorDescriptor, context: Context) {
+    override fun visitTypeAliasDescriptor(expected: TypeAliasDescriptor, context: Context) {
         TODO("not implemented")
     }
 
@@ -157,6 +212,7 @@ private class ComparingDeclarationsVisitor(
         context.assertFieldsEqual(expected::isExternal, actual::isExternal)
         context.assertFieldsEqual(expected::isExpect, actual::isExpect)
         context.assertFieldsEqual(expected::isActual, actual::isActual)
+        @Suppress("DEPRECATION")
         context.assertFieldsEqual(expected::isDelegated, actual::isDelegated)
         visitAnnotations(
             expected.delegateField?.annotations,
@@ -168,7 +224,7 @@ private class ComparingDeclarationsVisitor(
             actual.backingField?.annotations,
             context.nextLevel("Property backing field annotations")
         )
-        context.assertEquals(expected.compileTimeInitializer != null, actual.compileTimeInitializer != null, "compile-time initializers")
+        context.assertEquals(expected.compileTimeInitializer.isNull(), actual.compileTimeInitializer.isNull(), "compile-time initializers")
         visitType(expected.type, actual.type, context.nextLevel("Property type"))
 
         visitPropertyGetterDescriptor(expected.getter, context.nextLevel(actual.getter))
@@ -176,10 +232,6 @@ private class ComparingDeclarationsVisitor(
 
         visitReceiverParameterDescriptor(expected.extensionReceiverParameter, context.nextLevel(actual.extensionReceiverParameter))
         visitReceiverParameterDescriptor(expected.dispatchReceiverParameter, context.nextLevel(actual.dispatchReceiverParameter))
-    }
-
-    override fun visitValueParameterDescriptor(expected: ValueParameterDescriptor, context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun visitPropertyGetterDescriptor(expected: PropertyGetterDescriptor?, context: Context) {
@@ -222,8 +274,6 @@ private class ComparingDeclarationsVisitor(
         visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Receiver parameter annotations"))
     }
 
-    override fun visitScriptDescriptor(expected: ScriptDescriptor, context: Context) =
-        fail("Comparison of script descriptors not supported")
 
     private fun visitAnnotations(expected: Annotations?, actual: Annotations?, context: Context) {
         if (expected === actual) return
@@ -234,8 +284,10 @@ private class ComparingDeclarationsVisitor(
         context.assertEquals(expectedAnnotationFqNames, actualAnnotationFqNames, "annotations")
     }
 
-    private fun visitType(expected: KotlinType, actual: KotlinType, context: Context) {
+    private fun visitType(expected: KotlinType?, actual: KotlinType?, context: Context) {
         if (expected === actual) return
+
+        check(actual != null && expected != null)
 
         val expectedUnwrapped = expected.unwrap()
         val actualUnwrapped = actual.unwrap()
@@ -265,4 +317,16 @@ private class ComparingDeclarationsVisitor(
 
         assertEquals(expectedValue, actualValue, "fields \"$expected\"")
     }
+
+    override fun visitPackageViewDescriptor(expected: PackageViewDescriptor, context: Context) =
+        fail("Comparison of package views not supported")
+
+    override fun visitPackageFragmentDescriptor(expected: PackageFragmentDescriptor, context: Context) =
+        fail("Comparison of package fragments not supported")
+
+    override fun visitScriptDescriptor(expected: ScriptDescriptor, context: Context) =
+        fail("Comparison of script descriptors not supported")
+
+    override fun visitVariableDescriptor(expected: VariableDescriptor, context: Context) =
+        fail("Comparison of variables not supported")
 }

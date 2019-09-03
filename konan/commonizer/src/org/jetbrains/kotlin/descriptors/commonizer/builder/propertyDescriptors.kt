@@ -69,7 +69,7 @@ private fun Property.buildDescriptor(
     val dispatchReceiverDescriptor = DescriptorUtils.getDispatchReceiverParameterIfNeeded(containingDeclaration)
 
     propertyDescriptor.setType(
-        type,
+        returnType,
         emptyList(), // TODO: support type parameters
         dispatchReceiverDescriptor,
         extensionReceiverDescriptor

@@ -10,21 +10,7 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalContracts
 class PropertyCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTest() {
 
-    fun testMismatchedPackages() = doTestSuccessfulCommonization()
-
-    fun testReturnTypes() = doTestSuccessfulCommonization()
-
-    fun testVisibility() = doTestSuccessfulCommonization()
-
-    fun testSpecificProperties() = doTestSuccessfulCommonization()
-
-    fun testExtensionReceivers() = doTestSuccessfulCommonization()
+    fun testSpecifics() = doTestSuccessfulCommonization()
 
     fun testSetters() = doTestSuccessfulCommonization()
-
-    fun testAnnotations() = doTestSuccessfulCommonization()
-
-    // TODO: test modality (possible only inside classes)
-    // TODO: test virtual val visibility commonization (possible only inside classes)
-
 }

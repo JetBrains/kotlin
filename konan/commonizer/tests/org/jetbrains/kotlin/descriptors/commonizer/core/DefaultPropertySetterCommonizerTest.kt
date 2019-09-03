@@ -78,5 +78,5 @@ private fun Visibility.toMockProperty() = mockProperty(
     name = "myProperty",
     setterVisibility = this,
     extensionReceiverType = null,
-    returnType = mockClassType("kotlin.String").unwrap()
+    returnType = mockClassType("kotlin.String")
 ).setter!!

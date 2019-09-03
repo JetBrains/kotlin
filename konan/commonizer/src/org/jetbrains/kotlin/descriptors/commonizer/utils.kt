@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
@@ -14,3 +17,8 @@ internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
 }
 
 internal inline fun <reified T> Iterable<T?>.firstNonNull() = firstIsInstance<T>()
+
+internal val KotlinType.fqName: FqName
+    get() = constructor.declarationDescriptor!!.fqNameSafe
+
+internal fun Any?.isNull() = this == null

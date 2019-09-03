@@ -11,24 +11,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.descriptors.commonizer.ir.Getter.Companion.toGetter
 import org.jetbrains.kotlin.descriptors.commonizer.ir.Setter.Companion.toSetter
-import org.jetbrains.kotlin.descriptors.commonizer.ir.ExtensionReceiver.Companion.toReceiver
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
-interface Property : Declaration {
-    val annotations: Annotations
-    val name: Name
-    val visibility: Visibility
-    val modality: Modality
+interface Property : CallableMember, Declaration {
     val isVar: Boolean
-    val kind: CallableMemberDescriptor.Kind
-    val type: UnwrappedType
     val lateInit: Boolean
     val isConst: Boolean
-    val isExternal: Boolean
     val isDelegate: Boolean
     val getter: Getter?
     val setter: Setter?
-    val extensionReceiver: ExtensionReceiver?
     val backingFieldAnnotations: Annotations? // null assumes no backing field
     val delegateFieldAnnotations: Annotations? // null assumes no backing field
     val compileTimeInitializer: ConstantValue<*>?
@@ -36,18 +27,16 @@ interface Property : Declaration {
 
 data class CommonProperty(
     override val name: Name,
-    override val visibility: Visibility,
     override val modality: Modality,
-    override val type: UnwrappedType,
-    override val setter: Setter?,
-    override val extensionReceiver: ExtensionReceiver?
-) : Property {
-    override val annotations get() = Annotations.EMPTY
+    override val visibility: Visibility,
+    override val isExternal: Boolean,
+    override val extensionReceiver: ExtensionReceiver?,
+    override val returnType: UnwrappedType,
+    override val setter: Setter?
+) : CommonCallableMember(), Property {
     override val isVar: Boolean get() = setter != null
-    override val kind get() = CallableMemberDescriptor.Kind.DECLARATION
     override val lateInit: Boolean get() = false
     override val isConst: Boolean get() = false
-    override val isExternal: Boolean get() = false
     override val isDelegate: Boolean get() = false
     override val getter: Getter get() = Getter.DEFAULT_NO_ANNOTATIONS
     override val backingFieldAnnotations: Annotations? get() = null
@@ -55,22 +44,14 @@ data class CommonProperty(
     override val compileTimeInitializer: ConstantValue<*>? get() = null
 }
 
-data class TargetProperty(private val descriptor: PropertyDescriptor) : Property {
-    override val annotations: Annotations get() = descriptor.annotations
-    override val name: Name get() = descriptor.name
-    override val visibility: Visibility get() = descriptor.visibility
-    override val modality: Modality get() = descriptor.modality
+class TargetProperty(descriptor: PropertyDescriptor) : TargetCallableMember<PropertyDescriptor>(descriptor), Property {
     override val isVar: Boolean get() = descriptor.isVar
-    override val kind: CallableMemberDescriptor.Kind get() = descriptor.kind
-    override val type: UnwrappedType get() = descriptor.type.unwrap()
     override val lateInit: Boolean get() = descriptor.isLateInit
     override val isConst: Boolean get() = descriptor.isConst
-    override val isExternal: Boolean get() = descriptor.isExternal
     @Suppress("DEPRECATION")
     override val isDelegate: Boolean get() = descriptor.isDelegated
     override val getter: Getter? get() = descriptor.getter?.toGetter()
     override val setter: Setter? get() = descriptor.setter?.toSetter()
-    override val extensionReceiver: ExtensionReceiver? get() = descriptor.extensionReceiverParameter?.toReceiver()
     override val backingFieldAnnotations: Annotations? get() = descriptor.backingField?.annotations
     override val delegateFieldAnnotations: Annotations? get() = descriptor.delegateField?.annotations
     override val compileTimeInitializer: ConstantValue<*>? get() = descriptor.compileTimeInitializer

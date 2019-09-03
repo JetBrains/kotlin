@@ -7,64 +7,39 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.ir.CommonProperty
-import org.jetbrains.kotlin.descriptors.commonizer.ir.ExtensionReceiver
+import org.jetbrains.kotlin.descriptors.commonizer.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
 import org.jetbrains.kotlin.descriptors.commonizer.ir.Property
-import org.jetbrains.kotlin.name.Name
 
-class PropertyCommonizer : Commonizer<PropertyDescriptor, Property> {
-    private enum class State {
-        EMPTY,
-        ERROR,
-        IN_PROGRESS
-    }
-
-    private var name: Name? = null
-    // TODO: visibility - what if virtual declaration?
-    private val visibility = VisibilityCommonizer.lowering()
-    private val modality = ModalityCommonizer.default()
-    private val returnType = TypeCommonizer.default()
+class PropertyCommonizer : CallableMemberCommonizer<PropertyDescriptor, Property>() {
     private val setter = PropertySetterCommonizer.default()
-    private val extensionReceiver = ExtensionReceiverCommonizer.default()
-
-    private var state = State.EMPTY
+    private var isExternal = true
 
     override val result: Property
         get() = when (state) {
             State.EMPTY, State.ERROR -> error("Can't commonize property")
             State.IN_PROGRESS -> CommonProperty(
                 name = name!!,
-                visibility = visibility.result,
                 modality = modality.result,
-                type = returnType.result,
-                setter = setter.result,
-                extensionReceiver = extensionReceiver.result?.let { ExtensionReceiver.createNoAnnotations(it) }
+                visibility = visibility.result,
+                isExternal = isExternal,
+                extensionReceiver = extensionReceiver.result?.toReceiverNoAnnotations(),
+                returnType = returnType.result,
+                setter = setter.result
             )
         }
 
-    override fun commonizeWith(next: PropertyDescriptor): Boolean {
-        if (state == State.ERROR)
-            return false
+    override fun canBeCommonized(next: PropertyDescriptor) = when {
+        next.isConst -> false // expect property can't be const because expect can't have initializer
+        next.isLateInit -> false // expect property can't be lateinit
+        else -> true
+    }
 
-        if (name == null)
-            name = next.name
-
-        val result = canBeCommonized(next)
-                && visibility.commonizeWith(next.visibility)
-                && modality.commonizeWith(next.modality)
-                && returnType.commonizeWith(next.type)
-                && setter.commonizeWith(next.setter)
-                && extensionReceiver.commonizeWith(next.extensionReceiverParameter)
+    override fun commonizeSpecifics(next: PropertyDescriptor): Boolean {
 
         // TODO: type parameters (for properties???)
 
-        state = if (!result) State.ERROR else State.IN_PROGRESS
+        isExternal = isExternal && next.isExternal
 
-        return result
-    }
-
-    private fun canBeCommonized(property: PropertyDescriptor) = when {
-        property.isConst -> false // expect property can't be const because expect can't have initializer
-        property.isLateInit -> false // expect property can't be lateinit
-        else -> true
+        return setter.commonizeWith(next.setter)
     }
 }
