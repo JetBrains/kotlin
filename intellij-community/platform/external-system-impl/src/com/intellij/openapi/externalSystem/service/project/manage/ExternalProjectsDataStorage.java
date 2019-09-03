@@ -78,7 +78,6 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
   }
 
   public synchronized void load() {
-    myExternalRootProjects.clear();
     long startTs = System.currentTimeMillis();
     long readEnd = startTs;
     try {
@@ -92,9 +91,14 @@ public class ExternalProjectsDataStorage implements SettingsSavingComponentJavaA
       }
 
       for (InternalExternalProjectInfo projectInfo : ContainerUtil.notNullize(projectInfos)) {
+        Pair<ProjectSystemId, File> key = Pair.create(projectInfo.getProjectSystemId(), new File(projectInfo.getExternalProjectPath()));
+        InternalExternalProjectInfo projectInfoReceivedBeforeStorageInitialization = myExternalRootProjects.get(key);
+        if (projectInfoReceivedBeforeStorageInitialization != null && projectInfoReceivedBeforeStorageInitialization.getLastSuccessfulImportTimestamp() > 0) {
+          // do not override the last successful import data which was received before this data storage initialization
+          continue;
+        }
         if (validate(projectInfo)) {
-          myExternalRootProjects.put(
-            Pair.create(projectInfo.getProjectSystemId(), new File(projectInfo.getExternalProjectPath())), projectInfo);
+          myExternalRootProjects.put(key, projectInfo);
           if (projectInfo.getLastImportTimestamp() != projectInfo.getLastSuccessfulImportTimestamp()) {
             markDirty(projectInfo.getExternalProjectPath());
           }
