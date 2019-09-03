@@ -66,30 +66,14 @@ public final class IrVariable extends
             bitField0_ |= 0x00000001;
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = name_.toBuilder();
-            }
-            name_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(name_);
-              name_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            name_ = input.readInt32();
             break;
           }
-          case 26: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000004) == 0x00000004)) {
-              subBuilder = type_.toBuilder();
-            }
-            type_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(type_);
-              type_ = subBuilder.buildPartial();
-            }
+          case 24: {
             bitField0_ |= 0x00000004;
+            type_ = input.readInt32();
             break;
           }
           case 32: {
@@ -170,32 +154,32 @@ public final class IrVariable extends
   }
 
   public static final int NAME_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name_;
+  private int name_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
   public boolean hasName() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName() {
+  public int getName() {
     return name_;
   }
 
   public static final int TYPE_FIELD_NUMBER = 3;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_;
+  private int type_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 3;</code>
+   * <code>required int32 type = 3;</code>
    */
   public boolean hasType() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 3;</code>
+   * <code>required int32 type = 3;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getType() {
+  public int getType() {
     return type_;
   }
 
@@ -261,8 +245,8 @@ public final class IrVariable extends
 
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
-    name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-    type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    name_ = 0;
+    type_ = 0;
     isVar_ = false;
     isConst_ = false;
     isLateinit_ = false;
@@ -302,14 +286,6 @@ public final class IrVariable extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getName().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!getType().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (hasInitializer()) {
       if (!getInitializer().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -327,10 +303,10 @@ public final class IrVariable extends
       output.writeMessage(1, base_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, name_);
+      output.writeInt32(2, name_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeMessage(3, type_);
+      output.writeInt32(3, type_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeBool(4, isVar_);
@@ -359,11 +335,11 @@ public final class IrVariable extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, name_);
+        .computeInt32Size(2, name_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(3, type_);
+        .computeInt32Size(3, type_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -477,9 +453,9 @@ public final class IrVariable extends
       super.clear();
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      name_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
-      type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      type_ = 0;
       bitField0_ = (bitField0_ & ~0x00000004);
       isVar_ = false;
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -550,10 +526,10 @@ public final class IrVariable extends
         mergeBase(other.getBase());
       }
       if (other.hasName()) {
-        mergeName(other.getName());
+        setName(other.getName());
       }
       if (other.hasType()) {
-        mergeType(other.getType());
+        setType(other.getType());
       }
       if (other.hasIsVar()) {
         setIsVar(other.getIsVar());
@@ -598,14 +574,6 @@ public final class IrVariable extends
         return false;
       }
       if (!getBase().isInitialized()) {
-        
-        return false;
-      }
-      if (!getName().isInitialized()) {
-        
-        return false;
-      }
-      if (!getType().isInitialized()) {
         
         return false;
       }
@@ -697,123 +665,67 @@ public final class IrVariable extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int name_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+     * <code>required int32 name = 2;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+     * <code>required int32 name = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName() {
+    public int getName() {
       return name_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+     * <code>required int32 name = 2;</code>
      */
-    public Builder setName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setName(int value) {
+      bitField0_ |= 0x00000002;
       name_ = value;
-
-      bitField0_ |= 0x00000002;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
-     */
-    public Builder setName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      name_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
-     */
-    public Builder mergeName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          name_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        name_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(name_).mergeFrom(value).buildPartial();
-      } else {
-        name_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+     * <code>required int32 name = 2;</code>
      */
     public Builder clearName() {
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000002);
+      name_ = 0;
+      
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int type_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 3;</code>
+     * <code>required int32 type = 3;</code>
      */
     public boolean hasType() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 3;</code>
+     * <code>required int32 type = 3;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getType() {
+    public int getType() {
       return type_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 3;</code>
+     * <code>required int32 type = 3;</code>
      */
-    public Builder setType(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setType(int value) {
+      bitField0_ |= 0x00000004;
       type_ = value;
-
-      bitField0_ |= 0x00000004;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 3;</code>
-     */
-    public Builder setType(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      type_ = builderForValue.build();
-
-      bitField0_ |= 0x00000004;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 3;</code>
-     */
-    public Builder mergeType(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000004) == 0x00000004) &&
-          type_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        type_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(type_).mergeFrom(value).buildPartial();
-      } else {
-        type_ = value;
-      }
-
-      bitField0_ |= 0x00000004;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 3;</code>
+     * <code>required int32 type = 3;</code>
      */
     public Builder clearType() {
-      type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000004);
+      type_ = 0;
+      
       return this;
     }
 

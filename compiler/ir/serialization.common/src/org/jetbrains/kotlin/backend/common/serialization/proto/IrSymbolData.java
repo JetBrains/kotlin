@@ -259,12 +259,6 @@ public final class IrSymbolData extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (hasFqname()) {
-      if (!getFqname().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     if (hasDescriptorReference()) {
       if (!getDescriptorReference().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -515,12 +509,6 @@ public final class IrSymbolData extends
       if (!getTopLevelUniqId().isInitialized()) {
         
         return false;
-      }
-      if (hasFqname()) {
-        if (!getFqname().isInitialized()) {
-          
-          return false;
-        }
       }
       if (hasDescriptorReference()) {
         if (!getDescriptorReference().isInitialized()) {

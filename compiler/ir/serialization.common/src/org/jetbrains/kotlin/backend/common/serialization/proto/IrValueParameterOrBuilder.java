@@ -17,13 +17,13 @@ public interface IrValueParameterOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
+  int getName();
 
   /**
    * <code>required int32 index = 3;</code>
@@ -35,22 +35,22 @@ public interface IrValueParameterOrBuilder extends
   int getIndex();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 4;</code>
+   * <code>required int32 type = 4;</code>
    */
   boolean hasType();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 4;</code>
+   * <code>required int32 type = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getType();
+  int getType();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex vararg_element_type = 5;</code>
+   * <code>optional int32 vararg_element_type = 5;</code>
    */
   boolean hasVarargElementType();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex vararg_element_type = 5;</code>
+   * <code>optional int32 vararg_element_type = 5;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getVarargElementType();
+  int getVarargElementType();
 
   /**
    * <code>required bool is_crossinline = 6;</code>
@@ -71,11 +71,11 @@ public interface IrValueParameterOrBuilder extends
   boolean getIsNoinline();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex default_value = 8;</code>
+   * <code>optional int32 default_value = 8;</code>
    */
   boolean hasDefaultValue();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex default_value = 8;</code>
+   * <code>optional int32 default_value = 8;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getDefaultValue();
+  int getDefaultValue();
 }

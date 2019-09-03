@@ -17,11 +17,11 @@ public interface IrDeclarationOriginOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.KnownOrigin getOrigin();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
+   * <code>optional int32 custom = 2;</code>
    */
   boolean hasCustom();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
+   * <code>optional int32 custom = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getCustom();
+  int getCustom();
 }

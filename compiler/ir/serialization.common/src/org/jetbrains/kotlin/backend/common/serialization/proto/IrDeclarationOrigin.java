@@ -65,17 +65,9 @@ public final class IrDeclarationOrigin extends
             }
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (eitherCase_ == 2) {
-              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) either_).toBuilder();
-            }
-            either_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) either_);
-              either_ = subBuilder.buildPartial();
-            }
+          case 16: {
             eitherCase_ = 2;
+            either_ = input.readInt32();
             break;
           }
         }
@@ -162,19 +154,19 @@ public final class IrDeclarationOrigin extends
 
   public static final int CUSTOM_FIELD_NUMBER = 2;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
+   * <code>optional int32 custom = 2;</code>
    */
   public boolean hasCustom() {
     return eitherCase_ == 2;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
+   * <code>optional int32 custom = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getCustom() {
+  public int getCustom() {
     if (eitherCase_ == 2) {
-       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) either_;
+      return (java.lang.Integer) either_;
     }
-    return org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    return 0;
   }
 
   private void initFields() {
@@ -185,12 +177,6 @@ public final class IrDeclarationOrigin extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (hasCustom()) {
-      if (!getCustom().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -202,7 +188,8 @@ public final class IrDeclarationOrigin extends
       output.writeEnum(1, ((org.jetbrains.kotlin.backend.common.serialization.proto.KnownOrigin) either_).getNumber());
     }
     if (eitherCase_ == 2) {
-      output.writeMessage(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) either_);
+      output.writeInt32(
+          2, (int)((java.lang.Integer) either_));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -219,7 +206,8 @@ public final class IrDeclarationOrigin extends
     }
     if (eitherCase_ == 2) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) either_);
+        .computeInt32Size(
+            2, (int)((java.lang.Integer) either_));
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -359,7 +347,7 @@ public final class IrDeclarationOrigin extends
           break;
         }
         case CUSTOM: {
-          mergeCustom(other.getCustom());
+          setCustom(other.getCustom());
           break;
         }
         case EITHER_NOT_SET: {
@@ -372,12 +360,6 @@ public final class IrDeclarationOrigin extends
     }
 
     public final boolean isInitialized() {
-      if (hasCustom()) {
-        if (!getCustom().isInitialized()) {
-          
-          return false;
-        }
-      }
       return true;
     }
 
@@ -454,59 +436,31 @@ public final class IrDeclarationOrigin extends
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
+     * <code>optional int32 custom = 2;</code>
      */
     public boolean hasCustom() {
       return eitherCase_ == 2;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
+     * <code>optional int32 custom = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getCustom() {
+    public int getCustom() {
       if (eitherCase_ == 2) {
-        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) either_;
+        return (java.lang.Integer) either_;
       }
-      return org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      return 0;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
+     * <code>optional int32 custom = 2;</code>
      */
-    public Builder setCustom(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setCustom(int value) {
+      eitherCase_ = 2;
       either_ = value;
-
-      eitherCase_ = 2;
+      
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
-     */
-    public Builder setCustom(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      either_ = builderForValue.build();
-
-      eitherCase_ = 2;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
-     */
-    public Builder mergeCustom(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (eitherCase_ == 2 &&
-          either_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        either_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) either_)
-            .mergeFrom(value).buildPartial();
-      } else {
-        either_ = value;
-      }
-
-      eitherCase_ = 2;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex custom = 2;</code>
+     * <code>optional int32 custom = 2;</code>
      */
     public Builder clearCustom() {
       if (eitherCase_ == 2) {

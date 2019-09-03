@@ -53,17 +53,9 @@ public final class IrStatementOrigin extends
             }
             break;
           }
-          case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = name_.toBuilder();
-            }
-            name_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(name_);
-              name_ = subBuilder.buildPartial();
-            }
+          case 8: {
             bitField0_ |= 0x00000001;
+            name_ = input.readInt32();
             break;
           }
         }
@@ -101,22 +93,22 @@ public final class IrStatementOrigin extends
 
   private int bitField0_;
   public static final int NAME_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name_;
+  private int name_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
+   * <code>required int32 name = 1;</code>
    */
   public boolean hasName() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
+   * <code>required int32 name = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName() {
+  public int getName() {
     return name_;
   }
 
   private void initFields() {
-    name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    name_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -128,10 +120,6 @@ public final class IrStatementOrigin extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getName().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -140,7 +128,7 @@ public final class IrStatementOrigin extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeMessage(1, name_);
+      output.writeInt32(1, name_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -153,7 +141,7 @@ public final class IrStatementOrigin extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, name_);
+        .computeInt32Size(1, name_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -249,7 +237,7 @@ public final class IrStatementOrigin extends
 
     public Builder clear() {
       super.clear();
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      name_ = 0;
       bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
@@ -285,7 +273,7 @@ public final class IrStatementOrigin extends
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance()) return this;
       if (other.hasName()) {
-        mergeName(other.getName());
+        setName(other.getName());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -294,10 +282,6 @@ public final class IrStatementOrigin extends
 
     public final boolean isInitialized() {
       if (!hasName()) {
-        
-        return false;
-      }
-      if (!getName().isInitialized()) {
         
         return false;
       }
@@ -323,63 +307,35 @@ public final class IrStatementOrigin extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int name_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
+     * <code>required int32 name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
+     * <code>required int32 name = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName() {
+    public int getName() {
       return name_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
+     * <code>required int32 name = 1;</code>
      */
-    public Builder setName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setName(int value) {
+      bitField0_ |= 0x00000001;
       name_ = value;
-
-      bitField0_ |= 0x00000001;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
-     */
-    public Builder setName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      name_ = builderForValue.build();
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
-     */
-    public Builder mergeName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          name_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        name_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(name_).mergeFrom(value).buildPartial();
-      } else {
-        name_ = value;
-      }
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
+     * <code>required int32 name = 1;</code>
      */
     public Builder clearName() {
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000001);
+      name_ = 0;
+      
       return this;
     }
 

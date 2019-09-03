@@ -50,10 +50,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst as ProtoC
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor as ProtoConstructor
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue as ProtoContinue
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoBodyIndex
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoStringIndex
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoSymbolIndex
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoTypeIndex
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationContainer as ProtoDeclarationContainer
@@ -171,18 +167,14 @@ open class IrFileSerializer(
         }
     }
 
-    private fun serializeIrExpressionBody(expression: IrExpression): ProtoBodyIndex {
-        val proto = ProtoBodyIndex.newBuilder()
+    private fun serializeIrExpressionBody(expression: IrExpression): Int {
         protoBodyArray.add(XStatementOrExpression.XExpression(serializeExpression(expression)))
-        proto.index = protoBodyArray.size - 1
-        return proto.build()
+        return protoBodyArray.size - 1
     }
 
-    private fun serializeIrStatementBody(statement: IrElement): ProtoBodyIndex {
-        val proto = ProtoBodyIndex.newBuilder()
+    private fun serializeIrStatementBody(statement: IrElement): Int {
         protoBodyArray.add(XStatementOrExpression.XStatement(serializeStatement(statement)))
-        proto.index = protoBodyArray.size - 1
-        return proto.build()
+        return protoBodyArray.size - 1
     }
 
     /* ------- Common fields ---------------------------------------------------- */
@@ -211,16 +203,12 @@ open class IrFileSerializer(
 
     /* ------- Strings ---------------------------------------------------------- */
 
-    fun serializeString(value: String): ProtoStringIndex {
-        val proto = ProtoStringIndex.newBuilder()
-        proto.index = protoStringMap.getOrPut(value) {
-            protoStringArray.add(value)
-            protoStringArray.size - 1
-        }
-        return proto.build()
+    private fun serializeString(value: String): Int = protoStringMap.getOrPut(value) {
+        protoStringArray.add(value)
+        protoStringArray.size - 1
     }
 
-    private fun serializeName(name: Name): ProtoStringIndex = serializeString(name.toString())
+    private fun serializeName(name: Name): Int = serializeString(name.toString())
 
     /* ------- IrSymbols -------------------------------------------------------- */
 
@@ -283,14 +271,10 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    fun serializeIrSymbol(symbol: IrSymbol): ProtoSymbolIndex {
-        val proto = ProtoSymbolIndex.newBuilder()
-        proto.index = protoSymbolMap.getOrPut(symbol) {
-            val symbolData = serializeIrSymbolData(symbol)
-            protoSymbolArray.add(symbolData)
-            protoSymbolArray.size - 1
-        }
-        return proto.build()
+    fun serializeIrSymbol(symbol: IrSymbol) = protoSymbolMap.getOrPut(symbol) {
+        val symbolData = serializeIrSymbolData(symbol)
+        protoSymbolArray.add(symbolData)
+        protoSymbolArray.size - 1
     }
 
     /* ------- IrTypes ---------------------------------------------------------- */
@@ -445,16 +429,9 @@ open class IrFileSerializer(
             type = (this as? IrTypeProjection)?.type?.toIrTypeKey
         )
 
-    private fun serializeIrType(type: IrType): ProtoTypeIndex {
-        val proto = ProtoTypeIndex.newBuilder()
-        val key = type.toIrTypeKey
-        proto.index = protoTypeMap.getOrPut(key) {
-            // println("new type: $type ${(type as? IrSimpleType)?.classifier?.descriptor}${if((type as? IrSimpleType)?.hasQuestionMark ?: false) "?" else ""}")
-            // println("new key = $key")
-            protoTypeArray.add(serializeIrTypeData(type))
-            protoTypeArray.size - 1
-        }
-        return proto.build()
+    private fun serializeIrType(type: IrType) = protoTypeMap.getOrPut(type.toIrTypeKey) {
+        protoTypeArray.add(serializeIrTypeData(type))
+        protoTypeArray.size - 1
     }
 
     /* -------------------------------------------------------------------------- */

@@ -66,17 +66,9 @@ public final class IrTypeParameter extends
             bitField0_ |= 0x00000001;
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = name_.toBuilder();
-            }
-            name_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(name_);
-              name_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            name_ = input.readInt32();
             break;
           }
           case 24: {
@@ -96,12 +88,25 @@ public final class IrTypeParameter extends
             }
             break;
           }
-          case 42: {
+          case 40: {
             if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-              superType_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>();
+              superType_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000010;
             }
-            superType_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry));
+            superType_.add(input.readInt32());
+            break;
+          }
+          case 42: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+              superType_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000010;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              superType_.add(input.readInt32());
+            }
+            input.popLimit(limit);
             break;
           }
           case 48: {
@@ -162,17 +167,17 @@ public final class IrTypeParameter extends
   }
 
   public static final int NAME_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name_;
+  private int name_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
   public boolean hasName() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName() {
+  public int getName() {
     return name_;
   }
 
@@ -207,37 +212,24 @@ public final class IrTypeParameter extends
   }
 
   public static final int SUPER_TYPE_FIELD_NUMBER = 5;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> superType_;
+  private java.util.List<java.lang.Integer> superType_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+   * <code>repeated int32 super_type = 5;</code>
    */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getSuperTypeList() {
+  public java.util.List<java.lang.Integer>
+      getSuperTypeList() {
     return superType_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
-   */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder> 
-      getSuperTypeOrBuilderList() {
-    return superType_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+   * <code>repeated int32 super_type = 5;</code>
    */
   public int getSuperTypeCount() {
     return superType_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+   * <code>repeated int32 super_type = 5;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSuperType(int index) {
-    return superType_.get(index);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder getSuperTypeOrBuilder(
-      int index) {
+  public int getSuperType(int index) {
     return superType_.get(index);
   }
 
@@ -258,7 +250,7 @@ public final class IrTypeParameter extends
 
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
-    name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    name_ = 0;
     index_ = 0;
     variance_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.IN;
     superType_ = java.util.Collections.emptyList();
@@ -294,16 +286,6 @@ public final class IrTypeParameter extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getName().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    for (int i = 0; i < getSuperTypeCount(); i++) {
-      if (!getSuperType(i).isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -315,7 +297,7 @@ public final class IrTypeParameter extends
       output.writeMessage(1, base_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, name_);
+      output.writeInt32(2, name_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeInt32(3, index_);
@@ -324,7 +306,7 @@ public final class IrTypeParameter extends
       output.writeEnum(4, variance_.getNumber());
     }
     for (int i = 0; i < superType_.size(); i++) {
-      output.writeMessage(5, superType_.get(i));
+      output.writeInt32(5, superType_.get(i));
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       output.writeBool(6, isReified_);
@@ -344,7 +326,7 @@ public final class IrTypeParameter extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, name_);
+        .computeInt32Size(2, name_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -354,9 +336,14 @@ public final class IrTypeParameter extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeEnumSize(4, variance_.getNumber());
     }
-    for (int i = 0; i < superType_.size(); i++) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(5, superType_.get(i));
+    {
+      int dataSize = 0;
+      for (int i = 0; i < superType_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(superType_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getSuperTypeList().size();
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -458,7 +445,7 @@ public final class IrTypeParameter extends
       super.clear();
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      name_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       index_ = 0;
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -526,7 +513,7 @@ public final class IrTypeParameter extends
         mergeBase(other.getBase());
       }
       if (other.hasName()) {
-        mergeName(other.getName());
+        setName(other.getName());
       }
       if (other.hasIndex()) {
         setIndex(other.getIndex());
@@ -576,16 +563,6 @@ public final class IrTypeParameter extends
       if (!getBase().isInitialized()) {
         
         return false;
-      }
-      if (!getName().isInitialized()) {
-        
-        return false;
-      }
-      for (int i = 0; i < getSuperTypeCount(); i++) {
-        if (!getSuperType(i).isInitialized()) {
-          
-          return false;
-        }
       }
       return true;
     }
@@ -669,63 +646,35 @@ public final class IrTypeParameter extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int name_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+     * <code>required int32 name = 2;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+     * <code>required int32 name = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName() {
+    public int getName() {
       return name_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+     * <code>required int32 name = 2;</code>
      */
-    public Builder setName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setName(int value) {
+      bitField0_ |= 0x00000002;
       name_ = value;
-
-      bitField0_ |= 0x00000002;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
-     */
-    public Builder setName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      name_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
-     */
-    public Builder mergeName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          name_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        name_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(name_).mergeFrom(value).buildPartial();
-      } else {
-        name_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+     * <code>required int32 name = 2;</code>
      */
     public Builder clearName() {
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000002);
+      name_ = 0;
+      
       return this;
     }
 
@@ -796,128 +745,69 @@ public final class IrTypeParameter extends
       return this;
     }
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> superType_ =
-      java.util.Collections.emptyList();
+    private java.util.List<java.lang.Integer> superType_ = java.util.Collections.emptyList();
     private void ensureSuperTypeIsMutable() {
       if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-        superType_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>(superType_);
+        superType_ = new java.util.ArrayList<java.lang.Integer>(superType_);
         bitField0_ |= 0x00000010;
        }
     }
-
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+     * <code>repeated int32 super_type = 5;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getSuperTypeList() {
+    public java.util.List<java.lang.Integer>
+        getSuperTypeList() {
       return java.util.Collections.unmodifiableList(superType_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+     * <code>repeated int32 super_type = 5;</code>
      */
     public int getSuperTypeCount() {
       return superType_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+     * <code>repeated int32 super_type = 5;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSuperType(int index) {
+    public int getSuperType(int index) {
       return superType_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+     * <code>repeated int32 super_type = 5;</code>
      */
     public Builder setSuperType(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+        int index, int value) {
       ensureSuperTypeIsMutable();
       superType_.set(index, value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+     * <code>repeated int32 super_type = 5;</code>
      */
-    public Builder setSuperType(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureSuperTypeIsMutable();
-      superType_.set(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
-     */
-    public Builder addSuperType(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder addSuperType(int value) {
       ensureSuperTypeIsMutable();
       superType_.add(value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
-     */
-    public Builder addSuperType(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureSuperTypeIsMutable();
-      superType_.add(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
-     */
-    public Builder addSuperType(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureSuperTypeIsMutable();
-      superType_.add(builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
-     */
-    public Builder addSuperType(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureSuperTypeIsMutable();
-      superType_.add(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+     * <code>repeated int32 super_type = 5;</code>
      */
     public Builder addAllSuperType(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> values) {
+        java.lang.Iterable<? extends java.lang.Integer> values) {
       ensureSuperTypeIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, superType_);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
+     * <code>repeated int32 super_type = 5;</code>
      */
     public Builder clearSuperType() {
       superType_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
-     */
-    public Builder removeSuperType(int index) {
-      ensureSuperTypeIsMutable();
-      superType_.remove(index);
-
+      
       return this;
     }
 

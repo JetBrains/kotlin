@@ -1215,12 +1215,6 @@ public final class IrOperation extends
         return false;
       }
     }
-    if (hasConst()) {
-      if (!getConst().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     if (hasContinue()) {
       if (!getContinue().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -2032,12 +2026,6 @@ public final class IrOperation extends
       }
       if (hasComposite()) {
         if (!getComposite().isInitialized()) {
-          
-          return false;
-        }
-      }
-      if (hasConst()) {
-        if (!getConst().isInitialized()) {
           
           return false;
         }

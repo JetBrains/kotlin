@@ -88,12 +88,25 @@ public final class IrFunction extends
             isSuspend_ = input.readBool();
             break;
           }
-          case 42: {
+          case 40: {
             if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-              overridden_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>();
+              overridden_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000010;
             }
-            overridden_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry));
+            overridden_.add(input.readInt32());
+            break;
+          }
+          case 42: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+              overridden_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000010;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              overridden_.add(input.readInt32());
+            }
+            input.popLimit(limit);
             break;
           }
         }
@@ -194,30 +207,20 @@ public final class IrFunction extends
   }
 
   public static final int OVERRIDDEN_FIELD_NUMBER = 5;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> overridden_;
+  private java.util.List<java.lang.Integer> overridden_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+   * <code>repeated int32 overridden = 5;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;
    * </pre>
    */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getOverriddenList() {
+  public java.util.List<java.lang.Integer>
+      getOverriddenList() {
     return overridden_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
-   *
-   * <pre>
-   *optional UniqId corresponding_property = 7;
-   * </pre>
-   */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder> 
-      getOverriddenOrBuilderList() {
-    return overridden_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+   * <code>repeated int32 overridden = 5;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;
@@ -227,24 +230,13 @@ public final class IrFunction extends
     return overridden_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+   * <code>repeated int32 overridden = 5;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;
    * </pre>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getOverridden(int index) {
-    return overridden_.get(index);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
-   *
-   * <pre>
-   *optional UniqId corresponding_property = 7;
-   * </pre>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder getOverriddenOrBuilder(
-      int index) {
+  public int getOverridden(int index) {
     return overridden_.get(index);
   }
 
@@ -281,12 +273,6 @@ public final class IrFunction extends
       memoizedIsInitialized = 0;
       return false;
     }
-    for (int i = 0; i < getOverriddenCount(); i++) {
-      if (!getOverridden(i).isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -307,7 +293,7 @@ public final class IrFunction extends
       output.writeBool(4, isSuspend_);
     }
     for (int i = 0; i < overridden_.size(); i++) {
-      output.writeMessage(5, overridden_.get(i));
+      output.writeInt32(5, overridden_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -334,9 +320,14 @@ public final class IrFunction extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(4, isSuspend_);
     }
-    for (int i = 0; i < overridden_.size(); i++) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(5, overridden_.get(i));
+    {
+      int dataSize = 0;
+      for (int i = 0; i < overridden_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(overridden_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getOverriddenList().size();
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -540,12 +531,6 @@ public final class IrFunction extends
         
         return false;
       }
-      for (int i = 0; i < getOverriddenCount(); i++) {
-        if (!getOverridden(i).isInitialized()) {
-          
-          return false;
-        }
-      }
       return true;
     }
 
@@ -727,27 +712,26 @@ public final class IrFunction extends
       return this;
     }
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> overridden_ =
-      java.util.Collections.emptyList();
+    private java.util.List<java.lang.Integer> overridden_ = java.util.Collections.emptyList();
     private void ensureOverriddenIsMutable() {
       if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-        overridden_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>(overridden_);
+        overridden_ = new java.util.ArrayList<java.lang.Integer>(overridden_);
         bitField0_ |= 0x00000010;
        }
     }
-
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+     * <code>repeated int32 overridden = 5;</code>
      *
      * <pre>
      *optional UniqId corresponding_property = 7;
      * </pre>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getOverriddenList() {
+    public java.util.List<java.lang.Integer>
+        getOverriddenList() {
       return java.util.Collections.unmodifiableList(overridden_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+     * <code>repeated int32 overridden = 5;</code>
      *
      * <pre>
      *optional UniqId corresponding_property = 7;
@@ -757,124 +741,59 @@ public final class IrFunction extends
       return overridden_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+     * <code>repeated int32 overridden = 5;</code>
      *
      * <pre>
      *optional UniqId corresponding_property = 7;
      * </pre>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getOverridden(int index) {
+    public int getOverridden(int index) {
       return overridden_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+     * <code>repeated int32 overridden = 5;</code>
      *
      * <pre>
      *optional UniqId corresponding_property = 7;
      * </pre>
      */
     public Builder setOverridden(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+        int index, int value) {
       ensureOverriddenIsMutable();
       overridden_.set(index, value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+     * <code>repeated int32 overridden = 5;</code>
      *
      * <pre>
      *optional UniqId corresponding_property = 7;
      * </pre>
      */
-    public Builder setOverridden(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureOverriddenIsMutable();
-      overridden_.set(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
-     */
-    public Builder addOverridden(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder addOverridden(int value) {
       ensureOverriddenIsMutable();
       overridden_.add(value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
-     */
-    public Builder addOverridden(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureOverriddenIsMutable();
-      overridden_.add(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
-     */
-    public Builder addOverridden(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureOverriddenIsMutable();
-      overridden_.add(builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
-     */
-    public Builder addOverridden(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureOverriddenIsMutable();
-      overridden_.add(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+     * <code>repeated int32 overridden = 5;</code>
      *
      * <pre>
      *optional UniqId corresponding_property = 7;
      * </pre>
      */
     public Builder addAllOverridden(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> values) {
+        java.lang.Iterable<? extends java.lang.Integer> values) {
       ensureOverriddenIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, overridden_);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
+     * <code>repeated int32 overridden = 5;</code>
      *
      * <pre>
      *optional UniqId corresponding_property = 7;
@@ -883,20 +802,7 @@ public final class IrFunction extends
     public Builder clearOverridden() {
       overridden_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
-     */
-    public Builder removeOverridden(int index) {
-      ensureOverriddenIsMutable();
-      overridden_.remove(index);
-
+      
       return this;
     }
 

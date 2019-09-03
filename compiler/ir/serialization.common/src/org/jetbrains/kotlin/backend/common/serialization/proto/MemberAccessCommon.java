@@ -251,10 +251,6 @@ public final class MemberAccessCommon extends
         return false;
       }
     }
-    if (!getTypeArguments().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -493,10 +489,6 @@ public final class MemberAccessCommon extends
           
           return false;
         }
-      }
-      if (!getTypeArguments().isInitialized()) {
-        
-        return false;
       }
       return true;
     }

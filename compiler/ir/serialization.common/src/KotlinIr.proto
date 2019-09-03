@@ -8,7 +8,7 @@ option optimize_for = LITE_RUNTIME;
 message DescriptorReference {
   required FqName package_fq_name = 1;
   required FqName class_fq_name = 2;
-  required IrDataIndex name = 3;
+  required int32 name = 3;
   optional UniqId uniq_id = 4;
   optional bool is_getter = 5 [default = false];
   optional bool is_setter = 6 [default = false];
@@ -31,11 +31,11 @@ message Coordinates {
 }
 
 message Visibility {
-  required IrDataIndex name = 1;
+  required int32 name = 1;
 }
 
 message IrStatementOrigin {
-  required IrDataIndex name = 1;
+  required int32 name = 1;
 }
 
 enum KnownOrigin {
@@ -72,16 +72,12 @@ enum KnownOrigin {
 message IrDeclarationOrigin {
   oneof either {
     KnownOrigin origin = 1;
-    IrDataIndex custom = 2;
+    int32 custom = 2;
   }
 }
 
-message IrDataIndex {
-  required int32 index = 1;
-}
-
 message FqName {
-  repeated IrDataIndex segment = 1;
+  repeated int32 segment = 1;
 }
 
 /* ------ Top Level---------------------------------------------- */
@@ -100,18 +96,7 @@ message IrFile {
   required FileEntry file_entry = 2;
   required FqName fq_name = 3;
   required Annotations annotations = 4;
-  repeated IrDataIndex explicitly_exported_to_compiler = 5;
-}
-
-//message IrModule {
-//  required string name = 1;
-//  repeated IrFile file = 2;
-//}
-
-/* ------ String Table ------------------------------------------ */
-
-message StringTable {
-  repeated string strings = 1;
+  repeated int32 explicitly_exported_to_compiler = 5;
 }
 
 /* ------ IrSymbols --------------------------------------------- */
@@ -159,7 +144,7 @@ message Annotations {
 }
 
 message TypeArguments {
-  repeated IrDataIndex type_argument = 1;
+  repeated int32 type_argument = 1;
 }
 
 message IrStarProjection {
@@ -168,7 +153,7 @@ message IrStarProjection {
 
 message IrTypeProjection {
   required IrTypeVariance variance = 1;
-  required IrDataIndex type = 2;
+  required int32 type = 2;
 }
 
 message IrTypeArgument {
@@ -180,7 +165,7 @@ message IrTypeArgument {
 
 message IrSimpleType {
   required Annotations annotations = 1;
-  required IrDataIndex classifier = 2;
+  required int32 classifier = 2;
   required bool has_question_mark = 3;
   repeated IrTypeArgument argument = 4;
   optional IrTypeAbbreviation abbreviation = 5;
@@ -188,7 +173,7 @@ message IrSimpleType {
 
 message IrTypeAbbreviation {
   required Annotations annotations = 1;
-  required IrDataIndex type_alias = 2;
+  required int32 type_alias = 2;
   required bool has_question_mark = 3;
   repeated IrTypeArgument argument = 4;
 }
@@ -218,7 +203,7 @@ message IrTypeTable {
 
 message IrBreak {
   required int32 loop_id = 1;
-  optional IrDataIndex label = 2;
+  optional int32 label = 2;
 }
 
 message IrBlock {
@@ -234,39 +219,39 @@ message MemberAccessCommon {
 }
 
 message IrCall {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
   required MemberAccessCommon member_access = 2;
-  optional IrDataIndex super = 3;
+  optional int32 super = 3;
   optional IrStatementOrigin origin = 4;
 }
 
 message IrConstructorCall {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
   required int32 constructor_type_arguments_count = 2;
   required MemberAccessCommon member_access = 3;
 }
 
 message IrFunctionReference {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
   optional IrStatementOrigin origin = 2;
   required MemberAccessCommon member_access = 3;
 }
 
 message IrLocalDelegatedPropertyReference {
-  required IrDataIndex delegate = 1;
-  optional IrDataIndex getter = 2;
-  optional IrDataIndex setter = 3;
-  required IrDataIndex symbol = 4;
+  required int32 delegate = 1;
+  optional int32 getter = 2;
+  optional int32 setter = 3;
+  required int32 symbol = 4;
   optional IrStatementOrigin origin = 5;
 }
 
 message IrPropertyReference {
-  optional IrDataIndex field = 1;
-  optional IrDataIndex getter = 2;
-  optional IrDataIndex setter = 3;
+  optional int32 field = 1;
+  optional int32 getter = 2;
+  optional int32 setter = 3;
   optional IrStatementOrigin origin = 4;
   required MemberAccessCommon member_access = 5;
-  required IrDataIndex symbol = 6;
+  required int32 symbol = 6;
 }
 
 message IrComposite {
@@ -275,8 +260,8 @@ message IrComposite {
 }
 
 message IrClassReference {
-  required IrDataIndex class_symbol = 1;
-  required IrDataIndex class_type = 2;
+  required int32 class_symbol = 1;
+  required int32 class_type = 2;
 }
 
 message IrConst {
@@ -290,17 +275,17 @@ message IrConst {
     int64 long = 7;
     float float = 8;
     double double = 9;
-    IrDataIndex string = 10;
+    int32 string = 10;
   }
 }
 
 message IrContinue {
   required int32 loop_id = 1;
-  optional IrDataIndex label = 2;
+  optional int32 label = 2;
 }
 
 message IrDelegatingConstructorCall {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
   required MemberAccessCommon member_access = 2;
 }
 
@@ -309,7 +294,7 @@ message IrDoWhile {
 }
 
 message IrEnumConstructorCall {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
   required MemberAccessCommon member_access = 2;
 }
 
@@ -318,12 +303,12 @@ message IrGetClass {
 }
 
 message IrGetEnumValue {
-  required IrDataIndex symbol = 2;
+  required int32 symbol = 2;
 }
 
 message FieldAccessCommon {
-  required IrDataIndex symbol = 1;
-  optional IrDataIndex super = 2;
+  required int32 symbol = 1;
+  optional int32 super = 2;
   optional IrExpression receiver = 3;
 }
 
@@ -333,28 +318,28 @@ message IrGetField {
 }
 
 message IrGetValue {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
   optional IrStatementOrigin origin = 2;
 }
 
 message IrGetObject {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
 }
 
 message IrInstanceInitializerCall {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
 }
 
 message Loop {
   required int32 loop_id = 1;
   required IrExpression condition = 2;
-  optional IrDataIndex label = 3;
+  optional int32 label = 3;
   optional IrExpression body = 4;
   optional IrStatementOrigin origin = 5;
 }
 
 message IrReturn {
-  required IrDataIndex return_target = 1;
+  required int32 return_target = 1;
   required IrExpression value = 2;
 }
 
@@ -365,7 +350,7 @@ message IrSetField {
 }
 
 message IrSetVariable {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
   required IrExpression value = 2;
   optional IrStatementOrigin origin = 3;
 }
@@ -391,12 +376,12 @@ message IrTry {
 
 message IrTypeOp {
   required IrTypeOperator operator = 1;
-  required IrDataIndex operand = 2;
+  required int32 operand = 2;
   required IrExpression argument = 3;
 }
 
 message IrVararg {
-  required IrDataIndex element_type = 1;
+  required int32 element_type = 1;
   repeated IrVarargElement element = 2;
 }
 
@@ -424,7 +409,7 @@ message IrFunctionExpression {
 /* ------ Dynamic expression --------------------------------------------- */
 
 message IrDynamicMemberExpression {
-  required IrDataIndex memberName = 1;
+  required int32 memberName = 1;
   required IrExpression receiver = 2;
 }
 
@@ -525,7 +510,7 @@ enum IrTypeOperator {
 
 message IrExpression {
   required IrOperation operation = 1;
-  required IrDataIndex type = 2;
+  required int32 type = 2;
   required Coordinates coordinates = 3;
 }
 
@@ -536,7 +521,7 @@ message NullableIrExpression {
 /* ------ Declarations --------------------------------------------- */
 
 message IrDeclarationBase {
-  required IrDataIndex symbol = 1;
+  required int32 symbol = 1;
   required IrDeclarationOrigin origin = 2;
   required Coordinates coordinates = 3;
   required Annotations annotations = 4;
@@ -544,7 +529,7 @@ message IrDeclarationBase {
 
 message IrFunctionBase {
   required IrDeclarationBase base = 1;
-  required IrDataIndex name = 2;
+  required int32 name = 2;
   required Visibility visibility = 3;
   required bool is_inline = 4;
   required bool is_external = 5;
@@ -552,8 +537,8 @@ message IrFunctionBase {
   optional IrValueParameter dispatch_receiver = 7;
   optional IrValueParameter extension_receiver = 8;
   repeated IrValueParameter value_parameter = 9;
-  optional IrDataIndex body = 10;
-  required IrDataIndex return_type = 11;
+  optional int32 body = 10;
+  required int32 return_type = 11;
 }
 
 message IrFunction {
@@ -561,7 +546,7 @@ message IrFunction {
   required ModalityKind modality = 2;
   required bool is_tailrec = 3;
   required bool is_suspend = 4;
-  repeated IrDataIndex overridden = 5;
+  repeated int32 overridden = 5;
   //optional UniqId corresponding_property = 7;
 }
 
@@ -573,19 +558,19 @@ message IrConstructor {
 
 message IrField {
   required IrDeclarationBase base = 1;
-  optional IrDataIndex initializer = 2;
-  required IrDataIndex name = 3;
+  optional int32 initializer = 2;
+  required int32 name = 3;
   required Visibility visibility = 4;
   required bool is_final = 5;
   required bool is_external = 6;
   required bool is_static = 7;
-  required IrDataIndex type = 8;
+  required int32 type = 8;
 }
 
 message IrLocalDelegatedProperty {
   required IrDeclarationBase base = 1;
-  required IrDataIndex name = 2;
-  required IrDataIndex type = 3;
+  required int32 name = 2;
+  required int32 type = 3;
   required bool is_var = 4;
   required IrVariable delegate = 5;
   optional IrFunction getter = 6;
@@ -594,7 +579,7 @@ message IrLocalDelegatedProperty {
 
 message IrProperty {
   required IrDeclarationBase base = 1;
-  required IrDataIndex name = 2;
+  required int32 name = 2;
   required Visibility visibility = 3;
   required ModalityKind modality = 4;
   required bool is_var = 5;
@@ -609,8 +594,8 @@ message IrProperty {
 
 message IrVariable {
   required IrDeclarationBase base = 1;
-  required IrDataIndex name = 2;
-  required IrDataIndex type = 3;
+  required int32 name = 2;
+  required int32 type = 3;
   required bool is_var = 4;
   required bool is_const = 5;
   required bool is_lateinit = 6;
@@ -635,21 +620,21 @@ enum ModalityKind { // It is ModalityKind to not clash with Modality in descript
 
 message IrValueParameter {
   required IrDeclarationBase base = 1;
-  required IrDataIndex name = 2;
+  required int32 name = 2;
   required int32 index = 3;
-  required IrDataIndex type = 4;
-  optional IrDataIndex vararg_element_type = 5;
+  required int32 type = 4;
+  optional int32 vararg_element_type = 5;
   required bool is_crossinline = 6;
   required bool is_noinline = 7;
-  optional IrDataIndex default_value = 8;
+  optional int32 default_value = 8;
 }
 
 message IrTypeParameter {
   required IrDeclarationBase base = 1;
-  required IrDataIndex name = 2;
+  required int32 name = 2;
   required int32 index = 3;
   required IrTypeVariance variance = 4;
-  repeated IrDataIndex super_type = 5;
+  repeated int32 super_type = 5;
   required bool is_reified = 6;
 }
 
@@ -659,7 +644,7 @@ message IrTypeParameterContainer {
 
 message IrClass {
   required IrDeclarationBase base = 1;
-  required IrDataIndex name = 2;
+  required int32 name = 2;
   required ClassKind kind = 3;
   required Visibility visibility = 4;
   required ModalityKind modality = 5;
@@ -672,28 +657,28 @@ message IrClass {
   optional IrValueParameter this_receiver = 11;
   required IrTypeParameterContainer type_parameters = 12;
   required IrDeclarationContainer declaration_container = 13;
-  repeated IrDataIndex super_type = 14;
+  repeated int32 super_type = 14;
 }
 
 message IrTypeAlias {
   required IrDeclarationBase base = 1;
-  required IrDataIndex name = 2;
+  required int32 name = 2;
   required Visibility visibility = 3;
   required IrTypeParameterContainer type_parameters = 4;
-  required IrDataIndex expanded_type = 5;
+  required int32 expanded_type = 5;
   required bool is_actual = 6;
 }
 
 message IrEnumEntry {
   required IrDeclarationBase base = 1;
-  optional IrDataIndex initializer = 2;
+  optional int32 initializer = 2;
   optional IrClass corresponding_class = 3;
-  required IrDataIndex name = 4;
+  required int32 name = 4;
 }
 
 message IrAnonymousInit {
   required IrDeclarationBase base = 1;
-  required IrDataIndex body = 2;
+  required int32 body = 2;
 }
 
 // TODO: we need an extension mechanism to accomodate new

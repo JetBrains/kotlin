@@ -53,30 +53,14 @@ public final class IrClassReference extends
             }
             break;
           }
-          case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = classSymbol_.toBuilder();
-            }
-            classSymbol_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(classSymbol_);
-              classSymbol_ = subBuilder.buildPartial();
-            }
+          case 8: {
             bitField0_ |= 0x00000001;
+            classSymbol_ = input.readInt32();
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = classType_.toBuilder();
-            }
-            classType_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(classType_);
-              classType_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            classType_ = input.readInt32();
             break;
           }
         }
@@ -114,38 +98,38 @@ public final class IrClassReference extends
 
   private int bitField0_;
   public static final int CLASS_SYMBOL_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classSymbol_;
+  private int classSymbol_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
+   * <code>required int32 class_symbol = 1;</code>
    */
   public boolean hasClassSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
+   * <code>required int32 class_symbol = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassSymbol() {
+  public int getClassSymbol() {
     return classSymbol_;
   }
 
   public static final int CLASS_TYPE_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classType_;
+  private int classType_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
+   * <code>required int32 class_type = 2;</code>
    */
   public boolean hasClassType() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
+   * <code>required int32 class_type = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassType() {
+  public int getClassType() {
     return classType_;
   }
 
   private void initFields() {
-    classSymbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-    classType_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    classSymbol_ = 0;
+    classType_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -161,14 +145,6 @@ public final class IrClassReference extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getClassSymbol().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!getClassType().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -177,10 +153,10 @@ public final class IrClassReference extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeMessage(1, classSymbol_);
+      output.writeInt32(1, classSymbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, classType_);
+      output.writeInt32(2, classType_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -193,11 +169,11 @@ public final class IrClassReference extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, classSymbol_);
+        .computeInt32Size(1, classSymbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, classType_);
+        .computeInt32Size(2, classType_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -293,9 +269,9 @@ public final class IrClassReference extends
 
     public Builder clear() {
       super.clear();
-      classSymbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      classSymbol_ = 0;
       bitField0_ = (bitField0_ & ~0x00000001);
-      classType_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      classType_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -335,10 +311,10 @@ public final class IrClassReference extends
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference.getDefaultInstance()) return this;
       if (other.hasClassSymbol()) {
-        mergeClassSymbol(other.getClassSymbol());
+        setClassSymbol(other.getClassSymbol());
       }
       if (other.hasClassType()) {
-        mergeClassType(other.getClassType());
+        setClassType(other.getClassType());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -351,14 +327,6 @@ public final class IrClassReference extends
         return false;
       }
       if (!hasClassType()) {
-        
-        return false;
-      }
-      if (!getClassSymbol().isInitialized()) {
-        
-        return false;
-      }
-      if (!getClassType().isInitialized()) {
         
         return false;
       }
@@ -384,123 +352,67 @@ public final class IrClassReference extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classSymbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int classSymbol_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
+     * <code>required int32 class_symbol = 1;</code>
      */
     public boolean hasClassSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
+     * <code>required int32 class_symbol = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassSymbol() {
+    public int getClassSymbol() {
       return classSymbol_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
+     * <code>required int32 class_symbol = 1;</code>
      */
-    public Builder setClassSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setClassSymbol(int value) {
+      bitField0_ |= 0x00000001;
       classSymbol_ = value;
-
-      bitField0_ |= 0x00000001;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
-     */
-    public Builder setClassSymbol(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      classSymbol_ = builderForValue.build();
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
-     */
-    public Builder mergeClassSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          classSymbol_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        classSymbol_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(classSymbol_).mergeFrom(value).buildPartial();
-      } else {
-        classSymbol_ = value;
-      }
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
+     * <code>required int32 class_symbol = 1;</code>
      */
     public Builder clearClassSymbol() {
-      classSymbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000001);
+      classSymbol_ = 0;
+      
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classType_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int classType_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
+     * <code>required int32 class_type = 2;</code>
      */
     public boolean hasClassType() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
+     * <code>required int32 class_type = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassType() {
+    public int getClassType() {
       return classType_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
+     * <code>required int32 class_type = 2;</code>
      */
-    public Builder setClassType(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setClassType(int value) {
+      bitField0_ |= 0x00000002;
       classType_ = value;
-
-      bitField0_ |= 0x00000002;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
-     */
-    public Builder setClassType(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      classType_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
-     */
-    public Builder mergeClassType(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          classType_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        classType_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(classType_).mergeFrom(value).buildPartial();
-      } else {
-        classType_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
+     * <code>required int32 class_type = 2;</code>
      */
     public Builder clearClassType() {
-      classType_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000002);
+      classType_ = 0;
+      
       return this;
     }
 

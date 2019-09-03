@@ -8,13 +8,13 @@ public interface IrDynamicMemberExpressionOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
+   * <code>required int32 memberName = 1;</code>
    */
   boolean hasMemberName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
+   * <code>required int32 memberName = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getMemberName();
+  int getMemberName();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression receiver = 2;</code>

@@ -66,17 +66,9 @@ public final class IrSimpleType extends
             bitField0_ |= 0x00000001;
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = classifier_.toBuilder();
-            }
-            classifier_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(classifier_);
-              classifier_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            classifier_ = input.readInt32();
             break;
           }
           case 24: {
@@ -158,17 +150,17 @@ public final class IrSimpleType extends
   }
 
   public static final int CLASSIFIER_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier_;
+  private int classifier_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
+   * <code>required int32 classifier = 2;</code>
    */
   public boolean hasClassifier() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
+   * <code>required int32 classifier = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassifier() {
+  public int getClassifier() {
     return classifier_;
   }
 
@@ -239,7 +231,7 @@ public final class IrSimpleType extends
 
   private void initFields() {
     annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
-    classifier_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    classifier_ = 0;
     hasQuestionMark_ = false;
     argument_ = java.util.Collections.emptyList();
     abbreviation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance();
@@ -266,10 +258,6 @@ public final class IrSimpleType extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getClassifier().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     for (int i = 0; i < getArgumentCount(); i++) {
       if (!getArgument(i).isInitialized()) {
         memoizedIsInitialized = 0;
@@ -293,7 +281,7 @@ public final class IrSimpleType extends
       output.writeMessage(1, annotations_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, classifier_);
+      output.writeInt32(2, classifier_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeBool(3, hasQuestionMark_);
@@ -319,7 +307,7 @@ public final class IrSimpleType extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, classifier_);
+        .computeInt32Size(2, classifier_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -429,7 +417,7 @@ public final class IrSimpleType extends
       super.clear();
       annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      classifier_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      classifier_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       hasQuestionMark_ = false;
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -491,7 +479,7 @@ public final class IrSimpleType extends
         mergeAnnotations(other.getAnnotations());
       }
       if (other.hasClassifier()) {
-        mergeClassifier(other.getClassifier());
+        setClassifier(other.getClassifier());
       }
       if (other.hasHasQuestionMark()) {
         setHasQuestionMark(other.getHasQuestionMark());
@@ -528,10 +516,6 @@ public final class IrSimpleType extends
         return false;
       }
       if (!getAnnotations().isInitialized()) {
-        
-        return false;
-      }
-      if (!getClassifier().isInitialized()) {
         
         return false;
       }
@@ -629,63 +613,35 @@ public final class IrSimpleType extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int classifier_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
+     * <code>required int32 classifier = 2;</code>
      */
     public boolean hasClassifier() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
+     * <code>required int32 classifier = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassifier() {
+    public int getClassifier() {
       return classifier_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
+     * <code>required int32 classifier = 2;</code>
      */
-    public Builder setClassifier(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setClassifier(int value) {
+      bitField0_ |= 0x00000002;
       classifier_ = value;
-
-      bitField0_ |= 0x00000002;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
-     */
-    public Builder setClassifier(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      classifier_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
-     */
-    public Builder mergeClassifier(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          classifier_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        classifier_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(classifier_).mergeFrom(value).buildPartial();
-      } else {
-        classifier_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
+     * <code>required int32 classifier = 2;</code>
      */
     public Builder clearClassifier() {
-      classifier_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000002);
+      classifier_ = 0;
+      
       return this;
     }
 

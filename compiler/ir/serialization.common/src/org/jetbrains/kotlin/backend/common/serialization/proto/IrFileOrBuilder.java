@@ -49,16 +49,15 @@ public interface IrFileOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> 
-      getExplicitlyExportedToCompilerList();
+  java.util.List<java.lang.Integer> getExplicitlyExportedToCompilerList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getExplicitlyExportedToCompiler(int index);
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
    */
   int getExplicitlyExportedToCompilerCount();
+  /**
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+   */
+  int getExplicitlyExportedToCompiler(int index);
 }

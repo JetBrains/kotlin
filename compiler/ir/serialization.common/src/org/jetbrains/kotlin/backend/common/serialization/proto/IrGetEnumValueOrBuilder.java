@@ -8,11 +8,11 @@ public interface IrGetEnumValueOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 2;</code>
+   * <code>required int32 symbol = 2;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 2;</code>
+   * <code>required int32 symbol = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSymbol();
+  int getSymbol();
 }

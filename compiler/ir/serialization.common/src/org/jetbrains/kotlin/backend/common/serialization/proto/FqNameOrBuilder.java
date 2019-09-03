@@ -8,16 +8,15 @@ public interface FqNameOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+   * <code>repeated int32 segment = 1;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> 
-      getSegmentList();
+  java.util.List<java.lang.Integer> getSegmentList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSegment(int index);
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+   * <code>repeated int32 segment = 1;</code>
    */
   int getSegmentCount();
+  /**
+   * <code>repeated int32 segment = 1;</code>
+   */
+  int getSegment(int index);
 }

@@ -26,13 +26,13 @@ public interface DescriptorReferenceOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.FqName getClassFqName();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
+   * <code>required int32 name = 3;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
+   * <code>required int32 name = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
+  int getName();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>

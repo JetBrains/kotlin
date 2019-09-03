@@ -66,17 +66,9 @@ public final class IrAnonymousInit extends
             bitField0_ |= 0x00000001;
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = body_.toBuilder();
-            }
-            body_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(body_);
-              body_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            body_ = input.readInt32();
             break;
           }
         }
@@ -129,23 +121,23 @@ public final class IrAnonymousInit extends
   }
 
   public static final int BODY_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body_;
+  private int body_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
+   * <code>required int32 body = 2;</code>
    */
   public boolean hasBody() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
+   * <code>required int32 body = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getBody() {
+  public int getBody() {
     return body_;
   }
 
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
-    body_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    body_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -165,10 +157,6 @@ public final class IrAnonymousInit extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getBody().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -180,7 +168,7 @@ public final class IrAnonymousInit extends
       output.writeMessage(1, base_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, body_);
+      output.writeInt32(2, body_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -197,7 +185,7 @@ public final class IrAnonymousInit extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, body_);
+        .computeInt32Size(2, body_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -295,7 +283,7 @@ public final class IrAnonymousInit extends
       super.clear();
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      body_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      body_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -338,7 +326,7 @@ public final class IrAnonymousInit extends
         mergeBase(other.getBase());
       }
       if (other.hasBody()) {
-        mergeBody(other.getBody());
+        setBody(other.getBody());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -355,10 +343,6 @@ public final class IrAnonymousInit extends
         return false;
       }
       if (!getBase().isInitialized()) {
-        
-        return false;
-      }
-      if (!getBody().isInitialized()) {
         
         return false;
       }
@@ -444,63 +428,35 @@ public final class IrAnonymousInit extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int body_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
+     * <code>required int32 body = 2;</code>
      */
     public boolean hasBody() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
+     * <code>required int32 body = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getBody() {
+    public int getBody() {
       return body_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
+     * <code>required int32 body = 2;</code>
      */
-    public Builder setBody(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setBody(int value) {
+      bitField0_ |= 0x00000002;
       body_ = value;
-
-      bitField0_ |= 0x00000002;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
-     */
-    public Builder setBody(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      body_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
-     */
-    public Builder mergeBody(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          body_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        body_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(body_).mergeFrom(value).buildPartial();
-      } else {
-        body_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
+     * <code>required int32 body = 2;</code>
      */
     public Builder clearBody() {
-      body_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000002);
+      body_ = 0;
+      
       return this;
     }
 

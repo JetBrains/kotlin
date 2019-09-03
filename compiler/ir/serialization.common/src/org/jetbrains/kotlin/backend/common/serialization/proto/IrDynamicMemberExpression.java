@@ -53,17 +53,9 @@ public final class IrDynamicMemberExpression extends
             }
             break;
           }
-          case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = memberName_.toBuilder();
-            }
-            memberName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(memberName_);
-              memberName_ = subBuilder.buildPartial();
-            }
+          case 8: {
             bitField0_ |= 0x00000001;
+            memberName_ = input.readInt32();
             break;
           }
           case 18: {
@@ -114,17 +106,17 @@ public final class IrDynamicMemberExpression extends
 
   private int bitField0_;
   public static final int MEMBERNAME_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName_;
+  private int memberName_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
+   * <code>required int32 memberName = 1;</code>
    */
   public boolean hasMemberName() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
+   * <code>required int32 memberName = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getMemberName() {
+  public int getMemberName() {
     return memberName_;
   }
 
@@ -144,7 +136,7 @@ public final class IrDynamicMemberExpression extends
   }
 
   private void initFields() {
-    memberName_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    memberName_ = 0;
     receiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -161,10 +153,6 @@ public final class IrDynamicMemberExpression extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getMemberName().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!getReceiver().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
@@ -177,7 +165,7 @@ public final class IrDynamicMemberExpression extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeMessage(1, memberName_);
+      output.writeInt32(1, memberName_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeMessage(2, receiver_);
@@ -193,7 +181,7 @@ public final class IrDynamicMemberExpression extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, memberName_);
+        .computeInt32Size(1, memberName_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -293,7 +281,7 @@ public final class IrDynamicMemberExpression extends
 
     public Builder clear() {
       super.clear();
-      memberName_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      memberName_ = 0;
       bitField0_ = (bitField0_ & ~0x00000001);
       receiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -335,7 +323,7 @@ public final class IrDynamicMemberExpression extends
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression.getDefaultInstance()) return this;
       if (other.hasMemberName()) {
-        mergeMemberName(other.getMemberName());
+        setMemberName(other.getMemberName());
       }
       if (other.hasReceiver()) {
         mergeReceiver(other.getReceiver());
@@ -351,10 +339,6 @@ public final class IrDynamicMemberExpression extends
         return false;
       }
       if (!hasReceiver()) {
-        
-        return false;
-      }
-      if (!getMemberName().isInitialized()) {
         
         return false;
       }
@@ -384,63 +368,35 @@ public final class IrDynamicMemberExpression extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int memberName_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
+     * <code>required int32 memberName = 1;</code>
      */
     public boolean hasMemberName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
+     * <code>required int32 memberName = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getMemberName() {
+    public int getMemberName() {
       return memberName_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
+     * <code>required int32 memberName = 1;</code>
      */
-    public Builder setMemberName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setMemberName(int value) {
+      bitField0_ |= 0x00000001;
       memberName_ = value;
-
-      bitField0_ |= 0x00000001;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
-     */
-    public Builder setMemberName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      memberName_ = builderForValue.build();
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
-     */
-    public Builder mergeMemberName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          memberName_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        memberName_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(memberName_).mergeFrom(value).buildPartial();
-      } else {
-        memberName_ = value;
-      }
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex memberName = 1;</code>
+     * <code>required int32 memberName = 1;</code>
      */
     public Builder clearMemberName() {
-      memberName_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000001);
+      memberName_ = 0;
+      
       return this;
     }
 

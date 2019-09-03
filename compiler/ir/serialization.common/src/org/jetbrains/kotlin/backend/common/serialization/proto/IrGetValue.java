@@ -53,17 +53,9 @@ public final class IrGetValue extends
             }
             break;
           }
-          case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = symbol_.toBuilder();
-            }
-            symbol_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(symbol_);
-              symbol_ = subBuilder.buildPartial();
-            }
+          case 8: {
             bitField0_ |= 0x00000001;
+            symbol_ = input.readInt32();
             break;
           }
           case 18: {
@@ -114,17 +106,17 @@ public final class IrGetValue extends
 
   private int bitField0_;
   public static final int SYMBOL_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol_;
+  private int symbol_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
+   * <code>required int32 symbol = 1;</code>
    */
   public boolean hasSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
+   * <code>required int32 symbol = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSymbol() {
+  public int getSymbol() {
     return symbol_;
   }
 
@@ -144,7 +136,7 @@ public final class IrGetValue extends
   }
 
   private void initFields() {
-    symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    symbol_ = 0;
     origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -154,10 +146,6 @@ public final class IrGetValue extends
     if (isInitialized == 0) return false;
 
     if (!hasSymbol()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!getSymbol().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -175,7 +163,7 @@ public final class IrGetValue extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeMessage(1, symbol_);
+      output.writeInt32(1, symbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeMessage(2, origin_);
@@ -191,7 +179,7 @@ public final class IrGetValue extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, symbol_);
+        .computeInt32Size(1, symbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -291,7 +279,7 @@ public final class IrGetValue extends
 
     public Builder clear() {
       super.clear();
-      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      symbol_ = 0;
       bitField0_ = (bitField0_ & ~0x00000001);
       origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -333,7 +321,7 @@ public final class IrGetValue extends
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue.getDefaultInstance()) return this;
       if (other.hasSymbol()) {
-        mergeSymbol(other.getSymbol());
+        setSymbol(other.getSymbol());
       }
       if (other.hasOrigin()) {
         mergeOrigin(other.getOrigin());
@@ -345,10 +333,6 @@ public final class IrGetValue extends
 
     public final boolean isInitialized() {
       if (!hasSymbol()) {
-        
-        return false;
-      }
-      if (!getSymbol().isInitialized()) {
         
         return false;
       }
@@ -380,63 +364,35 @@ public final class IrGetValue extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int symbol_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
+     * <code>required int32 symbol = 1;</code>
      */
     public boolean hasSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
+     * <code>required int32 symbol = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSymbol() {
+    public int getSymbol() {
       return symbol_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
+     * <code>required int32 symbol = 1;</code>
      */
-    public Builder setSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setSymbol(int value) {
+      bitField0_ |= 0x00000001;
       symbol_ = value;
-
-      bitField0_ |= 0x00000001;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
-     */
-    public Builder setSymbol(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      symbol_ = builderForValue.build();
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
-     */
-    public Builder mergeSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          symbol_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        symbol_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(symbol_).mergeFrom(value).buildPartial();
-      } else {
-        symbol_ = value;
-      }
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
+     * <code>required int32 symbol = 1;</code>
      */
     public Builder clearSymbol() {
-      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000001);
+      symbol_ = 0;
+      
       return this;
     }
 

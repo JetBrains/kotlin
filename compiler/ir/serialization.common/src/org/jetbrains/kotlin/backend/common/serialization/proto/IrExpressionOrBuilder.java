@@ -17,13 +17,13 @@ public interface IrExpressionOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation getOperation();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
+   * <code>required int32 type = 2;</code>
    */
   boolean hasType();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
+   * <code>required int32 type = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getType();
+  int getType();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 3;</code>

@@ -53,12 +53,25 @@ public final class FqName extends
             }
             break;
           }
-          case 10: {
+          case 8: {
             if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-              segment_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>();
+              segment_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000001;
             }
-            segment_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry));
+            segment_.add(input.readInt32());
+            break;
+          }
+          case 10: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
+              segment_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000001;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              segment_.add(input.readInt32());
+            }
+            input.popLimit(limit);
             break;
           }
         }
@@ -98,37 +111,24 @@ public final class FqName extends
   }
 
   public static final int SEGMENT_FIELD_NUMBER = 1;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> segment_;
+  private java.util.List<java.lang.Integer> segment_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+   * <code>repeated int32 segment = 1;</code>
    */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getSegmentList() {
+  public java.util.List<java.lang.Integer>
+      getSegmentList() {
     return segment_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
-   */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder> 
-      getSegmentOrBuilderList() {
-    return segment_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+   * <code>repeated int32 segment = 1;</code>
    */
   public int getSegmentCount() {
     return segment_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+   * <code>repeated int32 segment = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSegment(int index) {
-    return segment_.get(index);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder getSegmentOrBuilder(
-      int index) {
+  public int getSegment(int index) {
     return segment_.get(index);
   }
 
@@ -141,12 +141,6 @@ public final class FqName extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    for (int i = 0; i < getSegmentCount(); i++) {
-      if (!getSegment(i).isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -155,7 +149,7 @@ public final class FqName extends
                       throws java.io.IOException {
     getSerializedSize();
     for (int i = 0; i < segment_.size(); i++) {
-      output.writeMessage(1, segment_.get(i));
+      output.writeInt32(1, segment_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -166,9 +160,14 @@ public final class FqName extends
     if (size != -1) return size;
 
     size = 0;
-    for (int i = 0; i < segment_.size(); i++) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, segment_.get(i));
+    {
+      int dataSize = 0;
+      for (int i = 0; i < segment_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(segment_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getSegmentList().size();
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -314,12 +313,6 @@ public final class FqName extends
     }
 
     public final boolean isInitialized() {
-      for (int i = 0; i < getSegmentCount(); i++) {
-        if (!getSegment(i).isInitialized()) {
-          
-          return false;
-        }
-      }
       return true;
     }
 
@@ -342,128 +335,69 @@ public final class FqName extends
     }
     private int bitField0_;
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> segment_ =
-      java.util.Collections.emptyList();
+    private java.util.List<java.lang.Integer> segment_ = java.util.Collections.emptyList();
     private void ensureSegmentIsMutable() {
       if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-        segment_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>(segment_);
+        segment_ = new java.util.ArrayList<java.lang.Integer>(segment_);
         bitField0_ |= 0x00000001;
        }
     }
-
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+     * <code>repeated int32 segment = 1;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getSegmentList() {
+    public java.util.List<java.lang.Integer>
+        getSegmentList() {
       return java.util.Collections.unmodifiableList(segment_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+     * <code>repeated int32 segment = 1;</code>
      */
     public int getSegmentCount() {
       return segment_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+     * <code>repeated int32 segment = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSegment(int index) {
+    public int getSegment(int index) {
       return segment_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+     * <code>repeated int32 segment = 1;</code>
      */
     public Builder setSegment(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+        int index, int value) {
       ensureSegmentIsMutable();
       segment_.set(index, value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+     * <code>repeated int32 segment = 1;</code>
      */
-    public Builder setSegment(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureSegmentIsMutable();
-      segment_.set(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
-     */
-    public Builder addSegment(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder addSegment(int value) {
       ensureSegmentIsMutable();
       segment_.add(value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
-     */
-    public Builder addSegment(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureSegmentIsMutable();
-      segment_.add(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
-     */
-    public Builder addSegment(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureSegmentIsMutable();
-      segment_.add(builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
-     */
-    public Builder addSegment(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureSegmentIsMutable();
-      segment_.add(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+     * <code>repeated int32 segment = 1;</code>
      */
     public Builder addAllSegment(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> values) {
+        java.lang.Iterable<? extends java.lang.Integer> values) {
       ensureSegmentIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, segment_);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
+     * <code>repeated int32 segment = 1;</code>
      */
     public Builder clearSegment() {
       segment_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex segment = 1;</code>
-     */
-    public Builder removeSegment(int index) {
-      ensureSegmentIsMutable();
-      segment_.remove(index);
-
+      
       return this;
     }
 

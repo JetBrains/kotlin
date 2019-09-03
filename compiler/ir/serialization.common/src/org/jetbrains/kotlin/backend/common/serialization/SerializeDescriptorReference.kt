@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoString
 import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 
 import org.jetbrains.kotlin.descriptors.*
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
-    val serializeString: (String) -> ProtoString,
+    val serializeString: (String) -> Int,
     val serializeFqName: (FqName) -> ProtoFqName
 ) {
 

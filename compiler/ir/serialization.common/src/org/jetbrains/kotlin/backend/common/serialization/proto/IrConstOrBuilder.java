@@ -89,11 +89,11 @@ public interface IrConstOrBuilder extends
   double getDouble();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
+   * <code>optional int32 string = 10;</code>
    */
   boolean hasString();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
+   * <code>optional int32 string = 10;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getString();
+  int getString();
 }

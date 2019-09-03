@@ -100,12 +100,25 @@ public final class IrFile extends
             bitField0_ |= 0x00000004;
             break;
           }
-          case 42: {
+          case 40: {
             if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-              explicitlyExportedToCompiler_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>();
+              explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000010;
             }
-            explicitlyExportedToCompiler_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry));
+            explicitlyExportedToCompiler_.add(input.readInt32());
+            break;
+          }
+          case 42: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000010) == 0x00000010) && input.getBytesUntilLimit() > 0) {
+              explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000010;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              explicitlyExportedToCompiler_.add(input.readInt32());
+            }
+            input.popLimit(limit);
             break;
           }
         }
@@ -229,37 +242,24 @@ public final class IrFile extends
   }
 
   public static final int EXPLICITLY_EXPORTED_TO_COMPILER_FIELD_NUMBER = 5;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> explicitlyExportedToCompiler_;
+  private java.util.List<java.lang.Integer> explicitlyExportedToCompiler_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
    */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getExplicitlyExportedToCompilerList() {
+  public java.util.List<java.lang.Integer>
+      getExplicitlyExportedToCompilerList() {
     return explicitlyExportedToCompiler_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-   */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder> 
-      getExplicitlyExportedToCompilerOrBuilderList() {
-    return explicitlyExportedToCompiler_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
    */
   public int getExplicitlyExportedToCompilerCount() {
     return explicitlyExportedToCompiler_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getExplicitlyExportedToCompiler(int index) {
-    return explicitlyExportedToCompiler_.get(index);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder getExplicitlyExportedToCompilerOrBuilder(
-      int index) {
+  public int getExplicitlyExportedToCompiler(int index) {
     return explicitlyExportedToCompiler_.get(index);
   }
 
@@ -298,19 +298,9 @@ public final class IrFile extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getFqName().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!getAnnotations().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
-    }
-    for (int i = 0; i < getExplicitlyExportedToCompilerCount(); i++) {
-      if (!getExplicitlyExportedToCompiler(i).isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
     }
     memoizedIsInitialized = 1;
     return true;
@@ -332,7 +322,7 @@ public final class IrFile extends
       output.writeMessage(4, annotations_);
     }
     for (int i = 0; i < explicitlyExportedToCompiler_.size(); i++) {
-      output.writeMessage(5, explicitlyExportedToCompiler_.get(i));
+      output.writeInt32(5, explicitlyExportedToCompiler_.get(i));
     }
     output.writeRawBytes(unknownFields);
   }
@@ -359,9 +349,14 @@ public final class IrFile extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(4, annotations_);
     }
-    for (int i = 0; i < explicitlyExportedToCompiler_.size(); i++) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(5, explicitlyExportedToCompiler_.get(i));
+    {
+      int dataSize = 0;
+      for (int i = 0; i < explicitlyExportedToCompiler_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(explicitlyExportedToCompiler_.get(i));
+      }
+      size += dataSize;
+      size += 1 * getExplicitlyExportedToCompilerList().size();
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -575,19 +570,9 @@ public final class IrFile extends
         
         return false;
       }
-      if (!getFqName().isInitialized()) {
-        
-        return false;
-      }
       if (!getAnnotations().isInitialized()) {
         
         return false;
-      }
-      for (int i = 0; i < getExplicitlyExportedToCompilerCount(); i++) {
-        if (!getExplicitlyExportedToCompiler(i).isInitialized()) {
-          
-          return false;
-        }
       }
       return true;
     }
@@ -916,128 +901,69 @@ public final class IrFile extends
       return this;
     }
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> explicitlyExportedToCompiler_ =
-      java.util.Collections.emptyList();
+    private java.util.List<java.lang.Integer> explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
     private void ensureExplicitlyExportedToCompilerIsMutable() {
       if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-        explicitlyExportedToCompiler_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>(explicitlyExportedToCompiler_);
+        explicitlyExportedToCompiler_ = new java.util.ArrayList<java.lang.Integer>(explicitlyExportedToCompiler_);
         bitField0_ |= 0x00000010;
        }
     }
-
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getExplicitlyExportedToCompilerList() {
+    public java.util.List<java.lang.Integer>
+        getExplicitlyExportedToCompilerList() {
       return java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
      */
     public int getExplicitlyExportedToCompilerCount() {
       return explicitlyExportedToCompiler_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getExplicitlyExportedToCompiler(int index) {
+    public int getExplicitlyExportedToCompiler(int index) {
       return explicitlyExportedToCompiler_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
      */
     public Builder setExplicitlyExportedToCompiler(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+        int index, int value) {
       ensureExplicitlyExportedToCompilerIsMutable();
       explicitlyExportedToCompiler_.set(index, value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
      */
-    public Builder setExplicitlyExportedToCompiler(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureExplicitlyExportedToCompilerIsMutable();
-      explicitlyExportedToCompiler_.set(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-     */
-    public Builder addExplicitlyExportedToCompiler(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder addExplicitlyExportedToCompiler(int value) {
       ensureExplicitlyExportedToCompilerIsMutable();
       explicitlyExportedToCompiler_.add(value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-     */
-    public Builder addExplicitlyExportedToCompiler(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureExplicitlyExportedToCompilerIsMutable();
-      explicitlyExportedToCompiler_.add(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-     */
-    public Builder addExplicitlyExportedToCompiler(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureExplicitlyExportedToCompilerIsMutable();
-      explicitlyExportedToCompiler_.add(builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-     */
-    public Builder addExplicitlyExportedToCompiler(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      ensureExplicitlyExportedToCompilerIsMutable();
-      explicitlyExportedToCompiler_.add(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
      */
     public Builder addAllExplicitlyExportedToCompiler(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> values) {
+        java.lang.Iterable<? extends java.lang.Integer> values) {
       ensureExplicitlyExportedToCompilerIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, explicitlyExportedToCompiler_);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
      */
     public Builder clearExplicitlyExportedToCompiler() {
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-     */
-    public Builder removeExplicitlyExportedToCompiler(int index) {
-      ensureExplicitlyExportedToCompilerIsMutable();
-      explicitlyExportedToCompiler_.remove(index);
-
+      
       return this;
     }
 

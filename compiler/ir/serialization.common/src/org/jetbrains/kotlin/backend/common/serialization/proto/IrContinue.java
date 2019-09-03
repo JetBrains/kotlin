@@ -58,17 +58,9 @@ public final class IrContinue extends
             loopId_ = input.readInt32();
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = label_.toBuilder();
-            }
-            label_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(label_);
-              label_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            label_ = input.readInt32();
             break;
           }
         }
@@ -121,23 +113,23 @@ public final class IrContinue extends
   }
 
   public static final int LABEL_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label_;
+  private int label_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
+   * <code>optional int32 label = 2;</code>
    */
   public boolean hasLabel() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
+   * <code>optional int32 label = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getLabel() {
+  public int getLabel() {
     return label_;
   }
 
   private void initFields() {
     loopId_ = 0;
-    label_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    label_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -148,12 +140,6 @@ public final class IrContinue extends
     if (!hasLoopId()) {
       memoizedIsInitialized = 0;
       return false;
-    }
-    if (hasLabel()) {
-      if (!getLabel().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
     }
     memoizedIsInitialized = 1;
     return true;
@@ -166,7 +152,7 @@ public final class IrContinue extends
       output.writeInt32(1, loopId_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, label_);
+      output.writeInt32(2, label_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -183,7 +169,7 @@ public final class IrContinue extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, label_);
+        .computeInt32Size(2, label_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -281,7 +267,7 @@ public final class IrContinue extends
       super.clear();
       loopId_ = 0;
       bitField0_ = (bitField0_ & ~0x00000001);
-      label_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+      label_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -324,7 +310,7 @@ public final class IrContinue extends
         setLoopId(other.getLoopId());
       }
       if (other.hasLabel()) {
-        mergeLabel(other.getLabel());
+        setLabel(other.getLabel());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -335,12 +321,6 @@ public final class IrContinue extends
       if (!hasLoopId()) {
         
         return false;
-      }
-      if (hasLabel()) {
-        if (!getLabel().isInitialized()) {
-          
-          return false;
-        }
       }
       return true;
     }
@@ -396,63 +376,35 @@ public final class IrContinue extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    private int label_ ;
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
+     * <code>optional int32 label = 2;</code>
      */
     public boolean hasLabel() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
+     * <code>optional int32 label = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getLabel() {
+    public int getLabel() {
       return label_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
+     * <code>optional int32 label = 2;</code>
      */
-    public Builder setLabel(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setLabel(int value) {
+      bitField0_ |= 0x00000002;
       label_ = value;
-
-      bitField0_ |= 0x00000002;
+      
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
-     */
-    public Builder setLabel(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
-      label_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
-     */
-    public Builder mergeLabel(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          label_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
-        label_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(label_).mergeFrom(value).buildPartial();
-      } else {
-        label_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
+     * <code>optional int32 label = 2;</code>
      */
     public Builder clearLabel() {
-      label_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000002);
+      label_ = 0;
+      
       return this;
     }
 
