@@ -91,6 +91,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun androidNativeArm64(name: String, configure: Closure<*>) = androidNativeArm64(name) { ConfigureUtil.configure(configure, this) }
     fun androidNativeArm64(configure: Closure<*>) = androidNativeArm64 { ConfigureUtil.configure(configure, this) }
 
+    fun androidNativeX86(
+        name: String = "androidNativeX86",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("androidNativeX86") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun androidNativeX86() = androidNativeX86("androidNativeX86") { }
+    fun androidNativeX86(name: String) = androidNativeX86(name) { }
+    fun androidNativeX86(name: String, configure: Closure<*>) = androidNativeX86(name) { ConfigureUtil.configure(configure, this) }
+    fun androidNativeX86(configure: Closure<*>) = androidNativeX86 { ConfigureUtil.configure(configure, this) }
+
     fun androidNativeX64(
         name: String = "androidNativeX64",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -151,6 +166,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun iosX64(name: String, configure: Closure<*>) = iosX64(name) { ConfigureUtil.configure(configure, this) }
     fun iosX64(configure: Closure<*>) = iosX64 { ConfigureUtil.configure(configure, this) }
 
+    fun watchosArm32(
+        name: String = "watchosArm32",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("watchosArm32") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun watchosArm32() = watchosArm32("watchosArm32") { }
+    fun watchosArm32(name: String) = watchosArm32(name) { }
+    fun watchosArm32(name: String, configure: Closure<*>) = watchosArm32(name) { ConfigureUtil.configure(configure, this) }
+    fun watchosArm32(configure: Closure<*>) = watchosArm32 { ConfigureUtil.configure(configure, this) }
+
     fun watchosArm64(
         name: String = "watchosArm64",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -165,6 +195,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun watchosArm64(name: String) = watchosArm64(name) { }
     fun watchosArm64(name: String, configure: Closure<*>) = watchosArm64(name) { ConfigureUtil.configure(configure, this) }
     fun watchosArm64(configure: Closure<*>) = watchosArm64 { ConfigureUtil.configure(configure, this) }
+
+    fun watchosX86(
+        name: String = "watchosX86",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("watchosX86") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun watchosX86() = watchosX86("watchosX86") { }
+    fun watchosX86(name: String) = watchosX86(name) { }
+    fun watchosX86(name: String, configure: Closure<*>) = watchosX86(name) { ConfigureUtil.configure(configure, this) }
+    fun watchosX86(configure: Closure<*>) = watchosX86 { ConfigureUtil.configure(configure, this) }
 
     fun watchosX64(
         name: String = "watchosX64",

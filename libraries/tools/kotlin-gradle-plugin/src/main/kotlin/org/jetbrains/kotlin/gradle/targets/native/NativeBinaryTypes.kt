@@ -57,7 +57,7 @@ enum class NativeOutputKind(
         description = "a framework"
     ) {
         override fun availableFor(target: KonanTarget) =
-            target.family == Family.OSX || target.family == Family.IOS
+            target.family.isAppleFamily
     };
 
     open fun availableFor(target: KonanTarget) = true

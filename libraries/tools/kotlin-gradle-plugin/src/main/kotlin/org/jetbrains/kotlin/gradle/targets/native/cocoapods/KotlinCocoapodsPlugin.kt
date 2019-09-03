@@ -47,7 +47,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
 
     private fun KotlinMultiplatformExtension.supportedTargets() = targets
         .withType(KotlinNativeTarget::class.java)
-        .matching { it.konanTarget.family == Family.IOS || it.konanTarget.family == Family.OSX }
+        .matching { it.konanTarget.family.isAppleFamily }
 
     /**
      * Splits a string using a whitespace characters as delimiters.
@@ -133,9 +133,14 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         val requestedBuildType = project.findProperty(CONFIGURATION_PROPERTY)?.toString()?.toUpperCase() ?: return@whenEvaluated
 
         if (requestedTargetName == KOTLIN_TARGET_FOR_DEVICE) {
-            // We create a fat framework only for device platforms: iosArm64, iosArm32, watchosArm64 and tvosArm64.
-            val devicePlatforms = listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32,
-                    KonanTarget.WATCHOS_ARM64, KonanTarget.TVOS_ARM64)
+            // We create a fat framework only for device platforms: iosArm64, iosArm32, watchosArm32, watchosArm64 and tvosArm64.
+            val devicePlatforms = listOf(
+                KonanTarget.IOS_ARM64,
+                KonanTarget.IOS_ARM32,
+                KonanTarget.WATCHOS_ARM32,
+                KonanTarget.WATCHOS_ARM64,
+                KonanTarget.TVOS_ARM64
+            )
             val deviceTargets = devicePlatforms.flatMap { kotlinExtension.targetsForPlatform(it) }
 
             if (deviceTargets.size == 1) {
