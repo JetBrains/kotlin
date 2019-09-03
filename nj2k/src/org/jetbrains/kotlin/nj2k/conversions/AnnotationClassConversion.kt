@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.nj2k.toExpression
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-class AnnotationClassConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class AnnotationClassConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
         if (element.classKind != JKClass.ClassKind.ANNOTATION) return recurse(element)
@@ -36,8 +36,8 @@ class AnnotationClassConversion(private val context: NewJ2kConverterContext) : R
     private fun JKJavaAnnotationMethod.asKotlinAnnotationParameter(): JKParameterImpl {
         val type = returnType.type
             .updateNullabilityRecursively(Nullability.NotNull)
-            .replaceJavaClassWithKotlinClassType(context.symbolProvider)
-        val initializer = this::defaultValue.detached().toExpression(context.symbolProvider)
+            .replaceJavaClassWithKotlinClassType(symbolProvider)
+        val initializer = this::defaultValue.detached().toExpression(symbolProvider)
         val isVarArgs = type is JKJavaArrayType && name.value == "value"
         return JKParameterImpl(
             JKTypeElementImpl(

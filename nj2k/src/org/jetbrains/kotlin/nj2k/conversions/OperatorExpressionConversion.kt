@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
 
-class OperatorExpressionConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class OperatorExpressionConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKOperatorExpression) return recurse(element)
         val operator = element.operator as? JKJavaOperatorImpl ?: return recurse(element)
@@ -34,7 +34,7 @@ class OperatorExpressionConversion(private val context: NewJ2kConverterContext) 
             is JKPostfixExpression -> {
                 val operatorToken = operator.token.toKtToken()
                 val operand = applyToElement(element::expression.detached()) as JKExpression
-                recurse(kotlinPostfixExpression(operand, operatorToken, context.symbolProvider))
+                recurse(kotlinPostfixExpression(operand, operatorToken, symbolProvider))
             }
             else -> TODO(element.javaClass.toString())
         }.withNonCodeElementsFrom(element)
@@ -43,13 +43,13 @@ class OperatorExpressionConversion(private val context: NewJ2kConverterContext) 
 
     private fun convertPrefixExpression(operand: JKExpression, javaOperator: JKJavaOperatorImpl) =
         convertTildeExpression(operand, javaOperator)
-            ?: kotlinPrefixExpression(operand, javaOperator.token.toKtToken(), context.symbolProvider)
+            ?: kotlinPrefixExpression(operand, javaOperator.token.toKtToken(), symbolProvider)
 
     private fun convertTildeExpression(operand: JKExpression, javaOperator: JKJavaOperatorImpl): JKExpression? =
         if (javaOperator.token.psiToken == JavaTokenType.TILDE) {
             val invCall =
                 JKKtCallExpressionImpl(
-                    context.symbolProvider.provideMethodSymbol("kotlin.Int.inv"),//TODO check if Long
+                    symbolProvider.provideMethodSymbol("kotlin.Int.inv"),//TODO check if Long
                     JKArgumentListImpl()
                 )
             JKQualifiedExpressionImpl(
@@ -61,21 +61,21 @@ class OperatorExpressionConversion(private val context: NewJ2kConverterContext) 
 
     private fun convertBinaryExpression(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression =
         convertStringImplicitConcatenation(left, right, token)
-            ?: kotlinBinaryExpression(left, right, token, context.symbolProvider)
+            ?: kotlinBinaryExpression(left, right, token, symbolProvider)
 
 
     private fun convertStringImplicitConcatenation(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression? =
         if (token is JKKtSingleValueOperatorToken
             && token.psiToken == KtTokens.PLUS
-            && right.type(context.symbolProvider)?.isStringType() == true
-            && left.type(context.symbolProvider)?.isStringType() == false
+            && right.type(symbolProvider)?.isStringType() == true
+            && left.type(symbolProvider)?.isStringType() == false
         ) {
             val toStringCall =
                 JKKtCallExpressionImpl(
-                    context.symbolProvider.provideMethodSymbol("kotlin.Any.toString"),
+                    symbolProvider.provideMethodSymbol("kotlin.Any.toString"),
                     JKArgumentListImpl()
                 )
             val qualifiedCall = JKQualifiedExpressionImpl(left, JKKtQualifierImpl.DOT, toStringCall)
-            kotlinBinaryExpression(qualifiedCall, right, KtTokens.PLUS, context.symbolProvider)
+            kotlinBinaryExpression(qualifiedCall, right, KtTokens.PLUS, symbolProvider)
         } else null
 }

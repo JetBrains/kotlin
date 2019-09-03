@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         when (element) {
             is JKVariable -> convertVariable(element)
@@ -30,8 +30,8 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
 
     private fun convertBinaryExpression(binaryExpression: JKBinaryExpression): JKExpression {
         fun JKBinaryExpression.convertBinaryOperationWithChar(): JKBinaryExpression {
-            val leftType = left.type(context.symbolProvider)?.asPrimitiveType() ?: return this
-            val rightType = right.type(context.symbolProvider)?.asPrimitiveType() ?: return this
+            val leftType = left.type(symbolProvider)?.asPrimitiveType() ?: return this
+            val rightType = right.type(symbolProvider)?.asPrimitiveType() ?: return this
 
             val leftOperandCastedCasted by lazy {
                 JKBinaryExpressionImpl(
@@ -72,7 +72,7 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
     }
 
     private fun convertAssignmentStatement(statement: JKKtAssignmentStatement) {
-        val expressionType = statement.field.type(context.symbolProvider) ?: return
+        val expressionType = statement.field.type(symbolProvider) ?: return
         statement.expression.castTo(expressionType)?.also {
             statement.expression = it
         }
@@ -99,13 +99,13 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
 
     private fun JKExpression.castStringToRegex(toType: JKType): JKExpression? {
         if (toType.safeAs<JKClassType>()?.classReference?.fqName != "java.util.regex.Pattern") return null
-        val expressionType = type(context.symbolProvider) ?: return null
+        val expressionType = type(symbolProvider) ?: return null
         if (!expressionType.isStringType()) return null
         return JKQualifiedExpressionImpl(
             copyTreeAndDetach().parenthesizeIfBinaryExpression(),
             JKKtQualifierImpl.DOT,
             JKKtCallExpressionImpl(
-                context.symbolProvider.provideMethodSymbol("kotlin.text.toRegex"),
+                symbolProvider.provideMethodSymbol("kotlin.text.toRegex"),
                 JKArgumentListImpl(),
                 JKTypeArgumentListImpl()
             )
@@ -120,7 +120,7 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
             val casted = expression.castToAsPrimitiveTypes(toType, strict) ?: return null
             return JKPrefixExpressionImpl(casted, operator)
         }
-        val expressionTypeAsPrimitive = type(context.symbolProvider)?.asPrimitiveType() ?: return null
+        val expressionTypeAsPrimitive = type(symbolProvider)?.asPrimitiveType() ?: return null
         val toTypeAsPrimitive = toType.asPrimitiveType() ?: return null
         if (toTypeAsPrimitive == expressionTypeAsPrimitive) return null
 
@@ -147,7 +147,7 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
             this.copyTreeAndDetach(),
             JKKtQualifierImpl.DOT,
             JKJavaMethodCallExpressionImpl(
-                context.symbolProvider.provideMethodSymbol("kotlin.$initialTypeName.$conversionFunctionName"),
+                symbolProvider.provideMethodSymbol("kotlin.$initialTypeName.$conversionFunctionName"),
                 JKArgumentListImpl()
             )
         )
@@ -155,7 +155,7 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
 
 
     private fun JKExpression.castTo(toType: JKType, strict: Boolean = false): JKExpression? {
-        val expressionType = type(context.symbolProvider)
+        val expressionType = type(symbolProvider)
         if (expressionType == toType) return null
         castToAsPrimitiveTypes(toType, strict)?.also { return it }
         castStringToRegex(toType)?.also { return it }

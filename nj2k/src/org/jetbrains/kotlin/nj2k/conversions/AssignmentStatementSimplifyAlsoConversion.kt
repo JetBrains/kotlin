@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKExpressionStatementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKStubExpressionImpl
 
-class AssignmentStatementSimplifyAlsoConversion : RecursiveApplicableConversionBase() {
+class AssignmentStatementSimplifyAlsoConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKExpressionStatement) return recurse(element)
         val qualifiedExpression = element.expression as? JKQualifiedExpression ?: return recurse(element)

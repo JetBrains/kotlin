@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtConstructorImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKStubExpressionImpl
 
-class ConstructorConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class ConstructorConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaMethod) return recurse(element)
         val outerClass = element.parentOfType<JKClass>() ?: return recurse(element)
@@ -29,7 +29,7 @@ class ConstructorConversion(private val context: NewJ2kConverterContext) : Recur
             element.visibilityElement,
             element.modalityElement
         ).also {
-            context.symbolProvider.transferSymbol(it, element)
+            symbolProvider.transferSymbol(it, element)
         }.withNonCodeElementsFrom(element)
     }
 

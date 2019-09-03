@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaLiteralExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKNullLiteral
 
-class ImplicitInitializerConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class ImplicitInitializerConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
 
     enum class InitializationState {
         INITIALIZED_IN_ALL_CONSTRUCTORS,
@@ -48,11 +48,11 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
     }
 
     private fun JKJavaField.initializationState(): InitializationState {
-        val fieldSymbol = context.symbolProvider.provideUniverseSymbol(this)
+        val fieldSymbol = symbolProvider.provideUniverseSymbol(this)
         val containingClass = parentOfType<JKClass>() ?: return InitializationState.NON_INITIALIZED
         val symbolToConstructor = containingClass.declarationList
             .filterIsInstance<JKKtConstructor>()
-            .map { context.symbolProvider.provideUniverseSymbol(it) to it }
+            .map { symbolProvider.provideUniverseSymbol(it) to it }
             .toMap()
 
         fun JKMethodSymbol.parentConstructor(): JKMethodSymbol? =
@@ -61,7 +61,7 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
 
         val constructors = containingClass.declarationList
             .filterIsInstance<JKKtConstructor>()
-            .map { context.symbolProvider.provideUniverseSymbol(it) to false }
+            .map { symbolProvider.provideUniverseSymbol(it) to false }
             .toMap()
             .toMutableMap()
 
@@ -87,7 +87,7 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
         }
 
         for (constructor in constructorsWithInitializers) {
-            constructors[context.symbolProvider.provideUniverseSymbol(constructor)] = true
+            constructors[symbolProvider.provideUniverseSymbol(constructor)] = true
         }
 
         val constructorsToInitialize = mutableListOf<JKMethodSymbol>()

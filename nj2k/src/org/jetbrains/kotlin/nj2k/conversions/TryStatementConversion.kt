@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.useExpression
 
 
-class TryStatementConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaTryStatement) return recurse(element)
         return if (element.resourceDeclarations.isEmpty())
@@ -59,7 +59,7 @@ class TryStatementConversion(private val context: NewJ2kConverterContext) : Recu
                         receiver = (variable as JKLocalVariable)::initializer.detached(),
                         variableIdentifier = variable::name.detached(),
                         body = inner,
-                        symbolProvider = context.symbolProvider
+                        symbolProvider = symbolProvider
                     )
                 )
             }

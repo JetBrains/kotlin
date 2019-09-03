@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
 
-class SwitchStatementConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaSwitchStatementImpl) return recurse(element)
         element.invalidate()
@@ -86,7 +86,7 @@ class SwitchStatementConversion(private val context: NewJ2kConverterContext) : R
                     when (statement) {
                         is JKBlockStatement ->
                             JKExpressionStatementImpl(
-                                runExpression(statement, context.symbolProvider)
+                                runExpression(statement, symbolProvider)
                             )
                         else -> statement
                     }

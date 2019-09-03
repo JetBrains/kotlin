@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class AssignmentAsExpressionToAlsoConversion(val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class AssignmentAsExpressionToAlsoConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaAssignmentExpression) return recurse(element)
         element.invalidate()
@@ -21,11 +21,11 @@ class AssignmentAsExpressionToAlsoConversion(val context: NewJ2kConverterContext
         val alsoExpression = JKKtAlsoCallExpressionImpl(
             JKBlockStatementImpl(
                 JKBlockImpl(listOf(JKKtAssignmentStatementImpl(element.field, JKStubExpressionImpl(), element.operator)))
-            ), context.symbolProvider.provideMethodSymbol("kotlin.also")
+            ), symbolProvider.provideMethodSymbol("kotlin.also")
         ).also {
             it.statement.cast<JKBlockStatement>().block.statements.first().cast<JKKtAssignmentStatement>().expression =
                 JKFieldAccessExpressionImpl(
-                    context.symbolProvider.provideUniverseSymbol(
+                    symbolProvider.provideUniverseSymbol(
                         JKParameterImpl(JKTypeElementImpl(JKContextType), JKNameIdentifierImpl("it"))
                     )
                 )//TODO introduce symbol

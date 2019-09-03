@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.nj2k.symbols.deepestFqName
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKParenthesizedExpressionImpl
 
-class EqualsOperatorConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class EqualsOperatorConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
         if (element.receiver is JKSuperExpression) return recurse(element)
@@ -23,7 +23,7 @@ class EqualsOperatorConversion(private val context: NewJ2kConverterContext) : Re
                     equalsExpression(
                         element::receiver.detached(),
                         argument::value.detached(),
-                        context.symbolProvider
+                        symbolProvider
                     )
                 )
             )

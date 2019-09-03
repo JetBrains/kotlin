@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 import kotlin.math.abs
 
 
-class ForConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     private val referenceSearcher: ReferenceSearcher
         get() = context.converter.converterServices.oldServices.referenceSearcher
 
@@ -53,7 +53,7 @@ class ForConversion(private val context: NewJ2kConverterContext) : RecursiveAppl
                 JKExpressionStatementImpl(
                     runExpression(
                         convertedFromForLoopSyntheticWhileStatement,
-                        context.symbolProvider
+                        symbolProvider
                     )
                 )
             !notNeedParentBlock -> blockStatement(convertedFromForLoopSyntheticWhileStatement)
@@ -63,7 +63,7 @@ class ForConversion(private val context: NewJ2kConverterContext) : RecursiveAppl
 
     private fun createWhileBody(loopStatement: JKJavaForLoopStatement): JKStatement {
         if (loopStatement.updaters.singleOrNull() is JKEmptyStatement) return loopStatement::body.detached()
-        val continueStatementConverter = object : RecursiveApplicableConversionBase() {
+        val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
             override fun applyToElement(element: JKTreeElement): JKTreeElement {
                 if (element !is JKContinueStatement) return recurse(element)
                 val elementPsi = element.psi<PsiContinueStatement>()!!
@@ -90,7 +90,7 @@ class ForConversion(private val context: NewJ2kConverterContext) : RecursiveAppl
 
             val statements =
                 if (hasNameConflict) {
-                    listOf(JKExpressionStatementImpl(runExpression(body, context.symbolProvider))) + loopStatement::updaters.detached()
+                    listOf(JKExpressionStatementImpl(runExpression(body, symbolProvider))) + loopStatement::updaters.detached()
                 } else {
                     body.block::statements.detached() + loopStatement::updaters.detached()
                 }
@@ -185,7 +185,7 @@ class ForConversion(private val context: NewJ2kConverterContext) : RecursiveAppl
                 start,
                 convertBound(bound, if (inclusiveComparison) 0 else -1),
                 JKKtSingleValueOperatorToken(KtTokens.RANGE),
-                context.symbolProvider
+                symbolProvider
             )
         }
     }
@@ -203,7 +203,7 @@ class ForConversion(private val context: NewJ2kConverterContext) : RecursiveAppl
             bound,
             JKKtLiteralExpressionImpl(abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
             JKKtSingleValueOperatorToken(sign),
-            context.symbolProvider
+            symbolProvider
         )
     }
 
@@ -238,7 +238,7 @@ class ForConversion(private val context: NewJ2kConverterContext) : RecursiveAppl
                 indices,
                 JKKtQualifierImpl.DOT,
                 JKJavaMethodCallExpressionImpl(
-                    context.symbolProvider.provideMethodSymbol("kotlin.collections.reversed"),
+                    symbolProvider.provideMethodSymbol("kotlin.collections.reversed"),
                     JKArgumentListImpl()
                 )
             )
@@ -255,7 +255,7 @@ class ForConversion(private val context: NewJ2kConverterContext) : RecursiveAppl
 
     private fun indicesByArrayLength(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKFieldAccessExpression ?: return null
-        val receiverType = javaSizeCall.receiver.type(context.symbolProvider)
+        val receiverType = javaSizeCall.receiver.type(symbolProvider)
         if (methodCall.identifier.name == "length" && receiverType is JKJavaArrayType) {
             return toIndicesCall(javaSizeCall)
         }
@@ -265,7 +265,7 @@ class ForConversion(private val context: NewJ2kConverterContext) : RecursiveAppl
     private fun toIndicesCall(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         if (javaSizeCall.psi == null) return null
         val selector = JKFieldAccessExpressionImpl(
-            context.symbolProvider.provideFieldSymbol("kotlin.collections.indices")
+            symbolProvider.provideFieldSymbol("kotlin.collections.indices")
         )
         return JKQualifiedExpressionImpl(javaSizeCall::receiver.detached(), javaSizeCall.operator, selector)
     }

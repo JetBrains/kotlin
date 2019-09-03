@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtLiteralExpressionImpl
 import java.math.BigInteger
 
-class LiteralConversion : RecursiveApplicableConversionBase() {
+class LiteralConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaLiteralExpression) return recurse(element)
         return element.convertLiteral()

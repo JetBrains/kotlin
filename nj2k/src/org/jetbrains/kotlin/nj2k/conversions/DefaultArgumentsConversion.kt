@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     private fun JKMethod.canBeGetterOrSetter() =
         name.value.asGetterName() != null
                 || name.value.asSetterName() != null
@@ -97,7 +97,7 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
                         val target = on.identifier.target
                         if (target is JKParameter) {
                             val newSymbol =
-                                context.symbolProvider.provideUniverseSymbol(calledMethod.parameters[method.parameters.indexOf(target)])
+                                symbolProvider.provideUniverseSymbol(calledMethod.parameters[method.parameters.indexOf(target)])
                             return JKFieldAccessExpressionImpl(newSymbol)
                         }
                     }
@@ -115,7 +115,7 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
             if (method.hasParametersWithDefaultValues()
                 && (method.visibility == Visibility.PUBLIC || method.visibility == Visibility.INTERNAL)
             ) {
-                method.annotationList.annotations += jvmAnnotation("JvmOverloads", context.symbolProvider)
+                method.annotationList.annotations += jvmAnnotation("JvmOverloads", symbolProvider)
             }
         }
 

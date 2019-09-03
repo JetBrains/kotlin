@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-class AssignmentStatementValCreationConversion(val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class AssignmentStatementValCreationConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKKtAlsoCallExpression) return recurse(element)
         val codeBlock = (element.statement as? JKBlockStatement)?.block ?: return recurse(element)
@@ -29,7 +29,7 @@ class AssignmentStatementValCreationConversion(val context: NewJ2kConverterConte
                                 ex1,
                                 JKMutabilityModifierElementImpl(Mutability.IMMUTABLE)
                             ).also {
-                                assignableExpr.expression = JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
+                                assignableExpr.expression = JKFieldAccessExpressionImpl(symbolProvider.provideUniverseSymbol(it))
                             }, JKLocalVariableImpl(
                                 JKTypeElementImpl(JKJavaVoidType/*TODO*/),
                                 JKNameIdentifierImpl("i"),
@@ -37,7 +37,7 @@ class AssignmentStatementValCreationConversion(val context: NewJ2kConverterConte
                                 JKMutabilityModifierElementImpl(Mutability.UNKNOWN)
                             ).also {
                                 assignableExpr.indexExpression =
-                                    JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
+                                    JKFieldAccessExpressionImpl(symbolProvider.provideUniverseSymbol(it))
                             }
                         )
                     )
@@ -55,7 +55,7 @@ class AssignmentStatementValCreationConversion(val context: NewJ2kConverterConte
                                 ex,
                                 JKMutabilityModifierElementImpl(Mutability.UNKNOWN)
                             ).also {
-                                assignableExpr.receiver = JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
+                                assignableExpr.receiver = JKFieldAccessExpressionImpl(symbolProvider.provideUniverseSymbol(it))
                             }
                         )
                     )

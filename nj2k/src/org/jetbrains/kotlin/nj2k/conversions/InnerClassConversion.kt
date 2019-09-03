@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.OtherModifier
 import org.jetbrains.kotlin.nj2k.tree.JKClass
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.impl.JKOtherModifierElementImpl
 import org.jetbrains.kotlin.nj2k.tree.isLocalClass
 
-class InnerClassConversion : RecursiveApplicableConversionBase() {
+class InnerClassConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
         return recurseArmed(element, element)

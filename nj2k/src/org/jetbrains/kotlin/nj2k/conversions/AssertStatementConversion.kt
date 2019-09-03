@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKExpressionStatementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKLambdaExpressionImpl
 
 
-class AssertStatementConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class AssertStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaAssertStatement) return recurse(element)
         val messageExpression =
@@ -29,7 +29,7 @@ class AssertStatementConversion(private val context: NewJ2kConverterContext) : R
                 kotlinAssert(
                     element::condition.detached(),
                     messageExpression,
-                    context.symbolProvider
+                    symbolProvider
                 )
             )
         )

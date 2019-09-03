@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
 
-class InsertDefaultPrimaryConstructorConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class InsertDefaultPrimaryConstructorConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
         if (element.classKind != JKClass.ClassKind.CLASS) return recurse(element)
@@ -35,7 +35,7 @@ class InsertDefaultPrimaryConstructorConversion(private val context: NewJ2kConve
 
         if (superClassSymbol is JKUniverseClassSymbol) {
             val superClass = recurse(superClassSymbol.target)
-            val superConstructor = context.symbolProvider.provideUniverseSymbol(
+            val superConstructor = symbolProvider.provideUniverseSymbol(
                 superClass.declarationList.singleOrNull { it is JKKtConstructor && it.parameters.isEmpty() } as? JKMethod ?: return recurse(
                     element
                 )

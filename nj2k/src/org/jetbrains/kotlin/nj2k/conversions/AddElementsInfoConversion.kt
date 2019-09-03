@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKCapturedType
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
-import org.jetbrains.kotlin.nj2k.types.JKParametrizedType
-import org.jetbrains.kotlin.nj2k.types.JKStarProjectionType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AddElementsInfoConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
@@ -55,8 +53,8 @@ class AddElementsInfoConversion(context: NewJ2kConverterContext) : RecursiveAppl
 
     private fun JKMethod.superMethods(): Collection<FunctionDescriptor>? {
         val psiMethod = psi<PsiMethod>() ?: return null
-        psiMethod.getJavaMethodDescriptor()?.let {
-            return it.overriddenDescriptors
+        psiMethod.getJavaMethodDescriptor()?.let { descriptor ->
+            return descriptor.overriddenDescriptors
         }
         return psiMethod.findSuperMethods().mapNotNull { superMethod ->
             when (superMethod) {

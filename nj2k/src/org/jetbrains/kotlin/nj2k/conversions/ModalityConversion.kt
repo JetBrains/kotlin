@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKOtherModifierElementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
-class ModalityConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class ModalityConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         when (element) {
             is JKClass -> processClass(element)

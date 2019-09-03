@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKMethodReferenceExpression) return recurse(element)
         val symbol = element.identifier
@@ -59,7 +59,7 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
             } else emptyList()
 
         val arguments = parameters.map { parameter ->
-            val parameterSymbol = context.symbolProvider.provideUniverseSymbol(parameter)
+            val parameterSymbol = symbolProvider.provideUniverseSymbol(parameter)
             JKArgumentImpl(JKFieldAccessExpressionImpl(parameterSymbol))
         }
         val callExpression =
@@ -75,7 +75,7 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
             }
         val qualifier = when {
             receiverParameter != null ->
-                JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(receiverParameter))
+                JKFieldAccessExpressionImpl(symbolProvider.provideUniverseSymbol(receiverParameter))
             element.isConstructorCall -> element.qualifier.safeAs<JKQualifiedExpression>()?.let { it::receiver.detached() }
             else -> element::qualifier.detached().nullIfStubExpression()
         }
@@ -111,12 +111,12 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
                 .firstOrNull { !it.hasModifier(JvmModifier.STATIC) }
                 ?.parameterList
                 ?.parameters
-                ?.map { it.type.toJK(context.symbolProvider).substituteTypeParameters(this) }
+                ?.map { it.type.toJK(symbolProvider).substituteTypeParameters(this) }
             is JKMultiverseKtClassSymbol -> reference.target.body
                 ?.functions
                 ?.singleOrNull()
                 ?.valueParameters
-                ?.map { it.typeReference?.toJK(context.symbolProvider)?.substituteTypeParameters(this) ?: return null }
+                ?.map { it.typeReference?.toJK(symbolProvider)?.substituteTypeParameters(this) ?: return null }
             is JKUniverseClassSymbol -> reference.target.classBody.declarations.firstIsInstanceOrNull<JKMethod>()
                 ?.parameters
                 ?.map { it.type.type.substituteTypeParameters(this) }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-class JavaStandardMethodsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class JavaStandardMethodsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
         for (declaration in element.classBody.declarations) {

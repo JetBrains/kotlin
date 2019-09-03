@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeElementImpl
 
 
 //TODO temporary
-class MainFunctionConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class MainFunctionConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKMethod) return recurse(element)
         if (element.isMainFunctionDeclaration()) {
@@ -30,7 +30,7 @@ class MainFunctionConversion(private val context: NewJ2kConverterContext) : Recu
             }
             element.annotationList.annotations +=
                 JKAnnotationImpl(
-                    context.symbolProvider.provideClassSymbol("kotlin.jvm.JvmStatic"),
+                    symbolProvider.provideClassSymbol("kotlin.jvm.JvmStatic"),
                     emptyList()
                 )
         }

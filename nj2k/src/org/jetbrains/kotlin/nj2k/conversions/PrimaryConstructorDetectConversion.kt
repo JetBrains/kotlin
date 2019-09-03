@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtInitDeclarationImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtPrimaryConstructorImpl
 
-class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class PrimaryConstructorDetectConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKClass &&
             (element.classKind == JKClass.ClassKind.CLASS || element.classKind == JKClass.ClassKind.ENUM)
@@ -54,7 +54,7 @@ class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterCon
                 primaryConstructorCandidate.modalityElement
             ).withNonCodeElementsFrom(primaryConstructorCandidate)
 
-        context.symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)
+        symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)
 
         element.classBody.declarations += primaryConstructor
     }

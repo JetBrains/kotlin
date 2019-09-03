@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class ArrayOperationsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class ArrayOperationsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
         val selector = element.selector as? JKFieldAccessExpression ?: return recurse(element)
         if (element.receiver.isArrayOrVarargTypeParameter() && selector.identifier.name == "length") {
             val sizeCall =
                 JKFieldAccessExpressionImpl(
-                    context.symbolProvider.provideFieldSymbol("kotlin.Array.size")
+                    symbolProvider.provideFieldSymbol("kotlin.Array.size")
                 )
             element.selector = sizeCall
         }
@@ -32,7 +32,7 @@ class ArrayOperationsConversion(private val context: NewJ2kConverterContext) : R
     }
 
     private fun JKExpression.isArrayOrVarargTypeParameter(): Boolean {
-        if (type(context.symbolProvider) is JKJavaArrayType) return true
+        if (type(symbolProvider) is JKJavaArrayType) return true
         val parameter =
             safeAs<JKFieldAccessExpression>()
                 ?.identifier

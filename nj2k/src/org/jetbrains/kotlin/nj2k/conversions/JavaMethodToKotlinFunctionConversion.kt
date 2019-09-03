@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtFunctionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
-class JavaMethodToKotlinFunctionConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class JavaMethodToKotlinFunctionConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaMethod) return recurse(element)
 
@@ -39,7 +39,7 @@ class JavaMethodToKotlinFunctionConversion(private val context: NewJ2kConverterC
                     it.annotations +=
                         throwAnnotation(
                             element.throwsList.map { it.type.updateNullabilityRecursively(Nullability.NotNull) },
-                            context.symbolProvider
+                            symbolProvider
                         )
                 }
             },
@@ -48,7 +48,7 @@ class JavaMethodToKotlinFunctionConversion(private val context: NewJ2kConverterC
             element.modalityElement
         ).also {
             it.psi = element.psi
-            context.symbolProvider.transferSymbol(it, element)
+            symbolProvider.transferSymbol(it, element)
             it.leftParen.takeNonCodeElementsFrom(element.leftParen)
             it.rightParen.takeNonCodeElementsFrom(element.rightParen)
         }.withNonCodeElementsFrom(element)

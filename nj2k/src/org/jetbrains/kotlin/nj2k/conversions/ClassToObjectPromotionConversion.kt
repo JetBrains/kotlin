@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKClassImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKModalityModifierElementImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
-class ClassToObjectPromotionConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class ClassToObjectPromotionConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKClass && element.classKind == JKClass.ClassKind.CLASS) {
             val companion = element.getCompanion() ?: return recurse(element)

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKQualifiedExpressionImpl
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
 
-class EnumFieldAccessConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class EnumFieldAccessConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKFieldAccessExpression) return recurse(element)
         if ((element.parent as? JKQualifiedExpression)?.selector == element) return recurse(element)
@@ -34,11 +34,11 @@ class EnumFieldAccessConversion(private val context: NewJ2kConverterContext) : R
     private fun JKFieldSymbol.enumClassSymbol(): JKClassSymbol? =
         when {
             this is JKMultiverseFieldSymbol && target is PsiEnumConstant ->
-                context.symbolProvider.provideDirectSymbol(target.containingClass!!) as JKClassSymbol
+                symbolProvider.provideDirectSymbol(target.containingClass!!) as JKClassSymbol
             this is JKMultiverseKtEnumEntrySymbol ->
-                context.symbolProvider.provideDirectSymbol(target.containingClass()!!) as JKClassSymbol
+                symbolProvider.provideDirectSymbol(target.containingClass()!!) as JKClassSymbol
             this is JKUniverseFieldSymbol && target is JKEnumConstant ->
-                context.symbolProvider.provideUniverseSymbol(target.parentOfType<JKClass>()!!)
+                symbolProvider.provideUniverseSymbol(target.parentOfType<JKClass>()!!)
             else -> null
         }
 }

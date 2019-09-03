@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class StaticMemberAccessConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class StaticMemberAccessConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         val symbol =
             when (element) {
@@ -71,17 +71,17 @@ class StaticMemberAccessConversion(private val context: NewJ2kConverterContext) 
                 target.getStrictParentOfType<KtClassOrObject>()?.let { klass ->
                     if (klass is KtObjectDeclaration && klass.isCompanion()) klass.containingClass()
                     else klass
-                }?.let { context.symbolProvider.provideDirectSymbol(it) }
+                }?.let { symbolProvider.provideDirectSymbol(it) }
 
             is PsiElement -> target.getContainingClass()?.let {
-                context.symbolProvider.provideDirectSymbol(it)
+                symbolProvider.provideDirectSymbol(it)
             }
 
             is JKTreeElement ->
                 target.parentOfType<JKClass>()?.let { klass ->
                     if (klass.classKind == JKClass.ClassKind.COMPANION) klass.parentOfType<JKClass>()
                     else klass
-                }?.let { context.symbolProvider.provideUniverseSymbol(it) }
+                }?.let { symbolProvider.provideUniverseSymbol(it) }
             else -> error("bad isStaticMember")
         } as JKClassSymbol?
     }

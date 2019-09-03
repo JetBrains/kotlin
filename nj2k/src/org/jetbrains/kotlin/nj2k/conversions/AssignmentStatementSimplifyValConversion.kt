@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKStubExpressionImpl
 
-class AssignmentStatementSimplifyValConversion : RecursiveApplicableConversionBase() {
+class AssignmentStatementSimplifyValConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKKtAlsoCallExpression) return recurse(element)
         val codeBlock = (element.statement as? JKBlockStatement)?.block ?: return recurse(element)

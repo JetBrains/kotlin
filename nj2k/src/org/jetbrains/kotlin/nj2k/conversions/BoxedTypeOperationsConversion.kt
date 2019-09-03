@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKArgumentListImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtCallExpressionImpl
 
-class BoxedTypeOperationsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class BoxedTypeOperationsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         return recurse(
             when (element) {
@@ -39,7 +39,7 @@ class BoxedTypeOperationsConversion(private val context: NewJ2kConverterContext)
         val primitiveTypeName = boxedTypeToPrimitiveType[boxedJavaType] ?: return null
         if (operationType !in primitiveTypeNames) return null
         return JKKtCallExpressionImpl(
-            context.symbolProvider.provideMethodSymbol(
+            symbolProvider.provideMethodSymbol(
                 "kotlin.${primitiveTypeName.capitalize()}.to${operationType.capitalize()}"
             ),
             JKArgumentListImpl()

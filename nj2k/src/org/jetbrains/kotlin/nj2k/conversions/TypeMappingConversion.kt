@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiVariable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.j2k.*
-import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.toKotlinMutableTypesMap
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.kotlinTypeByName
@@ -21,7 +17,7 @@ import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         when (element) {
             is JKTypeElement -> {
@@ -56,7 +52,7 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
                 JKTypeElementImpl(
                     kotlinTypeByName(
                         KotlinBuiltIns.FQ_NAMES.any.toSafe().asString(),
-                        context.symbolProvider,
+                        symbolProvider,
                         Nullability.Nullable
                     )
                 )
@@ -86,12 +82,12 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
             is JKJavaVoidType ->
                 kotlinTypeByName(
                     KotlinBuiltIns.FQ_NAMES.unit.toSafe().asString(),
-                    context.symbolProvider,
+                    symbolProvider,
                     Nullability.NotNull
                 )
             is JKJavaArrayType ->
                 JKClassTypeImpl(
-                    context.symbolProvider.provideClassSymbol(type.arrayFqName()),
+                    symbolProvider.provideClassSymbol(type.arrayFqName()),
                     if (type is JKJavaPrimitiveType) emptyList() else listOf(type.mapType(typeElement)),
                     nullability
                 )
@@ -115,7 +111,7 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
         val newFqName = kotlinCollectionClassName()
             ?: kotlinStandardType()
             ?: fqName
-        return context.symbolProvider.provideClassSymbol(newFqName)
+        return symbolProvider.provideClassSymbol(newFqName)
     }
 
     private fun JKClassType.mapClassType(typeElement: JKTypeElement?): JKClassType =
@@ -136,7 +132,7 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
     private fun JKJavaPrimitiveType.mapPrimitiveType(): JKClassType {
         val fqName = jvmPrimitiveType.primitiveType.typeFqName
         return JKClassTypeImpl(
-            context.symbolProvider.provideClassSymbol(fqName),
+            symbolProvider.provideClassSymbol(fqName),
             nullability = Nullability.NotNull
         )
     }

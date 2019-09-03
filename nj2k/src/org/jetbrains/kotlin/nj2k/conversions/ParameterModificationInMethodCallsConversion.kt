@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 
 
-class ParameterModificationInMethodCallsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class ParameterModificationInMethodCallsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKMethod) return recurse(element)
         val newVariables =
@@ -21,7 +21,7 @@ class ParameterModificationInMethodCallsConversion(private val context: NewJ2kCo
                     val parameterType =
                         if (parameter.isVarArgs) {
                             JKClassTypeImpl(
-                                context.symbolProvider.provideClassSymbol(parameter.type.type.arrayFqName()),
+                                symbolProvider.provideClassSymbol(parameter.type.type.arrayFqName()),
                                 if (parameter.type.type is JKJavaPrimitiveType) emptyList()
                                 else listOf(
                                     JKVarianceTypeParameterTypeImpl(
@@ -36,7 +36,7 @@ class ParameterModificationInMethodCallsConversion(private val context: NewJ2kCo
                     JKLocalVariableImpl(
                         JKTypeElementImpl(parameterType),
                         JKNameIdentifierImpl(parameter.name.value),
-                        JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(parameter)),
+                        JKFieldAccessExpressionImpl(symbolProvider.provideUniverseSymbol(parameter)),
                         JKMutabilityModifierElementImpl(Mutability.MUTABLE)
                     )
                 } else null

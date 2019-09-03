@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationParameterImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtAnnotationArrayInitializerExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKNameIdentifierImpl
 
-class AnnotationConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class AnnotationConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKAnnotation) return recurse(element)
         fixVarargsInvocation(element)
         for (parameter in element.arguments) {
-            parameter.value = parameter.value.toExpression(context.symbolProvider)
+            parameter.value = parameter.value.toExpression(symbolProvider)
         }
 
         return recurse(element)

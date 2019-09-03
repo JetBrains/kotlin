@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 
-interface BatchBaseConversion {
+interface Conversion {
+    val context: NewJ2kConverterContext
+    val symbolProvider
+        get() = context.symbolProvider
+
     fun runConversion(treeRoots: List<JKTreeElement>, context: NewJ2kConverterContext): Boolean
 }
 
-interface SequentialBaseConversion : BatchBaseConversion {
+interface SequentialBaseConversion : Conversion {
     fun runConversion(treeRoot: JKTreeElement, context: NewJ2kConverterContext): Boolean
 
     override fun runConversion(treeRoots: List<JKTreeElement>, context: NewJ2kConverterContext): Boolean {

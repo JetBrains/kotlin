@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKKtLiteralExpressionImpl
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class JavaAnnotationsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class JavaAnnotationsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKAnnotationList) {
             for (annotation in element.annotations) {
@@ -29,14 +29,14 @@ class JavaAnnotationsConversion(private val context: NewJ2kConverterContext) : R
 
     private fun processAnnotation(annotation: JKAnnotation) {
         if (annotation.classSymbol.fqName == "java.lang.Deprecated") {
-            annotation.classSymbol = context.symbolProvider.provideClassSymbol("kotlin.Deprecated")
+            annotation.classSymbol = symbolProvider.provideClassSymbol("kotlin.Deprecated")
             if (annotation.arguments.isEmpty()) {
                 annotation.arguments +=
                     JKAnnotationParameterImpl(JKKtLiteralExpressionImpl("\"\"", JKLiteralExpression.LiteralType.STRING))
             }
         }
         if (annotation.classSymbol.fqName == "java.lang.annotation.Target") {
-            annotation.classSymbol = context.symbolProvider.provideClassSymbol("kotlin.annotation.Target")
+            annotation.classSymbol = symbolProvider.provideClassSymbol("kotlin.annotation.Target")
 
             val arguments = annotation.arguments.singleOrNull()?.let { parameter ->
                 val value = parameter.value
@@ -51,7 +51,7 @@ class JavaAnnotationsConversion(private val context: NewJ2kConverterContext) : R
                         value.fieldAccessFqName()
                             ?.let { targetMappings[it] }
                             ?.map { fqName ->
-                                JKFieldAccessExpressionImpl(context.symbolProvider.provideFieldSymbol(fqName))
+                                JKFieldAccessExpressionImpl(symbolProvider.provideFieldSymbol(fqName))
                             } ?: listOf(value.copyTreeAndDetach())
                     }
                 annotation.arguments = newArguments.map { JKAnnotationParameterImpl(it) }

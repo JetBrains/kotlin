@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.tree.withNonCodeElementsFrom
 
 
-class SynchronizedStatementConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class SynchronizedStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaSynchronizedStatement) return recurse(element)
         element.invalidate()
@@ -22,7 +22,7 @@ class SynchronizedStatementConversion(private val context: NewJ2kConverterContex
         )
         val synchronizedCall =
             JKKtCallExpressionImpl(
-                context.symbolProvider.provideMethodSymbol("kotlin.synchronized"),
+                symbolProvider.provideMethodSymbol("kotlin.synchronized"),
                 JKArgumentListImpl(
                     element.lockExpression,
                     lambdaBody
