@@ -1049,12 +1049,9 @@ public class ExternalSystemUtil {
 
   @Nullable
   public static VirtualFile findLocalFileByPath(String path) {
-    VirtualFile result = StandardFileSystems.local().findFileByPath(path);
-    if (result != null) return result;
-
-    return !ApplicationManager.getApplication().isReadAccessAllowed()
-           ? findLocalFileByPathUnderWriteAction(path)
-           : findLocalFileByPathUnderReadAction(path);
+    return ApplicationManager.getApplication().isReadAccessAllowed()
+           ? findLocalFileByPathUnderReadAction(path)
+           : findLocalFileByPathUnderWriteAction(path);
   }
 
   @Nullable
