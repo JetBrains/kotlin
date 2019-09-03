@@ -11,11 +11,12 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     runtime(project(":kotlin-reflect"))
+    testCompile(commonDep("junit"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
 }
 
 publish()

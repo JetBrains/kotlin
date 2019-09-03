@@ -44,6 +44,16 @@ fun ScriptingHostConfiguration?.with(body: ScriptingHostConfiguration.Builder.()
 }
 
 /**
+ * Add the values not explicitly set in the receiver from the [defaults] configuration
+ */
+fun ScriptingHostConfiguration?.withDefaultsFrom(defaults: ScriptingHostConfiguration): ScriptingHostConfiguration =
+    when {
+        this == defaults || defaults.isEmpty() -> this ?: defaults
+        this == null || this.isEmpty() -> defaults
+        else -> ScriptingHostConfiguration(defaults, this)
+    }
+
+/**
  * The list of all dependencies required for the script base class and refinement callbacks
  */
 val ScriptingHostConfigurationKeys.configurationDependencies by PropertiesCollection.key<List<ScriptDependency>>()
