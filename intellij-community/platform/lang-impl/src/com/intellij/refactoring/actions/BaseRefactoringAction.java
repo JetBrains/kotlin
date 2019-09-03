@@ -93,8 +93,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     Project project = e.getProject();
     if (project == null) return;
     int eventCount = IdeEventQueue.getInstance().getEventCount();
-    if (!PsiDocumentManager.getInstance(project).commitAllDocumentsUnderProgress(
-      RefactoringBundle.message("commit.documents.progress.text"), true)) {
+    if (!PsiDocumentManager.getInstance(project).commitAllDocumentsUnderProgress()) {
       return;
     }
     IdeEventQueue.getInstance().setEventCount(eventCount);

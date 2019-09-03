@@ -170,8 +170,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
   protected abstract String getCommandName();
 
   protected void doRun() {
-    if (!PsiDocumentManager.getInstance(myProject).commitAllDocumentsUnderProgress(
-      RefactoringBundle.message("commit.documents.progress.text"), true)) {
+    if (!PsiDocumentManager.getInstance(myProject).commitAllDocumentsUnderProgress()) {
       return;
     }
     final Ref<UsageInfo[]> refUsages = new Ref<>();
