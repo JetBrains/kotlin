@@ -302,21 +302,19 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
 
   protected VirtualFile createConfigFile(final VirtualFile dir, String config) {
     final String configFileName = getExternalSystemConfigFileName();
-    VirtualFile f = dir.findChild(configFileName);
+    VirtualFile configFile;
     try {
-      if (f == null) {
-        f = WriteAction.computeAndWait(() -> {
-          VirtualFile res = dir.createChildData(null, configFileName);
-          return res;
+        configFile = WriteAction.computeAndWait(() -> {
+          VirtualFile file = dir.findChild(configFileName);
+          return file == null ? dir.createChildData(null, configFileName) : file;
         });
-        myAllConfigs.add(f);
-      }
+        myAllConfigs.add(configFile);
     }
     catch (IOException e) {
       throw new RuntimeException(e);
     }
-    setFileContent(f, config, true);
-    return f;
+    setFileContent(configFile, config, true);
+    return configFile;
   }
 
   protected abstract String getExternalSystemConfigFileName();
