@@ -8,11 +8,12 @@ package org.jetbrains.konan
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.Version
 import com.intellij.util.EnvironmentUtil
+import com.intellij.util.SystemProperties
 import java.io.File
 
 object AndroidToolkit {
     val home: File? = EnvironmentUtil.getValue("ANDROID_SDK_ROOT")?.let { File(it) }
-        ?: File(System.getProperty("user.home"), "Library/Android/sdk")
+        ?: File(SystemProperties.getUserHome(), "Library/Android/sdk")
     val adb: File? = home?.let { File(File(it, "platform-tools"), "adb".exe) }
     val emulator: File? = home?.let { File(File(it, "tools"), "emulator".exe) }
     val buildTools: File? = home?.let { home ->
@@ -22,7 +23,7 @@ object AndroidToolkit {
     }
     val aapt: File? = buildTools?.let { File(it, "aapt".exe) }
 
-    val avdData: File = File(File(System.getProperty("user.home"), ".android"), "avd")
+    val avdData: File = File(File(SystemProperties.getUserHome(), ".android"), "avd")
 
     private val String.exe
         get() =
