@@ -22,7 +22,7 @@ import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.WindowManagerImpl;
+import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.panels.NonOpaquePanel;
@@ -80,7 +80,7 @@ public class ShowRunningListAction extends AnAction {
           .setHideOnKeyOutside(false);
         IdeFrame frame = e.getData(IdeFrame.KEY);
         if (frame == null) {
-          frame = ((WindowManagerImpl)WindowManager.getInstance()).getFrameHelper(project);
+          frame = WindowManagerEx.getInstanceEx().getFrameHelper(project);
         }
         if (balloon != null) {
           balloon.hide();
