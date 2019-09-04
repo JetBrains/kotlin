@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.facet.impl.ui;
 
 import com.intellij.facet.*;
@@ -12,25 +12,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class FacetDependentToolWindowManager implements ProjectComponent {
+final class FacetDependentToolWindowManager implements ProjectComponent {
   private final Project myProject;
-  private final ProjectWideFacetListenersRegistry myFacetListenersRegistry;
-  private final ProjectFacetManager myFacetManager;
-  private final ToolWindowManagerEx myToolWindowManager;
 
-  protected FacetDependentToolWindowManager(Project project,
-                                            ProjectWideFacetListenersRegistry facetListenersRegistry,
-                                            ProjectFacetManager facetManager,
-                                            ToolWindowManagerEx toolWindowManager) {
+  private FacetDependentToolWindowManager(@NotNull Project project) {
     myProject = project;
-    myFacetListenersRegistry = facetListenersRegistry;
-    myFacetManager = facetManager;
-    myToolWindowManager = toolWindowManager;
   }
 
   @Override
   public void projectOpened() {
-    myFacetListenersRegistry.registerListener(new ProjectWideFacetAdapter<Facet>() {
+    ProjectWideFacetListenersRegistry.getInstance(myProject).registerListener(new ProjectWideFacetAdapter<Facet>() {
       @Override
       public void facetAdded(@NotNull Facet facet) {
         for (FacetDependentToolWindow extension : getDependentExtensions(facet)) {
@@ -40,25 +31,32 @@ public class FacetDependentToolWindowManager implements ProjectComponent {
 
       @Override
       public void facetRemoved(@NotNull Facet facet) {
-        if (!myFacetManager.hasFacets(facet.getTypeId())) {
-          for (FacetDependentToolWindow extension : getDependentExtensions(facet)) {
-            ToolWindow toolWindow = myToolWindowManager.getToolWindow(extension.id);
-            if (toolWindow != null) {
-              // check for other facets
-              List<FacetType> facetTypes = extension.getFacetTypes();
-              for (FacetType facetType : facetTypes) {
-                if (myFacetManager.hasFacets(facetType.getId())) return;
+        ProjectFacetManager facetManager = ProjectFacetManager.getInstance(myProject);
+        if (facetManager.hasFacets(facet.getTypeId())) {
+          return;
+        }
+
+        ToolWindowManagerEx toolWindowManager = ToolWindowManagerEx.getInstanceEx(myProject);
+        for (FacetDependentToolWindow extension : getDependentExtensions(facet)) {
+          ToolWindow toolWindow = toolWindowManager.getToolWindow(extension.id);
+          if (toolWindow != null) {
+            // check for other facets
+            List<FacetType> facetTypes = extension.getFacetTypes();
+            for (FacetType facetType : facetTypes) {
+              if (facetManager.hasFacets(facetType.getId())) {
+                return;
               }
-              myToolWindowManager.unregisterToolWindow(extension.id);
             }
+            toolWindowManager.unregisterToolWindow(extension.id);
           }
         }
       }
     }, myProject);
 
+    ProjectFacetManager facetManager = ProjectFacetManager.getInstance(myProject);
     loop: for (FacetDependentToolWindow extension : FacetDependentToolWindow.EXTENSION_POINT_NAME.getExtensionList()) {
       for (FacetType type : extension.getFacetTypes()) {
-        if (myFacetManager.hasFacets(type.getId())) {
+        if (facetManager.hasFacets(type.getId())) {
           ensureToolWindowExists(extension);
           continue loop;
         }
@@ -67,9 +65,9 @@ public class FacetDependentToolWindowManager implements ProjectComponent {
   }
 
   private void ensureToolWindowExists(FacetDependentToolWindow extension) {
-    ToolWindow toolWindow = myToolWindowManager.getToolWindow(extension.id);
+    ToolWindow toolWindow = ToolWindowManagerEx.getInstanceEx(myProject).getToolWindow(extension.id);
     if (toolWindow == null) {
-      myToolWindowManager.initToolWindow(extension);
+      ToolWindowManagerEx.getInstanceEx(myProject).initToolWindow(extension);
     }
   }
 

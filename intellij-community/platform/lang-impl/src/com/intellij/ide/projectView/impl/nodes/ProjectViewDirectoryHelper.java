@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.ide.projectView.impl.nodes;
 
 import com.intellij.ide.projectView.ProjectViewSettings;
@@ -50,6 +49,12 @@ public class ProjectViewDirectoryHelper {
     return ServiceManager.getService(project, ProjectViewDirectoryHelper.class);
   }
 
+  public ProjectViewDirectoryHelper(Project project) {
+    myProject = project;
+    myIndex = DirectoryIndex.getInstance(project);
+  }
+
+  @Deprecated
   public ProjectViewDirectoryHelper(Project project, DirectoryIndex index) {
     myProject = project;
     myIndex = index;
@@ -93,7 +98,7 @@ public class ProjectViewDirectoryHelper {
       if (result.length() > 0) result.append(",").append(FontUtil.spaceAndThinSpace());
       result.append(FileUtil.getLocationRelativeToUserHome(directory.getPresentableUrl()));
     }
-    
+
     return result.length() == 0 ? null : result.toString();
   }
 

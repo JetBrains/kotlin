@@ -225,7 +225,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
       }
     }
 
-    
+
     List<String> recursiveUrls = ContainerUtil.map(recursivePaths, VfsUtilCore::pathToUrl);
     Set<String> excludedUrls = new THashSet<>();
     // changes in files provided by this method should be watched manually because no-one's bothered to set up correct pointers for them
@@ -247,7 +247,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
     // module roots already fire validity change events, see usages of ProjectRootManagerComponent.getRootsValidityChangedListener
     collectModuleWatchRoots(recursivePaths, flatPaths);
-    
+
     return Pair.create(recursivePaths, flatPaths);
   }
 
@@ -300,7 +300,11 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   @Override
   protected void clearScopesCaches() {
     super.clearScopesCaches();
-    LibraryScopeCache.getInstance(myProject).clear();
+
+    LibraryScopeCache libraryScopeCache = myProject.getServiceIfCreated(LibraryScopeCache.class);
+    if (libraryScopeCache != null) {
+      libraryScopeCache.clear();
+    }
   }
 
   @Override
