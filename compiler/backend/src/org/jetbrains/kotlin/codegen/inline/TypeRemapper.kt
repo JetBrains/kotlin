@@ -52,7 +52,7 @@ class TypeRemapper private constructor(
         typeParametersMapping[name] = TypeParameter(name, name, false, null)
     }
 
-    fun registerTypeParameter(mapping: TypeParameterMapping) {
+    fun registerTypeParameter(mapping: TypeParameterMapping<*>) {
         typeParametersMapping[mapping.name] = TypeParameter(
             mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature
         )
@@ -64,8 +64,8 @@ class TypeRemapper private constructor(
 
     companion object {
         @JvmStatic
-        fun createRoot(formalTypeParameters: TypeParameterMappings?): TypeRemapper {
-            return TypeRemapper(HashMap<String, String?>()).apply {
+        fun createRoot(formalTypeParameters: TypeParameterMappings<*>?): TypeRemapper {
+            return TypeRemapper(HashMap()).apply {
                 formalTypeParameters?.forEach {
                     registerTypeParameter(it)
                 }

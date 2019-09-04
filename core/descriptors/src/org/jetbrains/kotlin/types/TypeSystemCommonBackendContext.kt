@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.*
 
 interface TypeSystemCommonBackendContext : TypeSystemContext {
+    fun nullableAnyType(): SimpleTypeMarker
+    fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker
+
     fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean
 
     fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean
@@ -44,6 +47,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe?
 
     fun TypeParameterMarker.getName(): Name
+    fun TypeParameterMarker.isReified(): Boolean
 
     fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean
 }

@@ -431,6 +431,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this.firSafeNullable()
     }
 
+    override fun nullableAnyType(): SimpleTypeMarker = TODO("not implemented")
+
+    override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker = TODO("not implemented")
+
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val firRegularClass = toFirRegularClass() ?: return false
 
@@ -484,6 +488,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeParameterMarker.getName() = (this as ConeTypeParameterSymbol).name
+
+    override fun TypeParameterMarker.isReified(): Boolean = TODO("not implemented")
 
     override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
         val classKind = typeConstructor().toFirRegularClass()?.classKind ?: return false

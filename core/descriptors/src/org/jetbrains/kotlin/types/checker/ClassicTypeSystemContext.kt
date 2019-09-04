@@ -341,7 +341,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return builtIns.anyType
     }
 
-    val builtIns: KotlinBuiltIns get() = throw UnsupportedOperationException("Not supported")
+    open val builtIns: KotlinBuiltIns
+        get() = throw UnsupportedOperationException("Not supported")
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
         require(this is UnwrappedType, this::errorMessage)
@@ -502,6 +503,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is NewCapturedTypeConstructor
     }
 
+    override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker {
+        require(componentType is KotlinType, this::errorMessage)
+        return builtIns.getArrayType(Variance.INVARIANT, componentType)
+    }
+
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
         require(this is KotlinType, this::errorMessage)
         return annotations.hasAnnotation(fqName)
@@ -555,6 +561,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun TypeParameterMarker.getName(): Name {
         require(this is TypeParameterDescriptor, this::errorMessage)
         return name
+    }
+
+    override fun TypeParameterMarker.isReified(): Boolean {
+        require(this is TypeParameterDescriptor, this::errorMessage)
+        return isReified
     }
 
     override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {

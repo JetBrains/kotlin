@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
@@ -908,12 +909,7 @@ class ExpressionCodegen(
                 putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
             }
 
-            val asmType = typeMapper.mapType(classType)
-            if (classType.getClass()?.isInline == true || !isPrimitive(asmType)) {
-                mv.aconst(typeMapper.boxType(classType))
-            } else {
-                mv.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")
-            }
+            generateClassInstance(mv, classType)
         } else {
             throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
         }
@@ -922,6 +918,15 @@ class ExpressionCodegen(
             wrapJavaClassIntoKClass(mv)
         }
         return classReference.onStack
+    }
+
+    private fun generateClassInstance(v: InstructionAdapter, classType: IrType) {
+        val asmType = typeMapper.mapType(classType)
+        if (classType.getClass()?.isInline == true || !isPrimitive(asmType)) {
+            v.aconst(typeMapper.boxType(classType))
+        } else {
+            v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")
+        }
     }
 
     private fun getOrCreateCallGenerator(
@@ -964,7 +969,19 @@ class ExpressionCodegen(
         val original = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: irFunction
         val methodOwner = callee.parent.safeAs<IrClass>()?.let(typeMapper::mapClass) ?: MethodSignatureMapper.FAKE_OWNER_TYPE
         val sourceCompiler = IrSourceCompilerForInline(state, element, this, data)
-        return IrInlineCodegen(this, state, original.descriptor, methodOwner, signature, mappings, sourceCompiler)
+        val typeParameterMappings = mappings.toTypeParameterMappings()
+
+        val reifiedTypeInliner = ReifiedTypeInliner(typeParameterMappings, object : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
+            override fun putClassInstance(v: InstructionAdapter, type: IrType) {
+                generateClassInstance(v, type)
+            }
+
+            override fun toKotlinType(type: IrType): KotlinType = type.toKotlinType()
+        }, IrTypeCheckerContext(context.irBuiltIns), state.languageVersionSettings)
+
+        return IrInlineCodegen(
+            this, state, original.descriptor, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
+        )
     }
 
     private fun consumeReifiedOperationMarker(typeParameter: IrTypeParameter) {
@@ -1099,23 +1116,17 @@ class IrTypeParameterMappings {
         mappingsByName.values.forEach(l)
     }
 
-    fun toTypeParameterMappings() = TypeParameterMappings().also { result ->
+    fun toTypeParameterMappings() = TypeParameterMappings<IrType>().also { result ->
         mappingsByName.forEach { (_, value) ->
             if (value.asmType == null) {
                 result.addParameterMappingForFurtherReification(
                     value.name,
-                    value.type.toKotlinType(),
+                    value.type,
                     value.reificationArgument!!.toReificationArgument(),
                     value.isReified
                 )
             } else {
-                result.addParameterMappingToType(
-                    value.name,
-                    value.type.toKotlinType(),
-                    value.asmType,
-                    value.signature!!,
-                    value.isReified
-                )
+                result.addParameterMappingToType(value.name, value.type, value.asmType, value.signature!!, value.isReified)
             }
         }
     }

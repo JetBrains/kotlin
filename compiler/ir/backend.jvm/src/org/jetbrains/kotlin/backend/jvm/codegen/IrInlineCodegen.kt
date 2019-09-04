@@ -33,10 +33,11 @@ class IrInlineCodegen(
     function: FunctionDescriptor,
     methodOwner: Type,
     signature: JvmMethodSignature,
-    typeParameterMappings: IrTypeParameterMappings,
-    sourceCompiler: SourceCompilerForInline
+    typeParameterMappings: TypeParameterMappings<IrType>,
+    sourceCompiler: SourceCompilerForInline,
+    reifiedTypeInliner: ReifiedTypeInliner<IrType>
 ) : InlineCodegen<ExpressionCodegen>(
-    codegen, state, function, methodOwner, signature, typeParameterMappings.toTypeParameterMappings(), sourceCompiler
+    codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
 ), IrCallGenerator {
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         // TODO: JVM assertions are not implemented yet in IR backend
@@ -141,7 +142,7 @@ class IrExpressionLambdaImpl(
     val reference: IrFunctionReference,
     val function: IrFunction,
     private val typeMapper: IrTypeMapper,
-    private val methodSignatureMapper: MethodSignatureMapper,
+    methodSignatureMapper: MethodSignatureMapper,
     isCrossInline: Boolean,
     override val isBoundCallableReference: Boolean,
     override val isExtensionLambda: Boolean

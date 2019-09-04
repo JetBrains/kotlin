@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class PsiInlineCodegen(
     codegen: ExpressionCodegen,
@@ -32,10 +34,17 @@ class PsiInlineCodegen(
     function: FunctionDescriptor,
     methodOwner: Type,
     signature: JvmMethodSignature,
-    typeParameterMappings: TypeParameterMappings,
+    typeParameterMappings: TypeParameterMappings<KotlinType>,
     sourceCompiler: SourceCompilerForInline
 ) : InlineCodegen<ExpressionCodegen>(
-    codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler
+    codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler,
+    ReifiedTypeInliner(typeParameterMappings, object : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
+        override fun putClassInstance(v: InstructionAdapter, type: KotlinType) {
+            AsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
+        }
+
+        override fun toKotlinType(type: KotlinType): KotlinType = type
+    }, codegen.typeSystem, state.languageVersionSettings)
 ), CallGenerator {
 
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
@@ -154,7 +163,7 @@ class PsiInlineCodegen(
         assert(isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
 
         return PsiExpressionLambda(
-            ktLambda!!, typeMapper, state.languageVersionSettings,
+            ktLambda!!, state.typeMapper, state.languageVersionSettings,
             parameter.isCrossinline, getBoundCallableReferenceReceiver(expression) != null
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)

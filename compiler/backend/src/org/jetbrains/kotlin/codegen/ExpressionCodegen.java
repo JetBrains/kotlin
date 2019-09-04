@@ -77,10 +77,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.SimpleType;
-import org.jetbrains.kotlin.types.TypeProjection;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContextImpl;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -125,6 +123,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private final TailRecursionCodegen tailRecursionCodegen;
     public final CallGenerator defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
     private final SwitchCodegenProvider switchCodegenProvider;
+    public final TypeSystemCommonBackendContext typeSystem;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<>();
 
@@ -157,6 +156,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         this.parentCodegen = parentCodegen;
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
         this.switchCodegenProvider = new SwitchCodegenProvider(this);
+        this.typeSystem = new ClassicTypeSystemContextImpl(state.getModule().getBuiltIns());
     }
 
     @Nullable
@@ -2622,7 +2622,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private CallGenerator getOrCreateCallGenerator(
             @NotNull CallableDescriptor descriptor,
             @Nullable KtElement callElement,
-            @Nullable TypeParameterMappings typeParameterMappings,
+            @Nullable TypeParameterMappings<KotlinType> typeParameterMappings,
             boolean isDefaultCompilation
     ) {
         if (callElement == null) return defaultCallGenerator;
@@ -2672,7 +2672,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     CallGenerator getOrCreateCallGenerator(@NotNull ResolvedCall<?> resolvedCall, @NotNull CallableDescriptor descriptor) {
         Map<TypeParameterDescriptor, KotlinType> typeArguments = getTypeArgumentsForResolvedCall(resolvedCall, descriptor);
 
-        TypeParameterMappings mappings = new TypeParameterMappings();
+        TypeParameterMappings<KotlinType> mappings = new TypeParameterMappings<>();
         for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
             KotlinType type = entry.getValue();

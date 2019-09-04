@@ -47,8 +47,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val functionDescriptor: FunctionDescriptor,
     private val methodOwner: Type,
     protected val jvmSignature: JvmMethodSignature,
-    private val typeParameterMappings: TypeParameterMappings,
-    protected val sourceCompiler: SourceCompilerForInline
+    private val typeParameterMappings: TypeParameterMappings<*>,
+    protected val sourceCompiler: SourceCompilerForInline,
+    private val reifiedTypeInliner: ReifiedTypeInliner<*>
 ) {
     init {
         assert(InlineUtil.isInline(functionDescriptor)) {
@@ -59,12 +60,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     // TODO: implement AS_FUNCTION inline strategy
     private val asFunctionInline = false
 
-    protected val typeMapper = state.typeMapper
-
     private val initialFrameSize = codegen.frameMap.currentSize
-
-    private val reifiedTypeInliner =
-        ReifiedTypeInliner(typeParameterMappings, state.typeMapper, state.languageVersionSettings)
 
     private val isSameModule: Boolean
 
