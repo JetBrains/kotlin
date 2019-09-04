@@ -30,27 +30,35 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.FreeThreadedFileViewProvider;
+import com.intellij.psi.impl.PsiManagerEx;
+import com.intellij.psi.impl.source.PsiFileImpl;
+import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
+import com.intellij.util.containers.ContainerUtil;
+import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @deprecated Use methods from {@link InjectedLanguageManager} instead
  */
 @Deprecated
-public class InjectedFileViewProvider extends SingleRootFileViewProvider implements FreeThreadedFileViewProvider {
+public class InjectedFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements FreeThreadedFileViewProvider {
   private final Object myLock = new Object();
   private final DocumentWindowImpl myDocumentWindow;
+  private final Language myLanguage;
   private static final ThreadLocal<Boolean> disabledTemporarily = ThreadLocal.withInitial(() -> false);
   private boolean myPatchingLeaves;
 
-  InjectedFileViewProvider(@NotNull PsiManager psiManager,
+  private InjectedFileViewProvider(@NotNull PsiManager psiManager,
                            @NotNull VirtualFileWindow virtualFile,
                            @NotNull DocumentWindowImpl documentWindow,
                            @NotNull Language language) {
-    super(psiManager, (VirtualFile)virtualFile, true, language);
+    super(psiManager, (VirtualFile)virtualFile, true);
     myDocumentWindow = documentWindow;
+    myLanguage = language;
   }
 
   @Override
@@ -129,6 +137,27 @@ public class InjectedFileViewProvider extends SingleRootFileViewProvider impleme
     return getManager().getProject();
   }
 
+  @NotNull
+  @Override
+  public Language getBaseLanguage() {
+    return myLanguage;
+  }
+
+  @NotNull
+  @Override
+  public Set<Language> getLanguages() {
+    FileViewProvider original = getOriginalProvider(this);
+    Set<Language> languages = original.getLanguages();
+    Language base = original.getBaseLanguage();
+    return ContainerUtil.map2Set(languages, (language) -> language == base ? myLanguage : language);
+  }
+
+  @NotNull
+  @Override
+  protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(@NotNull VirtualFile fileCopy) {
+    throw new NotImplementedException();
+  }
+
   private static boolean same(Place oldShreds, Place newShreds) {
     if (oldShreds == newShreds) return true;
     if (oldShreds.size() != newShreds.size()) return false;
@@ -193,6 +222,50 @@ public class InjectedFileViewProvider extends SingleRootFileViewProvider impleme
     }
     finally {
       myPatchingLeaves = false;
+    }
+  }
+
+  private static FileViewProvider getOriginalProvider(FileViewProvider provider) {
+    if (provider instanceof InjectedFileViewProvider) {
+      return ((AbstractFileViewProvider)provider).getManager().getFileManager().createFileViewProvider(provider.getVirtualFile(), false);
+    }
+    return provider;
+  }
+
+  public final void forceCachedPsi(@NotNull PsiFile psiFile) {
+    myRoots.put(psiFile.getLanguage(), (PsiFileImpl)psiFile);
+    getManager().getFileManager().setViewProvider(getVirtualFile(), this);
+  }
+
+  public static InjectedFileViewProvider create(PsiManager manager,
+                                                VirtualFileWindowImpl file,
+                                                DocumentWindowImpl window,
+                                                Language language) {
+    return ((PsiManagerEx)manager).getFileManager().createFileViewProvider(file, false) instanceof TemplateLanguageFileViewProvider ?
+           new Template(manager, file, window, language) :
+           new InjectedFileViewProvider(manager, file, window, language);
+  }
+
+  private static final class Template extends InjectedFileViewProvider implements TemplateLanguageFileViewProvider {
+    private Template(@NotNull PsiManager psiManager,
+             @NotNull VirtualFileWindow virtualFile,
+             @NotNull DocumentWindowImpl documentWindow, @NotNull Language language) {
+      super(psiManager, virtualFile, documentWindow, language);
+    }
+
+    @NotNull
+    @Override
+    public Language getTemplateDataLanguage() {
+      FileViewProvider provider = getOriginalProvider(this);
+      assert provider instanceof TemplateLanguageFileViewProvider;
+      return ((TemplateLanguageFileViewProvider)provider).getTemplateDataLanguage();
+    }
+
+    @Override
+    public void setContentElementType(Language language, PsiFile file) {
+      FileViewProvider provider = getOriginalProvider(this);
+      assert provider instanceof TemplateLanguageFileViewProvider;
+      ((TemplateLanguageFileViewProvider)provider).setContentElementType(language, file);
     }
   }
 }

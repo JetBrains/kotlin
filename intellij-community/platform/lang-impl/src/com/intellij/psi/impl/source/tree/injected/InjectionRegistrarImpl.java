@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.EditorHighlighterProvider;
 import com.intellij.openapi.fileTypes.FileType;
@@ -33,6 +34,7 @@ import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.injection.ReferenceInjector;
+import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
@@ -45,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("deprecation")
 class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHostRegistrar {
@@ -248,17 +251,21 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     DocumentWindowImpl documentWindow = new DocumentWindowImpl(myHostDocument, place);
     String fileName = PathUtil.makeFileName(myHostVirtualFile.getName(), fileExtension);
 
-    ASTNode parsedNode =
+    ASTNode[] parsedNodes =
       parseFile(myLanguage, forcedLanguage, documentWindow, myHostVirtualFile, myHostDocument, myHostPsiFile, myProject, documentWindow.getText(),
                 placeInfos, decodedChars, fileName, myDocumentManagerBase);
-    PsiFile psiFile = (PsiFile)parsedNode.getPsi();
-    InjectedFileViewProvider viewProvider = (InjectedFileViewProvider)psiFile.getViewProvider();
-    synchronized (InjectedLanguageManagerImpl.ourInjectionPsiLock) {
-      psiFile = createOrMergeInjectedFile(myHostPsiFile, myDocumentManagerBase, place, documentWindow, psiFile, viewProvider);
-      addFileToResults(psiFile);
+    for (ASTNode node : parsedNodes) {
+      PsiFile psiFile = (PsiFile)node.getPsi();
+      InjectedFileViewProvider viewProvider = (InjectedFileViewProvider)psiFile.getViewProvider();
+      synchronized (InjectedLanguageManagerImpl.ourInjectionPsiLock) {
+        psiFile = createOrMergeInjectedFile(myHostPsiFile, myDocumentManagerBase, place, documentWindow, psiFile, viewProvider);
+        if (psiFile.getLanguage() == viewProvider.getBaseLanguage()) {
+          addFileToResults(psiFile);
+        }
 
-      DocumentWindowImpl retrieved = (DocumentWindowImpl)myDocumentManagerBase.getDocument(psiFile);
-      assertEverythingIsAllright(myDocumentManagerBase, retrieved, psiFile);
+        DocumentWindowImpl retrieved = (DocumentWindowImpl)myDocumentManagerBase.getDocument(psiFile);
+        assertEverythingIsAllright(myDocumentManagerBase, retrieved, psiFile);
+      }
     }
   }
 
@@ -271,7 +278,8 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
                                                    @NotNull InjectedFileViewProvider viewProvider) {
     cacheEverything(place, documentWindow, viewProvider, psiFile);
 
-    PsiFile cachedPsiFile = documentManager.getCachedPsiFile(documentWindow);
+    final VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(documentWindow);
+    PsiFile cachedPsiFile = ((PsiManagerEx)psiFile.getManager()).getFileManager().findCachedViewProvider(virtualFile).getPsi(psiFile.getLanguage());
     assert cachedPsiFile == psiFile : "Cached psi :"+ cachedPsiFile +" instead of "+psiFile;
 
     assert place.isValid();
@@ -595,34 +603,43 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
 
     assert documentManager.isUncommited(hostDocument);
     String fileName = ((VirtualFileWindowImpl)oldInjectedVirtualFile).getName();
-    ASTNode parsedNode = parseFile(language, language, oldDocumentWindow,
+    ASTNode[] parsedNodes = parseFile(language, language, oldDocumentWindow,
                                    hostVirtualFile, hostDocument, hostPsiFile, project, newDocumentText, placeInfos, chars,
                                    fileName, documentManager);
+    List<PsiFile> oldFiles = oldInjectedPsiViewProvider.getCachedPsiFiles();
     synchronized (InjectedLanguageManagerImpl.ourInjectionPsiLock) {
-      DiffLog diffLog = BlockSupportImpl.mergeTrees((PsiFileImpl)oldInjectedPsi, oldNode, parsedNode, indicator, oldPsiText);
+      DiffLog[] diffLogs = new DiffLog[parsedNodes.length];
+      for (int i = 0; i < parsedNodes.length; i++) {
+        ASTNode parsedNode = parsedNodes[i];
+        PsiFile oldFile = oldFiles.get(i);
+        diffLogs[i] = BlockSupportImpl.mergeTrees((PsiFileImpl)oldFile, oldFile.getNode(), parsedNode, indicator, oldPsiText);
+      }
 
       return () -> {
         oldInjectedPsiViewProvider.performNonPhysically(() ->
           DebugUtil.performPsiModification("injected tree diff", () -> {
-            diffLog.doActualPsiChange(oldInjectedPsi);
+            for (int i = 0; i < diffLogs.length; i++) {
+              DiffLog diffLog = diffLogs[i];
+              diffLog.doActualPsiChange(oldFiles.get(i));
 
-            // create new shreds after commit is complete because otherwise the range markers will be changed in MarkerCache.updateMarkers
-            Place newPlace = new Place();
-            for (int i = 0; i < oldPlace.size(); i++) {
-              PsiLanguageInjectionHost.Shred shred = oldPlace.get(i);
-              PlaceInfo info = placeInfos.get(i);
-              TextRange rangeInDecodedPSI = info.rangeInDecodedPSI;
-              TextRange rangeInHostElementPSI = info.rangeInHostElement;
-              // now find the injection host in the newly committed file
-              FileASTNode root = hostPsiFile.getNode();
-              PsiLanguageInjectionHost newHost = findNewInjectionHost(hostPsiFile, root, root, info.host, info.newInjectionHostRange);
-              ShredImpl newShred = ((ShredImpl)shred).withRange(rangeInDecodedPSI, rangeInHostElementPSI, newHost);
-              newPlace.add(newShred);
+              // create new shreds after commit is complete because otherwise the range markers will be changed in MarkerCache.updateMarkers
+              Place newPlace = new Place();
+              for (int j = 0; j < oldPlace.size(); j++) {
+                PsiLanguageInjectionHost.Shred shred = oldPlace.get(j);
+                PlaceInfo info = placeInfos.get(j);
+                TextRange rangeInDecodedPSI = info.rangeInDecodedPSI;
+                TextRange rangeInHostElementPSI = info.rangeInHostElement;
+                // now find the injection host in the newly committed file
+                FileASTNode root = hostPsiFile.getNode();
+                PsiLanguageInjectionHost newHost = findNewInjectionHost(hostPsiFile, root, root, info.host, info.newInjectionHostRange);
+                ShredImpl newShred = ((ShredImpl)shred).withRange(rangeInDecodedPSI, rangeInHostElementPSI, newHost);
+                newPlace.add(newShred);
+              }
+
+              cacheEverything(newPlace, oldDocumentWindow, oldInjectedPsiViewProvider, oldFiles.get(i));
+              String docText = oldDocumentWindow.getText();
+              assert docText.equals(newText) : "=\n" + docText + "\n==\n" + newDocumentText + "\n===\n";
             }
-
-            cacheEverything(newPlace, oldDocumentWindow, oldInjectedPsiViewProvider, oldInjectedPsi);
-            String docText = oldDocumentWindow.getText();
-            assert docText.equals(newText) : "=\n" + docText + "\n==\n" + newDocumentText + "\n===\n";
           })
         );
         return true;
@@ -637,7 +654,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
   }
 
   @NotNull
-  private static ASTNode parseFile(@NotNull Language language, Language forcedLanguage,
+  private static ASTNode[] parseFile(@NotNull Language language, Language forcedLanguage,
                                    @NotNull DocumentWindowImpl documentWindow,
                                    @NotNull VirtualFile hostVirtualFile,
                                    @NotNull DocumentEx hostDocument, @NotNull PsiFile hostPsiFile,
@@ -648,43 +665,51 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
                                    @NotNull String fileName, @NotNull PsiDocumentManagerBase documentManager) {
     VirtualFileWindowImpl virtualFile = new VirtualFileWindowImpl(fileName, hostVirtualFile, documentWindow, language, decodedChars);
     Language finalLanguage = forcedLanguage == null ? LanguageSubstitutors.getInstance().substituteLanguage(language, virtualFile, project) : forcedLanguage;
-    InjectedFileViewProvider viewProvider = new InjectedFileViewProvider(PsiManager.getInstance(project), virtualFile, documentWindow, finalLanguage);
-    ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(finalLanguage);
-    assert parserDefinition != null : "Parser definition for language " + finalLanguage + " is null";
-    PsiFile psiFile = parserDefinition.createFile(viewProvider);
+    InjectedFileViewProvider viewProvider = InjectedFileViewProvider.create(PsiManager.getInstance(project), virtualFile, documentWindow, finalLanguage);
+    Set<Language> languages = viewProvider.getLanguages();
+    ASTNode[] parsedNodes = new ASTNode[languages.size()];
+    int i = 0;
+    for (Language lang : languages) {
+      ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
+      assert parserDefinition != null : "Parser definition for language " + finalLanguage + " is null";
+      PsiFile psiFile = parserDefinition.createFile(viewProvider);
+      if (viewProvider instanceof TemplateLanguageFileViewProvider) {
+        ((TemplateLanguageFileViewProvider)viewProvider).setContentElementType(lang, psiFile);
+      }
+      final ASTNode parsedNode = keepTreeFromChameleoningBack(psiFile);
 
-    final ASTNode parsedNode = keepTreeFromChameleoningBack(psiFile);
+      assert parsedNode instanceof FileElement : "Parsed to " + parsedNode + " instead of FileElement";
 
-    assert parsedNode instanceof FileElement : "Parsed to " + parsedNode + " instead of FileElement";
+      assert ((FileElement)parsedNode).textMatches(decodedChars) : exceptionContext("Before patch: doc:\n'" + documentText + "'\n---PSI:\n'" + parsedNode.getText() + "'\n---chars:\n'" +
+                                                                                    decodedChars + "'",
+                                                                                    finalLanguage, hostPsiFile, hostVirtualFile,
+                                                                                    hostDocument, placeInfos, documentManager);
+      try {
+        patchLeaves(placeInfos, viewProvider, parsedNode, documentText);
+      }
+      catch (PatchException e) {
+        throw new RuntimeException(exceptionContext(e.getMessage()+"'\n---chars:\n'" + decodedChars + "'", finalLanguage, hostPsiFile, hostVirtualFile, hostDocument, placeInfos,
+                                                    documentManager));
+      }
 
-    assert ((FileElement)parsedNode).textMatches(decodedChars) : exceptionContext("Before patch: doc:\n'" + documentText + "'\n---PSI:\n'" + parsedNode.getText() + "'\n---chars:\n'" +
-                                                                             decodedChars + "'",
-                                                                           finalLanguage, hostPsiFile, hostVirtualFile,
-                                                                             hostDocument, placeInfos, documentManager);
-    try {
-      patchLeaves(placeInfos, viewProvider, parsedNode, documentText);
+      virtualFile.setContent(null, decodedChars, false);
+      virtualFile.setWritable(virtualFile.getDelegate().isWritable());
+
+      try {
+        List<InjectedLanguageUtil.TokenInfo> tokens = obtainHighlightTokensFromLexer(language, decodedChars, virtualFile, project, placeInfos);
+        InjectedLanguageUtil.setHighlightTokens(psiFile, tokens);
+      }
+      catch (ProcessCanceledException e) {
+        throw e;
+      }
+      catch (RuntimeException e) {
+        throw new RuntimeException(exceptionContext("Obtaining tokens error", language, hostPsiFile, hostVirtualFile, hostDocument, placeInfos,
+                                                    documentManager), e);
+      }
+      parsedNodes[i++] = parsedNode;
     }
-    catch (PatchException e) {
-      throw new RuntimeException(exceptionContext(e.getMessage()+"'\n---chars:\n'" + decodedChars + "'", finalLanguage, hostPsiFile, hostVirtualFile, hostDocument, placeInfos,
-                                                  documentManager));
-    }
 
-    virtualFile.setContent(null, decodedChars, false);
-    virtualFile.setWritable(virtualFile.getDelegate().isWritable());
-
-    try {
-      List<InjectedLanguageUtil.TokenInfo> tokens = obtainHighlightTokensFromLexer(language, decodedChars, virtualFile, project, placeInfos);
-      InjectedLanguageUtil.setHighlightTokens(psiFile, tokens);
-    }
-    catch (ProcessCanceledException e) {
-      throw e;
-    }
-    catch (RuntimeException e) {
-      throw new RuntimeException(exceptionContext("Obtaining tokens error", language, hostPsiFile, hostVirtualFile, hostDocument, placeInfos,
-                                                  documentManager), e);
-    }
-
-    return parsedNode;
+    return parsedNodes;
   }
 
   // find PsiLanguageInjectionHost in range "newInjectionHostRange" in the file which is almost "hostPsiFile" but where "oldRoot" replaced with "newRoot"
