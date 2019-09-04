@@ -228,7 +228,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
     protected open fun testDataDirName(): String = ""
 
-    protected fun testDataDirectory(): File {
+    protected open fun testDataDirectory(): File {
         val baseDir = "${PluginTestCaseBase.getTestDataPathBase()}/gradle/${testDataDirName()}/"
         return File(baseDir, getTestName(true).substringBefore("_"))
     }
