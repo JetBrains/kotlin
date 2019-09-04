@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -54,6 +55,21 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         configuration.addAll(
             CONTENT_ROOTS,
             moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+
+        if (System.getProperty("fir.bench.oldfe.ni", "true") == "true") {
+            configuration.languageVersionSettings =
+                LanguageVersionSettingsImpl(
+                    LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_3, specificFeatures = mapOf(
+                        LanguageFeature.NewInference to LanguageFeature.State.ENABLED
+                    )
+                )
+        }
+
+        configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, true)
+
+        System.getProperty("fir.bench.oldfe.jvm_target")?.let {
+            configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(it) ?: error("Unknown JvmTarget"))
+        }
         configuration.put(MESSAGE_COLLECTOR_KEY, object : MessageCollector {
             override fun clear() {
 
