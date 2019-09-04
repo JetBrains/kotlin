@@ -90,6 +90,9 @@ fun shouldImportExternalAnnotations(projectData: ProjectData?, project: Project)
   }
 
   val gradleSettings = GradleSettings.getInstance(project)
+  if (gradleSettings.isOfflineWork) {
+    return false
+  }
 
   return gradleSettings
            .linkedProjectsSettings
