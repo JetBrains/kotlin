@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.types.KotlinType
@@ -107,7 +108,23 @@ class TypeAliasQualifier(
                 classDescriptor.staticScope
         }
 
+    /**
+     * We cannot use [org.jetbrains.kotlin.descriptors.ClassDescriptor.getUnsubstitutedMemberScope] directly,
+     * because we do not allow complete resolve through type aliases yet (see KT-15298).
+     *
+     * However, we want to allow to resolve and autocomplete enum constants even through type aliases;
+     * that's why we use [org.jetbrains.kotlin.descriptors.ClassDescriptor.getUnsubstitutedMemberScope],
+     * but filter only enum entries.
+     */
     private inner class EnumEntriesScope : MemberScopeImpl() {
+        override fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean
+        ): Collection<DeclarationDescriptor> =
+            classDescriptor.unsubstitutedInnerClassesScope
+                .getContributedDescriptors(kindFilter, nameFilter)
+                .filter { DescriptorUtils.isEnumEntry(it) }
+
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
             classDescriptor.unsubstitutedInnerClassesScope
                 .getContributedClassifier(name, location)
