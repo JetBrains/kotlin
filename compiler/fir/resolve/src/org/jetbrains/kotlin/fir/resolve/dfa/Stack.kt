@@ -17,39 +17,26 @@ interface Stack<T> {
     fun push(value: T)
 }
 
-fun <T> stackOf(vararg values: T): Stack<T> = StackImpl(*values, pushCallback = null, popCallback = null)
-fun <T> stackWithCallbacks(pushCallback: (T) -> Unit, popCallback: (T) -> Unit): Stack<T> =
-    StackImpl(pushCallback = pushCallback, popCallback = popCallback)
-
+fun <T> stackOf(vararg values: T): Stack<T> = StackImpl(*values)
 val Stack<*>.isEmpty: Boolean get() = size == 0
 val Stack<*>.isNotEmpty: Boolean get() = size != 0
 fun <T> Stack<T>.topOrNull(): T? = if (size == 0) null else top()
 
-private class StackImpl<T>(
-    vararg values: T,
-    private val pushCallback: ((T) -> Unit)?,
-    private val popCallback: ((T) -> Unit)?
-) : Stack<T> {
+private class StackImpl<T>(vararg values: T) : Stack<T> {
     private val stack = mutableListOf(*values)
 
     override fun top(): T = stack[stack.size - 1]
-    override fun pop(): T = stack.removeAt(stack.size - 1).also { element ->
-        popCallback?.let { it(element) }
-    }
+    override fun pop(): T = stack.removeAt(stack.size - 1)
 
     override fun push(value: T) {
         stack.add(value)
-        pushCallback?.let { it(value) }
     }
 
     override val size: Int get() = stack.size
 }
 
-class NodeStorage<T : FirElement, N : CFGNode<T>>(
-    pushCallback: ((N) -> Unit)? = null,
-    popCallback: ((N) -> Unit)? = null
-) : Stack<N> {
-    private val stack: Stack<N> = StackImpl(pushCallback = pushCallback, popCallback = popCallback)
+class NodeStorage<T : FirElement, N : CFGNode<T>>() : Stack<N> {
+    private val stack: Stack<N> = StackImpl()
     private val map: MutableMap<T, N> = mutableMapOf()
 
     override val size: Int get() = stack.size
@@ -70,11 +57,8 @@ class NodeStorage<T : FirElement, N : CFGNode<T>>(
     }
 }
 
-class SymbolBasedNodeStorage<T, N : CFGNode<T>>(
-    pushCallback: ((N) -> Unit)? = null,
-    popCallback: ((N) -> Unit)? = null
-) : Stack<N> where T : FirElement {
-    private val stack: Stack<N> = StackImpl(pushCallback = pushCallback, popCallback = popCallback)
+class SymbolBasedNodeStorage<T, N : CFGNode<T>> : Stack<N> where T : FirElement {
+    private val stack: Stack<N> = StackImpl()
     private val map: MutableMap<FirBasedSymbol<*>, N> = mutableMapOf()
 
     override val size: Int get() = stack.size

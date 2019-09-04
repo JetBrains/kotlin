@@ -39,15 +39,9 @@ class ControlFlowGraphBuilder {
     private val binaryAndExitNodes: Stack<BinaryAndExitNode> = stackOf()
     private val binaryOrExitNodes: Stack<BinaryOrExitNode> = stackOf()
 
-    private val topLevelVariableInitializerExitNodes: Stack<PropertyInitializerExitNode> = stackWithCallbacks(
-        pushCallback = { exitNodes.push(it) },
-        popCallback = { exitNodes.pop() }
-    )
+    private val topLevelVariableInitializerExitNodes: Stack<PropertyInitializerExitNode> = stackOf()
 
-    private val initBlockExitNodes: Stack<InitBlockExitNode> = stackWithCallbacks(
-        pushCallback = { exitNodes.push(it) },
-        popCallback = { exitNodes.pop() }
-    )
+    private val initBlockExitNodes: Stack<InitBlockExitNode> = stackOf()
 
     var levelCounter: Int = 0
         private set
@@ -133,6 +127,7 @@ class ControlFlowGraphBuilder {
         val enterNode = createPropertyInitializerEnterNode(property)
         val exitNode = createPropertyInitializerExitNode(property)
         topLevelVariableInitializerExitNodes.push(exitNode)
+        exitNodes.push(exitNode)
         lexicalScopes.push(stackOf(enterNode))
         graph.enterNode = enterNode
         graph.exitNode = exitNode
@@ -146,6 +141,7 @@ class ControlFlowGraphBuilder {
             it.markAsDeadIfNecessary()
         }
         levelCounter--
+        exitNodes.pop()
         lexicalScopes.pop()
         return topLevelVariableExitNode to graphs.pop()
     }
@@ -522,6 +518,7 @@ class ControlFlowGraphBuilder {
         }
         val exitNode = createInitBlockExitNode(initBlock)
         initBlockExitNodes.push(exitNode)
+        exitNodes.push(exitNode)
         levelCounter++
         return enterNode
     }
@@ -532,6 +529,7 @@ class ControlFlowGraphBuilder {
             addNewSimpleNode(it)
             it.markAsDeadIfNecessary()
             lexicalScopes.pop()
+            exitNodes.pop()
         }
     }
 
