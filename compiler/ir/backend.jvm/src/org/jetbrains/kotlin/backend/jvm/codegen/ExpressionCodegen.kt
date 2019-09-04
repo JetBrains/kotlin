@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.CallGenerator
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
+import org.jetbrains.kotlin.codegen.extractReificationArgument
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
@@ -45,6 +46,8 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
@@ -115,6 +118,9 @@ class ExpressionCodegen(
         get() = mv
 
     override val inlineNameGenerator: NameGenerator = NameGenerator("${classCodegen.type.internalName}\$todo") // TODO
+
+    override val typeSystem: TypeSystemCommonBackendContext
+        get() = typeMapper.typeSystem
 
     override var lastLineNumber: Int = -1
 
@@ -319,8 +325,9 @@ class ExpressionCodegen(
                 mv.load(0, OBJECT_TYPE)
 
                 for (argumentIndex in 0 until expression.typeArgumentsCount) {
-                    expression.getTypeArgument(argumentIndex)?.getTypeParameterOrNull()?.takeIf { it.isReified }?.let {
-                        consumeReifiedOperationMarker(it)
+                    val classifier = expression.getTypeArgument(argumentIndex)?.classifierOrNull
+                    if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
+                        consumeReifiedOperationMarker(classifier)
                     }
                 }
             }
@@ -605,7 +612,7 @@ class ExpressionCodegen(
 
                 if (typeOperand.isReifiedTypeParameter) {
                     val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind, mv, this)
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)
                     v.checkcast(boxedRightType)
                 } else {
                     assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
@@ -618,7 +625,7 @@ class ExpressionCodegen(
                 expression.argument.accept(this, data).coerce(context.irBuiltIns.anyNType).materialize()
                 val type = typeMapper.boxType(typeOperand)
                 if (typeOperand.isReifiedTypeParameter) {
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS, mv, this)
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
                     v.instanceOf(type)
                 } else {
                     TypeIntrinsics.instanceOf(mv, kotlinType, type, state.languageVersionSettings.isReleaseCoroutines())
@@ -906,7 +913,7 @@ class ExpressionCodegen(
                 assert(classifier.owner.isReified) {
                     "Non-reified type parameter under ::class should be rejected by type checker: ${classifier.owner.dump()}"
                 }
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
             }
 
             generateClassInstance(mv, classType)
@@ -948,9 +955,9 @@ class ExpressionCodegen(
                 element.getTypeArgumentOrDefault(it)
             }
 
-        val mappings = IrTypeParameterMappings()
+        val mappings = TypeParameterMappings<IrType>()
         for ((key, type) in typeArguments.entries) {
-            val reificationArgument = extractReificationArgument(type)
+            val reificationArgument = typeMapper.typeSystem.extractReificationArgument(type)
             if (reificationArgument == null) {
                 // type is not generic
                 val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
@@ -961,7 +968,7 @@ class ExpressionCodegen(
                 )
             } else {
                 mappings.addParameterMappingForFurtherReification(
-                    key.name.identifier, type, reificationArgument, key.isReified
+                    key.name.identifier, type, reificationArgument.second, key.isReified
                 )
             }
         }
@@ -969,9 +976,8 @@ class ExpressionCodegen(
         val original = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: irFunction
         val methodOwner = callee.parent.safeAs<IrClass>()?.let(typeMapper::mapClass) ?: MethodSignatureMapper.FAKE_OWNER_TYPE
         val sourceCompiler = IrSourceCompilerForInline(state, element, this, data)
-        val typeParameterMappings = mappings.toTypeParameterMappings()
 
-        val reifiedTypeInliner = ReifiedTypeInliner(typeParameterMappings, object : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
+        val reifiedTypeInliner = ReifiedTypeInliner(mappings, object : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
             override fun putClassInstance(v: InstructionAdapter, type: IrType) {
                 generateClassInstance(v, type)
             }
@@ -980,13 +986,14 @@ class ExpressionCodegen(
         }, IrTypeCheckerContext(context.irBuiltIns), state.languageVersionSettings)
 
         return IrInlineCodegen(
-            this, state, original.descriptor, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
+            this, state, original.descriptor, methodOwner, signature, mappings, sourceCompiler, reifiedTypeInliner
         )
     }
 
-    private fun consumeReifiedOperationMarker(typeParameter: IrTypeParameter) {
-        if (typeParameter.parent != irFunction) {
-            classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.name.asString())
+    override fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
+        require(typeParameter is IrTypeParameterSymbol)
+        if (typeParameter.owner.parent != irFunction) {
+            classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
         }
     }
 
@@ -1015,128 +1022,6 @@ class ExpressionCodegen(
         return irFunction.isInline || isInlineLambda
     }
 
-    /* Borrowed and modified from compiler/backend/src/org/jetbrains/kotlin/codegen/codegenUtil.kt */
-
-    private fun extractReificationArgumentWithParameter(initialType: IrType): Pair<IrTypeParameter, IrReificationArgument>? {
-        var type = initialType
-        var arrayDepth = 0
-        val isNullable = type.isMarkedNullable()
-        while (type.isArray() || type.isNullableArray()) {
-            arrayDepth++
-            type = (type as IrSimpleType).arguments[0].safeAs<IrTypeProjection>()?.type ?: classCodegen.context.irBuiltIns.anyNType
-        }
-
-        val parameter = type.getTypeParameterOrNull() ?: return null
-
-        return Pair(parameter, IrReificationArgument(parameter.name.asString(), isNullable, arrayDepth))
-    }
-
-    private fun extractReificationArgument(initialType: IrType): IrReificationArgument? = extractReificationArgumentWithParameter(initialType)?.second
-
-    /* From ReifiedTypeInliner.kt */
-    inner class IrReificationArgument(
-        val parameterName: String, val nullable: Boolean, private val arrayDepth: Int
-    ) {
-        fun asString() = "[".repeat(arrayDepth) + parameterName + (if (nullable) "?" else "")
-        fun combine(replacement: IrReificationArgument) =
-            IrReificationArgument(
-                replacement.parameterName,
-                this.nullable || (replacement.nullable && this.arrayDepth == 0),
-                this.arrayDepth + replacement.arrayDepth
-            )
-
-        fun reify(replacementAsmType: Type, irType: IrType) =
-            Pair(
-                Type.getType("[".repeat(arrayDepth) + replacementAsmType),
-                irType.arrayOf(arrayDepth).withHasQuestionMark(nullable)
-            )
-
-        private fun IrType.arrayOf(arrayDepth: Int): IrType {
-            val builtins = classCodegen.context.irBuiltIns
-            var currentType = this
-
-            repeat(arrayDepth) {
-                currentType = builtins.arrayClass.typeWith(currentType)
-            }
-
-            return currentType
-        }
-
-        fun toReificationArgument() = ReificationArgument(parameterName, nullable, arrayDepth)
-    }
-
-    /* From ExpressionCodegen.java */
-    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(
-        type: IrType, operationKind: ReifiedTypeInliner.OperationKind, v: InstructionAdapter,
-        codegen: ExpressionCodegen?
-    ) {
-        val typeParameterAndReificationArgument = extractReificationArgumentWithParameter(type)
-        if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.first.isReified) {
-            val irTypeParameter = typeParameterAndReificationArgument.first
-            codegen?.consumeReifiedOperationMarker(irTypeParameter)
-            ReifiedTypeInliner.putReifiedOperationMarker(
-                operationKind, typeParameterAndReificationArgument.second.toReificationArgument(), v
-            )
-        }
-    }
+    private val IrType.isReifiedTypeParameter: Boolean
+        get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
 }
-
-val IrType.isReifiedTypeParameter: Boolean
-    get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
-
-/* From typeUtil.java */
-fun IrType.getTypeParameterOrNull() = classifierOrNull?.owner?.safeAs<IrTypeParameter>()
-
-/* From ReifiedTypeInliner.kt */
-class IrTypeParameterMappings {
-    private val mappingsByName = hashMapOf<String, IrTypeParameterMapping>()
-
-    fun addParameterMappingToType(name: String, type: IrType, asmType: Type, signature: String, isReified: Boolean) {
-        mappingsByName[name] = IrTypeParameterMapping(
-            name, type, asmType, reificationArgument = null, signature = signature, isReified = isReified
-        )
-    }
-
-    fun addParameterMappingForFurtherReification(
-        name: String,
-        type: IrType,
-        reificationArgument: ExpressionCodegen.IrReificationArgument,
-        isReified: Boolean
-    ) {
-        mappingsByName[name] = IrTypeParameterMapping(
-            name, type, asmType = null, reificationArgument = reificationArgument, signature = null, isReified = isReified
-        )
-    }
-
-    operator fun get(name: String): IrTypeParameterMapping? = mappingsByName[name]
-
-    fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
-
-    internal inline fun forEach(l: (IrTypeParameterMapping) -> Unit) {
-        mappingsByName.values.forEach(l)
-    }
-
-    fun toTypeParameterMappings() = TypeParameterMappings<IrType>().also { result ->
-        mappingsByName.forEach { (_, value) ->
-            if (value.asmType == null) {
-                result.addParameterMappingForFurtherReification(
-                    value.name,
-                    value.type,
-                    value.reificationArgument!!.toReificationArgument(),
-                    value.isReified
-                )
-            } else {
-                result.addParameterMappingToType(value.name, value.type, value.asmType, value.signature!!, value.isReified)
-            }
-        }
-    }
-}
-
-class IrTypeParameterMapping(
-    val name: String,
-    val type: IrType,
-    val asmType: Type?,
-    val reificationArgument: ExpressionCodegen.IrReificationArgument?,
-    val signature: String?,
-    val isReified: Boolean
-)

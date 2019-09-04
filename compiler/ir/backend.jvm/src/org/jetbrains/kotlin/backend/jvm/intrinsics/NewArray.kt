@@ -20,9 +20,7 @@ object NewArray : IntrinsicMethod() {
         return with(codegen) {
             val elementIrType = expression.type.getArrayElementType(context.irBuiltIns)
             if (expression.type.isArray()) {
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(
-                    elementIrType, ReifiedTypeInliner.OperationKind.NEW_ARRAY, mv, this
-                )
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(elementIrType, ReifiedTypeInliner.OperationKind.NEW_ARRAY)
                 mv.newarray(typeMapper.boxType(elementIrType))
             } else {
                 mv.newarray(typeMapper.mapType(elementIrType))

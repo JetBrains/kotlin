@@ -508,6 +508,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return builtIns.getArrayType(Variance.INVARIANT, componentType)
     }
 
+    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return KotlinBuiltIns.isArray(this)
+    }
+
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
         require(this is KotlinType, this::errorMessage)
         return annotations.hasAnnotation(fqName)

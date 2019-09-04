@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.types.model.*
 interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun nullableAnyType(): SimpleTypeMarker
     fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker
+    fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean
 
     fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean
 

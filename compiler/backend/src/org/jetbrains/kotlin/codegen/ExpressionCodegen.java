@@ -80,6 +80,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContextImpl;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
+import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -123,7 +124,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private final TailRecursionCodegen tailRecursionCodegen;
     public final CallGenerator defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
     private final SwitchCodegenProvider switchCodegenProvider;
-    public final TypeSystemCommonBackendContext typeSystem;
+    private final TypeSystemCommonBackendContext typeSystem;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<>();
 
@@ -2679,7 +2680,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             boolean isReified = key.isReified() || InlineUtil.isArrayConstructorWithLambda(resolvedCall.getResultingDescriptor());
 
-            Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
+            Pair<TypeParameterMarker, ReificationArgument> typeParameterAndReificationArgument =
+                    extractReificationArgument(typeSystem, type);
             if (typeParameterAndReificationArgument == null) {
                 KotlinType approximatedType = CapturedTypeApproximationKt.approximateCapturedTypes(entry.getValue()).getUpper();
                 // type is not generic
@@ -4841,19 +4843,6 @@ The "returned" value of try expression with no finally is either the last expres
         });
     }
 
-    public void putReifiedOperationMarkerIfTypeIsReifiedParameter(
-            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind
-    ) {
-        Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
-        if (typeParameterAndReificationArgument == null) return;
-
-        TypeParameterDescriptor typeParameter = typeParameterAndReificationArgument.getFirst();
-        if (typeParameter.isReified()) {
-            consumeReifiedOperationMarker(typeParameter);
-            ReifiedTypeInliner.putReifiedOperationMarker(operationKind, typeParameterAndReificationArgument.getSecond(), v);
-        }
-    }
-
     @Override
     public void propagateChildReifiedTypeParametersUsages(@NotNull ReifiedTypeParametersUsages usages) {
         parentCodegen.getReifiedTypeParametersUsages().propagateChildUsagesWithinContext(
@@ -5077,10 +5066,18 @@ The "returned" value of try expression with no finally is either the last expres
         return v;
     }
 
-    private void consumeReifiedOperationMarker(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+    @NotNull
+    @Override
+    public TypeSystemCommonBackendContext getTypeSystem() {
+        return typeSystem;
+    }
+
+    @Override
+    public void consumeReifiedOperationMarker(@NotNull TypeParameterMarker typeParameter) {
+        assert typeParameter instanceof TypeParameterDescriptor : "Type parameter should be a descriptor: " + typeParameter;
+        TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) typeParameter;
         if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
-            parentCodegen.getReifiedTypeParametersUsages().
-                    addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
+            parentCodegen.getReifiedTypeParametersUsages().addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
         }
     }
 }

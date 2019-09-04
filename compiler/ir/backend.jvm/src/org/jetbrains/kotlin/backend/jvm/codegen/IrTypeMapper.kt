@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
 
 class IrTypeMapper(private val context: JvmBackendContext) {
-    private val typeSystem = IrTypeCheckerContext(context.irBuiltIns)
+    internal val typeSystem = IrTypeCheckerContext(context.irBuiltIns)
 
     fun classInternalName(irClass: IrClass): String =
         context.getLocalClassInfo(irClass)?.internalName

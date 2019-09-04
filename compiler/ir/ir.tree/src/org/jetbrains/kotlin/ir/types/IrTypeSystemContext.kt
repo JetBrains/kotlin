@@ -273,6 +273,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker =
         irBuiltIns.arrayClass.typeWith(componentType as IrType)
 
+    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean =
+        (this as IrType).isArray() || isNullableArray()
+
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val symbol = this as IrClassifierSymbol
         return symbol is IrClassSymbol && symbol.owner.let {
