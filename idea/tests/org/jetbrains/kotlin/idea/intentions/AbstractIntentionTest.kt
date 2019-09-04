@@ -23,6 +23,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -172,9 +173,12 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
 
         try {
             if (isApplicableExpected) {
-                project.executeWriteCommand(intentionAction.text) {
-                    intentionAction.invoke(project, editor, file)
-                }
+                val action = { intentionAction.invoke(project, editor, file) }
+                if (intentionAction.startInWriteAction())
+                    project.executeWriteCommand(intentionAction.text, action)
+                else
+                    project.executeCommand(intentionAction.text, null, action)
+
                 // Don't bother checking if it should have failed.
                 if (shouldFailString.isEmpty()) {
                     for ((filePath, value) in pathToFiles) {
