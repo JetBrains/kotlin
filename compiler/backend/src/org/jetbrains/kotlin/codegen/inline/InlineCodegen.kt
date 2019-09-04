@@ -29,8 +29,10 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -127,13 +129,16 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     fun performInline(
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        typeArguments: List<TypeParameterMarker>?,
         callDefault: Boolean,
+        typeSystem: TypeSystemCommonBackendContext,
         codegen: BaseExpressionCodegen
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = createInlineMethodNode(functionDescriptor, methodOwner, jvmSignature, callDefault, typeArguments, state, sourceCompiler)
+            nodeAndSmap = createInlineMethodNode(
+                functionDescriptor, methodOwner, jvmSignature, callDefault, typeArguments, typeSystem, state, sourceCompiler
+            )
             endCall(inlineCall(nodeAndSmap, callDefault))
         } catch (e: CompilationException) {
             throw e
@@ -514,11 +519,12 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             methodOwner: Type,
             jvmSignature: JvmMethodSignature,
             callDefault: Boolean,
-            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+            typeArguments: List<TypeParameterMarker>?,
+            typeSystem: TypeSystemCommonBackendContext,
             state: GenerationState,
             sourceCompilerForInline: SourceCompilerForInline
         ): SMAPAndMethodNode {
-            val intrinsic = generateInlineIntrinsic(state, functionDescriptor, typeArguments)
+            val intrinsic = generateInlineIntrinsic(state, functionDescriptor, typeArguments, typeSystem)
             if (intrinsic != null) {
                 return SMAPAndMethodNode(intrinsic, createDefaultFakeSMAP())
             }

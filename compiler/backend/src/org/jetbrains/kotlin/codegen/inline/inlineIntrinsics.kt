@@ -15,16 +15,12 @@ import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCorouti
 import org.jetbrains.kotlin.codegen.createMethodNodeForAlwaysEnabledAssert
 import org.jetbrains.kotlin.codegen.isBuiltinAlwaysEnabledAssert
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.checkers.TypeOfChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContextImpl
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
@@ -37,19 +33,16 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 internal fun generateInlineIntrinsic(
     state: GenerationState,
     descriptor: FunctionDescriptor,
-    typeArguments: Map<TypeParameterDescriptor, KotlinType>?
+    typeParameters: List<TypeParameterMarker>?,
+    typeSystem: TypeSystemCommonBackendContext
 ): MethodNode? {
     val languageVersionSettings = state.languageVersionSettings
-    val typeMapper = state.typeMapper
-
-    // TODO
-    val typeSystem = ClassicTypeSystemContextImpl(state.module.builtIns)
 
     return when {
         isSpecialEnumMethod(descriptor) ->
-            createSpecialEnumMethodBody(descriptor.name.asString(), typeArguments!!.keys.single(), typeMapper, typeSystem)
+            createSpecialEnumMethodBody(descriptor.name.asString(), typeParameters!!.single(), typeSystem)
         TypeOfChecker.isTypeOf(descriptor) ->
-            typeSystem.createTypeOfMethodBody(typeArguments!!.keys.single())
+            typeSystem.createTypeOfMethodBody(typeParameters!!.single())
         descriptor.isBuiltInIntercepted(languageVersionSettings) ->
             createMethodNodeForIntercepted(languageVersionSettings)
         descriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
@@ -77,11 +70,10 @@ private fun isSpecialEnumMethod(descriptor: FunctionDescriptor): Boolean {
 }
 
 private fun createSpecialEnumMethodBody(
-    name: String, typeParameter: TypeParameterDescriptor, typeMapper: KotlinTypeMapper, typeSystem: TypeSystemCommonBackendContext
+    name: String, typeParameter: TypeParameterMarker, typeSystem: TypeSystemCommonBackendContext
 ): MethodNode {
     val isValueOf = "enumValueOf" == name
-    val invokeType = typeMapper.mapType(typeParameter.defaultType)
-    val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
+    val desc = getSpecialEnumFunDescriptor(ENUM_TYPE, isValueOf)
     val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", desc, null, null)
     ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(
         typeParameter, false, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, InstructionAdapter(node), typeSystem
