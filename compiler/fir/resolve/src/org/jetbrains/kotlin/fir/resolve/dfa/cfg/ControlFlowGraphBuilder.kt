@@ -77,6 +77,10 @@ class ControlFlowGraphBuilder {
         when (invocationKind) {
             InvocationKind.AT_LEAST_ONCE -> addEdge(exitNode, enterNode)
             InvocationKind.AT_MOST_ONCE -> addEdge(enterNode, exitNode)
+            InvocationKind.UNKNOWN -> {
+                addEdge(exitNode, enterNode)
+                addEdge(enterNode, exitNode)
+            }
         }
 
         functionExitNodes.push(exitNode)
