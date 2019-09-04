@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.generators.util.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
-import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
-import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
-import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
-import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
@@ -193,6 +190,11 @@ fun main(args: Array<String>) {
         testClass<AbstractIrTextTestCase> {
             model("ir/irText")
         }
+
+        testClass<AbstractIrDecompilerTestCase> {
+            model("decompiler")
+        }
+
 
         testClass<AbstractIrJsTextTestCase> {
             model("ir/irJsText")
