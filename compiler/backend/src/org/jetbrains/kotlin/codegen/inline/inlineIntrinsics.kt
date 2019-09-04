@@ -51,11 +51,11 @@ internal fun generateInlineIntrinsic(
         TypeOfChecker.isTypeOf(descriptor) ->
             typeSystem.createTypeOfMethodBody(typeArguments!!.keys.single())
         descriptor.isBuiltInIntercepted(languageVersionSettings) ->
-            createMethodNodeForIntercepted(descriptor, typeMapper, languageVersionSettings)
+            createMethodNodeForIntercepted(languageVersionSettings)
         descriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
             createMethodNodeForCoroutineContext(descriptor, languageVersionSettings)
         descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
-            createMethodNodeForSuspendCoroutineUninterceptedOrReturn(descriptor, typeMapper, languageVersionSettings)
+            createMethodNodeForSuspendCoroutineUninterceptedOrReturn(languageVersionSettings)
         descriptor.isBuiltinAlwaysEnabledAssert() ->
             createMethodNodeForAlwaysEnabledAssert(descriptor)
         else -> null

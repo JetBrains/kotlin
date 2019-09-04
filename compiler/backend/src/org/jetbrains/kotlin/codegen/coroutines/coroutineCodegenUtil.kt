@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
-import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
@@ -331,21 +330,14 @@ private fun MethodNode.invokeNormalizeContinuation(languageVersionSettings: Lang
 fun FunctionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings: LanguageVersionSettings) =
     getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) == true
 
-fun createMethodNodeForIntercepted(
-    functionDescriptor: FunctionDescriptor,
-    typeMapper: KotlinTypeMapper,
-    languageVersionSettings: LanguageVersionSettings
-): MethodNode {
-    assert(functionDescriptor.isBuiltInIntercepted(languageVersionSettings)) {
-        "functionDescriptor must be kotlin.coroutines.intrinsics.intercepted"
-    }
-
+fun createMethodNodeForIntercepted(languageVersionSettings: LanguageVersionSettings): MethodNode {
     val node =
         MethodNode(
             Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
-            typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
+            Type.getMethodDescriptor(languageVersionSettings.continuationAsmType(), languageVersionSettings.continuationAsmType()),
+            null, null
         )
 
     node.visitVarInsn(Opcodes.ALOAD, 0)
@@ -386,32 +378,25 @@ fun createMethodNodeForCoroutineContext(
     return node
 }
 
-fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
-    functionDescriptor: FunctionDescriptor,
-    typeMapper: KotlinTypeMapper,
-    languageVersionSettings: LanguageVersionSettings
-): MethodNode {
-    assert(functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings)) {
-        "functionDescriptor must be kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn"
-    }
-
+fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(languageVersionSettings: LanguageVersionSettings): MethodNode {
     val node =
         MethodNode(
             Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
-            typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
+            Type.getMethodDescriptor(OBJECT_TYPE, AsmTypes.FUNCTION1, languageVersionSettings.continuationAsmType()),
+            null, null
         )
 
     with(InstructionAdapter(node)) {
-        load(0, AsmTypes.OBJECT_TYPE) // block
-        load(1, AsmTypes.OBJECT_TYPE) // continuation
+        load(0, OBJECT_TYPE) // block
+        load(1, OBJECT_TYPE) // continuation
 
         // block.invoke(continuation)
         invokeinterface(
-            typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
+            AsmTypes.FUNCTION1.internalName,
             OperatorNameConventions.INVOKE.identifier,
-            "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}"
+            "($OBJECT_TYPE)$OBJECT_TYPE"
         )
 
         if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
@@ -421,7 +406,7 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
             loadCoroutineSuspendedMarker(languageVersionSettings)
             ifacmpne(elseLabel)
             //   DebugProbesKt.probeCoroutineSuspended(continuation)
-            load(1, AsmTypes.OBJECT_TYPE) // continuation
+            load(1, OBJECT_TYPE) // continuation
             checkcast(languageVersionSettings.continuationAsmType())
             invokestatic(
                 languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("DebugProbesKt")).topLevelClassAsmType().internalName,
@@ -468,7 +453,7 @@ fun InstructionAdapter.loadCoroutineSuspendedMarker(languageVersionSettings: Lan
     invokestatic(
         languageVersionSettings.coroutinesIntrinsicsFileFacadeInternalName().internalName,
         "get$COROUTINE_SUSPENDED_NAME",
-        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
+        Type.getMethodDescriptor(OBJECT_TYPE),
         false
     )
 }
@@ -482,7 +467,7 @@ fun InstructionAdapter.invokeDoResumeWithUnit(thisName: String) {
     invokevirtual(
         thisName,
         DO_RESUME_METHOD_NAME,
-        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.JAVA_THROWABLE_TYPE),
+        Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, AsmTypes.JAVA_THROWABLE_TYPE),
         false
     )
 }
@@ -493,7 +478,7 @@ fun InstructionAdapter.invokeInvokeSuspendWithUnit(thisName: String) {
     invokevirtual(
         thisName,
         INVOKE_SUSPEND_METHOD_NAME,
-        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE),
+        Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE),
         false
     )
 }
