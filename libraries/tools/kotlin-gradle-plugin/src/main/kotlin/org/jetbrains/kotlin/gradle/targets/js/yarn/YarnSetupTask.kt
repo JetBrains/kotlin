@@ -9,9 +9,9 @@ import de.undercouch.gradle.tasks.download.DownloadAction
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
-import javax.xml.ws.Action
 
 open class YarnSetupTask : DefaultTask() {
     private val settings = project.yarn
@@ -34,7 +34,7 @@ open class YarnSetupTask : DefaultTask() {
         }
     }
 
-    @Action
+    @TaskAction
     fun setup() {
         val dir = temporaryDir
         val tar = download(dir)
