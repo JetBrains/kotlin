@@ -122,6 +122,59 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @TestMetadata("idea/testData/multiModuleQuickFix/changeSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeSignature extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("actual")
+        public void testActual() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeSignature/actual/");
+        }
+
+        public void testAllFilesPresentInChangeSignature() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/changeSignature"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("expect")
+        public void testExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeSignature/expect/");
+        }
+
+        @TestMetadata("override")
+        public void testOverride() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeSignature/override/");
+        }
+
+        @TestMetadata("override2")
+        public void testOverride2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeSignature/override2/");
+        }
+
+        @TestMetadata("override3")
+        public void testOverride3() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeSignature/override3/");
+        }
+
+        @TestMetadata("override4")
+        public void testOverride4() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeSignature/override4/");
+        }
+
+        @TestMetadata("override5")
+        public void testOverride5() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeSignature/override5/");
+        }
+
+        @TestMetadata("override6")
+        public void testOverride6() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeSignature/override6/");
+        }
+    }
+
     @TestMetadata("idea/testData/multiModuleQuickFix/createActual")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

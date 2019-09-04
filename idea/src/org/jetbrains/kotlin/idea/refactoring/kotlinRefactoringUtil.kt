@@ -994,7 +994,7 @@ fun DialogWrapper.showWithTransaction() {
     TransactionGuard.submitTransaction(disposable, Runnable { show() })
 }
 
-fun PsiMethod.checkDeclarationConflict(name: String, conflicts: MultiMap<PsiElement, String>, callables: List<PsiElement>) {
+fun PsiMethod.checkDeclarationConflict(name: String, conflicts: MultiMap<PsiElement, String>, callables: Collection<PsiElement>) {
     containingClass
         ?.findMethodsByName(name, true)
         // as is necessary here: see KT-10386
