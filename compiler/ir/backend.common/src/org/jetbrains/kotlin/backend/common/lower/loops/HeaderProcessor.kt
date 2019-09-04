@@ -102,12 +102,12 @@ internal sealed class ForLoopHeader(
                     //   // (use `<` if last is exclusive)
                     //   (step > 0 && inductionVar <= last) || (step < 0 || last <= inductionVar)
                     val stepKotlinType = progressionType.stepType(builtIns).toKotlinType()
-                    val zero = if (progressionType == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
+                    val isLong = progressionType == ProgressionType.LONG_PROGRESSION
                     context.oror(
                         context.andand(
                             irCall(builtIns.greaterFunByOperandType[stepKotlinType]!!).apply {
                                 putValueArgument(0, irGet(step))
-                                putValueArgument(1, zero)
+                                putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },
                             irCall(compFun).apply {
                                 putValueArgument(0, irGet(inductionVariable))
@@ -116,7 +116,7 @@ internal sealed class ForLoopHeader(
                         context.andand(
                             irCall(builtIns.lessFunByOperandType[stepKotlinType]!!).apply {
                                 putValueArgument(0, irGet(step))
-                                putValueArgument(1, zero)
+                                putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },
                             irCall(compFun).apply {
                                 putValueArgument(0, irGet(last))
