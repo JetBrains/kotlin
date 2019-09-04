@@ -18,7 +18,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class PowerSaveModeNotifier implements StartupActivity.Backgroundable {
+public final class PowerSaveModeNotifier implements StartupActivity.DumbAware {
   private static final NotificationGroup POWER_SAVE_MODE = NotificationGroup.balloonGroup("Power Save Mode");
   private static final String IGNORE_POWER_SAVE_MODE = "ignore.power.save.mode";
 

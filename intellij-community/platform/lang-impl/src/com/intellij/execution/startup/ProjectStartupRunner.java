@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author Irina.Chernushina on 8/19/2015.
  */
-public class ProjectStartupRunner implements StartupActivity.Backgroundable {
+public class ProjectStartupRunner implements StartupActivity.DumbAware {
   @Override
   public void runActivity(@NotNull final Project project) {
     final ProjectStartupTaskManager projectStartupTaskManager = ProjectStartupTaskManager.getInstance(project);

@@ -22,7 +22,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class GradleUnlinkedProjectProcessor : StartupActivity.Backgroundable {
+class GradleUnlinkedProjectProcessor : StartupActivity.DumbAware {
 
   override fun runActivity(project: Project) {
     if (isEnabledNotifications(project)) {
