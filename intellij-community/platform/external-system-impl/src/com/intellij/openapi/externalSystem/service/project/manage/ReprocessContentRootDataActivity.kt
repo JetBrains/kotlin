@@ -12,7 +12,7 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 
-class ReprocessContentRootDataActivity : StartupActivity.DumbAware {
+class ReprocessContentRootDataActivity : StartupActivity.Background {
   private val LOG = Logger.getInstance(ReprocessContentRootDataActivity::class.java)
 
   override fun runActivity(project: Project) {

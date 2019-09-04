@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import org.jetbrains.annotations.NotNull;
 
-final class ExternalSystemStartupActivity implements StartupActivity.DumbAware {
+final class ExternalSystemStartupActivity implements StartupActivity.Background {
   @Override
   public void runActivity(@NotNull final Project project) {
     ExternalProjectsManagerImpl.getInstance(project).init();
