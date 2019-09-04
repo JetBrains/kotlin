@@ -12,10 +12,10 @@ import java.io.File
 import java.io.PrintStream
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
 
@@ -107,7 +107,7 @@ class MainKtsTest {
     }
 }
 
-private fun captureOut(body: () -> Unit): String {
+internal fun captureOut(body: () -> Unit): String {
     val outStream = ByteArrayOutputStream()
     val prevOut = System.out
     System.setOut(PrintStream(outStream))

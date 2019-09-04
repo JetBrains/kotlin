@@ -140,7 +140,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
             KotlinCodegenFacade.generatePackage(
                 generationState,
                 snippetKtFile.script!!.containingKtFile.packageFqName,
-                setOf(snippetKtFile.script!!.containingKtFile),
+                sourceFiles,
                 CompilationErrorHandler.THROW_EXCEPTION
             )
 

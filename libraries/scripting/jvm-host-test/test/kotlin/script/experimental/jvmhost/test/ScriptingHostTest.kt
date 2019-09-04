@@ -267,7 +267,7 @@ class ScriptingHostTest : TestCase() {
         assertTrue(res is ResultWithDiagnostics.Failure)
         val report = res.reports.find { it.message.startsWith("Source file or directory not found") }
         assertNotNull(report)
-        assertEquals("/script.kts", report?.sourcePath)
+        assertEquals("script.kts", report?.sourcePath)
     }
 
     @Test
