@@ -52,7 +52,7 @@ class ExternalProjectsDataStorageTest: UsefulTestCase() {
   }
 
   @Test
-  fun `test external project data updated before storage initialization is not lost `() = runBlocking<Unit> {
+  fun `test external project data updated before storage initialization is not lost`() = runBlocking<Unit> {
     val dataStorage = ExternalProjectsDataStorage(myFixture.project)
 
     val testSystemId = ProjectSystemId("Test")
