@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.render
 
-data class UnapprovedFirDataFlowInfo(
+data class ConditionalFirDataFlowInfo(
     val condition: Condition,
     val variable: DataFlowVariable,
     val info: FirDataFlowInfo
 ) {
-    fun invert(): UnapprovedFirDataFlowInfo {
-        return UnapprovedFirDataFlowInfo(condition.invert(), variable, info)
+    fun invert(): ConditionalFirDataFlowInfo {
+        return ConditionalFirDataFlowInfo(condition.invert(), variable, info)
     }
 
     override fun toString(): String {

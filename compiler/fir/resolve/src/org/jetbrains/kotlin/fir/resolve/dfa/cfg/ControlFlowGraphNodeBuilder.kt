@@ -41,18 +41,18 @@ abstract class ControlFlowGraphNodeBuilder {
     protected fun createJumpNode(fir: FirJump<*>): JumpNode =
         JumpNode(graph, fir, levelCounter)
 
-    protected fun createQualifiedAccessNode(
-        fir: FirQualifiedAccessExpression,
-        returnsNothing: Boolean
-    ): QualifiedAccessNode = QualifiedAccessNode(graph, fir, returnsNothing, levelCounter)
+    protected fun createQualifiedAccessNode(fir: FirQualifiedAccessExpression): QualifiedAccessNode =
+        QualifiedAccessNode(graph, fir, levelCounter)
 
     protected fun createBlockEnterNode(fir: FirBlock): BlockEnterNode = BlockEnterNode(graph, fir, levelCounter)
 
     protected fun createBlockExitNode(fir: FirBlock): BlockExitNode = BlockExitNode(graph, fir, levelCounter)
 
-    protected fun createPropertyExitNode(fir: FirProperty): PropertyExitNode = PropertyExitNode(graph, fir, levelCounter)
+    protected fun createPropertyInitializerExitNode(fir: FirProperty): PropertyInitializerExitNode =
+        PropertyInitializerExitNode(graph, fir, levelCounter)
 
-    protected fun createPropertyEnterNode(fir: FirProperty): PropertyEnterNode = PropertyEnterNode(graph, fir, levelCounter)
+    protected fun createPropertyInitializerEnterNode(fir: FirProperty): PropertyInitializerEnterNode =
+        PropertyInitializerEnterNode(graph, fir, levelCounter)
 
     protected fun createFunctionEnterNode(fir: FirFunction<*>, isInPlace: Boolean): FunctionEnterNode =
         FunctionEnterNode(graph, fir, levelCounter).also {
@@ -66,7 +66,7 @@ abstract class ControlFlowGraphNodeBuilder {
             if (!isInPlace) {
                 graph.exitNode = it
             }
-    }
+        }
 
     protected fun createBinaryOrEnterNode(fir: FirBinaryLogicExpression): BinaryOrEnterNode =
         BinaryOrEnterNode(graph, fir, levelCounter)
@@ -107,8 +107,8 @@ abstract class ControlFlowGraphNodeBuilder {
     protected fun createLoopBlockExitNode(fir: FirLoop): LoopBlockExitNode =
         LoopBlockExitNode(graph, fir, levelCounter)
 
-    protected fun createFunctionCallNode(fir: FirFunctionCall, returnsNothing: Boolean): FunctionCallNode =
-        FunctionCallNode(graph, fir, returnsNothing, levelCounter)
+    protected fun createFunctionCallNode(fir: FirFunctionCall): FunctionCallNode =
+        FunctionCallNode(graph, fir, levelCounter)
 
     protected fun createVariableAssignmentNode(fir: FirVariableAssignment): VariableAssignmentNode =
         VariableAssignmentNode(graph, fir, levelCounter)

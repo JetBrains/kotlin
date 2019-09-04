@@ -141,8 +141,8 @@ fun CFGNode<*>.render(): String =
                 is BinaryOrEnterRightOperandNode -> "Enter right part of ||"
                 is BinaryOrExitNode -> "Exit ||"
 
-                is PropertyEnterNode -> "Enter property"
-                is PropertyExitNode -> "Exit property"
+                is PropertyInitializerEnterNode -> "Enter property"
+                is PropertyInitializerExitNode -> "Exit property"
                 is InitBlockEnterNode -> "Enter init block"
                 is InitBlockExitNode -> "Exit init block"
                 is AnnotationEnterNode -> "Enter annotation"

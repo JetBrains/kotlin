@@ -31,12 +31,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     var isDead: Boolean = false
 }
 
-val CFGNode<*>.usefulFollowingNodes: List<CFGNode<*>> get() = if (isDead) followingNodes else followingNodes.filterNot { it.isDead }
-val CFGNode<*>.usefulPreviousNodes: List<CFGNode<*>> get() = if (isDead) previousNodes else previousNodes.filterNot { it.isDead }
-
-interface ReturnableNothingNode {
-    val returnsNothing: Boolean
-}
+val CFGNode<*>.aliveFollowingNodes: List<CFGNode<*>> get() = if (isDead) followingNodes else followingNodes.filterNot { it.isDead }
+val CFGNode<*>.alivePreviousNodes: List<CFGNode<*>> get() = if (isDead) previousNodes else previousNodes.filterNot { it.isDead }
 
 interface EnterNode
 interface ExitNode
@@ -48,8 +44,8 @@ class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction<*>
 
 // ----------------------------------- Property -----------------------------------
 
-class PropertyEnterNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNode<FirProperty>(owner, level), EnterNode
-class PropertyExitNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNode<FirProperty>(owner, level), ExitNode
+class PropertyInitializerEnterNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNode<FirProperty>(owner, level), EnterNode
+class PropertyInitializerExitNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNode<FirProperty>(owner, level), ExitNode
 
 // ----------------------------------- Init -----------------------------------
 
@@ -125,24 +121,20 @@ class ConstExpressionNode(owner: ControlFlowGraph, override val fir: FirConstExp
 class QualifiedAccessNode(
     owner: ControlFlowGraph,
     override val fir: FirQualifiedAccessExpression,
-    override val returnsNothing: Boolean,
     level: Int
-) : CFGNode<FirQualifiedAccessExpression>(owner, level), ReturnableNothingNode
+) : CFGNode<FirQualifiedAccessExpression>(owner, level)
 
 class FunctionCallNode(
     owner: ControlFlowGraph,
     override val fir: FirFunctionCall,
-    override val returnsNothing: Boolean,
     level: Int
-) : CFGNode<FirFunctionCall>(owner, level), ReturnableNothingNode
+) : CFGNode<FirFunctionCall>(owner, level)
 
 class ThrowExceptionNode(
     owner: ControlFlowGraph,
     override val fir: FirThrowExpression,
     level: Int
-) : CFGNode<FirThrowExpression>(owner, level), ReturnableNothingNode {
-    override val returnsNothing: Boolean get() = true
-}
+) : CFGNode<FirThrowExpression>(owner, level)
 
 class StubNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level) {
     init {

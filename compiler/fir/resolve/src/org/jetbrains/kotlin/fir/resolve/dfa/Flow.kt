@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import com.google.common.collect.HashMultimap
 
 class Flow(
-    val approvedFacts: MutableMap<DataFlowVariable, FirDataFlowInfo> = mutableMapOf(),
-    val notApprovedFacts: HashMultimap<DataFlowVariable, UnapprovedFirDataFlowInfo> = HashMultimap.create(),
+    val approvedInfos: MutableMap<DataFlowVariable, FirDataFlowInfo> = mutableMapOf(),
+    val conditionalInfos: HashMultimap<DataFlowVariable, ConditionalFirDataFlowInfo> = HashMultimap.create(),
     private var state: State = State.Building
 ) {
     private val isFrozen: Boolean get() = state == State.Frozen
@@ -20,46 +20,46 @@ class Flow(
 
     fun addApprovedFact(variable: DataFlowVariable, info: FirDataFlowInfo): Flow {
         if (isFrozen) return copyForBuilding().addApprovedFact(variable, info)
-        approvedFacts.compute(variable) { _, existingInfo ->
+        approvedInfos.compute(variable) { _, existingInfo ->
             if (existingInfo == null) info
             else existingInfo + info
         }
         return this
     }
 
-    fun addNotApprovedFact(variable: DataFlowVariable, info: UnapprovedFirDataFlowInfo): Flow {
+    fun addNotApprovedFact(variable: DataFlowVariable, info: ConditionalFirDataFlowInfo): Flow {
         if (isFrozen) return copyForBuilding().addNotApprovedFact(variable, info)
-        notApprovedFacts.put(variable, info)
+        conditionalInfos.put(variable, info)
         return this
     }
 
     fun copyNotApprovedFacts(
         from: DataFlowVariable,
         to: DataFlowVariable,
-        transform: ((UnapprovedFirDataFlowInfo) -> UnapprovedFirDataFlowInfo)? = null
+        transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo)? = null
     ): Flow {
         if (isFrozen)
             return copyForBuilding().copyNotApprovedFacts(from, to, transform)
         var facts = if (from.isSynthetic) {
-            notApprovedFacts.removeAll(from)
+            conditionalInfos.removeAll(from)
         } else {
-            notApprovedFacts[from]
+            conditionalInfos[from]
         }
         if (transform != null) {
             facts = facts.mapTo(mutableSetOf(), transform)
         }
-        notApprovedFacts.putAll(to, facts)
+        conditionalInfos.putAll(to, facts)
         return this
     }
 
     fun approvedFacts(variable: DataFlowVariable): FirDataFlowInfo? {
-        return approvedFacts[variable]
+        return approvedInfos[variable]
     }
 
     fun removeVariableFromFlow(variable: DataFlowVariable): Flow {
         if (isFrozen) return copyForBuilding().removeVariableFromFlow(variable)
-        notApprovedFacts.removeAll(variable)
-        approvedFacts.remove(variable)
+        conditionalInfos.removeAll(variable)
+        approvedInfos.remove(variable)
         return this
     }
 
@@ -79,7 +79,7 @@ class Flow(
     }
 
     fun copyForBuilding(): Flow {
-        return Flow(approvedFacts.toMutableMap(), notApprovedFacts.copy(), State.Building)
+        return Flow(approvedInfos.toMutableMap(), conditionalInfos.copy(), State.Building)
     }
 }
 

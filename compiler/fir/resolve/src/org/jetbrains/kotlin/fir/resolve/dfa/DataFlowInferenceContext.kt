@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 
 interface DataFlowInferenceContext : TypeSystemCommonSuperTypesContext, ConeInferenceContext {
-    fun myCommonSuperType(types: List<ConeKotlinType>): ConeKotlinType? {
+    fun commonSuperTypeOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
         return when (types.size) {
             0 -> null
             1 -> types.first()
@@ -22,7 +22,7 @@ interface DataFlowInferenceContext : TypeSystemCommonSuperTypesContext, ConeInfe
         }
     }
 
-    fun myIntersectTypes(types: List<ConeKotlinType>): ConeKotlinType? {
+    fun intersectTypesOrNull(types: List<ConeKotlinType>): ConeKotlinType? {
         return when (types.size) {
             0 -> null
             1 -> types.first()
@@ -43,7 +43,7 @@ interface DataFlowInferenceContext : TypeSystemCommonSuperTypesContext, ConeInfe
         val commonTypes = allTypes.toMutableSet()
         types.forEach { commonTypes.retainAll(it) }
         val differentTypes = allTypes - commonTypes
-        myCommonSuperType(differentTypes.toList())?.let { commonTypes += it }
+        commonSuperTypeOrNull(differentTypes.toList())?.let { commonTypes += it }
         return commonTypes
     }
 

@@ -14,28 +14,27 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
         storages.singleOrNull()?.let {
             return it
         }
-        val approvedFacts = mutableMapOf<DataFlowVariable, FirDataFlowInfo>().apply {
-            storages.map { it.approvedFacts.keys }
-                .intersectSets()
-                .forEach { variable ->
-                    val infos = storages.map { it.approvedFacts[variable]!! }
-                    if (infos.isNotEmpty()) {
-                        this[variable] = context.or(infos)
-                    }
+        val approvedFacts = mutableMapOf<DataFlowVariable, FirDataFlowInfo>()
+        storages.map { it.approvedInfos.keys }
+            .intersectSets()
+            .forEach { variable ->
+                val infos = storages.map { it.approvedInfos[variable]!! }
+                if (infos.isNotEmpty()) {
+                    approvedFacts[variable] = context.or(infos)
                 }
-        }
-
-        val notApprovedFacts = HashMultimap.create<DataFlowVariable, UnapprovedFirDataFlowInfo>()
-            .apply {
-                storages.map { it.notApprovedFacts.keySet() }
-                    .intersectSets()
-                    .forEach { variable ->
-                        val infos = storages.map { it.notApprovedFacts[variable] }.intersectSets()
-                        if (infos.isNotEmpty()) {
-                            this.putAll(variable, infos)
-                        }
-                    }
             }
+
+
+        val notApprovedFacts = HashMultimap.create<DataFlowVariable, ConditionalFirDataFlowInfo>()
+        storages.map { it.conditionalInfos.keySet() }
+            .intersectSets()
+            .forEach { variable ->
+                val infos = storages.map { it.conditionalInfos[variable] }.intersectSets()
+                if (infos.isNotEmpty()) {
+                    notApprovedFacts.putAll(variable, infos)
+                }
+            }
+
         return Flow(approvedFacts, notApprovedFacts)
     }
 
@@ -70,7 +69,7 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
     }
 
     fun approveFactsInsideFlow(variable: DataFlowVariable, condition: Condition, flow: Flow): Pair<Flow, Collection<DataFlowVariable>> {
-        val notApprovedFacts: Set<UnapprovedFirDataFlowInfo> = flow.notApprovedFacts[variable]
+        val notApprovedFacts: Set<ConditionalFirDataFlowInfo> = flow.conditionalInfos[variable]
         if (notApprovedFacts.isEmpty()) {
             return flow to emptyList()
         }
@@ -87,10 +86,10 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
         newFacts.asMap().forEach { (variable, infos) ->
             @Suppress("NAME_SHADOWING")
             val infos = ArrayList(infos)
-            flow.approvedFacts[variable]?.let {
+            flow.approvedInfos[variable]?.let {
                 infos.add(it)
             }
-            flow.approvedFacts[variable] = context.and(infos)
+            flow.approvedInfos[variable] = context.and(infos)
             if (variable.isThisReference) {
                 updatedReceivers += variable
             }
@@ -99,7 +98,7 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
     }
 
     fun approveFact(variable: DataFlowVariable, condition: Condition, flow: Flow): MutableMap<DataFlowVariable, FirDataFlowInfo> {
-        val notApprovedFacts: Set<UnapprovedFirDataFlowInfo> = flow.notApprovedFacts[variable]
+        val notApprovedFacts: Set<ConditionalFirDataFlowInfo> = flow.conditionalInfos[variable]
         if (notApprovedFacts.isEmpty()) {
             return mutableMapOf()
         }

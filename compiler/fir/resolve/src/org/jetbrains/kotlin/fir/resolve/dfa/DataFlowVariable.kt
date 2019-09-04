@@ -6,43 +6,32 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirThisReference
-import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 /*
  * isSynthetic = false for variables that represents actual variables in fir
  * isSynthetic = true for complex expressions (like when expression)
  */
-sealed class DataFlowVariable(val index: Int, val fir: FirElement) {
+sealed class DataFlowVariable(val variableIndexForDebug: Int, val fir: FirElement) {
     abstract val isSynthetic: Boolean
-    abstract val real: DataFlowVariable
+    abstract val aliasedVariable: DataFlowVariable
     abstract val isThisReference: Boolean
 
-    final override fun hashCode(): Int {
-        return index
-    }
-
-    final override fun equals(other: Any?): Boolean {
-        if (other !is DataFlowVariable) return false
-        return index == other.index
-    }
-
     final override fun toString(): String {
-        return "d$index"
+        return "d$variableIndexForDebug"
     }
 }
 
 private class RealDataFlowVariable(index: Int, fir: FirElement, override val isThisReference: Boolean) : DataFlowVariable(index, fir) {
     override val isSynthetic: Boolean get() = false
 
-    override val real: DataFlowVariable get() = this
+    override val aliasedVariable: DataFlowVariable get() = this
 }
 
 private class SyntheticDataFlowVariable(index: Int, fir: FirElement) : DataFlowVariable(index, fir) {
     override val isSynthetic: Boolean get() = true
 
-    override val real: DataFlowVariable get() = this
+    override val aliasedVariable: DataFlowVariable get() = this
 
     override val isThisReference: Boolean get() = false
 }
@@ -50,7 +39,7 @@ private class SyntheticDataFlowVariable(index: Int, fir: FirElement) : DataFlowV
 private class AliasedDataFlowVariable(index: Int, fir: FirElement, var delegate: DataFlowVariable) : DataFlowVariable(index, fir) {
     override val isSynthetic: Boolean get() = delegate.isSynthetic
 
-    override val real: DataFlowVariable get() = delegate.real
+    override val aliasedVariable: DataFlowVariable get() = delegate.aliasedVariable
 
     override val isThisReference: Boolean get() = false
 }
@@ -58,7 +47,7 @@ private class AliasedDataFlowVariable(index: Int, fir: FirElement, var delegate:
 
 class DataFlowVariableStorage {
     private val fir2DfiMap: MutableMap<FirElement, DataFlowVariable> = mutableMapOf()
-    private var counter: Int = 1
+    private var debugIndexCounter: Int = 1
 
     fun getOrCreateNewRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable {
         return getOrCreateNewRealVariableImpl(symbol, false)
@@ -71,12 +60,12 @@ class DataFlowVariableStorage {
     private fun getOrCreateNewRealVariableImpl(symbol: FirBasedSymbol<*>, isThisReference: Boolean): DataFlowVariable {
         val fir = symbol.fir
         get(fir)?.let { return it }
-        return RealDataFlowVariable(counter++, fir, isThisReference).also { storeVariable(it, fir) }
+        return RealDataFlowVariable(debugIndexCounter++, fir, isThisReference).also { storeVariable(it, fir) }
     }
 
     fun getOrCreateNewSyntheticVariable(fir: FirElement): DataFlowVariable {
         get(fir)?.let { return it }
-        return SyntheticDataFlowVariable(counter++, fir).also { storeVariable(it, fir) }
+        return SyntheticDataFlowVariable(debugIndexCounter++, fir).also { storeVariable(it, fir) }
     }
 
     fun createAliasVariable(symbol: FirBasedSymbol<*>, variable: DataFlowVariable) {
@@ -84,7 +73,7 @@ class DataFlowVariableStorage {
     }
 
     private fun createAliasVariable(fir: FirElement, variable: DataFlowVariable) {
-        AliasedDataFlowVariable(counter++, fir, variable).also { storeVariable(it, fir) }
+        AliasedDataFlowVariable(debugIndexCounter++, fir, variable).also { storeVariable(it, fir) }
     }
 
     fun rebindAliasVariable(aliasVariable: DataFlowVariable, newVariable: DataFlowVariable) {
@@ -122,7 +111,7 @@ class DataFlowVariableStorage {
 
     fun reset() {
         fir2DfiMap.clear()
-        counter = 1
+        debugIndexCounter = 1
     }
 
     private fun storeVariable(variable: DataFlowVariable, fir: FirElement) {
