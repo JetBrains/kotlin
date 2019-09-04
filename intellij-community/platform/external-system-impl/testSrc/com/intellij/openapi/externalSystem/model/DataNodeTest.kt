@@ -6,6 +6,7 @@ import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.serialization.ObjectSerializer
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.BDDAssertions.then
 import org.junit.Before
 import org.junit.Test
 import java.io.Serializable
@@ -102,6 +103,22 @@ class DataNodeTest {
     val dataNode = wrapAndDeserialize(proxy, javaClass.classLoader)
     val counter = dataNode.data as Counter
     assertThat(counter.incrementAndGet()).isEqualTo(2)
+  }
+
+  @Test
+  fun `test DataNode visit allows children modification`() {
+    val key = Key.create(Object::class.java, 0)
+    val parent = DataNode(key, Object(), null)
+    val child1 = DataNode(key, Object(), parent)
+    val child2 = DataNode(key, Object(), parent)
+    with(parent) {
+      addChild(child1)
+      addChild(child2)
+    }
+
+    parent.visit { if (it == child1) { it.clear(true) } }
+
+    then(parent.children).containsExactly(child2)
   }
 
   private fun wrapAndDeserialize(barObject: Any, classLoader: ClassLoader): DataNode<*> {
