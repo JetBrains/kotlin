@@ -19,7 +19,6 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
@@ -34,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.plaf.TextUI;
 import javax.swing.text.AttributeSet;
@@ -59,7 +57,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
   private final boolean mySearchMode;
   private final boolean myInfoMode;
   private final JLabel myInfoLabel;
-  private JPanel myIconsPanel = null;
+  private final JPanel myIconsPanel;
   private final ActionButton myNewLineButton;
   private final ActionButton myClearButton;
   private final JBScrollPane myScrollPane;
@@ -330,9 +328,6 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
     myInfoLabel.setText(info);
   }
 
-  private static final Color enabledBorderColor = new JBColor(Gray._196, Gray._100);
-  private static final Color disabledBorderColor = Gray._83;
-
   @Override
   public void paint(Graphics graphics) {
     Graphics2D g = (Graphics2D)graphics.create();
@@ -362,7 +357,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
       FindInProjectSettings findInProjectSettings = FindInProjectSettings.getInstance(e.getProject());
       String[] recent = mySearchMode ? findInProjectSettings.getRecentFindStrings()
                                      : findInProjectSettings.getRecentReplaceStrings();
-      JBList historyList = new JBList((Object[])ArrayUtil.reverseArray(recent));
+      JBList<String> historyList = new JBList<>(ArrayUtil.reverseArray(recent));
       Utils.showCompletionPopup(SearchTextArea.this, historyList, null, myTextArea, null);
     }
   }
@@ -432,7 +427,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
   private class MacLafHelper extends LafHelper {
     @Override
     Border getBorder() {
-      return new EmptyBorder(3 + Math.max(0, JBUIScale.scale(16) - UIUtil.getLineHeight(myTextArea)) / 2, 6, 4, 4);
+      return JBUI.Borders.empty(3 + Math.max(0, JBUIScale.scale(16) - UIUtil.getLineHeight(myTextArea)) / 2, 6, 4, 4);
     }
 
     @Override
