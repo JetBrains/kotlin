@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.coroutines.createCustomCopy
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JVMAssertionsMode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.isTopLevelInPackage
@@ -48,22 +47,17 @@ fun FunctionDescriptor.isBuiltinAlwaysEnabledAssert() =
 fun FieldInsnNode.isCheckAssertionsStatus() =
     opcode == Opcodes.GETSTATIC && name == ASSERTIONS_DISABLED_FIELD_NAME && desc == Type.BOOLEAN_TYPE.descriptor
 
-fun createMethodNodeForAlwaysEnabledAssert(
-    functionDescriptor: FunctionDescriptor,
-    typeMapper: KotlinTypeMapper
-): MethodNode {
-    assert(functionDescriptor.isBuiltinAlwaysEnabledAssert()) {
-        "functionDescriptor must be kotlin.alwaysEnabledAssert, but got $functionDescriptor"
+fun createMethodNodeForAlwaysEnabledAssert(functionDescriptor: FunctionDescriptor): MethodNode {
+    val signature = when {
+        functionDescriptor.isBuiltinAlwaysEnabledAssertWithLambda() ->
+            Type.getMethodDescriptor(Type.VOID_TYPE, Type.BOOLEAN_TYPE, AsmTypes.FUNCTION0)
+        functionDescriptor.isBuiltinAlwaysEnabledAssertWithoutLambda() ->
+            Type.getMethodDescriptor(Type.VOID_TYPE, Type.BOOLEAN_TYPE)
+        else ->
+            error("functionDescriptor must be kotlin.alwaysEnabledAssert, but got $functionDescriptor")
     }
 
-    val node =
-        org.jetbrains.org.objectweb.asm.tree.MethodNode(
-            Opcodes.API_VERSION,
-            Opcodes.ACC_STATIC,
-            "fake",
-            typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
-        )
-
+    val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", signature, null, null)
     val v = InstructionAdapter(node)
     val returnLabel = Label()
 

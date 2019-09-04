@@ -39,6 +39,7 @@ public class AsmTypes {
 
     public static final Type RESULT_FAILURE = Type.getObjectType("kotlin/Result$Failure");
 
+    public static final Type FUNCTION0 = Type.getObjectType("kotlin/jvm/functions/Function0");
     public static final Type FUNCTION1 = Type.getObjectType("kotlin/jvm/functions/Function1");
 
     public static final Type[] PROPERTY_REFERENCE_IMPL = {

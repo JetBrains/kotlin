@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
-import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm
 import org.jetbrains.kotlin.codegen.createMethodNodeForAlwaysEnabledAssert
 import org.jetbrains.kotlin.codegen.isBuiltinAlwaysEnabledAssert
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -52,7 +51,7 @@ internal fun generateInlineIntrinsic(
         descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
             createMethodNodeForSuspendCoroutineUninterceptedOrReturn(descriptor, typeMapper, languageVersionSettings)
         descriptor.isBuiltinAlwaysEnabledAssert() ->
-            createMethodNodeForAlwaysEnabledAssert(descriptor, typeMapper)
+            createMethodNodeForAlwaysEnabledAssert(descriptor)
         else -> null
     }
 }
