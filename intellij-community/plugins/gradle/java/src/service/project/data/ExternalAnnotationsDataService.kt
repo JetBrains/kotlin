@@ -21,9 +21,7 @@ import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
-import org.jetbrains.plugins.gradle.settings.GradleSettings
 
 @Order(value = ExternalSystemConstants.UNORDERED)
 class ExternalAnnotationsDataService: AbstractProjectDataService<LibraryData, Library>() {
@@ -37,7 +35,6 @@ class ExternalAnnotationsDataService: AbstractProjectDataService<LibraryData, Li
                                project: Project,
                                modelsProvider: IdeModelsProvider) {
 
-    if (resolvers.isEmpty()) { return }
     val providedAnnotations = imported.mapNotNull {
       val libData = it.data
       val lib = modelsProvider.getLibraryByName(libData.internalName) ?: return@mapNotNull null
@@ -45,46 +42,6 @@ class ExternalAnnotationsDataService: AbstractProjectDataService<LibraryData, Li
     }.toMap()
 
     resolveProvidedAnnotations(providedAnnotations, resolvers, project)
-
-    if (!Registry.`is`("external.system.import.resolve.annotations")) {
-      return
-    }
-    if (imported.isEmpty()) {
-      return
-    }
-
-    projectData?.apply {
-      val importRepositories =
-        GradleSettings
-          .getInstance(project)
-          .linkedProjectsSettings
-          .find { settings -> settings.externalProjectPath == linkedExternalProjectPath }
-          ?.isResolveExternalAnnotations ?: false
-
-      if (!importRepositories) {
-        return
-      }
-    }
-
-    val totalSize = imported.size
-
-    runBackgroundableTask("Resolving external annotations", project) { indicator ->
-      indicator.isIndeterminate = false
-      imported.forEachIndexed { index, dataNode ->
-        if (indicator.isCanceled) {
-          return@runBackgroundableTask
-        }
-        val libraryData = dataNode.data
-        val libraryName = libraryData.internalName
-        val library = modelsProvider.getLibraryByName(libraryName)
-        if (library != null) {
-          indicator.text = "Looking for annotations for '$libraryName'"
-          val mavenId = "${libraryData.groupId}:${libraryData.artifactId}:${libraryData.version}"
-          resolvers.fold(false) {acc, res -> acc || res.resolve(project, library, mavenId) }
-        }
-        indicator.fraction = (index + 1) / totalSize.toDouble()
-      }
-    }
   }
   companion object {
     val LOG = Logger.getInstance(ExternalAnnotationsDataService::class.java)
