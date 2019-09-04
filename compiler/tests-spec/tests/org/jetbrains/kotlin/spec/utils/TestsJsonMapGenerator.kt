@@ -10,13 +10,17 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTest
+import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTest.Companion.getInstanceForImplementationTest
 import org.jetbrains.kotlin.spec.utils.models.SpecPlace
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
+import org.jetbrains.kotlin.spec.utils.parsers.ImplementationTestPatterns
 import java.io.File
 
 object TestsJsonMapGenerator {
     private const val LINKED_TESTS_PATH = "linked"
-    private const val TESTS_MAP_FILENAME = "testsMap.json"
+    const val TESTS_MAP_FILENAME = "testsMap.json"
+
+    private val testsMap = JsonObject()
 
     private inline fun <reified T : JsonElement> JsonObject.getOrCreate(key: String): T {
         if (!has(key)) {
@@ -46,11 +50,9 @@ object TestsJsonMapGenerator {
             )
         }
 
-    fun buildTestsMapPerSection() {
-        val testsMap = JsonObject()
-
+    private fun collectInfoFromSpecTests() {
         TestArea.values().forEach { testArea ->
-            File("${GeneralConfiguration.TESTDATA_PATH}/${testArea.testDataPath}/$LINKED_TESTS_PATH").walkTopDown()
+            File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/$LINKED_TESTS_PATH").walkTopDown()
                 .forEach testFiles@{ file ->
                     if (!file.isFile || file.extension != "kt") return@testFiles
 
@@ -68,11 +70,57 @@ object TestsJsonMapGenerator {
                     }
                 }
         }
+    }
+
+    private fun collectInfoFromImplementationTests() {
+        TestArea.values().forEach { testArea ->
+            File("${GeneralConfiguration.TESTDATA_PATH}/${testArea.testDataPath}").walkTopDown()
+                .forEach testFiles@{ file ->
+                    if (!file.isFile || file.extension != "kt") return@testFiles
+
+                    val matcher = ImplementationTestPatterns.testInfoPattern.matcher(file.readText())
+
+                    if (!matcher.find()) return@testFiles
+
+                    val specVersion = matcher.group("specVersion")
+                    val testType = TestType.fromValue(matcher.group("testType"))!!
+                    val testSpecSentenceList = matcher.group("testSpecSentenceList")
+                    val specSentenceListMatcher = ImplementationTestPatterns.relevantSpecSentencesPattern.matcher(testSpecSentenceList)
+                    val specPlaces = mutableSetOf<SpecPlace>()
+
+                    while (specSentenceListMatcher.find()) {
+                        specPlaces.add(
+                            SpecPlace(
+                                sections = specSentenceListMatcher.group("specSections").split(Regex(""",\s*""")),
+                                paragraphNumber = specSentenceListMatcher.group("specParagraph").toInt(),
+                                sentenceNumber = specSentenceListMatcher.group("specSentence").toInt()
+                            )
+                        )
+                    }
+
+                    specPlaces.forEach { specPlace ->
+                        testsMap.getOrCreateSpecTestObject(specPlace, testArea, testType).add(
+                            getTestInfo(
+                                getInstanceForImplementationTest(specVersion, testArea, testType, specPlace, file.nameWithoutExtension),
+                                file
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    fun buildTestsMapPerSection() {
+        collectInfoFromSpecTests()
+        collectInfoFromImplementationTests()
 
         val gson = GsonBuilder().setPrettyPrinting().create()
 
         testsMap.keySet().forEach { testPath ->
-            File("${GeneralConfiguration.TESTDATA_PATH}/$testPath/$TESTS_MAP_FILENAME").writeText(gson.toJson(testsMap.get(testPath)))
+            val testMapFolder = "${GeneralConfiguration.SPEC_TESTDATA_PATH}/$testPath"
+
+            File(testMapFolder).mkdirs()
+            File("$testMapFolder/$TESTS_MAP_FILENAME").writeText(gson.toJson(testsMap.get(testPath)))
         }
     }
 }

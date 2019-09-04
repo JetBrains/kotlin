@@ -1,0 +1,24 @@
+{
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Kt10811",
+          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Kt10811",
+          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

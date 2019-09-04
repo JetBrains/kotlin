@@ -1,3 +1,11 @@
+/*
+ * RELEVANT SPEC SENTENCES (spec version: 0.1-155, test type: pos):
+ *  - expressions, when-expression -> paragraph 5 -> sentence 1
+ *  - expressions, when-expression -> paragraph 9 -> sentence 1
+ *  - expressions, when-expression -> paragraph 2 -> sentence 4
+ *  - expressions, when-expression -> paragraph 2 -> sentence 5
+ */
+
 package test
 
 const val four = 4

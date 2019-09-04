@@ -1,0 +1,206 @@
+{
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning null",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarning.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive val over conditional init",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning false",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningFalse.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive var over conditional init",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveVarOverConditionalInit.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Property not initialized",
+          "path": "compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning else",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningElse.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning null",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarning.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive val over conditional init",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning false",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningFalse.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive var over conditional init",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveVarOverConditionalInit.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Property not initialized",
+          "path": "compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning else",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningElse.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive nullable",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive initialization",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive no initialization",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive nullable",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive initialization",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive no initialization",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "3": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive val over conditional init",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning false",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningFalse.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive var over conditional init",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveVarOverConditionalInit.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Property not initialized",
+          "path": "compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning else",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningElse.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive val over conditional init",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

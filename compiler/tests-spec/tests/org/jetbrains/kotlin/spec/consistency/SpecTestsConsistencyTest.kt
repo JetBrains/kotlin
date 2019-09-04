@@ -37,11 +37,11 @@ class SpecTestsConsistencyTest : TestCase() {
 
             TestArea.values().forEach { testArea ->
                 val testDataPath =
-                    "${GeneralConfiguration.TESTDATA_PATH}/${testArea.testDataPath}/${SpecTestLinkedType.LINKED.testDataPath}"
+                    "${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/${SpecTestLinkedType.LINKED.testDataPath}"
 
                 testFiles += File(testDataPath).let { testsDir ->
                     testsDir.walkTopDown().filter { it.extension == "kt" }.map {
-                        arrayOf(it.relativeTo(File(GeneralConfiguration.TESTDATA_PATH)).path.replace("/", "$"))
+                        arrayOf(it.relativeTo(File(GeneralConfiguration.SPEC_TESTDATA_PATH)).path.replace("/", "$"))
                     }.toList()
                 }
             }
@@ -52,7 +52,7 @@ class SpecTestsConsistencyTest : TestCase() {
 
     @Test
     fun doTest() {
-        val file = File("${GeneralConfiguration.TESTDATA_PATH}/${testFilePath.replace("$", "/")}")
+        val file = File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testFilePath.replace("$", "/")}")
         val specSentences = specSentencesStorage.getLatest() ?: return
         val test = parseLinkedSpecTest(file.canonicalPath, mapOf("main" to file.readText()))
         val sectionsPath = setOf(*test.place.sections.toTypedArray(), test.place.paragraphNumber).joinToString()
