@@ -379,14 +379,18 @@ fun serializeModuleIntoKlib(
     val additionalFiles = mutableListOf<KotlinFileSerializedData>()
 
     for ((ktFile, binaryFile) in files.zip(serializedIr.files)) {
-        val ioFile = VfsUtilCore.virtualToIoFile(ktFile.virtualFile)
-        assert(ioFile.path == binaryFile.path) { "The Kt and Ir files are put in different order" }
+        assert(ktFile.virtualFilePath == binaryFile.path) {
+            """The Kt and Ir files are put in different order
+                Kt: ${ktFile.virtualFilePath}
+                Ir: ${binaryFile.path}
+            """.trimMargin()
+        }
         val memberScope = ktFile.declarations.map { getDescriptorForElement(bindingContext, it) }
         val packageFragment = serializeScope(ktFile.packageFqName, memberScope)
         val compiledKotlinFile = KotlinFileSerializedData(packageFragment, binaryFile)
 
         additionalFiles += compiledKotlinFile
-        processCompiledFileData(ioFile, compiledKotlinFile)
+        processCompiledFileData(VfsUtilCore.virtualToIoFile(ktFile.virtualFile), compiledKotlinFile)
     }
 
     incrementalResultsConsumer?.run {
