@@ -9,7 +9,6 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
@@ -23,7 +22,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class GradleUnlinkedProjectProcessor : StartupActivity, DumbAware {
+class GradleUnlinkedProjectProcessor : StartupActivity.Backgroundable {
 
   override fun runActivity(project: Project) {
     if (isEnabledNotifications(project)) {

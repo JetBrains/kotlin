@@ -13,7 +13,6 @@ import com.intellij.openapi.compiler.CompilerBundle
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.CompilerProjectExtension
@@ -29,7 +28,7 @@ import java.io.File
  * Shows notification which suggests to delete stale output directories corresponding to renamed or deleted modules. Such directories may
  * be kept on disk because of a bug (https://youtrack.jetbrains.com/issue/IDEA-185574) in previous IntelliJ IDEA versions.
  */
-class CleanStaleModuleOutputsActivity : StartupActivity, DumbAware {
+class CleanStaleModuleOutputsActivity : StartupActivity.Backgroundable {
   override fun runActivity(project: Project) {
     val markerFile = File(BuildManager.getInstance().getProjectSystemDirectory(project), "stale_outputs_checked")
     if (markerFile.exists()) return

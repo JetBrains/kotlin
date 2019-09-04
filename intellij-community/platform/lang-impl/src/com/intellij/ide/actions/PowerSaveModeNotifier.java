@@ -9,7 +9,6 @@ import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -19,7 +18,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class PowerSaveModeNotifier implements StartupActivity, DumbAware {
+public final class PowerSaveModeNotifier implements StartupActivity.Backgroundable {
   private static final NotificationGroup POWER_SAVE_MODE = NotificationGroup.balloonGroup("Power Save Mode");
   private static final String IGNORE_POWER_SAVE_MODE = "ignore.power.save.mode";
 

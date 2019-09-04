@@ -9,11 +9,10 @@ import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 
-class ReprocessContentRootDataActivity : StartupActivity, DumbAware {
+class ReprocessContentRootDataActivity : StartupActivity.Backgroundable {
   private val LOG = Logger.getInstance(ReprocessContentRootDataActivity::class.java)
 
   override fun runActivity(project: Project) {

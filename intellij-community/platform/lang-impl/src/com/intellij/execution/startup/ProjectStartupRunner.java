@@ -7,7 +7,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.ui.MessageType;
@@ -21,7 +20,7 @@ import java.util.List;
 /**
  * @author Irina.Chernushina on 8/19/2015.
  */
-public class ProjectStartupRunner implements StartupActivity, DumbAware {
+public class ProjectStartupRunner implements StartupActivity.Backgroundable {
   @Override
   public void runActivity(@NotNull final Project project) {
     final ProjectStartupTaskManager projectStartupTaskManager = ProjectStartupTaskManager.getInstance(project);
