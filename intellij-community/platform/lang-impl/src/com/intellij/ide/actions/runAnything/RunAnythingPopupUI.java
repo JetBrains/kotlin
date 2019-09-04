@@ -100,6 +100,8 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private Project myProject;
   private Module myModule;
 
+  private RunAnythingChooseContextAction.RunAnythingContext myExecutionContext = RunAnythingChooseContextAction.RunAnythingContext.ProjectContext.INSTANCE;
+
   private void onMouseClicked(@NotNull MouseEvent event) {
     int clickCount = event.getClickCount();
     if (clickCount > 1 && clickCount % 2 == 0) {
@@ -170,8 +172,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
             myAlarm.cancelAllRequests();
 
             ApplicationManager.getApplication().invokeLater(() -> ActionToolbarImpl.updateAllToolbarsImmediately());
-
-            searchFinishedHandler.run();
           }
           finally {
             result.setDone();
@@ -910,9 +910,21 @@ public class RunAnythingPopupUI extends BigPopupUI {
     res.setOpaque(false);
 
     DefaultActionGroup actionGroup = new DefaultActionGroup();
+    actionGroup.addAction(new RunAnythingChooseContextAction(){
+      @Override
+      public void setCurrentContext(@NotNull RunAnythingContext context) {
+        myExecutionContext = context;
+      }
+
+      @NotNull
+      @Override
+      public RunAnythingContext getCurrentContext() {
+        return myExecutionContext;
+      }
+    });
     actionGroup.addAction(new RunAnythingShowFilterAction());
 
-    ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("search.everywhere.toolbar", actionGroup, true);
+    ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("run.anything.toolbar", actionGroup, true);
     toolbar.setLayoutPolicy(ActionToolbar.NOWRAP_LAYOUT_POLICY);
     toolbar.updateActionsImmediately();
     JComponent toolbarComponent = toolbar.getComponent();
