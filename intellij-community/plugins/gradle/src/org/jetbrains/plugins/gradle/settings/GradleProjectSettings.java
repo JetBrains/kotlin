@@ -34,7 +34,7 @@ public class GradleProjectSettings extends ExternalProjectSettings {
   @Nullable private DistributionType distributionType;
   private boolean disableWrapperSourceDistributionNotification;
   private boolean resolveModulePerSourceSet = ExternalSystemApiUtil.isJavaCompatibleIde();
-  private boolean resolveExternalAnnotations;
+  private boolean resolveExternalAnnotations = true;
   @Nullable private CompositeBuild myCompositeBuild;
 
   @Nullable
