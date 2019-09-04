@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
+import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.GraphicsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +45,7 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
   private final PredefinedCodeStyle[] myPredefinedCodeStyles;
   private JPopupMenu myCopyFromMenu;
   @Nullable private TabChangeListener myListener;
+  private final EventDispatcher<PredefinedCodeStyleListener> myPredefinedCodeStyleEventDispatcher = EventDispatcher.create(PredefinedCodeStyleListener.class);
 
   private Ref<LanguageCodeStyleSettingsProvider> myProviderRef;
 
@@ -310,6 +312,10 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
     }
   }
 
+  protected void addPredefinedCodeStyleListener(@NotNull PredefinedCodeStyleListener listener) {
+    myPredefinedCodeStyleEventDispatcher.addListener(listener);
+  }
+
   private PredefinedCodeStyle[] getPredefinedStyles() {
     final Language language = getDefaultLanguage();
     final List<PredefinedCodeStyle> result = new ArrayList<>();
@@ -343,6 +349,7 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
     for (PredefinedCodeStyle style : myPredefinedCodeStyles) {
       if (style.getName().equals(styleName)) {
         applyPredefinedSettings(style);
+        myPredefinedCodeStyleEventDispatcher.getMulticaster().styleApplied(style);
       }
     }
   }
