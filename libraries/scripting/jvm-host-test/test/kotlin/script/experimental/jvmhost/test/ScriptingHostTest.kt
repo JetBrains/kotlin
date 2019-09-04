@@ -192,6 +192,23 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
+    fun testSimpleImportWithImplicitReceiver() {
+        val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
+        val script = "println(\"Hello from imported \$helloScriptName script!\")"
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            makeSimpleConfigurationWithTestImport()
+            implicitReceivers(String::class)
+        }
+        val evaluationConfiguration = createJvmEvaluationConfigurationFromTemplate<SimpleScriptTemplate> {
+            implicitReceivers("abc")
+        }
+        val output = captureOut {
+            BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, evaluationConfiguration).throwOnFailure()
+        }.lines()
+        Assert.assertEquals(greeting, output)
+    }
+
+    @Test
     fun testDiamondImportWithoutSharing() {
         val greeting = listOf("Hi from common", "Hi from middle", "Hi from common", "sharedVar == 3")
         val output = doDiamondImportTest()

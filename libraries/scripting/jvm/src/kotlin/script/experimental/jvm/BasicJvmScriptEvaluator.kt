@@ -75,15 +75,16 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         refinedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
             args.addAll(it)
         }
+
+        importedScriptsEvalResults.forEach {
+            args.add(it.returnValue.scriptInstance)
+        }
+
         refinedEvalConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
             args.addAll(it)
         }
         refinedEvalConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
             args.add(it.value)
-        }
-
-        importedScriptsEvalResults.forEach {
-            args.add(it.returnValue.scriptInstance)
         }
 
         val ctor = java.constructors.single()
