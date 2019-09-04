@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
@@ -41,9 +40,9 @@ internal fun generateInlineIntrinsic(
     val typeMapper = state.typeMapper
     return when {
         isSpecialEnumMethod(descriptor) ->
-            createSpecialEnumMethodBody(descriptor.name.asString(), typeArguments!!.keys.single().defaultType, typeMapper)
+            createSpecialEnumMethodBody(descriptor.name.asString(), typeArguments!!.keys.single(), typeMapper)
         TypeOfChecker.isTypeOf(descriptor) ->
-            createTypeOfMethodBody(typeArguments!!.keys.single().defaultType)
+            createTypeOfMethodBody(typeArguments!!.keys.single())
         descriptor.isBuiltInIntercepted(languageVersionSettings) ->
             createMethodNodeForIntercepted(descriptor, typeMapper, languageVersionSettings)
         descriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
@@ -70,15 +69,13 @@ private fun isSpecialEnumMethod(descriptor: FunctionDescriptor): Boolean {
             (name == "enumValueOf" && parameters.size == 1 && KotlinBuiltIns.isString(parameters[0].type))
 }
 
-private fun createSpecialEnumMethodBody(name: String, type: KotlinType, typeMapper: KotlinTypeMapper): MethodNode {
+private fun createSpecialEnumMethodBody(name: String, typeParameter: TypeParameterDescriptor, typeMapper: KotlinTypeMapper): MethodNode {
     val isValueOf = "enumValueOf" == name
-    val invokeType = typeMapper.mapType(type)
+    val invokeType = typeMapper.mapType(typeParameter.defaultType)
     val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
     val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", desc, null, null)
-    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(
-        type,
-        ReifiedTypeInliner.OperationKind.ENUM_REIFIED,
-        InstructionAdapter(node)
+    ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(
+        typeParameter, false, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, InstructionAdapter(node)
     )
     if (isValueOf) {
         node.visitInsn(Opcodes.ACONST_NULL)
@@ -101,11 +98,11 @@ internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String
     if (isValueOf) Type.getMethodDescriptor(type, JAVA_STRING_TYPE)
     else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
 
-private fun createTypeOfMethodBody(type: KotlinType): MethodNode {
+private fun createTypeOfMethodBody(typeParameter: TypeParameterDescriptor): MethodNode {
     val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", Type.getMethodDescriptor(K_TYPE), null, null)
     val v = InstructionAdapter(node)
 
-    putTypeOfReifiedTypeParameter(v, type)
+    putTypeOfReifiedTypeParameter(v, typeParameter, false)
     v.areturn(K_TYPE)
 
     v.visitMaxs(2, 0)
@@ -113,8 +110,8 @@ private fun createTypeOfMethodBody(type: KotlinType): MethodNode {
     return node
 }
 
-private fun putTypeOfReifiedTypeParameter(v: InstructionAdapter, type: KotlinType) {
-    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(type, ReifiedTypeInliner.OperationKind.TYPE_OF, v)
+private fun putTypeOfReifiedTypeParameter(v: InstructionAdapter, typeParameter: TypeParameterDescriptor, isNullable: Boolean) {
+    ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(typeParameter, isNullable, ReifiedTypeInliner.OperationKind.TYPE_OF, v)
     v.aconst(null)
 }
 
@@ -179,7 +176,7 @@ private fun doGenerateTypeProjection(
     val descriptor = type.constructor.declarationDescriptor
     val stackSize = if (descriptor is TypeParameterDescriptor) {
         if (descriptor.isReified) {
-            putTypeOfReifiedTypeParameter(v, type)
+            putTypeOfReifiedTypeParameter(v, descriptor, type.isMarkedNullable)
             2
         } else {
             // TODO: support non-reified type parameters in typeOf

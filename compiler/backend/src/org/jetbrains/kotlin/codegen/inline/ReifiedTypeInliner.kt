@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -108,6 +109,18 @@ class ReifiedTypeInliner(
                 IntrinsicMethods.INTRINSICS_CLASS_NAME, REIFIED_OPERATION_MARKER_METHOD_NAME,
                 Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, AsmTypes.JAVA_STRING_TYPE), false
             )
+        }
+
+        fun putReifiedOperationMarkerIfNeeded(
+            typeParameter: TypeParameterDescriptor,
+            isNullable: Boolean,
+            operationKind: OperationKind,
+            v: InstructionAdapter
+        ) {
+            if (typeParameter.isReified) {
+                val argument = ReificationArgument(typeParameter.name.asString(), isNullable, 0)
+                putReifiedOperationMarker(operationKind, argument, v)
+            }
         }
     }
 

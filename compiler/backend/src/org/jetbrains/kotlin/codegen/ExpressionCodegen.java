@@ -4844,32 +4844,12 @@ The "returned" value of try expression with no finally is either the last expres
     public void putReifiedOperationMarkerIfTypeIsReifiedParameter(
             @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind
     ) {
-        putReifiedOperationMarkerIfTypeIsReifiedParameter(type, operationKind, v, this);
-    }
-
-    public static void putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(
-            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v
-    ) {
-        putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(type, operationKind, v, null);
-    }
-
-    private static void putReifiedOperationMarkerIfTypeIsReifiedParameter(
-            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
-            @NotNull ExpressionCodegen codegen
-    ) {
-        putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(type, operationKind, v, codegen);
-    }
-
-    private static void putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(
-            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
-            @Nullable ExpressionCodegen codegen
-    ) {
         Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
-        if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.getFirst().isReified()) {
-            TypeParameterDescriptor typeParameterDescriptor = typeParameterAndReificationArgument.getFirst();
-            if (codegen != null) {
-                codegen.consumeReifiedOperationMarker(typeParameterDescriptor);
-            }
+        if (typeParameterAndReificationArgument == null) return;
+
+        TypeParameterDescriptor typeParameter = typeParameterAndReificationArgument.getFirst();
+        if (typeParameter.isReified()) {
+            consumeReifiedOperationMarker(typeParameter);
             ReifiedTypeInliner.putReifiedOperationMarker(operationKind, typeParameterAndReificationArgument.getSecond(), v);
         }
     }
