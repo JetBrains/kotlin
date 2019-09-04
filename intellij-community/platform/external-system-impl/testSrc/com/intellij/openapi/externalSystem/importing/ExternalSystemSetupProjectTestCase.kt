@@ -16,11 +16,12 @@ import com.intellij.openapi.fileChooser.impl.FileChooserFactoryImpl
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.testFramework.TestActionEvent
+import com.intellij.testFramework.replaceService
 import org.junit.Assert.assertEquals
-import org.picocontainer.MutablePicoContainer
 import java.awt.Component
 
 interface ExternalSystemSetupProjectTestCase {
@@ -94,40 +95,27 @@ interface ExternalSystemSetupProjectTestCase {
 
   private fun <R> withSelectedFileIfNeeded(selectedFile: VirtualFile?, action: () -> R): R {
     if (selectedFile == null) return action()
-    val fileChooser = findApplicationComponent(FileChooserFactory::class.java)
-    replaceApplicationComponent(FileChooserFactory::class.java, object : FileChooserFactoryImpl() {
-      override fun createFileChooser(descriptor: FileChooserDescriptor, project: Project?, parent: Component?): FileChooserDialog {
-        return object : FileChooserDialog {
-          override fun choose(toSelect: VirtualFile?, project: Project?): Array<VirtualFile> {
-            return choose(project, toSelect)
-          }
 
-          override fun choose(project: Project?, vararg toSelect: VirtualFile?): Array<VirtualFile> {
-            return arrayOf(selectedFile)
+    val temporaryDisposable = Disposer.newDisposable()
+    try {
+      ApplicationManager.getApplication().replaceService(FileChooserFactory::class.java, object : FileChooserFactoryImpl() {
+        override fun createFileChooser(descriptor: FileChooserDescriptor, project: Project?, parent: Component?): FileChooserDialog {
+          return object : FileChooserDialog {
+            override fun choose(toSelect: VirtualFile?, project: Project?): Array<VirtualFile> {
+              return choose(project, toSelect)
+            }
+
+            override fun choose(project: Project?, vararg toSelect: VirtualFile?): Array<VirtualFile> {
+              return arrayOf(selectedFile)
+            }
           }
         }
-      }
-    })
-    try {
+      }, temporaryDisposable)
       return action()
     }
     finally {
-      replaceApplicationComponent(FileChooserFactory::class.java, fileChooser)
+      Disposer.dispose(temporaryDisposable)
     }
-  }
-
-  private fun <T> replaceApplicationComponent(cls: Class<T>, instance: T) {
-    val key = cls.name
-    val container = ApplicationManager.getApplication().picoContainer as MutablePicoContainer
-    container.unregisterComponent(key)
-    container.registerComponentInstance(key, instance)
-  }
-
-  @Suppress("UNCHECKED_CAST")
-  private fun <T> findApplicationComponent(cls: Class<T>): T {
-    val key = cls.name
-    val container = ApplicationManager.getApplication().picoContainer as MutablePicoContainer
-    return container.getComponentInstance(key) as T
   }
 
   private fun detectOpenedProject(action: () -> Unit): Project {
