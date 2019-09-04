@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirThisReference
+import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 /*
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 sealed class DataFlowVariable(val index: Int, val fir: FirElement) {
     abstract val isSynthetic: Boolean
     abstract val real: DataFlowVariable
+    abstract val isThisReference: Boolean
 
     final override fun hashCode(): Int {
         return index
@@ -30,7 +33,7 @@ sealed class DataFlowVariable(val index: Int, val fir: FirElement) {
     }
 }
 
-private class RealDataFlowVariable(index: Int, fir: FirElement) : DataFlowVariable(index, fir) {
+private class RealDataFlowVariable(index: Int, fir: FirElement, override val isThisReference: Boolean) : DataFlowVariable(index, fir) {
     override val isSynthetic: Boolean get() = false
 
     override val real: DataFlowVariable get() = this
@@ -40,12 +43,16 @@ private class SyntheticDataFlowVariable(index: Int, fir: FirElement) : DataFlowV
     override val isSynthetic: Boolean get() = true
 
     override val real: DataFlowVariable get() = this
+
+    override val isThisReference: Boolean get() = false
 }
 
 private class AliasedDataFlowVariable(index: Int, fir: FirElement, var delegate: DataFlowVariable) : DataFlowVariable(index, fir) {
     override val isSynthetic: Boolean get() = delegate.isSynthetic
 
     override val real: DataFlowVariable get() = delegate.real
+
+    override val isThisReference: Boolean get() = false
 }
 
 
@@ -54,9 +61,17 @@ class DataFlowVariableStorage {
     private var counter: Int = 1
 
     fun getOrCreateNewRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable {
+        return getOrCreateNewRealVariableImpl(symbol, false)
+    }
+
+    fun getOrCreateNewThisRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable {
+        return getOrCreateNewRealVariableImpl(symbol, true)
+    }
+
+    private fun getOrCreateNewRealVariableImpl(symbol: FirBasedSymbol<*>, isThisReference: Boolean): DataFlowVariable {
         val fir = symbol.fir
         get(fir)?.let { return it }
-        return RealDataFlowVariable(counter++, fir).also { storeVariable(it, fir) }
+        return RealDataFlowVariable(counter++, fir, isThisReference).also { storeVariable(it, fir) }
     }
 
     fun getOrCreateNewSyntheticVariable(fir: FirElement): DataFlowVariable {

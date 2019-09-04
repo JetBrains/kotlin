@@ -69,10 +69,10 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
         return map
     }
 
-    fun approveFactsInsideFlow(variable: DataFlowVariable, condition: Condition, flow: Flow): Flow {
+    fun approveFactsInsideFlow(variable: DataFlowVariable, condition: Condition, flow: Flow): Pair<Flow, Collection<DataFlowVariable>> {
         val notApprovedFacts: Set<UnapprovedFirDataFlowInfo> = flow.notApprovedFacts[variable]
         if (notApprovedFacts.isEmpty()) {
-            return flow
+            return flow to emptyList()
         }
         @Suppress("NAME_SHADOWING")
         val flow = flow.copyForBuilding()
@@ -82,6 +82,8 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
                 newFacts.put(it.variable, it.info)
             }
         }
+        val updatedReceivers = mutableSetOf<DataFlowVariable>()
+
         newFacts.asMap().forEach { (variable, infos) ->
             @Suppress("NAME_SHADOWING")
             val infos = ArrayList(infos)
@@ -89,8 +91,11 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
                 infos.add(it)
             }
             flow.approvedFacts[variable] = context.and(infos)
+            if (variable.isThisReference) {
+                updatedReceivers += variable
+            }
         }
-        return flow
+        return flow to updatedReceivers
     }
 
     fun approveFact(variable: DataFlowVariable, condition: Condition, flow: Flow): MutableMap<DataFlowVariable, FirDataFlowInfo> {

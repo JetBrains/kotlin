@@ -72,7 +72,7 @@ open class FirBodyResolveTransformer(
 
     private val localScopes = mutableListOf<FirLocalScope>()
     private val topLevelScopes = mutableListOf<FirScope>()
-    final override val implicitReceiverStack: ImplicitReceiverStack = ImplicitReceiverStack()
+    final override val implicitReceiverStack: ImplicitReceiverStackImpl = ImplicitReceiverStackImpl()
     final override val inferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
 
     private var primaryConstructorParametersScope: FirLocalScope? = null

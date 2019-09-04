@@ -60,15 +60,28 @@ class ExpressionReceiverValue(
 
 abstract class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     val boundSymbol: S,
-    final override val type: ConeKotlinType,
-    useSiteSession: FirSession,
-    scopeSession: ScopeSession
+    type: ConeKotlinType,
+    private val useSiteSession: FirSession,
+    private val scopeSession: ScopeSession
 ) : ReceiverValue {
-    val implicitScope: FirScope? = type.scope(useSiteSession, scopeSession)
+    final override var type: ConeKotlinType = type
+        private set
+
+    var implicitScope: FirScope? = type.scope(useSiteSession, scopeSession)
+        private set
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? = implicitScope
 
     override val receiverExpression: FirExpression = receiverExpression(boundSymbol, type)
+
+    /*
+     * Should be called only in ImplicitReceiverStack
+     */
+    internal fun replaceType(type: ConeKotlinType) {
+        if (type == this.type) return
+        this.type = type
+        implicitScope = type.scope(useSiteSession, scopeSession)
+    }
 }
 
 class ImplicitDispatchReceiverValue(

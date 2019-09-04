@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.Condition.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -33,6 +35,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     }
 
     private val context: DataFlowInferenceContext get() = inferenceComponents.ctx as DataFlowInferenceContext
+    private val receiverStack: ImplicitReceiverStackImpl = transformer.implicitReceiverStack
 
     private val graphBuilder = ControlFlowGraphBuilder()
     private val logicSystem = LogicSystem(context)
@@ -43,8 +46,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
      * If there is no types from smartcasts function returns null
      */
     fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): Collection<ConeKotlinType>? {
-        val symbol: FirBasedSymbol<*> = qualifiedAccessExpression.resolvedSymbol ?: return null
-        val variable = variableStorage[symbol]?.real ?: return null
+        val variable = qualifiedAccessExpression.variable?.real ?: return null
         return graphBuilder.lastNode.flow.approvedFacts(variable)?.exactType ?: return null
     }
 
@@ -54,7 +56,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         graphBuilder.enterFunction(function).passFlow()
 
         for (valueParameter in function.valueParameters) {
-            getRealVariable(valueParameter.symbol)
+            getOrCreateRealVariable(valueParameter.symbol)
         }
     }
 
@@ -90,7 +92,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
         val previousNode = node.usefulPreviousNodes.singleOrNull() as? WhenBranchConditionExitNode
         if (previousNode != null) {
-            node.flow = logicSystem.approveFactsInsideFlow(previousNode.variable, EqTrue, node.flow)
+            node.flow = approveFactsAndUpdateImplicitReceivers(previousNode.variable, EqTrue, node.flow)
         }
     }
 
@@ -100,25 +102,17 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
     // ----------------------------------- Operator call -----------------------------------
 
-    private fun FirExpression.getResolvedSymbol(): FirCallableSymbol<*>? {
-        val expression = (this as? FirWhenSubjectExpression)?.whenSubject?.whenExpression?.let {
-            it.subjectVariable?.symbol?.let { return it }
-            it.subject
-        } ?: this
-        return expression.toResolvedCallableSymbol() as? FirCallableSymbol<*>
-    }
-
     fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
         val node = graphBuilder.exitTypeOperatorCall(typeOperatorCall).passFlow(false)
+
         if (typeOperatorCall.operation !in FirOperation.TYPES) return
-        val symbol: FirCallableSymbol<*> = typeOperatorCall.argument.getResolvedSymbol() ?: return
-            val type = typeOperatorCall.conversionTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
-        val varVariable = getRealVariable(symbol)
+        val type = typeOperatorCall.conversionTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
+        val varVariable = getOrCreateRealVariable(typeOperatorCall.argument)?.real ?: return
 
         var flow = node.flow
         when (typeOperatorCall.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
-                val expressionVariable = getSyntheticVariable(typeOperatorCall)
+                val expressionVariable = getOrCreateSyntheticVariable(typeOperatorCall)
 
                 val trueInfo = FirDataFlowInfo(setOf(type), emptySet())
                 val falseInfo = FirDataFlowInfo(emptySet(), setOf(type))
@@ -142,11 +136,11 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
             }
 
             FirOperation.AS -> {
-                flow = flow.addApprovedFact(varVariable, FirDataFlowInfo(setOf(type), emptySet()))
+                flow = addApprovedFact(flow, varVariable, FirDataFlowInfo(setOf(type), emptySet()))
             }
 
             FirOperation.SAFE_AS -> {
-                val expressionVariable = getSyntheticVariable(typeOperatorCall)
+                val expressionVariable = getOrCreateSyntheticVariable(typeOperatorCall)
                 flow = flow.addNotApprovedFact(
                     expressionVariable,
                     UnapprovedFirDataFlowInfo(
@@ -195,7 +189,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
             else -> return
         }
 
-        val expressionVariable = getVariable(node.fir)
+        val expressionVariable = getOrCreateVariable(node.fir)
         var flow = node.flow
 
         // not null for comparisons with constants
@@ -239,7 +233,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
     private fun processEqNull(node: OperatorCallNode, operand: FirExpression, operation: FirOperation) {
         var flow = node.flow
-        val expressionVariable = getVariable(node.fir)
+        val expressionVariable = getOrCreateVariable(node.fir)
 
         variableStorage[operand]?.let { operandVariable ->
             val condition = when (operation) {
@@ -312,7 +306,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         val node = graphBuilder.enterWhenBranchCondition(whenBranch).passFlow(false)
         val previousNode = node.previousNodes.single()
         if (previousNode is WhenBranchConditionExitNode) {
-            node.flow = logicSystem.approveFactsInsideFlow(previousNode.variable, EqFalse, node.flow)
+            node.flow = approveFactsAndUpdateImplicitReceivers(previousNode.variable, EqFalse, node.flow)
         }
         node.flow.freeze()
     }
@@ -320,19 +314,19 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     fun exitWhenBranchCondition(whenBranch: FirWhenBranch) {
         val node = graphBuilder.exitWhenBranchCondition(whenBranch).passFlow(true)
 
-        val conditionVariable = getVariable(whenBranch.condition)
+        val conditionVariable = getOrCreateVariable(whenBranch.condition)
         node.variable = conditionVariable
     }
 
     fun exitWhenBranchResult(whenBranch: FirWhenBranch) {
         val node = graphBuilder.exitWhenBranchResult(whenBranch).passFlow(false)
-        val conditionVariable = getVariable(whenBranch.condition)
+        val conditionVariable = getOrCreateVariable(whenBranch.condition)
         node.flow = node.flow.removeSyntheticVariable(conditionVariable).apply { freeze() }
     }
 
     fun exitWhenExpression(whenExpression: FirWhenExpression) {
-        val node = graphBuilder.exitWhenExpression(whenExpression)
-        var flow = logicSystem.or(node.usefulPreviousNodes.map { it.flow })
+        val node = graphBuilder.exitWhenExpression(whenExpression).passFlow()
+        var flow = node.flow
         val subjectSymbol = whenExpression.subjectVariable?.symbol
         if (subjectSymbol != null) {
             variableStorage[subjectSymbol]?.let { flow = flow.removeVariable(it) }
@@ -426,7 +420,17 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         }
     }
 
-    private val FirElement.resolvedSymbol: FirBasedSymbol<*>? get() = this.safeAs<FirResolvable>()?.calleeReference.safeAs<FirResolvedCallableReference>()?.coneSymbol as? FirBasedSymbol<*>
+    private val FirElement.resolvedSymbol: FirBasedSymbol<*>?
+        get() {
+            val expression = (this as? FirWhenSubjectExpression)?.whenSubject?.whenExpression?.let {
+                it.subjectVariable?.symbol?.let { symbol -> return symbol }
+                it.subject
+            } ?: this
+            return (expression as? FirResolvable)?.resolvedSymbol
+        }
+
+    private val FirResolvable.resolvedSymbol: FirBasedSymbol<*>?
+        get() = (calleeReference as? FirResolvedCallableReference)?.coneSymbol as? FirBasedSymbol<*>
 
     private fun FirFunctionCall.isBooleanNot(): Boolean {
         val symbol = calleeReference.safeAs<FirResolvedCallableReference>()?.coneSymbol as? FirNamedFunctionSymbol ?: return false
@@ -452,7 +456,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
          */
         variableStorage[initializer]?.let { initializerVariable ->
             assert(initializerVariable.isSynthetic)
-            val realVariable = getRealVariable(variable.symbol)
+            val realVariable = getOrCreateRealVariable(variable.symbol)
             node.flow = node.flow.copyNotApprovedFacts(initializerVariable, realVariable)
         }
 
@@ -483,8 +487,9 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         val (leftNode, rightNode) = graphBuilder.exitLeftBinaryAndArgument(binaryLogicExpression)
         leftNode.passFlow(true)
         rightNode.passFlow(false)
-        val leftOperandVariable = getVariable(leftNode.previousNodes.first().fir)
-        rightNode.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable, EqTrue, rightNode.flow).also { it.freeze() }
+        val leftOperandVariable = getOrCreateVariable(leftNode.previousNodes.first().fir)
+        val flow = approveFactsAndUpdateImplicitReceivers(leftOperandVariable, EqTrue, rightNode.flow)
+        rightNode.flow = flow.also { it.freeze() }
     }
 
     fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression) {
@@ -495,7 +500,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         val flowFromRight = node.rightOperandNode.flow
         val flow = node.flow
 
-        val andVariable = getVariable(binaryLogicExpression)
+        val andVariable = getOrCreateVariable(binaryLogicExpression)
 
         val leftIsTrue = approveFact(leftVariable, EqTrue, flowFromRight)
         val leftIsFalse = approveFact(leftVariable, EqFalse, flowFromRight)
@@ -528,8 +533,9 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         val (leftNode, rightNode) = graphBuilder.exitLeftBinaryOrArgument(binaryLogicExpression)
         leftNode.passFlow(true)
         rightNode.passFlow(false)
-        val leftOperandVariable = getVariable(leftNode.previousNodes.first().fir)
-        rightNode.flow = logicSystem.approveFactsInsideFlow(leftOperandVariable, EqFalse, rightNode.flow).also { it.freeze() }
+        val leftOperandVariable = getOrCreateVariable(leftNode.previousNodes.first().fir)
+        val flow = approveFactsAndUpdateImplicitReceivers(leftOperandVariable, EqFalse, rightNode.flow)
+        rightNode.flow = flow.also { it.freeze() }
     }
 
     fun exitBinaryOr(binaryLogicExpression: FirBinaryLogicExpression) {
@@ -540,7 +546,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         val flowFromRight = node.rightOperandNode.flow
         val flow = node.flow
 
-        val orVariable = getVariable(binaryLogicExpression)
+        val orVariable = getOrCreateVariable(binaryLogicExpression)
 
         val leftIsTrue = approveFact(leftVariable, EqTrue, flowFromLeft)
         val leftIsFalse = approveFact(leftVariable, EqFalse, flowFromLeft)
@@ -561,8 +567,8 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     }
 
     private fun exitBooleanNot(functionCall: FirFunctionCall, node: FunctionCallNode) {
-        val booleanExpressionVariable = getVariable(node.previousNodes.first().fir)
-        val variable = getVariable(functionCall)
+        val booleanExpressionVariable = getOrCreateVariable(node.previousNodes.first().fir)
+        val variable = getOrCreateVariable(functionCall)
         node.flow = node.flow.copyNotApprovedFacts(booleanExpressionVariable, variable) { it.invert() }
     }
 
@@ -592,7 +598,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         logicSystem.approveFact(variable, condition, flow)
 
     private fun FirBinaryLogicExpression.getVariables(): Pair<DataFlowVariable, DataFlowVariable> =
-        getVariable(leftOperand) to getVariable(rightOperand)
+        getOrCreateVariable(leftOperand) to getOrCreateVariable(rightOperand)
 
     private var CFGNode<*>.flow: Flow
         get() = edges[this] ?: Flow.EMPTY
@@ -601,21 +607,57 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         }
 
     private fun <T : CFGNode<*>> T.passFlow(shouldFreeze: Boolean = false): T = this.also { node ->
-        node.flow = logicSystem.or(node.usefulPreviousNodes.map { it.flow }).also {
+        val previousFlows = node.usefulPreviousNodes.map { it.flow }
+        val flow = logicSystem.or(previousFlows).also {
             if (shouldFreeze) it.freeze()
         }
+        if (previousFlows.size > 1) {
+            receiverStack.forEachIndexed { index, receiver ->
+                val variable = variableStorage[receiver.boundSymbol] ?: return@forEachIndexed
+                val approvedFacts = flow.approvedFacts(variable)
+                if (approvedFacts == null) {
+                    receiver.replaceType(receiverStack.getOriginalType(index))
+                } else {
+                    updateReceiverType(index, approvedFacts)
+                }
+            }
+        }
+        node.flow = flow
     }
 
-    private fun getSyntheticVariable(fir: FirElement): DataFlowVariable = variableStorage.getOrCreateNewSyntheticVariable(fir)
-    private fun getRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable = variableStorage.getOrCreateNewRealVariable(symbol).real
+    // -------------------------------- get or create variable --------------------------------
+    private fun getOrCreateSyntheticVariable(fir: FirElement): DataFlowVariable = variableStorage.getOrCreateNewSyntheticVariable(fir)
 
-    private fun getVariable(fir: FirElement): DataFlowVariable {
+    private fun getOrCreateRealVariable(fir: FirElement): DataFlowVariable? {
+        if (fir is FirThisReceiverExpressionImpl) {
+            return variableStorage.getOrCreateNewThisRealVariable(fir.calleeReference.boundSymbol ?: return null)
+        }
+        val symbol: FirBasedSymbol<*> = fir.resolvedSymbol ?: return null
+        return variableStorage.getOrCreateNewRealVariable(symbol)
+    }
+
+    private fun getOrCreateRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable =
+        variableStorage.getOrCreateNewRealVariable(symbol).real
+
+    private fun getOrCreateVariable(fir: FirElement): DataFlowVariable {
         val symbol = fir.resolvedSymbol
         return if (symbol == null)
-            getSyntheticVariable(fir)
+            getOrCreateSyntheticVariable(fir)
         else
-            getRealVariable(symbol)
+            getOrCreateRealVariable(symbol)
     }
+
+    // -------------------------------- get variable --------------------------------
+
+    private val FirElement.variable: DataFlowVariable?
+        get() {
+            val symbol: FirBasedSymbol<*> = if (this is FirThisReceiverExpressionImpl) {
+                calleeReference.boundSymbol
+            } else {
+                resolvedSymbol
+            } ?: return null
+            return variableStorage[symbol]
+        }
 
     private fun getRealVariablesForSafeCallChain(call: FirExpression): Collection<DataFlowVariable> {
         val result = mutableListOf<DataFlowVariable>()
@@ -630,12 +672,13 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
                     }
                     ((call.calleeReference as? FirResolvedCallableReference)?.coneSymbol)?.let { symbol ->
                         if (symbol is FirVariableSymbol<*> || symbol is FirPropertySymbol) {
-                            result += getRealVariable(symbol as FirBasedSymbol<*>)
+                            result += getOrCreateRealVariable(symbol as FirBasedSymbol<*>)
                         }
                     }
                 }
                 is FirWhenSubjectExpression -> {
-                    call.whenSubject.whenExpression.subjectVariable?.let { result += getRealVariable(it.symbol) }
+                    // TODO: check
+                    call.whenSubject.whenExpression.subjectVariable?.let { result += getOrCreateRealVariable(it.symbol) }
                     call.whenSubject.whenExpression.subject?.let { collect(it) }
                 }
             }
@@ -643,6 +686,37 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
         collect(call)
         return result
+    }
+
+    private fun approveFactsAndUpdateImplicitReceivers(variable: DataFlowVariable, condition: Condition, flow: Flow): Flow {
+        val (newFlow, variables) = logicSystem.approveFactsInsideFlow(variable, condition, flow)
+        for (variable in variables) {
+            updateReceiverType(newFlow, variable)
+        }
+        return newFlow
+    }
+
+    private fun updateReceiverType(flow: Flow, variable: DataFlowVariable) {
+        val symbol = (variable.fir as? FirSymbolOwner<*>)?.symbol ?: return
+        val index = receiverStack.getReceiverIndex(symbol) ?: return
+        val info = flow.approvedFacts[variable] ?: return
+        updateReceiverType(index, info)
+    }
+
+    private fun updateReceiverType(index: Int, info: FirDataFlowInfo) {
+        val types = info.exactType.toMutableList().also {
+            it += receiverStack.getOriginalType(index)
+        }
+        receiverStack.replaceReceiverType(index, context.myIntersectTypes(types)!!)
+
+    }
+
+    private fun addApprovedFact(flow: Flow, variable: DataFlowVariable, info: FirDataFlowInfo): Flow {
+        return flow.addApprovedFact(variable, info).also {
+            if (variable.isThisReference) {
+                updateReceiverType(flow, variable)
+            }
+        }
     }
 
     private fun Flow.removeVariable(variable: DataFlowVariable): Flow {
