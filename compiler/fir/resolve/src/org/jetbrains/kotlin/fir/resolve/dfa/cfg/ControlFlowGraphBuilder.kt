@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.resultType
 import org.jetbrains.kotlin.fir.types.isNothing
 
-class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
+class ControlFlowGraphBuilder {
     private val graphs: Stack<ControlFlowGraph> = stackOf(ControlFlowGraph("<DUMP_GRAPH_FOR_ENUMS>"))
-    override val graph: ControlFlowGraph get() = graphs.top()
+    val graph: ControlFlowGraph get() = graphs.top()
 
     private val lexicalScopes: Stack<Stack<CFGNode<*>>> = stackOf(stackOf())
     private val lastNodes: Stack<CFGNode<*>> get() = lexicalScopes.top()
@@ -49,7 +49,8 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         popCallback = { exitNodes.pop() }
     )
 
-    override var levelCounter: Int = 0
+    var levelCounter: Int = 0
+        private set
 
     fun isTopLevel(): Boolean = graphs.size == 1
 
