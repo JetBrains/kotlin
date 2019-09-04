@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi2ir.afterPsi2Ir
 import org.jetbrains.kotlin.utils.DFS
 
 fun sortDependencies(dependencies: Collection<IrModuleFragment>): Collection<IrModuleFragment> {
@@ -47,11 +48,16 @@ fun compile(
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, files, configuration, allDependencies, friendDependencies)
 
+    val start = System.currentTimeMillis()
+
     val moduleDescriptor = moduleFragment.descriptor
 
     val mainFunction = JsMainFunctionDetector.getMainFunctionOrNull(moduleFragment)
 
     val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)
+
+    val beforeDeserialization = System.currentTimeMillis()
+    createContextTime += beforeDeserialization - start
 
     // Load declarations referenced during `context` initialization
     dependencyModules.forEach {
@@ -62,6 +68,9 @@ fun compile(
             deserializer = deserializer
         ).generateUnboundSymbolsAsDependencies()
     }
+
+    val afterDeserialization = System.currentTimeMillis()
+    additionalDeserialization += afterDeserialization - beforeDeserialization
 
     // Since modules should be initialized in the correct topological order we sort them
     val irFiles = sortDependencies(dependencyModules).flatMap { it.files } + moduleFragment.files
@@ -77,10 +86,39 @@ fun compile(
     ).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
 
+    val afterPrep = System.currentTimeMillis()
+    prepTime += afterPrep - afterDeserialization
+
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
 
     jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
+    val afterLowerings = System.currentTimeMillis()
+    loweringTime += afterLowerings - afterPrep
+
     val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-    return transformer.generateModule(moduleFragment)
+    val result = transformer.generateModule(moduleFragment)
+
+    val afterIr2Js = System.currentTimeMillis()
+
+    ir2JsTime += afterIr2Js - afterLowerings
+    totalBe += afterIr2Js - afterPsi2Ir
+
+    return result
+}
+
+var createContextTime = 0L
+var additionalDeserialization = 0L
+var prepTime = 0L
+var loweringTime = 0L
+var ir2JsTime = 0L
+var totalBe = 0L
+
+fun cleanCompilerTimes() {
+    createContextTime = 0L
+    additionalDeserialization = 0L
+    prepTime = 0L
+    loweringTime = 0L
+    ir2JsTime = 0L
+    totalBe = 0L
 }
