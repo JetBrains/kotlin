@@ -18,6 +18,19 @@ package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.file.File
 
+internal object Android {
+    const val API = "21"
+    private val architectureMap = mapOf(
+            // KonanTarget.X86 to "x86",
+            KonanTarget.ANDROID_X64 to "x86_64",
+            KonanTarget.ANDROID_ARM32 to "arm",
+            KonanTarget.ANDROID_ARM64 to "arm64"
+    )
+
+    fun architectureDirForTarget(target: KonanTarget) =
+            "android-${API}/arch-${architectureMap.getValue(target)}"
+}
+
 class ClangArgs(private val configurables: Configurables) : Configurables by configurables {
 
     val targetArg = if (configurables is TargetableConfigurables)
@@ -72,22 +85,19 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 KonanTarget.IOS_X64 ->
                     listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-miphoneos-version-min=9.0.0")
 
-                KonanTarget.ANDROID_ARM32 ->
-                    listOf("-target", targetArg!!,
-                            "--sysroot=$absoluteTargetSysRoot",
-                            // HACKS!
-                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x",
-                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x/arm-linux-androideabi")
+                KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_X64 -> {
+                    val clangTarget = targetArg!!
+                    val architectureDir = Android.architectureDirForTarget(target)
+                    val toolchainSysroot = "$absoluteTargetToolchain/sysroot"
+                    listOf("-target", clangTarget,
+                            "-D__ANDROID_API__=${Android.API}",
+                            "--sysroot=$absoluteTargetSysRoot/$architectureDir",
+                            "-I$toolchainSysroot/usr/include/c++/v1",
+                            "-I$toolchainSysroot/usr/include",
+                            "-I$toolchainSysroot/usr/include/$clangTarget")
+                }
 
-                KonanTarget.ANDROID_ARM64 ->
-                    listOf("-target", targetArg!!,
-                            "--sysroot=$absoluteTargetSysRoot",
-                            // HACKS!
-                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x",
-                            "-I$absoluteTargetSysRoot/usr/include/c++/4.9.x/aarch64-linux-android")
-
-                // By default wasm target forces `hidden` visibility which causes
-                // linkage problems.
+                // By default WASM target forces `hidden` visibility which causes linkage problems.
                 KonanTarget.WASM32 ->
                     listOf("-target", targetArg!!,
                             "-fno-rtti",
@@ -103,7 +113,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                             "-Xclang", "-isystem$absoluteTargetSysRoot/include/compat",
                             "-Xclang", "-isystem$absoluteTargetSysRoot/include/libc")
 
-                KonanTarget.ANDROID_X64 -> TODO("implement me")
                 KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
                 KonanTarget.WATCHOS_X64 -> TODO("implement me")
                 KonanTarget.TVOS_ARM64 -> TODO("implement me")
@@ -239,6 +248,15 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_ARM64=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
+            KonanTarget.ANDROID_X64 ->
+                listOf("-D__ANDROID__",
+                        "-DUSE_GCC_UNWIND=1",
+                        "-DUSE_ELF_SYMBOLS=1",
+                        "-DELFSIZE=64",
+                        "-DKONAN_ANDROID=1",
+                        "-DKONAN_X64=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
+
             KonanTarget.WASM32 ->
                 listOf("-DKONAN_WASM=1",
                         "-DKONAN_NO_FFI=1",
@@ -250,7 +268,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_NO_MEMMEM",
                         "-DKONAN_NO_CTORS_SECTION=1")
 
-            KonanTarget.ANDROID_X64 -> TODO("implement me")
             KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
             KonanTarget.WATCHOS_X64 -> TODO("implement me")
             KonanTarget.TVOS_ARM64 -> TODO("implement me")

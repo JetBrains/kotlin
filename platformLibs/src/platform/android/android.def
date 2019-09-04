@@ -1,13 +1,28 @@
 depends = posix
 package = platform.android
-headers = jni.h android/api-level.h android/asset_manager.h android/asset_manager_jni.h android/bitmap.h \
-     android/configuration.h android/dlext.h android/input.h android/keycodes.h android/log.h \
-     android/looper.h android/native_activity.h android/native_window.h android/native_window_jni.h \
-     android/obb.h android/rect.h android/sensor.h android/storage_manager.h android/tts.h \
+headers = jni.h stdbool.h \
+     android/NeuralNetworks.h \
+     android/api-level.h android/asset_manager.h android/asset_manager_jni.h \
+     android/bitmap.h \
+     android/choreographer.h android/configuration.h \
+     android/data_space.h android/dlext.h \
+     android/fdsan.h android/font.h android/font_matcher.h \
+     android/hardware_buffer.h android/hardware_buffer_jni.h \
+     android/input.h \
+     android/keycodes.h \
+     android/log.h android/looper.h \
+     android/multinetwork.h \
+     android/native_activity.h android/native_window.h android/ndk-version.h \
+     android/obb.h \
+     android/rect.h \
+     android/sensor.h android/set_abort_message.h android/sharedmem.h android/sharedmem_jni.h \
+     android/storage_manager.h android/surface_texture.h android/surface_texture_jni.h \
+     android/sync.h android/system_fonts.h \
+     android/trace.h \
+     android/versioning.h \
      android/window.h
 
 headerFilter = **
-
 linkerOpts = -landroid -llog -ljnigraphics
 
 ---

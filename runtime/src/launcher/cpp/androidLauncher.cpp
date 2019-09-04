@@ -25,6 +25,7 @@
 
 #include <unistd.h>
 #include <pthread.h>
+#include <sys/errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
