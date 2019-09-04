@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
+import org.jetbrains.plugins.gradle.settings.GradleSettings
 
 @Order(value = ExternalSystemConstants.UNORDERED)
 class ExternalAnnotationsDataService: AbstractProjectDataService<LibraryData, Library>() {
@@ -34,6 +35,9 @@ class ExternalAnnotationsDataService: AbstractProjectDataService<LibraryData, Li
                                projectData: ProjectData?,
                                project: Project,
                                modelsProvider: IdeModelsProvider) {
+    if (!shouldImportExternalAnnotations(projectData, project)) {
+      return
+    }
 
     val providedAnnotations = imported.mapNotNull {
       val libData = it.data
@@ -59,7 +63,7 @@ class ExternalAnnotationsModuleLibrariesService: AbstractProjectDataService<Modu
                                projectData: ProjectData?,
                                project: Project,
                                modelsProvider: IdeModelsProvider) {
-    if (resolvers.isEmpty()) {
+    if (!shouldImportExternalAnnotations(projectData, project)) {
       return
     }
 
@@ -79,6 +83,19 @@ class ExternalAnnotationsModuleLibrariesService: AbstractProjectDataService<Modu
   }
 }
 
+
+fun shouldImportExternalAnnotations(projectData: ProjectData?, project: Project): Boolean {
+  if (projectData == null) {
+    return false
+  }
+
+  val gradleSettings = GradleSettings.getInstance(project)
+
+  return gradleSettings
+           .linkedProjectsSettings
+           .find { settings -> settings.externalProjectPath == projectData.linkedExternalProjectPath }
+           ?.isResolveExternalAnnotations ?: false
+}
 
 fun lookForLocations(lib: Library, libData: LibraryData): Pair<Library, Collection<AnnotationsLocation>>? {
   val locations = AnnotationsLocationSearcher.findAnnotationsLocation(lib, libData.artifactId, libData.groupId, libData.version)

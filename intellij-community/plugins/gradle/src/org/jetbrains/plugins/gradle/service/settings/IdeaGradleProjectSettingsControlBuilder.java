@@ -121,7 +121,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
 
   @Nullable
   private JBCheckBox myResolveExternalAnnotationsCheckBox;
-  private boolean dropResolveExternalAnnotationsCheckBox = !Registry.is("external.system.import.resolve.annotations", false);
+  private boolean dropResolveExternalAnnotationsCheckBox = false;
 
   @Nullable
   private JLabel myDelegateBuildLabel;
@@ -325,9 +325,9 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       }
 
       if (!dropResolveExternalAnnotationsCheckBox) {
-        panel.add(
-          myResolveExternalAnnotationsCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.download.annotations")),
-          ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
+      panel.add(
+        myResolveExternalAnnotationsCheckBox = new JBCheckBox(GradleBundle.message("gradle.settings.text.download.annotations")),
+        ExternalSystemUiUtil.getFillLineConstraints(indentLevel));
       }
     });
   }
