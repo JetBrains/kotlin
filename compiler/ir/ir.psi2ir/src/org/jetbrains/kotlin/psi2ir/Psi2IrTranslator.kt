@@ -75,15 +75,26 @@ class Psi2IrTranslator(
         deserializer: IrDeserializer? = null,
         irProviders: List<IrProvider> = emptyList()
     ): IrModuleFragment {
+        val start = System.currentTimeMillis()
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
 
+        afterPsi2Ir = System.currentTimeMillis()
+        psi2IrTime += afterPsi2Ir - start
+
         // This is required for implicit casts insertion on IrTypes (work-in-progress).
         moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer, irProviders, facadeClassGenerator)
+
+        val afterDeserializer = System.currentTimeMillis()
+        deserTime += afterDeserializer - afterPsi2Ir
+
         irModule.patchDeclarationParents()
 
         postprocess(context, irModule)
         moduleGenerator.generateUnboundSymbolsAsDependencies(irModule, deserializer, irProviders, facadeClassGenerator)
+
+        postProcessingTime += System.currentTimeMillis() - afterDeserializer
+
         return irModule
     }
 
@@ -100,4 +111,16 @@ class Psi2IrTranslator(
         val annotationGenerator = AnnotationGenerator(context)
         irElement.acceptVoid(annotationGenerator)
     }
+}
+
+var psi2IrTime = 0L
+var deserTime = 0L
+var postProcessingTime = 0L
+var afterPsi2Ir = 0L
+
+fun cleanPsi2IrTimes() {
+    psi2IrTime = 0L
+    deserTime = 0L
+    postProcessingTime = 0L
+    afterPsi2Ir = 0L
 }

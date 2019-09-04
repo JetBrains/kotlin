@@ -593,15 +593,15 @@ abstract class KotlinIrLinker(
     }
 
     fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor): IrModuleFragment? {
-        // TODO: consider skip deserializing explicitly exported declarations for libraries.
-        // Now it's not valid because of all dependencies that must be computed.
-        val deserializationStrategy =
-            if (exportedDependencies.contains(moduleDescriptor)) {
-                DeserializationStrategy.ALL
-            } else {
-                DeserializationStrategy.EXPLICITLY_EXPORTED
-            }
-        return deserializeIrModuleHeader(moduleDescriptor, deserializationStrategy)
+        // TODO:  consider skip deserializing explicitly exported declarations for libraries.
+            // Now it's not valid because of all dependencies that must be computed.
+            val deserializationStrategy =
+//                if (exportedDependencies.contains(moduleDescriptor)) {
+                    DeserializationStrategy.ALL
+//                } else {
+//                    DeserializationStrategy.EXPLICITLY_EXPORTED
+//                }
+           return deserializeIrModuleHeader(moduleDescriptor, deserializationStrategy)
     }
 
     fun deserializeFullModule(moduleDescriptor: ModuleDescriptor): IrModuleFragment =

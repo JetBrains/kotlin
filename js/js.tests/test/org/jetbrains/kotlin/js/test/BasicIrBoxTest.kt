@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.ir.backend.js.compile
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi2ir.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
@@ -26,6 +28,64 @@ import java.lang.Boolean.getBoolean
 private val fullRuntimeKlib = "compiler/ir/serialization.js/build/fullRuntime/klib"
 private val defaultRuntimeKlib = "compiler/ir/serialization.js/build/reducedRuntime/klib"
 private val kotlinTestKLib = "compiler/ir/serialization.js/build/kotlin.test/klib"
+
+fun <T> doMeasure(iterations: Int, fn: () -> T): T {
+    cleanPsi2IrTimes()
+    cleanKlibTimes()
+    cleanCompilerTimes()
+
+    val start = System.currentTimeMillis()
+
+
+    fun printStats(i: Int) {
+        val total = System.currentTimeMillis() - start
+
+        fun Long.fmt(): String {
+            return "${this * 100 / i / 100.0}"
+        }
+
+        println("#${i}")
+        println("Total time: ${total.fmt()}")
+        println("BE: ${totalBe.fmt()}")
+        println()
+        println("FE: ${feTime.fmt()}")
+        println("Misc: ${miscTime.fmt()}")
+        println("Header: ${headerDeserTime.fmt()}")
+        println("Psi2Ir: ${psi2IrTime.fmt()}")
+        println("Deserializer: ${deserTime.fmt()} + ${additionalDeserialization.fmt()} = ${(deserTime + additionalDeserialization).fmt()}")
+        println("Post processing: ${postProcessingTime.fmt()}")
+        println("Create context: ${createContextTime.fmt()}")
+        println("Compiler prep: ${prepTime.fmt()}")
+        println("Lowerings: ${loweringTime.fmt()}")
+        println("Ir2Js: ${ir2JsTime.fmt()}")
+        println()
+        println()
+    }
+
+    var result: T? = null
+    for (i in 1..iterations) {
+        result = fn()
+
+        if (i % 10 == 0) {
+            printStats(i)
+        }
+    }
+
+    printStats(iterations)
+
+    return result!!
+}
+
+fun <T> measure(fn: () -> T): T {
+    // Warmup
+    println("WARMUP")
+    println()
+
+    doMeasure(500, fn)
+
+    println("MEASURE")
+    return doMeasure(100, fn)
+}
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -78,7 +138,7 @@ abstract class BasicIrBoxTest(
             // TODO: split input files to some parts (global common, local common, test)
             .filterNot { it.virtualFilePath.contains(COMMON_FILES_DIR_PATH) }
 
-        val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
+        val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(fullRuntimeKlib)
 
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 
@@ -110,16 +170,18 @@ abstract class BasicIrBoxTest(
                 PhaseConfig(jsPhases)
             }
 
-            val compiledModule = compile(
-                project = config.project,
-                files = filesToCompile,
-                configuration = config.configuration,
-                phaseConfig = phaseConfig,
-                allDependencies = resolvedLibraries,
-                friendDependencies = emptyList(),
-                mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
-                exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
-            )
+            val compiledModule = measure {
+                compile(
+                    project = config.project,
+                    files = filesToCompile,
+                    configuration = config.configuration,
+                    phaseConfig = phaseConfig,
+                    allDependencies = resolvedLibraries,
+                    friendDependencies = emptyList(),
+                    mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
+                    exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
+                )
+            }
 
             val wrappedCode = wrapWithModuleEmulationMarkers(compiledModule.jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
             outputFile.write(wrappedCode)

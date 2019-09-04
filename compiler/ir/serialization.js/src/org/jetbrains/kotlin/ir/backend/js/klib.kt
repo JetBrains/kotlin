@@ -172,6 +172,22 @@ data class IrModuleInfo(
     val deserializer: JsIrLinker
 )
 
+var start = 0L
+var afterFe = 0L
+
+var feTime = 0L
+var headerDeserTime = 0L
+var miscTime = 0L
+
+fun cleanKlibTimes() {
+    start = 0L
+    afterFe = 0L
+
+    feTime = 0L
+    headerDeserTime = 0L
+    miscTime = 0L
+}
+
 private fun sortDependencies(dependencies: List<KotlinLibrary>, mapping: Map<KotlinLibrary, ModuleDescriptor>): Collection<KotlinLibrary> {
     val m2l = mapping.map { it.value to it.key }.toMap()
 
@@ -188,19 +204,25 @@ fun loadIr(
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
+    start = System.currentTimeMillis()
 
+    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
     val irBuiltIns = psi2IrContext.irBuiltIns
     val symbolTable = psi2IrContext.symbolTable
     val moduleDescriptor = psi2IrContext.moduleDescriptor
 
+    val afterMisc = System.currentTimeMillis()
+    miscTime += afterMisc - afterFe
+
     val deserializer = JsIrLinker(moduleDescriptor, JsMangler, emptyLoggingContext, irBuiltIns, symbolTable)
 
     val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
         deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it))!!
     }
+
+    headerDeserTime += System.currentTimeMillis() - afterMisc
 
     val moduleFragment = psi2IrContext.generateModuleFragment(files, deserializer)
 
@@ -209,6 +231,9 @@ fun loadIr(
 
 private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): GeneratorContext {
     val analysisResult = depsDescriptors.runAnalysis()
+
+    afterFe = System.currentTimeMillis()
+    feTime += afterFe - start
 
     return GeneratorContext(
         Psi2IrConfiguration(),
