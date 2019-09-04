@@ -5,6 +5,7 @@ description = "Kotlin IDEA Ultimate plugin"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 val ideaProjectResources = provider { project(":idea").mainSourceSet.output.resourcesDir }
