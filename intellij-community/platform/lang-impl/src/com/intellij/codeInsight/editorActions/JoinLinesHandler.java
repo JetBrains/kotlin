@@ -225,7 +225,9 @@ public class JoinLinesHandler extends EditorActionHandler {
           }
           beforeLines = afterLines;
           text = myDoc.getCharsSequence();
-          finalOffset = myDoc.getLineEndOffset(finalLine);
+          if (finalLine >= startLine) {
+            finalOffset = myDoc.getLineEndOffset(finalLine);
+          }
         }
       }
       return startLine - myLine;
