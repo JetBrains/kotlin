@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.types.render
 
 data class ConditionalFirDataFlowInfo(
     val condition: Condition,
-    val variable: DataFlowVariable,
+    val variable: RealDataFlowVariable,
     val info: FirDataFlowInfo
 ) {
     fun invert(): ConditionalFirDataFlowInfo {

@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -52,7 +55,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
          * DataFlowAnalyzer holds variables only for declarations that have some smartcast (or can have)
          * If there is no useful information there is no data flow variable also
          */
-        val variable = qualifiedAccessExpression.variable?.aliasedVariable ?: return null
+        val variable = qualifiedAccessExpression.realVariable?.variableUnderAlias ?: return null
         return graphBuilder.lastNode.flow.approvedFacts(variable)?.exactType ?: return null
     }
 
@@ -109,7 +112,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
         if (typeOperatorCall.operation !in FirOperation.TYPES) return
         val type = typeOperatorCall.conversionTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
-        val operandVariable = getOrCreateRealVariable(typeOperatorCall.argument)?.aliasedVariable ?: return
+        val operandVariable = getOrCreateRealVariable(typeOperatorCall.argument)?.variableUnderAlias ?: return
 
         var flow = node.flow
         when (typeOperatorCall.operation) {
@@ -457,7 +460,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
          *   }
          */
         variableStorage[initializer]?.let { initializerVariable ->
-            assert(initializerVariable.isSynthetic)
+            assert(initializerVariable.isSynthetic())
             val realVariable = getOrCreateRealVariable(variable.symbol)
             node.flow = node.flow.copyNotApprovedFacts(initializerVariable, realVariable)
         }
@@ -471,7 +474,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
         val lhsVariable = variableStorage[assignment.resolvedSymbol ?: return] ?: return
-        val rhsVariable = variableStorage[assignment.rValue.resolvedSymbol ?: return]?.takeIf { !it.isSynthetic } ?: return
+        val rhsVariable = variableStorage[assignment.rValue.resolvedSymbol ?: return]?.takeIf { !it.isSynthetic() } ?: return
         variableStorage.rebindAliasVariable(lhsVariable, rhsVariable)
     }
 
@@ -598,7 +601,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
     // -------------------------------------------------------------------------------------------------------------------------
 
-    private fun approveFact(variable: DataFlowVariable, condition: Condition, flow: Flow): MutableMap<DataFlowVariable, FirDataFlowInfo>? =
+    private fun approveFact(variable: DataFlowVariable, condition: Condition, flow: Flow): MutableMap<RealDataFlowVariable, FirDataFlowInfo>? =
         logicSystem.approveFact(variable, condition, flow)
 
     private fun FirBinaryLogicExpression.getVariables(): Pair<DataFlowVariable, DataFlowVariable> =
@@ -628,9 +631,9 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     }
 
     // -------------------------------- get or create variable --------------------------------
-    private fun getOrCreateSyntheticVariable(fir: FirElement): DataFlowVariable = variableStorage.getOrCreateNewSyntheticVariable(fir)
+    private fun getOrCreateSyntheticVariable(fir: FirElement): SyntheticDataFlowVariable = variableStorage.getOrCreateNewSyntheticVariable(fir)
 
-    private fun getOrCreateRealVariable(fir: FirElement): DataFlowVariable? {
+    private fun getOrCreateRealVariable(fir: FirElement): RealDataFlowVariable? {
         if (fir is FirThisReceiverExpressionImpl) {
             return variableStorage.getOrCreateNewThisRealVariable(fir.calleeReference.boundSymbol ?: return null)
         }
@@ -638,8 +641,8 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         return variableStorage.getOrCreateNewRealVariable(symbol)
     }
 
-    private fun getOrCreateRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable =
-        variableStorage.getOrCreateNewRealVariable(symbol).aliasedVariable
+    private fun getOrCreateRealVariable(symbol: FirBasedSymbol<*>): RealDataFlowVariable =
+        variableStorage.getOrCreateNewRealVariable(symbol).variableUnderAlias
 
     private fun getOrCreateVariable(fir: FirElement): DataFlowVariable {
         val symbol = fir.resolvedSymbol
@@ -651,7 +654,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
     // -------------------------------- get variable --------------------------------
 
-    private val FirElement.variable: DataFlowVariable?
+    private val FirElement.realVariable: RealDataFlowVariable?
         get() {
             val symbol: FirBasedSymbol<*> = if (this is FirThisReceiverExpressionImpl) {
                 calleeReference.boundSymbol
@@ -661,8 +664,8 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
             return variableStorage[symbol]
         }
 
-    private fun getRealVariablesForSafeCallChain(call: FirExpression): Collection<DataFlowVariable> {
-        val result = mutableListOf<DataFlowVariable>()
+    private fun getRealVariablesForSafeCallChain(call: FirExpression): Collection<RealDataFlowVariable> {
+        val result = mutableListOf<RealDataFlowVariable>()
 
         fun collect(call: FirExpression) {
             when (call) {
@@ -713,7 +716,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
     }
 
-    private fun addApprovedFact(flow: Flow, variable: DataFlowVariable, info: FirDataFlowInfo): Flow {
+    private fun addApprovedFact(flow: Flow, variable: RealDataFlowVariable, info: FirDataFlowInfo): Flow {
         return flow.addApprovedFact(variable, info).also {
             if (variable.isThisReference) {
                 updateReceiverType(flow, variable)
@@ -727,7 +730,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     }
 
     private fun Flow.removeSyntheticVariable(variable: DataFlowVariable): Flow {
-        if (!variable.isSynthetic) return this
+        if (!variable.isSynthetic()) return this
         return removeVariable(variable)
     }
 }

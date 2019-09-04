@@ -7,18 +7,27 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import com.google.common.collect.HashMultimap
 
-class Flow(
-    val approvedInfos: MutableMap<DataFlowVariable, FirDataFlowInfo> = mutableMapOf(),
-    val conditionalInfos: HashMultimap<DataFlowVariable, ConditionalFirDataFlowInfo> = HashMultimap.create(),
+class Flow private constructor(
+    val approvedInfos: MutableMap<RealDataFlowVariable, FirDataFlowInfo>,
+    val conditionalInfos: HashMultimap<DataFlowVariable, ConditionalFirDataFlowInfo>,
     private var state: State = State.Building
 ) {
+    constructor(
+        approvedInfos: MutableMap<RealDataFlowVariable, FirDataFlowInfo> = mutableMapOf(),
+        conditionalInfos: HashMultimap<DataFlowVariable, ConditionalFirDataFlowInfo> = HashMultimap.create()
+    ) : this(approvedInfos, conditionalInfos, State.Building)
+
+    companion object {
+        val EMPTY = Flow(mutableMapOf(), HashMultimap.create(), State.Frozen)
+    }
+
     private val isFrozen: Boolean get() = state == State.Frozen
 
     fun freeze() {
         state = State.Frozen
     }
 
-    fun addApprovedFact(variable: DataFlowVariable, info: FirDataFlowInfo): Flow {
+    fun addApprovedFact(variable: RealDataFlowVariable, info: FirDataFlowInfo): Flow {
         if (isFrozen) return copyForBuilding().addApprovedFact(variable, info)
         approvedInfos.compute(variable) { _, existingInfo ->
             if (existingInfo == null) info
@@ -38,9 +47,11 @@ class Flow(
         to: DataFlowVariable,
         transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo)? = null
     ): Flow {
-        if (isFrozen)
+        if (isFrozen) {
             return copyForBuilding().copyNotApprovedFacts(from, to, transform)
-        var facts = if (from.isSynthetic) {
+        }
+
+        var facts = if (from.isSynthetic()) {
             conditionalInfos.removeAll(from)
         } else {
             conditionalInfos[from]
@@ -52,7 +63,7 @@ class Flow(
         return this
     }
 
-    fun approvedFacts(variable: DataFlowVariable): FirDataFlowInfo? {
+    fun approvedFacts(variable: RealDataFlowVariable): FirDataFlowInfo? {
         return approvedInfos[variable]
     }
 
@@ -63,11 +74,7 @@ class Flow(
         return this
     }
 
-    companion object {
-        val EMPTY = Flow(mutableMapOf(), HashMultimap.create(), State.Frozen)
-    }
-
-    enum class State {
+    private enum class State {
         Building, Frozen
     }
 
