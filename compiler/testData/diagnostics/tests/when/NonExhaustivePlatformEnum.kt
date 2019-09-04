@@ -1,3 +1,10 @@
+/*
+ * RELEVANT SPEC SENTENCES (spec version: 0.1-155, test type: neg):
+ *  - expressions, when-expression -> paragraph 5 -> sentence 1
+ *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 1 -> sentence 1
+ *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 9
+ */
+
 // See KT-6399: exhaustive whens on platform enums
 
 // FILE: J.java

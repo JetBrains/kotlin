@@ -1,5 +1,15 @@
 // !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
+/*
+ * RELEVANT SPEC SENTENCES (spec version: 0.1-155, test type: neg):
+ *  - expressions, when-expression -> paragraph 2 -> sentence 1
+ *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
+ *  - declarations, function-declaration -> paragraph 7 -> sentence 1
+ *  - declarations, function-declaration -> paragraph 7 -> sentence 2
+ *  - declarations, function-declaration -> paragraph 8 -> sentence 1
+ *  - overload-resolution, determining-function-applicability-for-a-specific-call, description -> paragraph 1 -> sentence 3
+ */
+
 val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test1<!> = when {
     true -> { <!OI;TYPE_MISMATCH!>{ true }<!> }
     else -> TODO()

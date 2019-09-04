@@ -1,3 +1,13 @@
+/*
+ * RELEVANT SPEC SENTENCES (spec version: 0.1-155, test type: neg):
+ *  - expressions, when-expression -> paragraph 5 -> sentence 1
+ *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 3
+ *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 6
+ *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 9
+ *  - expressions, when-expression -> paragraph 6 -> sentence 10
+ *  - expressions, when-expression -> paragraph 6 -> sentence 11
+ */
+
 // FILE: MyEnum.java
 public enum MyEnum {
     SINGLE;

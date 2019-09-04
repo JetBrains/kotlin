@@ -1,4 +1,13 @@
 // !WITH_NEW_INFERENCE
+/*
+ * RELEVANT SPEC SENTENCES (spec version: 0.1-155, test type: neg):
+ *  - expressions, when-expression -> paragraph 2 -> sentence 1
+ *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
+ *  - type-system, subtyping, subtyping-rules -> paragraph 2 -> sentence 1
+ *  - type-inference, local-type-inference -> paragraph 2 -> sentence 1
+ *  - overload-resolution, determining-function-applicability-for-a-specific-call, description -> paragraph 3 -> sentence 3
+ */
+
 val test1: (String) -> Boolean =
         when {
             true -> {{ true }}

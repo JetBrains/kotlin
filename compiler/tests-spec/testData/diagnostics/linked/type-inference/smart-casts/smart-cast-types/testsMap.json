@@ -1,0 +1,130 @@
+{
+  "9": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Branch false bypass",
+          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check before",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBefore.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check else",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckElse.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Branch false bypass else",
+          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheck.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check boolean",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Kt10809",
+          "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "8": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Branch false bypass",
+          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Branch false bypass else",
+          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "When type disjunctions",
+          "path": "compiler/testData/diagnostics/tests/when/WhenTypeDisjunctions.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Branch bypass val",
+          "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive warning for sealed class",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Branch bypass var",
+          "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Non exhaustive with nullability check",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWithNullabilityCheck.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Branch bypass val",
+          "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "8": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Branch bypass var",
+          "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

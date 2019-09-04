@@ -1,0 +1,22 @@
+{
+  "10": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "No else returned coercion to unit",
+          "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedCoercionToUnit.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "No else returned from lambda expected int",
+          "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedFromLambdaExpectedInt.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

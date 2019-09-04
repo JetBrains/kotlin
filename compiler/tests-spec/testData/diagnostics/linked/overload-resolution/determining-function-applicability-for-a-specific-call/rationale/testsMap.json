@@ -1,0 +1,15 @@
+{
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Kt10439",
+          "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

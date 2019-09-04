@@ -65,7 +65,7 @@ object NotLinkedSpecTestPatterns : BasePatterns {
 }
 
 object LinkedSpecTestPatterns : BasePatterns {
-    const val FILENAME_REGEX = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)\.kt"""
+    private const val FILENAME_REGEX = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)\.kt"""
 
     override val pathPartRegex =
         """${SpecTestLinkedType.LINKED.testDataPath}$ps$sectionsInPathRegex${ps}p-(?<paragraphNumber>$INTEGER_REGEX)"""
@@ -97,4 +97,11 @@ object TestCasePatterns {
 
     val testCaseInfoPattern: Pattern = Pattern.compile("(?:$testCaseInfoSingleLineRegex)|(?:$testCaseInfoMultilineRegex)")
     val testCaseNumberPattern: Pattern = Pattern.compile("""([1-9]\d*)(,\s*[1-9]\d*)*""")
+}
+
+object ImplementationTestPatterns {
+    val testInfoPattern: Pattern =
+        Pattern.compile(MULTILINE_COMMENT_REGEX.format("""\*\s+RELEVANT SPEC SENTENCES \(spec version: (?<specVersion>\d+\.[0-9]\d*\-[0-9]\d*), test type: (?<testType>pos|neg)\):(?<testSpecSentenceList>(\n\s+\*\s+-\s+.*?)+)"""))
+    val relevantSpecSentencesPattern: Pattern =
+        Pattern.compile("""\n\s+\*\s+-\s+(?<specSections>.*?) -> paragraph (?<specParagraph>[1-9]\d*) -> sentence (?<specSentence>[1-9]\d*)""")
 }

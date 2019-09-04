@@ -1,0 +1,53 @@
+{
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "When and lambda with expected type",
+          "path": "compiler/testData/diagnostics/tests/when/whenAndLambdaWithExpectedType.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Kt10811",
+          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Kt10809",
+          "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "8": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Kt10811",
+          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Kt10809",
+          "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
