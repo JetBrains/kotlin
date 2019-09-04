@@ -54,10 +54,6 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
     fun enterFunction(function: FirFunction<*>) {
         graphBuilder.enterFunction(function).passFlow()
-
-        for (valueParameter in function.valueParameters) {
-            getOrCreateRealVariable(valueParameter.symbol)
-        }
     }
 
     fun exitFunction(function: FirFunction<*>): ControlFlowGraph? {
@@ -461,7 +457,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         }
 
         initializer.resolvedSymbol?.let { initializerSymbol: FirBasedSymbol<*> ->
-            val rhsVariable = variableStorage[initializerSymbol]?.takeIf { !it.isSynthetic } ?: return
+            val rhsVariable = getOrCreateRealVariable(initializerSymbol)
             variableStorage.createAliasVariable(variable.symbol, rhsVariable)
         }
     }
