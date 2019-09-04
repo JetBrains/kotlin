@@ -60,10 +60,13 @@ private class LlvmPipelineConfiguration(context: Context) {
         KonanTarget.ANDROID_ARM32 -> "arm7tdmi"
         KonanTarget.ANDROID_ARM64 -> "cortex-a57"
         KonanTarget.ANDROID_X64 -> "x86-64"
+        KonanTarget.ANDROID_X86 -> TODO("implement me")
         KonanTarget.LINUX_MIPS32 -> "mips32r2"
         KonanTarget.LINUX_MIPSEL32 -> "mips32r2"
         KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
+        KonanTarget.WATCHOS_ARM32 -> TODO("implement me")
         KonanTarget.WATCHOS_X64 -> TODO("implement me")
+        KonanTarget.WATCHOS_X86 -> TODO("implement me")
         KonanTarget.TVOS_ARM64 -> TODO("implement me")
         KonanTarget.TVOS_X64 -> TODO("implement me")
         KonanTarget.WASM32,

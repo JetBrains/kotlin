@@ -49,7 +49,8 @@ class PlatformManager(distribution: Distribution = Distribution(), experimental:
      * TODO: Don't forget to delete this field and replace all its usages to `enabled`.
      */
     val filteredOutEnabledButNotSupported
-        get() = enabled.filterNot { it == KonanTarget.WATCHOS_X64 || it == KonanTarget.WATCHOS_ARM64 ||
+        get() = enabled.filterNot { it == KonanTarget.ANDROID_X86 || it == KonanTarget.WATCHOS_X64 ||
+                it == KonanTarget.WATCHOS_X86|| it == KonanTarget.WATCHOS_ARM64 || it == KonanTarget.WATCHOS_ARM32 ||
                 it == KonanTarget.TVOS_X64 || it == KonanTarget.TVOS_ARM64}
 }
 
