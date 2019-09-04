@@ -55,7 +55,7 @@ class GradleStructureWizardStep(
     override val location: String = data.linkedExternalProjectPath
     override val icon: Icon = GradleIcons.GradleFile
     override val presentationName: String = data.externalName
-    override val groupId: String = data.group
-    override val version: String = data.version
+    override val groupId: String = data.group ?: ""
+    override val version: String = data.version ?: ""
   }
 }

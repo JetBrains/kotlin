@@ -11,6 +11,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.externalSystem.model.project.ProjectId;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsDataStorage;
+import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
@@ -38,6 +39,7 @@ import com.intellij.testFramework.RunAll;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.collectRootsInside;
 
@@ -85,7 +88,13 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
         gradleProjectBuilder.setProjectId(new ProjectId("", null, null));
       }
     });
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
+    CountDownLatch latch = new CountDownLatch(1);
+    MessageBusConnection connection = project.getMessageBus().connect();
+    connection.subscribe(ProjectDataImportListener.TOPIC, path -> latch.countDown());
+    while (latch.getCount() == 1) {
+      UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
+      Thread.yield();
+    }
 
     assertEquals(projectName, project.getName());
     assertModules(project, projectName, projectName + ".main", projectName + ".test");

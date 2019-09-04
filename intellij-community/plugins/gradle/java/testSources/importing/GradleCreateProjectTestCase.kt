@@ -10,6 +10,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.findProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.getSettings
 import com.intellij.openapi.externalSystem.util.use
@@ -29,6 +30,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runners.Parameterized
 import java.io.File
+import java.util.concurrent.CountDownLatch
 
 
 abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
@@ -118,7 +120,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
       wizard.runWizard(configure)
       NewProjectUtil.createFromWizard(wizard, null)
     }
-    waitForImportCompletion()
+    waitForImportCompletion(project)
     return project
   }
 
@@ -128,7 +130,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
       wizard.runWizard(configure)
       NewModuleAction().createModuleFromWizard(project, null, wizard)
     }
-    waitForImportCompletion()
+    waitForImportCompletion(project)
   }
 
   private fun createWizard(project: Project?, directory: String): AbstractProjectWizard {
@@ -153,9 +155,15 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     doFinishAction()
   }
 
-  private fun waitForImportCompletion() {
-    invokeAndWaitIfNeeded {
-      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+  private fun waitForImportCompletion(project: Project) {
+    val latch = CountDownLatch(1)
+    val connection = project.messageBus.connect()
+    connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener { latch.countDown() })
+    while (latch.count == 1L) {
+      invokeAndWaitIfNeeded {
+        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+      }
+      Thread.yield()
     }
   }
 
