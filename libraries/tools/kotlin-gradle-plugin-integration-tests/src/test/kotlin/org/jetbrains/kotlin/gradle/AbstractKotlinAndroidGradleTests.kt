@@ -325,6 +325,19 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     }
 
     @Test
+    fun testLintInAndroidProjectsDependingOnMppWithoutAndroid() = with(Project("AndroidProject")) {
+        embedProject(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app"))
+        gradleBuildScript("Lib").appendText(
+            "\ndependencies { implementation(project(':sample-lib')) }"
+        )
+        val lintTask = ":Lib:lintFlavor1Debug"
+        build(lintTask) {
+            assertSuccessful()
+            assertTasksExecuted(lintTask) // Check that the lint task ran successfully, KT-27170
+        }
+    }
+
+    @Test
     fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
         setupWorkingDir()
 
