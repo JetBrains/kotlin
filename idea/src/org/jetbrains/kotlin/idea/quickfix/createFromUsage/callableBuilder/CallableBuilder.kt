@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import kotlin.math.max
 
@@ -1145,13 +1146,22 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
         else -> throw AssertionError("Invalid containing element: ${container.text}")
     }
 
-    if (declaration !is KtPrimaryConstructor) {
-        val parent = declarationInPlace.parent
-        calcNecessaryEmptyLines(declarationInPlace, false).let {
-            if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
+    when (declaration) {
+        is KtEnumEntry -> {
+            val prevEnumEntry = declarationInPlace.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtEnumEntry>()
+            if ((prevEnumEntry?.prevSibling as? PsiWhiteSpace)?.text?.contains('\n') == true) {
+                val parent = declarationInPlace.parent
+                parent.addBefore(psiFactory.createNewLine(), declarationInPlace)
+            }
         }
-        calcNecessaryEmptyLines(declarationInPlace, true).let {
-            if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
+        !is KtPrimaryConstructor -> {
+            val parent = declarationInPlace.parent
+            calcNecessaryEmptyLines(declarationInPlace, false).let {
+                if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
+            }
+            calcNecessaryEmptyLines(declarationInPlace, true).let {
+                if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
+            }
         }
     }
     return declarationInPlace
