@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.debugger.breakpoints.isInlineOnly
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.isFromJava
@@ -183,6 +184,11 @@ class SmartStepTargetVisitor(
                     // There is no constructor or init block, so do not show it in smart step into
                     return
                 }
+            }
+
+            // We can't step into @InlineOnly callables as there is no LVT, so skip them
+            if (declaration is KtCallableDeclaration && declaration.isInlineOnly()) {
+                return
             }
 
             val callLabel = KotlinMethodSmartStepTarget.calcLabel(descriptor)
