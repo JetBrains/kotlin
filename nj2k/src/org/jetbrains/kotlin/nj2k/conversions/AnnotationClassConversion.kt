@@ -55,10 +55,10 @@ class AnnotationClassConversion(context: NewJ2kConverterContext) : RecursiveAppl
             } else initializer
         ).also { parameter ->
             if (leftNonCodeElements.any { it is JKCommentElement }) {
-                parameter.leftNonCodeElements = leftNonCodeElements
+                parameter.leftNonCodeElements += leftNonCodeElements
             }
             if (rightNonCodeElements.any { it is JKCommentElement }) {
-                parameter.rightNonCodeElements = rightNonCodeElements
+                parameter.rightNonCodeElements += rightNonCodeElements
             }
 
         }

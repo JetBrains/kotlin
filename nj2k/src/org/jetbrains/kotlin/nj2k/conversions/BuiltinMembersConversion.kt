@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedField
@@ -32,11 +31,11 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
         val newSelector = conversion.createBuilder().build(selector)
 
         if (this is JKQualifiedExpression && conversion.replaceType == ReplaceType.REPLACE_WITH_QUALIFIER) {
-            newSelector.rightNonCodeElements =
-                (receiver.leftNonCodeElements +
-                        receiver.rightNonCodeElements +
-                        selector.leftNonCodeElements +
-                        selector.rightNonCodeElements).dropSpacesAtBegining()
+            newSelector.rightNonCodeElements += receiver.leftNonCodeElements
+            newSelector.rightNonCodeElements += receiver.leftNonCodeElements
+            newSelector.rightNonCodeElements += receiver.rightNonCodeElements
+            newSelector.rightNonCodeElements += selector.leftNonCodeElements
+            newSelector.rightNonCodeElements += selector.rightNonCodeElements
         }
 
         return when (conversion.replaceType) {
@@ -469,7 +468,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
         ).groupBy { it.from.fqName }
 
 
-    private fun JKExpression.   callOn(symbol: JKMethodSymbol, arguments: List<JKArgument> = emptyList()) =
+    private fun JKExpression.callOn(symbol: JKMethodSymbol, arguments: List<JKArgument> = emptyList()) =
         JKQualifiedExpressionImpl(
             this,
             JKKtQualifierImpl.DOT,

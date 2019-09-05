@@ -14,7 +14,7 @@ class NonCodeElementsConversion(context : NewJ2kConverterContext) : RecursiveApp
         when (element) {
             is JKClass -> {
                 element.name.rightNonCodeElements += element.inheritance.leftNonCodeElements
-                element.inheritance.leftNonCodeElements = emptyList()
+                element.inheritance.leftNonCodeElements.clear()
             }
         }
         return recurse(element)

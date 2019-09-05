@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class JKKtPropertyImpl(
     type: JKTypeElement,
@@ -50,7 +48,7 @@ class JKKtPropertyImpl(
     override var modalityElement by child(modalityElement)
     override var mutabilityElement by child(mutabilityElement)
 
-    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+    override var rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf(JKSpaceElementImpl("\n"))
 }
 
 class JKKtFunctionImpl(
@@ -152,7 +150,7 @@ class JKKtAssignmentStatementImpl(
     override var expression by child(expression)
     override fun accept(visitor: JKVisitor) = visitor.visitKtAssignmentStatement(this)
 
-    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+    override var rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf(JKSpaceElementImpl("\n"))
 }
 
 object JKContextType : JKType {

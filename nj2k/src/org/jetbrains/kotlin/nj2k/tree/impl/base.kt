@@ -43,8 +43,8 @@ private class JKListChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKB
 }
 
 abstract class JKElementBase : JKTreeElement, Cloneable {
-    override var leftNonCodeElements: List<JKNonCodeElement> = emptyList()
-    override var rightNonCodeElements: List<JKNonCodeElement> = emptyList()
+    override val leftNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
+    override val rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
 
     override var parent: JKElement? = null
 

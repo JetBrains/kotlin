@@ -22,7 +22,6 @@ import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.CompositeElement
-import com.intellij.psi.impl.source.tree.ElementType
 import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiLabeledStatementImpl
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
@@ -1038,8 +1037,8 @@ class JavaToJKTreeBuilder constructor(
     private fun JKNonCodeElementsListOwner.assignNonCodeElements(psi: PsiElement?) {
         if (psi == null) return
         val (leftTokens, rightTokens) = psi.collectNonCodeElements()
-        this.leftNonCodeElements = leftTokens
-        this.rightNonCodeElements = rightTokens
+        this.leftNonCodeElements += leftTokens
+        this.rightNonCodeElements += rightTokens
     }
 
     private inline fun <reified T : JKNonCodeElementsListOwner> T.withAssignedNonCodeElements(psi: PsiElement?): T =

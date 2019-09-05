@@ -38,7 +38,7 @@ interface PsiOwner {
 }
 
 abstract class JKDeclaration : JKTreeElement, JKBranchElementBase() {
-    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+    override val rightNonCodeElements = mutableListOf<JKNonCodeElement>(JKSpaceElementImpl("\n"))
     abstract val name: JKNameIdentifier
 }
 
@@ -260,7 +260,7 @@ interface JKTypeElement : JKTreeElement {
 }
 
 abstract class JKStatement : JKTreeElement, JKBranchElementBase() {
-    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+    override var rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf(JKSpaceElementImpl("\n"))
 }
 
 abstract class JKBlock : JKTreeElement, JKBranchElementBase() {
@@ -389,7 +389,7 @@ interface JKLiteralExpression : JKExpression {
 abstract class JKParameter : JKVariable(), JKModifiersListOwner {
     abstract var isVarArgs: Boolean
 
-    override var rightNonCodeElements: List<JKNonCodeElement> = emptyList()
+    override val rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
 }
 
 interface JKStringLiteralExpression : JKLiteralExpression {

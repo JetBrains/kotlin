@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.nj2k.tree.JKCommentElement
 import org.jetbrains.kotlin.nj2k.tree.JKNonCodeElement
 import org.jetbrains.kotlin.nj2k.tree.JKSpaceElement
 import org.jetbrains.kotlin.nj2k.tree.JKTokenElement
+import org.jetbrains.kotlin.utils.SmartList
 
 
 class JKSpaceElementImpl(override val text: String) : JKSpaceElement
@@ -16,6 +17,6 @@ class JKSpaceElementImpl(override val text: String) : JKSpaceElement
 class JKCommentElementImpl(override val text: String) : JKCommentElement
 
 class JKTokenElementImpl(override val text: String) : JKTokenElement {
-    override var leftNonCodeElements: List<JKNonCodeElement> = emptyList()
-    override var rightNonCodeElements: List<JKNonCodeElement> = emptyList()
+    override val leftNonCodeElements: MutableList<JKNonCodeElement> = SmartList()
+    override val rightNonCodeElements: MutableList<JKNonCodeElement> = SmartList()
 }

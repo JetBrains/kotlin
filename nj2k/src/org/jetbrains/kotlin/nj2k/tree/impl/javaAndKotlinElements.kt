@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.nj2k.tree.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType
@@ -168,7 +165,7 @@ class JKDeclarationStatementImpl(declaredStatements: List<JKDeclaration>) : JKDe
 
     override fun accept(visitor: JKVisitor) = visitor.visitDeclarationStatement(this)
 
-    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+    override var rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf(JKSpaceElementImpl("\n"))
 }
 
 class JKArrayAccessExpressionImpl(
@@ -270,8 +267,8 @@ class JKStubExpressionImpl : JKStubExpression, JKElementBase(), PsiOwner by PsiO
 }
 
 object JKBodyStubImpl : JKBodyStub() {
-    override var leftNonCodeElements: List<JKNonCodeElement> = emptyList()//TODO fix
-    override var rightNonCodeElements: List<JKNonCodeElement> = emptyList()//TODO fix
+    override val leftNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
+    override val rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
 
     override fun copy(): JKTreeElement = this
 
@@ -538,7 +535,7 @@ class JKAnnotationImpl(
     override var arguments: List<JKAnnotationParameter> by children(arguments)
     override fun accept(visitor: JKVisitor) = visitor.visitAnnotation(this)
 
-    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+    override var rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf(JKSpaceElementImpl("\n"))
 }
 
 class JKTypeArgumentListImpl(typeArguments: List<JKTypeElement> = emptyList()) : JKTypeArgumentList, JKBranchElementBase(),
@@ -562,7 +559,7 @@ class JKImportStatementImpl(name: JKNameIdentifier) : JKImportStatement, JKBranc
 
     override fun accept(visitor: JKVisitor) = visitor.visitImportStatement(this)
 
-    override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+    override var rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf(JKSpaceElementImpl("\n"))
 }
 
 class JKImportListImpl(imports: List<JKImportStatement>) : JKImportList, JKBranchElementBase() {

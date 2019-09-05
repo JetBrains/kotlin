@@ -22,22 +22,17 @@ fun JKCommentElement.isSingleline() =
 
 
 interface JKNonCodeElementsListOwner {
-    var leftNonCodeElements: List<JKNonCodeElement>
-    var rightNonCodeElements: List<JKNonCodeElement>
+    val leftNonCodeElements: MutableList<JKNonCodeElement>
+    val rightNonCodeElements: MutableList<JKNonCodeElement>
 }
 
 fun JKNonCodeElementsListOwner.takeNonCodeElementsFrom(other: JKNonCodeElementsListOwner) {
-    leftNonCodeElements = other.leftNonCodeElements
-    rightNonCodeElements = other.rightNonCodeElements
+    leftNonCodeElements += other.leftNonCodeElements
+    rightNonCodeElements += other.rightNonCodeElements
 }
 
 
-fun JKNonCodeElementsListOwner.appendNonCodeElementsFrom(other: JKNonCodeElementsListOwner) {
-    leftNonCodeElements = other.leftNonCodeElements + leftNonCodeElements
-    rightNonCodeElements = rightNonCodeElements + other.rightNonCodeElements
-}
-
-fun List<JKNonCodeElement>.dropSpacesAtBegining() =
+fun List<JKNonCodeElement>.dropSpacesAtBeginning() =
     dropWhile { it is JKSpaceElement }
 
 fun JKTreeElement.commentsFromInside(): List<JKCommentElement> {
@@ -62,8 +57,8 @@ inline fun <reified T : JKNonCodeElementsListOwner> List<T>.withNonCodeElementsF
     }
 
 fun JKNonCodeElementsListOwner.clearNonCodeElements() {
-    leftNonCodeElements = emptyList()
-    rightNonCodeElements = emptyList()
+    leftNonCodeElements.clear()
+    rightNonCodeElements.clear()
 }
 
 interface JKTokenElement : JKNonCodeElementsListOwner {
