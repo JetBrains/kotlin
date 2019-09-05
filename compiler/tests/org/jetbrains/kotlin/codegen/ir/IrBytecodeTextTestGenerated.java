@@ -1034,6 +1034,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/conditions/nonZeroCompareInWhile.kt");
         }
 
+        @TestMetadata("nullCompareConst.kt")
+        public void testNullCompareConst() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/conditions/nullCompareConst.kt");
+        }
+
         @TestMetadata("nullCompareInDoWhile.kt")
         public void testNullCompareInDoWhile() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/conditions/nullCompareInDoWhile.kt");
