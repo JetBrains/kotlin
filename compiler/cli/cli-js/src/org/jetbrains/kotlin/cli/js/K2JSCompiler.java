@@ -71,7 +71,9 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -90,8 +92,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @NotNull
     private K2JsIrCompiler getIrCompiler() {
-        if (irCompiler == null)
+        if (irCompiler == null) {
             irCompiler = new K2JsIrCompiler();
+        }
         return irCompiler;
     }
 
@@ -126,6 +129,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull MainCallParameters mainCallParameters,
             @NotNull JsConfig config
     ) throws TranslationException {
+        long start = System.currentTimeMillis();
+
         K2JSTranslator translator = new K2JSTranslator(config);
         IncrementalDataProvider incrementalDataProvider = config.getConfiguration().get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER);
         if (incrementalDataProvider != null) {
@@ -170,7 +175,17 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         CollectionsKt.sortBy(allKotlinFiles, ktFile -> VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()));
-        return translator.translate(reporter, allKotlinFiles, mainCallParameters, jsAnalysisResult);
+
+        TranslationResult result = translator.translate(reporter, allKotlinFiles, mainCallParameters, jsAnalysisResult);
+
+        beforeTranslationTime = translator.getBeforeTranslation();
+
+        preparationTime += translator.getBeforeTranslation() - start;
+        translationTime += translator.getBeforeInliner() - translator.getBeforeTranslation();
+        jsAstPhasesTime += translator.getBeforeGlobalPhases() - translator.getBeforeInliner();
+        globalPhasesTime += translator.getTranslatorFinish() - translator.getBeforeGlobalPhases();
+
+        return result;
     }
 
     @NotNull
@@ -305,35 +320,154 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.getMain());
         TranslationResult translationResult;
+        OutputFileCollection outputFiles = null;
 
-        try {
-            //noinspection unchecked
-            translationResult = translate(reporter, sourcesFiles, jsAnalysisResult, mainCallParameters, config);
+        boolean measurementEnabled = configuration.getBoolean(JSConfigurationKeys.MEASURE_PERFORMANCE);
+        int totalIterations = measurementEnabled ? 200 : 1;
+        int warmupIterations = 150;
+
+        long startTime = System.currentTimeMillis();
+        int iterations = 0;
+
+        log("WARMUP");
+        log("");
+        flush();
+
+        for (int i = 0; i < totalIterations; ++i, ++iterations) {
+
+            if (i == warmupIterations) {
+                startTime = System.currentTimeMillis();
+                clearTimes();
+                iterations = 0;
+                log("MEARUMENT");
+                log("");
+                flush();
+            }
+
+            try {
+                //noinspection unchecked
+                translationResult = translate(reporter, sourcesFiles, jsAnalysisResult, mainCallParameters, config);
+            }
+            catch (Exception e) {
+                throw ExceptionUtilsKt.rethrow(e);
+            }
+
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
+            AnalyzerWithCompilerReport.Companion.reportDiagnostics(translationResult.getDiagnostics(), messageCollector);
+
+            if (!(translationResult instanceof TranslationResult.Success)) return ExitCode.COMPILATION_ERROR;
+
+            TranslationResult.Success successResult = (TranslationResult.Success) translationResult;
+            outputFiles = successResult.getOutputFiles(outputFile, outputPrefixFile, outputPostfixFile);
+
+            outputTime += successResult.getBeforeJsFile() - successResult.getBeforeOutput();
+            jsFileTime += successResult.getBeforeMeta() - successResult.getBeforeJsFile();
+            metaTime += successResult.getAfterMeta() - successResult.getBeforeMeta();
+            srcMapFileTime += successResult.getAfterSrcMapFile() - successResult.getAfterMeta();
+
+            totalBeTime += successResult.getAfterSrcMapFile() - beforeTranslationTime;
+
+
+            if (outputFile.isDirectory()) {
+                messageCollector.report(ERROR, "Cannot open output file '" + outputFile.getPath() + "': is a directory", null);
+                return ExitCode.COMPILATION_ERROR;
+            }
+
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
+            OutputUtilsKt.writeAll(outputFiles, outputDir, messageCollector,
+                                   configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES));
+
+            if ((iterations + 1) % 10 == 0) {
+                printMeasurementResults(startTime, System.currentTimeMillis(), iterations + 1);
+            }
         }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-
-        AnalyzerWithCompilerReport.Companion.reportDiagnostics(translationResult.getDiagnostics(), messageCollector);
-
-        if (!(translationResult instanceof TranslationResult.Success)) return ExitCode.COMPILATION_ERROR;
-
-        TranslationResult.Success successResult = (TranslationResult.Success) translationResult;
-        OutputFileCollection outputFiles = successResult.getOutputFiles(outputFile, outputPrefixFile, outputPostfixFile);
-
-        if (outputFile.isDirectory()) {
-            messageCollector.report(ERROR, "Cannot open output file '" + outputFile.getPath() + "': is a directory", null);
-            return ExitCode.COMPILATION_ERROR;
-        }
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-
-        OutputUtilsKt.writeAll(outputFiles, outputDir, messageCollector,
-                               configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES));
 
         return OK;
+    }
+
+    private static long preparationTime = 0;
+    private static long translationTime = 0;
+    private static long jsAstPhasesTime = 0;
+    private static long globalPhasesTime = 0;
+    private static long outputTime = 0;
+    private static long jsFileTime = 0;
+    private static long metaTime = 0;
+    private static long srcMapFileTime = 0;
+
+    private static long beforeTranslationTime = 0;
+    private static long totalBeTime = 0;
+
+    private static void clearTimes() {
+        preparationTime = 0;
+        translationTime = 0;
+        jsAstPhasesTime = 0;
+        globalPhasesTime = 0;
+        outputTime = 0;
+        jsFileTime = 0;
+        metaTime = 0;
+        srcMapFileTime = 0;
+        totalBeTime = 0;
+    }
+
+    private static String fmt(long time, int iterations) {
+        return (time * 100 / iterations / 100.0) + " ms";
+    }
+
+    private static void printMeasurementResults(long start, long finish, int iterations) {
+        log("#" + iterations);
+        log("Total: " + fmt(finish - start, iterations));
+        log("Total BE: " + fmt(totalBeTime, iterations));
+        log("");
+        log("Prep: " + fmt(preparationTime, iterations));
+        log("Translation: " + fmt(translationTime, iterations));
+        log("Inliner, coroutines, etc: " + fmt(jsAstPhasesTime, iterations));
+        log("Global (merge + rename): " + fmt(globalPhasesTime, iterations));
+        log("js output: " + fmt(outputTime, iterations));
+        log("output -> js file: " + fmt(jsFileTime, iterations));
+        log("metadata: " + fmt(metaTime, iterations));
+        log("source maps -> file: " + fmt(srcMapFileTime, iterations));
+        log("");
+        flush();
+    }
+
+    private static BufferedWriter logWriter = null;
+
+    private static void flush() {
+        if (logWriter != null) {
+            try {
+                logWriter.flush();
+            }
+            catch (Throwable t) {
+                throw new Error(t);
+            }
+        }
+    }
+
+    private static void close() {
+        if (logWriter != null) {
+            try {
+                logWriter.close();
+                logWriter = null;
+            }
+            catch (Throwable t) {
+                throw new Error(t);
+            }
+        }
+    }
+
+    private static void log(String s) {
+        try {
+            if (logWriter == null) {
+                logWriter = new BufferedWriter(new FileWriter("/home/user/perf-log", true));
+            }
+            logWriter.append(s);
+            logWriter.newLine();
+        }
+        catch (Throwable t) {
+            throw new Error(t);
+        }
     }
 
     private static void checkDuplicateSourceFileNames(
@@ -430,6 +564,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.getFriendModulesDisabled());
 
+        configuration.put(JSConfigurationKeys.MEASURE_PERFORMANCE, "true".equals(arguments.getMeasurePerformance()));
+
+        log("Flag state: " + arguments.getMeasurePerformance() + " (" + configuration.get(JSConfigurationKeys.MEASURE_PERFORMANCE) + ")");
+        log("Output file: " + arguments.getOutputFile());
+        flush();
+
         if (!arguments.getFriendModulesDisabled() && arguments.getFriendModules() != null) {
             List<String> friendPaths = ArraysKt.filterNot(arguments.getFriendModules().split(File.pathSeparator), String::isEmpty);
             configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths);
@@ -445,6 +585,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         configuration.put(JSConfigurationKeys.MODULE_KIND, moduleKind);
 
+        //if (!configuration.getBoolean(JSConfigurationKeys.MEASURE_PERFORMANCE)) {
         IncrementalDataProvider incrementalDataProvider = services.get(IncrementalDataProvider.class);
         if (incrementalDataProvider != null) {
             configuration.put(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER, incrementalDataProvider);
@@ -454,6 +595,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (incrementalResultsConsumer != null) {
             configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, incrementalResultsConsumer);
         }
+        //}
 
         LookupTracker lookupTracker = services.get(LookupTracker.class);
         if (lookupTracker != null) {

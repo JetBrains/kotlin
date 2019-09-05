@@ -81,6 +81,11 @@ class K2JSTranslator @JvmOverloads constructor(
         return translateUnits(reporter, units, mainCallParameters, analysisResult)
     }
 
+    var beforeTranslation = 0L
+    var beforeInliner = 0L
+    var beforeGlobalPhases = 0L
+    var translatorFinish = 0L
+
     @Throws(TranslationException::class)
     @JvmOverloads
     fun translateUnits(
@@ -113,6 +118,8 @@ class K2JSTranslator @JvmOverloads constructor(
         analysisResult: JsAnalysisResult,
         packageMetadata: MutableMap<FqName, ByteArray>
     ): TranslationResult {
+        beforeTranslation = System.currentTimeMillis()
+
         val bindingTrace = analysisResult.bindingTrace
         TopDownAnalyzerFacadeForJS.checkForErrors(files, bindingTrace.bindingContext)
         val moduleDescriptor = analysisResult.moduleDescriptor
@@ -122,6 +129,8 @@ class K2JSTranslator @JvmOverloads constructor(
         val translationResult = Translation.generateAst(bindingTrace, allUnits, mainCallParameters, moduleDescriptor, config, pathResolver)
         if (hasError(diagnostics)) return TranslationResult.Fail(diagnostics)
         checkCanceled()
+
+        beforeInliner = System.currentTimeMillis()
 
         JsInliner(
             reporter,
@@ -146,13 +155,14 @@ class K2JSTranslator @JvmOverloads constructor(
         checkCanceled()
 
         // Global phases
+        beforeGlobalPhases = System.currentTimeMillis()
 
         val (program, importedModules) = translationResult.buildProgram()
 
         program.resolveTemporaryNames()
         checkCanceled()
 
-        return if (hasError(diagnostics)) {
+        return (if (hasError(diagnostics)) {
             TranslationResult.Fail(diagnostics)
         } else {
             TranslationResult.Success(
@@ -165,6 +175,8 @@ class K2JSTranslator @JvmOverloads constructor(
                 bindingTrace.bindingContext,
                 packageMetadata
             )
+        }).also {
+            translatorFinish = System.currentTimeMillis()
         }
     }
 

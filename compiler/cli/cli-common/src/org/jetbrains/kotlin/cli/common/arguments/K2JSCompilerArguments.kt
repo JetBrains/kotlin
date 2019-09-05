@@ -134,4 +134,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             description = "Paths to friend modules"
     )
     var friendModules: String? by NullableStringFreezableVar(null)
+
+    @Argument(
+        value = "-Xmeasure-performance",
+        valueDescription = "<path>",
+        description = "Paths to friend modules"
+    )
+    var measurePerformance: String? by NullableStringFreezableVar(null)
 }

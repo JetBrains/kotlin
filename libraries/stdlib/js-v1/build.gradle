@@ -144,6 +144,7 @@ compileBuiltinsKotlin2Js {
         outputFile = "${buildDir}/classes/builtins/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
+        freeCompilerArgs += [ "-Xmeasure-performance=true" ]
     }
 }
 
@@ -171,7 +172,7 @@ compileExperimentalKotlin2Js {
         outputFile = "${buildDir}/classes/experimental/${experimentalJsModuleName}.js"
         sourceMap = true
         sourceMapPrefix = "./"
-        freeCompilerArgs += ["-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator)]
+        freeCompilerArgs += ["-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator), "-Xmeasure-performance=true"]
     }
 }
 

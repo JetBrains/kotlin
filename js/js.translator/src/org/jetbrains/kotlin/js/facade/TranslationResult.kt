@@ -48,6 +48,12 @@ import java.util.*
 abstract class TranslationResult protected constructor(val diagnostics: Diagnostics) {
     class Fail(diagnostics: Diagnostics) : TranslationResult(diagnostics)
 
+    var beforeOutput = 0L
+    var beforeJsFile = 0L
+    var beforeMeta = 0L
+    var afterMeta = 0L
+    var afterSrcMapFile = 0L
+
     class Success(
             private val config: JsConfig,
             private val files: List<KtFile>,
@@ -66,6 +72,8 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
         }
 
         fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
+            beforeOutput = System.currentTimeMillis()
+
             val output = TextOutputImpl()
 
             val sourceMapBuilder = SourceMap3Builder(outputFile, output, config.sourceMapPrefix)
@@ -90,6 +98,8 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             }
             val code = output.toString()
 
+            beforeJsFile = System.currentTimeMillis()
+
             val prefix = outputPrefixFile?.readText() ?: ""
             val postfix = outputPostfixFile?.readText() ?: ""
             val sourceFiles = files.map {
@@ -103,6 +113,8 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
 
             val jsFile = SimpleOutputFile(sourceFiles, outputFile.name, prefix + code + postfix)
             val outputFiles = arrayListOf<OutputFile>(jsFile)
+
+            beforeMeta = System.currentTimeMillis()
 
             if (config.configuration.getBoolean(JSConfigurationKeys.META_INFO)) {
                 val metaFileName = KotlinJavascriptMetadataUtils.replaceSuffix(outputFile.name)
@@ -128,12 +140,16 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                 }
             }
 
+            afterMeta = System.currentTimeMillis()
+
             if (sourceMapBuilderConsumer != null) {
                 sourceMapBuilder.skipLinesAtBeginning(StringUtil.getLineBreakCount(prefix))
                 val sourceMapFile = SimpleOutputFile(sourceFiles, sourceMapBuilder.outFile.name, sourceMapBuilder.build())
                 outputFiles.add(sourceMapFile)
                 sourceMapBuilder.addLink()
             }
+
+            afterSrcMapFile = System.currentTimeMillis()
 
             return SimpleOutputFileCollection(outputFiles)
         }
