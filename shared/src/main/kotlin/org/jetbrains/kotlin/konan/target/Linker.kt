@@ -439,13 +439,13 @@ fun linker(configurables: Configurables): LinkerFlags =
                 LinuxBasedLinker(configurables as LinuxMIPSConfigurables)
             KonanTarget.MACOS_X64, KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64, KonanTarget.IOS_X64 ->
                 MacOSBasedLinker(configurables as AppleConfigurables)
-            KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64, KonanTarget.ANDROID_X64 ->
+            KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
+            KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 ->
                 AndroidLinker(configurables as AndroidConfigurables)
             KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 ->
                 MingwLinker(configurables as MingwConfigurables)
             KonanTarget.WASM32 ->
                 WasmLinker(configurables as WasmConfigurables)
-            KonanTarget.ANDROID_X86 -> TODO("implement me")
             KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
             KonanTarget.WATCHOS_ARM32 -> TODO("implement me")
             KonanTarget.WATCHOS_X64 -> TODO("implement me")
