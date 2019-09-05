@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.KotlinMultiplatformVersion
+import org.jetbrains.kotlin.config.isHmpp
+import org.jetbrains.kotlin.config.isNewMPP
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.SourceType.PRODUCTION
 import org.jetbrains.kotlin.idea.caches.project.SourceType.TEST
@@ -28,7 +31,8 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 
 val Module.isNewMPPModule: Boolean
-    get() = facetSettings?.kind?.isNewMPP ?: false
+    get() = facetSettings?.mppVersion.isNewMPP ||
+            facetSettings?.mppVersion.isHmpp // TODO: review clients, correct them to use precise checks for MPP version
 
 val Module.externalProjectId: String
     get() = facetSettings?.externalProjectId ?: ""
@@ -43,7 +47,7 @@ val Module.isTestModule: Boolean
     get() = facetSettings?.isTestModule ?: false
 
 val KotlinFacetSettings.isMPPModule: Boolean
-    get() = this.mppVersion?.isMPPModule ?: false
+    get() = this.mppVersion != null
 
 private val Module.facetSettings get() = KotlinFacet.get(this)?.configuration?.settings
 

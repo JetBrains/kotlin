@@ -12,6 +12,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.text.nullize
 import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.config.isHmpp
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 
 object KotlinMultiplatformAnalysisModeComponent {
@@ -38,7 +39,7 @@ object KotlinMultiplatformAnalysisModeComponent {
         cacheByClassInvalidatingOnRootModifications(KotlinMultiplatformAnalysisModeComponent::class.java) {
             ModuleManager.getInstance(this).modules.asSequence()
                 .mapNotNull { KotlinFacet.get(it) }
-                .any { it.configuration.settings.isHmppEnabled }
+                .any { it.configuration.settings.mppVersion.isHmpp }
         }
 
     enum class Mode {

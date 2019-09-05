@@ -134,6 +134,7 @@ enum class KotlinModuleKind {
     SOURCE_SET_HOLDER,
     COMPILATION_AND_SOURCE_SET_HOLDER;
 
+    @Deprecated("Use KotlinFacetSettings.mppVersion.isNewMpp")
     val isNewMPP: Boolean
         get() = this != DEFAULT
 }
@@ -141,17 +142,17 @@ enum class KotlinModuleKind {
 enum class KotlinMultiplatformVersion(val version: Int) {
     M1(1), // the first implementation of MPP. Aka 1.2.0 MPP
     M2(2), // the "New" MPP. Aka 1.3.0 MPP
-    M3(3); // the "Hierarchical" MPP.
-
-    val isMPPModule: Boolean
-        get() = version >= 1
-
-    val isNewMPP: Boolean
-        get() = version >= 2
-
-    val isHMPP: Boolean
-        get() = version >= 3
+    M3(3) // the "Hierarchical" MPP.
 }
+
+val KotlinMultiplatformVersion?.isOldMpp: Boolean
+    get() = this == KotlinMultiplatformVersion.M1
+
+val KotlinMultiplatformVersion?.isNewMPP: Boolean
+    get() = this == KotlinMultiplatformVersion.M2
+
+val KotlinMultiplatformVersion?.isHmpp: Boolean
+    get() = this == KotlinMultiplatformVersion.M3
 
 data class ExternalSystemTestTask(val testName: String, val externalSystemProjectId: String, val targetName: String?) {
 
