@@ -3632,6 +3632,7 @@ if (isAppleTarget(project)) {
 
                 extraOpts "-Xembed-bitcode-marker"
                 extraOpts "-Xemit-lazy-objc-header=$lazyHeader"
+                extraOpts project.globalTestArgs
             }
         }
         swiftSources = ['framework/values/values.swift']
@@ -3650,6 +3651,7 @@ if (isAppleTarget(project)) {
                 }
 
                 extraOpts "-Xembed-bitcode-marker", "-Xobjc-generics"
+                extraOpts project.globalTestArgs
             }
         }
         swiftSources = ['framework/values_generics/values.swift']
@@ -3668,6 +3670,7 @@ if (isAppleTarget(project)) {
                 }
 
                 extraOpts "-Xembed-bitcode"
+                extraOpts project.globalTestArgs
             }
         }
         swiftSources = ['framework/stdlib/stdlib.swift']
