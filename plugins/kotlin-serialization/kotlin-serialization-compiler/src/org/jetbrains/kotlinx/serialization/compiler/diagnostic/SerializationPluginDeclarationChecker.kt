@@ -223,5 +223,4 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             )
         }
     }
-
 }

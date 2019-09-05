@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.annotation.plugin.ide
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDeclaration
 import java.io.File
 
 fun Module.getSpecialAnnotations(prefix: String): List<String> {
@@ -26,9 +29,9 @@ fun Module.getSpecialAnnotations(prefix: String): List<String> {
     val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return emptyList()
 
     return commonArgs.pluginOptions
-            ?.filter { it.startsWith(prefix) }
-            ?.map { it.substring(prefix.length) }
-    ?: emptyList()
+        ?.filter { it.startsWith(prefix) }
+        ?.map { it.substring(prefix.length) }
+        ?: emptyList()
 }
 
 class AnnotationBasedCompilerPluginSetup(val options: List<PluginOption>, val classpath: List<String>) {
@@ -36,10 +39,10 @@ class AnnotationBasedCompilerPluginSetup(val options: List<PluginOption>, val cl
 }
 
 internal fun modifyCompilerArgumentsForPlugin(
-        facet: KotlinFacet,
-        setup: AnnotationBasedCompilerPluginSetup?,
-        compilerPluginId: String,
-        pluginName: String
+    facet: KotlinFacet,
+    setup: AnnotationBasedCompilerPluginSetup?,
+    compilerPluginId: String,
+    pluginName: String
 ) {
     val facetSettings = facet.configuration.settings
 
@@ -49,7 +52,8 @@ internal fun modifyCompilerArgumentsForPlugin(
     /** See [CommonCompilerArguments.PLUGIN_OPTION_FORMAT] **/
     val newOptionsForPlugin = setup?.options?.map { "plugin:$compilerPluginId:${it.key}=${it.value}" } ?: emptyList()
 
-    val oldAllPluginOptions = (commonArguments.pluginOptions ?: emptyArray()).filterTo(mutableListOf()) { !it.startsWith("plugin:$compilerPluginId:") }
+    val oldAllPluginOptions =
+        (commonArguments.pluginOptions ?: emptyArray()).filterTo(mutableListOf()) { !it.startsWith("plugin:$compilerPluginId:") }
     val newAllPluginOptions = oldAllPluginOptions + newOptionsForPlugin
 
     val oldPluginClasspaths = (commonArguments.pluginClasspaths ?: emptyArray()).filterTo(mutableListOf()) {
@@ -67,3 +71,11 @@ internal fun modifyCompilerArgumentsForPlugin(
 
     facetSettings.compilerArguments = commonArguments
 }
+
+val KtDeclaration.isOrdinaryClass
+    get() = this is KtClass &&
+            !this.hasModifier(KtTokens.INLINE_KEYWORD) &&
+            !this.isAnnotation() &&
+            !this.isInterface()
+
+val KtDeclaration.isAnnotated get() = this.annotationEntries.isNotEmpty()

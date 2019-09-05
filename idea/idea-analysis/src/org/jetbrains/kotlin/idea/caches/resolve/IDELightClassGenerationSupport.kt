@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.extensions.LightClassApplicabilityType
+import org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassContexts
 import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -53,7 +55,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -62,7 +63,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.ConcurrentMap
 
 class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
@@ -78,12 +78,29 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         override val isReleasedCoroutine
             get() = module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
-        override fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean {
+        private fun KtDeclaration.mayBeModifiedByCompilerPlugins(): Boolean {
+
             val facet = KotlinFacet.get(module)
             val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
-            if (!pluginClasspaths.isNullOrEmpty()) {
-                val stringifiedClasspaths = pluginClasspaths.joinToString()
-                LOG.debug { "Using heavy light classes for ${element.forLogString()} because of compiler plugins $stringifiedClasspaths" }
+            if (pluginClasspaths.isNullOrEmpty()) return false
+
+            val resolvedDescriptor = lazy(LazyThreadSafetyMode.NONE) {
+                resolveToDescriptorIfAny(
+                    getResolutionFacade(),
+                    bodyResolveMode = BodyResolveMode.PARTIAL
+                )
+            }
+
+            return LightClassApplicabilityCheckExtension.getInstances(project).any {
+                it.checkApplicabilityType(this, resolvedDescriptor) == LightClassApplicabilityType.LightClass
+            }
+        }
+
+        override fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean {
+
+            val codegenExtensionsEnabled = element.mayBeModifiedByCompilerPlugins()
+            if (codegenExtensionsEnabled) {
+                LOG.debug { "Using heavy light classes because of compiler plugins" }
                 return true
             }
 

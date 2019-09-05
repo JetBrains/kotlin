@@ -16,41 +16,24 @@
 
 package org.jetbrains.kotlin.noarg.ide
 
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.annotation.plugin.ide.getSpecialAnnotations
-import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.ANNOTATION_OPTION
-import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.PLUGIN_ID
+import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedLightClassApplicabilityExtension
+import org.jetbrains.kotlin.annotation.plugin.ide.CachedAnnotationNames
+import org.jetbrains.kotlin.annotation.plugin.ide.getAnnotationNames
+import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor
 import org.jetbrains.kotlin.noarg.diagnostic.AbstractNoArgDeclarationChecker
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import java.util.concurrent.ConcurrentMap
 
-class IdeNoArgDeclarationChecker(val project: Project) : AbstractNoArgDeclarationChecker() {
-    private companion object {
-        val ANNOTATION_OPTION_PREFIX = "plugin:$PLUGIN_ID:${ANNOTATION_OPTION.optionName}="
-    }
+internal val NO_ARG_ANNOTATION_OPTION_PREFIX =
+    "plugin:${NoArgCommandLineProcessor.PLUGIN_ID}:${NoArgCommandLineProcessor.ANNOTATION_OPTION.optionName}="
 
-    private val cache: CachedValue<ConcurrentMap<Module, List<String>>> = cachedValue(project) {
-        CachedValueProvider.Result.create(
-            ContainerUtil.createConcurrentWeakMap<Module, List<String>>(),
-            ProjectRootModificationTracker.getInstance(project)
-        )
-    }
+class IdeNoArgApplicabilityExtension(project: Project) :
+    AnnotationBasedLightClassApplicabilityExtension(project, NO_ARG_ANNOTATION_OPTION_PREFIX)
 
-    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> {
-        if (modifierListOwner == null) return emptyList()
-        val module = ModuleUtilCore.findModuleForPsiElement(modifierListOwner) ?: return emptyList()
+class IdeNoArgDeclarationChecker(project: Project) : AbstractNoArgDeclarationChecker() {
 
-        return cache.value.getOrPut(module) { module.getSpecialAnnotations(ANNOTATION_OPTION_PREFIX) }
-    }
+    private val cachedAnnotationNames = CachedAnnotationNames(project, NO_ARG_ANNOTATION_OPTION_PREFIX)
 
-    private fun <T> cachedValue(project: Project, result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
-        return CachedValuesManager.getManager(project).createCachedValue(result, false)
-    }
+    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> =
+        cachedAnnotationNames.getAnnotationNames(modifierListOwner)
 }
