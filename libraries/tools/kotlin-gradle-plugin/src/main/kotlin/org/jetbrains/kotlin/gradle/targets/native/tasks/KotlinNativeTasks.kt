@@ -124,12 +124,19 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
     val additionalCompilerOptions: Collection<String>
         @Input get() = kotlinOptions.freeCompilerArgs
 
-    // region DSL for compiler options
+    // region Compiler options.
     @get:Internal
     abstract val kotlinOptions: T
     abstract fun kotlinOptions(fn: T.() -> Unit)
     abstract fun kotlinOptions(fn: Closure<*>)
 
+    @get:Internal
+    val languageSettings: LanguageSettingsBuilder?
+        get() = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
+
+    @get:Input
+    val progressiveMode: Boolean
+        get() = languageSettings?.progressiveMode ?: false
     // endregion.
 
     val kotlinNativeVersion: String
@@ -193,6 +200,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
         addKey("-Werror", kotlinOptions.allWarningsAsErrors)
         addKey("-nowarn", kotlinOptions.suppressWarnings)
         addKey("-verbose", kotlinOptions.verbose)
+        addKey("-progressive", progressiveMode)
 
         if (!defaultsOnly) {
             addAll(additionalCompilerOptions)
@@ -266,17 +274,11 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
     // endregion.
 
     // region Language settings imported from a SourceSet.
-    val languageSettings: LanguageSettingsBuilder?
-        @Internal get() = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
-
     val languageVersion: String?
         @Optional @Input get() = languageSettings?.languageVersion
 
     val apiVersion: String?
         @Optional @Input get() = languageSettings?.apiVersion
-
-    val progressiveMode: Boolean
-        @Input get() = languageSettings?.progressiveMode ?: false
 
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings?.enabledLanguageFeatures ?: emptySet()
@@ -327,7 +329,6 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
         // Language features.
         addArgIfNotNull("-language-version", languageVersion)
         addArgIfNotNull("-api-version", apiVersion)
-        addKey("-progressive", progressiveMode)
         enabledLanguageFeatures.forEach { featureName ->
             add("-XXLanguage:+$featureName")
         }
