@@ -23,6 +23,11 @@ The tests that use the Gradle plugins DSL ([`PluginsDslIT`](../kotlin-gradle-plu
     ./gradlew -Pdeploy_version=1.2-test :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install
     ./gradlew -Pdeploy_version=1.2-test :kotlin-gradle-plugin-integration-tests:test
     
+If you want to run only one test class, you need to set flag `--tests` with value of test class, which you want to run
+
+      ./gradlew :kotlin-gradle-plugin-integration-tests:test --tests <class-name-with-package>
+
+
 #### How to work with the tests
 
 When you create a new test, figure out which Gradle versions it is supposed to run on. Then, when you instantiate a test project, specify one of:
