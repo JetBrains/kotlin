@@ -40,8 +40,9 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
 
         var delta = 0
 
+        val psiFactory = KtPsiFactory(klass)
         if (declaration is KtEnumEntry) {
-            val comma = KtPsiFactory(klass).createComma()
+            val comma = psiFactory.createComma()
 
             val nextEntry = declaration.nextSiblingOfSameType()
             if (nextEntry != null && !declaration.containsToken(KtTokens.COMMA)) {
@@ -51,6 +52,11 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
 
             val prevEntry = declaration.prevSiblingOfSameType()
             if (prevEntry != null && !prevEntry.containsToken(KtTokens.COMMA)) {
+                val semicolon = prevEntry.allChildren.firstOrNull { it.node?.elementType == KtTokens.SEMICOLON }
+                if (semicolon != null) {
+                    semicolon.delete()
+                    declaration.add(psiFactory.createSemicolon())
+                }
                 prevEntry.add(comma)
                 delta += comma.textLength
             }
@@ -60,7 +66,7 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
             if (lastEntry != null && lastEntry.containsToken(KtTokens.SEMICOLON)) return
             if (lastEntry == null && classBody.containsToken(KtTokens.SEMICOLON)) return
 
-            val semicolon = KtPsiFactory(klass).createSemicolon()
+            val semicolon = psiFactory.createSemicolon()
             classBody.addAfter(semicolon, lastEntry)
             delta += semicolon.textLength
         }
