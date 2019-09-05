@@ -11,16 +11,11 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
-import org.jetbrains.kotlin.nj2k.symbols.JKMultiverseClassSymbol
-import org.jetbrains.kotlin.nj2k.symbols.JKMultiverseKtClassSymbol
-import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.types.*
 import org.jetbrains.kotlin.psi.KtClass
@@ -28,8 +23,6 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun JKExpression.type(typeFactory: JKTypeFactory): JKType? =
@@ -73,6 +66,10 @@ fun JKExpression.type(typeFactory: JKTypeFactory): JKType? =
         is JKLabeledStatement ->
             statement.safeAs<JKExpressionStatement>()?.expression?.type(typeFactory)
         is JKMethodReferenceExpression -> JKNoTypeImpl //TODO
+        is JKAssignmentChainAlsoLink -> receiver.type(typeFactory)
+        is JKAssignmentChainLetLink -> field.type(typeFactory)
+        is JKKtAssignmentStatement -> typeFactory.types.unit
+        is JKKtItExpression -> type
         else -> TODO(this::class.java.toString())
     }
 
@@ -82,32 +79,19 @@ fun JKType.asTypeElement() =
 fun JKClassSymbol.asType(nullability: Nullability = Nullability.Default): JKClassType =
     JKClassTypeImpl(this, emptyList(), nullability)
 
-fun JKType.isSubtypeOf(other: JKType, typeFactory: JKTypeFactory): Boolean =
-    other.toKtType(typeFactory)
-        ?.let { otherType -> this.toKtType(typeFactory)?.isSubtypeOf(otherType) } == true
-
-
 val PsiType.isKotlinFunctionalType: Boolean
     get() {
         val fqName = safeAs<PsiClassType>()?.resolve()?.getKotlinFqName() ?: return false
         return functionalTypeRegex.matches(fqName.asString())
     }
 
-
 private val functionalTypeRegex = """(kotlin\.jvm\.functions|kotlin)\.Function[\d+]""".toRegex()
-
 
 fun KtTypeReference.toJK(typeFactory: JKTypeFactory): JKType? =
     analyze(BodyResolveMode.PARTIAL)
         .get(BindingContext.TYPE, this)
         ?.let { typeFactory.fromKotlinType(it) }
 
-
-fun JKType.toKtType(typeFactory: JKTypeFactory): KotlinType? = when (this) {
-    is JKClassType -> classReference.toKtType()
-    is JKJavaPrimitiveType -> typeFactory.fromPrimitiveType(this).toKtType(typeFactory)
-    else -> null
-}
 
 infix fun JKJavaPrimitiveType.isStrongerThan(other: JKJavaPrimitiveType) =
     jvmPrimitiveTypesPriority.getValue(this.jvmPrimitiveType.primitiveType) >
@@ -125,21 +109,6 @@ private val jvmPrimitiveTypesPriority =
         PrimitiveType.DOUBLE to 6
     )
 
-
-fun JKClassSymbol.toKtType(): KotlinType? {
-    val classDescriptor = when (this) {
-        is JKMultiverseKtClassSymbol -> {
-            val bindingContext = target.analyze()
-            bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, target] as ClassDescriptor
-        }
-        is JKMultiverseClassSymbol ->
-            target.getJavaClassDescriptor()
-        is JKUniverseClassSymbol ->
-            target.psi<PsiClass>()?.getJavaClassDescriptor()//TODO null in case of a fake package
-        else -> TODO(this::class.java.toString())
-    }
-    return classDescriptor?.defaultType
-}
 
 fun JKType.applyRecursive(transform: (JKType) -> JKType?): JKType =
     transform(this) ?: when (this) {

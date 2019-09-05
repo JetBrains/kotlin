@@ -104,64 +104,51 @@ class JKKtLiteralExpressionImpl(
 }
 
 class JKKtSingleValueOperatorToken(val psiToken: KtSingleValueToken) : JKKtOperatorToken {
-    override val operatorName: String
-        get() = OperatorConventions.getNameForOperationSymbol(psiToken, true, true)?.identifier
-            ?: OperatorConventions.BOOLEAN_OPERATIONS[psiToken]?.identifier
-            ?: TODO(psiToken.value)
     override val text: String = psiToken.value
 }
 
 object JKKtSpreadOperatorToken : JKKtOperatorToken {
     override val text: String = "*"
-    override val operatorName: String = "*"
 }
 
-object JKKtSpreadOperator : JKOperator {
+class JKKtSpreadOperator(override val returnType: JKType) : JKOperator {
     override val token: JKOperatorToken = JKKtSpreadOperatorToken
-    override val precedence: Int
-        get() = TODO()
 }
 
-class JKKtWordOperatorToken(override val text: String) : JKKtOperatorToken {
-    override val operatorName: String = text
+class JKKtWordOperatorToken(override val text: String) : JKKtOperatorToken
+
+class JKKtOperatorImpl(override val token: JKOperatorToken, override val returnType: JKType) : JKOperator
+
+class JKAssignmentChainAlsoLinkImpl(
+    receiver: JKExpression,
+    assignmentStatement: JKKtAssignmentStatement,
+    field: JKExpression
+) : JKAssignmentChainAlsoLink, JKBranchElementBase() {
+    override val receiver by child(receiver)
+    override val assignmentStatement by child(assignmentStatement)
+    override val field by child(field)
+
+    override fun accept(visitor: JKVisitor) = visitor.visitAssignmentChainAlsoLink(this)
 }
 
-class JKKtOperatorImpl(override val token: JKKtOperatorToken, val returnType: JKType) : JKOperator, JKElementBase() {
-    constructor(singleValueToken: KtSingleValueToken, returnType: JKType) : this(
-        JKKtSingleValueOperatorToken(singleValueToken),
-        returnType
-    )
+class JKAssignmentChainLetLinkImpl(
+    receiver: JKExpression,
+    assignmentStatement: JKKtAssignmentStatement,
+    field: JKExpression
+) : JKAssignmentChainLetLink, JKBranchElementBase() {
+    override val receiver by child(receiver)
+    override val assignmentStatement by child(assignmentStatement)
+    override val field by child(field)
 
-    override val precedence: Int
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-}
-
-
-class JKKtAlsoCallExpressionImpl(
-    statement: JKStatement,
-    override val identifier: JKMethodSymbol,
-    typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
-) : JKKtAlsoCallExpression, JKBranchElementBase() {
-    override fun accept(visitor: JKVisitor) = visitor.visitKtAlsoCallExpression(this)
-    override var statement
-        get() = arguments.arguments.first().value.cast<JKLambdaExpressionImpl>().statement
-        set(it) {
-            arguments.arguments.first().value.cast<JKLambdaExpressionImpl>().statement = it
-        }
-    override var arguments: JKArgumentList by child(
-        JKArgumentListImpl(
-            JKLambdaExpressionImpl(statement, emptyList())
-        )
-    )
-    override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
+    override fun accept(visitor: JKVisitor) = visitor.visitAssignmentChainLetLink(this)
 }
 
 class JKKtAssignmentStatementImpl(
-    field: JKAssignableExpression,
+    field: JKExpression,
     expression: JKExpression,
-    override var operator: JKOperator
+    override var token: JKOperatorToken
 ) : JKKtAssignmentStatement() {
-    override var field: JKAssignableExpression by child(field)
+    override var field: JKExpression by child(field)
     override var expression by child(expression)
     override fun accept(visitor: JKVisitor) = visitor.visitKtAssignmentStatement(this)
 
@@ -320,4 +307,8 @@ class JKKtEmptyGetterOrSetterImpl : JKKtEmptyGetterOrSetter, JKBranchElementBase
     override var visibilityElement by child(JKVisibilityModifierElementImpl(Visibility.PUBLIC))
 
     override fun accept(visitor: JKVisitor) = visitor.visitKtEmptyGetterOrSetter(this)
+}
+
+class JKKtItExpressionImpl(override val type: JKType) : JKKtItExpression, JKBranchElementBase() {
+    override fun accept(visitor: JKVisitor) = visitor.visitKtItExpression(this)
 }

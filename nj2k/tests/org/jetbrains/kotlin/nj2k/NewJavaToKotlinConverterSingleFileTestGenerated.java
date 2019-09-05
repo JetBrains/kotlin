@@ -412,6 +412,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/assignmentExpression/assignmentAsExpression.java");
         }
 
+        @TestMetadata("assignmentsChain.java")
+        public void testAssignmentsChain() throws Exception {
+            runTest("nj2k/testData/newJ2k/assignmentExpression/assignmentsChain.java");
+        }
+
+        @TestMetadata("assignmentsChainWithParenthesis.java")
+        public void testAssignmentsChainWithParenthesis() throws Exception {
+            runTest("nj2k/testData/newJ2k/assignmentExpression/assignmentsChainWithParenthesis.java");
+        }
+
         @TestMetadata("bitOperationPriority.java")
         public void testBitOperationPriority() throws Exception {
             runTest("nj2k/testData/newJ2k/assignmentExpression/bitOperationPriority.java");
@@ -422,9 +432,24 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/assignmentExpression/bitOperationPriorityComments.java");
         }
 
+        @TestMetadata("declarationAssignmentsChain.java")
+        public void testDeclarationAssignmentsChain() throws Exception {
+            runTest("nj2k/testData/newJ2k/assignmentExpression/declarationAssignmentsChain.java");
+        }
+
         @TestMetadata("divideAssign.java")
         public void testDivideAssign() throws Exception {
             runTest("nj2k/testData/newJ2k/assignmentExpression/divideAssign.java");
+        }
+
+        @TestMetadata("expressionAssignmentWithParentheses.java")
+        public void testExpressionAssignmentWithParentheses() throws Exception {
+            runTest("nj2k/testData/newJ2k/assignmentExpression/expressionAssignmentWithParentheses.java");
+        }
+
+        @TestMetadata("inExpressionAssignmentsChain.java")
+        public void testInExpressionAssignmentsChain() throws Exception {
+            runTest("nj2k/testData/newJ2k/assignmentExpression/inExpressionAssignmentsChain.java");
         }
 
         @TestMetadata("minusAssign.java")

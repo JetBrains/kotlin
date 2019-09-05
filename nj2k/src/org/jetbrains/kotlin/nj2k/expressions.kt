@@ -5,66 +5,17 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.psi.PsiClass
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.conversions.RecursiveApplicableConversionBase
-import org.jetbrains.kotlin.nj2k.symbols.*
+import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedMethod
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.nj2k.types.JKClassType
-import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
-import org.jetbrains.kotlin.nj2k.types.JKTypeParameterType
-import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-private fun JKType.classSymbol(typeFactory: JKTypeFactory) = when (this) {
-    is JKClassType -> classReference
-    is JKJavaPrimitiveType -> typeFactory.fromPrimitiveType(this).classReference
-    else -> null
-}
-
-private fun JKKtOperatorToken.arithmeticMethodType(
-    leftType: JKType,
-    rightType: JKType,
-    typeFactory: JKTypeFactory
-): JKType? {
-    val symbolProvider = typeFactory.symbolProvider
-
-    fun PsiClass.methodReturnType() =
-        allMethods
-            .filter { it.name == operatorName }
-            .firstOrNull {
-                it.parameterList.parameters.singleOrNull()?.takeIf { parameter ->
-                    val type = typeFactory.fromPsiType(parameter.type)
-                    if (type !is JKTypeParameterType) rightType.isSubtypeOf(type, typeFactory)
-                    else true//TODO check for type bounds
-                } != null
-            }?.returnType?.let { typeFactory.fromPsiType(it) }
-
-    val classSymbol =
-        if (leftType.isStringType()) symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.string.toSafe())
-        else leftType.classSymbol(typeFactory)
-
-    return when (classSymbol) {
-        is JKMultiverseKtClassSymbol ->
-            classSymbol.target.declarations
-                .asSequence()
-                .filterIsInstance<KtNamedFunction>()
-                .filter { it.name == operatorName }
-                .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
-                .firstOrNull { it.parameterTypes?.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, typeFactory) } != null }
-                ?.returnType
-        is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodReturnType()
-        is JKMultiverseClassSymbol -> classSymbol.target.methodReturnType()
-        else -> null
-    }
-}
 
 fun JKOperator.isEquals() =
     (token as? JKKtSingleValueOperatorToken)?.psiToken in equalsOperators
@@ -76,98 +27,6 @@ private val equalsOperators =
         KtTokens.EQEQ,
         KtTokens.EXCLEQ
     )
-
-private val lessGreaterOperators =
-    TokenSet.create(
-        KtTokens.LT,
-        KtTokens.GT,
-        KtTokens.LTEQ,
-        KtTokens.GTEQ
-    )
-
-private val comparisonOperators =
-    TokenSet.orSet(
-        lessGreaterOperators,
-        equalsOperators
-    )
-
-private val booleanOperators =
-    TokenSet.orSet(
-        comparisonOperators,
-        TokenSet.create(
-            KtTokens.ANDAND,
-            KtTokens.OROR
-        )
-    )
-
-private val arithmeticOperators = TokenSet.create(
-    KtTokens.MUL,
-    KtTokens.PLUS,
-    KtTokens.MINUS,
-    KtTokens.DIV,
-    KtTokens.PERC
-)
-
-private fun JKKtOperatorToken.defaultReturnType(leftType: JKType?): JKType? {
-    if (this is JKKtSingleValueOperatorToken && psiToken in arithmeticOperators) return leftType
-    return null
-}
-
-fun kotlinBinaryExpression(
-    left: JKExpression,
-    right: JKExpression,
-    token: JKKtOperatorToken,
-    typeFactory: JKTypeFactory
-): JKBinaryExpression {
-    val symbolProvider = typeFactory.symbolProvider
-    val returnType =
-        when {
-            token is JKKtSingleValueOperatorToken && token.psiToken in booleanOperators ->
-                JKClassTypeImpl(symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES._boolean.toSafe()))
-            else -> {
-                val leftType = left.type(typeFactory)
-                val rightType = right.type(typeFactory)
-                leftType?.let { l ->
-                    rightType?.let { r ->
-                        token.arithmeticMethodType(l, r, typeFactory)
-                    }
-                } ?: token.defaultReturnType(leftType)
-                ?: typeFactory.types.nothing
-            }
-        }
-    return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, returnType))
-}
-
-fun kotlinBinaryExpression(
-    left: JKExpression,
-    right: JKExpression,
-    token: KtSingleValueToken,
-    typeFactory: JKTypeFactory
-): JKBinaryExpression =
-    kotlinBinaryExpression(
-        left,
-        right,
-        JKKtSingleValueOperatorToken(token),
-        typeFactory
-    )
-
-fun kotlinPrefixExpression(
-    operand: JKExpression,
-    token: JKKtOperatorToken,
-    typeFactory: JKTypeFactory
-): JKPrefixExpression {
-    val operandType = operand.type(typeFactory) ?: JKNoTypeImpl
-    return JKPrefixExpressionImpl(operand, JKKtOperatorImpl(token, operandType))
-}
-
-fun kotlinPostfixExpression(
-    operand: JKExpression,
-    token: JKKtOperatorToken,
-    typeFactory: JKTypeFactory
-): JKPostfixExpression {
-    val operandType = operand.type(typeFactory) ?: JKNoTypeImpl
-    return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, operandType))
-}
 
 fun untilToExpression(
     from: JKExpression,
@@ -198,6 +57,8 @@ fun JKExpression.parenthesizeIfBinaryExpression() =
         is JKBinaryExpression -> JKParenthesizedExpressionImpl(this)
         else -> this
     }
+
+fun JKExpression.parenthesize() = JKParenthesizedExpressionImpl(this)
 
 fun rangeExpression(
     from: JKExpression,
@@ -277,7 +138,7 @@ fun stringLiteral(content: String, typeFactory: JKTypeFactory): JKExpression {
         val newlineSeparator = if (i == lines.size - 1) "" else "\\n"
         JKKtLiteralExpressionImpl("\"$line$newlineSeparator\"", JKLiteralExpression.LiteralType.STRING)
     }.reduce { acc: JKExpression, literalExpression: JKKtLiteralExpression ->
-        kotlinBinaryExpression(acc, literalExpression, JKKtSingleValueOperatorToken(KtTokens.PLUS), typeFactory)
+        JKBinaryExpressionImpl(acc, literalExpression, JKKtOperatorImpl(JKOperatorToken.PLUS, typeFactory.types.string))
     }
 }
 
@@ -320,11 +181,13 @@ fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: NewJ2kConverterC
     }
 
 fun equalsExpression(left: JKExpression, right: JKExpression, typeFactory: JKTypeFactory) =
-    kotlinBinaryExpression(
+    JKBinaryExpressionImpl(
         left,
         right,
-        KtTokens.EQEQ,
-        typeFactory
+        JKKtOperatorImpl(
+            JKOperatorToken.EQEQ,
+            typeFactory.types.boolean
+        )
     )
 
 fun createCompanion(declarations: List<JKDeclaration>): JKClass =
@@ -439,3 +302,18 @@ fun JKExpression.qualified(qualifier: JKExpression?) =
     if (qualifier != null && qualifier !is JKStubExpression) {
         JKQualifiedExpressionImpl(qualifier, JKJavaQualifierImpl.DOT, this)
     } else this
+
+fun JKExpression.callOn(
+    symbol: JKMethodSymbol,
+    arguments: List<JKExpression> = emptyList(),
+    typeArguments: List<JKTypeElement> = emptyList()
+) = JKQualifiedExpressionImpl(
+    this,
+    JKKtQualifierImpl.DOT,
+    JKKtCallExpressionImpl(
+        symbol,
+        JKArgumentListImpl(arguments.map { JKArgumentImpl(it) }),
+        JKTypeArgumentListImpl(typeArguments)
+    )
+)
+

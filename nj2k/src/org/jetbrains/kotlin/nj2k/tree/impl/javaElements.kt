@@ -92,125 +92,9 @@ class JKJavaLiteralExpressionImpl(
     }
 }
 
-
 class JKJavaOperatorToken(val psiToken: IElementType) : JKOperatorToken {
     override val text: String
-        get() = when (psiToken) {
-            JavaTokenType.EQ -> "="
-            JavaTokenType.EQEQ -> "=="
-            JavaTokenType.NE -> "!="
-            JavaTokenType.ANDAND -> "&&"
-            JavaTokenType.OROR -> "||"
-            JavaTokenType.GT -> ">"
-            JavaTokenType.LT -> "<"
-            JavaTokenType.GE -> ">="
-            JavaTokenType.LE -> "<="
-            JavaTokenType.EXCL -> "!"
-            JavaTokenType.PLUS -> "+"
-            JavaTokenType.MINUS -> "-"
-            JavaTokenType.ASTERISK -> "*"
-            JavaTokenType.DIV -> "/"
-            JavaTokenType.PERC -> "%"
-            JavaTokenType.PLUSEQ -> "+="
-            JavaTokenType.MINUSEQ -> "-="
-            JavaTokenType.ASTERISKEQ -> "*="
-            JavaTokenType.DIVEQ -> "/="
-            JavaTokenType.PERCEQ -> "%="
-            JavaTokenType.GTGT -> "shr"
-            JavaTokenType.LTLT -> "shl"
-            JavaTokenType.XOR -> "xor"
-            JavaTokenType.AND -> "and"
-            JavaTokenType.OR -> "or"
-            JavaTokenType.GTGTGT -> "ushr"
-            JavaTokenType.GTGTEQ -> "shr"
-            JavaTokenType.LTLTEQ -> "shl"
-            JavaTokenType.XOREQ -> "xor"
-            JavaTokenType.ANDEQ -> "and"
-            JavaTokenType.OREQ -> "or"
-            JavaTokenType.GTGTGTEQ -> "ushr"
-            JavaTokenType.PLUSPLUS -> "++"
-            JavaTokenType.MINUSMINUS -> "--"
-            JavaTokenType.TILDE -> "~"
-            else -> TODO(psiToken.toString())
-        }
-}
-
-fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
-    when (this.psiToken) {
-        JavaTokenType.DIV -> JKKtSingleValueOperatorToken(KtTokens.DIV)
-        JavaTokenType.MINUS -> JKKtSingleValueOperatorToken(KtTokens.MINUS)
-        JavaTokenType.ANDAND -> JKKtSingleValueOperatorToken(KtTokens.ANDAND)
-        JavaTokenType.OROR -> JKKtSingleValueOperatorToken(KtTokens.OROR)
-        JavaTokenType.PLUS -> JKKtSingleValueOperatorToken(KtTokens.PLUS)
-        JavaTokenType.ASTERISK -> JKKtSingleValueOperatorToken(KtTokens.MUL)
-        JavaTokenType.GT -> JKKtSingleValueOperatorToken(KtTokens.GT)
-        JavaTokenType.GE -> JKKtSingleValueOperatorToken(KtTokens.GTEQ)
-        JavaTokenType.LT -> JKKtSingleValueOperatorToken(KtTokens.LT)
-        JavaTokenType.LE -> JKKtSingleValueOperatorToken(KtTokens.LTEQ)
-        JavaTokenType.PERC -> JKKtSingleValueOperatorToken(KtTokens.PERC)
-
-        JavaTokenType.EQ -> JKKtSingleValueOperatorToken(KtTokens.EQ)
-        JavaTokenType.EQEQ -> JKKtSingleValueOperatorToken(KtTokens.EQEQ)
-        JavaTokenType.NE -> JKKtSingleValueOperatorToken(KtTokens.EXCLEQ)
-        JavaTokenType.PLUSEQ -> JKKtSingleValueOperatorToken(KtTokens.PLUSEQ)
-        JavaTokenType.MINUSEQ -> JKKtSingleValueOperatorToken(KtTokens.MINUSEQ)
-        JavaTokenType.PLUSPLUS -> JKKtSingleValueOperatorToken(KtTokens.PLUSPLUS)
-        JavaTokenType.MINUSMINUS -> JKKtSingleValueOperatorToken(KtTokens.MINUSMINUS)
-        JavaTokenType.EXCL -> JKKtSingleValueOperatorToken(KtTokens.EXCL)
-
-        KtTokens.EQEQEQ -> JKKtSingleValueOperatorToken(KtTokens.EQEQEQ)
-        KtTokens.EXCLEQEQEQ -> JKKtSingleValueOperatorToken(KtTokens.EXCLEQEQEQ)
-
-        JavaTokenType.AND -> JKKtWordOperatorToken("and")
-        JavaTokenType.OR -> JKKtWordOperatorToken("or")
-        JavaTokenType.XOR -> JKKtWordOperatorToken("xor")
-        JavaTokenType.GTGTGT -> JKKtWordOperatorToken("ushr")
-        JavaTokenType.GTGT -> JKKtWordOperatorToken("shr")
-        JavaTokenType.LTLT -> JKKtWordOperatorToken("shl")
-
-        JavaTokenType.OREQ -> JKKtWordOperatorToken("or")
-        JavaTokenType.ANDEQ -> JKKtWordOperatorToken("and")
-        JavaTokenType.LTLTEQ -> JKKtWordOperatorToken("shl")
-        JavaTokenType.GTGTEQ -> JKKtWordOperatorToken("shr")
-        JavaTokenType.GTGTGTEQ -> JKKtWordOperatorToken("ushr")
-        JavaTokenType.XOREQ -> JKKtWordOperatorToken("xor")
-
-        else -> TODO(this.psiToken.toString())
-    }
-
-
-class JKJavaOperatorImpl private constructor(psiToken: IElementType) : JKOperator {
-    override val token: JKJavaOperatorToken = JKJavaOperatorToken(psiToken)
-
-    override val precedence: Int
-        get() = when (token.psiToken) {
-            JavaTokenType.ASTERISK, JavaTokenType.DIV, JavaTokenType.PERC -> 3
-            JavaTokenType.PLUS, JavaTokenType.MINUS -> 4
-            KtTokens.ELVIS -> 7
-            JavaTokenType.GT, JavaTokenType.LT, JavaTokenType.GE, JavaTokenType.LE -> 9
-            JavaTokenType.EQEQ, JavaTokenType.NE, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ -> 10
-            JavaTokenType.ANDAND -> 11
-            JavaTokenType.OROR -> 12
-            JavaTokenType.GTGTGT, JavaTokenType.GTGT, JavaTokenType.LTLT -> 7
-            else -> 6 /* simple name */
-        }
-
-//    override val priority: Int
-//        get() = when (token.psiToken) {
-//            JavaTokenType.ASTERISK, JavaTokenType.DIV, JavaTokenType.PERC -> 12
-//            JavaTokenType.PLUS, JavaTokenType.MINUS -> 11
-//            JavaTokenType.GTGTGT, JavaTokenType.GTGT, JavaTokenType.LTLT -> 10
-//            JavaTokenType.GT, JavaTokenType.LT, JavaTokenType.GE, JavaTokenType.LE -> 9
-//            JavaTokenType.EQEQ, JavaTokenType.NE, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ ->
-//        }
-
-    companion object {
-        val tokenToOperator =
-            (OPERATION_BIT_SET.types + arrayOf(KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ))
-                .associate {
-                    it to JKJavaOperatorImpl(it)
-                }
-    }
+        get() = error("Java token should not be printed, it should be replaces with corresponding Kotlin one")
 }
 
 sealed class JKJavaQualifierImpl : JKQualifier {
@@ -342,13 +226,13 @@ class JKJavaPolyadicExpressionImpl(operands: List<JKExpression>, override var to
 }
 
 class JKJavaAssignmentExpressionImpl(
-    field: JKAssignableExpression,
+    field: JKExpression,
     expression: JKExpression,
     override var operator: JKOperator
 ) : JKBranchElementBase(), JKJavaAssignmentExpression, PsiOwner by PsiOwnerImpl() {
     override fun accept(visitor: JKVisitor) = visitor.visitJavaAssignmentExpression(this)
-    override var field: JKAssignableExpression by child(field)
-    override var expression: JKExpression by child(expression)
+    override var field by child(field)
+    override var expression by child(expression)
 }
 
 class JKJavaSwitchStatementImpl(

@@ -95,7 +95,7 @@ interface JKJavaPolyadicExpression : JKExpression {
 }
 
 interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
-    var field: JKAssignableExpression
+    var field: JKExpression
     var expression: JKExpression
     var operator: JKOperator
 }

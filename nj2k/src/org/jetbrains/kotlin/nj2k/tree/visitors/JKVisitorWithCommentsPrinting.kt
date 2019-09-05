@@ -582,13 +582,13 @@ abstract class JKVisitorWithCommentsPrinting : JKVisitor() {
 
     open fun visitIfElseExpressionRaw(ifElseExpression: JKIfElseExpression) = visitExpressionRaw(ifElseExpression)
 
-    override fun visitAssignableExpression(assignableExpression: JKAssignableExpression) {
+    override fun visitAssignableExpression(assignableExpression: JKExpression) {
         printLeftNonCodeElements(assignableExpression)
         visitAssignableExpressionRaw(assignableExpression)
         printRightNonCodeElements(assignableExpression)
     }
 
-    open fun visitAssignableExpressionRaw(assignableExpression: JKAssignableExpression) = visitExpressionRaw(assignableExpression)
+    open fun visitAssignableExpressionRaw(assignableExpression: JKExpression) = visitExpressionRaw(assignableExpression)
 
     override fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) {
         printLeftNonCodeElements(lambdaExpression)
@@ -668,7 +668,7 @@ abstract class JKVisitorWithCommentsPrinting : JKVisitor() {
         printRightNonCodeElements(typeParameter)
     }
 
-    open fun visitTypeParameterRaw(typeParameter: JKTypeParameter) = visitTreeElementRaw(typeParameter)
+    open fun visitTypeParameterRaw(typeParameter: JKTypeParameter) = visitDeclarationRaw(typeParameter)
 
     override fun visitTypeParameterListOwner(typeParameterListOwner: JKTypeParameterListOwner) {
         printLeftNonCodeElements(typeParameterListOwner)
@@ -1006,13 +1006,29 @@ abstract class JKVisitorWithCommentsPrinting : JKVisitor() {
 
     open fun visitKtMethodCallExpressionRaw(ktMethodCallExpression: JKKtMethodCallExpression) = visitMethodCallExpressionRaw(ktMethodCallExpression)
 
-    override fun visitKtAlsoCallExpression(ktAlsoCallExpression: JKKtAlsoCallExpression) {
-        printLeftNonCodeElements(ktAlsoCallExpression)
-        visitKtAlsoCallExpressionRaw(ktAlsoCallExpression)
-        printRightNonCodeElements(ktAlsoCallExpression)
+    override fun visitKtAssignmentChainLink(ktAssignmentChainLink: JKKtAssignmentChainLink) {
+        printLeftNonCodeElements(ktAssignmentChainLink)
+        visitKtAssignmentChainLinkRaw(ktAssignmentChainLink)
+        printRightNonCodeElements(ktAssignmentChainLink)
     }
 
-    open fun visitKtAlsoCallExpressionRaw(ktAlsoCallExpression: JKKtAlsoCallExpression) = visitKtMethodCallExpressionRaw(ktAlsoCallExpression)
+    open fun visitKtAssignmentChainLinkRaw(ktAssignmentChainLink: JKKtAssignmentChainLink) = visitExpressionRaw(ktAssignmentChainLink)
+
+    override fun visitAssignmentChainAlsoLink(assignmentChainAlsoLink: JKAssignmentChainAlsoLink) {
+        printLeftNonCodeElements(assignmentChainAlsoLink)
+        visitAssignmentChainAlsoLinkRaw(assignmentChainAlsoLink)
+        printRightNonCodeElements(assignmentChainAlsoLink)
+    }
+
+    open fun visitAssignmentChainAlsoLinkRaw(assignmentChainAlsoLink: JKAssignmentChainAlsoLink) = visitKtAssignmentChainLinkRaw(assignmentChainAlsoLink)
+
+    override fun visitAssignmentChainLetLink(assignmentChainLetLink: JKAssignmentChainLetLink) {
+        printLeftNonCodeElements(assignmentChainLetLink)
+        visitAssignmentChainLetLinkRaw(assignmentChainLetLink)
+        printRightNonCodeElements(assignmentChainLetLink)
+    }
+
+    open fun visitAssignmentChainLetLinkRaw(assignmentChainLetLink: JKAssignmentChainLetLink) = visitKtAssignmentChainLinkRaw(assignmentChainLetLink)
 
     override fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression) {
         printLeftNonCodeElements(ktLiteralExpression)
@@ -1117,4 +1133,12 @@ abstract class JKVisitorWithCommentsPrinting : JKVisitor() {
     }
 
     open fun visitKtAnnotationArrayInitializerExpressionRaw(ktAnnotationArrayInitializerExpression: JKKtAnnotationArrayInitializerExpression) = visitExpressionRaw(ktAnnotationArrayInitializerExpression)
+
+    override fun visitKtItExpression(ktItExpression: JKKtItExpression) {
+        printLeftNonCodeElements(ktItExpression)
+        visitKtItExpressionRaw(ktItExpression)
+        printRightNonCodeElements(ktItExpression)
+    }
+
+    open fun visitKtItExpressionRaw(ktItExpression: JKKtItExpression) = visitExpressionRaw(ktItExpression)
 }

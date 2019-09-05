@@ -182,11 +182,13 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                     convertBound(bound, 0),
                     context
                 )
-            else -> kotlinBinaryExpression(
+            else -> JKBinaryExpressionImpl(
                 start,
                 convertBound(bound, if (inclusiveComparison) 0 else -1),
-                JKKtSingleValueOperatorToken(KtTokens.RANGE),
-                typeFactory
+                JKKtOperatorImpl(
+                    JKOperatorToken.RANGE,
+                    typeFactory.types.nullableAny //todo range type
+                )
             )
         }
     }
@@ -199,12 +201,14 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
             return JKKtLiteralExpressionImpl((value + correction).toString(), bound.type)
         }
 
-        val sign = if (correction > 0) KtTokens.PLUS else KtTokens.MINUS
-        return kotlinBinaryExpression(
+        val sign = if (correction > 0) JKOperatorToken.PLUS else JKOperatorToken.MINUS
+        return JKBinaryExpressionImpl(
             bound,
             JKKtLiteralExpressionImpl(abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
-            JKKtSingleValueOperatorToken(sign),
-            typeFactory
+            JKKtOperatorImpl(
+                sign,
+                typeFactory.types.int
+            )
         )
     }
 

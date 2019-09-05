@@ -53,6 +53,14 @@ fun JKTreeElement.commentsFromInside(): List<JKCommentElement> {
 inline fun <reified T : JKNonCodeElementsListOwner> T.withNonCodeElementsFrom(other: JKNonCodeElementsListOwner): T =
     also { it.takeNonCodeElementsFrom(other) }
 
+inline fun <reified T : JKNonCodeElementsListOwner> List<T>.withNonCodeElementsFrom(other: JKNonCodeElementsListOwner): List<T> =
+    also {
+        if (isNotEmpty()) {
+            it.first().leftNonCodeElements += other.leftNonCodeElements
+            it.last().rightNonCodeElements += other.rightNonCodeElements
+        }
+    }
+
 fun JKNonCodeElementsListOwner.clearNonCodeElements() {
     leftNonCodeElements = emptyList()
     rightNonCodeElements = emptyList()

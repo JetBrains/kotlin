@@ -159,7 +159,7 @@ class JKQualifiedExpressionImpl(
 class JKExpressionStatementImpl(expression: JKExpression) : JKExpressionStatement(), PsiOwner by PsiOwnerImpl() {
     override fun accept(visitor: JKVisitor) = visitor.visitExpressionStatement(this)
 
-    override val expression: JKExpression by child(expression)
+    override var expression: JKExpression by child(expression)
 }
 
 class JKDeclarationStatementImpl(declaredStatements: List<JKDeclaration>) : JKDeclarationStatement(),

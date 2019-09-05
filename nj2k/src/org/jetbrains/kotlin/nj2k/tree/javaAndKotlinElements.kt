@@ -290,7 +290,7 @@ interface JKMethodReferenceExpression : JKExpression, PsiOwner {
 }
 
 abstract class JKExpressionStatement : JKStatement() {
-    abstract val expression: JKExpression
+    abstract var expression: JKExpression
 }
 
 abstract class JKDeclarationStatement : JKStatement() {
@@ -315,7 +315,7 @@ interface JKPrefixExpression : JKUnaryExpression
 
 interface JKPostfixExpression : JKUnaryExpression
 
-interface JKQualifiedExpression : JKExpression, JKAssignableExpression {
+interface JKQualifiedExpression : JKExpression {
     var receiver: JKExpression
     var operator: JKQualifier
     var selector: JKExpression
@@ -334,11 +334,11 @@ interface JKMethodCallExpression : JKExpression, JKTypeArgumentListOwner, JKBran
     var arguments: JKArgumentList
 }
 
-interface JKFieldAccessExpression : JKAssignableExpression {
+interface JKFieldAccessExpression : JKExpression {
     val identifier: JKFieldSymbol
 }
 
-interface JKPackageAccessExpression : JKAssignableExpression {
+interface JKPackageAccessExpression : JKExpression {
     val identifier: JKPackageSymbol
 }
 
@@ -346,7 +346,7 @@ interface JKClassAccessExpression : JKExpression {
     val identifier: JKClassSymbol
 }
 
-interface JKArrayAccessExpression : JKAssignableExpression {
+interface JKArrayAccessExpression : JKExpression {
     var expression: JKExpression
     var indexExpression: JKExpression
 }
@@ -446,8 +446,6 @@ interface JKIfElseExpression : JKExpression {
     var thenBranch: JKExpression
     var elseBranch: JKExpression
 }
-
-interface JKAssignableExpression : JKExpression
 
 interface JKLambdaExpression : JKExpression {
     var parameters: List<JKParameter>

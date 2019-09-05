@@ -366,11 +366,10 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                         if (expression !is JKMethodCallExpression) error("Expression should be JKMethodCallExpression")
                         val firstArgument = expression.parent.cast<JKQualifiedExpression>()::receiver.detached()
                         val secondArgument = expression.arguments.arguments.first()::value.detached()
-                        kotlinBinaryExpression(
+                        JKBinaryExpressionImpl(
                             firstArgument,
                             secondArgument,
-                            KtTokens.PLUS,
-                            typeFactory
+                            JKKtOperatorImpl(JKOperatorToken.PLUS, typeFactory.types.possiblyNullString)
                         )
                     } withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
 
@@ -390,27 +389,26 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                         else expression
                             .also {
                                 arguments.arguments = arguments.arguments.dropLast(1)
-                            }.let {
-                                it.callOn(
-                                    symbolProvider.provideMethodSymbol("kotlin.collections.dropLastWhile"),
+                            }.callOn(
+                                symbolProvider.provideMethodSymbol("kotlin.collections.dropLastWhile"),
+                                listOf(
                                     JKLambdaExpressionImpl(
                                         JKFieldAccessExpressionImpl(
                                             JKUnresolvedField(//TODO replace with `it` parameter
                                                 "it",
                                                 typeFactory
                                             )
-                                        ).callOn(symbolProvider.provideMethodSymbol("kotlin.text.isEmpty"))
-                                            .asStatement(),
+                                        ).callOn(symbolProvider.provideMethodSymbol("kotlin.text.isEmpty")).asStatement(),
                                         emptyList()
                                     )
                                 )
-                            }
+                            )
                     }
                     else -> expression.also {
                         val lastArgument = arguments.arguments.last().value.copyTreeAndDetach()
                             .callOn(
                                 symbolProvider.provideMethodSymbol("kotlin.ranges.coerceAtLeast"),
-                                JKKtLiteralExpressionImpl("0", JKLiteralExpression.LiteralType.INT)
+                                listOf(JKKtLiteralExpressionImpl("0", JKLiteralExpression.LiteralType.INT))
                             )
                         arguments.arguments = arguments.arguments.dropLast(1) + JKArgumentImpl(lastArgument)
                     }
@@ -428,7 +426,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                 JKArgumentListImpl(
                     JKLambdaExpressionImpl(
                         JKExpressionStatementImpl(
-                            kotlinBinaryExpression(
+                            JKBinaryExpressionImpl(
                                 JKFieldAccessExpressionImpl(
                                     JKUnresolvedField(//TODO replace with `it` parameter
                                         "it",
@@ -436,8 +434,10 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                                     )
                                 ),
                                 JKKtLiteralExpressionImpl("' '", JKLiteralExpression.LiteralType.CHAR),
-                                KtTokens.LTEQ,
-                                typeFactory
+                                JKKtOperatorImpl(
+                                    JKOperatorToken.LTEQ,
+                                    typeFactory.types.boolean
+                                )
                             )
                         ),
                         emptyList()
@@ -469,7 +469,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
         ).groupBy { it.from.fqName }
 
 
-    private fun JKExpression.callOn(symbol: JKMethodSymbol, arguments: List<JKArgument> = emptyList()) =
+    private fun JKExpression.   callOn(symbol: JKMethodSymbol, arguments: List<JKArgument> = emptyList()) =
         JKQualifiedExpressionImpl(
             this,
             JKKtQualifierImpl.DOT,
@@ -479,12 +479,6 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                 JKTypeArgumentListImpl()
             )
         )
-
-    private fun JKExpression.callOn(symbol: JKMethodSymbol, vararg arguments: JKArgument) =
-        callOn(symbol, arguments.toList())
-
-    private fun JKExpression.callOn(symbol: JKMethodSymbol, vararg arguments: JKExpression) =
-        callOn(symbol, arguments.map { JKArgumentImpl(it) })
 
     private fun isSystemOutCall(expression: JKExpression): Boolean =
         expression.parent

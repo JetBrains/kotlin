@@ -659,6 +659,9 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
             }
         }
 
+        override fun visitKtItExpressionRaw(ktItExpression: JKKtItExpression) {
+            printer.printWithNoIndent("it")
+        }
 
         override fun visitClassBodyRaw(classBody: JKClassBody) {
             val declarationsToPrint = classBody.declarations.filterNot { it is JKKtPrimaryConstructor }
@@ -818,9 +821,25 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         override fun visitKtAssignmentStatementRaw(ktAssignmentStatement: JKKtAssignmentStatement) {
             ktAssignmentStatement.field.accept(this)
             printer.printWithNoIndent(" ")
-            printer.printWithNoIndent(ktAssignmentStatement.operator.token.text)
+            printer.printWithNoIndent(ktAssignmentStatement.token.text)
             printer.printWithNoIndent(" ")
             ktAssignmentStatement.expression.accept(this)
+        }
+
+        override fun visitAssignmentChainAlsoLinkRaw(assignmentChainAlsoLink: JKAssignmentChainAlsoLink) {
+            assignmentChainAlsoLink.receiver.accept(this)
+            printer.printWithNoIndent(".also({ ")
+            assignmentChainAlsoLink.assignmentStatement.accept(this)
+            printer.printWithNoIndent(" })")
+        }
+
+        override fun visitAssignmentChainLetLinkRaw(assignmentChainLetLink: JKAssignmentChainLetLink) {
+            assignmentChainLetLink.receiver.accept(this)
+            printer.printWithNoIndent(".let({ ")
+            assignmentChainLetLink.assignmentStatement.accept(this)
+            printer.printWithNoIndent("; ")
+            assignmentChainLetLink.field.accept(this)
+            printer.printWithNoIndent(" })")
         }
 
         override fun visitKtWhenStatementRaw(ktWhenStatement: JKKtWhenStatement) {

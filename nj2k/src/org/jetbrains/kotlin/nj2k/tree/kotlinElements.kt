@@ -42,18 +42,23 @@ abstract class JKKtConstructor : JKMethod(), JKOtherModifiersOwner {
 abstract class JKKtPrimaryConstructor : JKKtConstructor()
 
 abstract class JKKtAssignmentStatement : JKStatement() {
-    abstract var field: JKAssignableExpression
+    abstract var field: JKExpression
     abstract var expression: JKExpression
-    abstract var operator: JKOperator
+    abstract var token: JKOperatorToken
 }
 
 interface JKKtCall : JKMethodCallExpression
 
 interface JKKtMethodCallExpression : JKMethodCallExpression
 
-interface JKKtAlsoCallExpression : JKKtMethodCallExpression {
-    var statement: JKStatement
+interface JKKtAssignmentChainLink : JKExpression {
+    val receiver: JKExpression
+    val assignmentStatement: JKKtAssignmentStatement
+    val field: JKExpression
 }
+
+interface JKAssignmentChainAlsoLink : JKKtAssignmentChainLink
+interface JKAssignmentChainLetLink : JKKtAssignmentChainLink
 
 interface JKKtLiteralExpression : JKLiteralExpression
 
@@ -108,4 +113,8 @@ interface JKKtTryCatchSection : JKTreeElement {
 
 interface JKKtAnnotationArrayInitializerExpression : JKExpression, JKBranchElement {
     val initializers: List<JKAnnotationMemberValue>
+}
+
+interface JKKtItExpression : JKExpression {
+    val type: JKType
 }

@@ -25,7 +25,7 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
                 element.type = element.type.mapType(element)
             }
             is JKJavaNewExpression -> {
-                val newClassSymbol = element.classSymbol.mapClassSymbol(null)
+                val newClassSymbol = element.classSymbol.mapClassSymbol()
                 return recurse(
                     JKJavaNewExpressionImpl(
                         newClassSymbol,
@@ -55,7 +55,6 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
         }
     }
 
-
     private fun JKType.fixRawType(typeElement: JKTypeElement?) =
         when (typeElement?.parent) {
             is JKClassLiteralExpression -> this
@@ -71,7 +70,7 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
     private fun JKType.mapType(typeElement: JKTypeElement?): JKType =
         when (this) {
             is JKJavaPrimitiveType -> mapPrimitiveType()
-            is JKClassType -> mapClassType(typeElement)
+            is JKClassType -> mapClassType()
             is JKJavaVoidType -> typeFactory.types.unit
 
             is JKJavaArrayType ->
@@ -94,18 +93,17 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
             else -> this
         }.fixRawType(typeElement)
 
-    private fun JKClassSymbol.mapClassSymbol(typeElement: JKTypeElement?): JKClassSymbol {
+    private fun JKClassSymbol.mapClassSymbol(): JKClassSymbol {
         if (this is JKUniverseClassSymbol) return this
-        if (typeElement?.parentOfType<JKInheritanceInfo>() != null) return this
         val newFqName = kotlinCollectionClassName()
             ?: kotlinStandardType()
             ?: fqName
         return symbolProvider.provideClassSymbol(newFqName)
     }
 
-    private fun JKClassType.mapClassType(typeElement: JKTypeElement?): JKClassType =
+    private fun JKClassType.mapClassType(): JKClassType =
         JKClassTypeImpl(
-            classReference.mapClassSymbol(typeElement),
+            classReference.mapClassSymbol(),
             parameters.map { it.mapType(null) },
             nullability
         )
@@ -118,13 +116,8 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
         return JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqName))?.asString()
     }
 
-    private fun JKJavaPrimitiveType.mapPrimitiveType(): JKClassType {
-        val fqName = jvmPrimitiveType.primitiveType.typeFqName
-        return JKClassTypeImpl(
-            symbolProvider.provideClassSymbol(fqName),
-            nullability = Nullability.NotNull
-        )
-    }
+    private fun JKJavaPrimitiveType.mapPrimitiveType(): JKClassType =
+        typeFactory.fromPrimitiveType(this)
 
     private inline fun <reified T : JKType> T.addTypeParametersToRawProjectionType(typeParameter: JKType): T =
         if (this is JKClassType && parameters.isEmpty()) {
@@ -147,7 +140,6 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
 
     companion object {
         private val ktFunctionRegex = "kotlin\\.jvm\\.functions\\.Function\\d+".toRegex()
-        private fun isKtFunction(fqName: String) =
-            ktFunctionRegex.matches(fqName)
+        private fun isKtFunction(fqName: String) = ktFunctionRegex.matches(fqName)
     }
 }

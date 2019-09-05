@@ -22,6 +22,7 @@ import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.CompositeElement
+import com.intellij.psi.impl.source.tree.ElementType
 import com.intellij.psi.impl.source.tree.java.PsiClassObjectAccessExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiLabeledStatementImpl
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
@@ -138,14 +139,17 @@ class JavaToJKTreeBuilder constructor(
                 is PsiConditionalExpression -> JKIfElseExpressionImpl(
                     condition.toJK(), thenExpression.toJK(), elseExpression.toJK()
                 )
-                is PsiPolyadicExpression -> JKJavaPolyadicExpressionImpl(
-                    operands.map { it.toJK() },
-                    Array(operands.lastIndex) { index ->
-                        getTokenBeforeOperand(operands[index + 1])
-                    }.map {
-                        it?.tokenType?.toJK() ?: throwCanNotConvertError()
+                is PsiPolyadicExpression -> {
+                    val token = JKOperatorToken.fromElementType(operationTokenType)
+                    val type = type?.toJK() ?: typeFactory.types.nullableAny
+                    val jkOperands = operands.map { it.toJK().parenthesizeIfBinaryExpression() }
+                    jkOperands.reduce { acc, operand ->
+                        JKBinaryExpressionImpl(acc, operand, JKKtOperatorImpl(token, type))
+                    }.let { folded ->
+                        if (jkOperands.any { it.containsNewLine() }) folded.parenthesize()
+                        else folded
                     }
-                )
+                }
                 is PsiArrayInitializerExpression -> toJK()
                 is PsiLambdaExpression -> toJK()
                 is PsiClassObjectAccessExpressionImpl -> toJK()
@@ -180,9 +184,9 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
             return JKJavaAssignmentExpressionImpl(
-                lExpression.toJK() as JKAssignableExpression,
+                lExpression.toJK(),
                 rExpression.toJK(),
-                operationSign.tokenType.toJK()
+                createOperator(operationSign.tokenType, type)
             ).also {
                 it.assignNonCodeElements(this)
             }
@@ -192,16 +196,22 @@ class JavaToJKTreeBuilder constructor(
             val token = when (operationSign.tokenType) {
                 JavaTokenType.EQEQ, JavaTokenType.NE ->
                     when {
-                        canKeepEqEq(lOperand, rOperand) -> operationSign.tokenType
-                        operationSign.tokenType == JavaTokenType.EQEQ -> KtTokens.EQEQEQ
-                        else -> KtTokens.EXCLEQEQEQ
+                        canKeepEqEq(lOperand, rOperand) -> JKOperatorToken.fromElementType(operationSign.tokenType)
+                        operationSign.tokenType == JavaTokenType.EQEQ -> JKOperatorToken.fromElementType(KtTokens.EQEQEQ)
+                        else -> JKOperatorToken.fromElementType(KtTokens.EXCLEQEQEQ)
                     }
-                else -> operationSign.tokenType
+                else -> JKOperatorToken.fromElementType(operationSign.tokenType)
             }
-            return JKBinaryExpressionImpl(lOperand.toJK(), rOperand.toJK(), token.toJK())
-                .also {
-                    it.assignNonCodeElements(this)
-                }
+            return JKBinaryExpressionImpl(
+                lOperand.toJK(),
+                rOperand.toJK(),
+                JKKtOperatorImpl(
+                    token,
+                    type?.toJK() ?: typeFactory.types.nullableAny
+                )
+            ).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         fun PsiLiteralExpression.toJK(): JKLiteralExpression {
@@ -223,19 +233,23 @@ class JavaToJKTreeBuilder constructor(
             }
         }
 
-        fun IElementType.toJK(): JKOperator = JKJavaOperatorImpl.tokenToOperator[this] ?: error("Unsupported token-type: $this")
+        private fun createOperator(elementType: IElementType, type: PsiType?) =
+            JKKtOperatorImpl(
+                JKOperatorToken.fromElementType(elementType),
+                type?.toJK() ?: typeFactory.types.nullableAny
+            )
 
-        fun PsiPrefixExpression.toJK(): JKExpression {
-            return JKPrefixExpressionImpl(operand.toJK(), operationSign.tokenType.toJK()).also {
-                it.assignNonCodeElements(this)
-            }
+        fun PsiPrefixExpression.toJK(): JKExpression = when (operationSign.tokenType) {
+            JavaTokenType.TILDE -> operand.toJK().callOn(symbolProvider.provideMethodSymbol("kotlin.Int.inv"))
+            else -> JKPrefixExpressionImpl(operand.toJK(), createOperator(operationSign.tokenType, type))
+        }.also {
+            it.assignNonCodeElements(this)
         }
 
-        fun PsiPostfixExpression.toJK(): JKExpression {
-            return JKPostfixExpressionImpl(operand.toJK(), operationSign.tokenType.toJK()).also {
+        fun PsiPostfixExpression.toJK(): JKExpression =
+            JKPostfixExpressionImpl(operand.toJK(), createOperator(operationSign.tokenType, type)).also {
                 it.assignNonCodeElements(this)
             }
-        }
 
         fun PsiLambdaExpression.toJK(): JKExpression {
             return JKLambdaExpressionImpl(
@@ -326,7 +340,7 @@ class JavaToJKTreeBuilder constructor(
                                     propertyAccessExpression
                                 )
                                 else propertyAccessExpression
-                            } else propertyAccessExpression.qualified(qualifier) as JKAssignableExpression
+                            } else propertyAccessExpression.qualified(qualifier) as JKExpression
 
                             when (if (isExtension) parameterCount - 1 else parameterCount) {
                                 0 /* getter */ ->
@@ -337,7 +351,7 @@ class JavaToJKTreeBuilder constructor(
                                     JKJavaAssignmentExpressionImpl(
                                         propertyAccess,
                                         argument,
-                                        JKJavaOperatorImpl.tokenToOperator[JavaTokenType.EQ]!!
+                                        createOperator(JavaTokenType.EQ, type)//TODO correct type
                                     )
                                 }
                                 else -> throwCanNotConvertError("expected getter or setter call")
@@ -513,14 +527,15 @@ class JavaToJKTreeBuilder constructor(
             val jkExpressions = expressions.map { it.toJK() }
             return ((parent as? PsiCall)?.resolveMethod()
                 ?.let { method ->
+                    val lastExpressionType = expressions.lastOrNull()?.type
                     if (jkExpressions.size == method.parameterList.parameters.size
                         && method.parameterList.parameters.getOrNull(jkExpressions.lastIndex)?.isVarArgs == true
-                        && expressions.lastOrNull()?.type is PsiArrayType
+                        && lastExpressionType is PsiArrayType
                     ) {
                         val staredExpression =
                             JKPrefixExpressionImpl(
                                 jkExpressions.last(),
-                                JKKtSpreadOperator
+                                JKKtSpreadOperator(lastExpressionType.toJK())
                             ).withNonCodeElementsFrom(jkExpressions.last())
                         jkExpressions.dropLast(1) + staredExpression
                     } else jkExpressions
