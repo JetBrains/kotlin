@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.ui.tabs;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -24,10 +26,8 @@ import java.util.*;
  * @author spleaner
  * @author Konstantin Bulenkov
  */
-@State(
-  name = "FileColors",
-  storages = {@Storage(StoragePathMacros.WORKSPACE_FILE)})
-public class FileColorManagerImpl extends FileColorManager implements PersistentStateComponent<Element> {
+@State(name = "FileColors", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
+public final class FileColorManagerImpl extends FileColorManager implements PersistentStateComponent<Element> {
   public static final String FC_ENABLED = "FileColorsEnabled";
   public static final String FC_TABS_ENABLED = "FileColorsForTabsEnabled";
   public static final String FC_PROJECT_VIEW_ENABLED = "FileColorsForProjectViewEnabled";
@@ -44,14 +44,14 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
     .put("Yellow", JBColor.namedColor("FileColor.Yellow", new JBColor(0xffffe4, 0x4f4b41)))
     .build();
 
-  public FileColorManagerImpl(@NotNull final Project project) {
+  public FileColorManagerImpl(@NotNull Project project) {
     myProject = project;
     myModel = new FileColorsModel(project);
   }
 
   private void initProjectLevelConfigurations() {
     if (myProjectLevelConfigurationManager == null) {
-      myProjectLevelConfigurationManager = ServiceManager.getService(myProject, FileColorProjectLevelConfigurationManager.class);
+      myProjectLevelConfigurationManager = myProject.getService(FileColorProjectLevelConfigurationManager.class);
     }
   }
 
@@ -95,30 +95,16 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
     PropertiesComponent.getInstance().setValue(FC_PROJECT_VIEW_ENABLED, Boolean.toString(enabled));
   }
 
-  public Element getState(final boolean shared) {
-    Element element = new Element("state");
-    myModel.save(element, shared);
-    return element;
-  }
-
   @Override
   @Nullable
-  public Color getColor(@NotNull final String name) {
+  public Color getColor(@NotNull String name) {
     Color color = ourDefaultColors.get(name);
-    if (color != null) {
-      return color;
-    }
-    return ColorUtil.fromHex(name, null);
+    return color == null ? ColorUtil.fromHex(name, null) : color;
   }
 
   @Override
   public Element getState() {
-    initProjectLevelConfigurations();
-    return getState(false);
-  }
-
-  void loadState(Element state, final boolean shared) {
-    myModel.load(state, shared);
+    return myModel.save(false);
   }
 
   @Override
@@ -130,13 +116,7 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
 
   @Override
   public void loadState(@NotNull Element state) {
-    initProjectLevelConfigurations();
-    loadState(state, false);
-  }
-
-  @Override
-  public boolean isColored(@NotNull final String scopeName, final boolean shared) {
-    return myModel.isColored(scopeName, shared);
+    myModel.load(state, false);
   }
 
   @Nullable
@@ -158,7 +138,7 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
   public Color getRendererBackground(PsiFile file) {
     if (file == null) return null;
 
-    final VirtualFile vFile = file.getVirtualFile();
+    VirtualFile vFile = file.getVirtualFile();
     if (vFile == null) return null;
 
     return getRendererBackground(vFile);
@@ -166,24 +146,17 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
 
   @Override
   public void addScopeColor(@NotNull String scopeName, @NotNull String colorName, boolean isProjectLevel) {
+    initProjectLevelConfigurations();
+
     myModel.add(scopeName, colorName, isProjectLevel);
   }
 
   @Override
   @Nullable
-  public Color getFileColor(@NotNull final PsiFile file) {
+  public Color getFileColor(@NotNull VirtualFile file) {
     initProjectLevelConfigurations();
 
-    final String colorName = myModel.getColor(file);
-    return colorName == null ? null : getColor(colorName);
-  }
-
-  @Override
-  @Nullable
-  public Color getFileColor(@NotNull final VirtualFile file) {
-    initProjectLevelConfigurations();
-
-    final String colorName = myModel.getColor(file, getProject());
+    String colorName = myModel.getColor(file, getProject());
     return colorName == null ? null : getColor(colorName);
   }
 
@@ -192,17 +165,21 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
   public Color getScopeColor(@NotNull String scopeName) {
     initProjectLevelConfigurations();
 
-    final String colorName = myModel.getScopeColor(scopeName, getProject());
+    String colorName = myModel.getScopeColor(scopeName, getProject());
     return colorName == null ? null : getColor(colorName);
   }
 
   @Override
-  public boolean isShared(@NotNull final String scopeName) {
+  public boolean isShared(@NotNull String scopeName) {
+    initProjectLevelConfigurations();
+
     return myModel.isProjectLevel(scopeName);
   }
 
   @NotNull
   FileColorsModel getModel() {
+    initProjectLevelConfigurations();
+
     return myModel;
   }
 
@@ -217,6 +194,8 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
   }
 
   public List<FileColorConfiguration> getProjectLevelConfigurations() {
+    initProjectLevelConfigurations();
+
     return myModel.getProjectLevelConfigurations();
   }
 
