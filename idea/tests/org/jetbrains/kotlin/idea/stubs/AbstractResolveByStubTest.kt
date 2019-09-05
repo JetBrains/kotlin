@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -50,7 +51,12 @@ abstract class AbstractResolveByStubTest : KotlinLightCodeInsightFixtureTestCase
                 .filterRecursion(RecursiveDescriptorComparator.SKIP_BUILT_INS_PACKAGES)
                 .checkPrimaryConstructors(true)
                 .checkPropertyAccessors(true)
-                .withValidationStrategy(errorTypesForbidden()),
+                .withValidationStrategy(errorTypesForbidden())
+                .withRendererOptions { options ->
+                    options.annotationFilter = { annotationDescriptor ->
+                        annotationDescriptor !is PossiblyExternalAnnotationDescriptor || !annotationDescriptor.isIdeExternalAnnotation
+                    }
+                },
             fileToCompareTo
         )
     }
