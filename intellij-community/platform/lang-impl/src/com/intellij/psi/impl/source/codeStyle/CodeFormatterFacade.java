@@ -171,56 +171,20 @@ public class CodeFormatterFacade {
       document = documentWindow.getDelegate();
     }
 
-
     final FormattingModelBuilder builder = LanguageFormatting.INSTANCE.forContext(file);
-    final Language contextLanguage = file.getLanguage();
-
     if (builder != null) {
       if (file.getTextLength() > 0) {
         LOG.assertTrue(document != null);
         try {
-          final FileViewProvider viewProvider = file.getViewProvider();
-          final PsiElement startElement = viewProvider.findElementAt(textRanges.get(0).getTextRange().getStartOffset(), contextLanguage);
-          final PsiElement endElement =
-            viewProvider.findElementAt(textRanges.get(textRanges.size() - 1).getTextRange().getEndOffset() - 1, contextLanguage);
-          final PsiElement commonParent = startElement != null && endElement != null ? PsiTreeUtil.findCommonParent(startElement, endElement) : null;
-          ASTNode node = null;
-          if (commonParent != null) {
-            node = commonParent.getNode();
-          }
-          if (node == null) {
-            node = file.getNode();
-          }
-          for (FormatTextRange range : ranges.getRanges()) {
-            TextRange rangeToUse = preprocess(node, range.getTextRange());
-            range.setTextRange(rangeToUse);
+          ASTNode containingNode = findContainingNode(file, ranges, file.getLanguage());
+          if (containingNode != null) {
+            for (FormatTextRange range : ranges.getRanges()) {
+              TextRange rangeToUse = preprocess(containingNode, range.getTextRange());
+              range.setTextRange(rangeToUse);
+            }
           }
           if (doPostponedFormatting) {
-            RangeMarker[] markers = new RangeMarker[textRanges.size()];
-            int i = 0;
-            for (FormatTextRange range : textRanges) {
-              TextRange textRange = range.getTextRange();
-              int start = textRange.getStartOffset();
-              int end = textRange.getEndOffset();
-              if (start >= 0 && end > start && end <= document.getTextLength()) {
-                markers[i] = document.createRangeMarker(textRange);
-                markers[i].setGreedyToLeft(true);
-                markers[i].setGreedyToRight(true);
-                i++;
-              }
-            }
-            final PostprocessReformattingAspect component = file.getProject().getComponent(PostprocessReformattingAspect.class);
-            FormattingProgressTask.FORMATTING_CANCELLED_FLAG.set(false);
-            component.doPostponedFormatting(file.getViewProvider());
-            i = 0;
-            for (FormatTextRange range : textRanges) {
-              RangeMarker marker = markers[i];
-              if (marker != null) {
-                range.setTextRange(TextRange.create(marker));
-                marker.dispose();
-              }
-              i++;
-            }
+            invokePostponedFormatting(file, document, textRanges);
           }
           if (FormattingProgressTask.FORMATTING_CANCELLED_FLAG.get()) {
             return;
@@ -252,6 +216,60 @@ public class CodeFormatterFacade {
         }
       }
     }
+  }
+
+  private static void invokePostponedFormatting(@NotNull PsiFile file,
+                                                Document document,
+                                                List<FormatTextRange> textRanges) {
+    RangeMarker[] markers = new RangeMarker[textRanges.size()];
+    int i = 0;
+    for (FormatTextRange range : textRanges) {
+      TextRange textRange = range.getTextRange();
+      int start = textRange.getStartOffset();
+      int end = textRange.getEndOffset();
+      if (start >= 0 && end > start && end <= document.getTextLength()) {
+        markers[i] = document.createRangeMarker(textRange);
+        markers[i].setGreedyToLeft(true);
+        markers[i].setGreedyToRight(true);
+        i++;
+      }
+    }
+    final PostprocessReformattingAspect component = file.getProject().getComponent(PostprocessReformattingAspect.class);
+    FormattingProgressTask.FORMATTING_CANCELLED_FLAG.set(false);
+    component.doPostponedFormatting(file.getViewProvider());
+    i = 0;
+    for (FormatTextRange range : textRanges) {
+      RangeMarker marker = markers[i];
+      if (marker != null) {
+        range.setTextRange(TextRange.create(marker));
+        marker.dispose();
+      }
+      i++;
+    }
+  }
+
+  @Nullable
+  private static ASTNode findContainingNode(@NotNull PsiFile file,
+                                            @NotNull FormatTextRanges ranges,
+                                            @NotNull Language language) {
+    final List<FormatTextRange> textRanges = ranges.getRanges();
+    if (textRanges.isEmpty()) return null;
+    final FileViewProvider viewProvider = file.getViewProvider();
+    final PsiElement startElement =
+      viewProvider.findElementAt(textRanges.get(0).getTextRange().getStartOffset(), language);
+    final PsiElement endElement =
+      viewProvider.findElementAt(textRanges.get(textRanges.size() - 1).getTextRange().getEndOffset() - 1, language);
+    final PsiElement commonParent = startElement != null && endElement != null ?
+                                    PsiTreeUtil.findCommonParent(startElement, endElement) :
+                                    null;
+    ASTNode node = null;
+    if (commonParent != null) {
+      node = commonParent.getNode();
+    }
+    if (node == null) {
+      node = file.getNode();
+    }
+    return node;
   }
 
   @NotNull
