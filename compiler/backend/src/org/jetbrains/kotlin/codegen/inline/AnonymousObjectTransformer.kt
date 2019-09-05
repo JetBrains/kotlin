@@ -329,14 +329,16 @@ class AnonymousObjectTransformer(
 
         val constructorParams = constructorInlineBuilder.buildParameters()
         val capturedIndexes = IntArray(constructorParams.parameters.size)
+        val retainedParams = mutableListOf<Int>()
         var index = 0
         var size = 0
 
         //complex processing cause it could have super constructor call params
-        for (info in constructorParams) {
+        for ((oldIndex, info) in constructorParams.withIndex()) {
             if (!info.isSkipped) { //not inlined
                 if (info.isCaptured || info is CapturedParamInfo) {
                     capturedIndexes[index] = size
+                    retainedParams.add(oldIndex)
                     index++
                 }
 
@@ -388,7 +390,8 @@ class AnonymousObjectTransformer(
         }
 
         val intermediateMethodNode = MethodNode(constructor!!.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY)
-        inlineMethodAndUpdateGlobalResult(parentRemapper, intermediateMethodNode, constructor!!, constructorInlineBuilder, true)
+        val withShiftedAnnotations = ShiftParameterAnnotationsVisitor(intermediateMethodNode, retainedParams)
+        inlineMethodAndUpdateGlobalResult(parentRemapper, withShiftedAnnotations, constructor!!, constructorInlineBuilder, true)
         removeFinallyMarkers(intermediateMethodNode)
 
         val first = intermediateMethodNode.instructions.first

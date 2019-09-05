@@ -49,3 +49,12 @@ open class MethodBodyVisitor(mv: MethodVisitor) : MethodVisitor(Opcodes.API_VERS
 
     override fun visitEnd() {}
 }
+
+class ShiftParameterAnnotationsVisitor(mv: MethodVisitor, private val retain: List<Int>) : MethodVisitor(Opcodes.API_VERSION, mv) {
+    override fun visitParameterAnnotation(parameter: Int, descriptor: String, visible: Boolean): AnnotationVisitor? {
+        val newIndex = retain.binarySearch(parameter)
+        if (newIndex < 0)
+            return null
+        return super.visitParameterAnnotation(newIndex, descriptor, visible)
+    }
+}
