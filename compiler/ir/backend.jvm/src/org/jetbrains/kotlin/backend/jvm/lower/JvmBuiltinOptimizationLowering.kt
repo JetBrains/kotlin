@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.codegen.intrinsics.Not
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
@@ -43,56 +45,71 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
         return expression.type.isPrimitiveType() && (expression is IrConst<*> || expression is IrGetValue)
     }
 
-    private fun isNullCheckOfPrimitiveTypeValue(call: IrCall, context: JvmBackendContext): Boolean {
-        if (call.symbol == context.irBuiltIns.eqeqSymbol) {
-            val left = call.getValueArgument(0)!!
-            val right = call.getValueArgument(1)!!
-            // When used for null checks, it is safe to eliminate constants and local variable loads.
-            // Even if a local variable of simple type is updated via the debugger it still cannot
-            // be null.
-            return (right.isNullConst() && left.type.unboxInlineClass().isPrimitiveType())
-                    || (left.isNullConst() && right.type.unboxInlineClass().isPrimitiveType())
-        }
-        return false
-    }
+    private val IrFunction.isObjectEquals
+        get() = name.asString() == "equals" &&
+                valueParameters.count() == 1 &&
+                valueParameters[0].type.isNullableAny() &&
+                extensionReceiverParameter == null &&
+                dispatchReceiverParameter != null
 
-    private fun isNullCheckOfConstant(call: IrCall, context: JvmBackendContext): Boolean {
+
+    private fun getOperandsIfCallToEqeqOrEquals(call: IrCall): Pair<IrExpression, IrExpression>? {
         if (call.symbol == context.irBuiltIns.eqeqSymbol) {
             val left = call.getValueArgument(0)!!
             val right = call.getValueArgument(1)!!
-            return (right.isNullConst() && left is IrConst<*>)
-                    || (left.isNullConst() && right is IrConst<*>)
+            return left to right
+        } else if (call.symbol.owner.isObjectEquals) {
+            val left = call.dispatchReceiver!!
+            val right = call.getValueArgument(0)!!
+            return left to right
+        } else {
+            return null;
         }
-        return false
     }
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
-                return if (isNegation(expression, context) && isNegation(expression.dispatchReceiver!!, context)) {
-                    (expression.dispatchReceiver as IrCall).dispatchReceiver!!
-                } else if (isNullCheckOfPrimitiveTypeValue(expression, context)) {
-                    val left = expression.getValueArgument(0)!!
-                    val nonNullArgument = if (left.isNullConst()) expression.getValueArgument(1)!! else left
-                    val constFalse = IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
-                    if (hasNoSideEffectsForNullCompare(nonNullArgument)) {
-                        constFalse
-                    } else {
-                        IrBlockImpl(expression.startOffset, expression.endOffset, expression.type, expression.origin).apply {
-                            statements.add(nonNullArgument.coerceToUnitIfNeeded(nonNullArgument.type.toKotlinType(), context.irBuiltIns))
-                            statements.add(constFalse)
-                        }
-                    }
-                } else if (isNullCheckOfConstant(expression, context)) {
-                    if (expression.getValueArgument(0)!!.isNullConst() && expression.getValueArgument(1)!!.isNullConst()) {
-                        IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
-                    } else {
-                        IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
-                    }
-                } else {
-                    expression
+
+                if (isNegation(expression, context) && isNegation(expression.dispatchReceiver!!, context)) {
+                    return (expression.dispatchReceiver as IrCall).dispatchReceiver!!
                 }
+
+                getOperandsIfCallToEqeqOrEquals(expression)?.let { (left, right) ->
+                    val constFalse =
+                        IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
+
+                    return when {
+                        left.isNullConst() && right.isNullConst() ->
+                            IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
+
+                        left.isNullConst() && right is IrConst<*> || right.isNullConst() && left is IrConst<*> ->
+                            constFalse
+
+                        right.isNullConst() && left.type.unboxInlineClass().isPrimitiveType() ||
+                                left.isNullConst() && right.type.unboxInlineClass().isPrimitiveType() -> {
+                            val nonNullArgument = if (left.isNullConst()) right else left
+                            if (hasNoSideEffectsForNullCompare(nonNullArgument)) {
+                                constFalse
+                            } else {
+                                IrBlockImpl(expression.startOffset, expression.endOffset, expression.type, expression.origin).apply {
+                                    statements.add(
+                                        nonNullArgument.coerceToUnitIfNeeded(
+                                            nonNullArgument.type.toKotlinType(),
+                                            context.irBuiltIns
+                                        )
+                                    )
+                                    statements.add(constFalse)
+                                }
+                            }
+                        }
+
+                        else -> expression
+                    }
+                }
+
+                return expression
             }
 
             override fun visitWhen(expression: IrWhen): IrExpression {
@@ -103,10 +120,12 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                     it.condition.isFalseConst() && isCompilerGenerated
                 }
                 if (expression.origin == IrStatementOrigin.ANDAND) {
-                    assert(expression.type.isBoolean()
-                            && expression.branches.size == 2
-                            && expression.branches[1].condition.isTrueConst()
-                            && expression.branches[1].result.isFalseConst()) {
+                    assert(
+                        expression.type.isBoolean()
+                                && expression.branches.size == 2
+                                && expression.branches[1].condition.isTrueConst()
+                                && expression.branches[1].result.isFalseConst()
+                    ) {
                         "ANDAND condition should have an 'if true then false' body on its second branch. " +
                                 "Failing expression: ${expression.dump()}"
                     }
@@ -126,7 +145,8 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                         expression.type.isBoolean()
                                 && expression.branches.size == 2
                                 && expression.branches[0].result.isTrueConst()
-                                && expression.branches[1].condition.isTrueConst()) {
+                                && expression.branches[1].condition.isTrueConst()
+                    ) {
                         "OROR condition should have an 'if a then true' body on its first branch, " +
                                 "and an 'if true then b' body on its second branch. " +
                                 "Failing expression: ${expression.dump()}"
@@ -228,7 +248,8 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                     if (first is IrVariable
                         && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
                         && second is IrGetValue
-                        && first.symbol == second.symbol) {
+                        && first.symbol == second.symbol
+                    ) {
                         expression.statements.clear()
                         first.initializer?.let { expression.statements.add(it) }
                     }
