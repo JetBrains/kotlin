@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import java.util.jar.JarFile
 import java.util.zip.ZipFile
@@ -1037,6 +1038,9 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTrue(it.contains("-Xtime"))
                 // Check that kotlinOptions of the compilation don't affect the binary.
                 assertFalse(it.contains("-verbose"))
+                // Check that free args are still propagated to the binary (unlike other kotlinOptions, see KT-33717).
+                // TODO: Reverse this check when the args are fully separated.
+                assertTrue(it.contains("-nowarn"))
             }
             assertTrue(output.contains("tests.foo"))
         }
@@ -1141,6 +1145,9 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
     }
 
+    // We propagate compilation args to link tasks for now (see KT-33717).
+    // TODO: Reenable the test when the args are separated.
+    @Ignore
     @Test
     fun testNativeFreeArgsWarning() = with(transformProjectWithPluginsDsl("kotlin-dsl", gradleVersion, "new-mpp-native-binaries")) {
         gradleBuildScript().appendText(

@@ -24,8 +24,9 @@ class KotlinNativeCompilationFactory(
             if (name == KotlinCompilation.TEST_COMPILATION_NAME) {
                 friendCompilationName = KotlinCompilation.MAIN_COMPILATION_NAME
             }
-            project.whenEvaluated {
-                CompilationFreeArgsValidator.validate(this@apply)
-            }
+            // TODO: Validate compilation free args using the [CompilationFreeArgsValidator]
+            //       when the compilation and the link args are separated (see KT-33717).
+            // Note: such validation should be done in the whenEvaluate block because
+            // a user can change args during project configuration.
         }
 }

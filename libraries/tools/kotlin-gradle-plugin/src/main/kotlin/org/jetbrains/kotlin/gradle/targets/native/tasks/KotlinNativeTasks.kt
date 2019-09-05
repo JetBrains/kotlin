@@ -121,14 +121,14 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
     val target: String
         @Input get() = compilation.target.konanTarget.name
 
-    val additionalCompilerOptions: Collection<String>
-        @Input get() = kotlinOptions.freeCompilerArgs
-
     // region Compiler options.
     @get:Internal
     abstract val kotlinOptions: T
     abstract fun kotlinOptions(fn: T.() -> Unit)
     abstract fun kotlinOptions(fn: Closure<*>)
+
+    @get:Input
+    abstract val additionalCompilerOptions: Collection<String>
 
     @get:Internal
     val languageSettings: LanguageSettingsBuilder?
@@ -310,6 +310,10 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
             }
     }
 
+    @get:Input
+    override val additionalCompilerOptions: Collection<String>
+        get() = kotlinOptions.freeCompilerArgs
+
     override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions()
 
     override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
@@ -411,6 +415,11 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
         override var verbose: Boolean = false
         override var freeCompilerArgs: List<String> = listOf()
     }
+
+    // We propagate compilation free args to the link task for now (see KT-33717).
+    @get:Input
+    override val additionalCompilerOptions: Collection<String>
+        get() = kotlinOptions.freeCompilerArgs + compilation.kotlinOptions.freeCompilerArgs
 
     override val kotlinOptions: KotlinCommonToolOptions = NativeLinkOptions()
 

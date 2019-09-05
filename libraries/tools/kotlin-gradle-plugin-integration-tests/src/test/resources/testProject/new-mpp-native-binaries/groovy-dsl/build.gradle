@@ -37,7 +37,8 @@ kotlin {
         mingwX64("mingw64")
 
         configure([macos64, linux64, mingw64]) {
-            compilations.main.kotlinOptions.verbose = true
+            compilations.all { kotlinOptions.verbose = true }
+            compilations.test.kotlinOptions.freeCompilerArgs += "-nowarn"
             binaries {
 
                 executable()                  // Executable with default name.
