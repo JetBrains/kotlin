@@ -88,6 +88,9 @@ fun ControlFlowGraphBuilder.createWhenExitNode(fir: FirWhenExpression): WhenExit
 fun ControlFlowGraphBuilder.createWhenBranchResultExitNode(fir: FirWhenBranch): WhenBranchResultExitNode =
     WhenBranchResultExitNode(graph, fir, levelCounter)
 
+fun ControlFlowGraphBuilder.createWhenBranchResultEnterNode(fir: FirWhenBranch): WhenBranchResultEnterNode =
+    WhenBranchResultEnterNode(graph, fir, levelCounter)
+
 fun ControlFlowGraphBuilder.createLoopConditionExitNode(fir: FirExpression): LoopConditionExitNode =
     LoopConditionExitNode(graph, fir, levelCounter)
 

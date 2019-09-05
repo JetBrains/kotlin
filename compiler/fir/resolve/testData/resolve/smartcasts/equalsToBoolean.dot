@@ -40,30 +40,32 @@ digraph equalsToBoolean_kt {
         }
         subgraph cluster_6 {
           color=blue
-          14 [label="Enter block"];
-          15 [label="Access variable R|<local>/b|"];
-          16 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
-          17 [label="Exit block"];
+          14 [label="Enter when branch condition else"];
+          15 [label="Exit when branch condition"];
         }
-        18 [label="Exit when branch result"];
+        16 [label="Enter when branch result"];
         subgraph cluster_7 {
           color=blue
-          19 [label="Enter when branch condition else"];
-          20 [label="Exit when branch condition"];
+          17 [label="Enter block"];
+          18 [label="Access variable R|<local>/b|"];
+          19 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
+          20 [label="Exit block"];
         }
+        21 [label="Exit when branch result"];
+        22 [label="Enter when branch result"];
         subgraph cluster_8 {
           color=blue
-          21 [label="Enter block"];
-          22 [label="Access variable R|<local>/b|"];
-          23 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
-          24 [label="Exit block"];
+          23 [label="Enter block"];
+          24 [label="Access variable R|<local>/b|"];
+          25 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+          26 [label="Exit block"];
         }
-        25 [label="Exit when branch result"];
-        26 [label="Exit when"];
+        27 [label="Exit when branch result"];
+        28 [label="Exit when"];
       }
-      27 [label="Exit block"];
+      29 [label="Exit block"];
     }
-    28 [label="Exit function test_1" style="filled" fillcolor=red];
+    30 [label="Exit function test_1" style="filled" fillcolor=red];
   }
 
   4 -> {5};
@@ -75,71 +77,73 @@ digraph equalsToBoolean_kt {
   10 -> {11};
   11 -> {12};
   12 -> {13};
-  13 -> {14 19};
+  13 -> {22 14};
   14 -> {15};
   15 -> {16};
   16 -> {17};
   17 -> {18};
-  18 -> {26};
+  18 -> {19};
   19 -> {20};
   20 -> {21};
-  21 -> {22};
+  21 -> {28};
   22 -> {23};
   23 -> {24};
   24 -> {25};
   25 -> {26};
   26 -> {27};
   27 -> {28};
+  28 -> {29};
+  29 -> {30};
 
   subgraph cluster_9 {
     color=red
-    29 [label="Enter function test_2" style="filled" fillcolor=red];
+    31 [label="Enter function test_2" style="filled" fillcolor=red];
     subgraph cluster_10 {
       color=blue
-      30 [label="Enter block"];
+      32 [label="Enter block"];
       subgraph cluster_11 {
         color=blue
-        31 [label="Enter when"];
+        33 [label="Enter when"];
         subgraph cluster_12 {
           color=blue
-          32 [label="Enter when branch condition "];
-          33 [label="Access variable R|<local>/b|"];
-          34 [label="Const: Boolean(true)"];
-          35 [label="Operator =="];
+          34 [label="Enter when branch condition "];
+          35 [label="Access variable R|<local>/b|"];
           36 [label="Const: Boolean(true)"];
-          37 [label="Operator !="];
-          38 [label="Exit when branch condition"];
+          37 [label="Operator =="];
+          38 [label="Const: Boolean(true)"];
+          39 [label="Operator !="];
+          40 [label="Exit when branch condition"];
         }
         subgraph cluster_13 {
           color=blue
-          39 [label="Enter block"];
-          40 [label="Access variable R|<local>/b|"];
-          41 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
-          42 [label="Exit block"];
+          41 [label="Enter when branch condition else"];
+          42 [label="Exit when branch condition"];
         }
-        43 [label="Exit when branch result"];
+        43 [label="Enter when branch result"];
         subgraph cluster_14 {
           color=blue
-          44 [label="Enter when branch condition else"];
-          45 [label="Exit when branch condition"];
+          44 [label="Enter block"];
+          45 [label="Access variable R|<local>/b|"];
+          46 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+          47 [label="Exit block"];
         }
+        48 [label="Exit when branch result"];
+        49 [label="Enter when branch result"];
         subgraph cluster_15 {
           color=blue
-          46 [label="Enter block"];
-          47 [label="Access variable R|<local>/b|"];
-          48 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
-          49 [label="Exit block"];
+          50 [label="Enter block"];
+          51 [label="Access variable R|<local>/b|"];
+          52 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
+          53 [label="Exit block"];
         }
-        50 [label="Exit when branch result"];
-        51 [label="Exit when"];
+        54 [label="Exit when branch result"];
+        55 [label="Exit when"];
       }
-      52 [label="Exit block"];
+      56 [label="Exit block"];
     }
-    53 [label="Exit function test_2" style="filled" fillcolor=red];
+    57 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
-  29 -> {30};
-  30 -> {31};
   31 -> {32};
   32 -> {33};
   33 -> {34};
@@ -147,55 +151,52 @@ digraph equalsToBoolean_kt {
   35 -> {36};
   36 -> {37};
   37 -> {38};
-  38 -> {39 44};
+  38 -> {39};
   39 -> {40};
-  40 -> {41};
+  40 -> {49 41};
   41 -> {42};
   42 -> {43};
-  43 -> {51};
+  43 -> {44};
   44 -> {45};
   45 -> {46};
   46 -> {47};
   47 -> {48};
-  48 -> {49};
+  48 -> {55};
   49 -> {50};
   50 -> {51};
   51 -> {52};
   52 -> {53};
+  53 -> {54};
+  54 -> {55};
+  55 -> {56};
+  56 -> {57};
 
   subgraph cluster_16 {
     color=red
-    54 [label="Enter function test_3" style="filled" fillcolor=red];
+    58 [label="Enter function test_3" style="filled" fillcolor=red];
     subgraph cluster_17 {
       color=blue
-      55 [label="Enter block"];
+      59 [label="Enter block"];
       subgraph cluster_18 {
         color=blue
-        56 [label="Enter when"];
+        60 [label="Enter when"];
         subgraph cluster_19 {
           color=blue
-          57 [label="Enter when branch condition "];
-          58 [label="Access variable R|<local>/b|"];
-          59 [label="Const: Boolean(true)"];
-          60 [label="Operator =="];
-          61 [label="Const: Boolean(false)"];
-          62 [label="Operator =="];
-          63 [label="Exit when branch condition"];
+          61 [label="Enter when branch condition "];
+          62 [label="Access variable R|<local>/b|"];
+          63 [label="Const: Boolean(true)"];
+          64 [label="Operator =="];
+          65 [label="Const: Boolean(false)"];
+          66 [label="Operator =="];
+          67 [label="Exit when branch condition"];
         }
         subgraph cluster_20 {
           color=blue
-          64 [label="Enter block"];
-          65 [label="Access variable R|<local>/b|"];
-          66 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
-          67 [label="Exit block"];
+          68 [label="Enter when branch condition else"];
+          69 [label="Exit when branch condition"];
         }
-        68 [label="Exit when branch result"];
+        70 [label="Enter when branch result"];
         subgraph cluster_21 {
-          color=blue
-          69 [label="Enter when branch condition else"];
-          70 [label="Exit when branch condition"];
-        }
-        subgraph cluster_22 {
           color=blue
           71 [label="Enter block"];
           72 [label="Access variable R|<local>/b|"];
@@ -203,101 +204,108 @@ digraph equalsToBoolean_kt {
           74 [label="Exit block"];
         }
         75 [label="Exit when branch result"];
-        76 [label="Exit when"];
+        76 [label="Enter when branch result"];
+        subgraph cluster_22 {
+          color=blue
+          77 [label="Enter block"];
+          78 [label="Access variable R|<local>/b|"];
+          79 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
+          80 [label="Exit block"];
+        }
+        81 [label="Exit when branch result"];
+        82 [label="Exit when"];
       }
-      77 [label="Exit block"];
+      83 [label="Exit block"];
     }
-    78 [label="Exit function test_3" style="filled" fillcolor=red];
+    84 [label="Exit function test_3" style="filled" fillcolor=red];
   }
 
-  54 -> {55};
-  55 -> {56};
-  56 -> {57};
-  57 -> {58};
   58 -> {59};
   59 -> {60};
   60 -> {61};
   61 -> {62};
   62 -> {63};
-  63 -> {64 69};
+  63 -> {64};
   64 -> {65};
   65 -> {66};
   66 -> {67};
-  67 -> {68};
-  68 -> {76};
+  67 -> {76 68};
+  68 -> {69};
   69 -> {70};
   70 -> {71};
   71 -> {72};
   72 -> {73};
   73 -> {74};
   74 -> {75};
-  75 -> {76};
+  75 -> {82};
   76 -> {77};
   77 -> {78};
-
-  subgraph cluster_23 {
-    color=red
-    79 [label="Enter function test_4" style="filled" fillcolor=red];
-    subgraph cluster_24 {
-      color=blue
-      80 [label="Enter block"];
-      subgraph cluster_25 {
-        color=blue
-        81 [label="Enter when"];
-        subgraph cluster_26 {
-          color=blue
-          82 [label="Enter when branch condition "];
-          83 [label="Access variable R|<local>/b|"];
-          84 [label="Const: Boolean(true)"];
-          85 [label="Operator =="];
-          86 [label="Const: Boolean(false)"];
-          87 [label="Operator !="];
-          88 [label="Exit when branch condition"];
-        }
-        subgraph cluster_27 {
-          color=blue
-          89 [label="Enter block"];
-          90 [label="Access variable R|<local>/b|"];
-          91 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
-          92 [label="Exit block"];
-        }
-        93 [label="Exit when branch result"];
-        subgraph cluster_28 {
-          color=blue
-          94 [label="Enter when branch condition else"];
-          95 [label="Exit when branch condition"];
-        }
-        subgraph cluster_29 {
-          color=blue
-          96 [label="Enter block"];
-          97 [label="Access variable R|<local>/b|"];
-          98 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
-          99 [label="Exit block"];
-        }
-        100 [label="Exit when branch result"];
-        101 [label="Exit when"];
-      }
-      102 [label="Exit block"];
-    }
-    103 [label="Exit function test_4" style="filled" fillcolor=red];
-  }
-
+  78 -> {79};
   79 -> {80};
   80 -> {81};
   81 -> {82};
   82 -> {83};
   83 -> {84};
-  84 -> {85};
+
+  subgraph cluster_23 {
+    color=red
+    85 [label="Enter function test_4" style="filled" fillcolor=red];
+    subgraph cluster_24 {
+      color=blue
+      86 [label="Enter block"];
+      subgraph cluster_25 {
+        color=blue
+        87 [label="Enter when"];
+        subgraph cluster_26 {
+          color=blue
+          88 [label="Enter when branch condition "];
+          89 [label="Access variable R|<local>/b|"];
+          90 [label="Const: Boolean(true)"];
+          91 [label="Operator =="];
+          92 [label="Const: Boolean(false)"];
+          93 [label="Operator !="];
+          94 [label="Exit when branch condition"];
+        }
+        subgraph cluster_27 {
+          color=blue
+          95 [label="Enter when branch condition else"];
+          96 [label="Exit when branch condition"];
+        }
+        97 [label="Enter when branch result"];
+        subgraph cluster_28 {
+          color=blue
+          98 [label="Enter block"];
+          99 [label="Access variable R|<local>/b|"];
+          100 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
+          101 [label="Exit block"];
+        }
+        102 [label="Exit when branch result"];
+        103 [label="Enter when branch result"];
+        subgraph cluster_29 {
+          color=blue
+          104 [label="Enter block"];
+          105 [label="Access variable R|<local>/b|"];
+          106 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+          107 [label="Exit block"];
+        }
+        108 [label="Exit when branch result"];
+        109 [label="Exit when"];
+      }
+      110 [label="Exit block"];
+    }
+    111 [label="Exit function test_4" style="filled" fillcolor=red];
+  }
+
   85 -> {86};
   86 -> {87};
   87 -> {88};
-  88 -> {89 94};
+  88 -> {89};
   89 -> {90};
   90 -> {91};
   91 -> {92};
   92 -> {93};
-  93 -> {101};
-  94 -> {95};
+  93 -> {94};
+  94 -> {103 95};
   95 -> {96};
   96 -> {97};
   97 -> {98};
@@ -305,55 +313,8 @@ digraph equalsToBoolean_kt {
   99 -> {100};
   100 -> {101};
   101 -> {102};
-  102 -> {103};
-
-  subgraph cluster_30 {
-    color=red
-    104 [label="Enter function test_5" style="filled" fillcolor=red];
-    subgraph cluster_31 {
-      color=blue
-      105 [label="Enter block"];
-      subgraph cluster_32 {
-        color=blue
-        106 [label="Enter when"];
-        subgraph cluster_33 {
-          color=blue
-          107 [label="Enter when branch condition "];
-          108 [label="Access variable R|<local>/b|"];
-          109 [label="Const: Boolean(true)"];
-          110 [label="Operator !="];
-          111 [label="Const: Boolean(true)"];
-          112 [label="Operator =="];
-          113 [label="Exit when branch condition"];
-        }
-        subgraph cluster_34 {
-          color=blue
-          114 [label="Enter block"];
-          115 [label="Access variable R|<local>/b|"];
-          116 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
-          117 [label="Exit block"];
-        }
-        118 [label="Exit when branch result"];
-        subgraph cluster_35 {
-          color=blue
-          119 [label="Enter when branch condition else"];
-          120 [label="Exit when branch condition"];
-        }
-        subgraph cluster_36 {
-          color=blue
-          121 [label="Enter block"];
-          122 [label="Access variable R|<local>/b|"];
-          123 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
-          124 [label="Exit block"];
-        }
-        125 [label="Exit when branch result"];
-        126 [label="Exit when"];
-      }
-      127 [label="Exit block"];
-    }
-    128 [label="Exit function test_5" style="filled" fillcolor=red];
-  }
-
+  102 -> {109};
+  103 -> {104};
   104 -> {105};
   105 -> {106};
   106 -> {107};
@@ -361,72 +322,74 @@ digraph equalsToBoolean_kt {
   108 -> {109};
   109 -> {110};
   110 -> {111};
-  111 -> {112};
+
+  subgraph cluster_30 {
+    color=red
+    112 [label="Enter function test_5" style="filled" fillcolor=red];
+    subgraph cluster_31 {
+      color=blue
+      113 [label="Enter block"];
+      subgraph cluster_32 {
+        color=blue
+        114 [label="Enter when"];
+        subgraph cluster_33 {
+          color=blue
+          115 [label="Enter when branch condition "];
+          116 [label="Access variable R|<local>/b|"];
+          117 [label="Const: Boolean(true)"];
+          118 [label="Operator !="];
+          119 [label="Const: Boolean(true)"];
+          120 [label="Operator =="];
+          121 [label="Exit when branch condition"];
+        }
+        subgraph cluster_34 {
+          color=blue
+          122 [label="Enter when branch condition else"];
+          123 [label="Exit when branch condition"];
+        }
+        124 [label="Enter when branch result"];
+        subgraph cluster_35 {
+          color=blue
+          125 [label="Enter block"];
+          126 [label="Access variable R|<local>/b|"];
+          127 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+          128 [label="Exit block"];
+        }
+        129 [label="Exit when branch result"];
+        130 [label="Enter when branch result"];
+        subgraph cluster_36 {
+          color=blue
+          131 [label="Enter block"];
+          132 [label="Access variable R|<local>/b|"];
+          133 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
+          134 [label="Exit block"];
+        }
+        135 [label="Exit when branch result"];
+        136 [label="Exit when"];
+      }
+      137 [label="Exit block"];
+    }
+    138 [label="Exit function test_5" style="filled" fillcolor=red];
+  }
+
   112 -> {113};
-  113 -> {114 119};
+  113 -> {114};
   114 -> {115};
   115 -> {116};
   116 -> {117};
   117 -> {118};
-  118 -> {126};
+  118 -> {119};
   119 -> {120};
   120 -> {121};
-  121 -> {122};
+  121 -> {130 122};
   122 -> {123};
   123 -> {124};
   124 -> {125};
   125 -> {126};
   126 -> {127};
   127 -> {128};
-
-  subgraph cluster_37 {
-    color=red
-    129 [label="Enter function test_6" style="filled" fillcolor=red];
-    subgraph cluster_38 {
-      color=blue
-      130 [label="Enter block"];
-      subgraph cluster_39 {
-        color=blue
-        131 [label="Enter when"];
-        subgraph cluster_40 {
-          color=blue
-          132 [label="Enter when branch condition "];
-          133 [label="Access variable R|<local>/b|"];
-          134 [label="Const: Boolean(true)"];
-          135 [label="Operator !="];
-          136 [label="Const: Boolean(true)"];
-          137 [label="Operator !="];
-          138 [label="Exit when branch condition"];
-        }
-        subgraph cluster_41 {
-          color=blue
-          139 [label="Enter block"];
-          140 [label="Access variable R|<local>/b|"];
-          141 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
-          142 [label="Exit block"];
-        }
-        143 [label="Exit when branch result"];
-        subgraph cluster_42 {
-          color=blue
-          144 [label="Enter when branch condition else"];
-          145 [label="Exit when branch condition"];
-        }
-        subgraph cluster_43 {
-          color=blue
-          146 [label="Enter block"];
-          147 [label="Access variable R|<local>/b|"];
-          148 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
-          149 [label="Exit block"];
-        }
-        150 [label="Exit when branch result"];
-        151 [label="Exit when"];
-      }
-      152 [label="Exit block"];
-    }
-    153 [label="Exit function test_6" style="filled" fillcolor=red];
-  }
-
-  129 -> {130};
+  128 -> {129};
+  129 -> {136};
   130 -> {131};
   131 -> {132};
   132 -> {133};
@@ -435,156 +398,209 @@ digraph equalsToBoolean_kt {
   135 -> {136};
   136 -> {137};
   137 -> {138};
-  138 -> {139 144};
+
+  subgraph cluster_37 {
+    color=red
+    139 [label="Enter function test_6" style="filled" fillcolor=red];
+    subgraph cluster_38 {
+      color=blue
+      140 [label="Enter block"];
+      subgraph cluster_39 {
+        color=blue
+        141 [label="Enter when"];
+        subgraph cluster_40 {
+          color=blue
+          142 [label="Enter when branch condition "];
+          143 [label="Access variable R|<local>/b|"];
+          144 [label="Const: Boolean(true)"];
+          145 [label="Operator !="];
+          146 [label="Const: Boolean(true)"];
+          147 [label="Operator !="];
+          148 [label="Exit when branch condition"];
+        }
+        subgraph cluster_41 {
+          color=blue
+          149 [label="Enter when branch condition else"];
+          150 [label="Exit when branch condition"];
+        }
+        151 [label="Enter when branch result"];
+        subgraph cluster_42 {
+          color=blue
+          152 [label="Enter block"];
+          153 [label="Access variable R|<local>/b|"];
+          154 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
+          155 [label="Exit block"];
+        }
+        156 [label="Exit when branch result"];
+        157 [label="Enter when branch result"];
+        subgraph cluster_43 {
+          color=blue
+          158 [label="Enter block"];
+          159 [label="Access variable R|<local>/b|"];
+          160 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+          161 [label="Exit block"];
+        }
+        162 [label="Exit when branch result"];
+        163 [label="Exit when"];
+      }
+      164 [label="Exit block"];
+    }
+    165 [label="Exit function test_6" style="filled" fillcolor=red];
+  }
+
   139 -> {140};
   140 -> {141};
   141 -> {142};
   142 -> {143};
-  143 -> {151};
+  143 -> {144};
   144 -> {145};
   145 -> {146};
   146 -> {147};
   147 -> {148};
-  148 -> {149};
+  148 -> {157 149};
   149 -> {150};
   150 -> {151};
   151 -> {152};
   152 -> {153};
-
-  subgraph cluster_44 {
-    color=red
-    154 [label="Enter function test_7" style="filled" fillcolor=red];
-    subgraph cluster_45 {
-      color=blue
-      155 [label="Enter block"];
-      subgraph cluster_46 {
-        color=blue
-        156 [label="Enter when"];
-        subgraph cluster_47 {
-          color=blue
-          157 [label="Enter when branch condition "];
-          158 [label="Access variable R|<local>/b|"];
-          159 [label="Const: Boolean(true)"];
-          160 [label="Operator !="];
-          161 [label="Const: Boolean(false)"];
-          162 [label="Operator =="];
-          163 [label="Exit when branch condition"];
-        }
-        subgraph cluster_48 {
-          color=blue
-          164 [label="Enter block"];
-          165 [label="Access variable R|<local>/b|"];
-          166 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
-          167 [label="Exit block"];
-        }
-        168 [label="Exit when branch result"];
-        subgraph cluster_49 {
-          color=blue
-          169 [label="Enter when branch condition else"];
-          170 [label="Exit when branch condition"];
-        }
-        subgraph cluster_50 {
-          color=blue
-          171 [label="Enter block"];
-          172 [label="Access variable R|<local>/b|"];
-          173 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
-          174 [label="Exit block"];
-        }
-        175 [label="Exit when branch result"];
-        176 [label="Exit when"];
-      }
-      177 [label="Exit block"];
-    }
-    178 [label="Exit function test_7" style="filled" fillcolor=red];
-  }
-
+  153 -> {154};
   154 -> {155};
   155 -> {156};
-  156 -> {157};
+  156 -> {163};
   157 -> {158};
   158 -> {159};
   159 -> {160};
   160 -> {161};
   161 -> {162};
   162 -> {163};
-  163 -> {164 169};
+  163 -> {164};
   164 -> {165};
-  165 -> {166};
+
+  subgraph cluster_44 {
+    color=red
+    166 [label="Enter function test_7" style="filled" fillcolor=red];
+    subgraph cluster_45 {
+      color=blue
+      167 [label="Enter block"];
+      subgraph cluster_46 {
+        color=blue
+        168 [label="Enter when"];
+        subgraph cluster_47 {
+          color=blue
+          169 [label="Enter when branch condition "];
+          170 [label="Access variable R|<local>/b|"];
+          171 [label="Const: Boolean(true)"];
+          172 [label="Operator !="];
+          173 [label="Const: Boolean(false)"];
+          174 [label="Operator =="];
+          175 [label="Exit when branch condition"];
+        }
+        subgraph cluster_48 {
+          color=blue
+          176 [label="Enter when branch condition else"];
+          177 [label="Exit when branch condition"];
+        }
+        178 [label="Enter when branch result"];
+        subgraph cluster_49 {
+          color=blue
+          179 [label="Enter block"];
+          180 [label="Access variable R|<local>/b|"];
+          181 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
+          182 [label="Exit block"];
+        }
+        183 [label="Exit when branch result"];
+        184 [label="Enter when branch result"];
+        subgraph cluster_50 {
+          color=blue
+          185 [label="Enter block"];
+          186 [label="Access variable R|<local>/b|"];
+          187 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+          188 [label="Exit block"];
+        }
+        189 [label="Exit when branch result"];
+        190 [label="Exit when"];
+      }
+      191 [label="Exit block"];
+    }
+    192 [label="Exit function test_7" style="filled" fillcolor=red];
+  }
+
   166 -> {167};
   167 -> {168};
-  168 -> {176};
+  168 -> {169};
   169 -> {170};
   170 -> {171};
   171 -> {172};
   172 -> {173};
   173 -> {174};
   174 -> {175};
-  175 -> {176};
+  175 -> {184 176};
   176 -> {177};
   177 -> {178};
-
-  subgraph cluster_51 {
-    color=red
-    179 [label="Enter function test_8" style="filled" fillcolor=red];
-    subgraph cluster_52 {
-      color=blue
-      180 [label="Enter block"];
-      subgraph cluster_53 {
-        color=blue
-        181 [label="Enter when"];
-        subgraph cluster_54 {
-          color=blue
-          182 [label="Enter when branch condition "];
-          183 [label="Access variable R|<local>/b|"];
-          184 [label="Const: Boolean(true)"];
-          185 [label="Operator !="];
-          186 [label="Const: Boolean(false)"];
-          187 [label="Operator !="];
-          188 [label="Exit when branch condition"];
-        }
-        subgraph cluster_55 {
-          color=blue
-          189 [label="Enter block"];
-          190 [label="Access variable R|<local>/b|"];
-          191 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
-          192 [label="Exit block"];
-        }
-        193 [label="Exit when branch result"];
-        subgraph cluster_56 {
-          color=blue
-          194 [label="Enter when branch condition else"];
-          195 [label="Exit when branch condition"];
-        }
-        subgraph cluster_57 {
-          color=blue
-          196 [label="Enter block"];
-          197 [label="Access variable R|<local>/b|"];
-          198 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
-          199 [label="Exit block"];
-        }
-        200 [label="Exit when branch result"];
-        201 [label="Exit when"];
-      }
-      202 [label="Exit block"];
-    }
-    203 [label="Exit function test_8" style="filled" fillcolor=red];
-  }
-
+  178 -> {179};
   179 -> {180};
   180 -> {181};
   181 -> {182};
   182 -> {183};
-  183 -> {184};
+  183 -> {190};
   184 -> {185};
   185 -> {186};
   186 -> {187};
   187 -> {188};
-  188 -> {189 194};
+  188 -> {189};
   189 -> {190};
   190 -> {191};
   191 -> {192};
-  192 -> {193};
-  193 -> {201};
+
+  subgraph cluster_51 {
+    color=red
+    193 [label="Enter function test_8" style="filled" fillcolor=red];
+    subgraph cluster_52 {
+      color=blue
+      194 [label="Enter block"];
+      subgraph cluster_53 {
+        color=blue
+        195 [label="Enter when"];
+        subgraph cluster_54 {
+          color=blue
+          196 [label="Enter when branch condition "];
+          197 [label="Access variable R|<local>/b|"];
+          198 [label="Const: Boolean(true)"];
+          199 [label="Operator !="];
+          200 [label="Const: Boolean(false)"];
+          201 [label="Operator !="];
+          202 [label="Exit when branch condition"];
+        }
+        subgraph cluster_55 {
+          color=blue
+          203 [label="Enter when branch condition else"];
+          204 [label="Exit when branch condition"];
+        }
+        205 [label="Enter when branch result"];
+        subgraph cluster_56 {
+          color=blue
+          206 [label="Enter block"];
+          207 [label="Access variable R|<local>/b|"];
+          208 [label="Function call: R|<local>/b|.R|kotlin/Boolean.not|()"];
+          209 [label="Exit block"];
+        }
+        210 [label="Exit when branch result"];
+        211 [label="Enter when branch result"];
+        subgraph cluster_57 {
+          color=blue
+          212 [label="Enter block"];
+          213 [label="Access variable R|<local>/b|"];
+          214 [label="Function call: R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()"];
+          215 [label="Exit block"];
+        }
+        216 [label="Exit when branch result"];
+        217 [label="Exit when"];
+      }
+      218 [label="Exit block"];
+    }
+    219 [label="Exit function test_8" style="filled" fillcolor=red];
+  }
+
+  193 -> {194};
   194 -> {195};
   195 -> {196};
   196 -> {197};
@@ -593,6 +609,22 @@ digraph equalsToBoolean_kt {
   199 -> {200};
   200 -> {201};
   201 -> {202};
-  202 -> {203};
+  202 -> {211 203};
+  203 -> {204};
+  204 -> {205};
+  205 -> {206};
+  206 -> {207};
+  207 -> {208};
+  208 -> {209};
+  209 -> {210};
+  210 -> {217};
+  211 -> {212};
+  212 -> {213};
+  213 -> {214};
+  214 -> {215};
+  215 -> {216};
+  216 -> {217};
+  217 -> {218};
+  218 -> {219};
 
 }

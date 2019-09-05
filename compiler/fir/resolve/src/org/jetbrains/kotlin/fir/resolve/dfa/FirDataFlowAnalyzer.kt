@@ -45,6 +45,8 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     private val variableStorage = DataFlowVariableStorage()
     private val flowOnNodes = mutableMapOf<CFGNode<*>, Flow>()
 
+    private val variablesForWhenConditions = mutableMapOf<WhenBranchConditionExitNode, DataFlowVariable>()
+
     /*
      * If there is no types from smartcasts function returns null
      *
@@ -93,12 +95,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     // ----------------------------------- Block -----------------------------------
 
     fun enterBlock(block: FirBlock) {
-        val node = graphBuilder.enterBlock(block).mergeIncomingFlow()
-
-        val previousNode = node.alivePreviousNodes.singleOrNull() as? WhenBranchConditionExitNode
-        if (previousNode != null) {
-            node.flow = approveFactsAndUpdateImplicitReceivers(previousNode.variable, EqTrue, node.flow)
-        }
+        graphBuilder.enterBlock(block).mergeIncomingFlow()
     }
 
     fun exitBlock(block: FirBlock) {
@@ -311,16 +308,20 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         val node = graphBuilder.enterWhenBranchCondition(whenBranch).mergeIncomingFlow()
         val previousNode = node.previousNodes.single()
         if (previousNode is WhenBranchConditionExitNode) {
-            node.flow = approveFactsAndUpdateImplicitReceivers(previousNode.variable, EqFalse, node.flow)
+            node.flow = approveFactsAndUpdateImplicitReceivers(variablesForWhenConditions.remove(previousNode)!!, EqFalse, node.flow)
         }
         node.flow.freeze()
     }
 
     fun exitWhenBranchCondition(whenBranch: FirWhenBranch) {
-        val node = graphBuilder.exitWhenBranchCondition(whenBranch).mergeIncomingFlow()
-        node.flow.freeze()
+        val (conditionExitNode, branchEnterNode) = graphBuilder.exitWhenBranchCondition(whenBranch)
+        conditionExitNode.mergeIncomingFlow()
+        conditionExitNode.flow.freeze()
+
         val conditionVariable = getOrCreateVariable(whenBranch.condition)
-        node.variable = conditionVariable
+        variablesForWhenConditions[conditionExitNode] = conditionVariable
+        branchEnterNode.mergeIncomingFlow()
+        branchEnterNode.flow = approveFactsAndUpdateImplicitReceivers(conditionVariable, EqTrue, branchEnterNode.flow)
     }
 
     fun exitWhenBranchResult(whenBranch: FirWhenBranch) {

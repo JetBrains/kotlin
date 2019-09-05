@@ -188,13 +188,16 @@ class ControlFlowGraphBuilder {
         return createWhenBranchConditionEnterNode(whenBranch).also { addNewSimpleNode(it) }.also { levelCounter++ }
     }
 
-    fun exitWhenBranchCondition(whenBranch: FirWhenBranch): WhenBranchConditionExitNode {
+    fun exitWhenBranchCondition(whenBranch: FirWhenBranch): Pair<WhenBranchConditionExitNode, WhenBranchResultEnterNode> {
         levelCounter--
-        return createWhenBranchConditionExitNode(whenBranch).also {
+        val conditionExitNode = createWhenBranchConditionExitNode(whenBranch).also {
             addNewSimpleNode(it)
-            // put exit branch condition node twice so we can refer it after exit from when expression
-            lastNodes.push(it)
         }.also { levelCounter++ }
+        val branchEnterNode = createWhenBranchResultEnterNode(whenBranch).also {
+            lastNodes.push(it)
+            addEdge(conditionExitNode, it)
+        }
+        return conditionExitNode to branchEnterNode
     }
 
     fun exitWhenBranchResult(whenBranch: FirWhenBranch): WhenBranchResultExitNode {
