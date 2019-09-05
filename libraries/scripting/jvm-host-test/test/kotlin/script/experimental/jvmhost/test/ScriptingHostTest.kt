@@ -27,7 +27,9 @@ import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.util.classpathFromClass
@@ -52,6 +54,24 @@ class ScriptingHostTest : TestCase() {
             BasicJvmScriptingHost().evalWithTemplate<SimpleScriptTemplate>("println(\"$greeting\")".toScriptSource()).throwOnFailure()
         }
         Assert.assertEquals(greeting, output2)
+    }
+
+    @Test
+    fun testSourceWithName() {
+        val greeting = "Hello from script!"
+        val output = captureOut {
+            val basicJvmScriptingHost = BasicJvmScriptingHost()
+            basicJvmScriptingHost.eval(
+                "println(\"$greeting\")".toScriptSource("name"),
+                createJvmCompilationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration) {
+                    jvm {
+                        dependenciesFromCurrentContext(wholeClasspath = true)
+                    }
+                },
+                createJvmEvaluationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration)
+            ).throwOnFailure()
+        }
+        Assert.assertEquals(greeting, output)
     }
 
     @Test

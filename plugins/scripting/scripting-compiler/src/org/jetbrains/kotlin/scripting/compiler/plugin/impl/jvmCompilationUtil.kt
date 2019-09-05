@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
+import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import kotlin.script.experimental.api.*
@@ -31,16 +32,6 @@ internal fun makeCompiledModule(generationState: GenerationState) =
         generationState.factory.asList()
             .associateTo(sortedMapOf<String, ByteArray>()) { it.relativePath to it.asByteArray() }
     )
-
-internal fun SourceCode.scriptFileName(
-    mainScript: SourceCode,
-    scriptCompilationConfiguration: ScriptCompilationConfiguration
-): String =
-    when {
-        name != null -> name!!
-        mainScript == this -> "script.${scriptCompilationConfiguration[ScriptCompilationConfiguration.fileExtension]}"
-        else -> throw Exception("Unexpected script without name: $this")
-    }
 
 internal inline fun <T> withMessageCollectorAndDisposable(
     script: SourceCode? = null,

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.withCorrectExtension
 import java.io.File
 import java.net.URL
 import kotlin.reflect.KClass
@@ -290,7 +291,7 @@ fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
         val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
         if (vFile != null) return vFile
     }
-    val scriptName = name ?: "script.${definition.fileExtension}"
+    val scriptName = withCorrectExtension(name ?: "script", definition.fileExtension)
     val scriptPath = when (this) {
         is FileScriptSource -> file.path
         is ExternalSourceCode -> externalLocation.toString()
