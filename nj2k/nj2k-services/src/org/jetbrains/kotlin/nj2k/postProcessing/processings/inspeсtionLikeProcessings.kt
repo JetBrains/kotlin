@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -18,14 +17,15 @@ import org.jetbrains.kotlin.idea.core.implicitModality
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.callName
 import org.jetbrains.kotlin.idea.inspections.RedundantExplicitTypeInspection
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
+import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxIntention
 import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.postProcessing.ApplicabilityBasedInspectionLikeProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.InspectionLikeProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.generalInspectionBasedProcessing
-import org.jetbrains.kotlin.nj2k.postProcessing.resolve
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -106,8 +105,8 @@ class RemoveJavaStreamsCollectCallTypeArgumentsProcessing :
     ApplicabilityBasedInspectionLikeProcessing<KtCallExpression>(KtCallExpression::class) {
     override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean {
         if (element.typeArgumentList == null) return false
-        val resolved = element.calleeExpression?.mainReference?.resolve() as? PsiMethod ?: return false
-        return resolved.getKotlinFqName()?.asString() == COLLECT_FQ_NAME
+        if (element.callName() != COLLECT_FQ_NAME.shortName().identifier) return false
+        return element.isCalling(COLLECT_FQ_NAME)
     }
 
     override fun apply(element: KtCallExpression) {
@@ -115,7 +114,7 @@ class RemoveJavaStreamsCollectCallTypeArgumentsProcessing :
     }
 
     companion object {
-        private const val COLLECT_FQ_NAME = "java.util.stream.Stream.collect"
+        private val COLLECT_FQ_NAME = FqName("java.util.stream.Stream.collect")
     }
 }
 
@@ -287,13 +286,10 @@ class JavaObjectEqualsToEqOperatorProcessing : ApplicabilityBasedInspectionLikeP
     }
 
     override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean {
+        if (element.callName() != CALL_FQ_NAME.shortName().identifier) return false
         if (element.valueArguments.size != 2) return false
         if (element.valueArguments.any { it.getArgumentExpression() == null }) return false
-        val target = element.calleeExpression
-            .safeAs<KtReferenceExpression>()
-            ?.resolve()
-            ?: return false
-        return target.getKotlinFqName() == CALL_FQ_NAME
+        return element.isCalling(CALL_FQ_NAME)
     }
 
     override fun apply(element: KtCallExpression) {
