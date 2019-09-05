@@ -114,7 +114,7 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
           }
         }
       }
-    }.withMinimumWidth(horizontalSize)
+    }.withMaximumWidth(horizontalSize)
   }
 
   override fun getPreferredFocusedComponent() = contentPanel.preferredFocusedComponent
