@@ -998,6 +998,12 @@ func testGH2931() throws {
     }
 }
 
+class ClassForTypeCheckInheritor : ClassForTypeCheck { }
+
+func testClassTypeCheck() throws {
+    try assertTrue(ValuesKt.testClassTypeCheck(x: ClassForTypeCheckInheritor()))
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -1047,6 +1053,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestDeprecation", method: withAutorelease(testDeprecation)),
             TestCase(name: "TestWeakRefs", method: withAutorelease(testWeakRefs)),
             TestCase(name: "TestSharedRefs", method: withAutorelease(TestSharedRefs().test)),
+            TestCase(name: "TestClassTypeCheck", method: withAutorelease(testClassTypeCheck)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }

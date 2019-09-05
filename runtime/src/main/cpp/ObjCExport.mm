@@ -734,6 +734,8 @@ static const TypeInfo* createTypeInfo(
     result->flags_ |= TF_IMMUTABLE;
   }
 
+  result->classId_ = superType->classId_;
+
   KStdVector<const TypeInfo*> implementedInterfaces(
     superType->implementedInterfaces_, superType->implementedInterfaces_ + superType->implementedInterfacesCount_
   );

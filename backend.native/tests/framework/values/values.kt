@@ -774,3 +774,7 @@ class SharedRefs {
 
     private val mustBeRemoved = mutableListOf<WeakReference<*>>()
 }
+
+open class ClassForTypeCheck
+
+fun testClassTypeCheck(x: Any) = x is ClassForTypeCheck
