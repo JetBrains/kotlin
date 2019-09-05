@@ -33,18 +33,18 @@ class IdeFirProvider(
     // TODO: invalidation?
     private val files = mutableMapOf<KtFile, FirFile>()
 
-    override fun getFirClassifierByFqName(fqName: ClassId): FirClassLikeDeclaration<*>? {
-        return cacheProvider.getFirClassifierByFqName(fqName) ?: run {
+    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
+        return cacheProvider.getFirClassifierByFqName(classId) ?: run {
 
-            val classes = KotlinFullClassNameIndex.getInstance().get(fqName.asSingleFqName().asString(), project, scope)
+            val classes = KotlinFullClassNameIndex.getInstance().get(classId.asSingleFqName().asString(), project, scope)
             val ktClass = classes.firstOrNull {
-                fqName.packageFqName == it.containingKtFile.packageFqName
+                classId.packageFqName == it.containingKtFile.packageFqName
             } ?: return null // TODO: what if two of them?
             val ktFile = ktClass.containingKtFile
 
             getOrBuildFile(ktFile)
 
-            cacheProvider.getFirClassifierByFqName(fqName)
+            cacheProvider.getFirClassifierByFqName(classId)
         }
     }
 

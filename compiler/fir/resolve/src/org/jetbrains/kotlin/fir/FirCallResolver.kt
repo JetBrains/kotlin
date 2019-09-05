@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -204,7 +206,14 @@ class FirCallResolver(
         if (referencedSymbol is FirClassLikeSymbol<*>) {
             val classId = referencedSymbol.classId
             return FirResolvedQualifierImpl(nameReference.source, classId.packageFqName, classId.relativeClassName).apply {
-                resultType = typeForQualifier(this)
+                resultType = if (classId.isLocal) {
+                    typeForQualifierByDeclaration(referencedSymbol.fir, resultType)
+                        ?: resultType.resolvedTypeFromPrototype(
+                            StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
+                        )
+                } else {
+                    typeForQualifier(this)
+                }
             }
         }
 

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -92,7 +93,12 @@ class ImplicitDispatchReceiverValue(
     scopeSession: ScopeSession
 ) : ImplicitReceiverValue<FirClassSymbol>(boundSymbol, type, useSiteSession, scopeSession) {
     val implicitCompanionScope: FirScope? = boundSymbol.fir.companionObject?.let { companionObject ->
-        symbolProvider.getClassUseSiteMemberScope(companionObject.classId, useSiteSession, scopeSession)
+        val companionId = companionObject.classId
+        if (companionId.isLocal) {
+            companionObject.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
+        } else {
+            symbolProvider.getClassUseSiteMemberScope(companionId, useSiteSession, scopeSession)
+        }
     }
 }
 

@@ -242,32 +242,36 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
     if (classId != null) {
         val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId)!!
         val declaration = classSymbol.phasedFir
-        if (declaration is FirClass) {
-            if (declaration.classKind == ClassKind.OBJECT) {
-                return resultType.resolvedTypeFromPrototype(
-                    classSymbol.constructType(emptyArray(), false)
-                )
-            } else if (declaration.classKind == ClassKind.ENUM_ENTRY) {
-                val enumClassSymbol = symbolProvider.getClassLikeSymbolByFqName(classSymbol.classId.outerClassId!!)!!
-                return resultType.resolvedTypeFromPrototype(
-                    enumClassSymbol.constructType(emptyArray(), false)
-                )
-            } else {
-                if (declaration is FirRegularClass) {
-                    val companionObject = declaration.companionObject
-                    if (companionObject != null) {
-                        return resultType.resolvedTypeFromPrototype(
-                            companionObject.symbol.constructType(emptyArray(), false)
-                        )
-                    }
-                }
-            }
+        typeForQualifierByDeclaration(declaration, resultType)?.let { return it }
+        if (declaration is FirRegularClass && declaration.classKind == ClassKind.ENUM_ENTRY) {
+            val enumClassSymbol = symbolProvider.getClassLikeSymbolByFqName(classSymbol.classId.outerClassId!!)!!
+            return resultType.resolvedTypeFromPrototype(
+                enumClassSymbol.constructType(emptyArray(), false)
+            )
         }
     }
     // TODO: Handle no value type here
     return resultType.resolvedTypeFromPrototype(
         StandardClassIds.Unit(symbolProvider).constructType(emptyArray(), isNullable = false)
     )
+}
+
+internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultType: FirTypeRef): FirTypeRef? {
+    if (declaration is FirRegularClass) {
+        if (declaration.classKind == ClassKind.OBJECT) {
+            return resultType.resolvedTypeFromPrototype(
+                declaration.symbol.constructType(emptyArray(), false)
+            )
+        } else {
+            val companionObject = declaration.companionObject
+            if (companionObject != null) {
+                return resultType.resolvedTypeFromPrototype(
+                    companionObject.symbol.constructType(emptyArray(), false)
+                )
+            }
+        }
+    }
+    return null
 }
 
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {

@@ -134,6 +134,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): CompositeTransformResult<FirStatement> {
+        localScopes.lastOrNull()?.storeDeclaration(regularClass)
         val oldConstructorScope = primaryConstructorParametersScope
         primaryConstructorParametersScope = null
         val type = regularClass.defaultType()

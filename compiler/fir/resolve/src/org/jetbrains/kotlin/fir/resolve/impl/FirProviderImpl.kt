@@ -136,8 +136,11 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         return state.fileMap[fqName].orEmpty()
     }
 
-    override fun getFirClassifierByFqName(fqName: ClassId): FirClassLikeDeclaration<*>? {
-        return state.classifierMap[fqName]
+    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
+        require(!classId.isLocal) {
+            "Local $classId should never be used to find its corresponding classifier"
+        }
+        return state.classifierMap[classId]
     }
 
     @TestOnly

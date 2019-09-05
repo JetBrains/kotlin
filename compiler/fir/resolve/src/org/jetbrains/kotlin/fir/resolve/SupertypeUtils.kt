@@ -52,8 +52,12 @@ val USE_SITE = scopeSessionKey<FirScope>()
 data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassSubstitutionScope>() {}
 
 fun FirRegularClass.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
+    if (classId.isLocal) {
+        // It's not possible to find local class by symbol
+        return buildDefaultUseSiteMemberScope(useSiteSession, builder)
+    }
     val symbolProvider = useSiteSession.firSymbolProvider
-    return symbolProvider.getClassUseSiteMemberScope(this.classId, useSiteSession, builder)
+    return symbolProvider.getClassUseSiteMemberScope(classId, useSiteSession, builder)
 }
 
 fun FirTypeAlias.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
