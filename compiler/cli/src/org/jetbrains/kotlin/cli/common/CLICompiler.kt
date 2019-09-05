@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.utils.KotlinPaths
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
 import java.io.PrintStream
 
 abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
@@ -53,68 +55,115 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_FULL_PATHS, args)
     }
 
-    public override fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
-        val performanceManager = performanceManager
-        if (arguments.reportPerf || arguments.dumpPerf != null) {
-            performanceManager.enableCollectingPerformanceStatistics()
-        }
+    private var logWriter: BufferedWriter? = null
 
-        val configuration = CompilerConfiguration()
-
-        val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors).also {
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, it)
-        }
-
-        configuration.put(CLIConfigurationKeys.PERF_MANAGER, performanceManager)
-        try {
-            setupCommonArguments(configuration, arguments)
-            setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
-            val paths = computeKotlinPaths(collector, arguments)
-            if (collector.hasErrors()) {
-                return ExitCode.COMPILATION_ERROR
+    private fun flush() {
+        if (logWriter != null) {
+            try {
+                logWriter!!.flush()
+            } catch (t: Throwable) {
+                throw Error(t)
             }
 
-            val canceledStatus = services[CompilationCanceledStatus::class.java]
-            ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
+        }
+    }
 
-            val rootDisposable = Disposer.newDisposable()
+    private fun close() {
+        if (logWriter != null) {
             try {
-                setIdeaIoUseFallback()
+                logWriter!!.close()
+                logWriter = null
+            } catch (t: Throwable) {
+                throw Error(t)
+            }
 
-                val code = doExecute(arguments, configuration, rootDisposable, paths)
+        }
+    }
 
-                performanceManager.notifyCompilationFinished()
-                if (arguments.reportPerf) {
-                    performanceManager.getMeasurementResults()
-                        .forEach { it -> configuration.get(MESSAGE_COLLECTOR_KEY)!!.report(INFO, "PERF: " + it.render(), null) }
+    private fun log(s: String) {
+        try {
+            if (logWriter == null) {
+                logWriter = BufferedWriter(FileWriter("/home/user/perf-log2", true))
+            }
+            logWriter!!.append(s)
+            logWriter!!.newLine()
+        } catch (t: Throwable) {
+            throw Error(t)
+        }
+
+    }
+
+    public override fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
+
+        val startTime = System.currentTimeMillis()
+
+        try {
+
+            val performanceManager = performanceManager
+            if (arguments.reportPerf || arguments.dumpPerf != null) {
+                performanceManager.enableCollectingPerformanceStatistics()
+            }
+
+            val configuration = CompilerConfiguration()
+
+            val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors).also {
+                configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, it)
+            }
+
+            configuration.put(CLIConfigurationKeys.PERF_MANAGER, performanceManager)
+            try {
+                setupCommonArguments(configuration, arguments)
+                setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
+                val paths = computeKotlinPaths(collector, arguments)
+                if (collector.hasErrors()) {
+                    return ExitCode.COMPILATION_ERROR
                 }
 
-                if (arguments.dumpPerf != null) {
-                    performanceManager.dumpPerformanceReport(File(arguments.dumpPerf!!))
-                }
+                val canceledStatus = services[CompilationCanceledStatus::class.java]
+                ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
 
-                return if (collector.hasErrors()) COMPILATION_ERROR else code
-            } catch (e: CompilationCanceledException) {
-                collector.report(INFO, "Compilation was canceled", null)
-                return ExitCode.OK
-            } catch (e: RuntimeException) {
-                val cause = e.cause
-                if (cause is CompilationCanceledException) {
+                val rootDisposable = Disposer.newDisposable()
+                try {
+                    setIdeaIoUseFallback()
+
+                    val code = doExecute(arguments, configuration, rootDisposable, paths)
+
+                    performanceManager.notifyCompilationFinished()
+                    if (arguments.reportPerf) {
+                        performanceManager.getMeasurementResults()
+                            .forEach { it -> configuration.get(MESSAGE_COLLECTOR_KEY)!!.report(INFO, "PERF: " + it.render(), null) }
+                    }
+
+                    if (arguments.dumpPerf != null) {
+                        performanceManager.dumpPerformanceReport(File(arguments.dumpPerf!!))
+                    }
+
+                    return if (collector.hasErrors()) COMPILATION_ERROR else code
+                } catch (e: CompilationCanceledException) {
                     collector.report(INFO, "Compilation was canceled", null)
                     return ExitCode.OK
-                } else {
-                    throw e
+                } catch (e: RuntimeException) {
+                    val cause = e.cause
+                    if (cause is CompilationCanceledException) {
+                        collector.report(INFO, "Compilation was canceled", null)
+                        return ExitCode.OK
+                    } else {
+                        throw e
+                    }
+                } finally {
+                    Disposer.dispose(rootDisposable)
                 }
+            } catch (e: AnalysisResult.CompilationErrorException) {
+                return COMPILATION_ERROR
+            } catch (t: Throwable) {
+                MessageCollectorUtil.reportException(collector, t)
+                return INTERNAL_ERROR
             } finally {
-                Disposer.dispose(rootDisposable)
+                collector.flush()
             }
-        } catch (e: AnalysisResult.CompilationErrorException) {
-            return COMPILATION_ERROR
-        } catch (t: Throwable) {
-            MessageCollectorUtil.reportException(collector, t)
-            return INTERNAL_ERROR
         } finally {
-            collector.flush()
+            log("Time: ${System.currentTimeMillis() - startTime}")
+            close()
         }
     }
 
