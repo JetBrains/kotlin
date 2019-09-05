@@ -277,7 +277,7 @@ class KotlinFacetSettings {
         get() = when {
             isHmppEnabled -> KotlinMultiplatformVersion.M3
             kind.isNewMPP -> KotlinMultiplatformVersion.M2
-            targetPlatform.isCommon() || implementedModuleNames.isNotEmpty() || kind.isNewMPP -> KotlinMultiplatformVersion.M1
+            targetPlatform.isCommon() || implementedModuleNames.isNotEmpty() -> KotlinMultiplatformVersion.M1
             else -> null
         }
 
