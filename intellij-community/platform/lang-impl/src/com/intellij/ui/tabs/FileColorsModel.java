@@ -1,4 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 package com.intellij.ui.tabs;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -29,7 +30,8 @@ import java.util.Map;
  * @author spleaner
  * @author Konstantin Bulenkov
  */
-public final class FileColorsModel implements Cloneable {
+// todo[spL]: listen to scope rename
+public class FileColorsModel implements Cloneable {
   public static final String FILE_COLOR = "fileColor";
 
   private final List<FileColorConfiguration> myApplicationLevelConfigurations = new ArrayList<>();
@@ -40,7 +42,7 @@ public final class FileColorsModel implements Cloneable {
   @NotNull
   private final Project myProject;
 
-  FileColorsModel(@NotNull Project project) {
+  FileColorsModel(@NotNull final Project project) {
     myProject = project;
     initPredefinedAndGlobalScopes();
   }
@@ -103,9 +105,7 @@ public final class FileColorsModel implements Cloneable {
     return colorName;
   }
 
-  @NotNull
-  Element save(boolean isProjectLevel) {
-    Element e = new Element("state");
+  public void save(@NotNull Element e, boolean isProjectLevel) {
     List<FileColorConfiguration> configurations = isProjectLevel ? myProjectLevelConfigurations : myApplicationLevelConfigurations;
     for (FileColorConfiguration configuration : configurations) {
       String scopeName = configuration.getScopeName();
@@ -120,7 +120,6 @@ public final class FileColorsModel implements Cloneable {
         PropertiesComponent.getInstance().setValue(scopeName, null);
       }
     }
-    return e;
   }
 
   public void load(@NotNull Element e, boolean isProjectLevel) {
