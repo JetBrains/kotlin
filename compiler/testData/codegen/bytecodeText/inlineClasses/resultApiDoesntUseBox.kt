@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
-// WITH_COROUTINES
+// WITH_RUNTIME
 // FILE: test.kt
 fun test() {
     val result = Result.success("yes!")
@@ -12,21 +10,8 @@ fun test() {
     println(failure.getOrNull())
     println(failure.exceptionOrNull())
 
-    val other = Result.success("nope")
-    if (result == other) println("==")
-    if (result != other) println("!=")
-    if (result.equals(other)) println("equals") // Boxes (JVM, JVM_IR)
-    if (!result.equals(other)) println("!equals") // Boxes (JVM, JVM_IR)
-
     println(result.hashCode())
     println(result.toString())
-    println("$result") // Boxes (JVM_IR)
-
-    val ans1 = runCatching { 42 }
-    println(ans1) // Boxes (JVM, JVM_IR)
-
-    val ans2 = 42.runCatching { this }
-    println(ans2) // Boxes (JVM, JVM_IR)
 
     println(result.getOrElse { "oops" })
     println(result.getOrDefault("oops"))

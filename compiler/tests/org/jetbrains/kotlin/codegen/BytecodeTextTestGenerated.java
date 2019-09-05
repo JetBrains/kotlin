@@ -2603,9 +2603,29 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertySetterWithInlineClassTypeArgument.kt");
         }
 
+        @TestMetadata("resultApiDoesntCallSpecializedEquals.kt")
+        public void testResultApiDoesntCallSpecializedEquals() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiDoesntCallSpecializedEquals.kt");
+        }
+
         @TestMetadata("resultApiDoesntUseBox.kt")
         public void testResultApiDoesntUseBox() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiDoesntUseBox.kt");
+        }
+
+        @TestMetadata("resultApiEqualsDoesntBox.kt")
+        public void testResultApiEqualsDoesntBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiEqualsDoesntBox.kt");
+        }
+
+        @TestMetadata("resultApiRunCatchingDoesntBox.kt")
+        public void testResultApiRunCatchingDoesntBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiRunCatchingDoesntBox.kt");
+        }
+
+        @TestMetadata("resultApiStringInterpolationDoesntBox.kt")
+        public void testResultApiStringInterpolationDoesntBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiStringInterpolationDoesntBox.kt");
         }
 
         @TestMetadata("resultMangling.kt")
