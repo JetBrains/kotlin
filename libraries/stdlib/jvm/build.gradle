@@ -78,7 +78,7 @@ dependencies {
 
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
 
-    compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+    compile group: 'org.jetbrains', name: 'annotations', version:'17.0.0'
 
     testCompile project(':kotlin-test:kotlin-test-junit')
     testCompile sourceSets.coroutinesExperimental.output

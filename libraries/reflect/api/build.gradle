@@ -25,7 +25,7 @@ dependencies {
     compileOnly project(':core:deserialization')
     compileOnly project(':core:descriptors.runtime')
     compileOnly project(':core:util.runtime')
-    compileOnly "org.jetbrains:annotations:13.0"
+    compileOnly "org.jetbrains:annotations:17.0.0"
 }
 
 if (includeJava9) {

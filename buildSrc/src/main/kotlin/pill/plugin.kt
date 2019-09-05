@@ -38,7 +38,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
                 DependencyMapper.forProject(":kotlin-stdlib") {
                     MappedDependency(
                         PDependency.Library("kotlin-stdlib"),
-                        listOf(PDependency.Library("annotations-13.0"))
+                        listOf(PDependency.Library("annotations-17.0.0"))
                     )
                 },
                 DependencyMapper.forProject(":kotlin-test:kotlin-test-jvm") { MappedDependency(PDependency.Library("kotlin-test-jvm")) },
@@ -69,7 +69,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     )
                 }
 
-            return libraries + PLibrary("annotations-13.0", classes = listOf(distJar("annotations-13.0")))
+            return libraries + PLibrary("annotations-17.0.0", classes = listOf(distJar("annotations-17.0.0")))
         }
     }
 

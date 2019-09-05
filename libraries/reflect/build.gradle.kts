@@ -59,7 +59,7 @@ dependencies {
     embedded("javax.inject:javax.inject:1")
     embedded(protobufLite())
     
-    compileOnly("org.jetbrains:annotations:13.0")
+    compileOnly("org.jetbrains:annotations:17.0.0")
 }
 
 class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {

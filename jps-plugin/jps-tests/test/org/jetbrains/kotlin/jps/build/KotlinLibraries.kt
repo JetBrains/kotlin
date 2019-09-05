@@ -22,7 +22,7 @@ enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
     JvmStdLib(
         "kotlin-stdlib",
         PathUtil.kotlinPathsForDistDirectory.stdlibPath,
-        File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar")
+        File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-17.0.0.jar")
     ),
     JvmTest(
         "kotlin-test",

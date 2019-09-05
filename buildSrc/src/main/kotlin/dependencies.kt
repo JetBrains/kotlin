@@ -132,7 +132,7 @@ fun Project.toolsJar(jdkHome: File = File(this.property("JDK_18") as String)): F
     firstFromJavaHomeThatExists("lib/tools.jar", jdkHome = jdkHome)
 
 val compilerManifestClassPath
-    get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"
+    get() = "annotations-17.0.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"
 
 object EmbeddedComponents {
     val CONFIGURATION_NAME = "embedded"
