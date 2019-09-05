@@ -86,8 +86,11 @@ class JvmBackendContext(
         val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
             fqName.shortName(), NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor? ?: error("Class is not found: $fqName")
-        return symbolTable.referenceClass(descriptor)
+        return referenceClass(descriptor)
     }
+
+    internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
+        symbolTable.referenceClass(descriptor)
 
     override fun log(message: () -> String) {
         /*TODO*/

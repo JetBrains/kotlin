@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
@@ -22,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
@@ -67,11 +66,13 @@ class IrTypeMapper(private val context: JvmBackendContext) {
             error("Unexpected type: $type (original Kotlin type=$kotlinType of ${kotlinType?.let { it::class }})")
         }
 
-        // TODO: rewrite this part to produce the correct Type without the fake descriptor
-        if (type.toKotlinType().isSuspendFunctionType) {
-            return context.state.typeMapper.mapType(
-                transformSuspendFunctionToRuntimeFunctionType(type.toKotlinType(), isReleaseCoroutines = true), sw, mode
-            )
+        if (type.isSuspendFunction()) {
+            val arguments =
+                type.arguments.dropLast(1).map { (it as IrTypeProjection).type } +
+                        context.ir.symbols.continuationClass.typeWith((type.arguments.last() as IrTypeProjection).type) +
+                        context.irBuiltIns.anyNType
+            val runtimeFunctionType = context.referenceClass(context.builtIns.getFunction(arguments.size - 1)).typeWith(arguments)
+            return mapType(runtimeFunctionType, mode, sw)
         }
 
         with(typeSystem) {
