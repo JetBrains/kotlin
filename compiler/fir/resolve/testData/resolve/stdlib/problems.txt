@@ -36,8 +36,8 @@ FILE: problems.kt
         }
     public final val t: <ERROR TYPE REF: Ambiguity: bar, [/bar, /bar]> = String().<Ambiguity: bar, [/bar, /bar]>#
         public get(): <ERROR TYPE REF: Ambiguity: bar, [/bar, /bar]>
-    public final val p: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [kotlin/Pair.Pair]> = <Inapplicable(INAPPLICABLE): [kotlin/Pair.Pair]>#(Int(0), String())
-        public get(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [kotlin/Pair.Pair]>
+    public final val p: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/String|>(Int(0), String())
+        public get(): R|kotlin/Pair<kotlin/Int, kotlin/String>|
     public final class Base<T> : R|kotlin/Any| {
         public constructor<T>(x: R|T|): R|Base<T>| {
             super<R|kotlin/Any|>()

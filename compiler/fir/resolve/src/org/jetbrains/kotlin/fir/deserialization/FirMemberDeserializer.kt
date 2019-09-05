@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.types.Variance
 
 class FirDeserializationContext(
     val nameResolver: NameResolver,
@@ -234,11 +233,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val local = c.childContext(emptyList())
         val isPrimary = !Flags.IS_SECONDARY.get(flags)
 
-        val typeParameters = klass.typeParameters.map {
-            FirTypeParameterImpl(c.session, null, FirTypeParameterSymbol(), it.name, Variance.INVARIANT, false).apply {
-                bounds.addAll(it.bounds)
-            }
-        }
+        val typeParameters = klass.typeParameters
 
         val delegatedSelfType = FirResolvedTypeRefImpl(
             null,
