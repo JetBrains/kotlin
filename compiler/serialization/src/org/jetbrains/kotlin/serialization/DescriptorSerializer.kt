@@ -509,6 +509,10 @@ class DescriptorSerializer private constructor(
             builder.reified = typeParameter.isReified
         }
 
+        if (typeParameter.isVariadic != builder.variadic) {
+            builder.variadic = typeParameter.isVariadic
+        }
+
         val variance = variance(typeParameter.variance)
         if (variance != builder.variance) {
             builder.variance = variance

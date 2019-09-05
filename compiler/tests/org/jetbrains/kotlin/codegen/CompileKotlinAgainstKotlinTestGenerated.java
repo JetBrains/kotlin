@@ -323,6 +323,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
     }
 
+    @TestMetadata("variadicFunctions.kt")
+    public void testVariadicFunctions() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/variadicFunctions.kt");
+    }
+
     @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutines")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
