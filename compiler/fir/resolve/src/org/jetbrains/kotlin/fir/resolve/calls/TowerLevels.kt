@@ -224,7 +224,7 @@ class QualifiedReceiverTowerLevel(session: FirSession) : SessionBasedTowerLevel(
                     qualifiedReceiver.packageFqName,
                     qualifiedReceiver.relativeClassFqName
                 )
-            ), session
+            ), session, ScopeSession()
         )
 
         @Suppress("UNCHECKED_CAST")

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.Name
 class FirTopLevelDeclaredMemberScope(
     file: FirFile,
     session: FirSession,
+    private val scopeSession: ScopeSession,
     lookupInFir: Boolean = true
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
     private val packageFqName = file.packageFqName
@@ -32,7 +33,7 @@ class FirTopLevelDeclaredMemberScope(
                 matchedClass,
                 processor,
                 session,
-                ScopeSession(),
+                scopeSession,
                 name
             ).stop()
         ) {

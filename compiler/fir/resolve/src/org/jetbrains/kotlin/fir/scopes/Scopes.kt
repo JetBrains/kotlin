@@ -21,22 +21,22 @@ import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession) {
+fun MutableList<FirScope>.addImportingScopes(file: FirFile, session: FirSession, scopeSession: ScopeSession) {
     this += listOf(
         // from low priority to high priority
-        FirDefaultStarImportingScope(session, priority = DefaultImportPriority.LOW),
-        FirDefaultStarImportingScope(session, priority = DefaultImportPriority.HIGH),
-        FirExplicitStarImportingScope(file.imports, session),
-        FirDefaultSimpleImportingScope(session, priority = DefaultImportPriority.LOW),
-        FirDefaultSimpleImportingScope(session, priority = DefaultImportPriority.HIGH),
+        FirDefaultStarImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW),
+        FirDefaultStarImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH),
+        FirExplicitStarImportingScope(file.imports, session, scopeSession),
+        FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW),
+        FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH),
         FirSelfImportingScope(file.packageFqName, session),
         // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
-        FirExplicitSimpleImportingScope(file.imports, session)
+        FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
     )
 }
 
-fun FirCompositeScope.addImportingScopes(file: FirFile, session: FirSession) {
-    scopes.addImportingScopes(file, session)
+fun FirCompositeScope.addImportingScopes(file: FirFile, session: FirSession, scopeSession: ScopeSession) {
+    scopes.addImportingScopes(file, session, scopeSession)
 }
 
 private fun finalExpansionName(symbol: FirTypeAliasSymbol, session: FirSession): Name? {

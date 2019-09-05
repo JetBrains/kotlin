@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
@@ -26,8 +27,9 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         session = file.fileSession
+        val scopeSession = ScopeSession()
         return withScopeCleanup {
-            towerScope.addImportingScopes(file, session)
+            towerScope.addImportingScopes(file, session, scopeSession)
             super.transformFile(file, data)
         }
     }

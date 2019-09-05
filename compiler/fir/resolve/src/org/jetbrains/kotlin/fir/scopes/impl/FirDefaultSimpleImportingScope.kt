@@ -9,9 +9,14 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 
-class FirDefaultSimpleImportingScope(session: FirSession, priority: DefaultImportPriority) : FirAbstractSimpleImportingScope(session) {
+class FirDefaultSimpleImportingScope(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    priority: DefaultImportPriority
+) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
     private fun FirImportImpl.resolve(importResolveTransformer: FirImportResolveTransformer) =
         importResolveTransformer.transformImport(this, null).single as FirResolvedImportImpl

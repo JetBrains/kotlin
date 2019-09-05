@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
@@ -39,7 +40,7 @@ private fun FirFile.findCallableMember(
     packageFqName: FqName, klassFqName: FqName?, declName: Name
 ): FirCallableDeclaration<*> {
     val memberScope =
-        if (klassFqName == null) FirTopLevelDeclaredMemberScope(this, session)
+        if (klassFqName == null) FirTopLevelDeclaredMemberScope(this, session, ScopeSession())
         else provider.getClassDeclaredMemberScope(ClassId(packageFqName, klassFqName, false))!!
     var result: FirCallableDeclaration<*>? = null
     val processor = { symbol: FirCallableSymbol<*> ->

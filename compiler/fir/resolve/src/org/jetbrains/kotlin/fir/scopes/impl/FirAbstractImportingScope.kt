@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boolean) : FirAbstractProviderBasedScope(session, lookupInFir) {
-
-
-    protected val scopeCache = ScopeSession()
-
+abstract class FirAbstractImportingScope(
+    session: FirSession,
+    protected val scopeSession: ScopeSession,
+    lookupInFir: Boolean
+) : FirAbstractProviderBasedScope(session, lookupInFir) {
 
     private fun getStaticsScope(classId: ClassId): FirScope? {
-        provider.getClassUseSiteMemberScope(classId, session, scopeCache)?.let { return it }
+        provider.getClassUseSiteMemberScope(classId, session, scopeSession)?.let { return it }
 
 
         val symbol = provider.getClassLikeSymbolByFqName(classId) ?: error("No scope/symbol for $classId")
@@ -76,7 +76,7 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
                     matchedClass,
                     processor,
                     session,
-                    scopeCache,
+                    scopeSession,
                     name
                 ).stop()
             ) {

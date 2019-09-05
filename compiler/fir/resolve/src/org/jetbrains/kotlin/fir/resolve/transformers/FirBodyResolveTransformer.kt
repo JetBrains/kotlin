@@ -97,8 +97,8 @@ open class FirBodyResolveTransformer(
         packageFqName = file.packageFqName
         this.file = file
         return withScopeCleanup(topLevelScopes) {
-            topLevelScopes.addImportingScopes(file, session)
-            topLevelScopes += FirTopLevelDeclaredMemberScope(file, session)
+            topLevelScopes.addImportingScopes(file, session, scopeSession)
+            topLevelScopes += FirTopLevelDeclaredMemberScope(file, session, scopeSession)
             super.transformFile(file, data)
         }
     }

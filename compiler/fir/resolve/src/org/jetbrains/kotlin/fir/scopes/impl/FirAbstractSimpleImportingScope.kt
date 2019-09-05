@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -16,7 +17,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-abstract class FirAbstractSimpleImportingScope(session: FirSession) : FirAbstractImportingScope(session, lookupInFir = true) {
+abstract class FirAbstractSimpleImportingScope(
+    session: FirSession,
+    scopeSession: ScopeSession
+) : FirAbstractImportingScope(session, scopeSession, lookupInFir = true) {
 
     protected abstract val simpleImports: Map<Name, List<FirResolvedImportImpl>>
 
