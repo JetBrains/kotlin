@@ -333,12 +333,14 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         FunctionDescriptor functionDescriptor = bindingContext.get(VARIADIC_LAMBDA, functionLiteral);
         if (functionDescriptor == null) functionDescriptor =
                 (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, functionLiteral);
+        FunctionDescriptor nonOverriddenDescriptor = (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, functionLiteral);
         // working around a problem with shallow analysis
-        if (functionDescriptor == null) return;
+        if (functionDescriptor == null || nonOverriddenDescriptor == null) return;
 
         String name = inventAnonymousClassName();
         Collection<KotlinType> supertypes = runtimeTypes.getSupertypesForClosure(functionDescriptor);
         ClassDescriptor classDescriptor = recordClassForCallable(functionLiteral, functionDescriptor, supertypes, name);
+        bindingTrace.record(CLASS_FOR_CALLABLE, nonOverriddenDescriptor, classDescriptor);
         MutableClosure closure = recordClosure(classDescriptor, name);
 
         classStack.push(classDescriptor);

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.replaceAll
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.findAll
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -59,7 +60,6 @@ private fun preprocessLambdaArgument(
     argument: LambdaKotlinCallArgument,
     expectedType: UnwrappedType?,
     forceResolution: Boolean = false
-// TODO add flag or check if there is no variadic type variables
 ): ResolvedAtom {
     if (expectedType != null && !forceResolution && csBuilder.isTypeVariable(expectedType)) {
         return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType)
@@ -73,18 +73,30 @@ private fun preprocessLambdaArgument(
             csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver,
             resolvedArgument.parameters, null, resolvedArgument.returnType, resolvedArgument.isSuspend
         )
-        val modifiedExpectedType = if (expectedType.isFunctionType) {
-            val newParameters = expectedType.getValueParameterTypesFromFunctionType().flatMap {
-                it.type.replaceTupleTypes(csBuilder)
+
+        val expectedTypeForConstraint = when {
+            expectedType.isFunctionOrSuspendFunctionType -> {
+                val valueParameters = expectedType.getValueParameterTypesFromFunctionType()
+                val parameterWithReplaceableVariable = valueParameters.firstOrNull { projection ->
+                    projection.type.contains { it.isStubTypeVariable() }
+                }
+                if (parameterWithReplaceableVariable == null) {
+                    expectedType
+                } else {
+                    val newParameters = valueParameters.flatMap {
+                        it.type.replaceTupleTypes(csBuilder)
+                    }
+                    val isSuspend = expectedType.isSuspendFunctionType
+                    createFunctionType(
+                        csBuilder.builtIns, expectedType.annotations, expectedType.getReceiverTypeFromFunctionType(),
+                        newParameters, null, expectedType.getReturnTypeFromFunctionType(), isSuspend
+                    )
+                }
             }
-            createFunctionType(
-                csBuilder.builtIns, expectedType.annotations, expectedType.getReceiverTypeFromFunctionType(),
-                newParameters, null, expectedType.getReturnTypeFromFunctionType(), expectedType.isSuspendFunctionType
-            )
-        } else {
-            expectedType // TODO also replace tuple types in non-function types
+            else -> expectedType // TODO: KFunction, KSuspendFunction
         }
-        csBuilder.addSubtypeConstraint(lambdaType, modifiedExpectedType, ArgumentConstraintPosition(argument))
+
+        csBuilder.addSubtypeConstraint(lambdaType, expectedTypeForConstraint, ArgumentConstraintPosition(argument))
     }
 
     return resolvedArgument
@@ -169,9 +181,7 @@ fun KotlinType.replaceTupleTypes(csBuilder: ConstraintSystemBuilder): List<Kotli
     if (!TupleType.isTupleType(this)) return listOf(this)
 
     val tupleTypeArgumentType = TupleType.getTypeArgument(this)
-    val stubVariableTypes = tupleTypeArgumentType.findAll {
-        it.constructor.safeAs<TypeVariableTypeConstructor>()?.isStub ?: false
-    }
+    val stubVariableTypes = tupleTypeArgumentType.findAll { it.isStubTypeVariable() }
     if (stubVariableTypes.isEmpty()) return listOf(this)
 
     val packVariableType = stubVariableTypes.singleOrNull() ?: error("Multiple variadic type variables are not expected in a single type")
@@ -187,6 +197,9 @@ fun KotlinType.replaceTupleTypes(csBuilder: ConstraintSystemBuilder): List<Kotli
         tupleTypeArgumentType.replaceAll(packVariableType, variadicTypeVariable.defaultType)
     }
 }
+
+fun KotlinType.isStubTypeVariable(): Boolean =
+    constructor.safeAs<TypeVariableTypeConstructor>()?.isStub == true
 
 fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     csBuilder: ConstraintSystemBuilder

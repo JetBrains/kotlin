@@ -443,6 +443,7 @@ class CoroutineCodegenForLambda private constructor(
         }
 
         initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters, endLabel)
+        initializeVariablesForVariadicLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters) // TODO: endLabel shenanigans?
     }
 
     private fun allFunctionParameters(): List<ParameterDescriptor> =
