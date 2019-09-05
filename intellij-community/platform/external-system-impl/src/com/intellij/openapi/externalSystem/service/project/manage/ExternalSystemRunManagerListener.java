@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunCo
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.ExternalProjectsStateProvider;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ConcurrentIntObjectMap;
@@ -29,7 +30,7 @@ import static com.intellij.openapi.externalSystem.service.project.manage.Externa
  * @author Vladislav.Soroka
  */
 class ExternalSystemRunManagerListener implements RunManagerListener {
-  private Disposable eventDisposable;
+  private volatile Disposable eventDisposable;
 
   private final ExternalProjectsManagerImpl myManager;
   private final ConcurrentIntObjectMap<Pair<String, RunnerAndConfigurationSettings>> myMap;
@@ -102,8 +103,10 @@ class ExternalSystemRunManagerListener implements RunManagerListener {
   }
 
   public void attach() {
+    Project project = myManager.getProject();
     eventDisposable = Disposer.newDisposable();
-    myManager.getProject().getMessageBus().connect(eventDisposable).subscribe(RunManagerListener.TOPIC, this);
+    Disposer.register(project, eventDisposable);
+    project.getMessageBus().connect(eventDisposable).subscribe(RunManagerListener.TOPIC, this);
   }
 
   @Override
