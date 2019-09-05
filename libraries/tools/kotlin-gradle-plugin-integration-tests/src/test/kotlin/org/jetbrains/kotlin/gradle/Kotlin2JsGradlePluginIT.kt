@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.wrapper.GradleUserHomeLookup
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
@@ -411,6 +412,28 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             )
 
             assertFileExists("build/js/node_modules/puppeteer/.local-chromium")
+        }
+    }
+
+    @Test
+    fun testYarnSetup() = with(Project("yarn-setup", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        GradleUserHomeLookup.gradleUserHome().resolve("yarn").deleteRecursively()
+
+        build("kotlinYarnSetup") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":kotlinYarnSetup"
+            )
+
+            assertFileExists(
+                path = GradleUserHomeLookup.gradleUserHome().resolve("yarn").canonicalPath,
+                inWorkingDir = false
+            )
         }
     }
 }
