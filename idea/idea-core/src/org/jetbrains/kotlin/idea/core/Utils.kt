@@ -1,23 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -41,7 +29,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getDispatchReceiverWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
@@ -62,8 +49,7 @@ fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<Val
     for (argument in valueArguments) {
         if (argument is LambdaArgument) {
             map[argument] = parameters.last()
-        }
-        else {
+        } else {
             val argumentName = argument.getArgumentName()?.asName
 
             if (argumentName != null) {
@@ -74,8 +60,7 @@ fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<Val
                     }
                 }
                 positionalArgumentIndex = null
-            }
-            else {
+            } else {
                 if (positionalArgumentIndex != null && positionalArgumentIndex < parameters.size) {
                     val parameter = parameters[positionalArgumentIndex]
                     map[argument] = parameter
@@ -93,9 +78,9 @@ fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<Val
 
 fun ImplicitReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: KtPsiFactory): KtExpression? {
     val expressionFactory = resolutionScope.getImplicitReceiversWithInstanceToExpression()
-                                    .entries
-                                    .firstOrNull { it.key.containingDeclaration == this.declarationDescriptor }
-                                    ?.value ?: return null
+        .entries
+        .firstOrNull { it.key.containingDeclaration == this.declarationDescriptor }
+        ?.value ?: return null
     return expressionFactory.createExpression(psiFactory)
 }
 
@@ -107,11 +92,11 @@ fun KtImportDirective.targetDescriptors(resolutionFacade: ResolutionFacade = thi
 }
 
 fun Call.resolveCandidates(
-        bindingContext: BindingContext,
-        resolutionFacade: ResolutionFacade,
-        expectedType: KotlinType = expectedType(this, bindingContext),
-        filterOutWrongReceiver: Boolean = true,
-        filterOutByVisibility: Boolean = true
+    bindingContext: BindingContext,
+    resolutionFacade: ResolutionFacade,
+    expectedType: KotlinType = expectedType(this, bindingContext),
+    filterOutWrongReceiver: Boolean = true,
+    filterOutByVisibility: Boolean = true
 ): Collection<ResolvedCall<FunctionDescriptor>> {
     val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
     val inDescriptor = resolutionScope.ownerDescriptor
@@ -119,10 +104,10 @@ fun Call.resolveCandidates(
     val dataFlowInfo = bindingContext.getDataFlowInfoBefore(callElement)
     val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
     val callResolutionContext = BasicCallResolutionContext.create(
-            bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
-            ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            false, resolutionFacade.frontendService<LanguageVersionSettings>(),
-            resolutionFacade.frontendService<DataFlowValueFactory>()
+        bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
+        ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+        false, resolutionFacade.frontendService(),
+        resolutionFacade.frontendService()
     ).replaceCollectAllCandidates(true)
     val callResolver = resolutionFacade.frontendService<CallResolver>()
 
@@ -136,7 +121,9 @@ fun Call.resolveCandidates(
     }
 
     if (filterOutWrongReceiver) {
-        candidates = candidates.filter { it.status != ResolutionStatus.RECEIVER_TYPE_ERROR && it.status != ResolutionStatus.RECEIVER_PRESENCE_ERROR }
+        candidates = candidates.filter {
+            it.status != ResolutionStatus.RECEIVER_TYPE_ERROR && it.status != ResolutionStatus.RECEIVER_PRESENCE_ERROR
+        }
     }
 
     if (filterOutByVisibility) {
