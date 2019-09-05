@@ -24,7 +24,12 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("log4j", "jdom") }
-    testRuntime(intellijDep()) { includeJars("lz4-1.3.0") }
+
+    if (Platform.P192.orHigher()) {
+        testRuntime(intellijDep()) { includeJars("lz4-java-1.6.0") }
+    } else {
+        testRuntime(intellijDep()) { includeJars("lz4-1.3.0") }
+    }
 }
 
 sourceSets {
