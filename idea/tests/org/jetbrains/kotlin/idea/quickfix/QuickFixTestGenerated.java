@@ -3290,6 +3290,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryHasComma.kt");
                 }
 
+                @TestMetadata("enumEntryHasNoLineBreak.kt")
+                public void testEnumEntryHasNoLineBreak() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryHasNoLineBreak.kt");
+                }
+
                 @TestMetadata("enumEntryNoReceiver.kt")
                 public void testEnumEntryNoReceiver() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryNoReceiver.kt");
