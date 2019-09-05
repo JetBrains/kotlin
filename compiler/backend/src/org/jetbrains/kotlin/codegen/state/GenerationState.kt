@@ -297,7 +297,9 @@ class GenerationState private constructor(
     fun beforeCompile() {
         markUsed()
 
-        CodegenBinding.initTrace(this)
+        if (!isIrBackend || languageVersionSettings.getFlag(JvmAnalysisFlags.irCheckLocalNames)) {
+            CodegenBinding.initTrace(this)
+        }
     }
 
     fun afterIndependentPart() {

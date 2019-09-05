@@ -146,6 +146,7 @@ private val returnableBlocksPhase = makeIrFilePhase(
     prerequisite = setOf(arrayConstructorPhase, assertionPhase)
 )
 
+@Suppress("Reformat")
 private val jvmFilePhases =
         stripTypeAliasDeclarationsPhase then
         provisionalFunctionExpressionPhase then
@@ -220,7 +221,7 @@ private val jvmFilePhases =
         typeOperatorLowering then
         replaceKFunctionInvokeWithFunctionInvokePhase then
 
-        recordNamesForKotlinTypeMapperPhase then
+        checkLocalNamesWithOldBackendPhase then
 
         // should be last transformation
         removeDeclarationsThatWouldBeInlined then
