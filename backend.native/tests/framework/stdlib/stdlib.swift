@@ -47,7 +47,9 @@ class StdlibTests : TestProvider {
             TestCase(name: "TestSet", method: withAutorelease(testSet)),
             TestCase(name: "TestMutableSet", method: withAutorelease(testMutableSet)),
             TestCase(name: "TestMap", method: withAutorelease(testMap)),
-            TestCase(name: "TestMutableMap", method: withAutorelease(testMutableMap))
+            TestCase(name: "TestMutableMap", method: withAutorelease(testMutableMap)),
+            TestCase(name: "TestKotlinMutableSetInit", method: withAutorelease(testKotlinMutableSetInit)),
+            TestCase(name: "TestKotlinMutableDictionaryInit", method: withAutorelease(testKotlinMutableDictionaryInit)),
         ]
         providers.append(self)
     }
@@ -346,6 +348,115 @@ class StdlibTests : TestProvider {
         try assertTrue(map.object(forKey: "bar") == nil)
 
         try assertEquals(actual: NSSet(array: map.keyEnumerator().remainingObjects()), expected: NSSet(array: [nil, 42, "foo"] as [AnyObject]))
+    }
+
+    func testKotlinMutableSetInit() throws {
+        func test(
+                _ set: KotlinMutableSet<NSString>,
+                _ check: (KotlinMutableSet<NSString>) throws -> Void = { _ in }
+        ) throws {
+            try assertEquals(actual: String(describing: type(of: set)), expected: "KotlinMutableSet")
+            try check(set)
+            try assertFalse(set.contains("1"))
+            set.add("1")
+            try assertTrue(set.contains("1"))
+        }
+
+        try test(KotlinMutableSet())
+        try test(KotlinMutableSet(capacity: 1))
+        try test(KotlinMutableSet(object: "2")) {
+            try assertTrue($0.contains("2"))
+        }
+
+        var threeAndFour = ["3", "4"] as [AnyObject]
+        try test(KotlinMutableSet(objects: &threeAndFour, count: 2)) {
+            try assertTrue($0.contains("3"))
+            try assertTrue($0.contains("4"))
+        }
+
+        try test(KotlinMutableSet(array: ["5", "6"])) {
+            try assertTrue($0.contains("5"))
+            try assertTrue($0.contains("6"))
+        }
+
+        try test(KotlinMutableSet(set: ["7", "8"])) {
+            try assertTrue($0.contains("7"))
+            try assertTrue($0.contains("8"))
+        }
+
+        for flag in [false, true] {
+            try test(KotlinMutableSet(set: ["9", "10"], copyItems: flag)) {
+                try assertTrue($0.contains("9"))
+                try assertTrue($0.contains("10"))
+            }
+        }
+
+        /*
+        TODO: doesn't work, KotlinMutableSet seems to be serialized as NSMutableSet.
+        if #available(macOS 10.13, *) {
+            let data = try! NSKeyedArchiver.archivedData(
+                    withRootObject: KotlinMutableSet<NSString>(array: ["11", "12"]),
+                    requiringSecureCoding: false
+            )
+
+            try test(try! NSKeyedUnarchiver.unarchivedObject(ofClass: KotlinMutableSet.self, from: data)!) {
+                try assertTrue($0.contains("11"))
+                try assertTrue($0.contains("12"))
+            }
+        }
+        */
+
+        StdlibKt.gc() // To reproduce https://github.com/JetBrains/kotlin-native/issues/3259
+    }
+
+    func testKotlinMutableDictionaryInit() throws {
+        func test(
+                _ dict: KotlinMutableDictionary<NSString, NSString>,
+                _ check: (KotlinMutableDictionary<NSString, NSString>) throws -> Void = { _ in }
+        ) throws {
+            try assertEquals(actual: String(describing: type(of: dict)), expected: "KotlinMutableDictionary")
+            try check(dict)
+            try assertTrue(dict["1"] == nil)
+            dict["1"] = "2"
+            try assertTrue(dict["1"] as? NSString == "2")
+        }
+
+        try test(KotlinMutableDictionary())
+        try test(KotlinMutableDictionary(capacity: 4))
+
+        // TODO: test [initWithCoder:].
+
+        try test(KotlinMutableDictionary(objects: ["3", "4"], forKeys: ["4", "3"] as [NSString])) {
+            try assertEquals(actual: $0["3"] as? String, expected: "4")
+            try assertEquals(actual: $0["4"] as? String, expected: "3")
+        }
+
+        var fiveAndSix = ["5", "6"] as [AnyObject]
+        var sixAndFive = ["6", "5"] as [NSCopying]
+        try test(KotlinMutableDictionary(objects: &fiveAndSix, forKeys: &sixAndFive, count: 2)) {
+            try assertEquals(actual: $0["5"] as? String, expected: "6")
+            try assertEquals(actual: $0["6"] as? String, expected: "5")
+        }
+
+        try test(KotlinMutableDictionary(object: "7", forKey: "8" as NSString)) {
+            try assertEquals(actual: $0["8"] as? String, expected: "7")
+        }
+
+        try test(KotlinMutableDictionary(dictionary: ["10" : "9"])) {
+            try assertEquals(actual: $0["10"] as? String, expected: "9")
+        }
+
+        for flag in [false, true] {
+            try test(KotlinMutableDictionary(dictionary: ["12" : "11"], copyItems: flag)) {
+                try assertEquals(actual: $0["12"] as? String, expected: "11")
+            }
+        }
+
+        try test(KotlinMutableDictionary(dictionaryLiteral: ("14", "13"))) {
+            try assertEquals(actual: $0["14"] as? String, expected: "13")
+        }
+
+        StdlibKt.gc() // To reproduce https://github.com/JetBrains/kotlin-native/issues/3259
     }
 
 }

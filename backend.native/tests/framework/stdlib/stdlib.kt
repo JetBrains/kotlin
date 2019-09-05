@@ -60,3 +60,5 @@ data class TripleVars<T>(var first: T, var second: T, var third: T) {
         return "[$first, $second, $third]"
     }
 }
+
+fun gc() = kotlin.native.internal.GC.collect()

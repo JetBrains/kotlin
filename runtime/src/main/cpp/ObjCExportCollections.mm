@@ -386,6 +386,7 @@ static inline id KSet_getElement(KRef set, id object) {
   return self;
 }
 
+// TODO: super class implementation appears to be good enough.
 - (instancetype)initWithObjects:(const id _Nonnull [_Nullable])objects count:(NSUInteger)cnt {
   if (self = [self initWithCapacity:cnt]) {
     for (NSUInteger i = 0; i < cnt; ++i) {
