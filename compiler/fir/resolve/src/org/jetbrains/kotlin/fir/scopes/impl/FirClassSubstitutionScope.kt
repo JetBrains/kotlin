@@ -80,6 +80,10 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute()
         }
 
+        if (newReceiverType == null && newReturnType == null && newParameterTypes.all { it == null }) {
+            return original
+        }
+
         return createFakeOverrideFunction(session, member, original, newReceiverType, newReturnType, newParameterTypes)
     }
 
@@ -91,6 +95,10 @@ class FirClassSubstitutionScope(
 
         val returnType = typeCalculator.tryCalculateReturnType(member).type
         val newReturnType = returnType.substitute()
+
+        if (newReceiverType == null && newReturnType == null) {
+            return original
+        }
 
         return createFakeOverrideProperty(session, member, original, newReceiverType, newReturnType)
     }

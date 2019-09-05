@@ -232,7 +232,9 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [/I.fromInterface]>#' type=IrErrorType
+              arg0: CALL 'public open fun fromInterface <T> (): T of <root>.I.fromInterface declared in <root>.I' type=kotlin.Int origin=null
+                <T>: <none>
+                $this: GET_VAR '<this>: <root>.I declared in <root>.I' type=<root>.I<*> origin=null
               arg1: CONST Int type=kotlin.Int value=9
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="9"

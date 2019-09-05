@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
     FIELD DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) [primary] declared in <root>.DVal' type=<root>.DVal origin=null
-          kmember: PROPERTY_REFERENCE 'public final text: kotlin.String? [var]' field=null getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.String? origin=null
+          kmember: PROPERTY_REFERENCE 'public final text: kotlin.String? [var]' field='FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private' getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.String? origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:additionalText visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY

@@ -30,6 +30,6 @@ FILE: importedReceiver.kt
         (this@R|/My|, String()).R|/My.bar|<R|kotlin/String|>()
         this@R|/My|.R|/My.baz|()
         (this@R|/My|, Boolean(true)).R|/My.gau|()
-        this@R|/Your|.R|FakeOverride</Your.wat: R|kotlin/Unit|>|()
-        Boolean(false).<Inapplicable(WRONG_RECEIVER): [/Your.watwat]>#()
+        this@R|/Your|.R|/Your.wat|()
+        (this@R|/Your|, Boolean(false)).R|/Your.watwat|<R|kotlin/Boolean|>()
     }
