@@ -35,7 +35,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
     private val LOGGED_SESSIONS_RATIO: Map<String, Double> = mapOf(
       "python" to 0.5,
       "scala" to 0.3,
-      "php" to 0.3,
+      "php" to 0.2,
       "kotlin" to 0.2,
       "java" to 0.1
     )
