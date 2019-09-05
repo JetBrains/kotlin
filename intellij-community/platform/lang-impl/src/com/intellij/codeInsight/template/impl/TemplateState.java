@@ -480,9 +480,7 @@ public class TemplateState implements Disposable {
       mySegments.setSegmentsGreedy(true);
       restoreEmptyVariables(indices);
     };
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      DocumentUtil.executeInBulk(myDocument, true, action);
-    });
+    ApplicationManager.getApplication().runWriteAction(action);
   }
 
   public void setSegmentsGreedy(boolean greedy) {
