@@ -127,21 +127,22 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   @CalledInAwt
   private void addRootsToWatch() {
     if (myProject.isDefault()) return;
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    Disposable oldDisposable = myRootPointersDisposable;
+    Disposable newDisposable = Disposer.newDisposable();
 
-    Disposable prev = myRootPointersDisposable;
-    Disposable next = Disposer.newDisposable();
-
-    Application application = ApplicationManager.getApplication();
-    ExecutorService service = application.isUnitTestMode() ? ConcurrencyUtil.newSameThreadExecutorService() : myExecutor;
+    ExecutorService service = ApplicationManager.getApplication().isUnitTestMode() ? ConcurrencyUtil.newSameThreadExecutorService() : myExecutor;
 
     myCollectWatchRootsFuture.cancel(false);
     myCollectWatchRootsFuture = service.submit(() -> {
-      if (myProject.isDisposed()) return;
-      Pair<Set<String>, Set<String>> pair = ReadAction.compute(() -> collectWatchRoots(next));
+      Pair<Set<String>, Set<String>> watchRoots = ReadAction.compute(() -> myProject.isDisposed() ? null : collectWatchRoots(newDisposable));
       GuiUtils.invokeLaterIfNeeded(() -> {
-        myRootPointersDisposable = next;
-        Disposer.dispose(prev); // dispose after the re-creating container to keep VFPs from disposing and re-creating back
-        myRootsToWatch = LocalFileSystem.getInstance().replaceWatchedRoots(myRootsToWatch, pair.first, pair.second);
+        if (myProject.isDisposed()) return;
+        myRootPointersDisposable = newDisposable;
+        // dispose after the re-creating container to keep VFPs from disposing and re-creating back;
+        // instead, just increment/decrement their usage count
+        Disposer.dispose(oldDisposable);
+        myRootsToWatch = LocalFileSystem.getInstance().replaceWatchedRoots(myRootsToWatch, watchRoots.first, watchRoots.second);
       }, ModalityState.any());
     });
   }
@@ -198,7 +199,9 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     addRootsToWatch();
   }
 
+  @NotNull
   private Pair<Set<String>, Set<String>> collectWatchRoots(@NotNull Disposable disposable) {
+    ApplicationManager.getApplication().assertReadAccessAllowed();
     Set<String> recursivePaths = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
     Set<String> flatPaths = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
 
@@ -251,7 +254,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     return Pair.create(recursivePaths, flatPaths);
   }
 
-  private void collectModuleWatchRoots(@NotNull Set<String> recursivePaths, @NotNull Set<String> flatPaths) {
+  private void collectModuleWatchRoots(@NotNull Set<? super String> recursivePaths, @NotNull Set<? super String> flatPaths) {
     Set<String> urls = ContainerUtil.newTroveSet(FileUtil.PATH_HASHING_STRATEGY);
 
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
