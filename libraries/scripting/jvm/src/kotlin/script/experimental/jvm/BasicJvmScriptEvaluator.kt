@@ -89,7 +89,13 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
         val ctor = java.constructors.single()
 
-        return ctor.newInstance(*args.toArray())
+        val saveClassLoader = Thread.currentThread().contextClassLoader
+        Thread.currentThread().contextClassLoader = this.java.classLoader
+        return try {
+            ctor.newInstance(*args.toArray())
+        } finally {
+            Thread.currentThread().contextClassLoader = saveClassLoader
+        }
     }
 }
 

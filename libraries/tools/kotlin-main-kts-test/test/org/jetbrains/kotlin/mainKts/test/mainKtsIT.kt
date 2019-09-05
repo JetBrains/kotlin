@@ -15,18 +15,30 @@ class MainKtsIT {
 
     @Test
     fun testResolveJunit() {
-        runWithKotlinc(
-            "$TEST_DATA_ROOT/hello-resolve-junit.main.kts", listOf("Hello, World!"),
-            classpath = listOf(
-                File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
-                    Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
-                }
-            )
-        )
+        runWithKotlincAndMainKts("$TEST_DATA_ROOT/hello-resolve-junit.main.kts", listOf("Hello, World!"))
     }
 
     @Test
     fun testImport() {
         runWithK2JVMCompiler("$TEST_DATA_ROOT/import-test.main.kts", listOf("Hi from common", "Hi from middle", "sharedVar == 5"))
     }
+
+    @Test
+    fun testThreadContextClassLoader() {
+        runWithKotlincAndMainKts("$TEST_DATA_ROOT/context-classloader.main.kts", listOf("MainKtsConfigurator"))
+    }
 }
+
+fun runWithKotlincAndMainKts(
+    scriptPath: String,
+    expectedOutPatterns: List<String> = emptyList(),
+    expectedExitCode: Int = 0
+) = runWithKotlinc(
+    scriptPath, expectedOutPatterns, expectedExitCode,
+    classpath = listOf(
+        File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
+            Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
+        }
+    )
+)
+
