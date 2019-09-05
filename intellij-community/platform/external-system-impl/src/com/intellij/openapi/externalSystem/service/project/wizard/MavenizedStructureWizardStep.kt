@@ -70,60 +70,56 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
   private val contentPanel by lazy {
     val horizontalSize = JBUI.scale(450)
     panel {
-      boundedRow(horizontalSize) {
-        if (!context.isCreatingNewProject) {
-          row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.parent.label")) {
-            val presentationName = Function<DataView<Data>, String> { it.presentationName }
-            val parentComboBoxModel = SortedComboBoxModel(comparing(presentationName, String.CASE_INSENSITIVE_ORDER))
-            parentComboBoxModel.add(EMPTY_VIEW)
-            parentComboBoxModel.addAll(parents)
-            myComboBox(parentComboBoxModel, parentProperty.asBinding(), getParentRenderer()).apply {
-              component.bind(parentProperty, ::validateParent, context.disposable)
-            }
+      if (!context.isCreatingNewProject) {
+        row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.parent.label")) {
+          val presentationName = Function<DataView<Data>, String> { it.presentationName }
+          val parentComboBoxModel = SortedComboBoxModel(comparing(presentationName, String.CASE_INSENSITIVE_ORDER))
+          parentComboBoxModel.add(EMPTY_VIEW)
+          parentComboBoxModel.addAll(parents)
+          myComboBox(parentComboBoxModel, parentProperty.asBinding(), getParentRenderer()).apply {
+            component.bind(parentProperty, ::validateParent, context.disposable)
           }
         }
-        row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.name.label")) {
-          textField(entityNameProperty.asBinding()).focused().apply {
-            component.bind(entityNameProperty, ::validateName, context.disposable)
-          }
+      }
+      row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.name.label")) {
+        textField(entityNameProperty.asBinding()).focused().apply {
+          component.bind(entityNameProperty, ::validateName, context.disposable)
         }
-        row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.location.label")) {
-          val fileChooserDescriptor = createSingleLocalFileDescriptor().withFileFilter { it.isDirectory }
-          val fileChosen = { file: VirtualFile -> getUiPath(file.path) }
-          val title = IdeBundle.message("title.select.project.file.directory", context.presentationName)
-          textFieldWithBrowseButton(locationProperty.asBinding(), title, context.project, fileChooserDescriptor, fileChosen).apply {
-            component.bind(locationProperty, ::validateLocation, context.disposable)
-          }
+      }
+      row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.location.label")) {
+        val fileChooserDescriptor = createSingleLocalFileDescriptor().withFileFilter { it.isDirectory }
+        val fileChosen = { file: VirtualFile -> getUiPath(file.path) }
+        val title = IdeBundle.message("title.select.project.file.directory", context.presentationName)
+        textFieldWithBrowseButton(locationProperty.asBinding(), title, context.project, fileChooserDescriptor, fileChosen).apply {
+          component.bind(locationProperty, ::validateLocation, context.disposable)
         }
       }
       hideableRow(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.coordinates.title")) {
-        boundedRow(horizontalSize) {
-          row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.label")) {
-            textField(groupIdProperty.asBinding()).apply {
-              comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.help"))
-              component.bind(groupIdProperty, ::validateGroupId, context.disposable)
-            }
+        row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.label")) {
+          textField(groupIdProperty.asBinding()).apply {
+            comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.group.id.help"))
+            component.bind(groupIdProperty, ::validateGroupId, context.disposable)
           }
-          row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.label")) {
-            textField(artifactIdProperty.asBinding()).apply {
-              comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.help", context.presentationName))
-              component.bind(artifactIdProperty, ::validateArtifactId, context.disposable)
-            }
+        }
+        row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.label")) {
+          textField(artifactIdProperty.asBinding()).apply {
+            comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.artifact.id.help", context.presentationName))
+            component.bind(artifactIdProperty, ::validateArtifactId, context.disposable)
           }
-          row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.label")) {
-            textField(versionProperty.asBinding()).apply {
-              comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.help"))
-              component.bind(versionProperty, ::validateVersion, context.disposable)
-            }
+        }
+        row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.label")) {
+          textField(versionProperty.asBinding()).apply {
+            comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.help"))
+            component.bind(versionProperty, ::validateVersion, context.disposable)
           }
         }
       }
-    }
+    }.withMinimumWidth(horizontalSize)
   }
 
   override fun getPreferredFocusedComponent() = contentPanel.preferredFocusedComponent
 
-  override fun getComponent() = contentPanel
+  override fun getComponent() = JBUI.Panels.simplePanel().addToLeft(contentPanel)
 
   override fun updateStep() = (preferredFocusedComponent as JTextField).selectAll()
 
