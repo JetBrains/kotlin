@@ -3,6 +3,7 @@
 /android.tests.dependencies
 /confluence/target
 /dependencies/repo
+/dependencies/dependencies.properties
 /dist
 /local
 /gh-pages
