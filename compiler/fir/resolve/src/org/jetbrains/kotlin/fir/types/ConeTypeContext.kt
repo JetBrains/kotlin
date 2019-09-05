@@ -127,20 +127,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        if (nullability.isNullable == nullable) return this
-        return when (this) {
-            is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, ConeNullability.create(nullable), constructor)
-            is ConeTypeParameterType -> ConeTypeParameterTypeImpl(lookupTag, nullable)
-            is ConeClassErrorType -> this
-            is ConeClassType -> ConeClassTypeImpl(lookupTag, typeArguments, nullable)
-            is ConeAbbreviatedType -> ConeAbbreviatedTypeImpl(
-                lookupTag,
-                typeArguments,
-                nullable
-            )
-            is ConeIntersectionType -> this.withNullability(ConeNullability.create(nullable))
-            else -> error("!")
-        }
+        return withNullability(ConeNullability.create(nullable))
     }
 
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {

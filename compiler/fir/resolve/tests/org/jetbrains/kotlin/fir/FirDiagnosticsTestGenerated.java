@@ -41,6 +41,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/j+k"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("complexFlexibleInference.kt")
+        public void testComplexFlexibleInference() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/complexFlexibleInference.kt");
+        }
+
         @TestMetadata("KJKComplexHierarchy.kt")
         public void testKJKComplexHierarchy() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/KJKComplexHierarchy.kt");
