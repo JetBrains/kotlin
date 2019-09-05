@@ -43,6 +43,8 @@ class NpmVersions {
     val karmaSourceMapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.3.7")
     val karmaSourceMapSupport = NpmPackageVersion("karma-source-map-support", "1.4.0")
 
+    val puppeteer = NpmPackageVersion("puppeteer", "1.19.0")
+
     val kotlinNodeJsTestRunner = KotlinGradleNpmPackage("test-nodejs-runner")
 
     val istanbulInstrumenterLoader = NpmPackageVersion("istanbul-instrumenter-loader", "3.0.1")
