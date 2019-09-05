@@ -114,7 +114,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 filterUninitialized = false
             ) + declaration.primaryConstructorPropertiesDescriptorsMap(trace.bindingContext)
         propertiesMap.forEach { (descriptor, declaration) ->
-            val isInitialized = declarationHasInitializer(declaration)
+            val isInitialized = declarationHasInitializer(declaration) || descriptor.isLateInit
             val isMarkedTransient = descriptor.annotations.serialTransient
             val hasBackingField = descriptor.hasBackingField(trace.bindingContext)
             if (!hasBackingField && isMarkedTransient) {
