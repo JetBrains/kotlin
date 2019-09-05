@@ -28,9 +28,4 @@ public class WriteSignatureTestWithVariadicGenericsGenerated extends AbstractWri
     public void testAllFilesPresentInWriteSignatureWithVariadicGenerics() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignatureWithVariadicGenerics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
-
-    @TestMetadata("functionDeclarations.kt")
-    public void testFunctionDeclarations() throws Exception {
-        runTest("compiler/testData/writeSignatureWithVariadicGenerics/functionDeclarations.kt");
-    }
 }

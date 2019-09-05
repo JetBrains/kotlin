@@ -61,23 +61,16 @@ sourceSets {
             srcDir 'java9'
         }
     }
-    variadicGenerics {
-        kotlin {
-            srcDir '../variadicGenerics/src'
-        }
-    }
 }
 
 configurations {
     commonSources
     coroutinesExperimentalTestCompile.extendsFrom(testCompile)
-    variadicGenericsTestCompile.extendsFrom(testCompile)
     coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
     longRunningTestCompile.extendsFrom(testCompile)
     builtins
     compileOnly.extendsFrom(builtins)
     coroutinesExperimentalCompile.extendsFrom(builtins)
-    variadicGenericsCompile.extendsFrom(builtins)
 }
 
 dependencies {
@@ -89,13 +82,9 @@ dependencies {
 
     testCompile project(':kotlin-test:kotlin-test-junit')
     testCompile sourceSets.coroutinesExperimental.output
-    testCompile sourceSets.variadicGenerics.output
 
     coroutinesExperimentalCompile sourceSets.main.output
     coroutinesExperimentalTestCompile sourceSets.test.output
-
-    variadicGenericsCompile sourceSets.main.output
-    variadicGenericsTestCompile sourceSets.test.output
 
     builtins project(':core:builtins')
 }
@@ -115,15 +104,6 @@ jar {
 sourcesJar {
     from "${rootDir}/core/builtins/native"
     from sourceSets.coroutinesExperimental.kotlin
-}
-
-task variadicGenericsJar(type: Jar) {
-    inputs.dir('../variadic-generics/src')
-    outputs.dir("$distDir/kotlinc/lib")
-    dependsOn(jar)
-    version = null
-    classifier = 'variadic-generics'
-    from sourceSets.variadicGenerics.output
 }
 
 task distSourcesJar(type: Jar) {
@@ -158,7 +138,6 @@ artifacts {
     sources sourcesJar
     distSources distSourcesJar
     archives modularJar
-    distSources variadicGenericsJar
 }
 
 javadocJar()
@@ -226,17 +205,6 @@ compileCoroutinesExperimentalTestKotlin {
         apiVersion = "1.2"
         freeCompilerArgs = [
                 "-Xcoroutines=enable"
-        ]
-    }
-}
-
-compileVariadicGenericsKotlin {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs += [
-                "-Xallow-kotlin-package",
-                "-module-name", project.name+"-variadic-generics",
         ]
     }
 }

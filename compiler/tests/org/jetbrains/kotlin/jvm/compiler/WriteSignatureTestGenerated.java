@@ -139,6 +139,11 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         runTest("compiler/testData/writeSignature/VarargGeneric.kt");
     }
 
+    @TestMetadata("VarargGenericVariadic.kt")
+    public void testVarargGenericVariadic() throws Exception {
+        runTest("compiler/testData/writeSignature/VarargGenericVariadic.kt");
+    }
+
     @TestMetadata("compiler/testData/writeSignature/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

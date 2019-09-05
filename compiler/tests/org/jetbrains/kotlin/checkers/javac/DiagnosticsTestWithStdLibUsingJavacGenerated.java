@@ -3521,6 +3521,79 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class VariadicGenerics extends AbstractDiagnosticsTestWithStdLibUsingJavac {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInVariadicGenerics() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("boxed.kt")
+        public void testBoxed() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/boxed.kt");
+        }
+
+        @TestMetadata("chainedCalls.kt")
+        public void testChainedCalls() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/chainedCalls.kt");
+        }
+
+        @TestMetadata("emptyArgumentList.kt")
+        public void testEmptyArgumentList() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/emptyArgumentList.kt");
+        }
+
+        @TestMetadata("errorNoWrapper.kt")
+        public void testErrorNoWrapper() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/errorNoWrapper.kt");
+        }
+
+        @TestMetadata("incorrectCalls.kt")
+        public void testIncorrectCalls() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/incorrectCalls.kt");
+        }
+
+        @TestMetadata("incorrectModifiers.kt")
+        public void testIncorrectModifiers() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/incorrectModifiers.kt");
+        }
+
+        @TestMetadata("materialize.kt")
+        public void testMaterialize() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/materialize.kt");
+        }
+
+        @TestMetadata("suspendLambda.kt")
+        public void testSuspendLambda() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/suspendLambda.kt");
+        }
+
+        @TestMetadata("varargDeclarations.kt")
+        public void testVarargDeclarations() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/varargDeclarations.kt");
+        }
+
+        @TestMetadata("varargFunctionTypeInference.kt")
+        public void testVarargFunctionTypeInference() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/varargFunctionTypeInference.kt");
+        }
+
+        @TestMetadata("varargLambdaTypeInference.kt")
+        public void testVarargLambdaTypeInference() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/varargLambdaTypeInference.kt");
+        }
+
+        @TestMetadata("variadicSpread.kt")
+        public void testVariadicSpread() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/variadicSpread.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/when")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

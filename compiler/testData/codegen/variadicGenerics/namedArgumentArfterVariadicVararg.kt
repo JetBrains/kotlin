@@ -1,6 +1,6 @@
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM
+// TARGET_BACKEND: JVM
 
 fun <vararg Ts, R> variadic (
     vararg args: *Ts,

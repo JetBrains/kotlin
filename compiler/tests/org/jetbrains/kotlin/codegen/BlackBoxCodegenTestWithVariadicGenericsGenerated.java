@@ -39,6 +39,16 @@ public class BlackBoxCodegenTestWithVariadicGenericsGenerated extends AbstractBl
         runTest("compiler/testData/codegen/variadicGenerics/chainedCalls.kt");
     }
 
+    @TestMetadata("extraClosure.kt")
+    public void testExtraClosure() throws Exception {
+        runTest("compiler/testData/codegen/variadicGenerics/extraClosure.kt");
+    }
+
+    @TestMetadata("intermediateLambdaTransform.kt")
+    public void testIntermediateLambdaTransform() throws Exception {
+        runTest("compiler/testData/codegen/variadicGenerics/intermediateLambdaTransform.kt");
+    }
+
     @TestMetadata("lambdaWithBoxedArgs.kt")
     public void testLambdaWithBoxedArgs() throws Exception {
         runTest("compiler/testData/codegen/variadicGenerics/lambdaWithBoxedArgs.kt");
@@ -72,5 +82,15 @@ public class BlackBoxCodegenTestWithVariadicGenericsGenerated extends AbstractBl
     @TestMetadata("transformSimpleValues.kt")
     public void testTransformSimpleValues() throws Exception {
         runTest("compiler/testData/codegen/variadicGenerics/transformSimpleValues.kt");
+    }
+
+    @TestMetadata("variadicToSimple.kt")
+    public void testVariadicToSimple() throws Exception {
+        runTest("compiler/testData/codegen/variadicGenerics/variadicToSimple.kt");
+    }
+
+    @TestMetadata("withSuspend.kt")
+    public void testWithSuspend() throws Exception {
+        runTest("compiler/testData/codegen/variadicGenerics/withSuspend.kt");
     }
 }
