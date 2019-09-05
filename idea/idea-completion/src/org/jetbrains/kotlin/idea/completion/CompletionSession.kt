@@ -417,7 +417,7 @@ abstract class CompletionSession(
         bindingContext: BindingContext,
         nameExpression: KtSimpleNameExpression,
         callTypeAndReceiver: CallTypeAndReceiver<*, *>
-    ): Collection<ReceiverType>? {
+    ): List<ReceiverType>? {
         var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
             bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
             stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
