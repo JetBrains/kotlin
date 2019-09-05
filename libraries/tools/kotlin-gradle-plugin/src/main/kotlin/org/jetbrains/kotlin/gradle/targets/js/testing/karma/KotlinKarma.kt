@@ -39,7 +39,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private val requiredDependencies = mutableSetOf<NpmPackageVersion>()
 
     private val configurators = mutableListOf<(KotlinJsTest) -> Unit>()
-    private val envJsWriters = mutableListOf<(Appendable) -> Unit>()
+    private val envJsCollector = mutableMapOf<String, String>()
     private val confJsWriters = mutableListOf<(Appendable) -> Unit>()
     private var sourceMaps = false
     private var configDirectory: File? = project.projectDir.resolve("karma.config.d").takeIf { it.isDirectory }
@@ -119,16 +119,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private fun usePuppeteer(envVar: String) {
         requiredDependencies.add(versions.puppeteer)
 
-        envJsWriters.add {
-            it.appendln()
-            //language=JavaScript 1.8
-            it.appendln(
-                """
-                    // puppeteer
-                    process.env.$envVar = require('puppeteer').executablePath()
-                """.trimIndent()
-            )
-        }
+        //language=JavaScript 1.8
+        envJsCollector[envVar] = "require('puppeteer').executablePath()"
     }
 
     private fun useMocha() {
@@ -259,7 +251,12 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val karmaConfJs = npmProject.dir.resolve("karma.conf.js")
         karmaConfJs.printWriter().use { confWriter ->
-            envJsWriters.forEach { it(confWriter) }
+            confWriter.println("// environment variables")
+            envJsCollector.forEach { (envVar, value) ->
+                //language=JavaScript 1.8
+                confWriter.println("process.env.$envVar = $value")
+            }
+
             confWriter.println()
             confWriter.println("module.exports = function(config) {")
             confWriter.println()
