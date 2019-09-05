@@ -475,8 +475,10 @@ internal object CreateVariadicTypeVariablesResolutionPart : ResolutionPart() {
             variadicPackTypeVariable.isStub = true
         }
 
-        val freshVariable = VariadicTypeVariableFromCallableDescriptor(variadicPackTypeVariable, resolvedCall.variadicTypeVariables.size)
-        resolvedCall.variadicTypeVariables.add(freshVariable)
+        val variadicTypeVariables = resolvedCall.variadicTypeVariables
+
+        val freshVariable = VariadicTypeVariableFromCallableDescriptor(variadicPackTypeVariable, variadicTypeVariables.size)
+        variadicTypeVariables.add(freshVariable)
 
         val argumentStableType = argument.safeAs<SimpleKotlinCallArgument>()?.receiver?.stableType
             ?: error("Simple value argument expected for vararg")

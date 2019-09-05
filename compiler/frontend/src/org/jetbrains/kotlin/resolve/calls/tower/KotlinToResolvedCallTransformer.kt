@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import javaslang.Tuple
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.TupleType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -138,7 +134,7 @@ class KotlinToResolvedCallTransformer(
 
                 if (!ErrorUtils.isError(candidate.candidateDescriptor)) {
                     for (subKtPrimitive in candidate.subResolvedAtoms) {
-                        ktPrimitiveCompleter.completeAll(subKtPrimitive)
+                        ktPrimitiveCompleter.completeAll(subKtPrimitive, candidate)
                     }
                 }
 

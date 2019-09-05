@@ -54,7 +54,7 @@ class ResolvedAtomCompleter(
     private val topLevelCallCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
-    private fun complete(resolvedAtom: ResolvedAtom) {
+    private fun complete(resolvedAtom: ResolvedAtom, parentAtom: ResolvedAtom?) {
         if (topLevelCallContext.inferenceSession.callCompleted(resolvedAtom)) {
             return
         }
@@ -62,17 +62,17 @@ class ResolvedAtomCompleter(
         when (resolvedAtom) {
             is ResolvedCollectionLiteralAtom -> completeCollectionLiteralCalls(resolvedAtom)
             is ResolvedCallableReferenceAtom -> completeCallableReference(resolvedAtom)
-            is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
+            is ResolvedLambdaAtom -> completeLambda(resolvedAtom, parentAtom)
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
             is PartialCallResolutionResult -> completeResolvedCall(resolvedAtom.resultCallAtom, resolvedAtom.diagnostics)
         }
     }
 
-    fun completeAll(resolvedAtom: ResolvedAtom) {
+    fun completeAll(resolvedAtom: ResolvedAtom, parentAtom: ResolvedAtom? = null) {
         for (subKtPrimitive in resolvedAtom.subResolvedAtoms) {
-            completeAll(subKtPrimitive)
+            completeAll(subKtPrimitive, resolvedAtom)
         }
-        complete(resolvedAtom)
+        complete(resolvedAtom, parentAtom)
     }
 
     fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom, diagnostics: Collection<KotlinCallDiagnostic>): ResolvedCall<*>? {
@@ -133,7 +133,7 @@ class ResolvedAtomCompleter(
             return commonReturnType.isUnit()
         }
 
-    private fun completeLambda(lambda: ResolvedLambdaAtom) {
+    private fun completeLambda(lambda: ResolvedLambdaAtom, parentAtom: ResolvedAtom?) {
         val returnType = if (lambda.isCoercedToUnit) {
             builtIns.unitType
         } else {
@@ -146,7 +146,7 @@ class ResolvedAtomCompleter(
                 local = true,
                 languageVersionSettings = topLevelCallContext.languageVersionSettings
             )
-        updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType)
+        updateTraceForLambda(lambda, parentAtom, topLevelTrace, approximatedReturnType)
 
         for (lambdaResult in lambda.resultArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
@@ -162,7 +162,12 @@ class ResolvedAtomCompleter(
         }
     }
 
-    private fun updateTraceForLambda(lambda: ResolvedLambdaAtom, trace: BindingTrace, returnType: UnwrappedType) {
+    private fun updateTraceForLambda(
+        lambda: ResolvedLambdaAtom,
+        parentAtom: ResolvedAtom?,
+        trace: BindingTrace,
+        returnType: UnwrappedType
+    ) {
         val psiCallArgument = lambda.atom.psiCallArgument
 
         val ktArgumentExpression: KtExpression
@@ -199,7 +204,7 @@ class ResolvedAtomCompleter(
             lambda.isSuspend
         )
 
-        recordVariadicComponentsForTupleArguments(functionDescriptor, lambda, trace, ktFunction)
+        recordVariadicComponentsForTupleArguments(functionDescriptor, lambda, parentAtom.safeAs(), trace, ktFunction)
 
         trace.recordType(ktArgumentExpression, substitutedFunctionalType)
 
@@ -225,11 +230,12 @@ class ResolvedAtomCompleter(
     private fun recordVariadicComponentsForTupleArguments(
         descriptor: FunctionDescriptorImpl,
         atom: ResolvedLambdaAtom,
+        parentCall: ResolvedCallAtom?,
         trace: BindingTrace,
         ktFunction: KtElement
     ) {
         val expectedLambdaType = atom.expectedType ?: return
-        if (!expectedLambdaType.isFunctionType) return // TODO diagnostic
+        if (!expectedLambdaType.isFunctionOrSuspendFunctionType) return // TODO diagnostic
         val tupleArguments = expectedLambdaType.arguments.filter { TupleType.isTupleType(it.type) }
         if (tupleArguments.isEmpty()) return // TODO empty argument list handling
         assert(tupleArguments.size == 1) { "Multiple parameter packs are forbidden" } // TODO: diagnostic
@@ -243,6 +249,8 @@ class ResolvedAtomCompleter(
         if (variadicPackLength < 0) {
             return // TODO consider error descriptor
         }
+        if (parentCall == null || parentCall.variadicTypeVariables.isEmpty())
+            return
 
         val newValueParameters = mutableListOf<ValueParameterDescriptor>()
 
@@ -271,7 +279,7 @@ class ResolvedAtomCompleter(
             .setPreserveValueParametersUnsubstituted()
             .build()
             .safeAs<SimpleFunctionDescriptor>()
-            ?: error { "Vararg function descriptor copy for function $descriptor is null" }
+            ?: error("Vararg function descriptor copy for function $descriptor is null")
         trace.record(BindingContext.VARIADIC_LAMBDA, ktFunction, copy)
     }
 
