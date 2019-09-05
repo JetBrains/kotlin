@@ -39,6 +39,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private val requiredDependencies = mutableSetOf<NpmPackageVersion>()
 
     private val configurators = mutableListOf<(KotlinJsTest) -> Unit>()
+    private val envJsWriters = mutableListOf<(Appendable) -> Unit>()
     private val confJsWriters = mutableListOf<(Appendable) -> Unit>()
     private var sourceMaps = false
     private var configDirectory: File? = project.projectDir.resolve("karma.config.d").takeIf { it.isDirectory }
@@ -118,7 +119,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private fun usePuppeteer(envVar: String) {
         requiredDependencies.add(versions.puppeteer)
 
-        confJsWriters.add {
+        envJsWriters.add {
             it.appendln()
             //language=JavaScript 1.8
             it.appendln(
@@ -258,6 +259,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val karmaConfJs = npmProject.dir.resolve("karma.conf.js")
         karmaConfJs.printWriter().use { confWriter ->
+            envJsWriters.forEach { it(confWriter) }
+            confWriter.println()
             confWriter.println("module.exports = function(config) {")
             confWriter.println()
 
