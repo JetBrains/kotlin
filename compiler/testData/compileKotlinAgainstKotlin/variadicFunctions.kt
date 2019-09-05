@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM_IR
 // !LANGUAGE: +NewInference
 // FILE: A.kt
 
