@@ -25,6 +25,7 @@ import com.intellij.ui.components.panels.Wrapper;
 import com.intellij.ui.mac.TouchbarDataKeys;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
+import com.intellij.util.BooleanFunction;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
@@ -429,9 +430,13 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     final MyTextComponentWrapper wrapper = search ? mySearchFieldWrapper : myReplaceFieldWrapper;
 
     final JTextArea textComponent;
-      SearchTextArea textArea = new SearchTextArea(search);
-      textComponent = textArea.getTextArea();
-      textComponent.setRows(isMultiline() ? 2 : 1);
+    SearchTextArea textArea = new SearchTextArea(search);
+    textComponent = textArea.getTextArea();
+    textComponent.setFont(myTargetComponent.getFont());
+    textComponent.setRows(isMultiline() ? 2 : 1);
+    // Display empty text only when focused
+    textComponent.putClientProperty(
+      "StatusVisibleFunction", (BooleanFunction<JTextComponent>)(c -> c.getText().isEmpty() && c.isFocusOwner()));
 
     wrapper.setContent(textArea);
 

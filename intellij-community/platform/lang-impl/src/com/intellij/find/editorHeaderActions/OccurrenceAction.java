@@ -43,10 +43,14 @@ public abstract class OccurrenceAction extends DumbAwareAction implements Shortc
     boolean visible = !search.getFindModel().isReplaceState() || availableForReplace();
     boolean hasMatches = search.hasMatches();
     e.getPresentation().setVisible(visible);
-    e.getPresentation().setEnabled(visible && hasMatches);
+    e.getPresentation().setEnabled(visible && hasMatches && (availableForSelection() || search.getFindModel().isGlobal()));
   }
 
   protected boolean availableForReplace() {
+    return false;
+  }
+
+  protected boolean availableForSelection() {
     return false;
   }
 

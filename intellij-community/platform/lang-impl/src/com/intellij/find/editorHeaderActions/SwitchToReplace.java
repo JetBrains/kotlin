@@ -3,7 +3,6 @@ package com.intellij.find.editorHeaderActions;
 import com.intellij.execution.impl.ConsoleViewUtil;
 import com.intellij.find.EditorSearchSession;
 import com.intellij.find.FindModel;
-import com.intellij.find.FindUtil;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -32,7 +31,8 @@ public class SwitchToReplace extends AnAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     EditorSearchSession search = e.getRequiredData(EditorSearchSession.SESSION_KEY);
     FindModel findModel = search.getFindModel();
-    FindUtil.configureFindModel(true, e.getData(CommonDataKeys.EDITOR), findModel, false);
+    if (findModel.isReplaceState()) return;
+    findModel.setReplaceState(true);
     search.getComponent().getSearchTextComponent().selectAll();
   }
 }

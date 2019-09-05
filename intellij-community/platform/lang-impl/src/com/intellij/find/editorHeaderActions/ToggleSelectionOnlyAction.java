@@ -1,30 +1,43 @@
 package com.intellij.find.editorHeaderActions;
 
-import com.intellij.find.EditorSearchSession;
 import com.intellij.find.SearchSession;
-import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ToggleSelectionOnlyAction extends EditorHeaderToggleAction {
+public class ToggleSelectionOnlyAction extends ToggleAction implements ContextAwareShortcutProvider, DumbAware {
   public ToggleSelectionOnlyAction() {
-    super("In &Selection");
+    super("In Selection", "Search in selection only", AllIcons.Actions.InSelection);
   }
 
   @Override
-  public void update(@NotNull AnActionEvent e) {
-    super.update(e);
-
-    EditorSearchSession session = e.getData(EditorSearchSession.SESSION_KEY);
-    e.getPresentation().setEnabledAndVisible(session != null && session.getFindModel().isReplaceState());
+  public boolean isSelected(@NotNull AnActionEvent e) {
+    SearchSession search = e.getData(SearchSession.KEY);
+    return search != null && !search.getFindModel().isGlobal();
   }
 
   @Override
-  protected boolean isSelected(@NotNull SearchSession session) {
-    return !session.getFindModel().isGlobal();
+  public void setSelected(@NotNull AnActionEvent e, boolean state) {
+    SearchSession search = e.getData(SearchSession.KEY);
+    if (search != null) {
+      search.getFindModel().setGlobal(!state);
+    }
   }
 
+  @Nullable
   @Override
-  protected void setSelected(@NotNull SearchSession session, boolean selected) {
-    session.getFindModel().setGlobal(!selected);
+  public ShortcutSet getShortcut(@NotNull DataContext context) {
+    if (KeymapUtil.isEmacsKeymap()) return null;
+    SearchSession search = context.getData(SearchSession.KEY);
+    if (search != null) {
+      boolean replaceState = search.getFindModel().isReplaceState();
+      AnAction action = ActionManager.getInstance().getAction(
+        replaceState ? IdeActions.ACTION_REPLACE : IdeActions.ACTION_FIND);
+      return action != null ? action.getShortcutSet() : null;
+    }
+    return null;
   }
 }
