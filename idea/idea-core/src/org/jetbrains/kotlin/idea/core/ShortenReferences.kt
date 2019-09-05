@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.Companion.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -64,6 +65,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 is KtDotQualifiedExpression -> receiver.selectorExpression as? KtNameReferenceExpression ?: return false
                 else -> return false
             }
+            if (nameRef.name == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) return true
+
             when (val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]) {
                 is ClassDescriptor -> {
                     if (targetDescriptor.kind != ClassKind.OBJECT) return true
@@ -100,9 +103,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
     fun process(file: KtFile, startOffset: Int, endOffset: Int, additionalFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }) {
         val documentManager = PsiDocumentManager.getInstance(file.project)
         val document = file.viewProvider.document!!
-        if (!documentManager.isCommitted(document)) {
-            throw IllegalStateException("Document should be committed to shorten references in range")
-        }
+        check(documentManager.isCommitted(document)) { "Document should be committed to shorten references in range" }
 
         val rangeMarker = document.createRangeMarker(startOffset, endOffset)
         rangeMarker.isGreedyToLeft = true
@@ -198,7 +199,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
 
             // step 2: analyze collected elements with resolve and decide which can be shortened now and which need descriptors to be imported before shortening
-            val allElementsToAnalyze = visitors.flatMap { visitor -> visitor.getElementsToAnalyze().map { it.element } }
+            val allElementsToAnalyze = visitors.flatMap { visitor -> visitor.getElementsToAnalyze().map { it.element } }.toSet()
             val bindingContext = allowResolveInWriteAction {
                 file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL_WITH_CFA)
             }
@@ -387,7 +388,15 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 }
             }
 
-        override fun analyzeQualifiedElement(element: KtUserType, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
+        override fun analyzeQualifiedElement(element: KtUserType, bindingContext: BindingContext): AnalyzeQualifiedElementResult =
+            mainAnalyzeQualifiedElement(element, bindingContext).let {
+                if (it is AnalyzeQualifiedElementResult.Skip && element.qualifier?.text == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE)
+                    AnalyzeQualifiedElementResult.ShortenNow
+                else
+                    it
+            }
+
+        private fun mainAnalyzeQualifiedElement(element: KtUserType, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
             if (element.qualifier == null) return AnalyzeQualifiedElementResult.Skip
             val referenceExpression = element.referenceExpression ?: return AnalyzeQualifiedElementResult.Skip
 
@@ -472,13 +481,19 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         override fun analyzeQualifiedElement(
             element: KtDotQualifiedExpression,
             bindingContext: BindingContext
-        ): AnalyzeQualifiedElementResult {
-            if (!canBePossibleToDropReceiver(element, bindingContext)) return AnalyzeQualifiedElementResult.Skip
+        ): AnalyzeQualifiedElementResult = if (element.receiverExpression.text == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE)
+            AnalyzeQualifiedElementResult.ShortenNow
+        else
+            mainAnalyzeQualifiedElement(element, bindingContext)
 
+        private fun mainAnalyzeQualifiedElement(
+            element: KtDotQualifiedExpression,
+            bindingContext: BindingContext
+        ): AnalyzeQualifiedElementResult {
             if (PsiTreeUtil.getParentOfType(
                     element,
                     KtImportDirective::class.java, KtPackageDirective::class.java
-                ) != null
+                ) != null || !canBePossibleToDropReceiver(element, bindingContext)
             ) return AnalyzeQualifiedElementResult.Skip
 
             val selector = element.selectorExpression ?: return AnalyzeQualifiedElementResult.Skip
