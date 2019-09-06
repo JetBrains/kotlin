@@ -333,7 +333,7 @@ class JavacWrapper(
                     val symbol = reader.enterClass(fqName, fileObject)
 
                     (elements.getPackageOf(symbol) as? Symbol.PackageSymbol)?.let { packageSymbol ->
-                        packageSymbol.members_field.enter(symbol)
+                        packageSymbol.members_field?.enter(symbol)
                         packageSymbol.flags_field = packageSymbol.flags_field or Flags.EXISTS.toLong()
                     }
                 }
