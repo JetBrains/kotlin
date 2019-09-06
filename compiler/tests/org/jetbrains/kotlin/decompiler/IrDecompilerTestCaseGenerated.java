@@ -29,13 +29,26 @@ public class IrDecompilerTestCaseGenerated extends AbstractIrDecompilerTestCase 
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
-    @TestMetadata("forLoopTopLevelFunction.kt")
-    public void testForLoopTopLevelFunction() throws Exception {
-        runTest("compiler/testData/decompiler/forLoopTopLevelFunction.kt");
-    }
-
     @TestMetadata("simpleOperators.kt")
     public void testSimpleOperators() throws Exception {
         runTest("compiler/testData/decompiler/simpleOperators.kt");
+    }
+
+    @TestMetadata("compiler/testData/decompiler/classes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Classes extends AbstractIrDecompilerTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("classes.kt")
+        public void testClasses() throws Exception {
+            runTest("compiler/testData/decompiler/classes/classes.kt");
+        }
     }
 }

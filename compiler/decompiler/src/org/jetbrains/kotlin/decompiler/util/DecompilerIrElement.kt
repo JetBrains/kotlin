@@ -18,12 +18,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun IrElement.render() =
     accept(DecompilerIrElementVisitor(), null)
@@ -31,8 +29,6 @@ fun IrElement.render() =
 class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     fun renderType(type: IrType) = type.render()
-
-    fun renderSymbolReference(symbol: IrSymbol) = symbol.renderReference()
 
     fun renderAsAnnotation(irAnnotation: IrConstructorCall): String =
         StringBuilder().also { it.renderAsAnnotation(irAnnotation) }.toString()
@@ -318,35 +314,27 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
     }
 
-    override fun visitElement(element: IrElement, data: Nothing?): String =
-        "?ELEMENT? ${element::class.java.simpleName} $element"
+    override fun visitElement(element: IrElement, data: Nothing?): String = TODO()
 
-    override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
-        "?DECLARATION? ${declaration::class.java.simpleName} $declaration"
+    override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String = TODO()
 
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
-        "MODULE_FRAGMENT name:${declaration.name}"
+    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String = TODO()
 
-    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?): String =
-        "EXTERNAL_PACKAGE_FRAGMENT fqName:${declaration.fqName}"
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?): String = TODO()
 
-    override fun visitFile(declaration: IrFile, data: Nothing?): String = ""
+    override fun visitFile(declaration: IrFile, data: Nothing?): String = TODO()
 
-    override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "FUN ${renderOriginIfNonTrivial()}"
-        }
+    override fun visitFunction(declaration: IrFunction, data: Nothing?): String = TODO()
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
             renderSimpleFunctionFlags() +
-                    "${if (modality == Modality.FINAL) "" else modality.name.toLowerCase() + " "}" +
-                    "${if (visibility == Visibilities.PUBLIC) "" else visibility.name.toLowerCase() + " "}" +
-//                    "${renderOriginIfNonTrivial()}" +
+                    (if (modality == Modality.FINAL) "" else modality.name.toLowerCase() + " ") +
+                    (if (visibility == Visibilities.PUBLIC) "" else visibility.name.toLowerCase() + " ") +
                     "fun $name" +
                     renderTypeParameters() +
                     renderValueParameterTypes() +
-                    ": ${returnType.toKotlinType().toString()} "
+                    ": ${returnType.toKotlinType()} "
         }
 
     private fun renderFlagsList(vararg flags: String?) =
@@ -373,20 +361,10 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     private fun IrFunction.renderValueParameterTypes(): String =
         ArrayList<String>().apply {
-            //            addIfNotNull(dispatchReceiverParameter?.run { "\$this:${type.render()}" })
-//            addIfNotNull(extensionReceiverParameter?.run { "\$receiver:${type.render()}" })
-            valueParameters.mapTo(this) { "${it.name}: ${it.type.toKotlinType().toString()}" }
+            valueParameters.mapTo(this) { "${it.name}: ${it.type.toKotlinType()}" }
         }.joinToString(separator = ", ", prefix = "(", postfix = ")")
 
-    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "CONSTRUCTOR ${renderOriginIfNonTrivial()}" +
-                    "visibility:$visibility " +
-                    renderTypeParameters() + " " +
-                    renderValueParameterTypes() + " " +
-                    "returnType:${returnType.render()} " +
-                    renderConstructorFlags()
-        }
+    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String = TODO()
 
     private fun IrConstructor.renderConstructorFlags() =
         renderFlagsList(
@@ -395,12 +373,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "primary".takeIf { isPrimary }
         )
 
-    override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "PROPERTY ${renderOriginIfNonTrivial()}" +
-                    "name:$name visibility:$visibility modality:$modality " +
-                    renderPropertyFlags()
-        }
+    override fun visitProperty(declaration: IrProperty, data: Nothing?): String = TODO()
 
     private fun IrProperty.renderPropertyFlags() =
         renderFlagsList(
@@ -411,10 +384,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             if (isVar) "var" else "val"
         )
 
-    override fun visitField(declaration: IrField, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "FIELD ${renderOriginIfNonTrivial()}name:$name type:${type.render()} visibility:$visibility ${renderFieldFlags()}"
-        }
+    override fun visitField(declaration: IrField, data: Nothing?): String = TODO()
 
 
     private fun IrField.renderFieldFlags() =
@@ -425,26 +395,33 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
         )
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "CLASS ${renderOriginIfNonTrivial()}" +
-                    "$kind name:$name modality:$modality visibility:$visibility " +
-                    renderClassFlags() +
-                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
+        buildTrimEnd {
+            if (declaration.visibility != Visibilities.PUBLIC) append("${declaration.visibility.name.toLowerCase()} ")
+            if (declaration.modality != Modality.FINAL && !declaration.isInterface) append("${declaration.modality.name.toLowerCase()} ")
+            append(
+                when {
+                    declaration.isObject -> "object "
+                    declaration.isInterface -> "interface "
+                    declaration.isCompanion -> "companion object "
+                    else -> "${declaration.renderClassFlags()}class "
+                }
+            )
+            append(declaration.name.asString())
         }
 
     private fun IrClass.renderClassFlags() =
         renderFlagsList(
             "companion".takeIf { isCompanion },
             "inner".takeIf { isInner },
+            "inline".takeIf { isInline },
             "data".takeIf { isData },
             "external".takeIf { isExternal },
+            "annotation".takeIf { isAnnotationClass },
+            "enum".takeIf { isEnumClass },
             "inline".takeIf { isInline }
         )
 
-    override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "VAR ${renderOriginIfNonTrivial()}name:$name type:${type.render()} ${renderVariableFlags()}"
-        }
+    override fun visitVariable(declaration: IrVariable, data: Nothing?): String = TODO()
 
 
     private fun IrVariable.renderVariableFlags(): String =
@@ -454,31 +431,14 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             if (isVar) "var" else "val"
         )
 
-    override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "ENUM_ENTRY ${renderOriginIfNonTrivial()}name:$name"
-        }
+    override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String = TODO()
 
 
-    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
-        "ANONYMOUS_INITIALIZER isStatic=${declaration.isStatic}"
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String = TODO()
 
-    override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "TYPE_PARAMETER ${renderOriginIfNonTrivial()}" +
-                    "name:$name index:$index variance:$variance " +
-                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
-        }
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?): String = TODO()
 
-    override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "VALUE_PARAMETER ${renderOriginIfNonTrivial()}" +
-                    "name:$name " +
-                    (if (index >= 0) "index:$index " else "") +
-                    "type:${type.render()} " +
-                    (varargElementType?.let { "varargElementType:${it.render()} " } ?: "") +
-                    renderValueParameterFlags()
-        }
+    override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String = TODO()
 
     private fun IrValueParameter.renderValueParameterFlags(): String =
         renderFlagsList(
@@ -487,11 +447,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "noinline".takeIf { isNoinline }
         )
 
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "LOCAL_DELEGATED_PROPERTY ${declaration.renderOriginIfNonTrivial()}" +
-                    "name:$name type:${type.render()} flags:${renderLocalDelegatedPropertyFlags()}"
-        }
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String = TODO()
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
         declaration.run {
@@ -508,16 +464,13 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
     private fun IrLocalDelegatedProperty.renderLocalDelegatedPropertyFlags() =
         if (isVar) "var" else "val"
 
-    override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
-        "EXPRESSION_BODY"
+    override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String = TODO()
 
-    override fun visitBlockBody(body: IrBlockBody, data: Nothing?): String = ""
+    override fun visitBlockBody(body: IrBlockBody, data: Nothing?): String = TODO()
 
-    override fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?): String =
-        "SYNTHETIC_BODY kind=${body.kind}"
+    override fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?): String = TODO()
 
-    override fun visitExpression(expression: IrExpression, data: Nothing?): String =
-        "? ${expression::class.java.simpleName} type=${expression.type.render()}"
+    override fun visitExpression(expression: IrExpression, data: Nothing?): String = TODO()
 
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
         "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
@@ -529,24 +482,31 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             else -> this
         }
 
-    override fun visitVararg(expression: IrVararg, data: Nothing?): String =
-        "VARARG type=${expression.type.render()} varargElementType=${expression.varargElementType.render()}"
+    override fun visitVararg(expression: IrVararg, data: Nothing?): String = TODO()
 
-    override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): String =
-        "SPREAD_ELEMENT"
+    override fun visitSpreadElement(spread: IrSpreadElement, data: Nothing?): String = TODO()
 
-    override fun visitBlock(expression: IrBlock, data: Nothing?): String =
-        "BLOCK type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitBlock(expression: IrBlock, data: Nothing?): String = TODO()
 
-    override fun visitComposite(expression: IrComposite, data: Nothing?): String =
-        "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitComposite(expression: IrComposite, data: Nothing?): String = TODO()
 
-    override fun visitReturn(expression: IrReturn, data: Nothing?): String =
-        "RETURN type=${expression.type.render()} from='${expression.returnTargetSymbol.renderReference()}'"
+    override fun visitReturn(expression: IrReturn, data: Nothing?): String = "return"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
-        "CALL '${expression.symbol.renderReference()}' ${expression.renderSuperQualifier()}" +
-                "type=${expression.type.render()} origin=${expression.origin}"
+        StringBuilder().apply {
+            if (expression.dispatchReceiver != null) {
+                append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
+            }
+            append(expression.symbol.owner.name.asString())
+            append(
+                ArrayList<String?>().apply {
+                    (0 until expression.valueArgumentsCount).mapTo(this) {
+                        expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
+                    }
+                }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
+            )
+            append("\n")
+        }.toString()
 
     private fun IrCall.renderSuperQualifier(): String =
         superQualifierSymbol?.let { "superQualifier='${it.renderReference()}' " } ?: ""
@@ -563,8 +523,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
         "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classSymbol.renderReference()}'"
 
-    override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
-        "GET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitGetValue(expression: IrGetValue, data: Nothing?): String = "${expression.symbol.owner.name}"
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
         "SET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"

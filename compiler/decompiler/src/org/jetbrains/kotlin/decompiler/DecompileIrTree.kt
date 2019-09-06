@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -33,62 +32,47 @@ class DecompileIrTreeVisitor(
 ) : IrElementVisitor<Unit, String> {
 
     private val printer = Printer(out, "    ")
-    private val elementRenderer = DecompilerIrElementVisitor()
-    private fun IrType.render() = elementRenderer.renderType(this)
+    private val elementDecompiler = DecompilerIrElementVisitor()
+    private fun IrType.render() = elementDecompiler.renderType(this)
 
     override fun visitElement(element: IrElement, data: String) {
-//        element.dumpLabeledElementWith(data) {
+        element.generatesSourcesForElement {
             if (element is IrAnnotationContainer) {
                 decompileAnnotations(element)
             }
             element.acceptChildren(this@DecompileIrTreeVisitor, "")
-//        }
+        }
     }
 
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: String) = TODO()
-
     override fun visitFile(declaration: IrFile, data: String) {
-        decompileAnnotations(declaration)
         declaration.declarations.decompileElements()
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: String) {
-        with(printer) {
-            println(" {")
-//            pushIndent()
+        withBraces {
             body.statements.decompileElements()
-//            popIndent()
-            println("}")
-            println()
         }
     }
 
     override fun visitReturn(returnStatement: IrReturn, data: String) {
-        with(printer) {
-            pushIndent()
-            print("return ")
-            popIndent()
-            returnStatement.value.accept(this@DecompileIrTreeVisitor, "")
-        }
+        printer.print(
+            returnStatement.accept(elementDecompiler, null) + " " +
+                    returnStatement.value.accept(elementDecompiler, null)
+        )
+
     }
 
-    override fun visitClass(declaration: IrClass, data: String) = TODO()
+    override fun visitClass(declaration: IrClass, data: String) {
+        printer.println(declaration.accept(elementDecompiler, null) + "\n")
+    }
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: String) = TODO()
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: String) = TODO()
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
-        declaration.dumpLabeledElementWith(data) {
+        declaration.generatesSourcesForElement {
             decompileAnnotations(declaration)
-//            declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
-//            declaration.overriddenSymbols.dumpItems<IrSymbol>("overridden") {
-//                it.decompile()
-//            }
-//            declaration.typeParameters.decompileElements()
-//            declaration.dispatchReceiverParameter?.accept(this, "\$this")
-//            declaration.extensionReceiverParameter?.accept(this, "\$receiver")
-//            declaration.valueParameters.decompileElements()
             declaration.body?.accept(this, "")
         }
     }
@@ -108,134 +92,37 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: String) = TODO()
-
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) = TODO()
-
-    override fun visitCall(expression: IrCall, data: String) {
-        dumpTypeArguments(expression)
-        if (expression.dispatchReceiver != null) {
-            expression.dispatchReceiver?.accept(this, "")
-            printer.print(".")
-        }
-        printer.print("${expression.symbol.owner.name}(")
-        for (index in 0 until expression.valueArgumentsCount) {
-            expression.getValueArgument(index)?.accept(this, "")
-            if (index != expression.valueArgumentsCount - 1) printer.print(", ")
-        }
-        printer.println(")")
-
-    }
-
-    override fun visitGetValue(expression: IrGetValue, data: String) {
-        printer.print(expression.symbol.owner.name)
-    }
-
+    override fun visitGetValue(expression: IrGetValue, data: String) = TODO()
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: String) = TODO()
     override fun visitConstructorCall(expression: IrConstructorCall, data: String) = TODO()
-
-    private fun dumpTypeArguments(expression: IrMemberAccessExpression) {
-        val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
-        for (index in 0 until expression.typeArgumentsCount) {
-            printer.println("<${typeParameterNames[index]}>: ${expression.renderTypeArgument(index)}")
-        }
-    }
-
-    private fun IrMemberAccessExpression.getTypeParameterNames(expectedCount: Int): List<String> =
-        if (this is IrDeclarationReference && symbol.isBound)
-            symbol.owner.getTypeParameterNames(expectedCount)
-        else
-            getPlaceholderParameterNames(expectedCount)
-
-    private fun IrSymbolOwner.getTypeParameterNames(expectedCount: Int): List<String> =
-        if (this is IrTypeParametersContainer) {
-            val typeParameters = if (this is IrConstructor) getFullTypeParametersList() else this.typeParameters
-            (0 until expectedCount).map {
-                if (it < typeParameters.size)
-                    typeParameters[it].name.asString()
-                else
-                    "${it + 1}"
-            }
-        } else {
-            getPlaceholderParameterNames(expectedCount)
-        }
-
-    private fun IrConstructor.getFullTypeParametersList(): List<IrTypeParameter> {
-        val parentClass = try {
-            parent as? IrClass ?: return typeParameters
-        } catch (e: Exception) {
-            return typeParameters
-        }
-        return parentClass.typeParameters + typeParameters
-    }
-
-    private fun IrMemberAccessExpression.renderTypeArgument(index: Int): String =
-        getTypeArgument(index)?.render() ?: "<none>"
-
-    override fun visitGetField(expression: IrGetField, data: String) {
-        expression.dumpLabeledElementWith(data) {
-            expression.receiver?.accept(this, "receiver")
-        }
-    }
-
+    override fun visitGetField(expression: IrGetField, data: String) = TODO()
     override fun visitSetField(expression: IrSetField, data: String) = TODO()
-
     override fun visitWhen(expression: IrWhen, data: String) = TODO()
-
     override fun visitBranch(branch: IrBranch, data: String) = TODO()
-
     override fun visitWhileLoop(loop: IrWhileLoop, data: String) = TODO()
-
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: String) = TODO()
-
     override fun visitTry(aTry: IrTry, data: String) = TODO()
-
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) = TODO()
-
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: String) = TODO()
 
-    private inline fun IrElement.dumpLabeledElementWith(label: String, body: () -> Unit) {
-        printer.print(accept(elementRenderer, null).withLabel(label))
+    private inline fun IrElement.generatesSourcesForElement(body: () -> Unit) {
+        printer.printWithNoIndent(accept(elementDecompiler, null))
+        body()
+    }
+
+    private inline fun withBraces(body: () -> Unit) {
+        printer.printlnWithNoIndent(" {")
         indented(body)
-    }
-
-    private inline fun <T> Collection<T>.dumpItems(caption: String, renderElement: (T) -> Unit) {
-        if (isEmpty()) return
-        indented(caption) {
-            forEach {
-                renderElement(it)
-            }
-        }
-    }
-
-    private fun IrSymbol.dumpInternal(label: String? = null) {
-        if (isBound)
-            owner.dumpInternal(label)
-        else
-            printer.println("$label: UNBOUND ${javaClass.simpleName}")
-    }
-
-    private fun IrElement.dumpInternal(label: String? = null) {
-        if (label != null) {
-            printer.println("$label: ", accept(elementRenderer, null))
-        } else {
-            printer.println(accept(elementRenderer, null))
-        }
-
-    }
-
-    private inline fun indented(label: String, body: () -> Unit) {
-        printer.println("$label:")
-        indented(body)
+        printer.println("}")
+        printer.printlnWithNoIndent()
     }
 
     private inline fun indented(body: () -> Unit) {
-//        printer.pushIndent()
+        printer.pushIndent()
         body()
-//        printer.popIndent()
+        printer.popIndent()
     }
-
-    private fun String.withLabel(label: String) =
-        if (label.isEmpty()) this else "$label: $this"
 }
 
 class DecompileTreeFromSourceLineVisitor(
