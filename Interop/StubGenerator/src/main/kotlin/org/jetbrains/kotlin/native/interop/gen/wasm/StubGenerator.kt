@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.native.interop.gen.wasm
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.interop.gen.argsToCompiler
 import org.jetbrains.kotlin.native.interop.gen.wasm.idl.*
-import org.jetbrains.kliopt.ArgParser
+import kotlinx.cli.ArgParser
 import org.jetbrains.kotlin.native.interop.tool.JSInteropArguments
 
 fun kotlinHeader(packageName: String): String {

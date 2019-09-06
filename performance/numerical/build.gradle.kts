@@ -21,7 +21,7 @@ benchmark {
     posixSrcDirs = listOf("../shared/src/main/kotlin-native/posix")
     linkerOpts = listOf("$buildDir/pi.o")
 
-    dependencies.common(project(":endorsedLibraries:kliopt"))
+    dependencies.common(project(":endorsedLibraries:kotlinx.cli"))
 }
 
 val compileLibary by tasks.creating {

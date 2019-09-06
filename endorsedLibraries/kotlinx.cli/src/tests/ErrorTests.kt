@@ -3,20 +3,22 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kliopt
+package kotlinx.cli
 
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
 import kotlin.test.*
 
 class ErrorTests {
     @Test
     fun testExtraArguments() {
         val argParser = ArgParser("testParser")
-        val addendums by argParser.arguments(ArgType.Int, "addendums", 2, description = "Addendums")
+        val addendums by argParser.argument(ArgType.Int, "addendums", description = "Addendums").number(2)
         val output by argParser.argument(ArgType.String, "output", "Output file")
         val debugMode by argParser.option(ArgType.Boolean, "debug", "d", "Debug mode")
         val exception = assertFailsWith<IllegalStateException> { argParser.parse(
                 arrayOf("2", "-d", "3", "out.txt", "something", "else", "in", "string")) }
-        assertTrue("Too many arguments! Couldn't proccess argument something" in exception.message!!)
+        assertTrue("Too many arguments! Couldn't process argument something" in exception.message!!)
     }
 
     @Test
@@ -43,10 +45,9 @@ class ErrorTests {
     @Test
     fun testWrongChoice() {
         val argParser = ArgParser("testParser")
-        val useShortForm by argParser.option(ArgType.Boolean, "short", "s", "Show short version of report",
-                defaultValue = false)
-        val renders by argParser.options(ArgType.Choice(listOf("text", "html")),
-                "renders", "r", "Renders for showing information", listOf("text"), multiple = true)
+        val useShortForm by argParser.option(ArgType.Boolean, "short", "s", "Show short version of report").default(false)
+        val renders by argParser.option(ArgType.Choice(listOf("text", "html")),
+                "renders", "r", "Renders for showing information").multiple().default(listOf("text"))
         val exception = assertFailsWith<IllegalStateException> {
             argParser.parse(arrayOf("-r", "xml"))
         }

@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kliopt
+package kotlinx.cli
 
 import kotlin.annotation.AnnotationTarget.*
 
@@ -15,7 +15,7 @@ import kotlin.annotation.AnnotationTarget.*
  *
  * Any usage of a declaration annotated with `@ExperimentalCli` must be accepted either by
  * annotating that usage with the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalCli::class)`,
- * or by using the compiler argument `-Xuse-experimental=org.jetbrains.kliopt.ExperimentalCli`.
+ * or by using the compiler argument `-Xuse-experimental=kotlinx.cli.ExperimentalCli`.
  */
 @Experimental(level = Experimental.Level.WARNING)
 @Retention(AnnotationRetention.BINARY)

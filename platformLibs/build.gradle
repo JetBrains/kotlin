@@ -67,6 +67,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
                 defFile df.file
                 artifactName df.name
                 noDefaultLibs true
+                noEndorsedLibs true
                 libraries {
                     klibs df.config.depends
                 }

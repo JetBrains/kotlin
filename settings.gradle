@@ -45,7 +45,7 @@ if (System.getProperty("os.name") == "Mac OS X") {
 
 include ':platformLibs'
 include ':endorsedLibraries'
-include ':endorsedLibraries:kliopt'
+include ':endorsedLibraries:kotlinx.cli'
 
 if (hasProperty("kotlinProjectPath")) {
     include ':runtime:generator'

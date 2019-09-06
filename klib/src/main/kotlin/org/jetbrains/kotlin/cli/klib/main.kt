@@ -160,7 +160,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
                     distributionKlib = Distribution().klib,
                     skipCurrentDir = true,
                     logger = KlibToolLogger)
-            resolver.defaultLinks(false, true)
+            resolver.defaultLinks(false, true, true)
                     .mapTo(defaultModules) {
                         DefaultDeserializedDescriptorFactory.createDescriptor(
                                 it, versionSpec, storageManager, module.builtIns)

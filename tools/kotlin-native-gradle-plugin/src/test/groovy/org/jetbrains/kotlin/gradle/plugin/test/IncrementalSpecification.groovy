@@ -110,6 +110,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "artifactName"        | "'foo'"
         "extraOpts"           | "'-Xtime'"
         "noDefaultLibs"       | "true"
+        "noEndorsedLibs"       | "true"
     }
 
     def 'Plugin should support a custom entry point and recompile an artifact if it changes'() {
@@ -210,6 +211,7 @@ class IncrementalSpecification extends BaseKonanSpecification {
         "includeDirs.allHeaders" | "'src'"
         "extraOpts"              | "'-verbose'"
         "noDefaultLibs"          | "true"
+        "noEndorsedLibs"          | "true"
     }
 
     def 'includeDirs.headerFilterOnly change should cause recompilation and interop reprocessing'() {

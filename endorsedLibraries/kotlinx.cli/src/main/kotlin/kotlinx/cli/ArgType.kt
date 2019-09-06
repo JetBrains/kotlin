@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kliopt
+package kotlinx.cli
 
 /**
  * Possible types of arguments.
@@ -23,7 +23,7 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
      *
      * @param value value
      */
-    abstract val conversion: (value: kotlin.String, name: kotlin.String, helpMessage: kotlin.String)->T
+    abstract val conversion: (value: kotlin.String, name: kotlin.String)->T
 
     /**
      * Argument type for flags that can be only set/unset.
@@ -32,8 +32,8 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = ""
 
-        override val conversion: (value: kotlin.String, name: kotlin.String, _: kotlin.String) -> kotlin.Boolean
-            get() = { value, _ , _ -> if (value == "false") false else true }
+        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.Boolean
+            get() = { value, _ -> if (value == "false") false else true }
     }
 
     /**
@@ -43,8 +43,8 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = "{ String }"
 
-        override val conversion: (value: kotlin.String, name: kotlin.String, _: kotlin.String) -> kotlin.String
-            get() = { value, _, _ -> value }
+        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.String
+            get() = { value, _ -> value }
     }
 
     /**
@@ -54,9 +54,9 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = "{ Int }"
 
-        override val conversion: (value: kotlin.String, name: kotlin.String, helpMessage: kotlin.String) -> kotlin.Int
-            get() = { value, name, helpMessage -> value.toIntOrNull()
-                    ?: error("Option $name is expected to be integer number. $value is provided.\n$helpMessage") }
+        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.Int
+            get() = { value, name -> value.toIntOrNull()
+                    ?: throw ParsingException("Option $name is expected to be integer number. $value is provided.") }
     }
 
     /**
@@ -66,10 +66,9 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = "{ Double }"
 
-        override val conversion: (value: kotlin.String, name: kotlin.String,
-                                  helpMessage: kotlin.String) -> kotlin.Double
-            get() = { value, name, helpMessage -> value.toDoubleOrNull()
-                    ?: error("Option $name is expected to be double number. $value is provided.\n$helpMessage") }
+        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.Double
+            get() = { value, name -> value.toDoubleOrNull()
+                    ?: throw ParsingException("Option $name is expected to be double number. $value is provided.") }
     }
 
     /**
@@ -79,9 +78,10 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
         override val description: kotlin.String
             get() = "{ Value should be one of $values }"
 
-        override val conversion: (value: kotlin.String, name: kotlin.String,
-                                  helpMessage: kotlin.String) -> kotlin.String
-            get() = { value, name, helpMessage -> if (value in values) value
-            else error("Option $name is expected to be one of $values. $value is provided.\n$helpMessage") }
+        override val conversion: (value: kotlin.String, name: kotlin.String) -> kotlin.String
+            get() = { value, name -> if (value in values) value
+            else throw ParsingException("Option $name is expected to be one of $values. $value is provided.") }
     }
 }
+
+internal class ParsingException(message: String) : Exception(message)

@@ -57,8 +57,11 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             valueDescription = "<path>", description = "Include the native bitcode library", delimiter = "")
     var nativeLibraries: Array<String>? = null
 
-    @Argument(value = "-nodefaultlibs", description = "Don't link the libraries from dist/klib automatically")
+    @Argument(value = "-no-default-libs", deprecatedName = "-nodefaultlibs", description = "Don't link the libraries from dist/klib automatically")
     var nodefaultlibs: Boolean = false
+
+    @Argument(value = "-no-endorsed-libs", description = "Don't link the endorsed libraries from dist automatically")
+    var noendorsedlibs: Boolean = false
 
     @Argument(value = "-nomain", description = "Assume 'main' entry point to be provided by external libraries")
     var nomain: Boolean = false

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
-import org.jetbrains.kliopt.ArgParser
+import kotlinx.cli.ArgParser
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.file.*
@@ -175,16 +175,15 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
     val tool = prepareTool(cinteropArguments.target, flavor)
 
     val def = DefFile(defFile, tool.substitutions)
-    val isLinkerOptsSetByUser = (cinteropArguments.argParser.getOrigin("linkerOpts") == ArgParser.ValueOrigin.SET_BY_USER) ||
-            (cinteropArguments.argParser.getOrigin("linker-option") == ArgParser.ValueOrigin.SET_BY_USER) ||
-            (cinteropArguments.argParser.getOrigin("linker-options") == ArgParser.ValueOrigin.SET_BY_USER) ||
-            (cinteropArguments.argParser.getOrigin("lopt") == ArgParser.ValueOrigin.SET_BY_USER)
+    val isLinkerOptsSetByUser = (cinteropArguments.linkerOpts.valueOrigin == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (cinteropArguments.linkerOptions.valueOrigin == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (cinteropArguments.linkerOption.valueOrigin == ArgParser.ValueOrigin.SET_BY_USER)
     if (flavorName == "native" && isLinkerOptsSetByUser) {
-        warn("-linker-option(s)/-linkerOpts/-lopt option is not supported by cinterop. Please add linker options to .def file or binary compilation instead.")
+        warn("-linker-option(s)/-linkerOpts option is not supported by cinterop. Please add linker options to .def file or binary compilation instead.")
     }
 
-    val additionalLinkerOpts = cinteropArguments.linkerOpts.toTypedArray() + cinteropArguments.linkerOption.toTypedArray() +
-            cinteropArguments.linkerOptions.toTypedArray() + cinteropArguments.lopt.toTypedArray()
+    val additionalLinkerOpts = cinteropArguments.linkerOpts.value.toTypedArray() + cinteropArguments.linkerOption.value.toTypedArray() +
+            cinteropArguments.linkerOptions.value.toTypedArray()
     val verbose = cinteropArguments.verbose
 
     val language = selectNativeLanguage(def.config)
@@ -305,10 +304,9 @@ internal fun buildNativeLibrary(
         arguments: CInteropArguments,
         imports: ImportsImpl
 ): NativeLibrary {
-    val additionalHeaders = (arguments.header + arguments.shortHeaderForm).toTypedArray()
+    val additionalHeaders = (arguments.header).toTypedArray()
     val additionalCompilerOpts = (arguments.compilerOpts +
-            arguments.compilerOptions + arguments.compilerOption +
-            arguments.copt).toTypedArray()
+            arguments.compilerOptions + arguments.compilerOption).toTypedArray()
 
     val headerFiles = def.config.headers + additionalHeaders
     val language = selectNativeLanguage(def.config)

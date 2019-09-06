@@ -4,7 +4,7 @@
  */
 
 import org.jetbrains.benchmarksLauncher.*
-import org.jetbrains.kliopt.*
+import kotlinx.cli.*
 
 class SwiftLauncher: Launcher() {
     override val benchmarks = BenchmarksCollection(

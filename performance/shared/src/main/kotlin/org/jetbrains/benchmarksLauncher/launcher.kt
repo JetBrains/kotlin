@@ -17,7 +17,7 @@
 package org.jetbrains.benchmarksLauncher
 
 import org.jetbrains.report.BenchmarkResult
-import org.jetbrains.kliopt.*
+import kotlinx.cli.*
 
 
 abstract class Launcher {
@@ -118,17 +118,18 @@ abstract class Launcher {
 abstract class BenchmarkArguments(argParser: ArgParser)
 
 class BaseBenchmarkArguments(argParser: ArgParser): BenchmarkArguments(argParser) {
-    val warmup by argParser.option(ArgType.Int, shortName = "w", description = "Number of warm up iterations",
-            defaultValue = 20)
-    val repeat by argParser.option(ArgType.Int, shortName = "r", description = "Number of each benchmark run",
-            defaultValue = 60)
-    val prefix by argParser.option(ArgType.String, shortName = "p", description = "Prefix added to benchmark name",
-            defaultValue = "")
+    val warmup by argParser.option(ArgType.Int, shortName = "w", description = "Number of warm up iterations")
+            .default(20)
+    val repeat by argParser.option(ArgType.Int, shortName = "r", description = "Number of each benchmark run").
+            default(60)
+    val prefix by argParser.option(ArgType.String, shortName = "p", description = "Prefix added to benchmark name")
+            .default("")
     val output by argParser.option(ArgType.String, shortName = "o", description = "Output file")
-    val filter by argParser.options(ArgType.String, shortName = "f", description = "Benchmark to run", multiple = true)
-    val filterRegex by argParser.options(ArgType.String, shortName = "fr",
-            description = "Benchmark to run, described by a regular expression", multiple = true)
-    val verbose by argParser.option(ArgType.Boolean, shortName = "v", description = "Verbose mode of running", defaultValue = false)
+    val filter by argParser.option(ArgType.String, shortName = "f", description = "Benchmark to run").multiple()
+    val filterRegex by argParser.option(ArgType.String, shortName = "fr",
+            description = "Benchmark to run, described by a regular expression").multiple()
+    val verbose by argParser.option(ArgType.Boolean, shortName = "v", description = "Verbose mode of running")
+            .default(false)
 }
 
 object BenchmarksRunner {

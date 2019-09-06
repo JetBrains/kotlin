@@ -826,7 +826,7 @@ internal val ModuleDescriptor.namePrefix: String get() {
 internal fun abbreviate(name: String): String {
     val normalizedName = name
             .capitalize()
-            .replace('-', '_')
+            .replace("-|\\.".toRegex(), "_")
 
     val uppers = normalizedName.filterIndexed { index, character -> index == 0 || character.isUpperCase() }
     if (uppers.length >= 3) return uppers

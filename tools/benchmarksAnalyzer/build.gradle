@@ -48,7 +48,7 @@ kotlin {
             }
             kotlin.srcDir '../benchmarks/shared/src'
             kotlin.srcDir 'src/main/kotlin'
-            kotlin.srcDir '../../endorsedLibraries/kliopt/src/main/kotlin'
+            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin'
         }
         commonTest {
             dependencies {
@@ -71,21 +71,21 @@ kotlin {
         nativeMain {
             dependsOn commonMain
             kotlin.srcDir 'src/main/kotlin-native'
-            kotlin.srcDir '../../endorsedLibraries/kliopt/src/main/kotlin-native'
+            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-native'
         }
         jvmMain {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
             }
             kotlin.srcDir 'src/main/kotlin-jvm'
-            kotlin.srcDir '../../endorsedLibraries/kliopt/src/main/kotlin-jvm'
+            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-jvm'
         }
         jsMain {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
             }
             kotlin.srcDir 'src/main/kotlin-js'
-            kotlin.srcDir '../../endorsedLibraries/kliopt/src/main/kotlin-js'
+            kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-js'
         }
         linuxMain { dependsOn nativeMain }
         windowsMain { dependsOn nativeMain }

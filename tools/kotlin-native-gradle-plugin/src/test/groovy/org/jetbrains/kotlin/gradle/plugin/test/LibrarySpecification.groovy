@@ -57,11 +57,13 @@ class LibrarySpecification extends BaseKonanSpecification {
             |}
         """.stripMargin(), ArtifactType.LIBRARY)
         project.addSetting(name, "noDefaultLibs", "true")
+        project.addSetting(name, "noEndorsedLibs", "true")
     }
 
     void createInteropLibrary(KonanProject project, String name) {
         project.addCompilerArtifact(name, "headers = math.h", ArtifactType.INTEROP)
         project.addSetting(name, "noDefaultLibs", "true")
+        project.addSetting(name, "noEndorsedLibs", "true")
     }
 
     KonanProject createProjectWithLibraries(Closure createLibraryFunction, Closure callBuilder) {
@@ -79,6 +81,7 @@ class LibrarySpecification extends BaseKonanSpecification {
 
         result.addCompilerArtifact("main", createMainWithCalls(libraryNames, callBuilder))
         result.addSetting("main", "noDefaultLibs", "true")
+        result.addSetting("main", "noEndorsedLibs", "true")
 
         for (int i = 0; i < libraries.size(); i++) {
             def foo = libraryNames[i].first
@@ -130,12 +133,15 @@ class LibrarySpecification extends BaseKonanSpecification {
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
             it.addCompilerArtifact("foo", "fun foo() { println(42) }", ArtifactType.LIBRARY)
             it.addSetting("foo", "noDefaultLibs", "true")
+            it.addSetting("foo", "noEndorsedLibs", "true")
 
             it.addCompilerArtifact("bar", "fun bar() { println(43) }", ArtifactType.LIBRARY)
             it.addSetting("bar", "noDefaultLibs", "true")
+            it.addSetting("bar", "noEndorsedLibs", "true")
 
             it.addCompilerArtifact("main" ,"fun main(args: Array<String>) { foo(); bar() }")
             it.addSetting("main", "noDefaultLibs", "true" )
+            it.addSetting("main", "noEndorsedLibs", "true" )
             it.addLibraryToArtifactCustom("main", "allLibrariesFrom project")
         }
         project.createRunner()
@@ -153,15 +159,19 @@ class LibrarySpecification extends BaseKonanSpecification {
 
         project.addCompilerArtifact("wrongFoo","fun foo() { println(24) }", ArtifactType.LIBRARY)
         project.addSetting("wrongFoo", "noDefaultLibs", "true")
+        project.addSetting("wrongFoo", "noEndorsedLibs", "true")
 
         subproject.addCompilerArtifact("foo", "fun foo() { println(42) }", ArtifactType.LIBRARY)
         subproject.addSetting("foo", "noDefaultLibs", "true")
+        subproject.addSetting("foo", "noEndorsedLibs", "true")
 
         subproject.addCompilerArtifact("bar", "fun bar() { println(43) }", ArtifactType.LIBRARY)
         subproject.addSetting("bar", "noDefaultLibs", "true")
+        subproject.addSetting("bar", "noEndorsedLibs", "true")
 
         project.addCompilerArtifact("main" ,"fun main(args: Array<String>) { foo(); bar() }")
         project.addSetting("main", "noDefaultLibs", "true" )
+        project.addSetting("main", "noEndorsedLibs", "true" )
         project.addLibraryToArtifactCustom("main", "allLibrariesFrom project('subproject')")
 
         project.createRunner()
@@ -180,15 +190,19 @@ class LibrarySpecification extends BaseKonanSpecification {
 
         project.addCompilerArtifact("wrongFoo1", "fun foo() { println(42) }", ArtifactType.LIBRARY)
         project.addSetting("wrongFoo1", "noDefaultLibs", "true")
+        project.addSetting("wrongFoo1", "noEndorsedLibs", "true")
 
         subproject.addCompilerArtifact("wrongFoo2", "fun foo() { println(42) }", ArtifactType.LIBRARY)
         subproject.addSetting("wrongFoo2", "noDefaultLibs", "true")
+        subproject.addSetting("wrongFoo2", "noEndorsedLibs", "true")
 
         subproject.addCompilerArtifact("math1", "headers = math.h", ArtifactType.INTEROP)
         subproject.addSetting("math1", "noDefaultLibs", "true")
+        subproject.addSetting("math1", "noEndorsedLibs", "true")
 
         subproject.addCompilerArtifact("math2", "headers = math.h", ArtifactType.INTEROP)
         subproject.addSetting("math2", "noDefaultLibs", "true")
+        subproject.addSetting("math2", "noEndorsedLibs", "true")
 
         project.addCompilerArtifact("main" ,"""
             |fun foo() {}
@@ -196,6 +210,7 @@ class LibrarySpecification extends BaseKonanSpecification {
             |fun main(args: Array<String>) { foo(); math1.cos(0.0); math2.cos(0.0) }
         """.stripMargin())
         project.addSetting("main", "noDefaultLibs", "true" )
+        project.addSetting("main", "noEndorsedLibs", "true" )
         project.addLibraryToArtifactCustom("main", "allInteropLibrariesFrom project('subproject')")
 
 
@@ -209,12 +224,15 @@ class LibrarySpecification extends BaseKonanSpecification {
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
             it.addCompilerArtifact("wrongFoo", "fun foo() { println(42) }", ArtifactType.LIBRARY)
             it.addSetting("wrongFoo", "noDefaultLibs", "true")
+            it.addSetting("wrongFoo", "noEndorsedLibs", "true")
 
             it.addCompilerArtifact("math1", "headers = math.h", ArtifactType.INTEROP)
             it.addSetting("math1", "noDefaultLibs", "true")
+            it.addSetting("math1", "noEndorsedLibs", "true")
 
             it.addCompilerArtifact("math2", "headers = math.h", ArtifactType.INTEROP)
             it.addSetting("math2", "noDefaultLibs", "true")
+            it.addSetting("math2", "noEndorsedLibs", "true")
 
             it.addCompilerArtifact("main" ,"""
                 |fun foo() {}
@@ -222,6 +240,7 @@ class LibrarySpecification extends BaseKonanSpecification {
                 |fun main(args: Array<String>) { foo(); math1.cos(0.0); math2.cos(0.0) }
             """.stripMargin())
             it.addSetting("main", "noDefaultLibs", "true" )
+            it.addSetting("main", "noEndorsedLibs", "true" )
             it.addLibraryToArtifactCustom("main", "allInteropLibrariesFrom project")
         }
         project.createRunner()
@@ -234,11 +253,13 @@ class LibrarySpecification extends BaseKonanSpecification {
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
             it.addCompilerArtifact("foo", "fun foo() { println(42) }", ArtifactType.LIBRARY)
             it.addSetting("foo", "noDefaultLibs", "true")
+            it.addSetting("foo", "noEndorsedLibs", "true")
             it.addSetting("foo", "baseDir", "file('out')")
 
 
             it.addCompilerArtifact("main" ,"fun main(args: Array<String>) { foo() }")
             it.addSetting("main", "noDefaultLibs", "true" )
+            it.addSetting("main", "noEndorsedLibs", "true" )
             it.addSetting("main", "dependsOn", "konanArtifacts.foo.$KonanProject.HOST")
             it.addLibraryToArtifactCustom("main", "klib 'foo'")
             it.addLibraryToArtifactCustom("main", "useRepo 'out/$KonanProject.HOST'")
@@ -253,13 +274,16 @@ class LibrarySpecification extends BaseKonanSpecification {
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
             it.addCompilerArtifact("foo", "fun foo() { println(42) }", ArtifactType.LIBRARY)
             it.addSetting("foo", "noDefaultLibs", "true")
+            it.addSetting("foo", "noEndorsedLibs", "true")
 
             it.addCompilerArtifact("bar", "fun bar() { println(43) }", ArtifactType.LIBRARY)
             it.addSetting("bar", "noDefaultLibs", "true")
+            it.addSetting("bar", "noEndorsedLibs", "true")
             it.addLibraryToArtifact("bar", "foo")
 
             it.addCompilerArtifact("main" ,"fun main(args: Array<String>) { foo(); bar() }")
             it.addSetting("main", "noDefaultLibs", "true" )
+            it.addSetting("main", "noEndorsedLibs", "true" )
             it.addLibraryToArtifact("main", "bar")
         }
 
@@ -281,15 +305,18 @@ class LibrarySpecification extends BaseKonanSpecification {
 
         subproject1.addCompilerArtifact("foo", "fun foo() { println(42) }", ArtifactType.LIBRARY)
         subproject1.addSetting("foo", "noDefaultLibs", "true")
+        subproject1.addSetting("foo", "noEndorsedLibs", "true")
 
         subproject2.addCompilerArtifact("bar", "fun bar() { println(43) }", ArtifactType.LIBRARY)
         subproject2.addSetting("bar", "noDefaultLibs", "true")
+        subproject2.addSetting("bar", "noEndorsedLibs", "true")
         subproject2.addLibraryToArtifactCustom(
                 "bar", "artifact rootProject.project('subproject1'), 'foo'"
         )
 
         project.addCompilerArtifact("main" ,"fun main(args: Array<String>) { foo(); bar() }")
         project.addSetting("main", "noDefaultLibs", "true" )
+        project.addSetting("main", "noEndorsedLibs", "true" )
         project.addLibraryToArtifactCustom(
                 "main", "artifact project('subproject2'), 'bar'"
         )

@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kliopt
+package kotlinx.cli
 
 internal actual fun exitProcess(status: Int): Nothing {
     error("Not implemented for JS!")

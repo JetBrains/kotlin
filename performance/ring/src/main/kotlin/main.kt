@@ -18,7 +18,7 @@
 import org.jetbrains.ring.*
 import octoTest
 import org.jetbrains.benchmarksLauncher.*
-import org.jetbrains.kliopt.*
+import kotlinx.cli.*
 
 class RingLauncher : Launcher() {
 

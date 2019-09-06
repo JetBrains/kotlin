@@ -66,6 +66,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("native library file paths")
         val NODEFAULTLIBS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("don't link with the default libraries")
+        val NOENDORSEDLIBS: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("don't link with the endorsed libraries")
         val NOMAIN: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("assume 'main' entry point to be provided by external libraries")
         val NOSTDLIB: CompilerConfigurationKey<Boolean> 

@@ -36,7 +36,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
-                implementation project(":endorsedLibraries:kliopt")
+                implementation project(":endorsedLibraries:kotlinx.cli")
             }
             kotlin.srcDir "src"
             kotlin.srcDir "../shared/src/main/kotlin"
@@ -47,9 +47,9 @@ kotlin {
             kotlin.srcDir "../shared/src/main/kotlin-native/common"
             kotlin.srcDir "../shared/src/main/kotlin-native/posix"
              
-            // Exclude kliopt added in commonMain dependencies and inherited by macosMain.
+            // Exclude kotlinx.cli added in commonMain dependencies and inherited by macosMain.
             configurations.getByName(implementationConfigurationName) {
-                exclude module: "kliopt"
+                exclude module: "kotlinx.cli"
             }
         }
     }

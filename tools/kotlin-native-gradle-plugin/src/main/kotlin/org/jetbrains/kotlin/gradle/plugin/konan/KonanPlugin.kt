@@ -229,6 +229,7 @@ internal fun dumpProperties(task: Task) {
             println("enableOptimization : $enableOptimizations")
             println("enableAssertions   : $enableAssertions")
             println("noDefaultLibs      : $noDefaultLibs")
+            println("noEndorsedLibs     : $noEndorsedLibs")
             println("target             : $target")
             println("languageVersion    : $languageVersion")
             println("apiVersion         : $apiVersion")

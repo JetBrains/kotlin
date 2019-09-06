@@ -301,7 +301,7 @@ class NativeInteropPlugin implements Plugin<Project> {
 
         prj.dependencies {
             interopStubGenerator project(path: ":Interop:StubGenerator")
-            interopStubGenerator project(path: ":endorsedLibraries:kliopt", configuration: "jvmRuntimeElements")
+            interopStubGenerator project(path: ":endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
         }
 
         // FIXME: choose tasks more wisely

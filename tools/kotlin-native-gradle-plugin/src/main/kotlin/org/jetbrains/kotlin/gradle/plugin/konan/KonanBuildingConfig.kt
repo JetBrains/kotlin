@@ -160,6 +160,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     override fun libraries(configure: KonanLibrariesSpec.() -> Unit) = forEach { it.libraries(configure) }
 
     override fun noDefaultLibs(flag: Boolean) = forEach { it.noDefaultLibs(flag) }
+    override fun noEndorsedLibs(flag: Boolean) = forEach { it.noEndorsedLibs(flag) }
 
     override fun dumpParameters(flag: Boolean) = forEach { it.dumpParameters(flag) }
 

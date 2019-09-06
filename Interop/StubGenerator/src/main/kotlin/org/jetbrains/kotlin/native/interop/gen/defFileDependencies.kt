@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.prepareTool
 import org.jetbrains.kotlin.native.interop.indexer.NativeLibraryHeaders
 import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
 import org.jetbrains.kotlin.native.interop.tool.CInteropArguments
-import org.jetbrains.kliopt.ArgParser
+import kotlinx.cli.ArgParser
 import java.io.File
 
 fun defFileDependencies(args: Array<String>) {

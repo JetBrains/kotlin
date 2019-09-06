@@ -19,7 +19,7 @@ import org.jetbrains.structsProducedByMacrosBenchmarks.*
 import org.jetbrains.benchmarksLauncher.*
 import org.jetbrains.structsBenchmarks.*
 import org.jetbrains.typesBenchmarks.*
-import org.jetbrains.kliopt.*
+import kotlinx.cli.*
 
 class CinteropLauncher : Launcher() {
     override val benchmarks = BenchmarksCollection(

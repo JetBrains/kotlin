@@ -6,7 +6,7 @@
 
 import org.jetbrains.benchmarksLauncher.*
 import org.jetbrains.complexNumbers.*
-import org.jetbrains.kliopt.*
+import kotlinx.cli.*
 
 class ObjCInteropLauncher: Launcher() {
     override val benchmarks = BenchmarksCollection(

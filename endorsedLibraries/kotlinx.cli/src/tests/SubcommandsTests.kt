@@ -3,8 +3,12 @@
  * that can be found in the LICENSE file.
  */
 @file:UseExperimental(ExperimentalCli::class)
-package org.jetbrains.kliopt
+package kotlinx.cli
 
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.ExperimentalCli
+import kotlinx.cli.Subcommand
 import kotlin.test.*
 
 class SubcommandsTests {
@@ -14,7 +18,7 @@ class SubcommandsTests {
         val output by argParser.option(ArgType.String, "output", "o", "Output file")
         class Summary: Subcommand("summary") {
             val invert by option(ArgType.Boolean, "invert", "i", "Invert results")
-            val addendums by arguments(ArgType.Int, "addendums", description = "Addendums")
+            val addendums by argument(ArgType.Int, "addendums", description = "Addendums").number()
             var result: Int = 0
 
             override fun execute() {
@@ -32,7 +36,7 @@ class SubcommandsTests {
     @Test
     fun testCommonOptions() {
         abstract class CommonOptions(name: String): Subcommand(name) {
-            val numbers by arguments(ArgType.Int, "numbers", description = "Numbers")
+            val numbers by argument(ArgType.Int, "numbers", description = "Numbers").number()
         }
         class Summary: CommonOptions("summary") {
             val invert by option(ArgType.Boolean, "invert", "i", "Invert results")
@@ -70,7 +74,7 @@ class SubcommandsTests {
         val argParser = ArgParser("testParser")
 
         class Summary: Subcommand("summary") {
-            val addendums by arguments(ArgType.Int, "addendums", description = "Addendums")
+            val addendums by argument(ArgType.Int, "addendums", description = "Addendums").number()
             var result: Int = 0
 
             override fun execute() {

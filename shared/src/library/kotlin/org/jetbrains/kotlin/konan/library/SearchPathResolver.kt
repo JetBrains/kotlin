@@ -22,7 +22,7 @@ interface SearchPathResolver : WithLogger {
     fun resolutionSequence(givenPath: String): Sequence<File>
     fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean = false): KonanLibraryImpl
     fun resolve(givenPath: String): KonanLibraryImpl
-    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<KonanLibraryImpl>
+    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<KonanLibraryImpl>
 }
 
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this interface!
@@ -157,21 +157,34 @@ internal open class KonanLibrarySearchPathResolver(
     val defaultRoots: List<File>
         get() = listOfNotNull(distHead, distPlatformHead).filter { it.exists }
 
-    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<KonanLibraryImpl> {
+    private fun getDefaultLibrariesFromDir(directory: File) =
+        if (directory.exists) {
+            directory.listFiles
+                .asSequence()
+                .filterNot { it.name.startsWith('.') }
+                .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KONAN_STDLIB_NAME }
+                .map { UnresolvedLibrary(it.absolutePath, null) }
+                .map { resolve(it, isDefaultLink = true) }
+        } else emptySequence()
 
+    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<KonanLibraryImpl> {
         val result = mutableListOf<KonanLibraryImpl>()
 
         if (!noStdLib) {
             result.add(resolve(UnresolvedLibrary(KONAN_STDLIB_NAME, null), true))
         }
+
+        // Endorsed libraries in distHead.
+        if (!noEndorsedLibs) {
+            distHead?.let {
+                result.addAll(getDefaultLibrariesFromDir(it))
+            }
+        }
+        // Platform libraries resolve.
         if (!noDefaultLibs) {
-            val defaultLibs = defaultRoots.flatMap { it.listFiles }
-                    .asSequence()
-                    .filterNot { it.name.startsWith('.') }
-                    .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KONAN_STDLIB_NAME }
-                    .map { UnresolvedLibrary(it.absolutePath, null) }
-                    .map { resolve(it, isDefaultLink = true) }
-            result.addAll(defaultLibs)
+            distPlatformHead?.let {
+                result.addAll(getDefaultLibrariesFromDir(it))
+            }
         }
 
         return result

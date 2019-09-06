@@ -167,6 +167,9 @@ abstract class KonanArtifactWithLibrariesTask: KonanArtifactTask(), KonanArtifac
     @Input
     var noDefaultLibs = false
 
+    @Input
+    var noEndorsedLibs = false
+
     // DSL
 
     override fun libraries(closure: Closure<Unit>) = libraries(ConfigureUtil.configureUsing(closure))
@@ -175,5 +178,9 @@ abstract class KonanArtifactWithLibrariesTask: KonanArtifactTask(), KonanArtifac
 
     override fun noDefaultLibs(flag: Boolean) {
         noDefaultLibs = flag
+    }
+
+    override fun noEndorsedLibs(flag: Boolean) {
+        noEndorsedLibs = flag
     }
 }

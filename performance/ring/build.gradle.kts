@@ -15,5 +15,5 @@ benchmark {
     mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")
 
-    dependencies.common(project(":endorsedLibraries:kliopt"))
+    dependencies.common(project(":endorsedLibraries:kotlinx.cli"))
 }

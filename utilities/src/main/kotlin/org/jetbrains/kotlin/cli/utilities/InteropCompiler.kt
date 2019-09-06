@@ -19,7 +19,8 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
     val arguments = if (flavor == "native") CInteropArguments() else JSInteropArguments()
     arguments.argParser.parse(args)
     val outputFileName = arguments.output
-    val noDefaultLibs = arguments.nodefaultlibs
+    val noDefaultLibs = arguments.nodefaultlibs || arguments.nodefaultlibsDeprecated
+    val noEndorsedLibs = arguments.noendorsedlibs
     val purgeUserLibs = arguments.purgeUserLibs
     val temporaryFilesDir = arguments.tempDir
 
@@ -49,7 +50,8 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
                 Distribution()
         ).libraryResolver()
         val allLibraries = resolver.resolveWithDependencies(
-                libraries.toUnresolvedLibraries, noStdLib = true, noDefaultLibs = noDefaultLibs
+                libraries.toUnresolvedLibraries, noStdLib = true, noDefaultLibs = noDefaultLibs,
+                noEndorsedLibs = noEndorsedLibs
         ).getFullList()
 
         val imports = allLibraries.map { library ->
@@ -82,6 +84,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
         libraries.flatMap { listOf("-library", it) } + 
         repos.flatMap { listOf("-repo", it) } +
         (if (noDefaultLibs) arrayOf("-$NODEFAULTLIBS") else emptyArray()) +
+        (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else emptyArray()) +
         (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray())
 
     return konancArgs

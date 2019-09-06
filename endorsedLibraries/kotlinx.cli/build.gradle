@@ -60,7 +60,7 @@ kotlin {
 
         jvm().compilations.all {
             kotlinOptions {
-                freeCompilerArgs = ["-Xuse-experimental=org.jetbrains.kliopt.ExperimentalCli"]
+                freeCompilerArgs = ["-Xuse-experimental=kotlinx.cli.ExperimentalCli"]
                 suppressWarnings = true
             }
         }
@@ -76,23 +76,23 @@ targetList.each { target ->
                          "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
     ]
 
-    def defaultArgs = ['-nopack', '-nodefaultlibs']
+    def defaultArgs = ['-nopack', '-no-default-libs', '-no-endorsed-libs']
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
                      "-Xruntime=${project(':runtime').file('build/' + target + '/runtime.bc')}",
                      *project.globalBuildArgs]
 
-    task("${target}Kliopt", type: JavaExec) {
+    task("${target}KotlinxCli", type: JavaExec) {
         dependsOn ":${target}CrossDistRuntime"
 
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         classpath = project(":backend.native").configurations.cli_bc
         jvmArgs = konanJvmArgs
         args = [*konanArgs,
-                '-output', project.file("build/${target}Kliopt"),
-                '-produce', 'library', '-module-name', 'kliopt', '-XXLanguage:+AllowContractsForCustomFunctions',
-                '-Xmulti-platform', '-Xuse-experimental=org.jetbrains.kliopt.ExperimentalCli',
+                '-output', project.file("build/${target}KotlinxCli"),
+                '-produce', 'library', '-module-name', 'kotlinx-cli', '-XXLanguage:+AllowContractsForCustomFunctions',
+                '-Xmulti-platform', '-Xuse-experimental=kotlinx.cli.ExperimentalCli',
                 '-Xuse-experimental=kotlin.ExperimentalMultiplatform',
                 '-Xallow-result-return-type',
                 commonSrc.absolutePath,
@@ -100,6 +100,6 @@ targetList.each { target ->
                 nativeSrc]
         inputs.dir(nativeSrc)
         inputs.dir(commonSrc)
-        outputs.dir(project.file("build/${target}Kliopt"))
+        outputs.dir(project.file("build/${target}KotlinxCli"))
     }
 }

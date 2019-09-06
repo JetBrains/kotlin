@@ -137,7 +137,7 @@ open class BenchmarkingPlugin: Plugin<Project> {
 
             project.configurations.getByName(nativeMain.implementationConfigurationName).apply {
                 // Exclude dependencies already included into K/N distribution (aka endorsed libraries).
-                exclude(mapOf("module" to "kliopt"))
+                exclude(mapOf("module" to "kotlinx.cli"))
             }
 
             repositories.maven {

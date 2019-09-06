@@ -128,7 +128,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         resolver.resolveWithDependencies(
                 unresolvedLibraries + includedLibraryFiles.map { UnresolvedLibrary(it.absolutePath, null) },
                 noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
-                noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS)
+                noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
+                noEndorsedLibs = configuration.getBoolean(KonanConfigKeys.NOENDORSEDLIBS)
         )
     }
 

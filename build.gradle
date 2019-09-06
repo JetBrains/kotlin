@@ -286,7 +286,7 @@ task distCompiler(type: Copy) {
         into('konan/lib')
     }
 
-    from(project(':endorsedLibraries:kliopt').file('build/libs')) {
+    from(project(':endorsedLibraries:kotlinx.cli').file('build/libs')) {
         into('konan/lib')
     }
 

@@ -3,8 +3,12 @@
  * that can be found in the LICENSE file.
  */
 @file:UseExperimental(ExperimentalCli::class)
-package org.jetbrains.kliopt
+package kotlinx.cli
 
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.ExperimentalCli
+import kotlinx.cli.Subcommand
 import kotlin.math.exp
 import kotlin.test.*
 
@@ -13,19 +17,19 @@ class HelpTests {
     fun testHelpMessage() {
         val argParser = ArgParser("test")
         val mainReport by argParser.argument(ArgType.String, description = "Main report for analysis")
-        val compareToReport by argParser.argument(ArgType.String, description = "Report to compare to", required = false)
+        val compareToReport by argParser.argument(ArgType.String, description = "Report to compare to").optional()
 
         val output by argParser.option(ArgType.String, shortName = "o", description = "Output file")
-        val epsValue by argParser.option(ArgType.Double, "eps", "e", "Meaningful performance changes", 1.0)
+        val epsValue by argParser.option(ArgType.Double, "eps", "e", "Meaningful performance changes").default(1.0)
         val useShortForm by argParser.option(ArgType.Boolean, "short", "s",
-                "Show short version of report", defaultValue = false)
-        val renders by argParser.options(ArgType.Choice(listOf("text", "html", "teamcity", "statistics", "metrics")),
-                shortName = "r", description = "Renders for showing information", defaultValue = listOf("text"), multiple = true)
+                "Show short version of report").default(false)
+        val renders by argParser.option(ArgType.Choice(listOf("text", "html", "teamcity", "statistics", "metrics")),
+                shortName = "r", description = "Renders for showing information").multiple().default(listOf("text"))
         val user by argParser.option(ArgType.String, shortName = "u", description = "User access information for authorization")
-        argParser.parse(arrayOf("-h"))
+        argParser.parse(arrayOf("main.txt"))
         val helpOutput = argParser.makeUsage().trimIndent()
         val expectedOutput = """
-            Usage: test options_list
+Usage: test options_list
 Arguments: 
     mainReport -> Main report for analysis { String }
     compareToReport -> Report to compare to (optional) { String }
@@ -37,31 +41,28 @@ Options:
     --user, -u -> User access information for authorization { String }
     --help, -h -> Usage info 
         """.trimIndent()
-        assertEquals(helpOutput, expectedOutput)
+        assertEquals(expectedOutput, helpOutput)
     }
 
     @Test
     fun testHelpForSubcommands() {
         class Summary: Subcommand("summary") {
             val exec by option(ArgType.Choice(listOf("samples", "geomean")),
-                    description = "Execution time way of calculation", defaultValue = "geomean")
-            val execSamples by options(ArgType.String, "exec-samples",
-                    description = "Samples used for execution time metric (value 'all' allows use all samples)",
-                    delimiter = ",")
+                    description = "Execution time way of calculation").default("geomean")
+            val execSamples by option(ArgType.String, "exec-samples",
+                    description = "Samples used for execution time metric (value 'all' allows use all samples)").delimiter(",")
             val execNormalize by option(ArgType.String, "exec-normalize",
                     description = "File with golden results which should be used for normalization")
             val compile by option(ArgType.Choice(listOf("samples", "geomean")),
-                    description = "Compile time way of calculation", defaultValue = "geomean")
-            val compileSamples by options(ArgType.String, "compile-samples",
-                    description = "Samples used for compile time metric (value 'all' allows use all samples)",
-                    delimiter = ",")
+                    description = "Compile time way of calculation").default("geomean")
+            val compileSamples by option(ArgType.String, "compile-samples",
+                    description = "Samples used for compile time metric (value 'all' allows use all samples)").delimiter(",")
             val compileNormalize by option(ArgType.String, "compile-normalize",
                     description = "File with golden results which should be used for normalization")
             val codesize by option(ArgType.Choice(listOf("samples", "geomean")),
-                    description = "Code size way of calculation", defaultValue = "geomean")
-            val codesizeSamples by options(ArgType.String, "codesize-samples",
-                    description = "Samples used for code size metric (value 'all' allows use all samples)",
-                    delimiter = ",")
+                    description = "Code size way of calculation").default("geomean")
+            val codesizeSamples by option(ArgType.String, "codesize-samples",
+                    description = "Samples used for code size metric (value 'all' allows use all samples)").delimiter(",")
             val codesizeNormalize by option(ArgType.String, "codesize-normalize",
                     description = "File with golden results which should be used for normalization")
             val user by option(ArgType.String, shortName = "u", description = "User access information for authorization")
@@ -75,21 +76,25 @@ Options:
         // Parse args.
         val argParser = ArgParser("test")
         argParser.subcommands(action)
-        argParser.parse(arrayOf("summary", "-h"))
-        val helpOutput = argParser.makeUsage().trimIndent()
+        argParser.parse(arrayOf("summary", "out.txt"))
+        val helpOutput = action.makeUsage().trimIndent()
         val expectedOutput = """
-            Usage: test summary options_list
+Usage: test summary options_list
 Arguments: 
     mainReport -> Main report for analysis { String }
-    compareToReport -> Report to compare to (optional) { String }
 Options: 
-    --output, -o -> Output file { String }
-    --eps, -e [1.0] -> Meaningful performance changes { Double }
-    --short, -s [false] -> Show short version of report 
-    --renders, -r [text] -> Renders for showing information { Value should be one of [text, html, teamcity, statistics, metrics] }
+    --exec [geomean] -> Execution time way of calculation { Value should be one of [samples, geomean] }
+    --exec-samples -> Samples used for execution time metric (value 'all' allows use all samples) { String }
+    --exec-normalize -> File with golden results which should be used for normalization { String }
+    --compile [geomean] -> Compile time way of calculation { Value should be one of [samples, geomean] }
+    --compile-samples -> Samples used for compile time metric (value 'all' allows use all samples) { String }
+    --compile-normalize -> File with golden results which should be used for normalization { String }
+    --codesize [geomean] -> Code size way of calculation { Value should be one of [samples, geomean] }
+    --codesize-samples -> Samples used for code size metric (value 'all' allows use all samples) { String }
+    --codesize-normalize -> File with golden results which should be used for normalization { String }
     --user, -u -> User access information for authorization { String }
     --help, -h -> Usage info 
-        """.trimIndent()
-        assertEquals(helpOutput, expectedOutput)
+""".trimIndent()
+        assertEquals(expectedOutput, helpOutput)
     }
 }

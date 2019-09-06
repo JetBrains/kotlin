@@ -3225,6 +3225,7 @@ void createInterop(String name, Closure conf) {
         interop(name, targets: [target.name]) {
             conf(it)
             noDefaultLibs(true)
+            noEndorsedLibs(true)
             baseDir "$testOutputLocal/$name"
         }
     }

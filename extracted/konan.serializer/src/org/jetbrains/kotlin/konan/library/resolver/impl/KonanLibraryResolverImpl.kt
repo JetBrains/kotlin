@@ -30,13 +30,14 @@ internal class KonanLibraryResolverImpl(
     override fun resolveWithDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean,
-        noDefaultLibs: Boolean
-    ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs)
+        noDefaultLibs: Boolean,
+        noEndorsedLibs: Boolean
+    ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
             .leaveDistinct()
             .resolveDependencies()
 
     /**
-     * Returns the list of libraries based on [libraryNames], [noStdLib] and [noDefaultLibs] criteria.
+     * Returns the list of libraries based on [libraryNames], [noStdLib], [noDefaultLibs] and [noEndorsedLibs] criteria.
      *
      * This method does not return any libraries that might be available via transitive dependencies
      * from the original library set (root set).
@@ -44,14 +45,15 @@ internal class KonanLibraryResolverImpl(
     private fun findLibraries(
             unresolvedLibraries: List<UnresolvedLibrary>,
             noStdLib: Boolean,
-            noDefaultLibs: Boolean
+            noDefaultLibs: Boolean,
+            noEndorsedLibs: Boolean
     ): List<KonanLibrary> {
 
         val userProvidedLibraries = unresolvedLibraries.asSequence()
                 .map { searchPathResolver.resolve(it) }
                 .toList()
 
-        val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs)
+        val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs, noEndorsedLibs)
 
         // Make sure the user provided ones appear first, so that
         // they have precedence over defaults when duplicates are eliminated.

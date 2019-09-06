@@ -111,6 +111,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             with(configuration) {
 
                 put(NODEFAULTLIBS, arguments.nodefaultlibs)
+                put(NOENDORSEDLIBS, arguments.noendorsedlibs)
                 put(NOSTDLIB, arguments.nostdlib)
                 put(NOPACK, arguments.nopack)
                 put(NOMAIN, arguments.nomain)

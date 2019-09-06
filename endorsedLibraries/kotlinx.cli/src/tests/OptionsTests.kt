@@ -3,8 +3,10 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kliopt
+package kotlinx.cli
 
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
 import kotlin.test.*
 
 class OptionsTests {
@@ -41,9 +43,9 @@ class OptionsTests {
     @Test
     fun testMultipleOptions() {
         val argParser = ArgParser("testParser")
-        val useShortForm by argParser.option(ArgType.Boolean, "short", "s", "Show short version of report", defaultValue = false)
-        val renders by argParser.options(ArgType.Choice(listOf("text", "html", "xml", "json")),
-                "renders", "r", "Renders for showing information", listOf("text"), multiple = true)
+        val useShortForm by argParser.option(ArgType.Boolean, "short", "s", "Show short version of report").default(false)
+        val renders by argParser.option(ArgType.Choice(listOf("text", "html", "xml", "json")),
+                "renders", "r", "Renders for showing information").multiple().default(listOf("text"))
         argParser.parse(arrayOf("-s", "-r", "text", "-r", "json"))
         assertEquals(true, useShortForm)
         assertEquals(2, renders.size)
@@ -55,12 +57,34 @@ class OptionsTests {
     @Test
     fun testDefaultOptions() {
         val argParser = ArgParser("testParser")
-        val useShortForm by argParser.option(ArgType.Boolean, "short", "s", "Show short version of report", defaultValue = false)
-        val renders by argParser.options(ArgType.Choice(listOf("text", "html", "xml", "json")),
-                "renders", "r", "Renders for showing information", listOf("text"), multiple = true)
+        val useShortForm by argParser.option(ArgType.Boolean, "short", "s", "Show short version of report").default(false)
+        val renders by argParser.option(ArgType.Choice(listOf("text", "html", "xml", "json")),
+                "renders", "r", "Renders for showing information").multiple().default(listOf("text"))
         val output by argParser.option(ArgType.String, "output", "o", "Output file")
         argParser.parse(arrayOf("-o", "out.txt"))
         assertEquals(false, useShortForm)
         assertEquals("text", renders[0])
+    }
+
+    @Test
+    fun testResetOptionsValues() {
+        val argParser = ArgParser("testParser")
+        val useShortFormOption = argParser.option(ArgType.Boolean, "short", "s", "Show short version of report").default(false)
+        var useShortForm by useShortFormOption
+        val rendersOption = argParser.option(ArgType.Choice(listOf("text", "html", "xml", "json")),
+                "renders", "r", "Renders for showing information").multiple().default(listOf("text"))
+        var renders by rendersOption
+        val outputOption = argParser.option(ArgType.String, "output", "o", "Output file")
+        var output by outputOption
+        argParser.parse(arrayOf("-o", "out.txt"))
+        output = null
+        useShortForm = true
+        renders = listOf()
+        assertEquals(true, useShortForm)
+        assertEquals(null, output)
+        assertEquals(0, renders.size)
+        assertEquals(ArgParser.ValueOrigin.REDEFINED, outputOption.valueOrigin)
+        assertEquals(ArgParser.ValueOrigin.REDEFINED, useShortFormOption.valueOrigin)
+        assertEquals(ArgParser.ValueOrigin.REDEFINED, rendersOption.valueOrigin)
     }
 }
