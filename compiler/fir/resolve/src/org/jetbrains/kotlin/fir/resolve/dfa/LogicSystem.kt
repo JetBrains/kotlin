@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import com.google.common.collect.HashMultimap
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 class LogicSystem(private val context: DataFlowInferenceContext) {
     private fun <E> List<Set<E>>.intersectSets(): Set<E> = takeIf { isNotEmpty() }?.reduce { x, y -> x.intersect(y) } ?: emptySet()
@@ -20,7 +21,7 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
             .forEach { variable ->
                 val infos = storages.map { it.approvedInfos[variable]!! }
                 if (infos.isNotEmpty()) {
-                    approvedFacts[variable] = context.or(infos)
+                    approvedFacts[variable] = or(infos)
                 }
             }
 
@@ -49,7 +50,7 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
         for (variable in left.keys.union(right.keys)) {
             val leftInfo = left[variable]
             val rightInfo = right[variable]
-            map[variable] = context.and(listOfNotNull(leftInfo, rightInfo))
+            map[variable] = and(listOfNotNull(leftInfo, rightInfo))
         }
         return map
     }
@@ -63,7 +64,7 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
         for (variable in left.keys.intersect(right.keys)) {
             val leftInfo = left[variable]!!
             val rightInfo = right[variable]!!
-            map[variable] = context.or(listOf(leftInfo, rightInfo))
+            map[variable] = or(listOf(leftInfo, rightInfo))
         }
         return map
     }
@@ -89,7 +90,7 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
             flow.approvedInfos[variable]?.let {
                 infos.add(it)
             }
-            flow.approvedInfos[variable] = context.and(infos)
+            flow.approvedInfos[variable] = and(infos)
             if (variable.isThisReference) {
                 updatedReceivers += variable
             }
@@ -108,6 +109,30 @@ class LogicSystem(private val context: DataFlowInferenceContext) {
                 newFacts.put(it.variable, it.info)
             }
         }
-        return newFacts.asMap().mapValuesTo(mutableMapOf()) { (_, infos) -> context.and(infos) }
+        return newFacts.asMap().mapValuesTo(mutableMapOf()) { (_, infos) -> and(infos) }
+    }
+
+    private fun or(infos: Collection<FirDataFlowInfo>): FirDataFlowInfo {
+        infos.singleOrNull()?.let { return it }
+        val exactType = orTypes(infos.map { it.exactType })
+        val exactNotType = orTypes(infos.map { it.exactNotType })
+        return FirDataFlowInfo(exactType, exactNotType)
+    }
+
+    private fun orTypes(types: Collection<Set<ConeKotlinType>>): Set<ConeKotlinType> {
+        if (types.any { it.isEmpty() }) return emptySet()
+        val allTypes = types.flatMapTo(mutableSetOf()) { it }
+        val commonTypes = allTypes.toMutableSet()
+        types.forEach { commonTypes.retainAll(it) }
+        val differentTypes = allTypes - commonTypes
+        context.commonSuperTypeOrNull(differentTypes.toList())?.let { commonTypes += it }
+        return commonTypes
+    }
+
+    private fun and(infos: Collection<FirDataFlowInfo>): FirDataFlowInfo {
+        infos.singleOrNull()?.let { return it }
+        val exactType = infos.flatMapTo(mutableSetOf()) { it.exactType }
+        val exactNotType = infos.flatMapTo(mutableSetOf()) { it.exactNotType }
+        return FirDataFlowInfo(exactType, exactNotType)
     }
 }
