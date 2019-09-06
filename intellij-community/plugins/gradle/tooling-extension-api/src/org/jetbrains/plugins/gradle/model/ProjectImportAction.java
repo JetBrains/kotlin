@@ -237,6 +237,9 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         BuildModelConsumer modelConsumer = new BuildModelConsumer() {
           @Override
           public void consumeProjectModel(@NotNull ProjectModel projectModel, @NotNull Object object, @NotNull Class clazz) {
+            if (myUseCustomSerialization) {
+              object = serializerAdapter.serialize(object);
+            }
             allModels.addModel(object, clazz, projectModel);
             obtainedModels.add(clazz.getName());
           }
