@@ -181,14 +181,12 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
         updateDashboard(true);
 
         if (Registry.is("ide.service.view") && onAdd) {
-          RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
-          Set<RunnerAndConfigurationSettings> settingsSet = ExecutionManagerImpl.getInstance(myProject).getConfigurations(descriptor);
-          RunnerAndConfigurationSettings settings = ContainerUtil.getFirstItem(settingsSet);
+          RunnerAndConfigurationSettings settings = findSettings(content);
           if (settings != null) {
             RunDashboardServiceImpl service = new RunDashboardServiceImpl(settings);
             service.setContent(content);
-            RunConfigurationNode node = new RunConfigurationNode(myProject, service,
-                                                                 getCustomizers(settings, descriptor));
+            RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
+            RunConfigurationNode node = new RunConfigurationNode(myProject, service, getCustomizers(settings, descriptor));
             ServiceViewManager.getInstance(myProject).select(node, RunConfigurationsServiceViewContributor.class, true, false);
           }
         }
@@ -725,7 +723,11 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   private RunnerAndConfigurationSettings findSettings(@NotNull Content content) {
     RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
     Set<RunnerAndConfigurationSettings> settingsSet = ExecutionManagerImpl.getInstance(myProject).getConfigurations(descriptor);
-    return ContainerUtil.getFirstItem(settingsSet);
+    RunnerAndConfigurationSettings result = ContainerUtil.getFirstItem(settingsSet);
+    if (result != null) return result;
+
+    ProcessHandler processHandler = descriptor == null ? null : descriptor.getProcessHandler();
+    return processHandler == null ? null : processHandler.getUserData(RunContentManagerImpl.TEMPORARY_CONFIGURATION_KEY);
   }
 
   @Nullable
