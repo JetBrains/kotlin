@@ -27,6 +27,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.actions.VcsContextFactory;
 import com.intellij.openapi.vcs.annotate.AnnotationSource;
+import com.intellij.openapi.vcs.annotate.FileAnnotation;
 import com.intellij.openapi.vcs.annotate.ShowAllAffectedGenericAction;
 import com.intellij.openapi.vcs.history.VcsFileRevision;
 import com.intellij.openapi.vcs.history.VcsHistoryProvider;
@@ -280,7 +281,7 @@ public class AnnotateStackTraceAction extends DumbAwareAction {
     public String getLineText(int line, Editor editor) {
       LastRevision revision = myRevisions.get(line);
       if (revision != null) {
-        return String.format("%" + myMaxDateLength + "s", DateFormatUtil.formatPrettyDate(revision.getDate())) + " " + revision.getAuthor();
+        return String.format("%" + myMaxDateLength + "s", FileAnnotation.formatDate(revision.getDate())) + " " + revision.getAuthor();
       }
       return "";
     }
