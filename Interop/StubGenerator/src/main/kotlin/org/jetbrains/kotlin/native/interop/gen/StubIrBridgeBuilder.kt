@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.native.interop.gen.SimpleBridgeGeneratorImpl.Companion.INVALID_CLANG_IDENTIFIER_REGEX
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.ObjCProtocol
 import org.jetbrains.kotlin.native.interop.indexer.VoidType
@@ -75,8 +76,10 @@ class StubIrBridgeBuilder(
 
         private var currentFunctionWrapperId = 0
 
-        private fun generateFunctionWrapperName(functionName: String) =
-                "${functionName}_wrapper${currentFunctionWrapperId++}"
+        private fun generateFunctionWrapperName(packageName: String, functionName: String): String {
+            val validPackageName = packageName.replace(INVALID_CLANG_IDENTIFIER_REGEX, "_")
+            return "${validPackageName}_${functionName}_wrapper${currentFunctionWrapperId++}"
+        }
 
         override fun visitClass(element: ClassStub, owner: StubContainer?) {
             element.annotations.filterIsInstance<AnnotationStub.ObjC.ExternalClass>().firstOrNull()?.let {
@@ -135,7 +138,7 @@ class StubIrBridgeBuilder(
                     CCalleeWrapper(origin.function.name, emptyList())
                 } else {
                     val function = origin.function
-                    val wrapperName = generateFunctionWrapperName(function.name)
+                    val wrapperName = generateFunctionWrapperName(context.configuration.pkgName, function.name)
 
                     val returnType = function.returnType.getStringRepresentation()
                     val parameters = function.parameters.mapIndexed { index, parameter ->

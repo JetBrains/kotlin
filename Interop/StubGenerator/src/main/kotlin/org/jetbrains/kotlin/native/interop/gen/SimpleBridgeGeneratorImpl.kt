@@ -248,6 +248,6 @@ class SimpleBridgeGeneratorImpl(
     }
 
     companion object {
-        private val INVALID_CLANG_IDENTIFIER_REGEX = "[^a-zA-Z1-9_]".toRegex()
+        internal val INVALID_CLANG_IDENTIFIER_REGEX = "[^a-zA-Z1-9_]".toRegex()
     }
 }
