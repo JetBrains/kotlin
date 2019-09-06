@@ -3,9 +3,7 @@
   <!-- "org.jetbrains.plugins.gradle" id has been reused to avoid dependant plugins breakage-->
   <id>org.jetbrains.plugins.gradle</id>
   <description>
-    <![CDATA[
-      Plugin provides <a href=https://docs.gradle.org/current/userguide/java_plugin.html">the support for Java projects</a> for <a href="http://www.gradle.org">Gradle</a> build system.
-    ]]>
+    Plugin provides Java Gradle projects support
   </description>
   <vendor>JetBrains</vendor>
   <resource-bundle>messages.ActionsBundle</resource-bundle>
