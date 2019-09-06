@@ -396,4 +396,25 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertTestResults("testProject/kotlin-js-plugin-project/tests.xml", "nodeTest")
         }
     }
+
+    @Test
+    fun testKotlinJsKarmaDownloadChrome() = with(Project("kotlin-js-karma-download-chrome", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("test") {
+            assertFailed()
+
+            assertTasksExecuted(
+                ":kotlinNpmInstall",
+                ":compileKotlinJs",
+                ":compileTestKotlinJs"
+            )
+
+            assertFileExists("build/js/node_modules/puppeteer/.local-chromium")
+
+            assertTestResults("testProject/kotlin-js-karma-download-chrome/tests.xml", "browserTest")
+        }
+    }
 }
