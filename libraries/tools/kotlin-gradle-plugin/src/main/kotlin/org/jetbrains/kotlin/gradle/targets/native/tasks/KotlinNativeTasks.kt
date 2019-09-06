@@ -613,15 +613,15 @@ open class CInteropProcess : DefaultTask() {
             return "$baseName-cinterop-$interopName$suffix"
         }
 
+    @get:Internal
     val outputFile: File
-        @Internal get() = outputFileProvider.get().asFile
+        get() = outputFileProvider.get()
 
     // Inputs and outputs.
 
     @OutputFile
-    val outputFileProvider = newOutputFile().apply {
-        set { destinationDir.get().resolve(outputFileName) }
-    }
+    val outputFileProvider: Provider<File> =
+        project.provider { destinationDir.get().resolve(outputFileName) }
 
     val defFile: File
         @InputFile get() = settings.defFile
