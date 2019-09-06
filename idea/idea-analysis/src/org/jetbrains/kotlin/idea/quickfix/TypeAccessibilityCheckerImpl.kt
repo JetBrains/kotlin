@@ -39,7 +39,7 @@ class TypeAccessibilityCheckerImpl(
         }
 
     override fun incorrectTypes(declaration: KtNamedDeclaration): Collection<FqName?> = declaration.descriptor?.let {
-        incorrectTypesInSequence(it.collectAllTypes(), false)
+        incorrectTypesInDescriptor(it, false)
     } ?: listOf(null)
 
     override fun incorrectTypes(descriptor: DeclarationDescriptor): Collection<FqName?> = incorrectTypesInDescriptor(descriptor, false)
