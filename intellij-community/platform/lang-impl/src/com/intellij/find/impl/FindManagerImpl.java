@@ -562,23 +562,6 @@ public class FindManagerImpl extends FindManager {
           for (Language relevantLanguage : relevantLanguages) {
             tokensOfInterest = addTokenTypesForLanguage(model, relevantLanguage, tokensOfInterest);
           }
-
-          if (model.isInStringLiteralsOnly()) {
-            // TODO: xml does not have string literals defined so we add XmlAttributeValue element type as convenience
-            final Lexer xmlLexer = getHighlighter(null, Language.findLanguageByID("XML")).getHighlightingLexer();
-            final String marker = "xxx";
-            xmlLexer.start("<a href=\"" + marker + "\" />");
-
-            while (!marker.equals(xmlLexer.getTokenText())) {
-              xmlLexer.advance();
-              if (xmlLexer.getTokenType() == null) break;
-            }
-
-            IElementType convenienceXmlAttrType = xmlLexer.getTokenType();
-            if (convenienceXmlAttrType != null) {
-              tokensOfInterest = TokenSet.orSet(tokensOfInterest, TokenSet.create(convenienceXmlAttrType));
-            }
-          }
         }
         else {
           relevantLanguages = new HashSet<>();
