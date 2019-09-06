@@ -111,6 +111,13 @@ class DataFlowVariableStorage {
         }
     }
 
+    fun removeVariableIfSynthetic(variable: DataFlowVariable): FirElement? {
+        if (variable is SyntheticDataFlowVariable) {
+            return removeVariable(variable)
+        }
+        return null
+    }
+
     operator fun get(variable: DataFlowVariable): FirElement? {
         return variable.fir
     }
