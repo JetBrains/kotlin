@@ -100,6 +100,8 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
      * Start re-highlighting for opened scripts
      */
     override fun clearConfigurationCachesAndRehighlight() {
+        ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+
         clearAndRehighlight()
     }
 

@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.idea.script
 
+import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
 import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.ComparisonFailure
 
+@DaemonAnalyzerTestCase.CanChangeDocumentDuringHighlighting
 abstract class AbstractScriptDefinitionsOrderTest : AbstractScriptConfigurationTest() {
     fun doTest(path: String) {
         configureScriptFile(path)
@@ -41,7 +42,6 @@ abstract class AbstractScriptDefinitionsOrderTest : AbstractScriptConfigurationT
         }
 
         ScriptDefinitionsManager.getInstance(project).reorderScriptDefinitions()
-        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFile, project)
 
         checkHighlighting(editor, false, false)
     }
