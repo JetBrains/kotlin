@@ -2,8 +2,8 @@
 package org.jetbrains.plugins.gradle.model;
 
 import org.gradle.tooling.BuildController;
-import org.gradle.tooling.model.BuildModel;
 import org.gradle.tooling.model.Model;
+import org.gradle.tooling.model.gradle.GradleBuild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,9 +19,9 @@ public final class ClassSetImportModelProvider implements ProjectImportModelProv
   }
 
   @Override
-  public <T extends Model & BuildModel> void populateBuildModels(@NotNull BuildController controller,
-                                                                 @NotNull T buildModel,
-                                                                 @NotNull BuildModelConsumer consumer) {
+  public void populateBuildModels(@NotNull BuildController controller,
+                                  @NotNull GradleBuild buildModel,
+                                  @NotNull BuildModelConsumer consumer) {
     for (Class<?> aClass : buildModelClasses) {
       Object instance = controller.findModel(buildModel, aClass);
       if (instance != null) {
