@@ -14,12 +14,16 @@ import com.intellij.util.io.*
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.description.Description
+import org.junit.Assert.assertEquals
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.attribute.FileTime
+import java.util.*
 
 private val LOG = logger<ConfigImportHelperTest>()
 
@@ -28,6 +32,10 @@ class ConfigImportHelperTest {
     @JvmField
     @ClassRule
     val appRule = ApplicationRule()
+
+    @JvmField
+    @ClassRule
+    val localTempFolder = TemporaryFolder()
   }
 
   @JvmField
@@ -187,6 +195,46 @@ class ConfigImportHelperTest {
     else {
       assertThat(optionFile).doesNotExist()
     }
+  }
+
+  @Test
+  fun `migrate settings to empty folder`() {
+    val unique = UUID.randomUUID()
+    val oldPath = localTempFolder.newFolder("oldConfig$unique")
+    val newPath = localTempFolder.newFolder("newConfig$unique")
+
+    val oldPluginPath = File(oldPath, "plugins")
+    oldPluginPath.mkdirs()
+    File(oldPluginPath, "myOldPlugin").createNewFile()
+
+    val newPluginPath = File(newPath, "plugins")
+
+    ConfigImportHelper.doImport(oldPath.toPath(), newPath.toPath(), oldPath.toPath(), oldPluginPath.toPath(), newPluginPath.toPath(), LOG)
+
+    val newPathFiles = newPluginPath.listFiles()!!
+    assertEquals(1, newPathFiles.size)
+    assertEquals("myOldPlugin", newPathFiles[0].name)
+  }
+
+  @Test
+  fun `migrate settings to folder with existing plugin`() {
+    val unique = UUID.randomUUID()
+    val oldPath = localTempFolder.newFolder("oldConfig$unique")
+    val newPath = localTempFolder.newFolder("newConfig$unique")
+
+    val oldPluginPath = File(oldPath, "plugins")
+    oldPluginPath.mkdirs()
+    File(oldPluginPath, "myOldPlugin").createNewFile()
+
+    val newPluginPath = File(newPath, "plugins")
+    newPluginPath.mkdirs()
+    File(newPluginPath, "myNewPlugin").createNewFile()
+
+    ConfigImportHelper.doImport(oldPath.toPath(), newPath.toPath(), oldPath.toPath(), oldPluginPath.toPath(), newPluginPath.toPath(), LOG)
+
+    val newPathFiles = newPluginPath.listFiles()!!
+    assertEquals(1, newPathFiles.size)
+    assertEquals("myNewPlugin", newPathFiles[0].name)
   }
 
   private fun writeStorageFile(version: String, lastModified: Long, isMacOs: Boolean) {
