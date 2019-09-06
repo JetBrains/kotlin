@@ -12,6 +12,7 @@ import com.intellij.internal.statistic.eventLog.LogEvent
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -41,8 +42,10 @@ class StatisticsEventLogToolWindow(project: Project, private val recorderId: Str
 
     setContent(consoleLog.component)
 
-    val actionGroup = consoleLog.orCreateActions
-    toolbar = ActionManager.getInstance().createActionToolbar("FusEventLogToolWindow", actionGroup, false).component
+    val toolbarActions = DefaultActionGroup()
+    toolbarActions.add(consoleLog.orCreateActions)
+    toolbarActions.add(ConfigureWhitelistAction())
+    toolbar = ActionManager.getInstance().createActionToolbar("FusEventLogToolWindow", toolbarActions, false).component
 
     Disposer.register(this, consoleLog)
     EventLogNotificationService.subscribe(eventLogListener, recorderId)
