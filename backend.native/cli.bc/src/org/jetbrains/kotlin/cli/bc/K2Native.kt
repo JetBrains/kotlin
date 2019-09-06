@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.bc
 import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
@@ -24,15 +25,14 @@ import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.serialization.konan.KonanMetadataVersion
 
 private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
-    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KonanMetadataVersion(*versionArray)
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KlibMetadataVersion(*versionArray)
 
     override val performanceManager:CommonCompilerPerformanceManager by lazy {
         K2NativeCompilerPerformanceManager()
@@ -67,7 +67,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         /* Set default version of metadata version */
         val metadataVersionString = arguments.metadataVersion
         if (metadataVersionString == null) {
-            configuration.put(CommonConfigurationKeys.METADATA_VERSION, KonanMetadataVersion.INSTANCE)
+            configuration.put(CommonConfigurationKeys.METADATA_VERSION, KlibMetadataVersion.INSTANCE)
         }
 
         try {
@@ -222,7 +222,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     companion object {
         @JvmStatic fun main(args: Array<String>) {
             profile("Total compiler main()") {
-                CLITool.doMain(K2Native(), args)
+                doMain(K2Native(), args)
             }
         }
     }

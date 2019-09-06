@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.SyntheticModulesOrigin
-import org.jetbrains.kotlin.descriptors.konan.konanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.SearchPathResolver
-import org.jetbrains.kotlin.konan.library.isInterop
-import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolveResult
+import org.jetbrains.kotlin.library.SearchPathResolver
+import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
 internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromLibraries((config.exportedLibraries + config.includedLibraries).toSet())
@@ -24,17 +21,17 @@ internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = g
 
 private fun Context.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
     moduleDescriptor.allDependencyModules.filter {
-        when (val origin = it.konanModuleOrigin) {
-            CurrentKonanModuleOrigin, SyntheticModulesOrigin -> false
-            is DeserializedKonanModuleOrigin -> origin.library in libraries
+        when (val origin = it.klibModuleOrigin) {
+            CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
+            is DeserializedKlibModuleOrigin -> origin.library in libraries
         }
     }
 
 internal fun getExportedLibraries(
-        configuration: CompilerConfiguration,
-        resolvedLibraries: KonanLibraryResolveResult,
-        resolver: SearchPathResolver,
-        report: Boolean
+    configuration: CompilerConfiguration,
+    resolvedLibraries: KotlinLibraryResolveResult,
+    resolver: SearchPathResolver<KonanLibrary>,
+    report: Boolean
 ): List<KonanLibrary> = getFeaturedLibraries(
         configuration.getList(KonanConfigKeys.EXPORTED_LIBRARIES),
         resolvedLibraries,
@@ -46,7 +43,7 @@ internal fun getExportedLibraries(
 internal fun getIncludedLibraries(
     includedLibraryFiles: List<File>,
     configuration: CompilerConfiguration,
-    resolvedLibraries: KonanLibraryResolveResult
+    resolvedLibraries: KotlinLibraryResolveResult
 ): List<KonanLibrary> = getFeaturedLibraries(
         includedLibraryFiles.toSet(),
         resolvedLibraries,
@@ -56,8 +53,8 @@ internal fun getIncludedLibraries(
 
 internal fun getCoveredLibraries(
     configuration: CompilerConfiguration,
-    resolvedLibraries: KonanLibraryResolveResult,
-    resolver: SearchPathResolver
+    resolvedLibraries: KotlinLibraryResolveResult,
+    resolver: SearchPathResolver<KonanLibrary>
 ): List<KonanLibrary> = getFeaturedLibraries(
         configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER),
         resolvedLibraries,
@@ -147,8 +144,8 @@ private sealed class FeaturedLibrariesReporter {
 
 private fun getFeaturedLibraries(
         featuredLibraries: List<String>,
-        resolvedLibraries: KonanLibraryResolveResult,
-        resolver: SearchPathResolver,
+        resolvedLibraries: KotlinLibraryResolveResult,
+        resolver: SearchPathResolver<KonanLibrary>,
         reporter: FeaturedLibrariesReporter,
         allowDefaultLibs: Boolean
 ) = getFeaturedLibraries(
@@ -160,13 +157,13 @@ private fun getFeaturedLibraries(
 
 private fun getFeaturedLibraries(
     featuredLibraryFiles: Set<File>,
-    resolvedLibraries: KonanLibraryResolveResult,
+    resolvedLibraries: KotlinLibraryResolveResult,
     reporter: FeaturedLibrariesReporter,
     allowDefaultLibs: Boolean
 ) : List<KonanLibrary> {
     val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
     val result = mutableListOf<KonanLibrary>()
-    val libraries = resolvedLibraries.getFullList(null)
+    val libraries = resolvedLibraries.getFullList(null) as List<KonanLibrary>
 
     for (library in libraries) {
         val libraryFile = library.libraryFile

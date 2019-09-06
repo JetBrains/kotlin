@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -16,18 +17,17 @@ import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolveResult
 import org.jetbrains.kotlin.konan.utils.KonanFactories
-import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDescriptorFactory
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.serialization.konan.KonanResolvedModuleDescriptors
+import org.jetbrains.kotlin.serialization.konan.KotlinResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal object TopDownAnalyzerFacadeForKonan {
@@ -38,8 +38,8 @@ internal object TopDownAnalyzerFacadeForKonan {
 
         val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
-        val module = DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
-                moduleName, projectContext.storageManager, origin = CurrentKonanModuleOrigin)
+        val module = KonanFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
+                moduleName, projectContext.storageManager, origin = CurrentKlibModuleOrigin)
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
         val resolvedDependencies = ResolvedDependencies(
@@ -100,21 +100,21 @@ internal object TopDownAnalyzerFacadeForKonan {
 }
 
 private class ResolvedDependencies(
-        resolvedLibraries: KonanLibraryResolveResult,
-        storageManager: StorageManager,
-        builtIns: KotlinBuiltIns,
-        specifics: LanguageVersionSettings,
-        friendModuleFiles: Set<File>
+    resolvedLibraries: KotlinLibraryResolveResult,
+    storageManager: StorageManager,
+    builtIns: KotlinBuiltIns,
+    specifics: LanguageVersionSettings,
+    friendModuleFiles: Set<File>
 ) {
 
-    val moduleDescriptors: KonanResolvedModuleDescriptors
+    val moduleDescriptors: KotlinResolvedModuleDescriptors
     val friends: Set<ModuleDescriptorImpl>
 
     init {
 
         val collectedFriends = mutableListOf<ModuleDescriptorImpl>()
 
-        val customAction: (KonanLibrary, ModuleDescriptorImpl) -> Unit = { library, moduleDescriptor ->
+        val customAction: (KotlinLibrary, ModuleDescriptorImpl) -> Unit = { library, moduleDescriptor ->
             if (friendModuleFiles.contains(library.libraryFile)) {
                 collectedFriends.add(moduleDescriptor)
             }

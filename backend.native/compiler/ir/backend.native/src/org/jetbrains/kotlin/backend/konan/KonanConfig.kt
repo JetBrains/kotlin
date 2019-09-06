@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -18,15 +19,13 @@ import org.jetbrains.kotlin.konan.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.defaultResolver
-import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.konan.util.Logger
+import org.jetbrains.kotlin.util.Logger
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.library.isInterop
+import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
@@ -148,7 +147,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
 
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder)
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder) as List<KonanLibrary>
     }
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {

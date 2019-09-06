@@ -7,21 +7,20 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
-import org.jetbrains.kotlin.backend.konan.ir.isReal
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.ReadOnlyProperty
@@ -318,10 +317,10 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     internal fun externalFunction(
-            name: String,
-            type: LLVMTypeRef,
-            origin: CompiledKonanModuleOrigin,
-            independent: Boolean = false
+        name: String,
+        type: LLVMTypeRef,
+        origin: CompiledKlibModuleOrigin,
+        independent: Boolean = false
     ): LLVMValueRef {
         this.imports.add(origin, onlyBitcode = independent)
 
@@ -352,7 +351,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
-    private fun externalNounwindFunction(name: String, type: LLVMTypeRef, origin: CompiledKonanModuleOrigin): LLVMValueRef {
+    private fun externalNounwindFunction(name: String, type: LLVMTypeRef, origin: CompiledKlibModuleOrigin): LLVMValueRef {
         val function = externalFunction(name, type, origin)
         setFunctionNoUnwind(function)
         return function
@@ -362,15 +361,15 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     class ImportsImpl(private val context: Context) : LlvmImports {
 
-        private val usedBitcode = mutableSetOf<KonanLibrary>()
-        private val usedNativeDependencies = mutableSetOf<KonanLibrary>()
+        private val usedBitcode = mutableSetOf<KotlinLibrary>()
+        private val usedNativeDependencies = mutableSetOf<KotlinLibrary>()
 
         private val allLibraries by lazy { context.librariesWithDependencies.toSet() }
 
-        override fun add(origin: CompiledKonanModuleOrigin, onlyBitcode: Boolean) {
+        override fun add(origin: CompiledKlibModuleOrigin, onlyBitcode: Boolean) {
             val library = when (origin) {
-                CurrentKonanModuleOrigin -> return
-                is DeserializedKonanModuleOrigin -> origin.library
+                CurrentKlibModuleOrigin -> return
+                is DeserializedKlibModuleOrigin -> origin.library
             }
 
             if (library !in allLibraries) {
@@ -391,13 +390,16 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val nativeDependenciesToLink: List<KonanLibrary> by lazy {
         context.config.resolvedLibraries
                 .getFullList(TopologicalLibraryOrder)
-                .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it) }
+                .filter {
+                    require(it is KonanLibrary)
+                    (!it.isDefault && !context.config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it)
+                } as List<KonanLibrary>
 
     }
 
+
     val bitcodeToLink: List<KonanLibrary> by lazy {
-        context.config.resolvedLibraries
-                .getFullList(TopologicalLibraryOrder)
+        (context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder) as List<KonanLibrary>)
                 .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
                 // TODO: the filter above is incorrect when compiling to multiple LLVM modules.
                 .filter { context.llvmModuleSpecification.containsLibrary(it) }

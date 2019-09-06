@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 import java.io.File
 import java.io.StringReader
 import java.util.*

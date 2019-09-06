@@ -839,7 +839,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         val function = expression.symbol.owner
 
         if (descriptor == interop.nativePointedRawPtrGetter ||
-                OverridingUtil.overrides(descriptor, interop.nativePointedRawPtrGetter)) {
+                OverridingUtil.overrides(descriptor, interop.nativePointedRawPtrGetter, false)) {
 
             // Replace by the intrinsic call to be handled by code generator:
             return builder.irCall(symbols.interopNativePointedGetRawPointer).apply {

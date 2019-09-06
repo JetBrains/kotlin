@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
@@ -930,7 +930,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
     }
 
-    fun getObjCClass(binaryName: String, llvmSymbolOrigin: CompiledKonanModuleOrigin): LLVMValueRef {
+    fun getObjCClass(binaryName: String, llvmSymbolOrigin: CompiledKlibModuleOrigin): LLVMValueRef {
         context.llvm.imports.add(llvmSymbolOrigin)
         return load(codegen.objCDataGenerator!!.genClassRef(binaryName).llvm)
     }

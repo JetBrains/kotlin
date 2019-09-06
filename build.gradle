@@ -65,6 +65,7 @@ ext {
     kotlinNativeUtilsModule="org.jetbrains.kotlin:kotlin-native-utils:${kotlinVersion}"
     kotlinUtilIoModule="org.jetbrains.kotlin:kotlin-util-io:${kotlinVersion}"
     kotlinUtilKlibModule="org.jetbrains.kotlin:kotlin-util-klib:${kotlinVersion}"
+    kotlinUtilKliMetadatabModule="org.jetbrains.kotlin:kotlin-util-klib-metadata:${kotlinVersion}"
 
     konanVersionFull = KonanVersionGeneratedKt.getCurrentKonanVersion()
     gradlePluginVersion = konanVersionFull

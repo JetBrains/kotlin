@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 
 internal val LLVMValueRef.type: LLVMTypeRef
     get() = LLVMTypeOf(this)!!
@@ -212,7 +212,7 @@ internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported:
     return result
 }
 
-internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: CompiledKonanModuleOrigin,
+internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: CompiledKlibModuleOrigin,
                                        threadLocal: Boolean = false): LLVMValueRef {
 
     context.llvm.imports.add(origin)

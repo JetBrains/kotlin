@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.konan.util.nTabs
+import org.jetbrains.kotlin.util.nTabs
 import org.jetbrains.kotlin.descriptors.*
 
 class DeepPrintVisitor(worker: DeclarationDescriptorVisitor<Boolean, Int>): DeepVisitor<Int>(worker) {

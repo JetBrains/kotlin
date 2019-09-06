@@ -13,15 +13,16 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
-import org.jetbrains.kotlin.konan.library.resolverByName
+import org.jetbrains.kotlin.library.resolverByName
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.library.unpackZippedKonanLibraryTo
 import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
-import org.jetbrains.kotlin.konan.util.Logger
-import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
-import org.jetbrains.kotlin.serialization.konan.parseModuleHeader
+import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.lang.System.out
 import kotlin.system.exitProcess
@@ -85,7 +86,7 @@ object KlibToolLogger : Logger {
 val defaultRepository = File(DependencyProcessor.localKonanDir.resolve("klib").absolutePath)
 
 open class ModuleDeserializer(val library: ByteArray) {
-    protected val moduleHeader: KonanProtoBuf.LinkDataLibrary
+    protected val moduleHeader: KlibMetadataProtoBuf.Header
         get() = parseModuleHeader(library)
 
     val moduleName: String
@@ -112,8 +113,11 @@ class Library(val name: String, val requestedRepository: String?, val target: St
         println("ABI version: $headerAbiVersion")
         println("Compiler version: ${headerCompilerVersion?.toString(true, true)}")
         println("Library version: $headerLibraryVersion")
-        val targets = library.targetList.joinToString(", ")
-        print("Available targets: $targets\n")
+
+        if (library is KonanLibrary) {
+            val targets = library.targetList.joinToString(", ")
+            print("Available targets: $targets\n")
+        }
     }
 
     fun install() {
@@ -151,7 +155,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
         val storageManager = LockBasedStorageManager("klib")
         val library = libraryInRepoOrCurrentDir(repository, name)
         val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
-        val module = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager)
+        val module = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager, null)
 
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isKonanStdlib()) {
@@ -163,7 +167,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
             resolver.defaultLinks(false, true, true)
                     .mapTo(defaultModules) {
                         DefaultDeserializedDescriptorFactory.createDescriptor(
-                                it, versionSpec, storageManager, module.builtIns)
+                                it, versionSpec, storageManager, module.builtIns, null)
                     }
         }
 
