@@ -39,7 +39,7 @@ class KotlinUFile(
 
     override val javaPsi: PsiElement? = null
 
-    override val sourcePsi: PsiElement? = psi
+    override val sourcePsi: KtFile = psi
 
     override val allCommentsInFile by lz {
         val comments = ArrayList<UComment>(0)

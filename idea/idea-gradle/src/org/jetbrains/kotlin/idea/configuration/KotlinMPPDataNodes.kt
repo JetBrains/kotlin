@@ -21,6 +21,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.io.Serializable
 import com.intellij.openapi.externalSystem.model.Key as ExternalKey
+import com.intellij.serialization.PropertyMapping
 
 var DataNode<out ModuleData>.kotlinSourceSet: KotlinSourceSetInfo?
         by CopyableDataNodeUserDataProperty(Key.create("KOTLIN_SOURCE_SET"))
@@ -28,7 +29,7 @@ var DataNode<out ModuleData>.kotlinSourceSet: KotlinSourceSetInfo?
 val DataNode<ModuleData>.kotlinAndroidSourceSets: List<KotlinSourceSetInfo>?
         get() = ExternalSystemApiUtil.getChildren(this, KotlinAndroidSourceSetData.KEY).firstOrNull()?.data?.sourceSetInfos
 
-class KotlinSourceSetInfo(val kotlinModule: KotlinModule) : Serializable {
+class KotlinSourceSetInfo @PropertyMapping("kotlinModule") constructor(val kotlinModule: KotlinModule) : Serializable {
     var moduleId: String? = null
     var gradleModuleId: String = ""
 
@@ -46,15 +47,15 @@ class KotlinSourceSetInfo(val kotlinModule: KotlinModule) : Serializable {
     var dependsOn: List<String> = emptyList()
 }
 
-class KotlinAndroidSourceSetData(
-    val sourceSetInfos: List<KotlinSourceSetInfo>
+class KotlinAndroidSourceSetData @PropertyMapping("sourceSetInfos") constructor(val sourceSetInfos: List<KotlinSourceSetInfo>
 ) : AbstractExternalEntityData(GradleConstants.SYSTEM_ID) {
     companion object {
         val KEY = ExternalKey.create(KotlinAndroidSourceSetData::class.java, KotlinTargetData.KEY.processingWeight + 1)
     }
 }
 
-class KotlinTargetData(name: String) : AbstractNamedData(GradleConstants.SYSTEM_ID, name) {
+class KotlinTargetData @PropertyMapping("externalName") constructor(externalName: String) :
+    AbstractNamedData(GradleConstants.SYSTEM_ID, externalName) {
     var moduleIds: Set<String> = emptySet()
     var archiveFile: File? = null
     var konanArtifacts: Collection<KonanArtifactModel>? = null

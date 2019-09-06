@@ -87,7 +87,6 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             override fun setDefaultNotNull(p0: String) = Unit
             override fun setInstrumentedNotNulls(p0: List<String>) = Unit
             override fun getInstrumentedNotNulls() = emptyList<String>()
-            override fun isJsr305Default(psiAnnotation: PsiAnnotation, p1: Array<PsiAnnotation.TargetType>) = null
         })
 
         applicationEnvironment.application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)

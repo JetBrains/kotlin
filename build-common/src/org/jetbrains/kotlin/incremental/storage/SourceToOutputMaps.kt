@@ -41,7 +41,7 @@ internal abstract class AbstractSourceToOutputMap<Name>(
     }
 
     fun add(sourceFile: File, className: Name) {
-        storage.append(pathConverter.toPath(sourceFile), nameTransformer.asString(className))
+        storage.append(pathConverter.toPath(sourceFile), listOf(nameTransformer.asString(className)))
     }
 
     fun contains(sourceFile: File): Boolean =

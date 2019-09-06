@@ -34,7 +34,7 @@ public abstract class AbstractTypingIndentationTestBase extends LightCodeInsight
         String originalFileText = FileUtil.loadFile(new File(originFilePath), true);
 
         try {
-            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText);
+            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, getProject());
             if (!inverted) {
                 configurator.configureSettings();
             }

@@ -26,7 +26,7 @@ class KotlinSliceDereferenceUsage(
         parent: KotlinSliceUsage,
         lambdaLevel: Int
 ) : KotlinSliceUsage(element, parent, lambdaLevel, false) {
-    override fun processChildren(processor: Processor<SliceUsage>) {
+    override fun processChildren(processor: Processor<in SliceUsage>) {
         // no children
     }
 

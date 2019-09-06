@@ -281,7 +281,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         return listOfNotNull(changePrimaryConstructorAction, addConstructorAction)
     }
 
-    override fun createAddPropertyActions(targetClass: JvmClass, request: MemberRequest.Property): List<IntentionAction> {
+    fun createAddPropertyActions(targetClass: JvmClass, request: MemberRequest.Property): List<IntentionAction> {
         val targetContainer = targetClass.toKtClassOrFile() ?: return emptyList()
         return createAddPropertyActions(
             targetContainer, listOf(request.visibilityModifier),
