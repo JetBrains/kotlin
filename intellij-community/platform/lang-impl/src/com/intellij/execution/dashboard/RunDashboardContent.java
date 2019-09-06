@@ -24,6 +24,7 @@ import com.intellij.execution.dashboard.tree.RunDashboardTreeModel;
 import com.intellij.execution.dashboard.tree.RunDashboardTreeStructure;
 import com.intellij.execution.runners.FakeRerunAction;
 import com.intellij.execution.services.ServiceViewTreeLinkMouseListener;
+import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunContentManagerImpl;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.icons.AllIcons;
@@ -65,6 +66,7 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.*;
 
+import static com.intellij.execution.dashboard.RunDashboardManagerImpl.findActionToolbar;
 import static com.intellij.execution.dashboard.RunDashboardManagerImpl.getRunnerLayoutUi;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 
@@ -329,10 +331,20 @@ public class RunDashboardContent extends JPanel implements TreeContent, Disposab
   }
 
   private void onContentAdded(Content content) {
-    RunnerLayoutUiImpl ui = getRunnerLayoutUi(RunContentManagerImpl.getRunContentDescriptorByContent(content));
-    if (ui == null) return;
+    List<AnAction> leftToolbarActions = null;
+    RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
+    RunnerLayoutUiImpl ui = getRunnerLayoutUi(descriptor);
+    if (ui != null) {
+      leftToolbarActions = ui.getActions();
+    }
+    else {
+      ActionToolbar toolbar = findActionToolbar(descriptor);
+      if (toolbar != null) {
+        leftToolbarActions = toolbar.getActions();
+      }
+    }
+    if (leftToolbarActions == null) return;
 
-    List<AnAction> leftToolbarActions = ui.getActions();
     myContentActions.put(content, leftToolbarActions);
     updateContentToolbar(content);
   }

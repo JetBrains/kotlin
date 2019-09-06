@@ -51,6 +51,7 @@ import java.util.Map;
 import static com.intellij.execution.dashboard.RunDashboardContent.RUN_DASHBOARD_CONTENT_TOOLBAR;
 import static com.intellij.execution.dashboard.RunDashboardContent.RUN_DASHBOARD_TREE_TOOLBAR;
 import static com.intellij.execution.dashboard.RunDashboardCustomizer.NODE_LINKS;
+import static com.intellij.execution.dashboard.RunDashboardManagerImpl.findActionToolbar;
 import static com.intellij.execution.dashboard.RunDashboardManagerImpl.getRunnerLayoutUi;
 import static com.intellij.openapi.actionSystem.ActionPlaces.RUN_DASHBOARD_POPUP;
 
@@ -130,13 +131,23 @@ public class RunConfigurationsServiceViewContributor
     DefaultActionGroup actionGroup = new DefaultActionGroup();
     actionGroup.add(ActionManager.getInstance().getAction(RUN_DASHBOARD_CONTENT_TOOLBAR));
 
+    List<AnAction> leftToolbarActions = null;
     RunnerLayoutUiImpl ui = getRunnerLayoutUi(descriptor);
-    if (ui == null) return actionGroup;
+    if (ui != null) {
+      leftToolbarActions = ui.getActions();
+    }
+    else {
+      ActionToolbar toolbar = findActionToolbar(descriptor);
+      if (toolbar != null) {
+        leftToolbarActions = toolbar.getActions();
+      }
+    }
 
-    List<AnAction> leftToolbarActions = ui.getActions();
-    for (AnAction action : leftToolbarActions) {
-      if (!(action instanceof StopAction) && !(action instanceof FakeRerunAction)) {
-        actionGroup.add(action);
+    if (leftToolbarActions != null) {
+      for (AnAction action : leftToolbarActions) {
+        if (!(action instanceof StopAction) && !(action instanceof FakeRerunAction)) {
+          actionGroup.add(action);
+        }
       }
     }
     return actionGroup;

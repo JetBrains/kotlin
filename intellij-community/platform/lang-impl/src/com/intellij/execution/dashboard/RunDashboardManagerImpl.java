@@ -18,6 +18,7 @@ import com.intellij.execution.ui.RunContentManagerImpl;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -44,8 +45,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -741,10 +744,17 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   }
 
   private static void updateContentToolbar(Content content, boolean visible) {
-    RunnerLayoutUiImpl ui = getRunnerLayoutUi(RunContentManagerImpl.getRunContentDescriptorByContent(content));
+    RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
+    RunnerLayoutUiImpl ui = getRunnerLayoutUi(descriptor);
     if (ui != null) {
       ui.setLeftToolbarVisible(visible);
       ui.setContentToolbarBefore(visible);
+    }
+    else {
+      ActionToolbar toolbar = findActionToolbar(descriptor);
+      if (toolbar != null) {
+        toolbar.getComponent().setVisible(visible);
+      }
     }
   }
 
@@ -759,6 +769,18 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
     RunnerLayoutUi layoutUi = descriptor.getRunnerLayoutUi();
     return layoutUi instanceof RunnerLayoutUiImpl ? (RunnerLayoutUiImpl)layoutUi : null;
+  }
+
+  @Nullable
+  static ActionToolbar findActionToolbar(@Nullable RunContentDescriptor descriptor) {
+    if (descriptor == null) return null;
+
+    for (Component component : descriptor.getComponent().getComponents()) {
+      if (component instanceof ActionToolbar) {
+        return ((ActionToolbar)component);
+      }
+    }
+    return null;
   }
 
   @Nullable
