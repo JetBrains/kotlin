@@ -8,11 +8,11 @@ fun <R, vararg Ts> variadic (
     vararg arguments: *Box<Box<Ts>>,
     transform: (*Box<Ts>) -> R
 ): R {
-    val args = Tuple<Any?>(arguments.size)
+    val args = Tuple<Box<Ts>>(arguments.size)
     for (i in 0 until arguments.size) {
-        args[i] = (arguments[i] as Box<Any?>).value
+        args[i] = arguments.get<Box<Any?>>(i).value
     }
-    return transform(args as Tuple<Box<Ts>>)
+    return transform(args)
 }
 
 fun box(): String {

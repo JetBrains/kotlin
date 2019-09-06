@@ -41,7 +41,7 @@ fun <vararg Ts, R: Any> Collector<R>.transformOnCollector(
 ) {
     val arguments = Tuple<Ts>(args.size)
     for (index in 0 until args.size) {
-        arguments[index] = (args[index] as Box<Any?>).value
+        arguments[index] = args.get<Box<Any?>>(index).value
     }
     transform(arguments)
 }

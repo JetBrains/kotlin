@@ -86,15 +86,15 @@ public class Tuple<Ts>(size: Int = 0) : Iterable<Any?> {
     val size: Int
         get() = elements.size
 
-    operator fun get(index: Int): Any? = elements[index]
-    operator fun set(index: Int, value: Any?) {
+    operator fun <T> get(index: Int): T = elements[index] as T
+    operator fun <T> set(index: Int, value: T) {
         elements[index] = value
     }
 
     fun clone(): Tuple<Ts> {
         val newTuple = Tuple<Ts>(size)
         for (i in 0..elements.lastIndex) {
-            newTuple[i] = get(i)
+            newTuple[i] = get<Any?>(i)
         }
         return newTuple
     }
@@ -102,14 +102,8 @@ public class Tuple<Ts>(size: Int = 0) : Iterable<Any?> {
     override fun iterator(): Iterator<Any?> {
         return object : Iterator<Any?> {
             private var currentIndex = 0
-            override fun next() = get(currentIndex++)
+            override fun next() = get<Any?>(currentIndex++)
             override fun hasNext() = currentIndex < size
         }
     }
 }
-
-public operator fun <Ts> Tuple<Ts>.component1(): Any? = get(0)
-public operator fun <Ts> Tuple<Ts>.component2(): Any? = get(1)
-public operator fun <Ts> Tuple<Ts>.component3(): Any? = get(2)
-public operator fun <Ts> Tuple<Ts>.component4(): Any? = get(3)
-public operator fun <Ts> Tuple<Ts>.component5(): Any? = get(4)

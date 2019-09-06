@@ -9,7 +9,7 @@ fun <T, R, vararg Ts> Box<T>.withOthers (
 ): Box<R> {
     val args = Tuple<Any?>(others.size)
     for (i in 0 until others.size) {
-        args[i] = (others[i] as Box<Any?>).value
+        args[i] = (others.get<Box<Any?>>(i)).value
     }
     return Box(transform(this.value, args as Tuple<Ts>))
 }
