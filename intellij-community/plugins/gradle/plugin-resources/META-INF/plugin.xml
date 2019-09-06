@@ -1,6 +1,6 @@
 <idea-plugin url="https://www.jetbrains.com/help/idea/gradle.html" xmlns:xi="http://www.w3.org/2001/XInclude">
   <name>Gradle</name>
-  <id>org.jetbrains.plugins.gradle</id>
+  <id>com.intellij.gradle</id>
   <vendor>JetBrains</vendor>
   <description>
       <![CDATA[
@@ -13,7 +13,7 @@
       <li>Ability to edit .gradle files. The initial coding assistance is the same as for Groovy.</li>
       <li>Dedicated Gradle tool window.</li>
       <li>Ability to synchronize structures of Gradle and product's projects.</li>
-      <li>Running Gradle scripts with the Groovy run/debug configuration.</li>
+      <li>Running Gradle tasks with the Gradle run/debug configuration.</li>
       <li>Ability to use Gradle wrapper and auto-import.</li>
       </ul>
 
@@ -22,9 +22,6 @@
 
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.externalSystem</depends>
-  <xi:include href="/META-INF/gradle-java-integration.xml" xpointer="xpointer(/idea-plugin/*)">
-    <xi:fallback/>
-  </xi:include>
 
   <resource-bundle>i18n.GradleBundle</resource-bundle>
 
@@ -35,15 +32,15 @@
   </application-components>
 
   <extensionPoints>
-    <extensionPoint name="projectResolve" interface="org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension"/>
-    <extensionPoint name="taskManager" interface="org.jetbrains.plugins.gradle.service.task.GradleTaskManagerExtension"/>
-    <extensionPoint name="settingsControlProvider" interface="org.jetbrains.plugins.gradle.service.settings.GradleSettingsControlProvider"/>
-    <extensionPoint name="importCustomizer" interface="org.jetbrains.plugins.gradle.service.project.GradleImportCustomizer"/>
-    <extensionPoint name="testTasksProvider" interface="org.jetbrains.plugins.gradle.execution.test.runner.GradleTestTasksProvider"/>
-    <extensionPoint name="executionEnvironmentProvider" interface="org.jetbrains.plugins.gradle.execution.build.GradleExecutionEnvironmentProvider"/>
-    <extensionPoint name="orderEnumerationHandlerFactory"
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.projectResolve" interface="org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.taskManager" interface="org.jetbrains.plugins.gradle.service.task.GradleTaskManagerExtension"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.settingsControlProvider" interface="org.jetbrains.plugins.gradle.service.settings.GradleSettingsControlProvider"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.importCustomizer" interface="org.jetbrains.plugins.gradle.service.project.GradleImportCustomizer"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.testTasksProvider" interface="org.jetbrains.plugins.gradle.execution.test.runner.GradleTestTasksProvider"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.executionEnvironmentProvider" interface="org.jetbrains.plugins.gradle.execution.build.GradleExecutionEnvironmentProvider"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.orderEnumerationHandlerFactory"
                     interface="org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler$FactoryImpl"/>
-    <extensionPoint name="issueChecker" interface="org.jetbrains.plugins.gradle.issue.GradleIssueChecker"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.issueChecker" interface="org.jetbrains.plugins.gradle.issue.GradleIssueChecker"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">

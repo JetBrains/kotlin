@@ -16,7 +16,7 @@
 
 <idea-plugin>
   <module value="org.jetbrains.plugins.gradle.native"/>
-  <depends>org.jetbrains.plugins.gradle</depends>
+  <depends>com.intellij.gradle</depends>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <projectResolve implementation="org.jetbrains.plugins.gradle.nativeplatform.project.GradleNativeProjectResolver"/>

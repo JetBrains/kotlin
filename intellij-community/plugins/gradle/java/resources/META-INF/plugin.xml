@@ -1,18 +1,31 @@
-<idea-plugin>
+<idea-plugin implementation-detail="true">
+  <name>Gradle-Java</name>
+  <!-- "org.jetbrains.plugins.gradle" id has been reused to avoid dependant plugins breakage-->
+  <id>org.jetbrains.plugins.gradle</id>
+  <description>
+    <![CDATA[
+      Plugin provides <a href=https://docs.gradle.org/current/userguide/java_plugin.html">the support for Java projects</a> for <a href="http://www.gradle.org">Gradle</a> build system.
+    ]]>
+  </description>
+  <vendor>JetBrains</vendor>
+  <resource-bundle>messages.ActionsBundle</resource-bundle>
 
-  <module value="org.jetbrains.plugins.gradle.java"/>
+  <depends>com.intellij.java</depends>
+  <depends>com.intellij.gradle</depends>
+
   <module value="com.intellij.modules.gradle.java"/>
-
-  <depends>com.intellij.modules.java</depends>
+  <module value="org.jetbrains.plugins.gradle.java"/>
 
   <depends optional="true" config-file="gradle-maven-integration.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="gradle-coverage-integration.xml">Coverage</depends>
   <depends optional="true" config-file="gradle-groovy-integration.xml">org.intellij.groovy</depends>
 
+  <resource-bundle>i18n.GradleInspectionBundle</resource-bundle>
+
   <extensionPoints>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.frameworkSupport" interface="org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.kotlinDslFrameworkSupport" interface="org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider"/>
-    <extensionPoint qualifiedName="org.jetbrains.plugins.gradle.buildTasksProvider" interface="org.jetbrains.plugins.gradle.execution.build.GradleBuildTasksProvider"/>
+    <extensionPoint name="frameworkSupport" interface="org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider"/>
+    <extensionPoint name="kotlinDslFrameworkSupport" interface="org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider"/>
+    <extensionPoint name="buildTasksProvider" interface="org.jetbrains.plugins.gradle.execution.build.GradleBuildTasksProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
