@@ -363,26 +363,32 @@ fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodege
 
 fun initializeVariablesForVariadicLambdaParameters(
     codegen: ExpressionCodegen,
-    valueParameters: List<ValueParameterDescriptor>
+    valueParameters: List<ValueParameterDescriptor>,
+    endLabel: Label? = null
 ) {
     codegen.runWithShouldMarkLineNumbers(false) {
         for (parameterDescriptor in valueParameters) {
             if (parameterDescriptor is ValueParameterDescriptorImpl.WithVariadicComponents)
-                initializeVariadicParameter(codegen, parameterDescriptor)
+                initializeVariadicParameter(codegen, parameterDescriptor, endLabel)
         }
     }
 }
 
 private fun initializeVariadicParameter(
     codegen: ExpressionCodegen,
-    parameterDescriptor: ValueParameterDescriptorImpl.WithVariadicComponents
+    parameterDescriptor: ValueParameterDescriptorImpl.WithVariadicComponents,
+    endLabel: Label?
 ) = with(codegen) {
     val tupleStackValue = findLocalOrCapturedValue(parameterDescriptor)
         ?: error("Stack value for tuple should not be null")
 
+    val indexedVariables = mutableMapOf<Int, VariableDescriptor>()
+
     parameterDescriptor.componentVariables.forEachIndexed { ix, variableDescriptor ->
         // TODO check underscores
         val index = myFrameMap.enter(variableDescriptor, typeMapper.mapType(variableDescriptor.type))
+        indexedVariables[index] = variableDescriptor
+
         val varType = codegen.asmType(variableDescriptor.type)
 
         val storeTo = StackValue.local(index, varType, variableDescriptor, null)
@@ -391,6 +397,21 @@ private fun initializeVariadicParameter(
         val initializer = tupleComponentInitializer(ix, tupleStackValue)
         initializer.put(initializer.type, initializer.kotlinType, v)
         storeTo.storeSelector(initializer.type, initializer.kotlinType, v)
+    }
+
+    if (endLabel != null) {
+        val label = Label()
+        v.mark(label)
+        for ((index, variable) in indexedVariables.entries) {
+            v.visitLocalVariable(
+                variable.name.asString(),
+                codegen.typeMapper.mapType(variable.type).descriptor,
+                null,
+                label,
+                endLabel,
+                index
+            )
+        }
     }
 }
 

@@ -114,6 +114,11 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
     }
 
+    @TestMetadata("variadicParameters.kt")
+    public void testVariadicParameters() throws Exception {
+        runTest("compiler/testData/checkLocalVariablesTable/variadicParameters.kt");
+    }
+
     @TestMetadata("compiler/testData/checkLocalVariablesTable/completionInSuspendFunction")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -202,6 +207,11 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         @TestMetadata("underscoreNames.kt")
         public void testUnderscoreNames() throws Exception {
             runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/underscoreNames.kt");
+        }
+
+        @TestMetadata("variadicParameters.kt")
+        public void testVariadicParameters() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/variadicParameters.kt");
         }
     }
 }

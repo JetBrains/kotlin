@@ -84,6 +84,11 @@ public class BlackBoxCodegenTestWithVariadicGenericsGenerated extends AbstractBl
         runTest("compiler/testData/codegen/variadicGenerics/transformSimpleValues.kt");
     }
 
+    @TestMetadata("variadicArgsInTheMiddle.kt")
+    public void testVariadicArgsInTheMiddle() throws Exception {
+        runTest("compiler/testData/codegen/variadicGenerics/variadicArgsInTheMiddle.kt");
+    }
+
     @TestMetadata("variadicToSimple.kt")
     public void testVariadicToSimple() throws Exception {
         runTest("compiler/testData/codegen/variadicGenerics/variadicToSimple.kt");
