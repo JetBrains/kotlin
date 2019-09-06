@@ -57,7 +57,7 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                 factory.generateIt(project, TypeAccessibilityChecker.create(project, module), element) ?: return@runWhenSmart
             } catch (e: KotlinTypeInaccessibleException) {
                 if (editor != null) {
-                    showErrorHint(project, editor, "Cannot generate expected $elementType: " + e.message, e.message)
+                    showErrorHint(project, editor, escapeXml("Cannot generate $elementType: " + e.message), "Inaccessible type")
                 }
                 return@runWhenSmart
             }

@@ -56,6 +56,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/classUpperBounds/");
         }
 
+        @TestMetadata("errorType")
+        public void testErrorType() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/errorType/");
+        }
+
         @TestMetadata("memberFunction")
         public void testMemberFunction() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/memberFunction/");
@@ -184,9 +189,19 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/companionAbsence/");
         }
 
+        @TestMetadata("membersWithIncorrectType")
+        public void testMembersWithIncorrectType() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/membersWithIncorrectType/");
+        }
+
         @TestMetadata("primaryConstructorAbsence")
         public void testPrimaryConstructorAbsence() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/primaryConstructorAbsence/");
+        }
+
+        @TestMetadata("propertyWithIncorrectType")
+        public void testPropertyWithIncorrectType() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/propertyWithIncorrectType/");
         }
 
         @TestMetadata("secondaryConstructorAbsence")

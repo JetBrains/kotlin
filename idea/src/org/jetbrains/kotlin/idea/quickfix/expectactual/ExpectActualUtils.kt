@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix.expectactual
 
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
@@ -265,7 +266,7 @@ internal fun generateCallable(
     generatedClass: KtClassOrObject? = null,
     checker: TypeAccessibilityChecker
 ): KtCallableDeclaration {
-    if (generateExpect) descriptor.checkAccessibility(checker)
+    descriptor.checkAccessibility(checker)
     val memberChooserObject = create(
         originalDeclaration, descriptor, descriptor,
         if (generateExpect || descriptor.modality == Modality.ABSTRACT) NO_BODY else EMPTY_OR_TEMPLATE
@@ -372,8 +373,10 @@ private fun AnnotationDescriptor.isValidInModule(checker: TypeAccessibilityCheck
 }
 
 class KotlinTypeInaccessibleException(fqNames: Collection<FqName?>) : Exception() {
-    override val message: String =
-        "${StringUtil.pluralize("Type", fqNames.size)} ${fqNames.joinToString()} is not accessible from common code"
+    override val message: String = "${StringUtil.pluralize(
+        "Type",
+        fqNames.size
+    )} ${TypeAccessibilityChecker.typesToString(fqNames)} is not accessible from target module"
 }
 
 fun KtNamedDeclaration.isAlwaysActual(): Boolean = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()
@@ -399,14 +402,27 @@ fun TypeAccessibilityChecker.isCorrectAndHaveNonPrivateModifier(declaration: KtN
     return false
 }
 
-private fun showInaccessibleDeclarationError(element: KtNamedDeclaration, message: String) {
-    element.findExistingEditor()?.let { editor ->
-        showErrorHint(element.project, editor, message, "Inaccessible declaration")
+fun showInaccessibleDeclarationError(element: KtNamedDeclaration, message: String, editor: Editor? = element.findExistingEditor()) {
+    editor?.let {
+        showErrorHint(element.project, editor, escapeXml(message), "Inaccessible declaration")
     }
 }
 
 fun TypeAccessibilityChecker.Companion.typesToString(types: Collection<FqName?>, separator: CharSequence = "\n"): String {
     return types.toSet().joinToString(separator = separator) {
-        it?.shortName()?.asString() ?: "Unknown type"
+        it?.shortName()?.asString() ?: "<Unknown>"
+    }
+}
+
+fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Collection<KtNamedDeclaration>): HashSet<String> {
+    var classes = elements.filterIsInstance<KtClassOrObject>()
+    while (true) {
+        val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
+        existingTypeNames = existingNames
+
+        val newExistingClasses = classes.filter { isCorrectAndHaveNonPrivateModifier(it) }
+        if (classes.size == newExistingClasses.size) return existingNames
+
+        classes = newExistingClasses
     }
 }

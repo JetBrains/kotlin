@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
+import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -58,14 +59,20 @@ class AddActualFix(
 
         val module = element.module ?: return
         val checker = TypeAccessibilityChecker.create(project, module)
+        val errors = linkedMapOf<KtDeclaration, KotlinTypeInaccessibleException>()
         for (missedDeclaration in missedDeclarationPointers.mapNotNull { it.element }) {
-            val actualDeclaration = when (missedDeclaration) {
-                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, checker)
-                is KtFunction, is KtProperty -> missedDeclaration.toDescriptor()?.safeAs<CallableMemberDescriptor>()?.let {
-                    generateCallable(project, false, missedDeclaration, it, element, checker = checker)
-                }
-                else -> null
-            } ?: continue
+            val actualDeclaration = try {
+                when (missedDeclaration) {
+                    is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, checker)
+                    is KtFunction, is KtProperty -> missedDeclaration.toDescriptor()?.safeAs<CallableMemberDescriptor>()?.let {
+                        generateCallable(project, false, missedDeclaration, it, element, checker = checker)
+                    }
+                    else -> null
+                } ?: continue
+            } catch (e: KotlinTypeInaccessibleException) {
+                errors += missedDeclaration to e
+                continue
+            }
 
             if (actualDeclaration is KtPrimaryConstructor) {
                 if (element.primaryConstructor == null)
@@ -73,6 +80,16 @@ class AddActualFix(
             } else {
                 element.addDeclaration(actualDeclaration).clean()
             }
+        }
+
+        if (errors.isNotEmpty()) {
+            val message = errors.entries.joinToString(
+                separator = "\n",
+                prefix = "Some types are not accessible:\n"
+            ) { (declaration, error) ->
+                getExpressionShortText(declaration) + " -> " + error.message
+            }
+            showInaccessibleDeclarationError(element, message, editor)
         }
     }
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -126,7 +127,8 @@ private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
     }
 }
 
-private fun KotlinType.collectAllTypes(): Sequence<FqName?> = sequenceOf(fqName) + arguments.asSequence()
+private fun KotlinType.collectAllTypes(): Sequence<FqName?> = if (isError) sequenceOf(null)
+else sequenceOf(fqName) + arguments.asSequence()
     .map(TypeProjection::getType)
     .flatMap(KotlinType::collectAllTypes)
 

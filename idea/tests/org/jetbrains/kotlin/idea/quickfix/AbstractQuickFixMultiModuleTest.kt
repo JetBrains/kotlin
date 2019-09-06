@@ -91,6 +91,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
                     TestCase.fail(getTestName(true))
                 } else {
                     Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
+                    compareToExpected(dirPath)
                 }
             }
         }, "", "")

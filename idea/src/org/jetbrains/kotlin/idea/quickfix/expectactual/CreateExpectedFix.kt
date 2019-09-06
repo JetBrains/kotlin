@@ -113,7 +113,7 @@ class CreateExpectedClassFix(
     outerExpectedClass: KtClassOrObject?,
     commonModule: Module
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, checker, element ->
-    val originalElements = element.collectDeclarations(withSelf = false).toList()
+    val originalElements = element.collectDeclarationsForAddActualModifier(withSelf = false).toList()
     val existingClasses = checker.findAndApplyExistingClasses(originalElements + klass)
     if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
 
@@ -154,19 +154,6 @@ class CreateExpectedClassFix(
 
     generateClassOrObject(project, true, element, checker)
 })
-
-private fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Collection<KtNamedDeclaration>): HashSet<String> {
-    var classes = elements.filterIsInstance<KtClassOrObject>()
-    while (true) {
-        val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
-        existingTypeNames = existingNames
-
-        val newExistingClasses = classes.filter { isCorrectAndHaveNonPrivateModifier(it) }
-        if (classes.size == newExistingClasses.size) return existingNames
-
-        classes = newExistingClasses
-    }
-}
 
 private fun showUnknownTypeInDeclarationDialog(
     project: Project,
@@ -231,7 +218,7 @@ private class Member(val prefix: String, element: KtElement, descriptor: Declara
     }
 }
 
-private fun KtClassOrObject.collectDeclarations(withSelf: Boolean = true): Sequence<KtNamedDeclaration> {
+fun KtClassOrObject.collectDeclarationsForAddActualModifier(withSelf: Boolean = true): Sequence<KtNamedDeclaration> {
     val thisSequence: Sequence<KtNamedDeclaration> = if (withSelf) sequenceOf(this) else emptySequence()
     val primaryConstructorSequence: Sequence<KtNamedDeclaration> = primaryConstructorParameters.asSequence() + primaryConstructor.let {
         if (it != null) sequenceOf(it) else emptySequence()
@@ -240,7 +227,7 @@ private fun KtClassOrObject.collectDeclarations(withSelf: Boolean = true): Seque
     return thisSequence + primaryConstructorSequence + declarations.asSequence().flatMap {
         if (it.canAddActualModifier())
             when (it) {
-                is KtClassOrObject -> it.collectDeclarations()
+                is KtClassOrObject -> it.collectDeclarationsForAddActualModifier()
                 is KtNamedDeclaration -> sequenceOf(it)
                 else -> emptySequence()
             }
