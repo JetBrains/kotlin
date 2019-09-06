@@ -67,7 +67,7 @@ public class InitialInfoBuilder {
   {
     myModel = model;
     myAffectedRanges = affectedRanges;
-    myExtendedAffectedRanges = affectedRanges != null ? affectedRanges.getExtendedFormattingRanges() : null;
+    myExtendedAffectedRanges = affectedRanges != null ? affectedRanges.getExtendedRanges() : null;
     myProgressCallback = progressCallback;
     myCurrentWhiteSpace = new WhiteSpace(getStartOffset(rootBlock), true);
     myOptions = options;

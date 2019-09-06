@@ -17,11 +17,11 @@ package com.intellij.formatting;
 
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.UnfairTextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +30,7 @@ import java.util.Optional;
 public class FormatTextRanges implements FormattingRangesInfo {
   private final List<TextRange> myInsertedRanges;
   private final List<FormatTextRange> myRanges = new ArrayList<>();
+  private @Nullable FormattingRangesExtender myRangesExtender;
 
   public FormatTextRanges() {
     myInsertedRanges = null;
@@ -99,12 +100,13 @@ public class FormatTextRanges implements FormattingRangesInfo {
   public List<TextRange> getTextRanges() {
     return ContainerUtil.map(myRanges, FormatTextRange::getTextRange);
   }
+
+  public void setRangesExtender(@Nullable FormattingRangesExtender extender) {
+    myRangesExtender = extender;
+  }
   
-  public List<TextRange> getExtendedFormattingRanges() {
-    return ContainerUtil.map(myRanges, (range) -> {
-      TextRange textRange = range.getTextRange();
-      return new UnfairTextRange(textRange.getStartOffset() - 500, textRange.getEndOffset() + 500);
-    });
+  public List<TextRange> getExtendedRanges() {
+    return myRangesExtender != null ? myRangesExtender.getExtendedRanges(this) : getTextRanges();
   }
 
   private static List<TextRange> optimizedChangedRanges(@NotNull List<TextRange> allChangedRanges) {

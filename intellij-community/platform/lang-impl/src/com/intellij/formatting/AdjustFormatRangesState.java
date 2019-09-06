@@ -36,7 +36,7 @@ class AdjustFormatRangesState extends State {
   AdjustFormatRangesState(Block currentRoot, FormatTextRanges formatRanges, FormattingDocumentModel model) {
     myModel = model;
     myFormatRanges = formatRanges;
-    myExtendedRanges = formatRanges.getExtendedFormattingRanges();
+    myExtendedRanges = formatRanges.getExtendedRanges();
     state = new Stack<>(currentRoot);
     setOnDone(() -> totalNewRanges.forEach(range -> myFormatRanges.add(range, false)));
   }
