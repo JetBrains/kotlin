@@ -22,7 +22,6 @@ import com.intellij.util.concurrency.EdtExecutorService;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBCachingScalableIcon;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +45,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
   private Function<? super T, ? extends Icon> myEvaluator;
   private volatile boolean myIsScheduled;
   private T myParam;
-  private static final Icon EMPTY_ICON = JBUI.scale(EmptyIcon.create(16));
+  private static final Icon EMPTY_ICON = EmptyIcon.create(16).withIconPreScaled(false);
   private final boolean myNeedReadAction;
   private boolean myDone;
   private final boolean myAutoUpdatable;
@@ -114,10 +113,10 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
 
   private void checkDelegationDepth() {
     int depth = 0;
-    DeferredIconImpl each = this;
+    DeferredIconImpl<?> each = this;
     while (each.myScaledDelegateIcon instanceof DeferredIconImpl && depth < 50) {
       depth++;
-      each = (DeferredIconImpl)each.myScaledDelegateIcon;
+      each = (DeferredIconImpl<?>)each.myScaledDelegateIcon;
     }
     if (depth >= 50) {
       LOG.error("Too deep deferred icon nesting");
@@ -131,7 +130,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
 
   @Override
   public void paintIcon(final Component c, @NotNull final Graphics g, final int x, final int y) {
-    if (!(myScaledDelegateIcon instanceof DeferredIconImpl && ((DeferredIconImpl)myScaledDelegateIcon).myScaledDelegateIcon instanceof DeferredIconImpl)) {
+    if (!(myScaledDelegateIcon instanceof DeferredIconImpl && ((DeferredIconImpl<?>)myScaledDelegateIcon).myScaledDelegateIcon instanceof DeferredIconImpl)) {
       myScaledDelegateIcon.paintIcon(c, g, x, y); //SOE protection
     }
 
@@ -284,7 +283,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
     }
 
     if (icon instanceof DeferredIconImpl) {
-      checkDoesntReferenceThis(((DeferredIconImpl)icon).myScaledDelegateIcon);
+      checkDoesntReferenceThis(((DeferredIconImpl<?>)icon).myScaledDelegateIcon);
     }
     else if (icon instanceof LayeredIcon) {
       for (Icon layer : ((LayeredIcon)icon).getAllLayers()) {
@@ -387,12 +386,12 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
 
   static boolean equalIcons(Icon icon1, Icon icon2) {
     if (icon1 instanceof DeferredIconImpl && icon2 instanceof DeferredIconImpl) {
-      return paramsEqual((DeferredIconImpl)icon1, (DeferredIconImpl)icon2);
+      return paramsEqual((DeferredIconImpl<?>)icon1, (DeferredIconImpl<?>)icon2);
     }
     return Comparing.equal(icon1, icon2);
   }
 
-  private static boolean paramsEqual(@NotNull DeferredIconImpl icon1, @NotNull DeferredIconImpl icon2) {
+  private static boolean paramsEqual(@NotNull DeferredIconImpl<?> icon1, @NotNull DeferredIconImpl<?> icon2) {
     return Comparing.equal(icon1.myParam, icon2.myParam) &&
       equalIcons(icon1.myScaledDelegateIcon, icon2.myScaledDelegateIcon);
   }
