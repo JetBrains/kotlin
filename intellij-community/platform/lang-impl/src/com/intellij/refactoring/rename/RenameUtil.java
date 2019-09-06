@@ -18,6 +18,7 @@ package com.intellij.refactoring.rename;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.ide.actions.CopyReferenceAction;
+import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -49,6 +50,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageInfoFactory;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.MultiMap;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -305,7 +307,7 @@ public class RenameUtil {
 
   public static void renameNonCodeUsages(@NotNull Project project, @NotNull NonCodeUsageInfo[] usages) {
     PsiDocumentManager.getInstance(project).commitAllDocuments();
-    Map<Document, List<UsageOffset>> docsToOffsetsMap = new HashMap<>();
+    Map<Document, Map<Integer, UsageOffset>> docsToOffsetsMap = new HashMap<>();
     final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
     for (NonCodeUsageInfo usage : usages) {
       PsiElement element = usage.getElement();
@@ -318,25 +320,40 @@ public class RenameUtil {
       if (rangeInElement == null) continue;
 
       final PsiFile containingFile = element.getContainingFile();
-      final Document document = psiDocumentManager.getDocument(containingFile);
+      Document document = psiDocumentManager.getDocument(containingFile);
 
       final Segment segment = usage.getSegment();
       LOG.assertTrue(segment != null);
-      int fileOffset = segment.getStartOffset();
+      TextRange replaceRange = TextRange.create(segment);
 
-      List<UsageOffset> list = docsToOffsetsMap.get(document);
-      if (list == null) {
-        list = new ArrayList<>();
-        docsToOffsetsMap.put(document, list);
+      // re-map usages to upper host from injected document to avoid duplicated replacements
+      while (document instanceof DocumentWindow) {
+        DocumentWindow documentWindow = (DocumentWindow)document;
+        replaceRange = documentWindow.injectedToHost(replaceRange);
+        document = documentWindow.getDelegate();
       }
+      int fileOffset = replaceRange.getStartOffset();
 
-      list.add(new UsageOffset(fileOffset, fileOffset + rangeInElement.getLength(), usage.newText));
+      Map<Integer, UsageOffset> offsetMap = docsToOffsetsMap.get(document);
+      if (offsetMap == null) {
+        offsetMap = new HashMap<>();
+        docsToOffsetsMap.put(document, offsetMap);
+      }
+      final UsageOffset substitution = new UsageOffset(fileOffset, fileOffset + rangeInElement.getLength(), usage.newText);
+      final UsageOffset duplicate = offsetMap.get(fileOffset);
+      if (duplicate != null) {
+        LOG.assertTrue(duplicate.equals(substitution), "unequal renaming in the same place of document");
+      }
+      else {
+        offsetMap.put(fileOffset, substitution);
+      }
     }
 
     for (Document document : docsToOffsetsMap.keySet()) {
-      List<UsageOffset> list = docsToOffsetsMap.get(document);
-      LOG.assertTrue(list != null, document);
-      UsageOffset[] offsets = list.toArray(new UsageOffset[0]);
+      Map<Integer, UsageOffset> offsetMap = docsToOffsetsMap.get(document);
+      LOG.assertTrue(offsetMap != null, document);
+
+      UsageOffset[] offsets = offsetMap.values().toArray(new UsageOffset[0]);
       Arrays.sort(offsets);
 
       for (int i = offsets.length - 1; i >= 0; i--) {
@@ -384,8 +401,24 @@ public class RenameUtil {
     }
 
     @Override
-    public int compareTo(final UsageOffset o) {
+    public int compareTo(@NotNull final UsageOffset o) {
       return startOffset - o.startOffset;
+    }
+
+    @Contract(value = "null -> false", pure = true)
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      UsageOffset offset = (UsageOffset)o;
+      return startOffset == offset.startOffset &&
+             endOffset == offset.endOffset &&
+             Objects.equals(newText, offset.newText);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(startOffset, endOffset, newText);
     }
   }
 }
