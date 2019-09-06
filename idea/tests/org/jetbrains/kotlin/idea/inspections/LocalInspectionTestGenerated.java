@@ -7255,6 +7255,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty4.kt");
         }
 
+        @TestMetadata("javaPackagePrivate.kt")
+        public void testJavaPackagePrivate() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/javaPackagePrivate.kt");
+        }
+
         @TestMetadata("notCallSuper.kt")
         public void testNotCallSuper() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantOverride/notCallSuper.kt");

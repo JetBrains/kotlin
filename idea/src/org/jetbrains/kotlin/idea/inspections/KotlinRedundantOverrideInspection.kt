@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -59,7 +60,9 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
             val context = function.analyze()
             val functionDescriptor = context[BindingContext.FUNCTION, function]
             if (function.hasDerivedProperty(functionDescriptor, context)) return
-            if (function.isAmbiguouslyDerived(functionDescriptor, context)) return
+            val overriddenDescriptors = functionDescriptor?.original?.overriddenDescriptors
+            if (overriddenDescriptors?.any { it is JavaMethodDescriptor && it.visibility == JavaVisibilities.PACKAGE_VISIBILITY } == true) return
+            if (function.isAmbiguouslyDerived(overriddenDescriptors, context)) return
 
             val descriptor = holder.manager.createProblemDescriptor(
                 function,
@@ -85,7 +88,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
         val superCallMethodName = superSelectorExpression.getCallNameExpression()?.text ?: return false
         return function.name == superCallMethodName
     }
-    
+
     private fun KtNamedFunction.hasDerivedProperty(functionDescriptor: FunctionDescriptor?, context: BindingContext): Boolean {
         if (functionDescriptor == null) return false
         val functionName = nameAsName ?: return false
@@ -95,7 +98,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
         val valueParameters = valueParameters
         val singleValueParameter = valueParameters.singleOrNull()
         if (isSetter && singleValueParameter == null || !isSetter && valueParameters.isNotEmpty()) return false
-        val propertyType = 
+        val propertyType =
             (if (isSetter) context[BindingContext.VALUE_PARAMETER, singleValueParameter]?.type else functionType)?.makeNotNullable()
         return SyntheticJavaPropertyDescriptor.propertyNamesByAccessorName(functionName).any {
             val propertyName = it.asString()
@@ -119,10 +122,8 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
     }
 }
 
-private fun KtNamedFunction.isAmbiguouslyDerived(functionDescriptor: FunctionDescriptor?, context: BindingContext): Boolean {
-    val original = functionDescriptor?.original
-    val overriddenDescriptors = original?.overriddenDescriptors ?: return false
-    if (overriddenDescriptors.size < 2) return false
+private fun KtNamedFunction.isAmbiguouslyDerived(overriddenDescriptors: Collection<FunctionDescriptor>?, context: BindingContext): Boolean {
+    if (overriddenDescriptors == null || overriddenDescriptors.size < 2) return false
     // Two+ functions
     // At least one default in interface or abstract in class, or just something from Java
     if (overriddenDescriptors.any { overriddenFunction ->
