@@ -24,14 +24,13 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObj
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.hasInlineModifier
-import org.jetbrains.kotlin.idea.util.isEffectivelyActual
-import org.jetbrains.kotlin.idea.util.mustHaveValOrVar
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -379,3 +378,35 @@ class KotlinTypeInaccessibleException(fqNames: Collection<FqName?>) : Exception(
 
 fun KtNamedDeclaration.isAlwaysActual(): Boolean = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()
     ?.mustHaveValOrVar() ?: false
+
+
+fun TypeAccessibilityChecker.isCorrectAndHaveNonPrivateModifier(declaration: KtNamedDeclaration, showErrorHint: Boolean = false): Boolean {
+    if (declaration.hasPrivateModifier()) {
+        if (showErrorHint) showInaccessibleDeclarationError(declaration, "The declaration has a private modifier")
+        return false
+    }
+
+    if (!showErrorHint) return checkAccessibility(declaration)
+
+    val types = incorrectTypes(declaration).ifEmpty { return true }
+    showInaccessibleDeclarationError(
+        declaration,
+        "Some types are not accessible from ${targetModule.name}:\n" + TypeAccessibilityChecker.typesToString(
+            types
+        )
+    )
+
+    return false
+}
+
+private fun showInaccessibleDeclarationError(element: KtNamedDeclaration, message: String) {
+    element.findExistingEditor()?.let { editor ->
+        showErrorHint(element.project, editor, message, "Inaccessible declaration")
+    }
+}
+
+fun TypeAccessibilityChecker.Companion.typesToString(types: Collection<FqName?>, separator: CharSequence = "\n"): String {
+    return types.toSet().joinToString(separator = separator) {
+        it?.shortName()?.asString() ?: "Unknown type"
+    }
+}

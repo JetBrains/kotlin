@@ -1,5 +1,5 @@
 // "Create expected function in common module proj_Common" "true"
-// SHOULD_FAIL_WITH: You cannot create the expect declaration from:,fun createList() = ArrayList()
+// SHOULD_FAIL_WITH: Some types are not accessible from proj_Common:,ArrayList
 // DISABLE-ERRORS
 
 import java.util.ArrayList

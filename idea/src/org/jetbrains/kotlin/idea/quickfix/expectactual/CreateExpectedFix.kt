@@ -24,13 +24,10 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.makeActual
 import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
-import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
 import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
 import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
-import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.hasPrivateModifier
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -118,16 +115,13 @@ class CreateExpectedClassFix(
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, checker, element ->
     val originalElements = element.collectDeclarations(withSelf = false).toList()
     val existingClasses = checker.findAndApplyExistingClasses(originalElements + klass)
-    if (!checker.isCorrectAndHaveNonPrivateModifier(element)) {
-        showUnknownTypesError(element)
-        return@block null
-    }
+    if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
 
     val (members, declarationsWithNonExistentClasses) = originalElements.partition {
         checker.isCorrectAndHaveNonPrivateModifier(it)
     }
 
-    if (!showUnknownTypesDialog(project, declarationsWithNonExistentClasses)) return@block null
+    if (!showUnknownTypeInDeclarationDialog(project, declarationsWithNonExistentClasses)) return@block null
 
     val membersForSelection = members.filter {
         !it.isAlwaysActual() && if (it is KtParameter) it.hasValOrVar() else true
@@ -144,15 +138,12 @@ class CreateExpectedClassFix(
 
     val selectedClasses = checker.findAndApplyExistingClasses(selectedElements)
     val resultDeclarations = if (selectedClasses != existingClasses) {
-        if (!checker.isCorrectAndHaveNonPrivateModifier(element)) {
-            showUnknownTypesError(element)
-            return@block null
-        }
+        if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
 
         val (resultDeclarations, withErrors) = selectedElements.partition {
             checker.isCorrectAndHaveNonPrivateModifier(it)
         }
-        if (!showUnknownTypesDialog(project, withErrors)) return@block null
+        if (!showUnknownTypeInDeclarationDialog(project, withErrors)) return@block null
         resultDeclarations
     } else
         selectedElements
@@ -177,7 +168,10 @@ private fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Colle
     }
 }
 
-private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>): Boolean {
+private fun showUnknownTypeInDeclarationDialog(
+    project: Project,
+    declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>
+): Boolean {
     if (declarationsWithNonExistentClasses.isEmpty()) return true
     val message = escapeXml(
         declarationsWithNonExistentClasses.joinToString(
@@ -193,17 +187,6 @@ private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistent
         message,
         project
     )
-}
-
-private fun showUnknownTypesError(element: KtNamedDeclaration) {
-    element.findExistingEditor()?.let { editor ->
-        showErrorHint(
-            element.project,
-            editor,
-            "You cannot create the expect declaration from:\n${escapeXml(getExpressionShortText(element))}",
-            "Unknown types"
-        )
-    }
 }
 
 private fun KtDeclaration.canAddActualModifier() = when (this) {
@@ -300,10 +283,7 @@ class CreateExpectedCallableMemberFix(
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module
 ) : CreateExpectedFix<KtNamedDeclaration>(declaration, targetExpectedClass, commonModule, block@{ project, checker, element ->
-    if (!checker.isCorrectAndHaveNonPrivateModifier(element)) {
-        showUnknownTypesError(element)
-        return@block null
-    }
+    if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
     val descriptor = element.toDescriptor() as? CallableMemberDescriptor
     checker.existingTypeNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
     descriptor?.let {
@@ -317,6 +297,3 @@ class CreateExpectedCallableMemberFix(
         )
     }
 })
-
-private fun TypeAccessibilityChecker.isCorrectAndHaveNonPrivateModifier(declaration: KtNamedDeclaration): Boolean =
-    !declaration.hasPrivateModifier() && checkAccessibility(declaration)
