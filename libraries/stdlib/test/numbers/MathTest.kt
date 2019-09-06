@@ -352,6 +352,15 @@ class DoubleMathTest {
             assertEquals(maxUlp, (-Double.MAX_VALUE).ulp)
         }
     }
+
+    @Test fun degreesAndRadians() {
+        assertEquals(0.0001745329, radians(0.01))
+        assertEquals(2.216568, radians(127.0))
+        assertEquals(6.272713, radians(359.4))
+        assertEquals(114.5916, degrees(2.0))
+        assertEquals(127.3112, degrees(2.222))
+        assertEquals(343.7747, degrees(6.0))
+    }
 }
 
 class FloatMathTest {
@@ -640,6 +649,14 @@ class FloatMathTest {
         }
     }
 
+    @Test fun degreesAndRadians() {
+        assertEquals(0.0001745329f, radians(0.01f))
+        assertEquals(2.216568f, radians(127.0f))
+        assertEquals(6.272713f, radians(359.4f))
+        assertEquals(114.5916f, degrees(2.0f))
+        assertEquals(127.3112f, degrees(2.222f))
+        assertEquals(343.7747f, degrees(6.0f))
+    }
 }
 
 class IntegerMathTest {

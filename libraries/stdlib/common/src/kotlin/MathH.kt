@@ -477,8 +477,19 @@ public expect fun Double.roundToInt(): Int
 @SinceKotlin("1.2")
 public expect fun Double.roundToLong(): Long
 
-// endregion
+/**
+ * Converts a degree angle to radians.
+ */
+@SinceKotlin("1.3")
+public expect fun radians(degrees: Double): Double
 
+/**
+ * Converts a radian angle to degrees.
+ */
+@SinceKotlin("1.3")
+public expect fun degrees(radians: Double): Double
+
+// endregion
 
 
 // region ================ Float Math ========================================
@@ -906,6 +917,18 @@ public expect fun Float.roundToInt(): Int
 @SinceKotlin("1.2")
 public expect fun Float.roundToLong(): Long
 
+/**
+ * Converts a degree angle to radians.
+ */
+@SinceKotlin("1.3")
+public expect fun radians(degrees: Float): Float
+
+/**
+ * Converts a radian angle to degrees.
+ */
+@SinceKotlin("1.3")
+public expect fun degrees(radians: Float): Float
+
 
 // endregion
 
@@ -954,7 +977,6 @@ public expect val Int.absoluteValue: Int
  */
 @SinceKotlin("1.2")
 public expect val Int.sign: Int
-
 
 
 /**

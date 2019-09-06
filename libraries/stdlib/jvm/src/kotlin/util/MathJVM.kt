@@ -619,6 +619,19 @@ public actual fun Double.roundToInt(): Int = when {
 public actual fun Double.roundToLong(): Long =
     if (isNaN()) throw IllegalArgumentException("Cannot round NaN value.") else nativeMath.round(this)
 
+/**
+ * Converts a degree angle to radians.
+ */
+@SinceKotlin("1.3")
+public actual fun radians(degrees: Double): Double = nativeMath.toRadians(degrees)
+
+/**
+ * Converts a radian angle to degrees.
+ */
+@SinceKotlin("1.3")
+public actual fun degrees(radians: Double): Double = nativeMath.toDegrees(radians)
+
+
 // endregion
 
 
@@ -1143,6 +1156,18 @@ public actual fun Float.roundToInt(): Int =
  */
 @SinceKotlin("1.2")
 public actual fun Float.roundToLong(): Long = toDouble().roundToLong()
+
+/**
+ * Converts a degree angle to radians.
+ */
+@SinceKotlin("1.3")
+public actual fun radians(degrees: Float): Float = nativeMath.toRadians(degrees).toFloat()
+
+/**
+ * Converts a radian angle to degrees.
+ */
+@SinceKotlin("1.3")
+public actual fun degrees(radians: Float): Float = nativeMath.toDegrees(radians).toFloat()
 
 
 // endregion
