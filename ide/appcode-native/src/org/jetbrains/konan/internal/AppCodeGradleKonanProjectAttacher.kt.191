@@ -5,9 +5,7 @@
 
 package org.jetbrains.konan.internal
 
-import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
@@ -19,7 +17,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.plugins.gradle.service.project.GradleNotification
-import org.jetbrains.plugins.gradle.service.project.open.importProject
+import org.jetbrains.plugins.gradle.service.project.GradleProjectOpenProcessor
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -47,17 +45,18 @@ class AppCodeGradleKonanProjectAttacher(
             }
 
             findGradleProject()?.let {
-                val notification = GradleNotification.NOTIFICATION_GROUP.createNotification(
-                        GradleBundle.message("gradle.notifications.unlinked.project.found.title",
-                                ApplicationNamesInfo.getInstance().fullProductName),
-                        NotificationType.INFORMATION)
-                notification.addAction(NotificationAction.createSimple(
-                        GradleBundle.message("gradle.notifications.unlinked.project.found.import")) {
-                    notification.expire()
-                    importProject(it.parentFile.absolutePath, project)
-                })
+                val message = GradleBundle.message("gradle.notifications.unlinked.project.found.msg", "import")
 
-                notification.notify(project)
+                GradleNotification.getInstance(project).showBalloon(
+                    GradleBundle.message("gradle.notifications.unlinked.project.found.title"),
+                    message,
+                    NotificationType.INFORMATION
+                ) { notification, event ->
+                    if (event.description == "import") {
+                        notification.expire()
+                        GradleProjectOpenProcessor.attachGradleProjectAndRefresh(project, it.absolutePath)
+                    }
+                }
             }
         }
     }

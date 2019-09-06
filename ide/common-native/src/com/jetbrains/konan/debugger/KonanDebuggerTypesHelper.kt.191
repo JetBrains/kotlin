@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,8 +26,8 @@ class KonanDebuggerTypesHelper(process: CidrDebugProcess) : CidrDebuggerTypesHel
     override fun createReferenceFromText(`var`: LLValue, context: PsiElement): PsiReference? = null
     override fun isImplicitContextVariable(position: XSourcePosition, `var`: LLValue): Boolean? = null
 
-    override fun resolveToDeclaration(position: XSourcePosition?, value: LLValue): PsiElement? {
-        val blockExpression = findBlockAtPosition(position ?: return null, myProcess.project) ?: return null
+    override fun resolveToDeclaration(position: XSourcePosition, value: LLValue): PsiElement? {
+        val blockExpression = findBlockAtPosition(position, myProcess.project) ?: return null
         val referenceText = if (value.name == "<this>") "this" else value.name
         val codeFragment =
             KtPsiFactory(myProcess.project, false).createExpressionCodeFragment(referenceText, blockExpression).getContentElement()

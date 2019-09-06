@@ -27,7 +27,7 @@ abstract class AbstractSpringReferenceCompletionHandlerTest : AbstractBasicCompl
         super.setUpFixture(testPath)
 
         TestFixtureExtension
-                .loadFixture<SpringTestFixtureExtension>(myModule)
+                .loadFixture<SpringTestFixtureExtension>(module)
                 .configureFileSet(myFixture, listOf(PathUtil.toSystemIndependentName(File(testPath).parent + "/spring-config.xml")))
     }
 

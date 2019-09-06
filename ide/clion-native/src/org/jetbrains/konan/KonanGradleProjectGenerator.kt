@@ -18,7 +18,7 @@ import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.HtmlPanel
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.plugins.gradle.service.project.GradleProjectOpenProcessor
+import org.jetbrains.plugins.gradle.service.project.open.importProject
 import javax.swing.*
 import javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
 import javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
@@ -49,7 +49,7 @@ class KonanGradleProjectGenerator : WebProjectTemplate<Any>() {
             }
         }
 
-        GradleProjectOpenProcessor.attachGradleProjectAndRefresh(project, baseDir.path)
+        importProject(baseDir.path, project)
 
         filesToOpen.forEach { vf ->
             PsiNavigationSupport.getInstance().createNavigatable(project, vf, -1).navigate(true)

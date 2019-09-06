@@ -62,7 +62,8 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
         }
 
         val (taskName, taskDescription) = when (action) {
-            XcodeBuildAction.BUILD -> GRADLE_BUILD_TASK_NAME to "Build"
+            XcodeBuildAction.BUILD_FOR_LAUNCH, XcodeBuildAction.BUILD_FOR_TEST -> GRADLE_BUILD_TASK_NAME to "Build"
+            XcodeBuildAction.CLEAN -> GRADLE_CLEAN_TASK_NAME to "Clean"
             XcodeBuildAction.CLEAN -> GRADLE_CLEAN_TASK_NAME to "Clean"
         }
 

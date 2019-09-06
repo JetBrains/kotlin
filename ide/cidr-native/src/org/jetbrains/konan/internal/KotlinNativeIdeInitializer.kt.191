@@ -85,7 +85,8 @@ class KotlinNativeIdeInitializer {
         predicate: (String, ExtensionComponentAdapter) -> Boolean
     ) {
         val negatedPredicate = predicate.negate()
-        extensionPoint.unregisterExtensions(negatedPredicate, false)
+        // workaround for 2019.1 to avoid ConcurrentModificationException:
+        while (extensionPoint.unregisterExtensions(negatedPredicate, true)) {}
     }
 
     // TODO: drop this method as it forces all extensions to instantiate and then unregisters some of them.

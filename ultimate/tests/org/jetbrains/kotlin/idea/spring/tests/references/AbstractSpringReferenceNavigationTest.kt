@@ -37,7 +37,7 @@ abstract class AbstractSpringReferenceNavigationTest : AbstractNavigationTest() 
 
     override fun setUp() {
         super.setUp()
-        TestFixtureExtension.loadFixture<SpringTestFixtureExtension>(myModule)
+        TestFixtureExtension.loadFixture<SpringTestFixtureExtension>(module)
     }
 
     override fun configureExtra(mainFileBaseName: String, mainFileText: String) {

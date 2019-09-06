@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 
 abstract class AbstractSpringReferenceCompletionTest : AbstractJvmBasicCompletionTest() {
     override fun setUpFixture(testPath: String) {
-        TestFixtureExtension.loadFixture<SpringTestFixtureExtension>(module).loadConfigByMainFilePath(testPath, myFixture)
+        TestFixtureExtension.loadFixture<SpringTestFixtureExtension>(myModule).loadConfigByMainFilePath(testPath, myFixture)
         super.setUpFixture(testPath)
     }
 
