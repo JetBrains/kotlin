@@ -323,6 +323,7 @@ public class EditorSearchSession implements SearchSession,
 
   @Override
   public void searchFieldDocumentChanged() {
+    if (myEditor.isDisposed()) return;
     setMatchesLimit(LivePreviewController.MATCHES_LIMIT);
     String text = myComponent.getSearchTextComponent().getText();
     myFindModel.setStringToFind(text);
