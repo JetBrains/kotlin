@@ -9,26 +9,17 @@ import com.intellij.lang.LanguageAnnotators
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.impl.text.TextEditorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
-import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.util.ThrowableRunnable
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
-import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 fun commitAllDocuments() {
     val fileDocumentManager = FileDocumentManager.getInstance()
@@ -96,4 +87,8 @@ fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementatio
     if (filteredExtensions.size < extensions.size) {
         PlatformTestUtil.maskExtensions(pointName, filteredExtensions + listOf(point), parentDisposable)
     }
+}
+
+fun logMessage(message: () -> String) {
+    println("-- ${message()}")
 }

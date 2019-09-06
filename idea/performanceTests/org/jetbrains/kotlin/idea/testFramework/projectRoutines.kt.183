@@ -70,3 +70,7 @@ fun waitForAllEditorsFinallyLoaded(project: Project) {
 fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementationClass: String, toImplementationClass: String) {
  // 183 does not have this public api
 }
+
+fun logMessage(message: () -> String) {
+    println("-- ${message()}")
+}

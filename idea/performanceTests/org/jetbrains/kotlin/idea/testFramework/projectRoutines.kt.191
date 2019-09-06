@@ -117,3 +117,7 @@ fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementatio
         PlatformTestUtil.maskExtensions(pointName, filteredExtensions + listOf(point), parentDisposable)
     }
 }
+
+fun logMessage(message: () -> String) {
+    println("-- ${message()}")
+}

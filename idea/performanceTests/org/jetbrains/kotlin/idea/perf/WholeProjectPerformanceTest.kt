@@ -30,6 +30,8 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.xml.XmlFileNSInfoProvider
 import com.intellij.xml.XmlSchemaProvider
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcTest
 import java.io.*
 
 abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProjectFileProvider {
