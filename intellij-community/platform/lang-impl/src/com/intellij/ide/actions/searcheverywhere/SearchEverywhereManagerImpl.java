@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.ide.actions.GotoActionBase;
@@ -9,8 +9,8 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.DimensionService;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.WindowStateService;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.ScreenUtil;
@@ -125,7 +125,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     });
 
     if (mySearchEverywhereUI.getViewType() == SearchEverywhereUI.ViewType.SHORT) {
-      myBalloonFullSize = DimensionService.getInstance().getSize(LOCATION_SETTINGS_KEY, project);
+      myBalloonFullSize = WindowStateService.getInstance(myProject).getSize(LOCATION_SETTINGS_KEY);
       Dimension prefSize = mySearchEverywhereUI.getPreferredSize();
       myBalloon.setSize(prefSize);
     }
@@ -133,7 +133,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   }
 
   private void calcPositionAndShow(Project project, JBPopup balloon) {
-    Point savedLocation = DimensionService.getInstance().getLocation(LOCATION_SETTINGS_KEY, project);
+    Point savedLocation = WindowStateService.getInstance(myProject).getLocation(LOCATION_SETTINGS_KEY);
 
     //for first show and short mode popup should be shifted to the top screen half
     if (savedLocation == null && mySearchEverywhereUI.getViewType() == SearchEverywhereUI.ViewType.SHORT) {
@@ -280,7 +280,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
 
   private void saveSize() {
     if (mySearchEverywhereUI.getViewType() == SearchEverywhereUI.ViewType.SHORT) {
-      DimensionService.getInstance().setSize(LOCATION_SETTINGS_KEY, myBalloonFullSize, myProject);
+      WindowStateService.getInstance(myProject).putSize(LOCATION_SETTINGS_KEY, myBalloonFullSize);
     }
   }
 
