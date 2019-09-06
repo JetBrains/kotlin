@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonProperty
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Property
 
-class PropertyCommonizer : CallableMemberCommonizer<PropertyDescriptor, Property>() {
+class PropertyCommonizer : AbstractCallableMemberCommonizer<PropertyDescriptor, Property>() {
     private val setter = PropertySetterCommonizer.default()
     private var isExternal = true
 
@@ -24,7 +24,8 @@ class PropertyCommonizer : CallableMemberCommonizer<PropertyDescriptor, Property
                 isExternal = isExternal,
                 extensionReceiver = extensionReceiver.result?.toReceiverNoAnnotations(),
                 returnType = returnType.result,
-                setter = setter.result
+                setter = setter.result,
+                typeParameters = typeParameters.result
             )
         }
 
@@ -35,9 +36,6 @@ class PropertyCommonizer : CallableMemberCommonizer<PropertyDescriptor, Property
     }
 
     override fun commonizeSpecifics(next: PropertyDescriptor): Boolean {
-
-        // TODO: type parameters (for properties???)
-
         isExternal = isExternal && next.isExternal
 
         return setter.commonizeWith(next.setter)

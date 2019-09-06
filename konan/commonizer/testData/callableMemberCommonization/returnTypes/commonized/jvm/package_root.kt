@@ -36,3 +36,29 @@ fun functionWithMismatchedType2(): Short = 1
 fun functionWithMismatchedType3(): Number = 1
 fun functionWithMismatchedType4(): Comparable<Int> = 1
 fun functionWithMismatchedType5(): String = 1.toString()
+
+class Box<T>(val value: T)
+class Fox
+
+actual fun functionWithTypeParametersInReturnType1() = arrayOf(1)
+fun functionWithTypeParametersInReturnType2() = arrayOf("hello")
+actual fun functionWithTypeParametersInReturnType3() = arrayOf("hello")
+actual fun functionWithTypeParametersInReturnType4(): List<Int> = listOf(1)
+fun functionWithTypeParametersInReturnType5(): List<String> = listOf("hello")
+actual fun functionWithTypeParametersInReturnType6(): List<String> = listOf("hello")
+actual fun functionWithTypeParametersInReturnType7() = Box(1)
+fun functionWithTypeParametersInReturnType8() = Box("hello")
+actual fun functionWithTypeParametersInReturnType9() = Box("hello")
+actual fun functionWithTypeParametersInReturnType10() = Box(Planet("Earth", 12742))
+fun functionWithTypeParametersInReturnType11() = Box(Fox())
+actual fun functionWithTypeParametersInReturnType12() = Box(Fox())
+
+actual fun <T> functionWithUnsubstitutedTypeParametersInReturnType1(): T = TODO()
+actual fun <T : Any?> functionWithUnsubstitutedTypeParametersInReturnType2(): T = TODO()
+fun <T : Any> functionWithUnsubstitutedTypeParametersInReturnType3(): T = TODO()
+fun <Q> functionWithUnsubstitutedTypeParametersInReturnType4(): Q = TODO()
+fun <T, Q> functionWithUnsubstitutedTypeParametersInReturnType5(): T = TODO()
+fun <T, Q> functionWithUnsubstitutedTypeParametersInReturnType6(): Q = TODO()
+fun functionWithUnsubstitutedTypeParametersInReturnType7(): String = TODO()
+actual fun <T> functionWithUnsubstitutedTypeParametersInReturnType8(): Box<T> = TODO()
+fun functionWithUnsubstitutedTypeParametersInReturnType9(): Box<String> = TODO()

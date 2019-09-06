@@ -1,6 +1,6 @@
 import kotlin.annotation.AnnotationTarget.*
 
-@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, FUNCTION)
+@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, TYPE_PARAMETER, FUNCTION)
 annotation class Foo(val text: String)
 
 @Foo("property")
@@ -14,11 +14,11 @@ val propertyWithBackingField = 3.14
 @delegate:Foo("field")
 val propertyWithDelegateField: Int by lazy { 42 }
 
-val @receiver:Foo("receiver") String.propertyWithExtensionReceiver: Int
+val <@Foo("type-parameter") T : CharSequence> @receiver:Foo("receiver") T.propertyWithExtensionReceiver: Int
     get() = length
 
 @Foo("function")
 fun function1(@Foo("parameter") text: String) = text
 
 @Foo("function")
-fun @receiver:Foo("receiver") String.function2() = this
+fun <@Foo("type-parameter") Q : Number> @receiver:Foo("receiver") Q.function2() = this

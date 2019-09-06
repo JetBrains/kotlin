@@ -17,11 +17,11 @@ actual val propertyWithBackingField = 3.14
 @delegate:Foo("field")
 actual val propertyWithDelegateField: Int by lazy { 42 }
 
-actual val @receiver:Foo("receiver") String.propertyWithExtensionReceiver: Int
+actual val <@Foo("type-parameter") T : CharSequence> @receiver:Foo("receiver") T.propertyWithExtensionReceiver: Int
     get() = length
 
 @Foo("function")
 actual fun function1(@Foo("parameter") text: String) = text
 
 @Foo("function")
-actual fun @receiver:Foo("receiver") String.function2() = this
+actual fun <@Foo("type-parameter") Q : Number> @receiver:Foo("receiver") Q.function2() = this

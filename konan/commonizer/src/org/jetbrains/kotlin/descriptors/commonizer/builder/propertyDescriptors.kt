@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Property
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PropertyNode
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun PropertyNode.buildDescriptors(
@@ -60,19 +58,11 @@ private fun Property.buildDescriptor(
         isDelegate
     )
 
-    val extensionReceiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
-        propertyDescriptor,
-        extensionReceiver?.type,
-        extensionReceiver?.annotations ?: Annotations.EMPTY
-    )
-
-    val dispatchReceiverDescriptor = DescriptorUtils.getDispatchReceiverParameterIfNeeded(containingDeclaration)
-
     propertyDescriptor.setType(
         returnType,
-        emptyList(), // TODO: support type parameters
-        dispatchReceiverDescriptor,
-        extensionReceiverDescriptor
+        typeParameters.buildDescriptors(propertyDescriptor),
+        buildDispatchReceiver(propertyDescriptor),
+        extensionReceiver?.buildExtensionReceiver(propertyDescriptor)
     )
 
     val getterDescriptor = getter?.let { getter ->

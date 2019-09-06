@@ -19,3 +19,19 @@ expect fun function2(): String
 expect fun function3(): Planet
 expect fun function6(): Planet
 expect fun function7(): C
+
+class Box<T>(val value: T)
+class Fox
+
+expect fun functionWithTypeParametersInReturnType1(): Array<Int>
+expect fun functionWithTypeParametersInReturnType3(): Array<String>
+expect fun functionWithTypeParametersInReturnType4(): List<Int>
+expect fun functionWithTypeParametersInReturnType6(): List<String>
+expect fun functionWithTypeParametersInReturnType7(): Box<Int>
+expect fun functionWithTypeParametersInReturnType9(): Box<String>
+expect fun functionWithTypeParametersInReturnType10(): Box<Planet>
+expect fun functionWithTypeParametersInReturnType12(): Box<Fox>
+
+expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType1(): T
+expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType2(): T
+expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType8(): Box<T>

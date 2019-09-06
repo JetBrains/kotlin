@@ -82,19 +82,26 @@ private fun areAbbreviatedTypesEqual(a: SimpleType, aExpanded: SimpleType, b: Si
     val aDescriptor = requireNotNull(a.constructor.declarationDescriptor, a::nonNullDescriptorExpectedErrorMessage)
     val bDescriptor = requireNotNull(b.constructor.declarationDescriptor, b::nonNullDescriptorExpectedErrorMessage)
 
-    val aFqName = aDescriptor.fqNameSafe
-    val bFqName = bDescriptor.fqNameSafe
+    val isUnderStandardKotlinPackages = if (
+        aDescriptor is ClassifierDescriptorWithTypeParameters
+        && bDescriptor is ClassifierDescriptorWithTypeParameters
+    ) {
+        // N.B. only for descriptors that represent classes or type aliases, but not type parameters:
 
-    if (aFqName.isUnderStandardKotlinPackages || bFqName.isUnderStandardKotlinPackages) {
-        // make sure that FQ names of abbreviated types (e.g. representing type aliases) are equal
-        return aFqName == bFqName
+        val aFqName = aDescriptor.fqNameSafe
+        val bFqName = bDescriptor.fqNameSafe
+
+        aFqName.isUnderStandardKotlinPackages
+                // make sure that FQ names of abbreviated types (e.g. representing type aliases) are equal
+                && aFqName == bFqName
                 // if classes are from the standard Kotlin packages, compare them only by type constructors
                 // effectively, this includes 1) comparison of FQ names and 2) number of type constructor parameters
                 // see org.jetbrains.kotlin.types.AbstractClassTypeConstructor.equals() for details
                 && aExpanded.constructor == bExpandedType.constructor
-    }
+    } else false
 
-    val descriptorsCanBeCommonized = when (aDescriptor) {
+    val descriptorsCanBeCommonized = isUnderStandardKotlinPackages || when (aDescriptor) {
+        is TypeParameterDescriptor -> (bDescriptor is TypeParameterDescriptor) && canBeCommonized(aDescriptor, bDescriptor)
         is TypeAliasDescriptor -> (bDescriptor is TypeAliasDescriptor) && canBeCommonized(aDescriptor, bDescriptor)
         is ClassDescriptor -> (bDescriptor is ClassDescriptor) && canBeCommonized(aDescriptor, bDescriptor)
         else -> false
@@ -103,8 +110,8 @@ private fun areAbbreviatedTypesEqual(a: SimpleType, aExpanded: SimpleType, b: Si
     if (!descriptorsCanBeCommonized)
         return false
 
-    if (a.arguments === b.arguments)
-        return true
+    if (a.arguments.size != b.arguments.size)
+        return false
 
     for (i in 0 until a.arguments.size) {
         val aArg = a.arguments[i]
@@ -160,6 +167,12 @@ private fun canBeCommonized(a: TypeAliasDescriptor, b: TypeAliasDescriptor): Boo
         return false // right-hand side could have only classes
 
     return areTypesEqual(aUnderlyingType, bUnderlyingType)
+}
+
+private fun canBeCommonized(a: TypeParameterDescriptor, b: TypeParameterDescriptor): Boolean {
+    // N.B. real type parameter commonization is performed in TypeParameterCommonizer,
+    // here it is enough to check FQ names
+    return areFqNamesEqual(a, b)
 }
 
 private fun <T : ClassifierDescriptor> areFqNamesEqual(d1: T, d2: T): Boolean {

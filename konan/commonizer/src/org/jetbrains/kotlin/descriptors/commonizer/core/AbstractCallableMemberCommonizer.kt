@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CallableMember
 import org.jetbrains.kotlin.name.Name
 
-abstract class CallableMemberCommonizer<T : CallableMemberDescriptor, R: CallableMember> : Commonizer<T, R> {
+abstract class AbstractCallableMemberCommonizer<T : CallableMemberDescriptor, R: CallableMember> : Commonizer<T, R> {
     protected enum class State {
         EMPTY,
         ERROR,
@@ -22,6 +22,7 @@ abstract class CallableMemberCommonizer<T : CallableMemberDescriptor, R: Callabl
     protected val visibility = VisibilityCommonizer.lowering()
     protected val extensionReceiver = ExtensionReceiverCommonizer.default()
     protected val returnType = TypeCommonizer.default()
+    protected val typeParameters = TypeParameterListCommonizer.default()
 
     protected var state = State.EMPTY
 
@@ -37,6 +38,7 @@ abstract class CallableMemberCommonizer<T : CallableMemberDescriptor, R: Callabl
                 && visibility.commonizeWith(next.visibility)
                 && extensionReceiver.commonizeWith(next.extensionReceiverParameter)
                 && returnType.commonizeWith(next.returnType!!)
+                && typeParameters.commonizeWith(next.typeParameters)
                 && commonizeSpecifics(next)
 
         state = if (!result) State.ERROR else State.IN_PROGRESS

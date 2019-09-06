@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-abstract class NullableWrappedCommonizer<T : Any, R : Any, WT, WR>(
+abstract class AbstractNullableCommonizer<T : Any, R : Any, WT, WR>(
     private val subject: String,
     private val wrappedCommonizerFactory: () -> Commonizer<WT, WR>,
     private val extractor: (T) -> WT,

@@ -67,7 +67,7 @@ private class ComparingDeclarationsVisitor(
     override fun visitModuleDeclaration(expected: ModuleDescriptor, context: Context) {
         val actual = context.getActualAs<ModuleDescriptor>()
 
-        context.assertEquals(expected.name, actual.name, "module names")
+        context.assertFieldsEqual(expected::getName, actual::getName)
 
         fun collectPackageMemberScopes(module: ModuleDescriptor): Map<FqName, MemberScope> = mutableMapOf<FqName, MemberScope>().also {
             module.collectNonEmptyPackageMemberScopes { packageFqName, memberScope ->
@@ -79,7 +79,7 @@ private class ComparingDeclarationsVisitor(
         val expectedPackageMemberScopes = collectPackageMemberScopes(expected)
         val actualPackageMemberScopes = collectPackageMemberScopes(actual)
 
-        context.assertEquals(expectedPackageMemberScopes.keys, actualPackageMemberScopes.keys, "sets of packages")
+        context.assertSetsEqual(expectedPackageMemberScopes.keys, actualPackageMemberScopes.keys, "sets of packages")
 
         for (packageFqName in expectedPackageMemberScopes.keys) {
             val expectedMemberScope = expectedPackageMemberScopes.getValue(packageFqName)
@@ -100,7 +100,7 @@ private class ComparingDeclarationsVisitor(
         val expectedProperties = collectProperties(expected)
         val actualProperties = collectProperties(actual)
 
-        context.assertEquals(expectedProperties.keys, actualProperties.keys, "sets of properties")
+        context.assertSetsEqual(expectedProperties.keys, actualProperties.keys, "sets of properties")
 
         expectedProperties.forEach { (propertyKey, expectedProperty) ->
             val actualProperty = actualProperties.getValue(propertyKey)
@@ -117,7 +117,7 @@ private class ComparingDeclarationsVisitor(
         val expectedFunctions = collectFunctions(expected)
         val actualFunctions = collectFunctions(actual)
 
-        context.assertEquals(expectedFunctions.keys, actualFunctions.keys, "sets of functions")
+        context.assertSetsEqual(expectedFunctions.keys, actualFunctions.keys, "sets of functions")
 
         expectedFunctions.forEach { (functionKey, expectedFunction) ->
             val actualFunction = actualFunctions.getValue(functionKey)
@@ -153,6 +153,8 @@ private class ComparingDeclarationsVisitor(
 
         visitReceiverParameterDescriptor(expected.extensionReceiverParameter, context.nextLevel(actual.extensionReceiverParameter))
         visitReceiverParameterDescriptor(expected.dispatchReceiverParameter, context.nextLevel(actual.dispatchReceiverParameter))
+
+        visitTypeParameters(expected.typeParameters, actual.typeParameters, context.nextLevel("Function type parameters"))
     }
 
     fun visitValueParameterDescriptorList(
@@ -172,17 +174,43 @@ private class ComparingDeclarationsVisitor(
         val actual = context.getActualAs<ValueParameterDescriptor>()
 
         visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Value parameter annotations"))
-        context.assertEquals(expected.name, actual.name, "Name")
-        context.assertEquals(expected.index, actual.index, "Index")
-        context.assertEquals(expected.declaresDefaultValue(), actual.declaresDefaultValue(), "Declares default value")
-        context.assertEquals(expected.isCrossinline, actual.isCrossinline, "Crossinline")
-        context.assertEquals(expected.isNoinline, actual.isNoinline, "Noinline")
+        context.assertFieldsEqual(expected::getName, actual::getName)
+        context.assertFieldsEqual(expected::index, actual::index)
+        context.assertFieldsEqual(expected::declaresDefaultValue, actual::declaresDefaultValue)
+        context.assertFieldsEqual(expected::isCrossinline, actual::isCrossinline)
+        context.assertFieldsEqual(expected::isNoinline, actual::isNoinline)
         visitType(expected.type, actual.type, context.nextLevel("Value parameter type"))
         visitType(expected.varargElementType, actual.varargElementType, context.nextLevel("Value parameter vararg element type"))
     }
 
+    private fun visitTypeParameters(expected: List<TypeParameterDescriptor>, actual: List<TypeParameterDescriptor>, context: Context) {
+        context.assertEquals(expected.size, actual.size, "Type parameters list size")
+
+        expected.forEachIndexed { index, expectedParam ->
+            val actualParam = actual[index]
+            visitTypeParameterDescriptor(expectedParam, context.nextLevel(actualParam))
+        }
+    }
+
     override fun visitTypeParameterDescriptor(expected: TypeParameterDescriptor, context: Context) {
-        TODO("not implemented")
+        val actual = context.getActualAs<TypeParameterDescriptor>()
+
+        visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Type parameter annotations"))
+        context.assertFieldsEqual(expected::getName, actual::getName)
+        context.assertFieldsEqual(expected::getIndex, actual::getIndex)
+        context.assertFieldsEqual(expected::isCapturedFromOuterDeclaration, actual::isCapturedFromOuterDeclaration)
+        context.assertFieldsEqual(expected::isReified, actual::isReified)
+        context.assertFieldsEqual(expected::getVariance, actual::getVariance)
+
+        val expectedUpperBounds = expected.upperBounds
+        val actualUpperBounds = actual.upperBounds
+
+        context.assertEquals(expectedUpperBounds.size, actualUpperBounds.size, "Size of upper bound types")
+
+        expectedUpperBounds.forEachIndexed { index, expectedType ->
+            val actualType = actualUpperBounds[index]
+            visitType(expectedType, actualType, context.nextLevel("Type parameter type"))
+        }
     }
 
     override fun visitClassDescriptor(expected: ClassDescriptor, context: Context) {
@@ -231,6 +259,8 @@ private class ComparingDeclarationsVisitor(
 
         visitReceiverParameterDescriptor(expected.extensionReceiverParameter, context.nextLevel(actual.extensionReceiverParameter))
         visitReceiverParameterDescriptor(expected.dispatchReceiverParameter, context.nextLevel(actual.dispatchReceiverParameter))
+
+        visitTypeParameters(expected.typeParameters, actual.typeParameters, context.nextLevel("Property type parameters"))
     }
 
     override fun visitPropertyGetterDescriptor(expected: PropertyGetterDescriptor?, context: Context) {
@@ -280,7 +310,7 @@ private class ComparingDeclarationsVisitor(
         val expectedAnnotationFqNames = (expected ?: Annotations.EMPTY).map { it.fqName }.toSet()
         val actualAnnotationFqNames = (actual ?: Annotations.EMPTY).map { it.fqName }.toSet()
 
-        context.assertEquals(expectedAnnotationFqNames, actualAnnotationFqNames, "annotations")
+        context.assertSetsEqual(expectedAnnotationFqNames, actualAnnotationFqNames, "annotations")
     }
 
     private fun visitType(expected: KotlinType?, actual: KotlinType?, context: Context) {
@@ -297,6 +327,21 @@ private class ComparingDeclarationsVisitor(
         val actualFqName = actualUnwrapped.fqName
 
         context.assertEquals(expectedFqName, actualFqName, "type FQN")
+
+        val expectedArguments = expectedUnwrapped.arguments
+        val actualArguments = actualUnwrapped.arguments
+
+        context.assertEquals(expectedArguments.size, actualArguments.size, "size of type arguments list")
+
+        expectedArguments.forEachIndexed { index, expectedArgument ->
+            val actualArgument = actualArguments[index]
+
+            context.assertFieldsEqual(expectedArgument::isStarProjection, actualArgument::isStarProjection)
+            if (!expectedArgument.isStarProjection) {
+                context.assertFieldsEqual(expectedArgument::getProjectionKind, actualArgument::getProjectionKind)
+                visitType(expectedArgument.type, actualArgument.type, context.nextLevel("Type argument type"))
+            }
+        }
     }
 
     private fun <T> Context.assertEquals(expected: T?, actual: T?, subject: String) {
@@ -315,6 +360,24 @@ private class ComparingDeclarationsVisitor(
         val actualValue = actual.call()
 
         assertEquals(expectedValue, actualValue, "fields \"$expected\"")
+    }
+
+    private fun <T> Context.assertSetsEqual(expected: Set<T>, actual: Set<T>, subject: String) {
+        val expectedMinusActual = expected.subtract(actual)
+        val actualMinusExpected = actual.subtract(expected)
+
+        if (expectedMinusActual.isNotEmpty() || actualMinusExpected.isNotEmpty())
+            fail(
+                buildString {
+                    append("Comparing $subject:\n")
+                    append("$expected is not equal to $actual\n")
+                    append("Expected size: ${expected.size}\n")
+                    append("Actual size: ${actual.size}\n")
+                    append("Expected minus actual: $expectedMinusActual\n")
+                    append("Actual minus expected: $actualMinusExpected\n")
+                    append(this@assertSetsEqual.toString())
+                }
+            )
     }
 
     override fun visitPackageViewDescriptor(expected: PackageViewDescriptor, context: Context) =

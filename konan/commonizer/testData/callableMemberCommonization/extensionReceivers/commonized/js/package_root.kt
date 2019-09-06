@@ -19,3 +19,18 @@ val mismatchedProperty2 get() = 42
 
 fun String.mismatchedFunction1() = 42
 fun mismatchedFunction2() = 42
+
+actual val <T> T.propertyWithTypeParameter1 get() = 42
+actual val <T> T.propertyWithTypeParameter2 get() = 42
+val <T> T.propertyWithTypeParameter3 get() = 42
+actual val <T : CharSequence> T.propertyWithTypeParameter4 get() = length
+val <T : CharSequence> T.propertyWithTypeParameter5 get() = length
+val <T : CharSequence> T.propertyWithTypeParameter6 get() = length
+val <T : CharSequence> T.propertyWithTypeParameter7 get() = length
+val <T> T.propertyWithTypeParameter8 get() = 42
+val <T> T.propertyWithTypeParameter9 get() = 42
+
+actual fun <T> T.functionWithTypeParameter1() {}
+fun <T> T.functionWithTypeParameter2() {}
+fun <T> T.functionWithTypeParameter3() {}
+fun <T> T.functionWithTypeParameter4() {}

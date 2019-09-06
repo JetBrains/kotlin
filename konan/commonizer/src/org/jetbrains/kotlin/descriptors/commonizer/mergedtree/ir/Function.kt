@@ -33,7 +33,8 @@ data class CommonFunction(
     override val extensionReceiver: ExtensionReceiver?,
     override val returnType: UnwrappedType,
     private val modifiers: FunctionModifiers,
-    override val valueParameters: List<ValueParameter>
+    override val valueParameters: List<ValueParameter>,
+    override val typeParameters: List<TypeParameter>
 ) : CommonCallableMember(), Function, FunctionModifiers by modifiers
 
 class TargetFunction(descriptor: SimpleFunctionDescriptor) : TargetCallableMember<SimpleFunctionDescriptor>(descriptor), Function {

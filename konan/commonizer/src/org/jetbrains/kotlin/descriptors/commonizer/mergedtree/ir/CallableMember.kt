@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiv
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface CallableMember {
+interface CallableMember : DeclarationWithTypeParameters {
     val annotations: Annotations
     val name: Name
     val modality: Modality
@@ -39,6 +39,7 @@ abstract class TargetCallableMember<T : CallableMemberDescriptor>(protected val 
     final override val extensionReceiver: ExtensionReceiver? get() = descriptor.extensionReceiverParameter?.toReceiver()
     final override val returnType: UnwrappedType get() = descriptor.returnType!!.unwrap()
     final override val kind: CallableMemberDescriptor.Kind get() = descriptor.kind
+    final override val typeParameters: List<TypeParameter> get() = descriptor.typeParameters.map(::TargetTypeParameter)
 }
 
 data class ExtensionReceiver(

@@ -32,7 +32,8 @@ data class CommonProperty(
     override val isExternal: Boolean,
     override val extensionReceiver: ExtensionReceiver?,
     override val returnType: UnwrappedType,
-    override val setter: Setter?
+    override val setter: Setter?,
+    override val typeParameters: List<TypeParameter>
 ) : CommonCallableMember(), Property {
     override val isVar: Boolean get() = setter != null
     override val lateInit: Boolean get() = false

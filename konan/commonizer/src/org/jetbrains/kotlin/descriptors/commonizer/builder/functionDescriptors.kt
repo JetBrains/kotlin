@@ -59,18 +59,10 @@ private fun Function.buildDescriptor(
     functionDescriptor.isExpect = isExpect
     functionDescriptor.isActual = isActual
 
-    val extensionReceiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
-        functionDescriptor,
-        extensionReceiver?.type,
-        extensionReceiver?.annotations ?: Annotations.EMPTY
-    )
-
-    val dispatchReceiverDescriptor = DescriptorUtils.getDispatchReceiverParameterIfNeeded(containingDeclaration)
-
     functionDescriptor.initialize(
-        extensionReceiverDescriptor,
-        dispatchReceiverDescriptor,
-        emptyList(), // TODO: support type parameters
+        extensionReceiver?.buildExtensionReceiver(functionDescriptor),
+        buildDispatchReceiver(functionDescriptor),
+        typeParameters.buildDescriptors(functionDescriptor),
         valueParameters.buildValueParameters(functionDescriptor),
         returnType,
         modality,

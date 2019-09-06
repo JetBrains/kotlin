@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.commonizer.builder.buildDispatchReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -118,13 +118,8 @@ internal fun mockProperty(
 ): PropertyDescriptor {
     val propertyName = Name.identifier(name)
 
-    val containingDeclaration = object : DeclarationDescriptorImpl(Annotations.EMPTY, Name.special("<fake containing declaration>")) {
-        override fun getContainingDeclaration() = error("not supported")
-        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D) = error("not supported")
-    }
-
     val propertyDescriptor = PropertyDescriptorImpl.create(
-        /*containingDeclaration =*/ containingDeclaration,
+        /*containingDeclaration =*/ fakeContainingDeclaration(),
         /*annotations =*/ Annotations.EMPTY,
         /*modality =*/ Modality.FINAL,
         /*visibility =*/ Visibilities.PUBLIC,
@@ -146,7 +141,7 @@ internal fun mockProperty(
         /*annotations =*/ Annotations.EMPTY
     )
 
-    val dispatchReceiverDescriptor = DescriptorUtils.getDispatchReceiverParameterIfNeeded(containingDeclaration)
+    val dispatchReceiverDescriptor = buildDispatchReceiver(propertyDescriptor)
 
     propertyDescriptor.setType(
         /*outType =*/ returnType,
@@ -202,13 +197,8 @@ internal fun mockFunction(
 ): SimpleFunctionDescriptor {
     val functionName = Name.identifier(name)
 
-    val containingDeclaration = object : DeclarationDescriptorImpl(Annotations.EMPTY, Name.special("<fake containing declaration>")) {
-        override fun getContainingDeclaration() = error("not supported")
-        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D) = error("not supported")
-    }
-
     val functionDescriptor = SimpleFunctionDescriptorImpl.create(
-        /*containingDeclaration =*/ containingDeclaration,
+        /*containingDeclaration =*/ fakeContainingDeclaration(),
         /*annotations =*/ Annotations.EMPTY,
         /*name =*/ functionName,
         /*kind =*/ CallableMemberDescriptor.Kind.DECLARATION,
@@ -222,7 +212,7 @@ internal fun mockFunction(
     functionDescriptor.isSuspend = modifiers.isSuspend
     functionDescriptor.isExternal = modifiers.isExternal
 
-    val dispatchReceiverDescriptor = DescriptorUtils.getDispatchReceiverParameterIfNeeded(containingDeclaration)
+    val dispatchReceiverDescriptor = buildDispatchReceiver(functionDescriptor)
 
     functionDescriptor.initialize(
         /*extensionReceiverParameter =*/ null,
@@ -250,7 +240,11 @@ internal fun mockValueParameter(
     check(index >= 0)
 
     val effectiveContainingDeclaration = containingDeclaration
-        ?: mockFunction("fakeFunction", returnType, TestFunctionModifiers()) // use fake function if no real containing declaration specified
+        ?: /* use fake function if no real containing declaration specified */ mockFunction(
+            "fakeFunction",
+            returnType,
+            TestFunctionModifiers()
+        )
 
     return ValueParameterDescriptorImpl(
         containingDeclaration = effectiveContainingDeclaration,
@@ -267,29 +261,29 @@ internal fun mockValueParameter(
     )
 }
 
-//private fun mockTypeParameterType(
-//    name: String,
-//    containingDeclaration: DeclarationDescriptor,
-//    definitelyNotNull: Boolean = false
-//): KotlinType {
-//    val typeParameterName = Name.identifier(name)
-//
-//    val typeParameterDescriptor = TypeParameterDescriptorImpl.createWithDefaultBound(
-//        /*containingDeclaration =*/ containingDeclaration,
-//        /*annotations =*/ Annotations.EMPTY,
-//        /*reified =*/ false,
-//        /*variance =*/ Variance.INVARIANT,
-//        /*name =*/ typeParameterName,
-//        /*index =*/ 0
-//    )
-//
-//    val simpleType = createSimpleType(typeParameterDescriptor.typeConstructor, false)
-//
-//    return if (definitelyNotNull)
-//        simpleType.makeSimpleTypeDefinitelyNotNullOrNotNull().also { check(it.isDefinitelyNotNullType) }
-//    else
-//        simpleType
-//}
+internal fun mockTypeParameter(
+    containingDeclaration: CallableDescriptor? = null,
+    name: String,
+    index: Int,
+    isReified: Boolean,
+    variance: Variance,
+    upperBounds: List<KotlinType>
+): TypeParameterDescriptor {
+    check(index >= 0)
+
+    return TypeParameterDescriptorImpl.createForFurtherModification(
+        containingDeclaration ?: fakeContainingDeclaration(),
+        Annotations.EMPTY,
+        isReified,
+        variance,
+        Name.identifier(name),
+        index,
+        SourceElement.NO_SOURCE
+    ).apply {
+        upperBounds.forEach(this::addUpperBound)
+        setInitialized()
+    }
+}
 
 private fun createPackageFragmentForClassifier(classifierFqName: FqName): PackageFragmentDescriptor =
     object : PackageFragmentDescriptor {
@@ -315,3 +309,9 @@ private fun createSimpleType(typeConstructor: TypeConstructor, nullable: Boolean
         memberScope = MemberScope.Empty,
         refinedTypeFactory = { null }
     )
+
+private fun fakeContainingDeclaration() =
+    object : DeclarationDescriptorImpl(Annotations.EMPTY, Name.special("<fake containing declaration>")) {
+        override fun getContainingDeclaration() = error("not supported")
+        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D) = error("not supported")
+    }

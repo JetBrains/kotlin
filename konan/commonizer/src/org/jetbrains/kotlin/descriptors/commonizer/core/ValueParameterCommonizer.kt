@@ -82,7 +82,7 @@ interface ValueParameterListCommonizer : Commonizer<List<ValueParameterDescripto
 
 private class DefaultValueParameterListCommonizer :
     ValueParameterListCommonizer,
-    NamedListWrappedCommonizer<ValueParameterDescriptor, ValueParameter>(
+    AbstractNamedListCommonizer<ValueParameterDescriptor, ValueParameter>(
         subject = "value parameters",
-        wrappedCommonizerFactory = { ValueParameterCommonizer.default() }
+        singleElementCommonizerFactory = { ValueParameterCommonizer.default() }
     )

@@ -14,11 +14,11 @@ val propertyWithBackingField = 3.14
 @delegate:Bar("field")
 val propertyWithDelegateField: Int by lazy { 42 }
 
-val @receiver:Bar("receiver") String.propertyWithExtensionReceiver: Int
+val <@Bar("type-parameter") T : CharSequence> @receiver:Bar("receiver") T.propertyWithExtensionReceiver: Int
     get() = length
 
 @Bar("function")
 fun function1(@Bar("parameter") text: String) = text
 
 @Bar("function")
-fun @receiver:Foo("receiver") String.function2() = this
+fun <@Bar("type-parameter") Q : Number> @receiver:Bar("receiver") Q.function2() = this

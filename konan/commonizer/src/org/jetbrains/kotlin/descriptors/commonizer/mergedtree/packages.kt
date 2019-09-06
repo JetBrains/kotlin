@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.fqName
+import org.jetbrains.kotlin.descriptors.commonizer.fqNameWithTypeParameters
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -49,11 +49,11 @@ internal fun mergePackages(
 
 internal data class PropertyKey(
     val name: Name,
-    val extensionReceiverParameterFqName: FqName?
+    val extensionReceiverParameter: String?
 ) {
     constructor(property: PropertyDescriptor) : this(
         property.name,
-        property.extensionReceiverParameter?.type?.fqName
+        property.extensionReceiverParameter?.type?.fqNameWithTypeParameters
     )
 }
 
@@ -67,13 +67,13 @@ internal fun MemberScope.collectProperties(collector: (PropertyKey, PropertyDesc
 
 internal data class FunctionKey(
     val name: Name,
-    val valueParameters: List<Pair<Name, FqName>>,
-    val extensionReceiverParameterFqName: FqName?
+    val valueParameters: List<Pair<Name, String>>,
+    val extensionReceiverParameter: String?
 ) {
     constructor(function: SimpleFunctionDescriptor) : this(
         function.name,
-        function.valueParameters.map { it.name to it.type.fqName },
-        function.extensionReceiverParameter?.type?.fqName
+        function.valueParameters.map { it.name to it.type.fqNameWithTypeParameters },
+        function.extensionReceiverParameter?.type?.fqNameWithTypeParameters
     )
 }
 

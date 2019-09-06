@@ -8,28 +8,28 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.Named
 import org.jetbrains.kotlin.name.Name
 
-abstract class NamedListWrappedCommonizer<T : Named, R>(
+abstract class AbstractNamedListCommonizer<T : Named, R>(
     private val subject: String,
-    private val wrappedCommonizerFactory: () -> Commonizer<T, R>
+    private val singleElementCommonizerFactory: () -> Commonizer<T, R>
 ) : Commonizer<List<T>, List<R>> {
-    private var wrapped: List<Pair<Name, Commonizer<T, R>>>? = null
+    private var commonizers: List<Pair<Name, Commonizer<T, R>>>? = null
     private var error = false
 
     final override val result: List<R>
-        get() = wrapped?.takeIf { !error }?.map { it.second.result } ?: error("Can't commonize list of $subject")
+        get() = commonizers?.takeIf { !error }?.map { it.second.result } ?: error("Can't commonize list of $subject")
 
     final override fun commonizeWith(next: List<T>): Boolean {
         if (error)
             return false
 
-        val wrapped = wrapped
-            ?: next.map { it.name to wrappedCommonizerFactory() }.also { this.wrapped = it }
+        val commonizers = commonizers
+            ?: next.map { it.name to singleElementCommonizerFactory() }.also { this.commonizers = it }
 
-        if (wrapped.size != next.size)
+        if (commonizers.size != next.size)
             error = true
         else
             for (index in 0 until next.size) {
-                val (name, commonizer) = wrapped[index]
+                val (name, commonizer) = commonizers[index]
                 val nextElement = next[index]
 
                 if (name != nextElement.name || !commonizer.commonizeWith(nextElement)) {

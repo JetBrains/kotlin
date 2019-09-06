@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonFunction
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Function
 
-class FunctionCommonizer : CallableMemberCommonizer<SimpleFunctionDescriptor, Function>() {
+class FunctionCommonizer : AbstractCallableMemberCommonizer<SimpleFunctionDescriptor, Function>() {
     private val modifiers = FunctionModifiersCommonizer.default()
     private val valueParameters = ValueParameterListCommonizer.default()
 
@@ -24,16 +24,13 @@ class FunctionCommonizer : CallableMemberCommonizer<SimpleFunctionDescriptor, Fu
                 extensionReceiver = extensionReceiver.result?.toReceiverNoAnnotations(),
                 returnType = returnType.result,
                 modifiers = modifiers.result,
-                valueParameters = valueParameters.result
+                valueParameters = valueParameters.result,
+                typeParameters = typeParameters.result
             )
         }
 
     override fun canBeCommonized(next: SimpleFunctionDescriptor) = true
 
-    override fun commonizeSpecifics(next: SimpleFunctionDescriptor): Boolean {
-
-        // TODO: type parameters (for functions???)
-
-        return modifiers.commonizeWith(next) && valueParameters.commonizeWith(next.valueParameters)
-    }
+    override fun commonizeSpecifics(next: SimpleFunctionDescriptor) =
+        modifiers.commonizeWith(next) && valueParameters.commonizeWith(next.valueParameters)
 }

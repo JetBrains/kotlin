@@ -167,7 +167,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
 
     override fun createCommonizer() = ValueParameterListCommonizer.default()
 
-    companion object {
+    private companion object {
         fun create(vararg params: Pair<String, String>): List<ValueParameter> {
             check(params.isNotEmpty())
             return params.map { (name, returnTypeFqName) ->

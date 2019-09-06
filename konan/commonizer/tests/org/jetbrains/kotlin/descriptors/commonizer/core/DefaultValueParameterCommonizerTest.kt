@@ -141,8 +141,8 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<ValueParamete
 
     override fun createCommonizer() = ValueParameterCommonizer.default()
 
-    companion object {
-        internal fun create(
+    internal companion object {
+        fun create(
             returnTypeFqName: String,
             name: String = "myParameter",
             hasVarargElementType: Boolean = false,
@@ -160,7 +160,7 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<ValueParamete
             )
         }
 
-        internal fun ValueParameter.toMockParam(
+        fun ValueParameter.toMockParam(
             index: Int = 0,
             declaresDefaultValue: Boolean = false
         ): ValueParameterDescriptor = mockValueParameter(
