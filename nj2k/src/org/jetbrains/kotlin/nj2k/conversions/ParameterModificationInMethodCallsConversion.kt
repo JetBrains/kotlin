@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.hasWritableUsages
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
-import org.jetbrains.kotlin.nj2k.types.JKVarianceTypeParameterType
+import org.jetbrains.kotlin.nj2k.types.*
 
 
 class ParameterModificationInMethodCallsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
@@ -26,7 +24,7 @@ class ParameterModificationInMethodCallsConversion(context: NewJ2kConverterConte
                                 symbolProvider.provideClassSymbol(parameter.type.type.arrayFqName()),
                                 if (parameter.type.type is JKJavaPrimitiveType) emptyList()
                                 else listOf(
-                                    JKVarianceTypeParameterTypeImpl(
+                                    JKVarianceTypeParameterType(
                                         JKVarianceTypeParameterType.Variance.OUT,
                                         parameter.type.type
                                     )
@@ -35,16 +33,16 @@ class ParameterModificationInMethodCallsConversion(context: NewJ2kConverterConte
                             )
 
                         } else parameter.type.type
-                    JKLocalVariableImpl(
-                        JKTypeElementImpl(parameterType),
-                        JKNameIdentifierImpl(parameter.name.value),
-                        JKFieldAccessExpressionImpl(symbolProvider.provideUniverseSymbol(parameter)),
-                        JKMutabilityModifierElementImpl(Mutability.MUTABLE)
+                    JKLocalVariable(
+                        JKTypeElement(parameterType),
+                        JKNameIdentifier(parameter.name.value),
+                        JKFieldAccessExpression(symbolProvider.provideUniverseSymbol(parameter)),
+                        JKMutabilityModifierElement(Mutability.MUTABLE)
                     )
                 } else null
             }
         if (newVariables.isNotEmpty()) {
-            element.block.statements = listOf(JKDeclarationStatementImpl(newVariables)) + element.block.statements
+            element.block.statements = listOf(JKDeclarationStatement(newVariables)) + element.block.statements
         }
         return recurse(element)
     }

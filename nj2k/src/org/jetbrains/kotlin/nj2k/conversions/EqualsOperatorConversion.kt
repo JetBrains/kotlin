@@ -9,17 +9,17 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.equalsExpression
 import org.jetbrains.kotlin.nj2k.symbols.deepestFqName
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKParenthesizedExpressionImpl
+
 
 class EqualsOperatorConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKQualifiedExpression) return recurse(element)
         if (element.receiver is JKSuperExpression) return recurse(element)
-        val selector = element.selector as? JKMethodCallExpression ?: return (element)
+        val selector = element.selector as? JKCallExpression ?: return (element)
         val argument = selector.arguments.arguments.singleOrNull() ?: return recurse(element)
         if (selector.identifier.deepestFqName() == "java.lang.Object.equals") {
             return recurse(
-                JKParenthesizedExpressionImpl(
+                JKParenthesizedExpression(
                     equalsExpression(
                         element::receiver.detached(),
                         argument::value.detached(),

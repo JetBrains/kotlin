@@ -9,16 +9,21 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.modality
+import org.jetbrains.kotlin.nj2k.psi
 import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+
 import org.jetbrains.kotlin.nj2k.types.JKClassType
+import org.jetbrains.kotlin.nj2k.types.JKClassTypeImpl
+import org.jetbrains.kotlin.nj2k.types.JKJavaVoidType
+import org.jetbrains.kotlin.nj2k.types.updateNullability
 
 class JavaStandardMethodsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
         for (declaration in element.classBody.declarations) {
-            if (declaration !is JKJavaMethodImpl) continue
+            if (declaration !is JKMethodImpl) continue
             if (fixToStringMethod(declaration)) continue
             if (fixFinalizeMethod(declaration, element)) continue
             if (fixCloneMethod(declaration)) {
@@ -30,7 +35,7 @@ class JavaStandardMethodsConversion(context: NewJ2kConverterContext) : Recursive
                         } == true
                 if (hasNoCloneableInSuperClasses) {
                     element.inheritance.implements +=
-                        JKTypeElementImpl(
+                        JKTypeElement(
                             JKClassTypeImpl(
                                 JKUnresolvedClassSymbol("Cloneable", typeFactory),
                                 emptyList(), Nullability.NotNull
@@ -43,27 +48,27 @@ class JavaStandardMethodsConversion(context: NewJ2kConverterContext) : Recursive
         return recurse(element)
     }
 
-    private fun fixToStringMethod(method: JKJavaMethodImpl): Boolean {
+    private fun fixToStringMethod(method: JKMethodImpl): Boolean {
         if (method.name.value != "toString") return false
         if (method.parameters.isNotEmpty()) return false
         val type = (method.returnType.type as? JKClassType)
             ?.takeIf { it.classReference.name == "String" }
             ?.updateNullability(Nullability.NotNull) ?: return false
-        method.returnType = JKTypeElementImpl(type)
+        method.returnType = JKTypeElement(type)
         return true
     }
 
-    private fun fixCloneMethod(method: JKJavaMethodImpl): Boolean {
+    private fun fixCloneMethod(method: JKMethodImpl): Boolean {
         if (method.name.value != "clone") return false
         if (method.parameters.isNotEmpty()) return false
         val type = (method.returnType.type as? JKClassType)
             ?.takeIf { it.classReference.name == "Object" }
             ?.updateNullability(Nullability.NotNull) ?: return false
-        method.returnType = JKTypeElementImpl(type)
+        method.returnType = JKTypeElement(type)
         return true
     }
 
-    private fun fixFinalizeMethod(method: JKJavaMethodImpl, containingClass: JKClass): Boolean {
+    private fun fixFinalizeMethod(method: JKMethodImpl, containingClass: JKClass): Boolean {
         if (method.name.value != "finalize") return false
         if (method.parameters.isNotEmpty()) return false
         if (method.returnType.type != JKJavaVoidType) return false

@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
@@ -57,7 +56,7 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
         val assignment = expression as? JKJavaAssignmentExpression ?: return null
         return when {
             canBeConvertedToBlock() && assignment.expression is JKJavaAssignmentExpression ->
-                JKBlockStatementImpl(JKBlockImpl(assignment.unfoldToStatementsList(assignmentTarget = null)))
+                JKBlockStatement(JKBlockImpl(assignment.unfoldToStatementsList(assignmentTarget = null)))
             else -> createKtAssignmentStatement(
                 assignment::field.detached(),
                 assignment::expression.detached(),
@@ -69,7 +68,6 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
     private fun JKExpressionStatement.canBeConvertedToBlock() = when (val parent = parent) {
         is JKLoopStatement -> parent.body == this
         is JKIfElseStatement -> parent.thenBranch == this || parent.elseBranch == this
-        is JKIfStatement -> parent.thenBranch == this
         is JKJavaSwitchCase -> true
         else -> false
     }
@@ -110,7 +108,7 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
             null -> statements
             else -> {
                 assignmentTarget.initializer = statements.last().field.copyTreeAndDetach()
-                statements + JKDeclarationStatementImpl(listOf(assignmentTarget))
+                statements + JKDeclarationStatement(listOf(assignmentTarget))
             }
         }
     }
@@ -118,14 +116,14 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
     private fun JKJavaAssignmentExpression.toExpressionChainLink(receiver: JKExpression): JKExpression {
         val assignment = createKtAssignmentStatement(
             this::field.detached(),
-            JKKtItExpressionImpl(operator.returnType),
+            JKKtItExpression(operator.returnType),
             operator
         ).withNonCodeElementsFrom(this)
         return when {
             operator.isSimpleToken() ->
-                JKAssignmentChainAlsoLinkImpl(receiver, assignment, field.copyTreeAndDetach())
+                JKAssignmentChainAlsoLink(receiver, assignment, field.copyTreeAndDetach())
             else ->
-                JKAssignmentChainLetLinkImpl(receiver, assignment, field.copyTreeAndDetach())
+                JKAssignmentChainLetLink(receiver, assignment, field.copyTreeAndDetach())
         }
     }
 
@@ -139,9 +137,9 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
         operator: JKOperator
     ) = when {
         operator.isOnlyJavaToken() ->
-            JKKtAssignmentStatementImpl(
+            JKKtAssignmentStatement(
                 field,
-                JKBinaryExpressionImpl(
+                JKBinaryExpression(
                     field.copyTreeAndDetach(),
                     expression,
                     JKKtOperatorImpl(
@@ -151,7 +149,7 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
                 ),
                 JKOperatorToken.EQ
             )
-        else -> JKKtAssignmentStatementImpl(field, expression, operator.token)
+        else -> JKKtAssignmentStatement(field, expression, operator.token)
     }
 
     private fun JKOperator.isSimpleToken() = when {

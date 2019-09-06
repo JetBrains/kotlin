@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.toArgumentList
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
+import org.jetbrains.kotlin.nj2k.types.*
+
 import org.jetbrains.kotlin.resolve.CollectionLiteralResolver
 
 
@@ -27,9 +27,9 @@ class ArrayInitializerConversion(context: NewJ2kConverterContext) : RecursiveApp
                 else
                     CollectionLiteralResolver.ARRAY_OF_FUNCTION.asString()
             val typeArguments =
-                if (primitiveArrayType == null) JKTypeArgumentListImpl(listOf(element::type.detached()))
-                else JKTypeArgumentListImpl()
-            newElement = JKJavaMethodCallExpressionImpl(
+                if (primitiveArrayType == null) JKTypeArgumentList(listOf(element::type.detached()))
+                else JKTypeArgumentList()
+            newElement = JKCallExpressionImpl(
                 symbolProvider.provideMethodSymbol("kotlin.$arrayConstructorName"),
                 element.initializer.also { element.initializer = emptyList() }.toArgumentList(),
                 typeArguments
@@ -46,33 +46,33 @@ class ArrayInitializerConversion(context: NewJ2kConverterContext) : RecursiveApp
     private fun buildArrayInitializer(dimensions: List<JKExpression>, type: JKType): JKExpression {
         if (dimensions.size == 1) {
             return if (type !is JKJavaPrimitiveType) {
-                JKJavaMethodCallExpressionImpl(
+                JKCallExpressionImpl(
                     symbolProvider.provideMethodSymbol("kotlin.arrayOfNulls"),
-                    JKArgumentListImpl(dimensions[0]),
-                    JKTypeArgumentListImpl(listOf(JKTypeElementImpl(type)))
+                    JKArgumentList(dimensions[0]),
+                    JKTypeArgumentList(listOf(JKTypeElement(type)))
                 )
             } else {
-                JKJavaNewExpressionImpl(
+                JKNewExpression(
                     symbolProvider.provideClassSymbol(type.arrayFqName()),
-                    JKArgumentListImpl(dimensions[0]),
-                    JKTypeArgumentListImpl(emptyList())
+                    JKArgumentList(dimensions[0]),
+                    JKTypeArgumentList(emptyList())
                 )
             }
         }
         if (dimensions[1] !is JKStubExpression) {
             val arrayType = dimensions.drop(1).fold(type) { currentType, _ ->
-                JKJavaArrayTypeImpl(currentType)
+                JKJavaArrayType(currentType)
             }
-            return JKJavaNewExpressionImpl(
+            return JKNewExpression(
                 symbolProvider.provideClassSymbol("kotlin.Array"),
-                JKArgumentListImpl(
+                JKArgumentList(
                     dimensions[0],
-                    JKLambdaExpressionImpl(
-                        JKExpressionStatementImpl(buildArrayInitializer(dimensions.subList(1, dimensions.size), type)),
+                    JKLambdaExpression(
+                        JKExpressionStatement(buildArrayInitializer(dimensions.subList(1, dimensions.size), type)),
                         emptyList()
                     )
                 ),
-                JKTypeArgumentListImpl(listOf(JKTypeElementImpl(arrayType)))
+                JKTypeArgumentList(listOf(JKTypeElement(arrayType)))
             )
         }
         var resultType = JKClassTypeImpl(
@@ -87,10 +87,10 @@ class ArrayInitializerConversion(context: NewJ2kConverterContext) : RecursiveApp
                 Nullability.Default
             )
         }
-        return JKJavaMethodCallExpressionImpl(
+        return JKCallExpressionImpl(
             symbolProvider.provideMethodSymbol("kotlin.arrayOfNulls"),
-            JKArgumentListImpl(dimensions[0]),
-            JKTypeArgumentListImpl(listOf(JKTypeElementImpl(resultType)))
+            JKArgumentList(dimensions[0]),
+            JKTypeArgumentList(listOf(JKTypeElement(resultType)))
         )
     }
 }

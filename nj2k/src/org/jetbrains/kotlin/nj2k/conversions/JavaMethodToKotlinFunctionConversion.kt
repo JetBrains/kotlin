@@ -19,39 +19,21 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.throwAnnotation
-import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtFunctionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.psi
+import org.jetbrains.kotlin.nj2k.tree.JKMethodImpl
+import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
+import org.jetbrains.kotlin.nj2k.types.updateNullabilityRecursively
 
 class JavaMethodToKotlinFunctionConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaMethod) return recurse(element)
+        if (element !is JKMethodImpl) return recurse(element)
 
-        element.invalidate()
-        val kotlinFunction = JKKtFunctionImpl(
-            element.returnType,
-            element.name,
-            element.parameters,
-            element.block,
-            element.typeParameterList,
-            element.annotationList.also {
-                if (element.throwsList.isNotEmpty()) {
-                    it.annotations +=
-                        throwAnnotation(
-                            element.throwsList.map { it.type.updateNullabilityRecursively(Nullability.NotNull) },
-                            symbolProvider
-                        )
-                }
-            },
-            element.otherModifierElements,
-            element.visibilityElement,
-            element.modalityElement
-        ).also {
-            it.psi = element.psi
-            symbolProvider.transferSymbol(it, element)
-            it.leftParen.takeNonCodeElementsFrom(element.leftParen)
-            it.rightParen.takeNonCodeElementsFrom(element.rightParen)
-        }.withNonCodeElementsFrom(element)
-        return recurse(kotlinFunction)
+        if (element.throwsList.isNotEmpty()) {
+            element.annotationList.annotations +=
+                throwAnnotation(
+                    element.throwsList.map { it.type.updateNullabilityRecursively(Nullability.NotNull) },
+                    symbolProvider
+                )
+        }
+        return recurse(element)
     }
 }

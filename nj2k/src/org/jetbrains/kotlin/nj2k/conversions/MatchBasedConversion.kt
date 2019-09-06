@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.SequentialBaseConversion
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 
+
 abstract class MatchBasedConversion(override val context: NewJ2kConverterContext) : SequentialBaseConversion {
     fun <R : JKTreeElement, T> applyRecursive(element: R, data: T, func: (JKTreeElement, T) -> JKTreeElement): R =
         org.jetbrains.kotlin.nj2k.tree.applyRecursive(element, data, ::onElementChanged, func)

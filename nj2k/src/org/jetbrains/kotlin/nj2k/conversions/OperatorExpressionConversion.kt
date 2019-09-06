@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.callOn
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKBinaryExpressionImpl
+import org.jetbrains.kotlin.nj2k.types.isStringType
+import org.jetbrains.kotlin.nj2k.types.type
 
 
 class AnyWithStringConcatenationConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
@@ -19,7 +20,7 @@ class AnyWithStringConcatenationConversion(context: NewJ2kConverterContext) : Re
             && element.left.type(typeFactory)?.isStringType() == false
         ) {
             return recurse(
-                JKBinaryExpressionImpl(
+                JKBinaryExpression(
                     element::left.detached().callOn(symbolProvider.provideMethodSymbol("kotlin.Any.toString")),
                     element::right.detached(),
                     element.operator

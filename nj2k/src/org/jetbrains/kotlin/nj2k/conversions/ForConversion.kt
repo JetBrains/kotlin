@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.deepestFqName
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
+import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
+import org.jetbrains.kotlin.nj2k.types.JKNoTypeImpl
+import org.jetbrains.kotlin.nj2k.types.type
 import kotlin.math.abs
 
 
@@ -35,23 +38,23 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         val whileBody = createWhileBody(loopStatement)
         val condition =
             if (loopStatement.condition !is JKStubExpression) loopStatement::condition.detached()
-            else JKBooleanLiteral(true)
-        val whileStatement = JKWhileStatementImpl(condition, whileBody)
+            else JKLiteralExpression("true", JKLiteralExpression.LiteralType.BOOLEAN)
+        val whileStatement = JKWhileStatement(condition, whileBody)
 
         if (loopStatement.initializer is JKEmptyStatement) return whileStatement
 
         val convertedFromForLoopSyntheticWhileStatement =
-            JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
+            JKKtConvertedFromForLoopSyntheticWhileStatement(
                 loopStatement::initializer.detached(),
                 whileStatement
             )
 
         val notNeedParentBlock = loopStatement.parent is JKBlock
-                || loopStatement.parent is JKLabeledStatement && loopStatement.parent?.parent is JKBlock
+                || loopStatement.parent is JKLabeledExpression && loopStatement.parent?.parent is JKBlock
 
         return when {
             loopStatement.hasNameConflict() ->
-                JKExpressionStatementImpl(
+                JKExpressionStatement(
                     runExpression(
                         convertedFromForLoopSyntheticWhileStatement,
                         symbolProvider
@@ -71,8 +74,8 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
                 val statements = loopStatement.updaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
                 return if (element.parent is JKBlock)
-                    JKBlockStatementWithoutBracketsImpl(statements)
-                else JKBlockStatementImpl(JKBlockImpl(statements))
+                    JKBlockStatementWithoutBrackets(statements)
+                else JKBlockStatement(JKBlockImpl(statements))
             }
         }
 
@@ -91,15 +94,15 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
 
             val statements =
                 if (hasNameConflict) {
-                    listOf(JKExpressionStatementImpl(runExpression(body, symbolProvider))) + loopStatement::updaters.detached()
+                    listOf(JKExpressionStatement(runExpression(body, symbolProvider))) + loopStatement::updaters.detached()
                 } else {
                     body.block::statements.detached() + loopStatement::updaters.detached()
                 }
-            return JKBlockStatementImpl(JKBlockImpl(statements))
+            return JKBlockStatement(JKBlockImpl(statements))
         } else {
             val statements =
                 listOf(body as JKStatement) + loopStatement::updaters.detached()
-            return JKBlockStatementImpl(JKBlockImpl(statements))
+            return JKBlockStatement(JKBlockImpl(statements))
         }
     }
 
@@ -136,15 +139,15 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
             val range = forIterationRange(start, right, reversed, inclusive, loopVarPsi)
             val explicitType =
                 if (context.converter.settings.specifyLocalVariableTypeByDefault)
-                    JKJavaPrimitiveTypeImpl.INT
+                    JKJavaPrimitiveType.INT
                 else JKNoTypeImpl
             val loopVarDeclaration =
-                JKForLoopVariableImpl(
-                    JKTypeElementImpl(explicitType),
+                JKForLoopVariable(
+                    JKTypeElement(explicitType),
                     loopVar::name.detached(),
-                    JKStubExpressionImpl()
+                    JKStubExpression()
                 )
-            return JKForInStatementImpl(
+            return JKForInStatement(
                 loopVarDeclaration,
                 range,
                 loopStatement::body.detached()
@@ -176,13 +179,13 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 convertBound(bound, if (inclusiveComparison) 0 else +1),
                 context
             )
-            bound !is JKKtLiteralExpression && !inclusiveComparison ->
+            bound !is JKLiteralExpression && !inclusiveComparison ->
                 untilToExpression(
                     start,
                     convertBound(bound, 0),
                     context
                 )
-            else -> JKBinaryExpressionImpl(
+            else -> JKBinaryExpression(
                 start,
                 convertBound(bound, if (inclusiveComparison) 0 else -1),
                 JKKtOperatorImpl(
@@ -198,13 +201,13 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
 
         if (bound is JKLiteralExpression && bound.type == JKLiteralExpression.LiteralType.INT) {
             val value = bound.literal.toInt()
-            return JKKtLiteralExpressionImpl((value + correction).toString(), bound.type)
+            return JKLiteralExpression((value + correction).toString(), bound.type)
         }
 
         val sign = if (correction > 0) JKOperatorToken.PLUS else JKOperatorToken.MINUS
-        return JKBinaryExpressionImpl(
+        return JKBinaryExpression(
             bound,
-            JKKtLiteralExpressionImpl(abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
+            JKLiteralExpression(abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
             JKKtOperatorImpl(
                 sign,
                 typeFactory.types.int
@@ -239,12 +242,11 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
             ?: return null
 
         return if (reversed) {
-            JKQualifiedExpressionImpl(
+            JKQualifiedExpression(
                 indices,
-                JKKtQualifierImpl.DOT,
-                JKJavaMethodCallExpressionImpl(
+                JKCallExpressionImpl(
                     symbolProvider.provideMethodSymbol("kotlin.collections.reversed"),
-                    JKArgumentListImpl()
+                    JKArgumentList()
                 )
             )
         } else indices
@@ -252,7 +254,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
 
 
     private fun indicesByCollectionSize(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
-        val methodCall = javaSizeCall.selector as? JKMethodCallExpression ?: return null
+        val methodCall = javaSizeCall.selector as? JKCallExpression ?: return null
         return if (methodCall.identifier.deepestFqName() == "java.util.Collection.size"
             && methodCall.arguments.arguments.isEmpty()
         ) toIndicesCall(javaSizeCall) else null
@@ -269,10 +271,10 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
 
     private fun toIndicesCall(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         if (javaSizeCall.psi == null) return null
-        val selector = JKFieldAccessExpressionImpl(
+        val selector = JKFieldAccessExpression(
             symbolProvider.provideFieldSymbol("kotlin.collections.indices")
         )
-        return JKQualifiedExpressionImpl(javaSizeCall::receiver.detached(), javaSizeCall.operator, selector)
+        return JKQualifiedExpression(javaSizeCall::receiver.detached(), selector)
     }
 
     private fun JKJavaForLoopStatement.hasNameConflict(): Boolean {

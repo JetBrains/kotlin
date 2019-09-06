@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKBinaryExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKParenthesizedExpressionImpl
-
 
 class AddParenthesisForLineBreaksInBinaryExpression(override val context: NewJ2kConverterContext) :
     RecursiveApplicableConversionBase(context) {
@@ -19,8 +16,8 @@ class AddParenthesisForLineBreaksInBinaryExpression(override val context: NewJ2k
         if (element.left.rightNonCodeElements.any {
                 it is JKSpaceElement && '\n' in it.text
             }) {
-            return JKParenthesizedExpressionImpl(
-                JKBinaryExpressionImpl(
+            return JKParenthesizedExpression(
+                JKBinaryExpression(
                     element::left.detached(),
                     element::right.detached(),
                     element.operator

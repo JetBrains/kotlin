@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.nj2k.annotationByFqName
 import org.jetbrains.kotlin.nj2k.jvmAnnotation
 import org.jetbrains.kotlin.nj2k.tree.*
 
+
 class JavaModifiersConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKModalityOwner && element is JKAnnotationListOwner) {

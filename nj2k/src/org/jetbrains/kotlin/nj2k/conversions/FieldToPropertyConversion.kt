@@ -7,31 +7,13 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-class FieldToPropertyConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
+
+class FieldToPropertyConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaField) return recurse(element)
-        element.invalidate()
-        val mutability =
-            if (element.modality == Modality.FINAL) Mutability.IMMUTABLE
-            else Mutability.MUTABLE
-        return recurse(
-            JKKtPropertyImpl(
-                element.type,
-                element.name,
-                element.initializer,
-                JKKtEmptyGetterOrSetterImpl(),
-                JKKtEmptyGetterOrSetterImpl(),
-                element.annotationList,
-                element.otherModifierElements,
-                element.visibilityElement,
-                JKModalityModifierElementImpl(Modality.FINAL),
-                JKMutabilityModifierElementImpl(mutability).withNonCodeElementsFrom(element.modalityElement)
-            ).also {
-                it.psi = element.psi
-                it.takeNonCodeElementsFrom(element)
-            }
-        )
+        if (element !is JKField) return recurse(element)
+        element.mutability = if (element.modality == Modality.FINAL) Mutability.IMMUTABLE else Mutability.MUTABLE
+        element.modality = Modality.FINAL
+        return recurse(element)
     }
 }

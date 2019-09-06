@@ -14,11 +14,16 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
-import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKCapturedType
-import org.jetbrains.kotlin.nj2k.tree.impl.psi
+import org.jetbrains.kotlin.nj2k.tree.JKMethod
+import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
+import org.jetbrains.kotlin.nj2k.tree.JKTypeElement
+
+
+import org.jetbrains.kotlin.nj2k.types.isCollectionType
+import org.jetbrains.kotlin.nj2k.types.JKCapturedType
 import org.jetbrains.kotlin.nj2k.types.JKParametrizedType
 import org.jetbrains.kotlin.nj2k.types.JKStarProjectionType
+import org.jetbrains.kotlin.nj2k.types.JKType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AddElementsInfoConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {

@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.nj2k.tree
 
+import org.jetbrains.kotlin.utils.SmartList
+
 
 interface JKNonCodeElement {
     val text: String
 }
 
-interface JKSpaceElement : JKNonCodeElement
+class JKSpaceElement(override val text: String) : JKNonCodeElement
+class JKCommentElement(override val text: String) : JKNonCodeElement
 
-interface JKCommentElement : JKNonCodeElement
-
-fun JKCommentElement.isMultiline() =
-    text.startsWith("/*")
-
-fun JKCommentElement.isSingleline() =
-    text.startsWith("//")
-
+class JKTokenElementImpl(override val text: String) : JKTokenElement {
+    override val leftNonCodeElements: MutableList<JKNonCodeElement> = SmartList()
+    override val rightNonCodeElements: MutableList<JKNonCodeElement> = SmartList()
+}
 
 interface JKNonCodeElementsListOwner {
     val leftNonCodeElements: MutableList<JKNonCodeElement>
@@ -29,20 +28,6 @@ interface JKNonCodeElementsListOwner {
 fun JKNonCodeElementsListOwner.takeNonCodeElementsFrom(other: JKNonCodeElementsListOwner) {
     leftNonCodeElements += other.leftNonCodeElements
     rightNonCodeElements += other.rightNonCodeElements
-}
-
-
-fun List<JKNonCodeElement>.dropSpacesAtBeginning() =
-    dropWhile { it is JKSpaceElement }
-
-fun JKTreeElement.commentsFromInside(): List<JKCommentElement> {
-    val comments = mutableListOf<JKCommentElement>()
-    fun recurse(element: JKTreeElement): JKTreeElement {
-        comments += (element.leftNonCodeElements + element.rightNonCodeElements).filterIsInstance<JKCommentElement>()
-        return applyRecursive(element, ::recurse)
-    }
-    applyRecursive(this, ::recurse)
-    return comments
 }
 
 inline fun <reified T : JKNonCodeElementsListOwner> T.withNonCodeElementsFrom(other: JKNonCodeElementsListOwner): T =

@@ -14,8 +14,8 @@ import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.isNullLiteral
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKModalityModifierElementImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKVisibilityModifierElementImpl
+
+
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 //copied from old j2k
@@ -57,11 +57,11 @@ internal fun PsiMember.visibility(
 
             else -> null
         }?.let {
-            JKVisibilityModifierElementImpl(it)
+            JKVisibilityModifierElement(it)
         }?.also { modifier ->
             assignNonCodeElements?.also { it(modifier, child) }
         }
-    }?.firstOrNull() ?: JKVisibilityModifierElementImpl(Visibility.INTERNAL)
+    }?.firstOrNull() ?: JKVisibilityModifierElement(Visibility.INTERNAL)
 
 
 fun PsiMember.modality(assignNonCodeElements: ((JKNonCodeElementsListOwner, PsiElement) -> Unit)?) =
@@ -73,11 +73,11 @@ fun PsiMember.modality(assignNonCodeElements: ((JKNonCodeElementsListOwner, PsiE
 
             else -> null
         }?.let {
-            JKModalityModifierElementImpl(it)
+            JKModalityModifierElement(it)
         }?.also { modifier ->
             assignNonCodeElements?.let { it(modifier, child) }
         }
-    }?.firstOrNull() ?: JKModalityModifierElementImpl(Modality.OPEN)
+    }?.firstOrNull() ?: JKModalityModifierElement(Modality.OPEN)
 
 
 private fun PsiMember.handleProtectedVisibility(referenceSearcher: ReferenceSearcher): Visibility {

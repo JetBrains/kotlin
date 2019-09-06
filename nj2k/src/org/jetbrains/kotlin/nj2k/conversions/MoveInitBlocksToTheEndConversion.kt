@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.nj2k.tree.JKClassBody
 import org.jetbrains.kotlin.nj2k.tree.JKKtInitDeclaration
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 
+
 class MoveInitBlocksToTheEndConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClassBody) return recurse(element)

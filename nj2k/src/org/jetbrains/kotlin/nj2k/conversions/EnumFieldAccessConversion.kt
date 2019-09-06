@@ -9,10 +9,8 @@ import com.intellij.psi.PsiEnumConstant
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKClassAccessExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtQualifierImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKQualifiedExpressionImpl
+
+
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
 
@@ -23,10 +21,9 @@ class EnumFieldAccessConversion(context: NewJ2kConverterContext) : RecursiveAppl
         val enumsClassSymbol = element.identifier.enumClassSymbol() ?: return recurse(element)
 
         return recurse(
-            JKQualifiedExpressionImpl(
-                JKClassAccessExpressionImpl(enumsClassSymbol),
-                JKKtQualifierImpl.DOT,
-                JKFieldAccessExpressionImpl(element.identifier)
+            JKQualifiedExpression(
+                JKClassAccessExpression(enumsClassSymbol),
+                JKFieldAccessExpression(element.identifier)
             )
         )
     }

@@ -5,137 +5,155 @@
 
 package org.jetbrains.kotlin.nj2k.tree
 
-import com.intellij.psi.JavaTokenType
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaOperatorToken
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtSingleValueOperatorToken
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtWordOperatorToken
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
-interface JKOperator {
-    val token: JKOperatorToken
-    val returnType: JKType
-}
-
-interface JKOperatorToken {
-    val text: String
-
-    @Suppress("MemberVisibilityCanBePrivate", "SpellCheckingInspection")
-    companion object {
-        fun fromElementType(elementType: IElementType) = elementTypeToToken.getValue(elementType)
-
-        val RANGE = JKKtSingleValueOperatorToken(KtTokens.RANGE)
-
-        val DIV = JKKtSingleValueOperatorToken(KtTokens.DIV)
-        val MINUS = JKKtSingleValueOperatorToken(KtTokens.MINUS)
-        val ANDAND = JKKtSingleValueOperatorToken(KtTokens.ANDAND)
-        val OROR = JKKtSingleValueOperatorToken(KtTokens.OROR)
-        val PLUS = JKKtSingleValueOperatorToken(KtTokens.PLUS)
-        val MUL = JKKtSingleValueOperatorToken(KtTokens.MUL)
-        val GT = JKKtSingleValueOperatorToken(KtTokens.GT)
-        val GTEQ = JKKtSingleValueOperatorToken(KtTokens.GTEQ)
-        val LT = JKKtSingleValueOperatorToken(KtTokens.LT)
-        val LTEQ = JKKtSingleValueOperatorToken(KtTokens.LTEQ)
-        val PERC = JKKtSingleValueOperatorToken(KtTokens.PERC)
-        val EQ = JKKtSingleValueOperatorToken(KtTokens.EQ)
-        val EQEQ = JKKtSingleValueOperatorToken(KtTokens.EQEQ)
-        val EXCLEQ = JKKtSingleValueOperatorToken(KtTokens.EXCLEQ)
-
-        val PLUSEQ = JKKtSingleValueOperatorToken(KtTokens.PLUSEQ)
-        val MINUSEQ = JKKtSingleValueOperatorToken(KtTokens.MINUSEQ)
-        val DIVEQ = JKKtSingleValueOperatorToken(KtTokens.DIVEQ)
-        val MULTEQ = JKKtSingleValueOperatorToken(KtTokens.MULTEQ)
-        val PERCEQ = JKKtSingleValueOperatorToken(KtTokens.PERCEQ)
-
-
-        val PLUSPLUS = JKKtSingleValueOperatorToken(KtTokens.PLUSPLUS)
-        val MINUSMINUS = JKKtSingleValueOperatorToken(KtTokens.MINUSMINUS)
-        val EXCL = JKKtSingleValueOperatorToken(KtTokens.EXCL)
-        val EQEQEQ = JKKtSingleValueOperatorToken(KtTokens.EQEQEQ)
-        val EXCLEQEQEQ = JKKtSingleValueOperatorToken(KtTokens.EXCLEQEQEQ)
-
-        val AND = JKKtWordOperatorToken("and")
-        val OR = JKKtWordOperatorToken("or")
-        val XOR = JKKtWordOperatorToken("xor")
-        val USHR = JKKtWordOperatorToken("ushr")
-        val SHR = JKKtWordOperatorToken("shr")
-        val SHL = JKKtWordOperatorToken("shl")
-
-        val ANDEQ = JKJavaOperatorToken(JavaTokenType.ANDEQ)
-        val OREQ = JKJavaOperatorToken(JavaTokenType.OREQ)
-        val XOREQ = JKJavaOperatorToken(JavaTokenType.XOREQ)
-        val LTLTEQ = JKJavaOperatorToken(JavaTokenType.LTLTEQ)
-        val GTGTEQ = JKJavaOperatorToken(JavaTokenType.GTGTEQ)
-        val GTGTGTEQ = JKJavaOperatorToken(JavaTokenType.GTGTGTEQ)
-
-
-        private val elementTypeToToken: Map<IElementType, JKOperatorToken> = mapOf(
-            JavaTokenType.DIV to DIV,
-            JavaTokenType.MINUS to MINUS,
-            JavaTokenType.ANDAND to ANDAND,
-            JavaTokenType.OROR to OROR,
-            JavaTokenType.PLUS to PLUS,
-            JavaTokenType.ASTERISK to MUL,
-            JavaTokenType.GT to GT,
-            JavaTokenType.GE to GTEQ,
-            JavaTokenType.LT to LT,
-            JavaTokenType.LE to LTEQ,
-            JavaTokenType.PERC to PERC,
-
-            JavaTokenType.EQ to EQ,
-            JavaTokenType.EQEQ to EQEQ,
-            JavaTokenType.NE to EXCLEQ,
-
-            JavaTokenType.PLUSEQ to PLUSEQ,
-            JavaTokenType.MINUSEQ to MINUSEQ,
-            JavaTokenType.DIVEQ to DIVEQ,
-            JavaTokenType.ASTERISKEQ to MULTEQ,
-
-            JavaTokenType.PLUSPLUS to PLUSPLUS,
-            JavaTokenType.MINUSMINUS to MINUSMINUS,
-            JavaTokenType.EXCL to EXCL,
-
-            KtTokens.EQEQEQ to EQEQEQ,
-            KtTokens.EXCLEQEQEQ to EXCLEQEQEQ,
-
-            JavaTokenType.AND to AND,
-            JavaTokenType.OR to OR,
-            JavaTokenType.XOR to XOR,
-            JavaTokenType.GTGTGT to USHR,
-            JavaTokenType.GTGT to SHR,
-            JavaTokenType.LTLT to SHL,
-
-            JavaTokenType.ANDEQ to ANDEQ,
-            JavaTokenType.OREQ to OREQ,
-            JavaTokenType.XOREQ to XOREQ,
-            JavaTokenType.PERCEQ to PERCEQ,
-            JavaTokenType.LTLTEQ to LTLTEQ,
-            JavaTokenType.GTGTEQ to GTGTEQ,
-            JavaTokenType.GTGTGTEQ to GTGTGTEQ
-        )
-    }
-}
-
-interface JKKtOperatorToken : JKOperatorToken
-interface JKQualifier
 
 interface JKElement {
     val parent: JKElement?
-
     fun detach(from: JKElement)
-
     fun attach(to: JKElement)
 }
 
+private class JKChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKTreeElement, T> {
+    override operator fun getValue(thisRef: JKTreeElement, property: KProperty<*>): T {
+        @Suppress("UNCHECKED_CAST")
+        return thisRef.children[value] as T
+    }
 
-interface JKBranchElement : JKElement {
-    val children: List<Any>
-
-    val valid: Boolean
-    fun invalidate()
+    override operator fun setValue(thisRef: JKTreeElement, property: KProperty<*>, value: T) {
+        @Suppress("UNCHECKED_CAST")
+        (thisRef.children[this.value] as T).detach(thisRef)
+        thisRef.children[this.value] = value
+        value.attach(thisRef)
+    }
 }
 
-interface JKType {
-    val nullability: Nullability
+private class JKListChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKTreeElement, List<T>> {
+    override operator fun getValue(thisRef: JKTreeElement, property: KProperty<*>): List<T> {
+        @Suppress("UNCHECKED_CAST")
+        return thisRef.children[value] as List<T>
+    }
+
+    override operator fun setValue(thisRef: JKTreeElement, property: KProperty<*>, value: List<T>) {
+        @Suppress("UNCHECKED_CAST")
+        (thisRef.children[this.value] as List<T>).forEach { it.detach(thisRef) }
+        thisRef.children[this.value] = value
+        value.forEach { it.attach(thisRef) }
+    }
 }
+
+
+abstract class JKTreeElement : JKElement, JKNonCodeElementsListOwner, Cloneable {
+    override val leftNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
+    override val rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
+
+    override var parent: JKElement? = null
+
+    override fun detach(from: JKElement) {
+        val prevParent = parent
+        require(from == prevParent)
+        parent = null
+    }
+
+    override fun attach(to: JKElement) {
+        check(parent == null)
+        parent = to
+    }
+
+    open fun accept(visitor: JKVisitor) = visitor.visitTreeElement(this)
+
+    private var childNum = 0
+
+    protected fun <T : JKTreeElement, U : T> child(v: U): ReadWriteProperty<JKTreeElement, T> {
+        children.add(childNum, v)
+        v.attach(this)
+        return JKChild(childNum++)
+    }
+
+    protected inline fun <reified T : JKTreeElement> children(): ReadWriteProperty<JKTreeElement, List<T>> {
+        return children(emptyList())
+    }
+
+    protected fun <T : JKTreeElement> children(v: List<T>): ReadWriteProperty<JKTreeElement, List<T>> {
+        children.add(childNum, v)
+        v.forEach { it.attach(this) }
+        return JKListChild(childNum++)
+    }
+
+    open fun acceptChildren(visitor: JKVisitor) {
+        forEachChild { it.accept(visitor) }
+    }
+
+    private inline fun forEachChild(block: (JKTreeElement) -> Unit) {
+        children.forEach {
+            @Suppress("UNCHECKED_CAST")
+            if (it is JKTreeElement)
+                block(it)
+            else
+                (it as? List<JKTreeElement>)?.forEach { block(it) }
+        }
+    }
+
+
+    private var valid: Boolean = true
+
+    fun invalidate() {
+        forEachChild { it.detach(this) }
+        valid = false
+    }
+
+    fun onAttach() {
+        check(valid)
+    }
+
+    var children: MutableList<Any> = mutableListOf()
+        private set
+
+    @Suppress("UNCHECKED_CAST")
+    open fun copy(): JKTreeElement {
+        val cloned = clone() as JKTreeElement
+        val deepClonedChildren =
+            cloned.children.map {
+                when (it) {
+                    is JKTreeElement -> it.copy()
+                    is List<*> -> (it as List<JKTreeElement>).map { it.copy() }
+                    else -> error("Tree is corrupted")
+                }
+            }
+
+        deepClonedChildren.forEach { child ->
+            when (child) {
+                is JKTreeElement -> {
+                    child.detach(this)
+                    child.attach(cloned)
+                }
+                is List<*> -> (child as List<JKTreeElement>).forEach {
+                    it.detach(this)
+                    it.attach(cloned)
+                }
+            }
+        }
+        cloned.children = deepClonedChildren.toMutableList()
+        return cloned
+    }
+}
+
+abstract class JKAnnotationMemberValue : JKTreeElement()
+
+interface PsiOwner {
+    var psi: PsiElement?
+}
+
+class PsiOwnerImpl(override var psi: PsiElement? = null) : PsiOwner
+
+interface JKTypeArgumentListOwner : JKNonCodeElementsListOwner {
+    var typeArgumentList: JKTypeArgumentList
+}
+
+interface JKTypeParameterListOwner : JKNonCodeElementsListOwner {
+    var typeParameterList: JKTypeParameterList
+}
+

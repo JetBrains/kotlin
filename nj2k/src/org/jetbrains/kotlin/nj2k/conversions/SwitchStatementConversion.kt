@@ -11,15 +11,14 @@ import com.intellij.psi.controlFlow.ControlFlowUtil
 import com.intellij.psi.controlFlow.LocalsOrMyInstanceFieldsControlFlowPolicy
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.blockStatement
-import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.runExpression
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+
 
 
 class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaSwitchStatementImpl) return recurse(element)
+        if (element !is JKJavaSwitchStatement) return recurse(element)
         element.invalidate()
         element.cases.forEach { case ->
             case.statements.forEach { it.detach(case) }
@@ -28,7 +27,7 @@ class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveAppl
             }
         }
         val cases = switchCasesToWhenCases(element.cases).moveElseCaseToTheEnd()
-        val whenStatement = JKKtWhenStatementImpl(element.expression, cases)
+        val whenStatement = JKKtWhenStatement(element.expression, cases)
         return recurse(whenStatement)
     }
 
@@ -60,16 +59,16 @@ class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveAppl
 
             val statementLabels = javaLabels
                 .filterIsInstance<JKJavaLabelSwitchCase>()
-                .map { JKKtValueWhenLabelImpl(it.label) }
+                .map { JKKtValueWhenLabel(it.label) }
             val elseLabel = javaLabels
-                .find { it is JKJavaDefaultSwitchCaseImpl }
-                ?.let { JKKtElseWhenLabelImpl() }
+                .find { it is JKJavaDefaultSwitchCase }
+                ?.let { JKKtElseWhenLabel() }
             val elseWhenCase = elseLabel?.let { label ->
-                JKKtWhenCaseImpl(listOf(label), statements.map { it.copyTreeAndDetach() }.singleBlockOrWrapToRun())
+                JKKtWhenCase(listOf(label), statements.map { it.copyTreeAndDetach() }.singleBlockOrWrapToRun())
             }
             val mainWhenCase =
                 if (statementLabels.isNotEmpty()) {
-                    JKKtWhenCaseImpl(statementLabels, statements.singleBlockOrWrapToRun())
+                    JKKtWhenCase(statementLabels, statements.singleBlockOrWrapToRun())
                 } else null
             listOfNotNull(mainWhenCase) +
                     listOfNotNull(elseWhenCase) +
@@ -81,11 +80,11 @@ class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveAppl
 
     private fun List<JKStatement>.singleBlockOrWrapToRun(): JKStatement =
         singleOrNull()
-            ?: JKBlockStatementImpl(
+            ?: JKBlockStatement(
                 JKBlockImpl(map { statement ->
                     when (statement) {
                         is JKBlockStatement ->
-                            JKExpressionStatementImpl(
+                            JKExpressionStatement(
                                 runExpression(statement, symbolProvider)
                             )
                         else -> statement
@@ -101,7 +100,7 @@ class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveAppl
         }
 
     private fun isSwitchBreak(statement: JKStatement) =
-        statement is JKBreakStatement && statement !is JKBreakWithLabelStatement
+        statement is JKBreakStatement && statement.label is JKLabelEmpty
 
     private fun List<JKStatement>.fallsThrough(): Boolean =
         all { it.fallsThrough() }
@@ -113,7 +112,7 @@ class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveAppl
                     this is JKReturnStatement ||
                     this is JKContinueStatement -> false
             this is JKBlockStatement -> block.statements.fallsThrough()
-            this is JKIfStatement ||
+            this is JKIfElseStatement ||
                     this is JKJavaSwitchStatement ||
                     this is JKKtWhenStatement ->
                 this.psi!!.canCompleteNormally()

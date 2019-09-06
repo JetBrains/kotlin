@@ -5,90 +5,76 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtLiteralExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression
+import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import java.math.BigInteger
 
-class LiteralConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
+class LiteralConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaLiteralExpression) return recurse(element)
-        return element.convertLiteral()
+        if (element !is JKLiteralExpression) return recurse(element)
+        element.convertLiteral()
+        return recurse(element)
     }
 
-    private fun JKLiteralExpression.convertLiteral(): JKLiteralExpression =
-        when (type) {
+    private fun JKLiteralExpression.convertLiteral() {
+        literal = when (type) {
             JKLiteralExpression.LiteralType.DOUBLE -> toDoubleLiteral()
             JKLiteralExpression.LiteralType.FLOAT -> toFloatLiteral()
             JKLiteralExpression.LiteralType.LONG -> toLongLiteral()
             JKLiteralExpression.LiteralType.INT -> toIntLiteral()
             JKLiteralExpression.LiteralType.CHAR -> convertCharLiteral()
             JKLiteralExpression.LiteralType.STRING -> toStringLiteral()
-            else -> this
-        }.withNonCodeElementsFrom(this)
+            else -> return
+        }
+    }
 
     private fun JKLiteralExpression.toDoubleLiteral() =
-        JKKtLiteralExpressionImpl(
-            literal.cleanFloatAndDoubleLiterals()
-                .let { text ->
-                    if (!text.contains(".") && !text.contains("e", true))
-                        "$text."
-                    else text
-                }.let { text ->
-                    if (text.endsWith(".")) "${text}0" else text
-                },
-            JKLiteralExpression.LiteralType.DOUBLE
-        )
+        literal.cleanFloatAndDoubleLiterals().let { text ->
+            if (!text.contains(".") && !text.contains("e", true))
+                "$text."
+            else text
+        }.let { text ->
+            if (text.endsWith(".")) "${text}0" else text
+        }
 
 
     private fun JKLiteralExpression.toFloatLiteral() =
-        JKKtLiteralExpressionImpl(
-            literal.cleanFloatAndDoubleLiterals()
-                .let { text ->
-                    if (!text.endsWith("f")) "${text}f"
-                    else text
-                },
-            JKLiteralExpression.LiteralType.FLOAT
-        )
+        literal.cleanFloatAndDoubleLiterals().let { text ->
+            if (!text.endsWith("f")) "${text}f"
+            else text
+        }
 
     private fun JKLiteralExpression.toStringLiteral() =
-        JKKtLiteralExpressionImpl(literal.replace("((?:\\\\)*)\\\\([0-3]?[0-7]{1,2})".toRegex()) { matchResult ->
+        literal.replace("""((?:\\)*)\\([0-3]?[0-7]{1,2})""".toRegex()) { matchResult ->
             val leadingBackslashes = matchResult.groupValues[1]
             if (leadingBackslashes.length % 2 == 0)
                 String.format("%s\\u%04x", leadingBackslashes, Integer.parseInt(matchResult.groupValues[2], 8))
             else matchResult.value
-        }.replace("\\$([A-Za-z]+|\\{)".toRegex(), "\\\\$0"), JKLiteralExpression.LiteralType.STRING)
+        }.replace("""(?<!\\)\$([A-Za-z]+|\{)""".toRegex(), "\\\\$0")
 
 
-    private fun JKLiteralExpression.convertCharLiteral(): JKKtLiteralExpression =
-        JKKtLiteralExpressionImpl(
-            literal.replace("\\\\([0-3]?[0-7]{1,2})".toRegex()) {
-                String.format("\\u%04x", Integer.parseInt(it.groupValues[1], 8))
-            },
-            JKLiteralExpression.LiteralType.CHAR
-        )
+    private fun JKLiteralExpression.convertCharLiteral() =
+        literal.replace("""\\([0-3]?[0-7]{1,2})""".toRegex()) {
+            String.format("\\u%04x", Integer.parseInt(it.groupValues[1], 8))
+        }
 
 
-    private fun JKLiteralExpression.toIntLiteral(): JKKtLiteralExpression =
-        JKKtLiteralExpressionImpl(
-            literal
-                .cleanIntAndLongLiterals()
-                .convertHexLiteral(isLongLiteral = false)
-                .convertBinaryLiteral(isLongLiteral = false)
-                .convertOctalLiteral(isLongLiteral = false),
-            JKLiteralExpression.LiteralType.INT
-        )
+    private fun JKLiteralExpression.toIntLiteral() =
+        literal
+            .cleanIntAndLongLiterals()
+            .convertHexLiteral(isLongLiteral = false)
+            .convertBinaryLiteral(isLongLiteral = false)
+            .convertOctalLiteral(isLongLiteral = false)
 
 
-    private fun JKLiteralExpression.toLongLiteral(): JKKtLiteralExpression =
-        JKKtLiteralExpressionImpl(
-            literal
-                .cleanIntAndLongLiterals()
-                .convertHexLiteral(isLongLiteral = true)
-                .convertBinaryLiteral(isLongLiteral = true)
-                .convertOctalLiteral(isLongLiteral = true) + "L",
-            JKLiteralExpression.LiteralType.LONG
-        )
+    private fun JKLiteralExpression.toLongLiteral() =
+        literal
+            .cleanIntAndLongLiterals()
+            .convertHexLiteral(isLongLiteral = true)
+            .convertBinaryLiteral(isLongLiteral = true)
+            .convertOctalLiteral(isLongLiteral = true) + "L"
 
     private fun String.convertHexLiteral(isLongLiteral: Boolean): String {
         if (!startsWith("0x", ignoreCase = true)) return this

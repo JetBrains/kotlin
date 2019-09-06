@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaArrayTypeImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeElementImpl
 import org.jetbrains.kotlin.nj2k.types.JKClassType
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
+import org.jetbrains.kotlin.nj2k.types.updateNullability
 
 
 //TODO temporary
@@ -24,14 +22,14 @@ class MainFunctionConversion(context: NewJ2kConverterContext) : RecursiveApplica
                 val oldType = type.type as JKJavaArrayType
                 val oldTypeParameter = oldType.type as JKClassType
                 val newType =
-                    JKJavaArrayTypeImpl(
+                    JKJavaArrayType(
                         oldTypeParameter.updateNullability(Nullability.NotNull),
                         Nullability.NotNull
                     )
-                type = JKTypeElementImpl(newType)
+                type = JKTypeElement(newType)
             }
             element.annotationList.annotations +=
-                JKAnnotationImpl(
+                JKAnnotation(
                     symbolProvider.provideClassSymbol("kotlin.jvm.JvmStatic"),
                     emptyList()
                 )

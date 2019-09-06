@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKBlockStatementImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKLambdaExpressionImpl
+
+
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FunctionAsAnonymousObjectToLambdaConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaNewExpression) return recurse(element)
-        if (element.isAnonymousClass()
+        if (element !is JKNewExpression) return recurse(element)
+        if (element.isAnonymousClass
             && element.classSymbol.isKtFunction()
         ) {
             val invokeFunction = element.classBody.declarations.singleOrNull()
@@ -23,8 +23,8 @@ class FunctionAsAnonymousObjectToLambdaConversion(context: NewJ2kConverterContex
                 ?.takeIf { it.name.value == "invoke" }
                 ?: return recurse(element)
             return recurse(
-                JKLambdaExpressionImpl(
-                    JKBlockStatementImpl(invokeFunction::block.detached()),
+                JKLambdaExpression(
+                    JKBlockStatement(invokeFunction::block.detached()),
                     invokeFunction::parameters.detached()
                 )
             )

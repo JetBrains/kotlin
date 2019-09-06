@@ -6,29 +6,26 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.tree.JKJavaSynchronizedStatement
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
-import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.nj2k.tree.withNonCodeElementsFrom
+import org.jetbrains.kotlin.nj2k.tree.*
 
 
 class SynchronizedStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaSynchronizedStatement) return recurse(element)
         element.invalidate()
-        val lambdaBody = JKLambdaExpressionImpl(
-            JKBlockStatementImpl(element.body),
+        val lambdaBody = JKLambdaExpression(
+            JKBlockStatement(element.body),
             emptyList()
         )
         val synchronizedCall =
-            JKKtCallExpressionImpl(
+            JKCallExpressionImpl(
                 symbolProvider.provideMethodSymbol("kotlin.synchronized"),
-                JKArgumentListImpl(
+                JKArgumentList(
                     element.lockExpression,
                     lambdaBody
                 )
             ).withNonCodeElementsFrom(element)
-        return recurse(JKExpressionStatementImpl(synchronizedCall))
+        return recurse(JKExpressionStatement(synchronizedCall))
     }
 
 }

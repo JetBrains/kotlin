@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.declarationList
 import org.jetbrains.kotlin.nj2k.findUsages
+import org.jetbrains.kotlin.nj2k.modality
 import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKBooleanLiteral
-import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaLiteralExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaPrimitiveTypeImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKNullLiteral
+
 import org.jetbrains.kotlin.nj2k.types.JKClassType
 import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
 import org.jetbrains.kotlin.nj2k.types.JKTypeParameterType
@@ -26,7 +25,7 @@ class ImplicitInitializerConversion(context: NewJ2kConverterContext) : Recursive
     }
 
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaField) return recurse(element)
+        if (element !is JKField) return recurse(element)
         if (element.initializer !is JKStubExpression) return recurse(element)
 
         val initializationState = element.initializationState()
@@ -40,7 +39,7 @@ class ImplicitInitializerConversion(context: NewJ2kConverterContext) : Recursive
         }
 
         val newInitializer = when (val fieldType = element.type.type) {
-            is JKClassType, is JKTypeParameterType -> JKNullLiteral()
+            is JKClassType, is JKTypeParameterType -> JKLiteralExpression("null", JKLiteralExpression.LiteralType.NULL)
             is JKJavaPrimitiveType -> createPrimitiveTypeInitializer(fieldType)
             else -> null
         }
@@ -50,11 +49,11 @@ class ImplicitInitializerConversion(context: NewJ2kConverterContext) : Recursive
         return element
     }
 
-    private fun JKJavaField.initializationState(): InitializationState {
+    private fun JKField.initializationState(): InitializationState {
         val fieldSymbol = symbolProvider.provideUniverseSymbol(this)
         val containingClass = parentOfType<JKClass>() ?: return InitializationState.NON_INITIALIZED
         val symbolToConstructor = containingClass.declarationList
-            .filterIsInstance<JKKtConstructor>()
+            .filterIsInstance<JKConstructor>()
             .map { symbolProvider.provideUniverseSymbol(it) to it }
             .toMap()
 
@@ -63,7 +62,7 @@ class ImplicitInitializerConversion(context: NewJ2kConverterContext) : Recursive
                 ?.identifier
 
         val constructors = containingClass.declarationList
-            .filterIsInstance<JKKtConstructor>()
+            .filterIsInstance<JKConstructor>()
             .map { symbolProvider.provideUniverseSymbol(it) to false }
             .toMap()
             .toMutableMap()
@@ -74,11 +73,11 @@ class ImplicitInitializerConversion(context: NewJ2kConverterContext) : Recursive
                 when {
                     parent is JKKtAssignmentStatement -> parent
                     parent is JKQualifiedExpression && parent.receiver is JKThisExpression ->
-                        parent.parent  as? JKKtAssignmentStatement
+                        parent.parent as? JKKtAssignmentStatement
                     else -> null
                 } ?: return@mapNotNull null
             val constructor =
-                (assignmentStatement.parent as? JKBlock)?.parent as? JKKtConstructor ?: return@mapNotNull null
+                (assignmentStatement.parent as? JKBlock)?.parent as? JKConstructor ?: return@mapNotNull null
 
             val isInitializer = when (parent) {
                 is JKKtAssignmentStatement -> (parent.field as? JKFieldAccessExpression)?.identifier == fieldSymbol
@@ -118,9 +117,9 @@ class ImplicitInitializerConversion(context: NewJ2kConverterContext) : Recursive
 
     private fun createPrimitiveTypeInitializer(primitiveType: JKJavaPrimitiveType): JKLiteralExpression =
         when (primitiveType) {
-            JKJavaPrimitiveTypeImpl.BOOLEAN ->
-                JKBooleanLiteral(false)
+            JKJavaPrimitiveType.BOOLEAN ->
+                JKLiteralExpression("false", JKLiteralExpression.LiteralType.STRING)
             else ->
-                JKJavaLiteralExpressionImpl("0", JKLiteralExpression.LiteralType.INT)
+                JKLiteralExpression("0", JKLiteralExpression.LiteralType.INT)
         }
 }

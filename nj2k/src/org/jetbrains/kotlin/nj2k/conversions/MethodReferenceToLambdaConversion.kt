@@ -7,16 +7,14 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.lang.jvm.JvmModifier
 import org.jetbrains.kotlin.codegen.kotlinType
-import org.jetbrains.kotlin.codegen.optimization.common.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.nullIfStubExpression
 import org.jetbrains.kotlin.nj2k.qualified
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.nj2k.types.JKClassType
-import org.jetbrains.kotlin.nj2k.types.JKTypeParameterType
+import org.jetbrains.kotlin.nj2k.types.*
+
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -37,11 +35,11 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
             ?.safeAs<JKClassAccessExpression>()
             ?.takeIf { symbol.safeAs<JKMethodSymbol>()?.isStatic == false && !element.isConstructorCall }
             ?.let { classAccessExpression ->
-                JKParameterImpl(
-                    JKTypeElementImpl(
+                JKParameter(
+                    JKTypeElement(
                         parametersTypesByFunctionalInterface?.firstOrNull() ?: JKClassTypeImpl(classAccessExpression.identifier)
                     ),
-                    JKNameIdentifierImpl(RECEIVER_NAME),
+                    JKNameIdentifier(RECEIVER_NAME),
                     isVarArgs = false
                 )
             }
@@ -55,9 +53,9 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
                 (symbol.parameterNames ?: return recurse(element)).zip(
                     explicitParameterTypesByFunctionalInterface ?: symbol.parameterTypes ?: return recurse(element)
                 ) { name, type ->
-                    JKParameterImpl(
-                        JKTypeElementImpl(type),
-                        JKNameIdentifierImpl(name),
+                    JKParameter(
+                        JKTypeElement(type),
+                        JKNameIdentifier(name),
                         isVarArgs = false
                     )
                 }
@@ -65,32 +63,32 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
 
         val arguments = parameters.map { parameter ->
             val parameterSymbol = symbolProvider.provideUniverseSymbol(parameter)
-            JKArgumentImpl(JKFieldAccessExpressionImpl(parameterSymbol))
+            JKArgumentImpl(JKFieldAccessExpression(parameterSymbol))
         }
         val callExpression =
             when (symbol) {
                 is JKMethodSymbol ->
-                    JKKtCallExpressionImpl(
+                    JKCallExpressionImpl(
                         symbol,
-                        JKArgumentListImpl(arguments)
+                        JKArgumentList(arguments)
                     )
-                is JKClassSymbol -> JKJavaNewExpressionImpl(symbol, JKArgumentListImpl(), JKTypeArgumentListImpl())
+                is JKClassSymbol -> JKNewExpression(symbol, JKArgumentList(), JKTypeArgumentList())
                 is JKUnresolvedSymbol -> return recurse(element)
                 else -> error("Symbol should be either method symbol or class symbol, but it is ${symbol::class}")
             }
         val qualifier = when {
             receiverParameter != null ->
-                JKFieldAccessExpressionImpl(symbolProvider.provideUniverseSymbol(receiverParameter))
+                JKFieldAccessExpression(symbolProvider.provideUniverseSymbol(receiverParameter))
             element.isConstructorCall -> element.qualifier.safeAs<JKQualifiedExpression>()?.let { it::receiver.detached() }
             else -> element::qualifier.detached().nullIfStubExpression()
         }
 
 
-        val lambda = JKLambdaExpressionImpl(
-            JKExpressionStatementImpl(callExpression.qualified(qualifier)),
+        val lambda = JKLambdaExpression(
+            JKExpressionStatement(callExpression.qualified(qualifier)),
             listOfNotNull(receiverParameter) + parameters,
             element::functionalType.detached(),
-            JKTypeElementImpl(
+            JKTypeElement(
                 when (symbol) {
                     is JKMethodSymbol -> symbol.returnType ?: JKNoTypeImpl
                     is JKClassSymbol -> JKClassTypeImpl(symbol)

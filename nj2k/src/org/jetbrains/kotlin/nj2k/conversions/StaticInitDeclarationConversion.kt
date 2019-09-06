@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.nj2k.createCompanion
 import org.jetbrains.kotlin.nj2k.getCompanion
 import org.jetbrains.kotlin.nj2k.replace
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtInitDeclarationImpl
+
 
 class StaticInitDeclarationConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -34,5 +34,5 @@ class StaticInitDeclarationConversion(context : NewJ2kConverterContext) : Recurs
     }
 
     private fun JKJavaStaticInitDeclaration.toKtInitDeclaration() =
-        JKKtInitDeclarationImpl(::block.detached()).withNonCodeElementsFrom(this)
+        JKKtInitDeclaration(::block.detached()).withNonCodeElementsFrom(this)
 }

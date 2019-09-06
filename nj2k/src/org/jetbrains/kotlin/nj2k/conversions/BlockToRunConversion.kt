@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+
 
 class BlockToRunConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -19,15 +19,15 @@ class BlockToRunConversion(context: NewJ2kConverterContext) : RecursiveApplicabl
         if (parentDeclaration.psi == null) return recurse(element)
 
         element.invalidate()
-        val lambda = JKLambdaExpressionImpl(
-            JKBlockStatementImpl(element.block),
+        val lambda = JKLambdaExpression(
+            JKBlockStatement(element.block),
             emptyList()
         )
-        val call = JKKtCallExpressionImpl(
+        val call = JKCallExpressionImpl(
             symbolProvider.provideMethodSymbol("kotlin.run"),
-            JKArgumentListImpl(lambda)
+            JKArgumentList(lambda)
         )
-        return recurse(JKExpressionStatementImpl(call).withNonCodeElementsFrom(element))
+        return recurse(JKExpressionStatement(call).withNonCodeElementsFrom(element))
     }
 
 }

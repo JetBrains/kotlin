@@ -6,50 +6,32 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.declarationList
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+
 import org.jetbrains.kotlin.nj2k.types.JKClassType
+import org.jetbrains.kotlin.nj2k.types.JKNoType
 
 
 class InsertDefaultPrimaryConstructorConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
         if (element.classKind != JKClass.ClassKind.CLASS) return recurse(element)
-        if (element.declarationList.any { it is JKKtConstructor }) return recurse(element)
+        if (element.declarationList.any { it is JKConstructor }) return recurse(element)
 
-        val constructor = JKKtPrimaryConstructorImpl(
-            JKNameIdentifierImpl(element.name.value),
+        val constructor = JKKtPrimaryConstructor(
+            JKNameIdentifier(element.name.value),
             emptyList(),
-            JKStubExpressionImpl(),
-            JKAnnotationListImpl(),
+            JKStubExpression(),
+            JKAnnotationList(),
             emptyList(),
-            JKVisibilityModifierElementImpl(Visibility.PUBLIC),
-            JKModalityModifierElementImpl(Modality.FINAL)
+            JKVisibilityModifierElement(Visibility.PUBLIC),
+            JKModalityModifierElement(Modality.FINAL)
         )
 
         element.classBody.declarations += constructor
-
-        val superClassSymbol =
-            (element.inheritance.extends.singleOrNull() as? JKClassType)?.classReference
-
-        if (superClassSymbol is JKUniverseClassSymbol) {
-            val superClass = recurse(superClassSymbol.target)
-            val superConstructor = symbolProvider.provideUniverseSymbol(
-                superClass.declarationList.singleOrNull { it is JKKtConstructor && it.parameters.isEmpty() } as? JKMethod ?: return recurse(
-                    element
-                )
-            )
-            constructor.delegationCall = JKDelegationConstructorCallImpl(superConstructor, JKSuperExpressionImpl(), JKArgumentListImpl())
-        }
-
         return recurse(element)
     }
-
-    private val JKClassSymbol.kind
-        get() = when (this) {
-            is JKUniverseClassSymbol -> target.classKind
-            else -> null
-        }
 }

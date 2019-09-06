@@ -8,28 +8,27 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asStatement
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKBlockStatementWithoutBracketsImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtConvertedFromForLoopSyntheticWhileStatementImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKLabeledStatementImpl
+
+
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 class LabeledStatementConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKExpressionStatement) return recurse(element)
-        val labeledStatement = element.expression  as? JKLabeledStatement ?: return recurse(element)
+        val labeledStatement = element.expression as? JKLabeledExpression ?: return recurse(element)
         val convertedFromForLoopSyntheticWhileStatement = labeledStatement.statement
             .safeAs<JKBlockStatement>()
             ?.block
             ?.statements
             ?.singleOrNull()
-            ?.safeAs<JKKtConvertedFromForLoopSyntheticWhileStatementImpl>() ?: return recurse(element)
+            ?.safeAs<JKKtConvertedFromForLoopSyntheticWhileStatement>() ?: return recurse(element)
 
         return recurse(
-            JKBlockStatementWithoutBracketsImpl(
+            JKBlockStatementWithoutBrackets(
                 listOf(
                     convertedFromForLoopSyntheticWhileStatement::variableDeclaration.detached(),
-                    JKLabeledStatementImpl(
+                    JKLabeledExpression(
                         convertedFromForLoopSyntheticWhileStatement::whileStatement.detached(),
                         labeledStatement::labels.detached()
                     ).asStatement()

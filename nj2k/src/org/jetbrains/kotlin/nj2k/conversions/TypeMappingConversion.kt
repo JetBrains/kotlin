@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.types.*
 import org.jetbrains.kotlin.psi.KtClass
 
@@ -24,14 +23,15 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
             is JKTypeElement -> {
                 element.type = element.type.mapType(element)
             }
-            is JKJavaNewExpression -> {
+            is JKNewExpression -> {
                 val newClassSymbol = element.classSymbol.mapClassSymbol()
                 return recurse(
-                    JKJavaNewExpressionImpl(
+                    JKNewExpression(
                         newClassSymbol,
                         element::arguments.detached(),
                         element::typeArgumentList.detached().fixTypeArguments(newClassSymbol),
-                        element::classBody.detached()
+                        element::classBody.detached(),
+                        element.isAnonymousClass
                     ).withNonCodeElementsFrom(element)
                 )
             }
@@ -41,16 +41,16 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
 
     private fun JKTypeArgumentList.fixTypeArguments(classSymbol: JKClassSymbol): JKTypeArgumentList {
         if (typeArguments.isNotEmpty()) {
-            return JKTypeArgumentListImpl(
+            return JKTypeArgumentList(
                 typeArguments.map { typeArgument ->
-                    JKTypeElementImpl(typeArgument.type.mapType(null))
+                    JKTypeElement(typeArgument.type.mapType(null))
                 }
             )
         }
         return when (val typeParametersCount = classSymbol.expectedTypeParametersCount()) {
             0 -> this
-            else -> JKTypeArgumentListImpl(List(typeParametersCount) {
-                JKTypeElementImpl(typeFactory.types.nullableAny)
+            else -> JKTypeArgumentList(List(typeParametersCount) {
+                JKTypeElement(typeFactory.types.nullableAny)
             })
         }
     }
@@ -58,7 +58,7 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
     private fun JKType.fixRawType(typeElement: JKTypeElement?) =
         when (typeElement?.parent) {
             is JKClassLiteralExpression -> this
-            is JKKtIsExpression ->
+            is JKIsExpression ->
                 addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
                     .updateNullability(Nullability.NotNull)
             is JKTypeCastExpression ->
@@ -80,7 +80,7 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
                     nullability
                 )
             is JKVarianceTypeParameterType ->
-                JKVarianceTypeParameterTypeImpl(
+                JKVarianceTypeParameterType(
                     variance,
                     boundType.mapType(null)
                 )

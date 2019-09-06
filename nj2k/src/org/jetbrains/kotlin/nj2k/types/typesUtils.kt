@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.nj2k.tree
+package org.jetbrains.kotlin.nj2k.types
 
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.PsiClass
@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
-import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.nj2k.types.*
+import org.jetbrains.kotlin.nj2k.toJkType
+import org.jetbrains.kotlin.nj2k.tree.*
+
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -35,14 +36,13 @@ fun JKExpression.type(typeFactory: JKTypeFactory): JKType? =
                 else -> error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
             }
         }
-        is JKMethodCallExpression -> identifier.returnType
-        is JKFieldAccessExpressionImpl -> identifier.fieldType
-        is JKQualifiedExpressionImpl -> selector.type(typeFactory)
+        is JKCallExpression -> identifier.returnType
+        is JKFieldAccessExpression -> identifier.fieldType
+        is JKQualifiedExpression -> selector.type(typeFactory)
         is JKKtThrowExpression -> typeFactory.types.nothing
         is JKClassAccessExpression ->
             JKClassTypeImpl(identifier, emptyList(), Nullability.NotNull)
-        is JKJavaNewExpression -> JKClassTypeImpl(classSymbol)
-        is JKKtIsExpression -> typeFactory.types.boolean
+        is JKIsExpression -> typeFactory.types.boolean
         is JKParenthesizedExpression -> expression.type(typeFactory)
         is JKTypeCastExpression -> type.type
         is JKThisExpression -> null// TODO return actual type
@@ -53,28 +53,27 @@ fun JKExpression.type(typeFactory: JKTypeFactory): JKType? =
             (expression.type(typeFactory) as? JKParametrizedType)?.parameters?.lastOrNull()
         is JKClassLiteralExpression -> {
             val symbol = when (literalType) {
-                JKClassLiteralExpression.LiteralType.KOTLIN_CLASS ->
+                JKClassLiteralExpression.ClassLiteralType.KOTLIN_CLASS ->
                     typeFactory.symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.kClass.toSafe())
-                JKClassLiteralExpression.LiteralType.JAVA_CLASS,
-                JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS, JKClassLiteralExpression.LiteralType.JAVA_VOID_TYPE ->
+                JKClassLiteralExpression.ClassLiteralType.JAVA_CLASS,
+                JKClassLiteralExpression.ClassLiteralType.JAVA_PRIMITIVE_CLASS, JKClassLiteralExpression.ClassLiteralType.JAVA_VOID_TYPE ->
                     typeFactory.symbolProvider.provideClassSymbol("java.lang.Class")
             }
             JKClassTypeImpl(symbol, listOf(classType.type), Nullability.NotNull)
         }
         is JKKtAnnotationArrayInitializerExpression -> JKNoTypeImpl //TODO
         is JKLambdaExpression -> returnType.type
-        is JKLabeledStatement ->
-            statement.safeAs<JKExpressionStatement>()?.expression?.type(typeFactory)
+        is JKLabeledExpression -> typeFactory.types.unit
         is JKMethodReferenceExpression -> JKNoTypeImpl //TODO
         is JKAssignmentChainAlsoLink -> receiver.type(typeFactory)
         is JKAssignmentChainLetLink -> field.type(typeFactory)
-        is JKKtAssignmentStatement -> typeFactory.types.unit
         is JKKtItExpression -> type
+        is JKNewExpression -> JKClassTypeImpl(classSymbol)
         else -> TODO(this::class.java.toString())
     }
 
 fun JKType.asTypeElement() =
-    JKTypeElementImpl(this)
+    JKTypeElement(this)
 
 fun JKClassSymbol.asType(nullability: Nullability = Nullability.Default): JKClassType =
     JKClassTypeImpl(this, emptyList(), nullability)
@@ -112,7 +111,7 @@ private val jvmPrimitiveTypesPriority =
 
 fun JKType.applyRecursive(transform: (JKType) -> JKType?): JKType =
     transform(this) ?: when (this) {
-        is JKTypeParameterTypeImpl -> this
+        is JKTypeParameterType -> this
         is JKClassTypeImpl ->
             JKClassTypeImpl(
                 classReference,
@@ -122,10 +121,10 @@ fun JKType.applyRecursive(transform: (JKType) -> JKType?): JKType =
         is JKNoType -> this
         is JKJavaVoidType -> this
         is JKJavaPrimitiveType -> this
-        is JKJavaArrayType -> JKJavaArrayTypeImpl(type.applyRecursive(transform), nullability)
+        is JKJavaArrayType -> JKJavaArrayType(type.applyRecursive(transform), nullability)
         is JKContextType -> JKContextType
         is JKJavaDisjunctionType ->
-            JKJavaDisjunctionTypeImpl(disjunctions.map { it.applyRecursive(transform) }, nullability)
+            JKJavaDisjunctionType(disjunctions.map { it.applyRecursive(transform) }, nullability)
         is JKStarProjectionType -> this
         else -> TODO(this::class.toString())
     }
@@ -133,12 +132,12 @@ fun JKType.applyRecursive(transform: (JKType) -> JKType?): JKType =
 inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability): T =
     if (nullability == newNullability) this
     else when (this) {
-        is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(identifier, newNullability)
+        is JKTypeParameterType -> JKTypeParameterType(identifier, newNullability)
         is JKClassTypeImpl -> JKClassTypeImpl(classReference, parameters, newNullability)
         is JKNoType -> this
         is JKJavaVoidType -> this
         is JKJavaPrimitiveType -> this
-        is JKJavaArrayType -> JKJavaArrayTypeImpl(type, newNullability)
+        is JKJavaArrayType -> JKJavaArrayType(type, newNullability)
         is JKContextType -> JKContextType
         is JKJavaDisjunctionType -> this
         else -> TODO(this::class.toString())
@@ -148,14 +147,14 @@ inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability)
 fun <T : JKType> T.updateNullabilityRecursively(newNullability: Nullability): T =
     applyRecursive {
         when (it) {
-            is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(it.identifier, newNullability)
+            is JKTypeParameterType -> JKTypeParameterType(it.identifier, newNullability)
             is JKClassTypeImpl ->
                 JKClassTypeImpl(
                     it.classReference,
                     it.parameters.map { it.updateNullabilityRecursively(newNullability) },
                     newNullability
                 )
-            is JKJavaArrayType -> JKJavaArrayTypeImpl(it.type.updateNullabilityRecursively(newNullability), newNullability)
+            is JKJavaArrayType -> JKJavaArrayType(it.type.updateNullabilityRecursively(newNullability), newNullability)
             else -> null
         }
     } as T
@@ -183,14 +182,14 @@ fun JKJavaPrimitiveType.toLiteralType(): JKLiteralExpression.LiteralType? =
 fun JKType.asPrimitiveType(): JKJavaPrimitiveType? =
     if (this is JKJavaPrimitiveType) this
     else when ((this as? JKClassType)?.classReference?.fqName) {
-        KotlinBuiltIns.FQ_NAMES._char.asString(), CommonClassNames.JAVA_LANG_CHARACTER -> JKJavaPrimitiveTypeImpl.CHAR
-        KotlinBuiltIns.FQ_NAMES._boolean.asString(), CommonClassNames.JAVA_LANG_BOOLEAN -> JKJavaPrimitiveTypeImpl.BOOLEAN
-        KotlinBuiltIns.FQ_NAMES._int.asString(), CommonClassNames.JAVA_LANG_INTEGER -> JKJavaPrimitiveTypeImpl.INT
-        KotlinBuiltIns.FQ_NAMES._long.asString(), CommonClassNames.JAVA_LANG_LONG -> JKJavaPrimitiveTypeImpl.LONG
-        KotlinBuiltIns.FQ_NAMES._float.asString(), CommonClassNames.JAVA_LANG_FLOAT -> JKJavaPrimitiveTypeImpl.FLOAT
-        KotlinBuiltIns.FQ_NAMES._double.asString(), CommonClassNames.JAVA_LANG_DOUBLE -> JKJavaPrimitiveTypeImpl.DOUBLE
-        KotlinBuiltIns.FQ_NAMES._byte.asString(), CommonClassNames.JAVA_LANG_BYTE -> JKJavaPrimitiveTypeImpl.BYTE
-        KotlinBuiltIns.FQ_NAMES._short.asString(), CommonClassNames.JAVA_LANG_SHORT -> JKJavaPrimitiveTypeImpl.SHORT
+        KotlinBuiltIns.FQ_NAMES._char.asString(), CommonClassNames.JAVA_LANG_CHARACTER -> JKJavaPrimitiveType.CHAR
+        KotlinBuiltIns.FQ_NAMES._boolean.asString(), CommonClassNames.JAVA_LANG_BOOLEAN -> JKJavaPrimitiveType.BOOLEAN
+        KotlinBuiltIns.FQ_NAMES._int.asString(), CommonClassNames.JAVA_LANG_INTEGER -> JKJavaPrimitiveType.INT
+        KotlinBuiltIns.FQ_NAMES._long.asString(), CommonClassNames.JAVA_LANG_LONG -> JKJavaPrimitiveType.LONG
+        KotlinBuiltIns.FQ_NAMES._float.asString(), CommonClassNames.JAVA_LANG_FLOAT -> JKJavaPrimitiveType.FLOAT
+        KotlinBuiltIns.FQ_NAMES._double.asString(), CommonClassNames.JAVA_LANG_DOUBLE -> JKJavaPrimitiveType.DOUBLE
+        KotlinBuiltIns.FQ_NAMES._byte.asString(), CommonClassNames.JAVA_LANG_BYTE -> JKJavaPrimitiveType.BYTE
+        KotlinBuiltIns.FQ_NAMES._short.asString(), CommonClassNames.JAVA_LANG_SHORT -> JKJavaPrimitiveType.SHORT
         else -> null
     }
 
@@ -221,7 +220,7 @@ fun JKType.arrayFqName(): String =
 fun JKClassSymbol.isArrayType(): Boolean =
     fqName in arrayFqNames
 
-private val arrayFqNames = JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE.values
+private val arrayFqNames = JKJavaPrimitiveType.KEYWORD_TO_INSTANCE.values
     .filterIsInstance<JKJavaPrimitiveType>()
     .map { PrimitiveType.valueOf(it.jvmPrimitiveType.name).arrayTypeFqName.asString() } +
         KotlinBuiltIns.FQ_NAMES.array.asString()

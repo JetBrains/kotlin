@@ -6,17 +6,12 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.tree.JKJavaThrowStatement
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
-import org.jetbrains.kotlin.nj2k.tree.detached
-import org.jetbrains.kotlin.nj2k.tree.impl.JKExpressionStatementImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtThrowExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.*
 
-
-class ThrowStatementConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
+class ThrowStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaThrowStatement) return recurse(element)
-        val throwExpression = JKKtThrowExpressionImpl(element::exception.detached())
-        return recurse(JKExpressionStatementImpl(throwExpression))
+        val throwExpression = JKKtThrowExpression(element::exception.detached())
+        return recurse(JKExpressionStatement(throwExpression))
     }
 }

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+
 import org.jetbrains.kotlin.nj2k.types.JKJavaDisjunctionType
+import org.jetbrains.kotlin.nj2k.types.updateNullability
 import org.jetbrains.kotlin.nj2k.useExpression
 
 
@@ -23,8 +23,8 @@ class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplica
     }
 
     private fun convertNoResourcesTryStatement(tryStatement: JKJavaTryStatement): JKStatement =
-        JKExpressionStatementImpl(
-            JKKtTryExpressionImpl(
+        JKExpressionStatement(
+            JKKtTryExpression(
                 tryStatement::tryBlock.detached(),
                 tryStatement::finallyBlock.detached(),
                 tryStatement.catchSections.flatMap(::convertCatchSection)
@@ -35,11 +35,11 @@ class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplica
         val body =
             resourceDeclarationsToUseExpression(
                 tryStatement.resourceDeclarations,
-                JKBlockStatementImpl(tryStatement::tryBlock.detached())
+                JKBlockStatement(tryStatement::tryBlock.detached())
             )
         return if (tryStatement.finallyBlock !is JKBodyStub || tryStatement.catchSections.isNotEmpty()) {
-            JKExpressionStatementImpl(
-                JKKtTryExpressionImpl(
+            JKExpressionStatement(
+                JKKtTryExpression(
                     JKBlockImpl(listOf(body)),
                     tryStatement::finallyBlock.detached(),
                     tryStatement.catchSections.flatMap(::convertCatchSection)
@@ -55,7 +55,7 @@ class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplica
         resourceDeclarations
             .reversed()
             .fold(innerStatement) { inner, variable ->
-                JKExpressionStatementImpl(
+                JKExpressionStatement(
                     useExpression(
                         receiver = (variable as JKLocalVariable)::initializer.detached(),
                         variableIdentifier = variable::name.detached(),
@@ -70,11 +70,11 @@ class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplica
         return javaCatchSection.parameter.type.type.let {
             (it as? JKJavaDisjunctionType)?.disjunctions ?: listOf(it)
         }.map {
-            val parameter = JKParameterImpl(
-                JKTypeElementImpl(it.updateNullability(Nullability.NotNull)),
+            val parameter = JKParameter(
+                JKTypeElement(it.updateNullability(Nullability.NotNull)),
                 javaCatchSection.parameter.name.copyTreeAndDetach()
             )
-            JKKtTryCatchSectionImpl(
+            JKKtTryCatchSection(
                 parameter,
                 javaCatchSection.block.copyTreeAndDetach()
             ).withNonCodeElementsFrom(javaCatchSection)

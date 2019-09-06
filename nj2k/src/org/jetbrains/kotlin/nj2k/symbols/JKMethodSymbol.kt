@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.nj2k.symbols
 
+
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.nj2k.JKSymbolProvider
-import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKClassTypeImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKNoTypeImpl
+import org.jetbrains.kotlin.nj2k.tree.JKClass
+import org.jetbrains.kotlin.nj2k.tree.JKMethod
+import org.jetbrains.kotlin.nj2k.types.asType
+import org.jetbrains.kotlin.nj2k.types.toJK
+import org.jetbrains.kotlin.nj2k.types.JKClassTypeImpl
+import org.jetbrains.kotlin.nj2k.types.JKNoTypeImpl
+import org.jetbrains.kotlin.nj2k.types.JKType
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs

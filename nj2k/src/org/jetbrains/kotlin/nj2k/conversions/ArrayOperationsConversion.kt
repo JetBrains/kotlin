@@ -13,8 +13,9 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseFieldSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
+
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
+import org.jetbrains.kotlin.nj2k.types.type
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
@@ -24,7 +25,7 @@ class ArrayOperationsConversion(context: NewJ2kConverterContext) : RecursiveAppl
         val selector = element.selector as? JKFieldAccessExpression ?: return recurse(element)
         if (element.receiver.isArrayOrVarargTypeParameter() && selector.identifier.name == "length") {
             val sizeCall =
-                JKFieldAccessExpressionImpl(
+                JKFieldAccessExpression(
                     symbolProvider.provideFieldSymbol("kotlin.Array.size")
                 )
             element.selector = sizeCall

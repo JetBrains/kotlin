@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asStatement
-import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKLabelTextImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKLabeledStatementImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKNameIdentifierImpl
+
+
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ReturnStatementInLambdaExpressionConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
@@ -34,13 +32,13 @@ class ReturnStatementInLambdaExpressionConversion(context : NewJ2kConverterConte
                 statement.block.statements += last::expression.detached().asStatement()
             }
         }
-        val parentMethodName = element.parent?.parent?.parent.safeAs<JKMethodCallExpression>()?.identifier?.name
+        val parentMethodName = element.parent?.parent?.parent.safeAs<JKCallExpression>()?.identifier?.name
         if (parentMethodName == null) {
             val atLeastOneReturnStatementExists = applyLabelToAllReturnStatements(statement, element, DEFAULT_LABEL_NAME)
             return if (atLeastOneReturnStatementExists) {
-                JKLabeledStatementImpl(
+                JKLabeledExpression(
                     recurse(element.copyTreeAndDetach()).asStatement(),
-                    listOf(JKNameIdentifierImpl(DEFAULT_LABEL_NAME))
+                    listOf(JKNameIdentifier(DEFAULT_LABEL_NAME))
                 )
             } else recurse(element)
         }
@@ -58,7 +56,7 @@ class ReturnStatementInLambdaExpressionConversion(context : NewJ2kConverterConte
         fun addLabelToReturnStatement(returnStatement: JKReturnStatement) {
             if (returnStatement.label is JKLabelEmpty && returnStatement.parentOfType<JKLambdaExpression>() == lambdaExpression) {
                 atLeastOneReturnStatementExists = true
-                returnStatement.label = JKLabelTextImpl(JKNameIdentifierImpl(label))
+                returnStatement.label = JKLabelText(JKNameIdentifier(label))
             }
         }
 

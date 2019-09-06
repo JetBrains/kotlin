@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.primaryConstructor
 import org.jetbrains.kotlin.nj2k.toExpression
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationNameParameterImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKAnnotationParameterImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtAnnotationArrayInitializerExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKNameIdentifierImpl
+import org.jetbrains.kotlin.nj2k.types.isArrayType
 
 class AnnotationConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -43,15 +40,15 @@ class AnnotationConversion(context: NewJ2kConverterContext) : RecursiveApplicabl
                                 && annotation.isVarargsArgument(annotationParameter.name.value)
                                 && annotationParameter.value !is JKKtAnnotationArrayInitializerExpression -> {
                             listOf(
-                                JKAnnotationNameParameterImpl(
-                                    JKKtAnnotationArrayInitializerExpressionImpl(annotationParameter::value.detached()),
-                                    JKNameIdentifierImpl(annotationParameter.name.value)
+                                JKAnnotationNameParameter(
+                                    JKKtAnnotationArrayInitializerExpression(annotationParameter::value.detached()),
+                                    JKNameIdentifier(annotationParameter.name.value)
                                 )
                             )
                         }
-                        annotationParameter is JKAnnotationNameParameterImpl ->
+                        annotationParameter is JKAnnotationNameParameter ->
                             listOf(
-                                JKAnnotationNameParameterImpl(
+                                JKAnnotationNameParameter(
                                     annotationParameter::value.detached(),
                                     annotationParameter::name.detached()
                                 )
