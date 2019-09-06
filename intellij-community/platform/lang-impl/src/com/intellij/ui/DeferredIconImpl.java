@@ -31,6 +31,7 @@ import javax.swing.*;
 import javax.swing.plaf.TreeUI;
 import java.awt.*;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
@@ -372,6 +373,16 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
   @FunctionalInterface
   interface IconListener<T> {
     void evalDone(@NotNull DeferredIconImpl<T> source, T key, @NotNull Icon result);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof DeferredIconImpl && paramsEqual(this, (DeferredIconImpl<?>)obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(myParam, myScaledDelegateIcon);
   }
 
   static boolean equalIcons(Icon icon1, Icon icon2) {
