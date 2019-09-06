@@ -14,6 +14,24 @@ repositories {
 
 yarn
 
+tasks {
+    val yarnFolderRemove by registering {
+        doLast {
+            yarn.installationDir.deleteRecursively()
+        }
+    }
+
+    val yarnFolderCheck by registering {
+        dependsOn(getByName("kotlinYarnSetup"))
+
+        doLast {
+            if (!yarn.installationDir.exists()) {
+                throw GradleException()
+            }
+        }
+    }
+}
+
 kotlin.sourceSets {
     getByName("main") {
         dependencies {

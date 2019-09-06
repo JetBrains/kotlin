@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.wrapper.GradleUserHomeLookup
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
@@ -421,18 +420,16 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
 
-        GradleUserHomeLookup.gradleUserHome().resolve("yarn").deleteRecursively()
+        build("yarnFolderRemove") {
+            assertSuccessful()
+        }
 
-        build("kotlinYarnSetup") {
+        build("kotlinYarnSetup", "yarnFolderCheck") {
             assertSuccessful()
 
             assertTasksExecuted(
-                ":kotlinYarnSetup"
-            )
-
-            assertFileExists(
-                path = GradleUserHomeLookup.gradleUserHome().resolve("yarn").canonicalPath,
-                inWorkingDir = false
+                ":kotlinYarnSetup",
+                ":yarnFolderCheck"
             )
         }
     }
