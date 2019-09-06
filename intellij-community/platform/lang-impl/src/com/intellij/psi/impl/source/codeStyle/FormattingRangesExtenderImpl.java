@@ -33,12 +33,9 @@ class FormattingRangesExtenderImpl implements FormattingRangesExtender {
   }
 
   private TextRange processRange(@NotNull TextRange originalRange) {
-    TextRange trimmedSpacesRange = trimSpaces(originalRange);
-    if (trimmedSpacesRange != null) {
-      ASTNode containingNode = CodeFormatterFacade.findContainingNode(myFile, trimmedSpacesRange);
-      if (containingNode != null) {
-        return getRangeWithSiblings(containingNode);
-      }
+    ASTNode containingNode = CodeFormatterFacade.findContainingNode(myFile, expandToLine(originalRange));
+    if (containingNode != null) {
+      return getRangeWithSiblings(containingNode);
     }
     return originalRange;
   }
@@ -51,6 +48,19 @@ class FormattingRangesExtenderImpl implements FormattingRangesExtender {
     if (startOffset == endOffset) return null;
     endOffset = CharArrayUtil.shiftBackward(myDocument.getCharsSequence(), startOffset, endOffset, " /t" );
     return new TextRange(startOffset, endOffset);
+  }
+
+  private TextRange expandToLine(@NotNull TextRange range) {
+    int line = myDocument.getLineNumber(range.getStartOffset());
+    if (line == myDocument.getLineNumber(Math.min(range.getEndOffset(), myDocument.getTextLength()))) {
+      int lineStart = myDocument.getLineStartOffset(line);
+      int lineEnd = myDocument.getLineEndOffset(line);
+      TextRange lineRange = trimSpaces(new TextRange(lineStart, lineEnd));
+      if (lineRange != null) {
+        return lineRange;
+      }
+    }
+    return range;
   }
 
   private static TextRange getRangeWithSiblings(@NotNull ASTNode astNode) {
