@@ -112,3 +112,12 @@ object X {
 header class Expected
 
 impl class Actual
+
+// KT-33060
+interface AA {
+    fun foo(key: Any)
+}
+
+class A1 : AA {
+    override final fun foo(key: Any) {}
+}
