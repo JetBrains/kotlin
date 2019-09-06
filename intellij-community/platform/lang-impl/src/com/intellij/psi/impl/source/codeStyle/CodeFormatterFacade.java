@@ -38,6 +38,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NonNls;
@@ -191,7 +192,7 @@ public class CodeFormatterFacade {
             return;
           }
 
-          TextRange formattingModelRange = uniteFormatRanges(textRanges, file.getTextRange());
+          TextRange formattingModelRange = ObjectUtils.notNull(ranges.getBoundRange(), file.getTextRange());
 
           final FormattingModel originalModel = CoreFormatterUtil.buildModel(builder, file, formattingModelRange, mySettings, FormattingMode.REFORMAT);
           final FormattingModel model = new DocumentBasedFormattingModel(originalModel,
@@ -273,21 +274,6 @@ public class CodeFormatterFacade {
       node = file.getNode();
     }
     return node;
-  }
-
-  @NotNull
-  private static TextRange uniteFormatRanges(@NotNull Iterable<FormatTextRange> ranges, @NotNull TextRange defaultRange) {
-    TextRange resultRange = null;
-    for (FormatTextRange formatRange : ranges) {
-      TextRange textRange = formatRange.getTextRange();
-      if (resultRange == null) {
-        resultRange = textRange;
-      }
-      else {
-        resultRange = resultRange.union(textRange);
-      }
-    }
-    return resultRange != null ? resultRange : defaultRange;
   }
 
   private TextRange preprocess(@NotNull final ASTNode node, @NotNull TextRange range) {

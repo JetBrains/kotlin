@@ -98,7 +98,9 @@ public class FormatTextRanges implements FormattingRangesInfo {
   }
 
   public List<TextRange> getTextRanges() {
-    return ContainerUtil.map(myRanges, FormatTextRange::getTextRange);
+    List<TextRange> ranges = ContainerUtil.map(myRanges, FormatTextRange::getTextRange);
+    ranges.sort(Segment.BY_START_OFFSET_THEN_END_OFFSET);
+    return ranges;
   }
 
   public void setRangesExtender(@Nullable FormattingRangesExtender extender) {
