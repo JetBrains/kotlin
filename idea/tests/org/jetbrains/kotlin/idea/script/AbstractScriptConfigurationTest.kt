@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.script
 
-import com.intellij.codeInsight.highlighting.HighlightUsagesHandler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.JavaModuleType
@@ -21,34 +20,28 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.PsiTestUtil
-import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
-import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
-import org.jetbrains.kotlin.idea.navigation.GotoCheck
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
-import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
-import org.junit.Assert
-import org.junit.ComparisonFailure
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.script.dependencies.Environment
@@ -265,9 +258,13 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         // This is needed because updateScriptDependencies invalidates psiFile that was stored in myFile field
         myFile = psiManager.findFile(script)
 
-        val isFatalErrorPresent = IdeScriptReportSink.getReports(myFile as KtFile).any { it.severity == ScriptDiagnostic.Severity.FATAL }
+        val ktFile = myFile as KtFile
+        val reports = IdeScriptReportSink.getReports(ktFile)
+        val isFatalErrorPresent = reports.any { it.severity == ScriptDiagnostic.Severity.FATAL }
         assert(isFatalErrorPresent || KotlinHighlightingUtil.shouldHighlight(myFile)) {
-            "Highlighting is switched off for ${myFile.virtualFile.path}"
+            "Highlighting is switched off for ${myFile.virtualFile.path}\n" +
+                    "reports=$reports\n" +
+                    "scriptDefinition=${ktFile.findScriptDefinition()}"
         }
     }
 
