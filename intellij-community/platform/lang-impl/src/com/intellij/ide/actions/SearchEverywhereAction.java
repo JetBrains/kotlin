@@ -1023,8 +1023,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       }
     };
     SearchEverywherePsiRenderer myFileRenderer = new SearchEverywherePsiRenderer();
-    @SuppressWarnings("unchecked")
-    ListCellRenderer myActionsRenderer = new GotoActionModel.GotoActionListCellRenderer(Function.TO_STRING);
+    ListCellRenderer myActionsRenderer = new GotoActionModel.GotoActionListCellRenderer(Functions.TO_STRING());
 
     private String myLocationString;
     private Icon myLocationIcon;

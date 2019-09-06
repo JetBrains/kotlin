@@ -18,6 +18,7 @@ package org.jetbrains.jps.model.module.impl;
 import com.intellij.openapi.util.Condition;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.Consumer;
+import com.intellij.util.EmptyConsumer;
 import com.intellij.util.Processor;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -99,8 +100,7 @@ public abstract class JpsDependenciesEnumeratorBase<Self extends JpsDependencies
 
   @Override
   public void processModules(@NotNull final Consumer<? super JpsModule> consumer) {
-    //noinspection unchecked
-    processModuleAndLibraries(consumer, Consumer.EMPTY_CONSUMER);
+    processModuleAndLibraries(consumer, EmptyConsumer.getInstance());
   }
 
   protected boolean shouldProcessDependenciesRecursively() {
@@ -173,8 +173,7 @@ public abstract class JpsDependenciesEnumeratorBase<Self extends JpsDependencies
 
   @Override
   public void processLibraries(@NotNull final Consumer<? super JpsLibrary> consumer) {
-    //noinspection unchecked
-    processModuleAndLibraries(Consumer.EMPTY_CONSUMER, consumer);
+    processModuleAndLibraries(EmptyConsumer.getInstance(), consumer);
   }
 
   @Override

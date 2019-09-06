@@ -15,10 +15,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
@@ -126,7 +123,7 @@ public class ShowRunningListAction extends AnAction {
     for (int i = 0; i < projects.size(); i++) {
       Project project = projects.get(i);
       final ExecutionManagerImpl executionManager = ExecutionManagerImpl.getInstance(project);
-      List<RunContentDescriptor> runningDescriptors = executionManager.getRunningDescriptors(Condition.TRUE);
+      List<RunContentDescriptor> runningDescriptors = executionManager.getRunningDescriptors(Conditions.alwaysTrue());
 
       if (!runningDescriptors.isEmpty() && projects.size() > 1) {
         state.append(project.getName());
@@ -170,7 +167,7 @@ public class ShowRunningListAction extends AnAction {
     Project[] projects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : projects) {
       boolean enabled = project != null && !project.isDisposed()
-                        && !ExecutionManagerImpl.getInstance(project).getRunningDescriptors(Condition.TRUE).isEmpty();
+                        && !ExecutionManagerImpl.getInstance(project).getRunningDescriptors(Conditions.alwaysTrue()).isEmpty();
       e.getPresentation().setEnabled(enabled);
       if (enabled) break;
     }
