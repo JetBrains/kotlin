@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.ir.CommonProperty
-import org.jetbrains.kotlin.descriptors.commonizer.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
-import org.jetbrains.kotlin.descriptors.commonizer.ir.Property
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonProperty
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Property
 
 class PropertyCommonizer : CallableMemberCommonizer<PropertyDescriptor, Property>() {
     private val setter = PropertySetterCommonizer.default()

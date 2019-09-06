@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.ir.Function
-import org.jetbrains.kotlin.descriptors.commonizer.ir.FunctionNode
-import org.jetbrains.kotlin.descriptors.commonizer.ir.ValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Function
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory

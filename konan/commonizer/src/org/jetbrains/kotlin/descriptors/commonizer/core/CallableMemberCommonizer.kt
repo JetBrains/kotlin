@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.ir.CallableMember
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CallableMember
 import org.jetbrains.kotlin.name.Name
 
 abstract class CallableMemberCommonizer<T : CallableMemberDescriptor, R: CallableMember> : Commonizer<T, R> {

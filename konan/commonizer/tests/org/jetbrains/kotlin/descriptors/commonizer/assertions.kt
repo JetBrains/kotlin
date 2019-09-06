@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import java.io.File
@@ -294,8 +293,8 @@ private class ComparingDeclarationsVisitor(
 
         if (expectedUnwrapped === actualUnwrapped) return
 
-        val expectedFqName = expectedUnwrapped.constructor.declarationDescriptor!!.fqNameSafe
-        val actualFqName = actualUnwrapped.constructor.declarationDescriptor!!.fqNameSafe
+        val expectedFqName = expectedUnwrapped.fqName
+        val actualFqName = actualUnwrapped.fqName
 
         context.assertEquals(expectedFqName, actualFqName, "type FQN")
     }

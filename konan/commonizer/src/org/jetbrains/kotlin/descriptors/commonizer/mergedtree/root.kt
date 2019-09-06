@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.ConcreteTargetId
-import org.jetbrains.kotlin.descriptors.commonizer.ir.RootNode
-import org.jetbrains.kotlin.descriptors.commonizer.ir.buildRootNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildRootNode
 import org.jetbrains.kotlin.name.Name
 
 internal fun mergeRoots(modulesByTargets: List<Pair<ConcreteTargetId, Collection<ModuleDescriptor>>>): RootNode {

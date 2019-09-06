@@ -6,6 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.ir.buildFunctionNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildFunctionNode
 
 internal fun mergeFunctions(properties: List<SimpleFunctionDescriptor?>) = buildFunctionNode(properties)

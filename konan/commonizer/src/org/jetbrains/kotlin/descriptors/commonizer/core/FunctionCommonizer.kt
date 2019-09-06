@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.ir.CommonFunction
-import org.jetbrains.kotlin.descriptors.commonizer.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
-import org.jetbrains.kotlin.descriptors.commonizer.ir.Function
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonFunction
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Function
 
 class FunctionCommonizer : CallableMemberCommonizer<SimpleFunctionDescriptor, Function>() {
     private val modifiers = FunctionModifiersCommonizer.default()

@@ -6,6 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.ir.buildPropertyNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPropertyNode
 
 internal fun mergeProperties(properties: List<PropertyDescriptor?>) = buildPropertyNode(properties)

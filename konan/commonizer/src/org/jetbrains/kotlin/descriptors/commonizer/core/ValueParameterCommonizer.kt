@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.ir.CommonValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.ir.ValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.isNull
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType

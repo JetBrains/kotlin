@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.ir.Package
-import org.jetbrains.kotlin.descriptors.commonizer.ir.PackageNode
-import org.jetbrains.kotlin.descriptors.commonizer.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Package
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PackageNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName

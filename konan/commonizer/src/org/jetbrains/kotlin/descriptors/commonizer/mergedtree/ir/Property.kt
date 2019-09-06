@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.ir
+package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.descriptors.commonizer.ir.Getter.Companion.toGetter
-import org.jetbrains.kotlin.descriptors.commonizer.ir.Setter.Companion.toSetter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Getter.Companion.toGetter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Setter.Companion.toSetter
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 interface Property : CallableMember, Declaration {

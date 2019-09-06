@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.ir.FunctionModifiers
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name

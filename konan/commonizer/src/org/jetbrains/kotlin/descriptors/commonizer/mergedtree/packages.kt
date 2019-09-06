@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.descriptors.commonizer.ir.PackageNode
-import org.jetbrains.kotlin.descriptors.commonizer.ir.buildPackageNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PackageNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPackageNode
 
 internal fun mergePackages(
     packageFqName: FqName,

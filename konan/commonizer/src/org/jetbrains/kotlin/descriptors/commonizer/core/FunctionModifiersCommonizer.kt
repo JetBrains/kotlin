@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.ir.FunctionModifiers
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
 
 interface FunctionModifiersCommonizer : Commonizer<SimpleFunctionDescriptor, FunctionModifiers> {
     companion object {

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.TestFunctionModifiers
 import org.jetbrains.kotlin.descriptors.commonizer.TestFunctionModifiers.Companion.areEqual
-import org.jetbrains.kotlin.descriptors.commonizer.ir.FunctionModifiers
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
 import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.mockFunction
 import org.jetbrains.kotlin.types.refinement.TypeRefinement

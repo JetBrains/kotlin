@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.ir.ModuleNode
-import org.jetbrains.kotlin.descriptors.commonizer.ir.buildModuleNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ModuleNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildModuleNode
 import org.jetbrains.kotlin.descriptors.commonizer.toList
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName

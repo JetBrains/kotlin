@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.ir.Property
-import org.jetbrains.kotlin.descriptors.commonizer.ir.PropertyNode
-import org.jetbrains.kotlin.descriptors.commonizer.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Property
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PropertyNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory

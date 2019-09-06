@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.AbstractCommonizationFromSour
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts
-class BasicCommonizerFacadeTest {
+class CommonizerFacadeTest {
 
     @Test
     fun nothingToCommonize0() {

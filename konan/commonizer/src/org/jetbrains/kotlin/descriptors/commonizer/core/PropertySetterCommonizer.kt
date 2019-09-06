@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.ir.Setter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Setter
 
 interface PropertySetterCommonizer : Commonizer<PropertySetterDescriptor?, Setter?> {
     companion object {
