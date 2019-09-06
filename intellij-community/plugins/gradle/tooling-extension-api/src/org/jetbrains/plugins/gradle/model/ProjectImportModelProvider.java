@@ -6,6 +6,7 @@ import org.gradle.tooling.BuildController;
 import org.gradle.tooling.model.BuildModel;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.Model;
+import org.gradle.tooling.model.ProjectModel;
 import org.gradle.tooling.model.gradle.GradleBuild;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +30,8 @@ public interface ProjectImportModelProvider extends Serializable {
 
   interface BuildModelConsumer {
     void consume(@NotNull BuildModel buildModel, @NotNull Object object, @NotNull Class clazz);
+
+    void consumeProjectModel(@NotNull ProjectModel projectModel, @NotNull Object object, @NotNull Class clazz);
   }
 
   <T extends Model & BuildModel> void populateBuildModels(@NotNull BuildController controller,

@@ -236,6 +236,12 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         long startTime = System.currentTimeMillis();
         BuildModelConsumer modelConsumer = new BuildModelConsumer() {
           @Override
+          public void consumeProjectModel(@NotNull ProjectModel projectModel, @NotNull Object object, @NotNull Class clazz) {
+            allModels.addModel(object, clazz, projectModel);
+            obtainedModels.add(clazz.getName());
+          }
+
+          @Override
           public void consume(@NotNull BuildModel buildModel, @NotNull Object object, @NotNull Class clazz) {
             if (myUseCustomSerialization) {
               object = serializerAdapter.serialize(object);
