@@ -130,5 +130,17 @@ public class FormatTextRanges implements FormattingRangesInfo {
 
     return result;
   }
+
+
+  /**
+   * @return A range containing all ranges or null if no ranges.
+   */
+  @Nullable
+  public TextRange getBoundRange() {
+    List<TextRange> ranges = getTextRanges();
+    return ranges.size() > 0 ?
+           new TextRange(ranges.get(0).getStartOffset(), ranges.get(ranges.size() - 1).getEndOffset()) :
+           null;
+  }
   
 }

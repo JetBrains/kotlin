@@ -175,9 +175,9 @@ public class CodeFormatterFacade {
     if (builder != null) {
       if (file.getTextLength() > 0) {
         LOG.assertTrue(document != null);
-        ranges.setRangesExtender(new FormattingRangesExtenderImpl(document));
+        ranges.setRangesExtender(new FormattingRangesExtenderImpl(document, file));
         try {
-          ASTNode containingNode = findContainingNode(file, ranges, file.getLanguage());
+          ASTNode containingNode = findContainingNode(file, ranges.getBoundRange());
           if (containingNode != null) {
             for (FormatTextRange range : ranges.getRanges()) {
               TextRange rangeToUse = preprocess(containingNode, range.getTextRange());
@@ -250,22 +250,24 @@ public class CodeFormatterFacade {
   }
 
   @Nullable
-  private static ASTNode findContainingNode(@NotNull PsiFile file,
-                                            @NotNull FormatTextRanges ranges,
-                                            @NotNull Language language) {
-    final List<FormatTextRange> textRanges = ranges.getRanges();
-    if (textRanges.isEmpty()) return null;
+  static ASTNode findContainingNode(@NotNull PsiFile file, @Nullable TextRange range) {
+    Language language = file.getLanguage();
+    if (range == null) return null;
     final FileViewProvider viewProvider = file.getViewProvider();
-    final PsiElement startElement =
-      viewProvider.findElementAt(textRanges.get(0).getTextRange().getStartOffset(), language);
-    final PsiElement endElement =
-      viewProvider.findElementAt(textRanges.get(textRanges.size() - 1).getTextRange().getEndOffset() - 1, language);
+    final PsiElement startElement = viewProvider.findElementAt(range.getStartOffset(), language);
+    final PsiElement endElement = viewProvider.findElementAt(range.getEndOffset() - 1, language);
     final PsiElement commonParent = startElement != null && endElement != null ?
                                     PsiTreeUtil.findCommonParent(startElement, endElement) :
                                     null;
     ASTNode node = null;
     if (commonParent != null) {
       node = commonParent.getNode();
+      // Find the topmost parent with the same range.
+      ASTNode parent = node.getTreeParent();
+      while (parent != null && parent.getTextRange().equals(commonParent.getTextRange())) {
+        node = parent;
+        parent = parent.getTreeParent();
+      }
     }
     if (node == null) {
       node = file.getNode();
