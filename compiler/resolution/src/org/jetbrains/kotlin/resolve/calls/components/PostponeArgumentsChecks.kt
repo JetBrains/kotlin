@@ -177,6 +177,7 @@ private fun extractLambdaParameters(
     }
 }
 
+// TODO Nullable result type in case of simple argument
 fun KotlinType.replaceTupleTypes(csBuilder: ConstraintSystemBuilder): List<KotlinType> {
     if (!TupleType.isTupleType(this)) return listOf(this)
 

@@ -77,6 +77,7 @@ class ConstraintInjector(
         val possibleNewConstraints = Stack<Pair<TypeVariableMarker, Constraint>>()
         val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType, possibleNewConstraints)
 
+        // TODO remove list
         if (listOf(lowerType, upperType).none { it.containsStubTypeVariable() })
             typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
 

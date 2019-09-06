@@ -53,6 +53,7 @@ object TupleType {
         )
     }
 
+    // TODO is jvm static necessary?
     @JvmStatic
     fun getTypeArgument(type: KotlinType): KotlinType {
         assert(isTupleType(type)) { "Tuple type expected, but received $type" }
