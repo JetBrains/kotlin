@@ -68,7 +68,7 @@ class ServiceTreeView extends ServiceView {
         .onSuccess(result -> AppUIUtil.invokeOnEdt(() -> {
           JComponent component = getUi().getDetailsComponent();
           if (component != null) {
-            IdeFocusManager.getInstance(myProject).requestFocusInProject(component, myProject);
+            IdeFocusManager.getInstance(myProject).requestFocus(component, false);
           }
         }, myProject.getDisposed()));
     myNavBarPanel = new ServiceViewNavBarPanel(myProject, true, getModel(), selector);
@@ -149,7 +149,7 @@ class ServiceTreeView extends ServiceView {
   @Override
   void jumpToServices() {
     if (myTree.isShowing()) {
-      IdeFocusManager.getInstance(myProject).requestFocusInProject(myTree, myProject);
+      IdeFocusManager.getInstance(myProject).requestFocus(myTree, false);
     }
     else {
       myNavBarPanel.rebuildAndSelectTail(true);
@@ -196,7 +196,6 @@ class ServiceTreeView extends ServiceView {
       if (Comparing.equal(newSelection, updatedItem)) {
         newSelection = updatedItem;
       }
-      //myNavBarPanel.getModel().updateModel(newSelection);
       if (Comparing.equal(newSelection, myLastSelection)) {
         myLastSelection = newSelection;
         if (mySelected) {

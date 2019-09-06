@@ -579,6 +579,11 @@ class ServiceModel implements Disposable, InvokerSupplier {
     public int hashCode() {
       return myValue.hashCode();
     }
+
+    @Override
+    public String toString() {
+      return myValue.toString();
+    }
   }
 
   static class ContributorNode extends ServiceViewItem {
