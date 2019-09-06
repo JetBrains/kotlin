@@ -46,7 +46,7 @@ public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, 
 
     final BookmarkInContextInfo info = getBookmarkInfo(event);
     final boolean selected = info != null && info.getBookmarkAtPlace() != null;
-    event.getPresentation().putClientProperty(SELECTED_PROPERTY, selected);
+    Toggleable.setSelected(event.getPresentation(), selected);
   }
 
   @Override
@@ -58,7 +58,7 @@ public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, 
     if (info == null) return;
 
     final boolean selected = info.getBookmarkAtPlace() != null;
-    e.getPresentation().putClientProperty(SELECTED_PROPERTY, selected);
+    Toggleable.setSelected(e.getPresentation(), selected);
 
     if (selected) {
       BookmarkManager.getInstance(project).removeBookmark(info.getBookmarkAtPlace());

@@ -162,7 +162,7 @@ public class CompositeView<T extends ComponentContainer> extends JPanel implemen
       }
       else {
         presentation.setEnabledAndVisible(true);
-        presentation.putClientProperty(SELECTED_PROPERTY, isSelected(e));
+        Toggleable.setSelected(presentation, isSelected(e));
       }
     }
 

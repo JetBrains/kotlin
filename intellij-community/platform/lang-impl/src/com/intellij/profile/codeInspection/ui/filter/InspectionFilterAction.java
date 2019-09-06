@@ -55,7 +55,7 @@ public class InspectionFilterAction extends DefaultActionGroup implements Toggle
   @Override
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
-    e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, !myInspectionsFilter.isEmptyFilter());
+    Toggleable.setSelected(e.getPresentation(), !myInspectionsFilter.isEmptyFilter());
   }
 
   private void tune(InspectionProfileImpl profile, Project project) {

@@ -73,6 +73,6 @@ public abstract class FavoritesToolbarButtonAction extends AnActionButton implem
   @Override
   public void updateButton(@NotNull AnActionEvent e) {
     super.updateButton(e);
-    e.getPresentation().putClientProperty(SELECTED_PROPERTY, isOptionEnabled());
+    Toggleable.setSelected(e.getPresentation(), isOptionEnabled());
   }
 }

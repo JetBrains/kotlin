@@ -331,7 +331,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       }
       else {
         enableConsole(true);
-        presentation.putClientProperty(SELECTED_PROPERTY, false);
+        Toggleable.setSelected(presentation, false);
         presentation.setEnabled(false);
       }
     }

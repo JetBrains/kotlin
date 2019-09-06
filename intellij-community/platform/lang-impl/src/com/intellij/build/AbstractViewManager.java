@@ -254,7 +254,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
         myContent.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
       }
       myContent.setPinned(selected);
-      e.getPresentation().putClientProperty(SELECTED_PROPERTY, selected);
+      Toggleable.setSelected(e.getPresentation(), selected);
     }
 
     @Override
@@ -270,7 +270,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
       boolean selected = myContent.isPinned();
 
       e.getPresentation().setIcon(AllIcons.General.Pin_tab);
-      e.getPresentation().putClientProperty(SELECTED_PROPERTY, selected);
+      Toggleable.setSelected(e.getPresentation(), selected);
 
       String text;
       if (!isActiveTab) {

@@ -7,6 +7,7 @@ import com.intellij.ide.util.ElementsChooser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.actionSystem.Toggleable;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -51,7 +52,7 @@ public abstract class ShowFilterAction extends ToggleAction implements DumbAware
     Icon icon = getTemplatePresentation().getIcon();
     e.getPresentation().setIcon(isActive() ? ExecutionUtil.getLiveIndicator(icon) : icon);
     e.getPresentation().setEnabled(isEnabled());
-    e.getPresentation().putClientProperty(SELECTED_PROPERTY, isSelected(e));
+    Toggleable.setSelected(e.getPresentation(), isSelected(e));
   }
 
   protected abstract boolean isEnabled();
