@@ -2427,7 +2427,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     private boolean currentVersionCorrupted;
 
     private void initAssociatedDataForExtensions() {
-      Activity activity = ParallelActivity.PREPARE_APP_INIT.start("file index extensions iteration");
+      Activity activity = ParallelActivity.APP_INIT.start("file index extensions iteration");
       Iterator<FileBasedIndexExtension> extensions =
         IndexInfrastructure.hasIndices() ?
         ((ExtensionPointImpl<FileBasedIndexExtension>)FileBasedIndexExtension.EXTENSION_POINT_NAME.getPoint(null)).iterator() :

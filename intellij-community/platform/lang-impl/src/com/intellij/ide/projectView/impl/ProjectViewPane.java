@@ -207,13 +207,13 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
     }
   }
 
-  private class ProjectViewPaneTreeStructure extends ProjectTreeStructure implements ProjectViewSettings {
+  private final class ProjectViewPaneTreeStructure extends ProjectTreeStructure implements ProjectViewSettings {
     ProjectViewPaneTreeStructure() {
       super(ProjectViewPane.this.myProject, ID);
     }
 
     @Override
-    protected AbstractTreeNode createRoot(@NotNull final Project project, @NotNull ViewSettings settings) {
+    protected AbstractTreeNode<?> createRoot(@NotNull Project project, @NotNull ViewSettings settings) {
       return new ProjectViewProjectNode(project, settings);
     }
 
