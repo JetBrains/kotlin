@@ -329,4 +329,8 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testEnumClass4() {
         doOverrideFileTest("toString")
     }
+
+    fun testOverrideExternalFunction() {
+        doOverrideFileTest()
+    }
 }
