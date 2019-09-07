@@ -212,7 +212,8 @@ class JavaToKotlinAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val javaFiles = selectedJavaFiles(e).filter { it.isWritable }.toList()
-        val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext) ?: return
+        val module = e.getData(LangDataKeys.MODULE) ?: return
 
         if (javaFiles.isEmpty()) {
             val statusBar = WindowManager.getInstance().getStatusBar(project)
@@ -222,8 +223,6 @@ class JavaToKotlinAction : AnAction() {
                 .showInCenterOf(statusBar.component)
         }
 
-
-        val module = e.getData(LangDataKeys.MODULE)!!
         if (!J2kConverterExtension.extension().doCheckBeforeConversion(project, module)) return
 
         val firstSyntaxError = javaFiles.asSequence().map { PsiTreeUtil.findChildOfType(it, PsiErrorElement::class.java) }.firstOrNull()
@@ -261,6 +260,7 @@ class JavaToKotlinAction : AnAction() {
         if (isRunningInCidrIde) return false
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return false
         val project = e.project ?: return false
+        e.getData(LangDataKeys.MODULE) ?: return false
         return isAnyJavaFileSelected(project, virtualFiles)
     }
 
