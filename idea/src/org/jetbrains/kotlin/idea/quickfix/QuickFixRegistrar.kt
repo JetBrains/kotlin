@@ -319,6 +319,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix)
         NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix)
+        TYPE_MISMATCH.registerFactory(AddFunctionParametersFix.TypeMismatchFactory)
         UNUSED_PARAMETER.registerFactory(RemoveUnusedFunctionParameterFix)
         UNUSED_ANONYMOUS_PARAMETER.registerFactory(RenameToUnderscoreFix.Factory)
         UNUSED_ANONYMOUS_PARAMETER.registerFactory(RemoveSingleLambdaParameterFix)

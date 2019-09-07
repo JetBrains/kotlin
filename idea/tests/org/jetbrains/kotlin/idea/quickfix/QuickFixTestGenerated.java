@@ -2138,6 +2138,31 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterAndChangeTypes.kt");
         }
 
+        @TestMetadata("addFunctionParameterForTypeMismatch1.kt")
+        public void testAddFunctionParameterForTypeMismatch1() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterForTypeMismatch1.kt");
+        }
+
+        @TestMetadata("addFunctionParameterForTypeMismatch2.kt")
+        public void testAddFunctionParameterForTypeMismatch2() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterForTypeMismatch2.kt");
+        }
+
+        @TestMetadata("addFunctionParameterForTypeMismatch3.kt")
+        public void testAddFunctionParameterForTypeMismatch3() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterForTypeMismatch3.kt");
+        }
+
+        @TestMetadata("addFunctionParameterForTypeMismatch4.kt")
+        public void testAddFunctionParameterForTypeMismatch4() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterForTypeMismatch4.kt");
+        }
+
+        @TestMetadata("addFunctionParameterForTypeMismatch5.kt")
+        public void testAddFunctionParameterForTypeMismatch5() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterForTypeMismatch5.kt");
+        }
+
         @TestMetadata("addFunctionParameterLongNameRuntime.kt")
         public void testAddFunctionParameterLongNameRuntime() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterLongNameRuntime.kt");

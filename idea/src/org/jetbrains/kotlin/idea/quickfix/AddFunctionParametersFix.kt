@@ -16,22 +16,26 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -40,7 +44,8 @@ import java.util.*
 class AddFunctionParametersFix(
     callElement: KtCallElement,
     functionDescriptor: FunctionDescriptor,
-    private val hasTypeMismatches: Boolean
+    private val hasTypeMismatches: Boolean,
+    private val argumentIndex: Int? = null
 ) : ChangeFunctionSignatureFix(callElement, functionDescriptor) {
     private val callElement: KtCallElement?
         get() = element as? KtCallElement
@@ -65,10 +70,21 @@ class AddFunctionParametersFix(
             "function '$functionName'"
         }
 
+        val parameterOrdinal = argumentIndex?.let {
+            val number = (it + 1).toString()
+            val suffix = when {
+                number.endsWith("1") -> "st"
+                number.endsWith("2") -> "nd"
+                number.endsWith("3") -> "rd"
+                else -> "th"
+            }
+            "$number$suffix "
+        } ?: ""
+
         return if (hasTypeMismatches)
             "Change the signature of $callableDescription"
         else
-            "Add parameter$subjectSuffix to $callableDescription"
+            "Add ${parameterOrdinal}parameter$subjectSuffix to $callableDescription"
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
@@ -77,6 +93,7 @@ class AddFunctionParametersFix(
 
         // newParametersCnt <= 0: psi for this quickfix is no longer valid
         val newParametersCnt = callElement.valueArguments.size - functionDescriptor.valueParameters.size
+        if (argumentIndex != null && newParametersCnt != 1) return false
         return newParametersCnt > 0
     }
 
@@ -90,11 +107,23 @@ class AddFunctionParametersFix(
             override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify(fun(descriptor: KotlinMutableMethodDescriptor) {
                     val callElement = callElement ?: return
-                    val call = callElement.getCall(callElement.analyze()) ?: return
-                    val parameters = functionDescriptor.valueParameters
                     val arguments = callElement.valueArguments
+                    val parameters = functionDescriptor.valueParameters
                     val validator = CollectingNameValidator()
 
+                    if (argumentIndex != null) {
+                        parameters.forEach { validator.addName(it.name.asString()) }
+                        val argument = arguments[argumentIndex]
+                        val parameterInfo = getNewParameterInfo(
+                            originalDescriptor.baseDescriptor as FunctionDescriptor,
+                            argument,
+                            validator
+                        )
+                        descriptor.addParameter(argumentIndex, parameterInfo)
+                        return
+                    }
+
+                    val call = callElement.getCall(callElement.analyze()) ?: return
                     for (i in arguments.indices) {
                         val argument = arguments[i]
                         val expression = argument.getArgumentExpression()
@@ -118,12 +147,6 @@ class AddFunctionParametersFix(
                                 argument,
                                 validator
                             )
-                            parameterInfo.originalTypeInfo.type?.let { typesToShorten.add(it) }
-
-                            if (expression != null) {
-                                parameterInfo.defaultValueForCall = expression
-                            }
-
                             descriptor.addParameter(parameterInfo)
                         }
                     }
@@ -145,8 +168,11 @@ class AddFunctionParametersFix(
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()
         val type = expression?.let { getDataFlowAwareTypes(it).firstOrNull() } ?: functionDescriptor.builtIns.nullableAnyType
-        return KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, null))
-            .apply { currentTypeInfo = KotlinTypeInfo(false, type) }
+        return KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, null)).apply {
+            currentTypeInfo = KotlinTypeInfo(false, type)
+            originalTypeInfo.type?.let { typesToShorten.add(it) }
+            if (expression != null) defaultValueForCall = expression
+        }
     }
 
     private fun hasOtherUsages(function: PsiElement): Boolean {
@@ -157,4 +183,45 @@ class AddFunctionParametersFix(
     }
 
     private fun isConstructor() = functionDescriptor is ConstructorDescriptor
+
+    companion object TypeMismatchFactory : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, Pair<FunctionDescriptor, Int>>() {
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {
+            val (_, valueArgumentList) = diagnostic.valueArgument() ?: return null
+            return valueArgumentList.getStrictParentOfType()
+        }
+
+        override fun extractFixData(element: KtCallElement, diagnostic: Diagnostic): Pair<FunctionDescriptor, Int>? {
+            val (valueArgument, valueArgumentList) = diagnostic.valueArgument() ?: return null
+            val arguments = valueArgumentList.arguments
+            val argumentIndex = arguments.indexOfFirst { it == valueArgument }
+            val context = element.analyze()
+            val functionDescriptor = element.getResolvedCall(context)?.resultingDescriptor as? FunctionDescriptor ?: return null
+            val parameters = functionDescriptor.valueParameters
+            if (arguments.size - 1 != parameters.size) return null
+            if ((arguments - valueArgument).zip(parameters).any { (argument, parameter) ->
+                    val argumentType = argument.getArgumentExpression()?.let { context.getType(it) }
+                    argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
+                }) return null
+
+            return functionDescriptor to argumentIndex
+        }
+
+        override fun createFix(originalElement: KtCallElement, data: Pair<FunctionDescriptor, Int>): IntentionAction? {
+            val (functionDescriptor, argumentIndex) = data
+            val parameters = functionDescriptor.valueParameters
+            val arguments = originalElement.valueArguments
+            return if (arguments.size > parameters.size) {
+                AddFunctionParametersFix(originalElement, functionDescriptor, false, argumentIndex)
+            } else {
+                null
+            }
+        }
+
+        private fun Diagnostic.valueArgument(): Pair<KtValueArgument, KtValueArgumentList>? {
+            val element = DiagnosticFactory.cast(this, Errors.TYPE_MISMATCH).psiElement
+            val valueArgument = element.getStrictParentOfType<KtValueArgument>() ?: return null
+            val valueArgumentList = valueArgument.getStrictParentOfType<KtValueArgumentList>() ?: return null
+            return valueArgument to valueArgumentList
+        }
+    }
 }
