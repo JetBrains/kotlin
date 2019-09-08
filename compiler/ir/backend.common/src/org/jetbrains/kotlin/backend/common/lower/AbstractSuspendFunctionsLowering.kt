@@ -594,7 +594,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             stateMachineFunction: IrSimpleFunction,
             coroutineClass: IrClass
         ): IrSimpleFunction {
-            val originalBody = irFunction.body!!
             val function = WrappedSimpleFunctionDescriptor().let { d ->
                 IrFunctionImpl(
                     startOffset, endOffset,

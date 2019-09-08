@@ -11,4 +11,4 @@ FILE fqName:<root> fileName:/throw.kt
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Throwable
             GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null
           then: THROW type=kotlin.Nothing
-            GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null
+            GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Throwable origin=null

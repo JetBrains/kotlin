@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out kotlin.String>) returnType:<root>.A [primary]
       VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
     PROPERTY name:xs visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'xs: kotlin.Array<out kotlin.String> [vararg] declared in <root>.A.<init>' type=kotlin.Array<out kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Array<out kotlin.String>
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.Array<out kotlin.String> declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:public [final]' type=kotlin.Array<out kotlin.String> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:private [final]' type=kotlin.Array<out kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-xs>' type=<root>.A origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

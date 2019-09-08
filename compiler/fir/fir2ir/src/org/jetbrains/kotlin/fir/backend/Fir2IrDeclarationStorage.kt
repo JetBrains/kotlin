@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -226,7 +229,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun <T : IrFunction> T.declareParameters(function: FirFunction, containingClass: IrClass?) {
+    fun <T : IrFunction> T.declareParameters(function: FirFunction<*>, containingClass: IrClass?) {
         val parent = this
         for ((index, valueParameter) in function.valueParameters.withIndex()) {
             valueParameters += createAndSaveIrParameter(valueParameter, index).apply { this.parent = parent }
@@ -272,7 +275,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun <T : IrFunction> T.bindAndDeclareParameters(
-        function: FirFunction,
+        function: FirFunction<*>,
         descriptor: WrappedCallableDescriptor<T>,
         irParent: IrDeclarationParent?,
         shouldLeaveScope: Boolean
@@ -286,7 +289,7 @@ class Fir2IrDeclarationStorage(
         return this
     }
 
-    private fun <T : IrFunction> T.enterLocalScope(function: FirFunction): T {
+    private fun <T : IrFunction> T.enterLocalScope(function: FirFunction<*>): T {
         enterScope(descriptor)
         for ((firParameter, irParameter) in function.valueParameters.zip(valueParameters)) {
             irSymbolTable.introduceValueParameter(irParameter)

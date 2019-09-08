@@ -3451,6 +3451,8 @@ public class kotlin/jvm/internal/Intrinsics {
 	public static fun throwIllegalArgument (Ljava/lang/String;)V
 	public static fun throwIllegalState ()V
 	public static fun throwIllegalState (Ljava/lang/String;)V
+	public static fun throwJavaNpe ()V
+	public static fun throwJavaNpe (Ljava/lang/String;)V
 	public static fun throwNpe ()V
 	public static fun throwNpe (Ljava/lang/String;)V
 	public static fun throwUndefinedForReified ()V
@@ -5268,24 +5270,26 @@ public final class kotlin/text/UStringsKt {
 public abstract class kotlin/time/AbstractDoubleClock : kotlin/time/Clock {
 	public fun <init> (Ljava/util/concurrent/TimeUnit;)V
 	protected final fun getUnit ()Ljava/util/concurrent/TimeUnit;
-	public fun mark ()Lkotlin/time/ClockMark;
+	public fun markNow ()Lkotlin/time/ClockMark;
 	protected abstract fun read ()D
 }
 
 public abstract class kotlin/time/AbstractLongClock : kotlin/time/Clock {
 	public fun <init> (Ljava/util/concurrent/TimeUnit;)V
 	protected final fun getUnit ()Ljava/util/concurrent/TimeUnit;
-	public fun mark ()Lkotlin/time/ClockMark;
+	public fun markNow ()Lkotlin/time/ClockMark;
 	protected abstract fun read ()J
 }
 
 public abstract interface class kotlin/time/Clock {
-	public abstract fun mark ()Lkotlin/time/ClockMark;
+	public abstract fun markNow ()Lkotlin/time/ClockMark;
 }
 
 public abstract class kotlin/time/ClockMark {
 	public fun <init> ()V
-	public abstract fun elapsed ()D
+	public abstract fun elapsedNow ()D
+	public final fun hasNotPassedNow ()Z
+	public final fun hasPassedNow ()Z
 	public fun minus-LRDsOJo (D)Lkotlin/time/ClockMark;
 	public fun plus-LRDsOJo (D)Lkotlin/time/ClockMark;
 }
@@ -5315,6 +5319,7 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun isFinite-impl (D)Z
 	public static final fun isInfinite-impl (D)Z
 	public static final fun isNegative-impl (D)Z
+	public static final fun isPositive-impl (D)Z
 	public static final fun minus-LRDsOJo (DD)D
 	public static final fun plus-LRDsOJo (DD)D
 	public static final fun times-impl (DD)D
@@ -5387,10 +5392,7 @@ public final class kotlin/time/MonoClock : kotlin/time/AbstractLongClock, kotlin
 
 public final class kotlin/time/TestClock : kotlin/time/AbstractLongClock {
 	public fun <init> ()V
-	public fun <init> (JLjava/util/concurrent/TimeUnit;)V
-	public synthetic fun <init> (JLjava/util/concurrent/TimeUnit;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getReading ()J
-	public final fun setReading (J)V
+	public final fun plusAssign-LRDsOJo (D)V
 }
 
 public final class kotlin/time/TimedValue {

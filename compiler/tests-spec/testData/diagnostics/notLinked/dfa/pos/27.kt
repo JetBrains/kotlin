@@ -11,7 +11,10 @@
  * HELPERS: classes, objects, typealiases, enumClasses, interfaces, sealedClasses
  */
 
-// TESTCASE NUMBER: 1
+/*
+ * TESTCASE NUMBER: 1
+ * UNEXPECTED BEHAVIOUR
+ */
 open class Case1<K : Number> {
     open inner class Case1_1<L>: Case1<Int>() where L : CharSequence {
         inner class Case1_2<M>: Case1<K>.Case1_1<M>() where M : Map<K, L> {
@@ -26,6 +29,7 @@ open class Case1<K : Number> {
                     <!DEBUG_INFO_EXPRESSION_TYPE("L & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.get(0)
                     <!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.size
                     <!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.isEmpty()
+                    <!TYPE_INFERENCE_ONLY_INPUT_TYPES!><!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>[null]<!>
                 }
             }
         }

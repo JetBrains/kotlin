@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
+import java.io.FileOutputStream
 import java.io.PrintStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,7 +40,7 @@ private const val FIR_DUMP_PATH = "tmp/firDump"
 private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 private const val FIR_LOGS_PATH = "tmp/fir-logs"
 
-private const val PASSES = 1
+internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
 
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
@@ -56,28 +57,20 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val builder = RawFirBuilder(session, stubMode = false)
 
         val totalTransformer = FirTotalResolveTransformer()
-        val firFiles = ktFiles.toList().mapNotNull {
-            var firFile: FirFile? = null
-            val time = measureNanoTime {
-                firFile = builder.buildFirFile(it)
-                (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
-            }
-            bench.countBuilder(builder, time)
-            firFile
-        }.toList()
-
+        val firFiles = bench.buildFiles(builder, ktFiles)
 
         println("Raw FIR up, files: ${firFiles.size}")
 
         bench.processFiles(firFiles, totalTransformer.transformers)
 
-        dumpFir(moduleData, firFiles)
-        dumpFirHtml(moduleData, firFiles)
+        val disambiguatedName = moduleData.disambiguatedName()
+        dumpFir(disambiguatedName, moduleData, firFiles)
+        dumpFirHtml(disambiguatedName, moduleData, firFiles)
     }
 
-    private fun dumpFir(moduleData: ModuleData, firFiles: List<FirFile>) {
+    private fun dumpFir(disambiguatedName: String, moduleData: ModuleData, firFiles: List<FirFile>) {
         if (!DUMP_FIR) return
-        val dumpRoot = File(FIR_DUMP_PATH).resolve(moduleData.qualifiedName)
+        val dumpRoot = File(FIR_DUMP_PATH).resolve(disambiguatedName)
         firFiles.forEach {
             val directory = it.packageFqName.pathSegments().fold(dumpRoot) { file, name -> file.resolve(name.asString()) }
             directory.mkdirs()
@@ -85,9 +78,20 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         }
     }
 
-    private fun dumpFirHtml(moduleData: ModuleData, firFiles: List<FirFile>) {
+    private val dumpedModules = mutableSetOf<String>()
+    private fun ModuleData.disambiguatedName(): String {
+        val baseName = qualifiedName
+        var disambiguatedName = baseName
+        var counter = 0
+        while(!dumpedModules.add(disambiguatedName)) {
+            disambiguatedName = "$baseName.${counter++}"
+        }
+        return disambiguatedName
+    }
+
+    private fun dumpFirHtml(disambiguatedName: String, moduleData: ModuleData, firFiles: List<FirFile>) {
         if (!DUMP_FIR) return
-        dump.module(moduleData.qualifiedName) {
+        dump.module(disambiguatedName) {
             firFiles.forEach(dump::indexFile)
             firFiles.forEach(dump::generateFile)
         }
@@ -124,22 +128,46 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
     }
 
-    override fun afterPass() {
+    override fun afterPass(pass: Int) {
         bench.report(System.out, errorTypeReports = false)
 
-        saveReport()
+        saveReport(pass)
         if (FAIL_FAST) {
             bench.throwFailure()
         }
     }
 
-    private fun saveReport() {
+    private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
+    private lateinit var startDate: Date
+
+    override fun setUp() {
+        startDate = Date()
+        super.setUp()
+    }
+
+    private fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(startDate))
+        .also {
+            it.mkdirs()
+        }
+
+    private val reportDateStr by lazy {
+        val reportDateFormat = SimpleDateFormat("yyyy-MM-dd__HH-mm")
+        reportDateFormat.format(startDate)
+    }
+
+    private fun saveReport(pass: Int) {
         if (DUMP_FIR) dump.finish()
-        val format = SimpleDateFormat("yyyy-MM-dd__HH-mm")
-        val logDir = File(FIR_LOGS_PATH)
-        logDir.mkdirs()
-        PrintStream(logDir.resolve("report-${format.format(Date())}.log").outputStream()).use { stream ->
+        PrintStream(
+            FileOutputStream(
+                reportDir().resolve("report-$reportDateStr.log"),
+                true
+            )
+        ).use { stream ->
+            val sep = "=".repeat(10)
+            stream.println("$sep PASS $pass $sep")
             bench.report(stream)
+            stream.println()
+            stream.println()
         }
     }
 

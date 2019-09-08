@@ -1367,9 +1367,29 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("samByProjectedType.kt")
+            public void testSamByProjectedType() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samByProjectedType.kt");
+            }
+
             @TestMetadata("samConstructors.kt")
             public void testSamConstructors() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/sam/samConstructors.kt");
+            }
+
+            @TestMetadata("samConversionInGenericConstructorCall.kt")
+            public void testSamConversionInGenericConstructorCall() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samConversionInGenericConstructorCall.kt");
+            }
+
+            @TestMetadata("samConversionInGenericConstructorCall_NI.kt")
+            public void testSamConversionInGenericConstructorCall_NI() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samConversionInGenericConstructorCall_NI.kt");
+            }
+
+            @TestMetadata("samConversionToGeneric.kt")
+            public void testSamConversionToGeneric() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/sam/samConversionToGeneric.kt");
             }
 
             @TestMetadata("samConversions.kt")

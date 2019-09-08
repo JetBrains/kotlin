@@ -1,0 +1,6 @@
+// "Create type parameter in type alias 'G'" "true"
+
+class C
+typealias G<T> = C
+
+fun <T> a(g: G<T>) = Unit

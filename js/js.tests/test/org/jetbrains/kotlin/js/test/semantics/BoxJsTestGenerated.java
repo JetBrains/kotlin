@@ -5354,6 +5354,16 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("clashedDeclLinkage.kt")
+        public void testClashedDeclLinkage() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/clashedDeclLinkage.kt");
+        }
+
+        @TestMetadata("clashedInternalDeclarations.kt")
+        public void testClashedInternalDeclarations() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/clashedInternalDeclarations.kt");
+        }
+
         @TestMetadata("interfaceMethodWithDefaultParameter.kt")
         public void testInterfaceMethodWithDefaultParameter() throws Exception {
             runTest("js/js.translator/testData/box/multiModule/interfaceMethodWithDefaultParameter.kt");

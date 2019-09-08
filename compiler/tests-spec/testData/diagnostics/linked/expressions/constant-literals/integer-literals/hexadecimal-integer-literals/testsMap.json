@@ -1,0 +1,40 @@
+{
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 4,
+          "description": "Hexadecimal integer literals with an underscore after the prefix.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 7,
+          "description": "Hexadecimal integer literals with an underscore in the last position.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 11,
+          "description": "Hexadecimal integer literals with an underscore in the first position (it\u0027s considered as identifiers).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 11,
+          "description": "Hexadecimal integer literals with an underscore in the first position (it\u0027s considered as identifiers).",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "Hexadecimal integer literals with the prefix only.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

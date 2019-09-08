@@ -1,21 +1,21 @@
 FILE fqName:<root> fileName:/incrementDecrement.kt
   PROPERTY name:p visibility:public modality:FINAL [var]
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-p> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-p>' type=kotlin.Int origin=null
   PROPERTY name:arr visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
           elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
       correspondingProperty: PROPERTY name:arr visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-arr> (): kotlin.IntArray declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:public [final,static]' type=kotlin.IntArray origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:private [final,static]' type=kotlin.IntArray origin=null
   FUN name:testVarPrefix visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:kotlin.Int [var]

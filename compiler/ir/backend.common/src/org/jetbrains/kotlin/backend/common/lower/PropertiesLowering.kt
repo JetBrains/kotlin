@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDesc
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
@@ -31,7 +31,7 @@ class PropertiesLowering(
     private val originOfSyntheticMethodForAnnotations: IrDeclarationOrigin? = null,
     private val skipExternalProperties: Boolean = false,
     private val generateAnnotationFields: Boolean = false,
-    private val computeSyntheticMethodName: ((Name) -> String)? = null
+    private val computeSyntheticMethodName: ((IrProperty) -> String)? = null
 ) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
@@ -63,7 +63,7 @@ class PropertiesLowering(
                     if (declaration.annotations.isNotEmpty() && originOfSyntheticMethodForAnnotations != null
                         && computeSyntheticMethodName != null
                     ) {
-                        val methodName = computeSyntheticMethodName.invoke(declaration.name) // Workaround KT-4113
+                        val methodName = computeSyntheticMethodName.invoke(declaration) // Workaround KT-4113
                         add(createSyntheticMethodForAnnotations(declaration, originOfSyntheticMethodForAnnotations, methodName))
                     }
                 }
@@ -74,17 +74,16 @@ class PropertiesLowering(
     private fun createSyntheticMethodForAnnotations(declaration: IrProperty, origin: IrDeclarationOrigin, name: String): IrFunctionImpl {
         val descriptor = WrappedSimpleFunctionDescriptor(declaration.descriptor.annotations)
         val symbol = IrSimpleFunctionSymbolImpl(descriptor)
-        // TODO: ACC_DEPRECATED
         return IrFunctionImpl(
-            -1, -1, origin, symbol, Name.identifier(name),
-            Visibilities.PUBLIC, Modality.OPEN, context.irBuiltIns.unitType,
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, Name.identifier(name),
+            declaration.visibility, Modality.OPEN, context.irBuiltIns.unitType,
             isInline = false, isExternal = false, isTailrec = false, isSuspend = false
         ).apply {
             descriptor.bind(this)
 
             extensionReceiverParameter = declaration.getter?.extensionReceiverParameter?.copyTo(this)
 
-            body = IrBlockBodyImpl(-1, -1)
+            body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
             annotations.addAll(declaration.annotations)
             metadata = declaration.metadata

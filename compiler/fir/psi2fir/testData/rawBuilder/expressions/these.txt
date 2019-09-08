@@ -14,11 +14,11 @@ FILE: these.kt
 
         public? final? val instance: Some
             public? get(): Some {
-                ^ this@Some
+                ^ this@Some#
             }
 
         public? final? fun String.extension(): Int {
-            ^extension this@Some.bar#().plus#(this#.length#)
+            ^extension this@Some#.bar#().plus#(this#.length#)
         }
 
     }
@@ -27,7 +27,7 @@ FILE: these.kt
     }
     public? final? fun test(some: Some): Int {
         ^test with#(some#, <L> = with@fun <implicit>.<anonymous>(): <implicit> {
-            this#.foo#().plus#(this@with.extension#())
+            this#.foo#().plus#(this@with#.extension#())
         }
         )
     }

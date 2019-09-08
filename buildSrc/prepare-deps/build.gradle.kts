@@ -145,7 +145,7 @@ dependencies {
 
 val makeIntellijCore = buildIvyRepositoryTask(intellijCore, customDepsOrg, customDepsRepoDir)
 
-val makeIntellijAnnotations by tasks.creating(Copy::class.java) {
+val makeIntellijAnnotations by tasks.registering(Copy::class) {
     dependsOn(makeIntellijCore)
 
     from(repoDir.resolve("intellij-core/$intellijVersion/artifacts/annotations.jar"))
@@ -222,7 +222,7 @@ tasks.named("build") {
 }
 
 // Task to delete legacy repo locations
-tasks.create("cleanLegacy", Delete::class.java) {
+tasks.register<Delete>("cleanLegacy") {
     delete("$projectDir/android-dx")
     delete("$projectDir/intellij-sdk")
 }

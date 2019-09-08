@@ -5,13 +5,22 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isSuspendFunctionTypeOrSubtype
@@ -79,3 +88,31 @@ fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_D
 
 fun IrValueParameter.isInlineParameter() =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype())
+
+val IrType.isBoxedArray: Boolean
+    get() = classOrNull?.owner?.fqNameWhenAvailable == KotlinBuiltIns.FQ_NAMES.array.toSafe()
+
+fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
+    if (isBoxedArray)
+        ((this as IrSimpleType).arguments.single() as IrTypeProjection).type
+    else
+        irBuiltIns.primitiveArrayElementTypes.getValue(this.classOrNull!!)
+
+// An IR builder with a reference to the JvmBackendContext
+class JvmIrBuilder(
+    val backendContext: JvmBackendContext,
+    val symbol: IrSymbol,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET
+) : IrBuilderWithScope(
+    IrLoweringContext(backendContext),
+    Scope(symbol),
+    startOffset,
+    endOffset
+)
+
+fun JvmBackendContext.createJvmIrBuilder(
+    symbol: IrSymbol,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET
+) = JvmIrBuilder(this, symbol, startOffset, endOffset)

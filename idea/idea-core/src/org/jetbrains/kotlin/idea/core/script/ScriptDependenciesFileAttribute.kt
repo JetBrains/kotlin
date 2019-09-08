@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.util.*
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.*
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.dependencies.ScriptDependencies
@@ -61,7 +60,7 @@ var VirtualFile.scriptCompilationConfiguration: ScriptCompilationConfiguration? 
     write = {
         val os = ByteArrayOutputStream()
         ObjectOutputStream(os).use { oos ->
-            oos.writeObject((it as? ScriptCompilationConfigurationWrapper.FromCompilationConfiguration)?.configuration)
+            oos.writeObject(it)
         }
         val bytes = os.toByteArray()
         writeInt(bytes.size)

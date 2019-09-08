@@ -1,0 +1,6 @@
+public open class Base : R|kotlin/Any| {
+    public open field value:
+
+    public constructor(): R|Base|
+
+}

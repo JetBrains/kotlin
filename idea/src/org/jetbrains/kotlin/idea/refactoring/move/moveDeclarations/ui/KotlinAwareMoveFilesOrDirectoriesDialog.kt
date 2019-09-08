@@ -5,49 +5,60 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui
 
-import com.intellij.ide.util.DirectoryUtil
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileChooser.FileChooserFactory
-import com.intellij.openapi.help.HelpManager
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TextComponentAccessor
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
-import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
+import com.intellij.refactoring.move.MoveCallback
+import com.intellij.refactoring.move.MoveHandler
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.ui.RecentsManager
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton
 import com.intellij.ui.components.JBLabelDecorator
-import com.intellij.util.IncorrectOperationException
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.core.util.onTextChange
 import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
-import java.io.File
 import javax.swing.JComponent
 
 class KotlinAwareMoveFilesOrDirectoriesDialog(
     private val project: Project,
     private val initialDirectory: PsiDirectory?,
-    private val callback: (KotlinAwareMoveFilesOrDirectoriesDialog?) -> Unit
+    private val psiElements: Array<out PsiElement>,
+    private val callback: MoveCallback?
 ) : DialogWrapper(project, true) {
+
     companion object {
         private const val RECENT_KEYS = "MoveFile.RECENT_KEYS"
         private const val MOVE_FILES_OPEN_IN_EDITOR = "MoveFile.OpenInEditor"
+        private const val MOVE_FILES_SEARCH_REFERENCES = "MoveFile.SearchReferences"
+        private const val HELP_ID = "refactoring.moveFile"
+
+        private fun setConfigurationValue(id: String, value: Boolean, defaultValue: Boolean) {
+            if (!ApplicationManager.getApplication().isUnitTestMode) {
+                PropertiesComponent.getInstance().setValue(id, value, defaultValue)
+            }
+        }
+
+        private fun getConfigurationValue(id: String, defaultValue: Boolean) =
+            !ApplicationManager.getApplication().isUnitTestMode && PropertiesComponent.getInstance().getBoolean(id, defaultValue)
     }
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
@@ -56,26 +67,19 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     private val openInEditorCb = NonFocusableCheckBox("Open moved files in editor")
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
 
-    private var helpID: String? = null
-    var targetDirectory: PsiDirectory? = null
-        private set
+    override fun getHelpId() = HELP_ID
 
     init {
         title = RefactoringBundle.message("move.title")
         init()
+        initializeData()
     }
-
-    val updatePackageDirective: Boolean
-        get() = updatePackageDirectiveCb.isSelected
-
-    val searchReferences: Boolean
-        get() = searchReferencesCb.isSelected
 
     override fun createActions() = arrayOf(okAction, cancelAction, helpAction)
 
     override fun getPreferredFocusedComponent() = targetDirectoryField.childComponent
 
-    override fun createCenterPanel() = null
+    override fun createCenterPanel(): JComponent? = null
 
     override fun createNorthPanel(): JComponent {
         RecentsManager.getInstance(project).getRecentEntries(RECENT_KEYS)?.let { targetDirectoryField.childComponent.history = it }
@@ -94,7 +98,8 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         targetDirectoryField.setTextFieldPreferredWidth(CopyFilesOrDirectoriesDialog.MAX_PATH_LENGTH)
         Disposer.register(disposable, targetDirectoryField)
 
-        openInEditorCb.isSelected = isOpenInEditor()
+        openInEditorCb.isSelected = getConfigurationValue(id = MOVE_FILES_OPEN_IN_EDITOR, defaultValue = false)
+        searchReferencesCb.isSelected = getConfigurationValue(id = MOVE_FILES_SEARCH_REFERENCES, defaultValue = true)
 
         val shortcutText = KeymapUtil.getFirstKeyboardShortcutText(ActionManager.getInstance().getAction(IdeActions.ACTION_CODE_COMPLETION))
         return FormBuilder.createFormBuilder()
@@ -107,7 +112,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             .panel
     }
 
-    fun setData(psiElements: Array<out PsiElement>, initialTargetDirectory: PsiDirectory?, helpID: String) {
+    private fun initializeData() {
         val psiElement = psiElements.singleOrNull()
         if (psiElement != null) {
             val shortenedPath = CopyFilesOrDirectoriesDialog.shortenPath((psiElement as PsiFileSystemItem).virtualFile)
@@ -125,10 +130,9 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             }
         }
 
-        targetDirectoryField.childComponent.text = initialTargetDirectory?.virtualFile?.presentableUrl ?: ""
+        targetDirectoryField.childComponent.text = initialDirectory?.virtualFile?.presentableUrl ?: ""
 
         validateOKButton()
-        this.helpID = helpID
 
         with(updatePackageDirectiveCb) {
             val jetFiles = psiElements.filterIsInstance<KtFile>().filter(KtFile::isInKotlinAwareSourceRoot)
@@ -144,52 +148,60 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         }
     }
 
-    override fun doHelpAction() = HelpManager.getInstance().invokeHelp(helpID)
-
-    private fun isOpenInEditor(): Boolean {
-        if (ApplicationManager.getApplication().isUnitTestMode) return false
-        return PropertiesComponent.getInstance().getBoolean(MOVE_FILES_OPEN_IN_EDITOR, false)
-    }
-
     private fun validateOKButton() {
         isOKActionEnabled = targetDirectoryField.childComponent.text.isNotEmpty()
     }
 
-    override fun doOKAction() {
-        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected, false)
-        RecentsManager.getInstance(project).registerRecentEntry(RECENT_KEYS, targetDirectoryField.childComponent.text)
+    private val selectedDirectoryName: String
+        get() = targetDirectoryField.childComponent.text.let {
+            when {
+                it.startsWith(".") -> (initialDirectory?.virtualFile?.path ?: "") + "/" + it
+                else -> it
+            }
+        }
 
-        if (DumbService.isDumb(project)) {
-            Messages.showMessageDialog(project, "Move refactoring is not available while indexing is in progress", "Indexing", null)
+    private fun getModel(): Model<KotlinAwareMoveFilesOrDirectoriesProcessor> {
+
+        val directory = LocalFileSystem.getInstance().findFileByPath(selectedDirectoryName)?.let {
+            PsiManager.getInstance(project).findDirectory(it)
+        }
+
+        val elementsToMove: List<PsiElement> = directory?.let { existentDirectory ->
+            val choice = if (psiElements.size > 1 || psiElements[0] is PsiDirectory) intArrayOf(-1) else null
+            psiElements.filterNot {
+                it is PsiFile && CopyFilesOrDirectoriesHandler.checkFileExist(existentDirectory, choice, it, it.name, "Move")
+            }
+        } ?: psiElements.toList()
+
+        return KotlinAwareMoveFilesOrDirectoriesModel(
+            project,
+            elementsToMove,
+            selectedDirectoryName,
+            updatePackageDirectiveCb.isSelected,
+            searchReferencesCb.isSelected,
+            callback
+        )
+    }
+
+    override fun doOKAction() {
+
+        val processor: KotlinAwareMoveFilesOrDirectoriesProcessor
+        try {
+            processor = getModel().computeModelResult()
+        } catch (e: ConfigurationException) {
+            setErrorText(e.message)
             return
         }
 
-        project.executeCommand(RefactoringBundle.message("move.title"), null) {
-            runWriteAction {
-                val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/').let {
-                    when {
-                        it.startsWith(".") -> (initialDirectory?.virtualFile?.path ?: "") + "/" + it
-                        else -> it
-                    }
-                }
-                try {
-                    targetDirectory = DirectoryUtil.mkdirs(PsiManager.getInstance(project), directoryName)
-                } catch (e: IncorrectOperationException) {
-                    // ignore
-                }
-            }
-
-            if (targetDirectory == null) {
-                CommonRefactoringUtil.showErrorMessage(
-                    title,
-                    RefactoringBundle.message("cannot.create.directory"),
-                    helpID,
-                    project
-                )
-                return@executeCommand
-            }
-
-            callback(this@KotlinAwareMoveFilesOrDirectoriesDialog)
+        project.executeCommand(MoveHandler.REFACTORING_NAME) {
+            processor.run()
         }
+
+        setConfigurationValue(id = MOVE_FILES_OPEN_IN_EDITOR, value = openInEditorCb.isSelected, defaultValue = false)
+        setConfigurationValue(id = MOVE_FILES_SEARCH_REFERENCES, value = searchReferencesCb.isSelected, defaultValue = true)
+
+        RecentsManager.getInstance(project).registerRecentEntry(RECENT_KEYS, targetDirectoryField.childComponent.text)
+
+        close(OK_EXIT_CODE, /* isOk = */ true)
     }
 }

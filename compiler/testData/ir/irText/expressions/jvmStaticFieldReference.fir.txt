@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:test visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestClass
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Int declared in <root>.TestClass'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<get-test>' type=<root>.TestClass origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY

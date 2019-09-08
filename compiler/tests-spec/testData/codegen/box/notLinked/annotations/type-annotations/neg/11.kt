@@ -4,7 +4,6 @@
  * SECTIONS: annotations, type-annotations
  * NUMBER: 11
  * DESCRIPTION: Type annotations with invalid target.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28449
  */
 

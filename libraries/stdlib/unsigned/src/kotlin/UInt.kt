@@ -313,7 +313,7 @@ public inline fun Long.toUInt(): UInt = UInt(this.toInt())
 /**
  * Converts this [Float] value to [UInt].
  *
- * The fractional part, if any, is rounded down.
+ * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Float` value is negative or `NaN`, [UInt.MAX_VALUE] if it's bigger than `UInt.MAX_VALUE`.
  */
 @SinceKotlin("1.3")
@@ -323,7 +323,7 @@ public inline fun Float.toUInt(): UInt = doubleToUInt(this.toDouble())
 /**
  * Converts this [Double] value to [UInt].
  *
- * The fractional part, if any, is rounded down.
+ * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Double` value is negative or `NaN`, [UInt.MAX_VALUE] if it's bigger than `UInt.MAX_VALUE`.
  */
 @SinceKotlin("1.3")

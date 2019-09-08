@@ -487,7 +487,7 @@ fun IrClass.addFakeOverrides() {
                 IrSimpleFunctionSymbolImpl(descriptor),
                 irFunction.name,
                 Visibilities.INHERITED,
-                Modality.OPEN,
+                irFunction.modality,
                 irFunction.returnType,
                 irFunction.isInline,
                 irFunction.isExternal,
@@ -515,6 +515,7 @@ fun createStaticFunctionWithReceivers(
     oldFunction: IrFunction,
     dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
     origin: IrDeclarationOrigin = oldFunction.origin,
+    modality: Modality = Modality.FINAL,
     copyBody: Boolean = true
 ): IrSimpleFunction {
     val descriptor = WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
@@ -524,7 +525,7 @@ fun createStaticFunctionWithReceivers(
         IrSimpleFunctionSymbolImpl(descriptor),
         name,
         oldFunction.visibility,
-        Modality.FINAL,
+        modality,
         oldFunction.returnType,
         isInline = oldFunction.isInline,
         isExternal = false, isTailrec = false, isSuspend = false

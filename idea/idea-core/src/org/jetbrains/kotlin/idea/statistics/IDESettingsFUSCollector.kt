@@ -16,7 +16,8 @@ class IDESettingsFUSCollector : ProjectUsagesCollector() {
 
     override fun getUsages(project: Project): Set<UsageDescriptor> {
         val usages = mutableSetOf<UsageDescriptor>()
-        val inferenceState = NewInferenceForIDEAnalysisComponent.isEnabled(project)
+        @Suppress("DEPRECATION")
+        val inferenceState = NewInferenceForIDEAnalysisComponent.isEnabledForV1(project)
         val data = FeatureUsageData()
             .addData("enabled", inferenceState)
             .addData("pluginVersion", KotlinPluginUtil.getPluginVersion())

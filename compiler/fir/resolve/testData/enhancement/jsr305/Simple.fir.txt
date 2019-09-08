@@ -1,7 +1,7 @@
 public open class Simple : R|kotlin/Any| {
-    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String|?
+    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String?|
 
-    @R|javax/annotation/Nullable|() public open operator fun foo(@R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|kotlin/String|?
+    @R|javax/annotation/Nullable|() public open operator fun foo(@R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|kotlin/String?|
 
     @R|javax/annotation/Nonnull|() public open operator fun bar(): R|kotlin/String|
 

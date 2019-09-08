@@ -1689,6 +1689,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
             }
 
+            @TestMetadata("constraintFromLHSWithCorrectDirection.kt")
+            public void testConstraintFromLHSWithCorrectDirection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/constraintFromLHSWithCorrectDirection.kt");
+            }
+
             @TestMetadata("correctInfoAfterArrayLikeCall.kt")
             public void testCorrectInfoAfterArrayLikeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/correctInfoAfterArrayLikeCall.kt");
@@ -10360,6 +10365,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt32081.kt");
                 }
 
+                @TestMetadata("kt32207.kt")
+                public void testKt32207() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt32207.kt");
+                }
+
                 @TestMetadata("kt32388.kt")
                 public void testKt32388() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt32388.kt");
@@ -17102,6 +17112,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/regressions/kt328.kt");
             }
 
+            @TestMetadata("kt32836.kt")
+            public void testKt32836() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/kt32836.kt");
+            }
+
             @TestMetadata("kt334.kt")
             public void testKt334() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/regressions/kt334.kt");
@@ -17370,6 +17385,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("kt860.kt")
             public void testKt860() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/regressions/kt860.kt");
+            }
+
+            @TestMetadata("kt9384.kt")
+            public void testKt9384() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/regressions/kt9384.kt");
             }
 
             @TestMetadata("kt9620.kt")

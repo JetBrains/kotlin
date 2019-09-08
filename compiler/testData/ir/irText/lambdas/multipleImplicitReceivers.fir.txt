@@ -103,4 +103,4 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                             VALUE_PARAMETER name:it index:0 type:<root>.IInvoke
                             BLOCK_BODY
                               CALL 'public open fun invoke (): kotlin.Int declared in <root>.IInvoke' type=kotlin.Int origin=null
-                                $this: CALL 'public open fun <get-foo> (): <root>.B declared in <root>.IFoo' type=<root>.B origin=null
+                                $this: GET_VAR '<this>: <root>.IInvoke declared in <root>.IInvoke' type=<root>.IInvoke origin=null

@@ -7,7 +7,7 @@ val buildVersion by configurations.creating
 val buildNumber: String by rootProject.extra
 val kotlinVersion: String by rootProject.extra
 
-val writeBuildNumber by tasks.creating {
+val writeBuildNumber by tasks.registering {
     val versionFile = File(buildVersionFilePath)
     inputs.property("version", buildNumber)
     outputs.file(versionFile)
@@ -30,7 +30,7 @@ fun replaceVersion(versionFile: File, versionPattern: String, replacement: (Matc
     versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
 }
 
-val writeStdlibVersion by tasks.creating {
+val writeStdlibVersion by tasks.registering {
     val versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt")
     inputs.property("version", kotlinVersion)
     outputs.file(versionFile)
@@ -44,7 +44,7 @@ val writeStdlibVersion by tasks.creating {
     }
 }
 
-val writeCompilerVersion by tasks.creating {
+val writeCompilerVersion by tasks.registering {
     val versionFile = rootDir.resolve("core/util.runtime/src/org/jetbrains/kotlin/config/KotlinCompilerVersion.java")
     inputs.property("version", kotlinVersion)
     outputs.file(versionFile)
@@ -56,7 +56,7 @@ val writeCompilerVersion by tasks.creating {
     }
 }
 
-val writePluginVersion by tasks.creating {
+val writePluginVersion by tasks.registering {
     val versionFile = project(":idea").projectDir.resolve("resources/META-INF/plugin.xml")
     val pluginVersion = rootProject.findProperty("pluginVersion") as String?
     inputs.property("version", pluginVersion)
@@ -70,6 +70,6 @@ val writePluginVersion by tasks.creating {
     }
 }
 
-val writeVersions by tasks.creating {
+val writeVersions by tasks.registering {
     dependsOn(writeBuildNumber, writeStdlibVersion, writeCompilerVersion)
 }

@@ -1,0 +1,19 @@
+package
+
+public interface I {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        @get:kotlin.jvm.Synchronized @set:kotlin.jvm.Synchronized public final var syncProp: kotlin.String
+        @kotlin.jvm.JvmStatic @get:kotlin.jvm.Synchronized @set:kotlin.jvm.Synchronized public final var syncPropJvmStatic: kotlin.String
+        @get:kotlin.jvm.Synchronized @get:kotlin.jvm.JvmStatic @set:kotlin.jvm.Synchronized @set:kotlin.jvm.JvmStatic public final var syncPropJvmStaticAccessors: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.jvm.Synchronized public final fun syncFun(): kotlin.Unit
+        @kotlin.jvm.Synchronized @kotlin.jvm.JvmStatic public final fun syncFunJvmStatic(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

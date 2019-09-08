@@ -6,31 +6,42 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirLabeledElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirAnonymousFunction(
     final override val session: FirSession,
     psi: PsiElement?
-) : @VisitedSupertype FirFunction, FirUnknownTypeExpression(psi), FirTypedDeclaration, FirLabeledElement {
-    abstract val receiverTypeRef: FirTypeRef?
+) : @VisitedSupertype FirFunction<FirAnonymousFunction>, FirUnknownTypeExpression(psi), FirLabeledElement {
+    abstract override val receiverTypeRef: FirTypeRef?
+
+    abstract override val symbol: FirAnonymousFunctionSymbol
+
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+
+    abstract val invocationKind: InvocationKind?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousFunction(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirTypedDeclaration>.acceptChildren(visitor, data)
+        super<FirFunction>.acceptChildren(visitor, data)
         super<FirLabeledElement>.acceptChildren(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        for (parameter in valueParameters) {
-            parameter.accept(visitor, data)
-        }
-        body?.accept(visitor, data)
         typeRef.accept(visitor, data)
         // Don't call super<FirExpression>.acceptChildren (annotations & typeRef are already processed)
     }
+
+    abstract fun replaceReceiverTypeRef(receiverTypeRef: FirTypeRef)
+
+    abstract fun replaceInvocationKind(invocationKind: InvocationKind)
+
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 }

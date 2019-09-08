@@ -1,0 +1,14 @@
+FILE: localExtension.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            local final fun R|Foo|.bar(): R|kotlin/Unit| {
+            }
+
+            this@R|/Foo|.R|<local>/bar|()
+        }
+
+    }

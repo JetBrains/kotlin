@@ -8,19 +8,19 @@ FILE: lambda.kt
     public final fun multipleArgs(block: R|kotlin/Function2<kotlin/String, kotlin/String, kotlin/String>|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             String(This is test)
         }
         )
-        R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/String| {
+        R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/String| <kind=EXACTLY_ONCE>  {
             String(This is also test)
         }
         )
-        R|/itIs|(<L> = itIs@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| {
+        R|/itIs|(<L> = itIs@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
             <strcat>(String(this is ), R|<local>/it|, String( test))
         }
         )
-        R|/multipleArgs|(<L> = multipleArgs@fun <anonymous>(a: R|kotlin/String|, b: R|kotlin/String|): R|kotlin/String| {
+        R|/multipleArgs|(<L> = multipleArgs@fun <anonymous>(a: R|kotlin/String|, b: R|kotlin/String|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
             <strcat>(String(This is test of ), R|<local>/a|, String(, ), R|<local>/b|)
         }
         )

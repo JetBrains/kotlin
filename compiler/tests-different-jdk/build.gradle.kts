@@ -34,7 +34,7 @@ fun Project.codegenTest(
     target: Int, jvm: String, jdk: String,
     targetInTestClass: String = "$target",
     body: Test.() -> Unit
-): Test = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test") {
+): TaskProvider<Test> = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test") {
     dependsOn(":dist")
     workingDir = rootDir
 
@@ -53,12 +53,14 @@ fun Project.codegenTest(
 codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
     dependsOn(testJvm6ServerRuntime)
 
-    systemProperty("kotlin.test.default.jvm.target", "1.6")
-    systemProperty("kotlin.test.java.compilation.target", "1.6")
+    doFirst {
+        systemProperty("kotlin.test.default.jvm.target", "1.6")
+        systemProperty("kotlin.test.java.compilation.target", "1.6")
 
-    val port = project.findProperty("kotlin.compiler.codegen.tests.port") ?: "5100"
-    systemProperty("kotlin.test.box.in.separate.process.port", port)
-    systemProperty("kotlin.test.box.in.separate.process.server.classpath", testJvm6ServerRuntime.asPath)
+        val port = project.findProperty("kotlin.compiler.codegen.tests.port") ?: "5100"
+        systemProperty("kotlin.test.box.in.separate.process.port", port)
+        systemProperty("kotlin.test.box.in.separate.process.server.classpath", testJvm6ServerRuntime.asPath)
+    }
 }
 
 codegenTest(target = 6, jvm = 9) {}

@@ -55,7 +55,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -84,7 +87,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private val incompatibleClassTracker: IncompatibleClassTracker = IncompatibleClassTracker.DoNothing,
     val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
     private val isIrBackend: Boolean = false,
-    private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null
+    private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
+    private val namePreprocessor: ((ClassDescriptor) -> String?)? = null
 ) {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
@@ -99,6 +103,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         override fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String? {
             return getPredefinedTypeForClass(classDescriptor)?.internalName
+        }
+
+        override fun getPredefinedFullInternalNameForClass(classDescriptor: ClassDescriptor): String? {
+            return namePreprocessor?.invoke(classDescriptor)
         }
 
         override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {
@@ -967,47 +975,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
     fun writeFormalTypeParameters(typeParameters: List<TypeParameterDescriptor>, sw: JvmSignatureWriter) {
         if (sw.skipGenericSignature()) return
         for (typeParameter in typeParameters) {
-            writeFormalTypeParameter(typeParameter, sw)
-        }
-    }
-
-    private fun writeFormalTypeParameter(typeParameterDescriptor: TypeParameterDescriptor, sw: JvmSignatureWriter) {
-        if (!classBuilderMode.generateBodies && typeParameterDescriptor.name.isSpecial) {
-            // If a type parameter has no name, the code below fails, but it should recover in case of light classes
-            return
-        }
-
-        sw.writeFormalTypeParameter(typeParameterDescriptor.name.asString())
-
-        sw.writeClassBound()
-
-        for (type in typeParameterDescriptor.upperBounds) {
-            if (type.constructor.declarationDescriptor is ClassDescriptor && !isJvmInterface(type)) {
-                mapType(type, sw, TypeMappingMode.GENERIC_ARGUMENT)
-                break
+            if (!classBuilderMode.generateBodies && typeParameter.name.isSpecial) {
+                // If a type parameter has no name, the code below fails, but it should recover in case of light classes
+                continue
             }
-        }
 
-        // "extends Object" is optional according to ClassFileFormat-Java5.pdf
-        // but javac complaints to signature:
-        // <P:>Ljava/lang/Object;
-        // TODO: avoid writing java/lang/Object if interface list is not empty
-
-        sw.writeClassBoundEnd()
-
-        for (type in typeParameterDescriptor.upperBounds) {
-            when (val classifier = type.constructor.declarationDescriptor) {
-                is ClassDescriptor -> if (isJvmInterface(type)) {
-                    sw.writeInterfaceBound()
-                    mapType(type, sw, TypeMappingMode.GENERIC_ARGUMENT)
-                    sw.writeInterfaceBoundEnd()
-                }
-                is TypeParameterDescriptor -> {
-                    sw.writeInterfaceBound()
-                    mapType(type, sw, TypeMappingMode.GENERIC_ARGUMENT)
-                    sw.writeInterfaceBoundEnd()
-                }
-                else -> throw UnsupportedOperationException("Unknown classifier: $classifier")
+            SimpleClassicTypeSystemContext.writeFormalTypeParameter(typeParameter, sw) { type, mode ->
+                mapType(type as KotlinType, sw, mode)
             }
         }
     }
@@ -1157,7 +1131,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
     fun mapSyntheticMethodForPropertyAnnotations(descriptor: PropertyDescriptor): Method {
         val receiver = descriptor.extensionReceiverParameter
-        val name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.name)
+        val baseName = if (languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
+            mapFunctionName(descriptor.getter!!, OwnerKind.IMPLEMENTATION)
+        } else descriptor.name.asString()
+        val name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(baseName)
         val desc = if (receiver == null) "()V" else "(${mapType(receiver.type)})V"
         return Method(name, desc)
     }
@@ -1521,29 +1498,19 @@ class KotlinTypeMapper @JvmOverloads constructor(
         private fun findSuperDeclaration(descriptor: FunctionDescriptor, isSuperCall: Boolean): FunctionDescriptor {
             var current = descriptor
             while (current.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                val overridden = current.overriddenDescriptors
-                if (overridden.isEmpty()) {
-                    throw IllegalStateException("Fake override should have at least one overridden descriptor: $current")
-                }
-
-                var classCallable: FunctionDescriptor? = null
-                for (overriddenFunction in overridden) {
-                    if (!isInterface(overriddenFunction.containingDeclaration)) {
-                        classCallable = overriddenFunction
-                        break
-                    }
-                }
-
+                val classCallable = current.overriddenDescriptors.firstOrNull { !isInterface(it.containingDeclaration) }
                 if (classCallable != null) {
                     //prefer class callable cause of else branch
                     current = classCallable
                     continue
-                } else if (isSuperCall && !current.hasJvmDefaultAnnotation() && !isInterface(current.containingDeclaration)) {
+                }
+                if (isSuperCall && !current.hasJvmDefaultAnnotation() && !isInterface(current.containingDeclaration)) {
                     //Don't unwrap fake overrides from class to interface cause substituted override would be implicitly generated
                     return current
                 }
 
-                current = overridden.iterator().next()
+                current = current.overriddenDescriptors.firstOrNull()
+                    ?: error("Fake override should have at least one overridden descriptor: $current")
             }
             return current
         }
@@ -1657,6 +1624,41 @@ class KotlinTypeMapper @JvmOverloads constructor(
             sw.writeParameterType(kind)
             sw.writeAsmType(type)
             sw.writeParameterTypeEnd()
+        }
+
+        @JvmStatic
+        fun TypeSystemCommonBackendContext.writeFormalTypeParameter(
+            typeParameter: TypeParameterMarker,
+            sw: JvmSignatureWriter,
+            mapType: (KotlinTypeMarker, TypeMappingMode) -> Type
+        ) {
+            sw.writeFormalTypeParameter(typeParameter.getName().asString())
+
+            sw.writeClassBound()
+
+            for (i in 0 until typeParameter.upperBoundCount()) {
+                val type = typeParameter.getUpperBound(i)
+                if (type.typeConstructor().getTypeParameterClassifier() == null && !type.isInterfaceOrAnnotationClass()) {
+                    mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
+                    break
+                }
+            }
+
+            // "extends Object" is optional according to ClassFileFormat-Java5.pdf
+            // but javac complaints to signature:
+            // <P:>Ljava/lang/Object;
+            // TODO: avoid writing java/lang/Object if interface list is not empty
+
+            sw.writeClassBoundEnd()
+
+            for (i in 0 until typeParameter.upperBoundCount()) {
+                val type = typeParameter.getUpperBound(i)
+                if (type.typeConstructor().getTypeParameterClassifier() != null || type.isInterfaceOrAnnotationClass()) {
+                    sw.writeInterfaceBound()
+                    mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
+                    sw.writeInterfaceBoundEnd()
+                }
+            }
         }
     }
 }

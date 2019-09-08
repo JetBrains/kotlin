@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.BranchedValue
 import org.jetbrains.kotlin.codegen.NumberCompare
 import org.jetbrains.kotlin.codegen.ObjectCompare
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
@@ -87,7 +89,7 @@ class PrimitiveComparison(
     private val operatorToken: KtSingleValueToken
 ) : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
-        val parameterType = codegen.typeMapper.kotlinTypeMapper.mapType(primitiveNumberType)
+        val parameterType = Type.getType(JvmPrimitiveType.get(KotlinBuiltIns.getPrimitiveType(primitiveNumberType)!!).desc)
         val (left, right) = expression.receiverAndArgs()
         val a = left.accept(codegen, data).coerce(parameterType, left.type).materialized
         val b = right.accept(codegen, data).coerce(parameterType, right.type).materialized

@@ -12,26 +12,42 @@ class ClockMarkTest {
 
     @Test
     fun adjustment() {
-        val clock = TestClock(unit = DurationUnit.NANOSECONDS)
+        val clock = TestClock()
 
-        val mark = clock.mark()
-        val markFuture1 = mark + 1.milliseconds
-        val markFuture2 = mark - (-1).milliseconds
+        fun ClockMark.assertHasPassed(hasPassed: Boolean) {
+            assertEquals(!hasPassed, this.hasNotPassedNow(), "Expected mark in the future")
+            assertEquals(hasPassed, this.hasPassedNow(), "Expected mark in the past")
 
-        val markPast1 = mark - 1.milliseconds
-        val markPast2 = markFuture1 + (-2).milliseconds
+            assertEquals(!hasPassed, this.elapsedNow() < Duration.ZERO, "Mark elapsed: ${this.elapsedNow()}, expected hasPassed: $hasPassed")
+        }
 
-        clock.reading = 500_000L
+        val mark = clock.markNow()
+        val markFuture1 = (mark + 1.milliseconds).apply { assertHasPassed(false) }
+        val markFuture2 = (mark - (-1).milliseconds).apply { assertHasPassed(false) }
 
-        val elapsed = mark.elapsed()
+        val markPast1 = (mark - 1.milliseconds).apply { assertHasPassed(true) }
+        val markPast2 = (markFuture1 + (-2).milliseconds).apply { assertHasPassed(true) }
+
+        clock += 500_000.nanoseconds
+
+        val elapsed = mark.elapsedNow()
         val elapsedFromFuture = elapsed - 1.milliseconds
         val elapsedFromPast = elapsed + 1.milliseconds
 
         assertEquals(0.5.milliseconds, elapsed)
-        assertEquals(elapsedFromFuture, markFuture1.elapsed())
-        assertEquals(elapsedFromFuture, markFuture2.elapsed())
+        assertEquals(elapsedFromFuture, markFuture1.elapsedNow())
+        assertEquals(elapsedFromFuture, markFuture2.elapsedNow())
 
-        assertEquals(elapsedFromPast, markPast1.elapsed())
-        assertEquals(elapsedFromPast, markPast2.elapsed())
+        assertEquals(elapsedFromPast, markPast1.elapsedNow())
+        assertEquals(elapsedFromPast, markPast2.elapsedNow())
+
+        markFuture1.assertHasPassed(false)
+        markPast1.assertHasPassed(true)
+
+        clock += 1.milliseconds
+
+        markFuture1.assertHasPassed(true)
+        markPast1.assertHasPassed(true)
+
     }
 }

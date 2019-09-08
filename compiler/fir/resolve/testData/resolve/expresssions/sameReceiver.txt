@@ -1,0 +1,14 @@
+FILE: sameReceiver.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|Foo|.bar(): R|kotlin/Unit| {
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            (this@R|/Foo|, this@R|/Foo|).R|/Foo.bar|()
+        }
+
+    }

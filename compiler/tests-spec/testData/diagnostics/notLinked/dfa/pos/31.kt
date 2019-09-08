@@ -135,7 +135,7 @@ fun <T>case_8(x: Inv<T>?) {
 // TESTCASE NUMBER: 9
 inline fun <reified T>case_9(x: Out<T>?) {
     if (x?.prop_1?.prop_1?.prop_1?.prop_1 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<T> & Inv<T>?")!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<T>"), DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_1<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T> & Inv<out T>?")!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1.prop_1.prop_1.prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T> & Inv<out T>?")!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1.prop_1.prop_1.prop_1<!>.equals(10)
     }
 }

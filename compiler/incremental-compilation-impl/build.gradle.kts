@@ -24,6 +24,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("log4j", "jdom") }
+    testRuntime(intellijDep()) { includeJars("lz4-1.3.0") }
 }
 
 sourceSets {
@@ -33,6 +34,7 @@ sourceSets {
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    dependsOn(":compiler:ir.serialization.js:packFullRuntimeKLib")
 }
 
 testsJar()

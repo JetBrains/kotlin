@@ -3839,7 +3839,7 @@ fun Nothing.case_63() {
         <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>also<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>
             <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>.hashCode()<!>
-    }
+        }
     }<!>
 }
 

@@ -47,7 +47,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
                 KtUsefulTestCase.assertSameElements(actualLineNumbers, expectedLineNumbers)
             }
         } catch (e: Throwable) {
-            println(classFileFactory.createText())
+            printReport(wholeFile)
             throw e
         }
     }

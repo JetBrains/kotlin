@@ -12,8 +12,7 @@ dependencies {
 
 publish()
 
-val jar: Jar by tasks
-runtimeJar(rewriteDepsToShadedCompiler(jar))
+runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 
 sourcesJar()
 

@@ -64,7 +64,6 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.description = "Create package.json file for $compilation"
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
 
-                @Suppress("UnstableApiUsage")
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
                 task.mustRunAfter(rootClean)
             }

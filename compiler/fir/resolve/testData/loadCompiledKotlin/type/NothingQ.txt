@@ -1,1 +1,1 @@
-public final fun nothingq(): R|kotlin/Nothing|?
+public final fun nothingq(): R|kotlin/Nothing?|

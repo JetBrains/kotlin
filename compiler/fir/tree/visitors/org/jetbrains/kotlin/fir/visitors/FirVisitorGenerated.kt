@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
 
 
@@ -40,7 +41,7 @@ abstract class FirVisitor<out R, in D> {
         return visitDeclarationWithBody(anonymousInitializer, data)
     }
 
-    open fun visitFunction(function: FirFunction, data: D): R {
+    open fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: D): R {
         return visitDeclarationWithBody(function, data)
     }
 
@@ -60,16 +61,12 @@ abstract class FirVisitor<out R, in D> {
         return visitMemberFunction(namedFunction, data)
     }
 
-    open fun visitModifiableFunction(modifiableFunction: FirModifiableFunction, data: D): R {
+    open fun <F : FirFunction<F>> visitModifiableFunction(modifiableFunction: FirModifiableFunction<F>, data: D): R {
         return visitFunction(modifiableFunction, data)
     }
 
     open fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): R {
         return visitFunction(propertyAccessor, data)
-    }
-
-    open fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: D): R {
-        return visitPropertyAccessor(defaultPropertyAccessor, data)
     }
 
     open fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration, data: D): R {
@@ -154,6 +151,10 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitReference(reference: FirReference, data: D): R {
         return visitElement(reference, data)
+    }
+
+    open fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: D): R {
+        return visitReference(controlFlowGraphReference, data)
     }
 
     open fun visitNamedReference(namedReference: FirNamedReference, data: D): R {
@@ -280,8 +281,24 @@ abstract class FirVisitor<out R, in D> {
         return visitExpression(unknownTypeExpression, data)
     }
 
+    open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): R {
+        return visitUnknownTypeExpression(binaryLogicExpression, data)
+    }
+
     open fun visitBlock(block: FirBlock, data: D): R {
         return visitUnknownTypeExpression(block, data)
+    }
+
+    open fun visitCallLikeControlFlowExpression(callLikeControlFlowExpression: FirCallLikeControlFlowExpression, data: D): R {
+        return visitUnknownTypeExpression(callLikeControlFlowExpression, data)
+    }
+
+    open fun visitTryExpression(tryExpression: FirTryExpression, data: D): R {
+        return visitCallLikeControlFlowExpression(tryExpression, data)
+    }
+
+    open fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R {
+        return visitCallLikeControlFlowExpression(whenExpression, data)
     }
 
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R {
@@ -304,16 +321,12 @@ abstract class FirVisitor<out R, in D> {
         return visitQualifiedAccessExpression(callableReferenceAccess, data)
     }
 
+    open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: D): R {
+        return visitQualifiedAccessExpression(expressionWithSmartcast, data)
+    }
+
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R {
         return visitUnknownTypeExpression(resolvedQualifier, data)
-    }
-
-    open fun visitTryExpression(tryExpression: FirTryExpression, data: D): R {
-        return visitUnknownTypeExpression(tryExpression, data)
-    }
-
-    open fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R {
-        return visitUnknownTypeExpression(whenExpression, data)
     }
 
     open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): R {
@@ -372,8 +385,12 @@ abstract class FirVisitor<out R, in D> {
         return visitLoop(whileLoop, data)
     }
 
+    open fun visitResolvable(resolvable: FirResolvable, data: D): R {
+        return visitStatement(resolvable, data)
+    }
+
     open fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): R {
-        return visitStatement(qualifiedAccess, data)
+        return visitResolvable(qualifiedAccess, data)
     }
 
     open fun visitAssignment(assignment: FirAssignment, data: D): R {

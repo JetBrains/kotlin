@@ -9,6 +9,7 @@ import com.intellij.application.options.codeStyle.CommenterForm
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.psi.codeStyle.CodeStyleConfigurable
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.DisplayPriority
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.util.ui.JBInsets
@@ -17,7 +18,7 @@ import javax.swing.BoxLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class KotlinGenerationSettingsProvider : CodeStyleSettingsProviderCompat() {
+class KotlinGenerationSettingsProvider : CodeStyleSettingsProvider() {
     override fun createConfigurable(settings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable {
         return KotlinCodeStyleGenerationConfigurable(settings)
     }

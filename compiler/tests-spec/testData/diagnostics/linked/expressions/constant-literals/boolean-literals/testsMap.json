@@ -1,0 +1,30 @@
+{
+  "1": {
+    "neg": {
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "Checking of type for Boolean values",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "Checking of type for Boolean values",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "Checking of subtype for Boolean values",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

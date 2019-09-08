@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
       PROPERTY name:value2 visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:public [final]
+        FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]
           EXPRESSION_BODY
             CONST String type=kotlin.String value="OK"
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.String
@@ -21,22 +21,23 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.X.B
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-value2> (): kotlin.String declared in <root>.X.B'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value2>' type=<root>.X.B origin=null
       PROPERTY name:value visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:public [final]
+        FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:private [final]
           EXPRESSION_BODY
             FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.String
                 $this: VALUE_PARAMETER name:<this> type:<root>.X.B
                 BLOCK_BODY
                   CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=null
+                    $this: GET_VAR '<this>: <root>.X.B declared in <root>.X.B' type=<root>.X.B origin=null
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.Function0<kotlin.String>
           correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val]
           $this: VALUE_PARAMETER name:<this> type:<root>.X.B
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X.B'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:public [final]' type=kotlin.Function0<kotlin.String> origin=null
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:private [final]' type=kotlin.Function0<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value>' type=<root>.X.B origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
         overridden:
@@ -82,3 +83,4 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public abstract fun invoke (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
           $this: CALL 'public abstract fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X' type=kotlin.Function0<kotlin.String> origin=null
+            $this: GET_OBJECT 'CLASS ENUM_ENTRY name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X

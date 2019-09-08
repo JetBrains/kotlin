@@ -12,10 +12,11 @@ import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import org.jetbrains.kotlin.idea.KotlinPluginUpdater
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.PluginUpdateStatus
-import org.jetbrains.kotlin.idea.configuration.ui.ConfigurePluginUpdatesForm
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinLanguageConfigurationForm
+import org.jetbrains.kotlin.j2k.J2kConverterExtension
 import javax.swing.JComponent
 
-class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.NoScroll {
+class KotlinLanguageConfiguration : SearchableConfigurable, Configurable.NoScroll {
     companion object {
         const val ID = "preferences.language.Kotlin"
 
@@ -48,7 +49,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
         }
     }
 
-    private val form = ConfigurePluginUpdatesForm()
+    private val form = KotlinLanguageConfigurationForm()
     private var update: PluginUpdateStatus.Update? = null
 
     private var savedChannel = -1
@@ -62,10 +63,13 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
     override fun getDisplayName(): String = "Kotlin"
 
-    override fun isModified() = false
+    override fun isModified() =
+        form.useNewJ2kCheckBox.isSelected != J2kConverterExtension.isNewJ2k
 
     override fun apply() {
         // Selected channel is now saved automatically
+
+        J2kConverterExtension.isNewJ2k = form.useNewJ2kCheckBox.isSelected
     }
 
     private fun setInstalledVersion(installedVersion: String?, installingStatus: String?) {
@@ -74,6 +78,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
     }
 
     override fun createComponent(): JComponent? {
+        form.useNewJ2kCheckBox.isSelected = J2kConverterExtension.isNewJ2k
         form.updateCheckProgressIcon.suspend()
         form.updateCheckProgressIcon.setPaintPassiveIcon(false)
 

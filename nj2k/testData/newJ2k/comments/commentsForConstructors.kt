@@ -1,5 +1,6 @@
-internal class A @JvmOverloads constructor(p: Int = 1) {
-    private val v: Int
+internal class A // end of primary constructor body
+@JvmOverloads constructor(p: Int = 1) {
+    private val v = 1
 
     // this is a secondary constructor 2
     constructor(s: String) : this(s.length) {} // end of secondary constructor 2 body
@@ -8,9 +9,6 @@ internal class A @JvmOverloads constructor(p: Int = 1) {
 
 
     // this is a primary constructor
-    init {
-        v = 1
-    } // end of primary constructor body
 
 
     // end of secondary constructor 1 body
@@ -24,15 +22,12 @@ internal class B // end of constructor body
 }
 
 internal class CtorComment {
-    var myA: String
-
-    /*
+    var myA = "a"
+/*
      * The magic of comments
      */
     // single line magic comments
-    init {
-        myA = "a"
-    }
+
 }
 
 internal class CtorComment2 /*

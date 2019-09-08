@@ -11,7 +11,7 @@ val versionFilePath = "$rootDir/dependencies/dependencies.properties"
 val ideaVersion = findProperty("versions.intellijSdk").toString()
 val markdownVersion = findProperty("versions.markdown").toString()
 
-val writeVersions by tasks.creating {
+val writeVersions by tasks.registering {
     val versionFile = File(versionFilePath)
     inputs.property("ideaVersion", ideaVersion)
     inputs.property("markdownVersion", markdownVersion)

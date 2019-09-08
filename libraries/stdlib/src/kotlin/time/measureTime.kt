@@ -34,9 +34,9 @@ public inline fun Clock.measureTime(block: () -> Unit): Duration {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    val mark = mark()
+    val mark = markNow()
     block()
-    return mark.elapsed()
+    return mark.elapsedNow()
 }
 
 
@@ -79,7 +79,7 @@ public inline fun <T> Clock.measureTimedValue(block: () -> T): TimedValue<T> {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    val mark = mark()
+    val mark = markNow()
     val result = block()
-    return TimedValue(result, mark.elapsed())
+    return TimedValue(result, mark.elapsedNow())
 }

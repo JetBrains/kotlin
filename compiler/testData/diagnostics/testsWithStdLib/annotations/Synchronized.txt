@@ -3,6 +3,7 @@ package
 @kotlin.jvm.Synchronized public fun gav(): kotlin.Int
 
 public interface My {
+    @get:kotlin.jvm.Synchronized @set:kotlin.jvm.Synchronized public open var v: kotlin.String
     @kotlin.jvm.Synchronized public open fun bar(): kotlin.Int
     @kotlin.jvm.Synchronized public open fun baz(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -13,6 +14,7 @@ public interface My {
 
 public abstract class Your {
     public constructor Your()
+    @get:kotlin.jvm.Synchronized @set:kotlin.jvm.Synchronized public final var v: kotlin.String
     @kotlin.jvm.Synchronized public final fun bar(): kotlin.Int
     @kotlin.jvm.Synchronized public open fun baz(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

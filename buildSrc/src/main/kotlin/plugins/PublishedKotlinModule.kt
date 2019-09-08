@@ -4,9 +4,10 @@ import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenResolver
-
+import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.plugins.MavenRepositoryHandlerConvention
 import org.gradle.api.publication.maven.internal.deployer.MavenRemoteRepository
 import org.gradle.api.tasks.Upload
@@ -30,6 +31,12 @@ open class PublishedKotlinModule : Plugin<Project> {
 
             plugins.apply("maven")
 
+            val publishedRuntime by configurations.creating {
+                the<MavenPluginConvention>()
+                    .conf2ScopeMappings
+                    .addMapping(0, this, Conf2ScopeMappingContainer.RUNTIME)
+            }
+
             if (!project.hasProperty("prebuiltJar")) {
                 plugins.apply("signing")
 
@@ -41,7 +48,7 @@ open class PublishedKotlinModule : Plugin<Project> {
                     sign(configurations["archives"])
                 }
 
-                (tasks.getByName("signArchives") as Sign).apply {
+                tasks.named<Sign>("signArchives").configure {
                     enabled = signingRequired
                 }
             }
@@ -98,9 +105,9 @@ open class PublishedKotlinModule : Plugin<Project> {
                 }
             }
 
-            val preparePublication = project.rootProject.tasks.getByName("preparePublication")
+            tasks.named<Upload>("uploadArchives").configure {
 
-            val uploadArchives = (tasks.getByName("uploadArchives") as Upload).apply {
+                val preparePublication = project.rootProject.tasks.named("preparePublication").get()
 
                 dependsOn(preparePublication)
 
@@ -152,8 +159,8 @@ open class PublishedKotlinModule : Plugin<Project> {
                 }
             }
 
-            tasks.create("publish") {
-                dependsOn(uploadArchives)
+            tasks.register("publish") {
+                dependsOn(tasks.named("uploadArchives"))
             }
         }
     }

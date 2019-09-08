@@ -14,17 +14,18 @@ import org.jetbrains.kotlin.name.Name
 
 class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
 
-    private fun referenceFunction(fqn: FqName) = context.getFunctions(fqn).singleOrNull()?.let {
-        context.symbolTable.referenceSimpleFunction(it)
-    }
+    private fun referenceFunction(fqn: FqName) =
+        context.getFunctions(fqn).singleOrNull()?.let {
+            context.symbolTable.referenceSimpleFunction(it)
+        } ?: throw AssertionError("Function not found: $fqn")
 
     private val helperMapping = mapOf(
-        context.irBuiltIns.throwNpeSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))),
+        context.irBuiltIns.checkNotNullSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("ensureNotNull"))),
         context.irBuiltIns.throwCceSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))),
         context.irBuiltIns.throwIseSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))),
         context.irBuiltIns.noWhenBranchMatchedExceptionSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException")))
     )
 
-
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression) = helperMapping[call.symbol]?.let { irCall(call, it) } ?: call
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression) =
+        helperMapping[call.symbol]?.let { irCall(call, it) } ?: call
 }

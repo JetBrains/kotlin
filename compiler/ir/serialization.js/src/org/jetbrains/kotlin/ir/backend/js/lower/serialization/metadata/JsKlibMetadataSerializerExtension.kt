@@ -31,8 +31,6 @@ class JsKlibMetadataSerializerExtension(
     }
 
     private fun uniqId(descriptor: DeclarationDescriptor): JsKlibMetadataProtoBuf.DescriptorUniqId? {
-//        val index = declarationTable.descriptorTable.get(descriptor)
-//        return index?.let { newDescriptorUniqId(it) }
         return declarationTableHandler(descriptor)
     }
 
@@ -44,11 +42,6 @@ class JsKlibMetadataSerializerExtension(
     override fun serializeTypeAlias(typeAlias: TypeAliasDescriptor, proto: ProtoBuf.TypeAlias.Builder) {
         uniqId(typeAlias)?.let { proto.setExtension(JsKlibMetadataProtoBuf.typeAliasUniqId, it) }
         super.serializeTypeAlias(typeAlias, proto)
-    }
-
-    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
-        uniqId(descriptor)?.let { proto.setExtension(JsKlibMetadataProtoBuf.valueParamUniqId, it) }
-        super.serializeValueParameter(descriptor, proto)
     }
 
     override fun serializeEnumEntry(descriptor: ClassDescriptor, proto: ProtoBuf.EnumEntry.Builder) {
@@ -91,16 +84,18 @@ class JsKlibMetadataSerializerExtension(
         super.serializeProperty(descriptor, proto, versionRequirementTable, childSerializer)
     }
 
-    override fun serializeFunction(descriptor: FunctionDescriptor,
-                                   proto: ProtoBuf.Function.Builder,
-                                   childSerializer: DescriptorSerializer
+    override fun serializeFunction(
+        descriptor: FunctionDescriptor,
+        proto: ProtoBuf.Function.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: DescriptorSerializer
     ) {
         uniqId(descriptor)?.let { proto.setExtension(JsKlibMetadataProtoBuf.functionUniqId, it) }
         val id = getFileId(descriptor)
         if (id != null) {
             proto.setExtension(JsKlibMetadataProtoBuf.functionContainingFileId, id)
         }
-        super.serializeFunction(descriptor, proto, childSerializer)
+        super.serializeFunction(descriptor, proto, versionRequirementTable, childSerializer)
     }
 
     private fun getFileId(descriptor: DeclarationDescriptor): Int? {

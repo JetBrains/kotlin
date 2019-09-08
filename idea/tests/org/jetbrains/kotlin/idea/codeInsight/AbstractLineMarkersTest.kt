@@ -45,34 +45,14 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
     fun doTest(path: String) = doTest(path) {}
 
     protected fun doAndCheckHighlighting(
-        documentToAnalyze: Document, expectedHighlighting: ExpectedHighlightingData, expectedFile: File
+        project: Project,
+        documentToAnalyze: Document,
+        expectedHighlighting: ExpectedHighlightingData,
+        expectedFile: File
     ): List<LineMarkerInfo<*>> {
         myFixture.doHighlighting()
 
-        val markers = DaemonCodeAnalyzerImpl.getLineMarkers(documentToAnalyze, myFixture.project)
-
-        try {
-            expectedHighlighting.checkLineMarkers(markers, documentToAnalyze.text)
-
-            // This is a workaround for sad bug in ExpectedHighlightingData:
-            // the latter doesn't throw assertion error when some line markers are expected, but none are present.
-            if (FileUtil.loadFile(expectedFile).contains("<lineMarker") && markers.isEmpty()) {
-                throw AssertionError("Some line markers are expected, but nothing is present at all")
-            }
-        } catch (error: AssertionError) {
-            try {
-                val actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.file.text)
-                KotlinTestUtils.assertEqualsToFile(expectedFile, actualTextWithTestData)
-            } catch (failure: FileComparisonFailure) {
-                throw FileComparisonFailure(
-                    error.message + "\n" + failure.message,
-                    failure.expected,
-                    failure.actual,
-                    failure.filePath
-                )
-            }
-        }
-        return markers
+        return checkHighlighting(project, documentToAnalyze, expectedHighlighting, expectedFile)
     }
 
     fun doTest(path: String, additionalCheck: () -> Unit) {
@@ -92,7 +72,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-            val markers = doAndCheckHighlighting(document, data, File(path))
+            val markers = doAndCheckHighlighting(myFixture.project, document, data, File(path))
 
             assertNavigationElements(myFixture.project, myFixture.file as KtFile, markers)
             additionalCheck()
@@ -172,6 +152,38 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
             expectedNavigationText = expectedNavigationText.substring(expectedNavigationText.indexOf("\n") + 1)
 
             return expectedNavigationText
+        }
+
+        fun checkHighlighting(
+            project: Project,
+            documentToAnalyze: Document,
+            expectedHighlighting: ExpectedHighlightingData,
+            expectedFile: File
+        ): MutableList<LineMarkerInfo<*>> {
+            val markers = DaemonCodeAnalyzerImpl.getLineMarkers(documentToAnalyze, project)
+
+            try {
+                expectedHighlighting.checkLineMarkers(markers, documentToAnalyze.text)
+
+                // This is a workaround for sad bug in ExpectedHighlightingData:
+                // the latter doesn't throw assertion error when some line markers are expected, but none are present.
+                if (FileUtil.loadFile(expectedFile).contains("<lineMarker") && markers.isEmpty()) {
+                    throw AssertionError("Some line markers are expected, but nothing is present at all")
+                }
+            } catch (error: AssertionError) {
+                try {
+                    val actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, documentToAnalyze.text)
+                    KotlinTestUtils.assertEqualsToFile(expectedFile, actualTextWithTestData)
+                } catch (failure: FileComparisonFailure) {
+                    throw FileComparisonFailure(
+                        error.message + "\n" + failure.message,
+                        failure.expected,
+                        failure.actual,
+                        failure.filePath
+                    )
+                }
+            }
+            return markers
         }
     }
 }

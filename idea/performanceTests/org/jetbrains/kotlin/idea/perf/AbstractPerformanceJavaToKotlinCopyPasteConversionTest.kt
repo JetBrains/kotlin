@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor
+import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
+import org.jetbrains.kotlin.j2k.J2kConverterExtension
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -35,7 +36,7 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
     override fun setUp() {
         super.setUp()
 
-        Registry.get("kotlin.use.new.j2k").setValue(newJ2K)
+        J2kConverterExtension.isNewJ2k = newJ2K
         val index = j2kIndex()
 
         if (!warmedUp[index]) {

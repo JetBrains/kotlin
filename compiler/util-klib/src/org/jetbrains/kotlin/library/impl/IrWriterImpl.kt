@@ -5,25 +5,54 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 
-class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
+abstract class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
     init {
         irLayout.irDir.mkdirs()
-        irLayout.irTablesDir.mkdirs()
-    }
-
-    override fun addIr(ir: SerializedIr) {
-        irLayout.irHeader.writeBytes(ir.module)
-        // TODO: use Files.move.
-        File(ir.combinedDeclarationFilePath).copyTo(irLayout.irDeclarations)
-        File(ir.symbolTableFilePath).copyTo(irLayout.irSymbols)
-        File(ir.typeTableFilePath).copyTo(irLayout.irTypes)
-        File(ir.stringTableFilePath).copyTo(irLayout.irStrings)
     }
 
     override fun addDataFlowGraph(dataFlowGraph: ByteArray) {
         irLayout.dataFlowGraphFile.writeBytes(dataFlowGraph)
+    }
+}
+
+class IrMonoliticWriterImpl(irLayout: IrKotlinLibraryLayout) : IrWriterImpl(irLayout) {
+
+    override fun addIr(ir: SerializedIrModule) {
+        with(ir.files.sortedBy { it.path }) {
+            IrArrayWriter(map { it.fileData }).writeIntoFile(irLayout.irFiles.absolutePath)
+            IrArrayWriter(map { it.declarations }).writeIntoFile(irLayout.irDeclarations.absolutePath)
+            IrArrayWriter(map { it.symbols }).writeIntoFile(irLayout.irSymbols.absolutePath)
+            IrArrayWriter(map { it.types }).writeIntoFile(irLayout.irTypes.absolutePath)
+            IrArrayWriter(map { it.strings }).writeIntoFile(irLayout.irStrings.absolutePath)
+            IrArrayWriter(map { it.bodies }).writeIntoFile(irLayout.irBodies.absolutePath)
+        }
+    }
+}
+
+class IrPerFileWriterImpl(irLayout: IrKotlinLibraryLayout) : IrWriterImpl(irLayout) {
+    override fun addIr(ir: SerializedIrModule) {
+        ir.files.forEach {
+            serializeFile(it)
+        }
+    }
+
+    private fun serializeFile(file: SerializedIrFile) {
+        val fqnPath = file.fqName
+        val fileId = file.path.hashCode().toString(Character.MAX_RADIX)
+        val irFileDirectory = "$fqnPath.$fileId.file"
+        val fileDir = irLayout.irDir.child(irFileDirectory)
+
+        assert(!fileDir.exists)
+        fileDir.mkdirs()
+
+        irLayout.irFile(fileDir).writeBytes(file.fileData)
+
+        irLayout.irDeclarations(fileDir).writeBytes(file.declarations)
+        irLayout.irSymbols(fileDir).writeBytes(file.symbols)
+        irLayout.irTypes(fileDir).writeBytes(file.types)
+        irLayout.irStrings(fileDir).writeBytes(file.strings)
+        irLayout.irBodies(fileDir).writeBytes(file.bodies)
     }
 }

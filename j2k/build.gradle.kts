@@ -61,6 +61,11 @@ dependencies {
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("java-decompiler"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
+
+    if (Ide.AS36.orHigher()) {
+        testRuntime(intellijPluginDep("android-layoutlib"))
+        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
+    }
 }
 
 sourceSets {

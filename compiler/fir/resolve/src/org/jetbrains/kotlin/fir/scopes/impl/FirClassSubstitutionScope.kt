@@ -60,7 +60,7 @@ class FirClassSubstitutionScope(
         val member = when (original) {
             is FirNamedFunctionSymbol -> original.fir
             is FirConstructorSymbol -> return original
-            is FirAccessorSymbol -> throw AssertionError("Should not be here")
+            else -> throw AssertionError("Should not be here")
         }
 
         val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()

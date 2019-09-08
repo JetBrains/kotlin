@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.nj2k.conversions
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.j2k.getContainingClass
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asQualifierWithThisAsSelector
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
-import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
@@ -67,7 +68,7 @@ class StaticMemberAccessConversion(private val context: NewJ2kConverterContext) 
         val target = target
         return when (target) {
             is KtElement ->
-                target.parentOfType<KtClassOrObject>()?.let { klass ->
+                target.getStrictParentOfType<KtClassOrObject>()?.let { klass ->
                     if (klass is KtObjectDeclaration && klass.isCompanion()) klass.containingClass()
                     else klass
                 }?.let { context.symbolProvider.provideDirectSymbol(it) }

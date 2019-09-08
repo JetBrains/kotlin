@@ -1,4 +1,4 @@
 public open class Constructor : R|kotlin/Any| {
-    public constructor(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|!): R|test/Constructor|
+    public constructor(r: R|ft<java/lang/Runnable, java/lang/Runnable?>!|): R|test/Constructor|
 
 }

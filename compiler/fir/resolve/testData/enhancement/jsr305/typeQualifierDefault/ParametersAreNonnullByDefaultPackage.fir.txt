@@ -1,7 +1,7 @@
 public open class A : R|kotlin/Any| {
-    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String|?
+    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String?|
 
-    public open operator fun foo(q: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|ft<kotlin/String, kotlin/String?>|!
+    public open operator fun foo(q: R|ft<kotlin/String, kotlin/String?>!|, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|ft<kotlin/String, kotlin/String?>!|
 
     @R|javax/annotation/Nonnull|() public open operator fun bar(): R|kotlin/String|
 
@@ -9,9 +9,9 @@ public open class A : R|kotlin/Any| {
 
 }
 public open class A2 : R|kotlin/Any| {
-    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String|?
+    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String?|
 
-    public open operator fun foo(q: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|ft<kotlin/String, kotlin/String?>|!
+    public open operator fun foo(q: R|ft<kotlin/String, kotlin/String?>!|, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|ft<kotlin/String, kotlin/String?>!|
 
     @R|javax/annotation/Nonnull|() public open operator fun bar(): R|kotlin/String|
 

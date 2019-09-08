@@ -2,13 +2,13 @@
 // 'as?' should be generated as a single 'safeAs...' intrinsic call
 // without instanceof or 'is...'.
 
-inline fun <reified T> safeAs(x: Any) {
-    x as? T
+inline fun <reified T> safeAs(x: Any): T? {
+    return x as? T
 }
 
 fun test() {
     val x: Any = arrayListOf("abc", "def")
-    safeAs<MutableList<*>>(x)
+    safeAs<MutableList<*>>(x)?.clear()
 }
 
 // 0 INSTANCEOF java/util/List

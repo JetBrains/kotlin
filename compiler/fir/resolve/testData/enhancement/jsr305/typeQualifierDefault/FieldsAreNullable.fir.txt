@@ -1,9 +1,9 @@
 @R|FieldsAreNullable|() public open class A : R|kotlin/Any| {
-    public open field field: R|kotlin/String|?
+    public open field field: R|kotlin/String?|
 
     @R|javax/annotation/Nonnull|() public open field nonNullField: R|kotlin/String|
 
-    public open operator fun foo(q: R|ft<kotlin/String, kotlin/String?>|!, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|ft<kotlin/String, kotlin/String?>|!
+    public open operator fun foo(q: R|ft<kotlin/String, kotlin/String?>!|, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|ft<kotlin/String, kotlin/String?>!|
 
     @R|javax/annotation/Nonnull|() public open operator fun bar(): R|kotlin/String|
 

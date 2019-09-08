@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipEntry
@@ -63,6 +62,28 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
                 ),
                 getProcessedSources(output)
             )
+        }
+    }
+
+    @Test
+    fun testChangingAnnotationProcessorClasspath() {
+        val project = getProject()
+
+        project.build("clean", "build") {
+            assertSuccessful()
+        }
+
+        project.gradleBuildScript().appendText(
+            """
+            
+            dependencies {
+                kapt 'com.google.guava:guava:12.0'
+            }
+        """.trimIndent()
+        )
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Unable to use existing data, re-initializing classpath information for KAPT.")
         }
     }
 }

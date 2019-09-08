@@ -21,7 +21,7 @@ import org.junit.Assume
 
 sealed class GradleVersionRequired(val minVersion: String, val maxVersion: String?) {
     companion object {
-        const val OLDEST_SUPPORTED = "4.1"
+        const val OLDEST_SUPPORTED = "4.3"
     }
 
     class Exact(version: String) : GradleVersionRequired(version, version)

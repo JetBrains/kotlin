@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -27,9 +28,10 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-import kotlin.math.max
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
+    override val isErrorTypeAllowed: Boolean get() = true
+
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return this.isDenotable
@@ -54,6 +56,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isError(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return this.isError
+    }
+
+    override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
+        throw IllegalStateException("Should not be called")
     }
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
@@ -469,6 +475,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return IntegerLiteralTypeConstructor.findCommonSuperType(explicitSupertypes)
     }
 
+    override fun TypeConstructorMarker.isError(): Boolean {
+        throw IllegalStateException("Should not be called")
+    }
+
     override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
         require(this is IntegerLiteralTypeConstructor, this::errorMessage)
         return this.getApproximatedType().unwrap()
@@ -540,6 +550,17 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe {
         require(this is TypeConstructor, this::errorMessage)
         return (declarationDescriptor as ClassDescriptor).fqNameUnsafe
+    }
+
+    override fun TypeParameterMarker.getName(): Name {
+        require(this is TypeParameterDescriptor, this::errorMessage)
+        return name
+    }
+
+    override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        val descriptor = constructor.declarationDescriptor
+        return descriptor is ClassDescriptor && (descriptor.kind == ClassKind.INTERFACE || descriptor.kind == ClassKind.ANNOTATION_CLASS)
     }
 }
 

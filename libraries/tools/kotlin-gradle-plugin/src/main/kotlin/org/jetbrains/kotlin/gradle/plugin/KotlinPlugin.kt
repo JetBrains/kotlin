@@ -58,7 +58,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     val project: Project,
     val tasksProvider: KotlinTasksProvider,
     val taskDescription: String,
-    val kotlinCompilation: KotlinCompilation<*>
+    val kotlinCompilation: AbstractKotlinCompilation<*>
 ) {
     protected abstract fun doTargetSpecificProcessing()
     protected val logger = Logging.getLogger(this.javaClass)!!
@@ -83,13 +83,16 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     private fun registerKotlinCompileTask(): TaskHolder<out T> {
         val name = kotlinCompilation.compileKotlinTaskName
         logger.kotlinDebug("Creating kotlin compile task $name")
-        val kotlinCompile = doRegisterTask(project, name) {
+
+        KotlinCompileTaskData.register(name, kotlinCompilation).apply {
+            destinationDir.set(project.provider { defaultKotlinDestinationDir })
+        }
+
+        return doRegisterTask(project, name) {
             it.description = taskDescription
             it.mapClasspath { kotlinCompilation.compileDependencyFiles }
-            it.setDestinationDir { defaultKotlinDestinationDir }
             kotlinCompilation.output.addClassesDir { project.files(kotlinTask.doGetTask().destinationDir).builtBy(kotlinTask.doGetTask()) }
         }
-        return kotlinCompile
     }
 
     open fun run() {
@@ -162,7 +165,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 internal class Kotlin2JvmSourceSetProcessor(
     project: Project,
     tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: KotlinCompilation<*>,
+    kotlinCompilation: AbstractKotlinCompilation<*>,
     private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<KotlinCompile>(
     project, tasksProvider, "Compiles the $kotlinCompilation.", kotlinCompilation
@@ -236,7 +239,7 @@ internal fun KotlinCompilationOutput.addClassesDir(classesDirProvider: () -> Fil
 internal class Kotlin2JsSourceSetProcessor(
     project: Project,
     tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: KotlinCompilation<*>,
+    kotlinCompilation: AbstractKotlinCompilation<*>,
     private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
     project, tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
@@ -299,7 +302,7 @@ internal class Kotlin2JsSourceSetProcessor(
 
 internal class KotlinCommonSourceSetProcessor(
     project: Project,
-    compilation: KotlinCompilation<*>,
+    compilation: AbstractKotlinCompilation<*>,
     tasksProvider: KotlinTasksProvider,
     private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<KotlinCompileCommon>(
@@ -338,7 +341,7 @@ internal abstract class AbstractKotlinPlugin(
 
     internal abstract fun buildSourceSetProcessor(
         project: Project,
-        compilation: KotlinCompilation<*>,
+        compilation: AbstractKotlinCompilation<*>,
         kotlinPluginVersion: String
     ): KotlinSourceSetProcessor<*>
 
@@ -403,7 +406,7 @@ internal abstract class AbstractKotlinPlugin(
 
         fun configureTarget(
             target: KotlinWithJavaTarget<*>,
-            buildSourceSetProcessor: (KotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
+            buildSourceSetProcessor: (AbstractKotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             setUpJavaSourceSets(target)
             configureSourceSetDefaults(target, buildSourceSetProcessor)
@@ -517,8 +520,8 @@ internal abstract class AbstractKotlinPlugin(
         }
 
         private fun configureSourceSetDefaults(
-            kotlinTarget: KotlinTarget,
-            buildSourceSetProcessor: (KotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
+            kotlinTarget: KotlinWithJavaTarget<*>,
+            buildSourceSetProcessor: (AbstractKotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             kotlinTarget.compilations.all { compilation ->
                 buildSourceSetProcessor(compilation).run()
@@ -566,7 +569,7 @@ internal open class KotlinPlugin(
         private const val targetName = "" // use empty suffix for the task names
     }
 
-    override fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation<*>, kotlinPluginVersion: String) =
+    override fun buildSourceSetProcessor(project: Project, compilation: AbstractKotlinCompilation<*>, kotlinPluginVersion: String) =
         Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
@@ -592,7 +595,7 @@ internal open class KotlinCommonPlugin(
 
     override fun buildSourceSetProcessor(
         project: Project,
-        compilation: KotlinCompilation<*>,
+        compilation: AbstractKotlinCompilation<*>,
         kotlinPluginVersion: String
     ): KotlinSourceSetProcessor<*> =
         KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinPluginVersion)
@@ -616,7 +619,7 @@ internal open class Kotlin2JsPlugin(
 
     override fun buildSourceSetProcessor(
         project: Project,
-        compilation: KotlinCompilation<*>,
+        compilation: AbstractKotlinCompilation<*>,
         kotlinPluginVersion: String
     ): KotlinSourceSetProcessor<*> =
         Kotlin2JsSourceSetProcessor(
@@ -914,11 +917,14 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
         val kotlinTaskName = compilation.compileKotlinTaskName
 
+        KotlinCompileTaskData.register(kotlinTaskName, compilation).apply {
+            // store kotlin classes in separate directory. They will serve as class-path to java compiler
+            destinationDir.set(project.provider { File(project.buildDir, "tmp/kotlin-classes/$variantDataName") })
+        }
+
         tasksProvider.registerKotlinJVMTask(project, kotlinTaskName, compilation) {
             it.parentKotlinOptionsImpl = rootKotlinOptions
 
-            // store kotlin classes in separate directory. They will serve as class-path to java compiler
-            it.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
             it.description = "Compiles the $variantDataName kotlin."
         }
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
@@ -32,6 +33,8 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType as irTypePredicates_isPrimi
 interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext, TypeSystemCommonBackendContext {
 
     val irBuiltIns: IrBuiltIns
+
+    override val isErrorTypeAllowed: Boolean get() = true
 
     override fun KotlinTypeMarker.asSimpleType() = this as? SimpleTypeMarker
 
@@ -236,6 +239,14 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return maxInArguments + 1
     }
 
+    override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
+        throw IllegalStateException("Should not be called")
+    }
+
+    override fun TypeConstructorMarker.isError(): Boolean {
+        throw IllegalStateException("Should not be called")
+    }
+
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? =
         irBuiltIns.intType as IrSimpleType
 
@@ -325,6 +336,14 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? =
         (this as IrClassSymbol).owner.fqNameWhenAvailable?.toUnsafe()
+
+    override fun TypeParameterMarker.getName(): Name =
+        (this as IrTypeParameterSymbol).owner.name
+
+    override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
+        val irClass = (this as IrType).classOrNull?.owner
+        return irClass != null && (irClass.isInterface || irClass.isAnnotationClass)
+    }
 }
 
 fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {

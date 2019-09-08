@@ -49,6 +49,7 @@ open class ClassCodegen protected constructor(
     val state = context.state
 
     val typeMapper = context.typeMapper
+    val methodSignatureMapper = context.methodSignatureMapper
 
     val descriptor = irClass.descriptor
 
@@ -90,7 +91,7 @@ open class ClassCodegen protected constructor(
             signature.superclassName,
             signature.interfaces.toTypedArray()
         )
-        AnnotationCodegen(this, context.state, visitor.visitor::visitAnnotation).genAnnotations(irClass, null)
+        AnnotationCodegen(this, context, visitor.visitor::visitAnnotation).genAnnotations(irClass, null)
 
         val nestedClasses = irClass.declarations.mapNotNull { declaration ->
             if (declaration is IrClass) {
@@ -246,7 +247,7 @@ open class ClassCodegen protected constructor(
         val fieldType = typeMapper.mapType(field)
         val fieldSignature =
             if (field.origin == IrDeclarationOrigin.DELEGATE) null
-            else typeMapper.mapFieldSignature(field)
+            else methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
         // The ConstantValue attribute makes the initializer part of the ABI, which is why since 1.4
         // it is no longer set unless the property is explicitly `const`.
@@ -257,7 +258,7 @@ open class ClassCodegen protected constructor(
             fieldSignature, field.constantValue(implicitConst)?.value
         )
 
-        AnnotationCodegen(this, state, fv::visitAnnotation).genAnnotations(field, fieldType)
+        AnnotationCodegen(this, context, fv::visitAnnotation).genAnnotations(field, fieldType)
 
         val descriptor = field.metadata?.descriptor
         if (descriptor != null) {
@@ -342,7 +343,7 @@ open class ClassCodegen protected constructor(
             // in the source.
             val containingDeclaration = irClass.symbol.owner.parent
             if (containingDeclaration is IrFunction) {
-                val method = typeMapper.mapAsmMethod(containingDeclaration)
+                val method = methodSignatureMapper.mapAsmMethod(containingDeclaration)
                 visitor.visitOuterClass(outerClassName, method.name, method.descriptor)
             } else if (irClass.isAnonymousObject) {
                 visitor.visitOuterClass(outerClassName, null, null)
@@ -359,7 +360,7 @@ open class ClassCodegen protected constructor(
 }
 
 private val IrClass.flags: Int
-    get() = origin.flags or getVisibilityAccessFlagForClass() or when {
+    get() = origin.flags or getVisibilityAccessFlagForClass() or deprecationFlags or when {
         isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
         isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
         isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
@@ -367,7 +368,7 @@ private val IrClass.flags: Int
     }
 
 private val IrField.flags: Int
-    get() = origin.flags or visibility.flags or
+    get() = origin.flags or visibility.flags or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or

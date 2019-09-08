@@ -34,7 +34,7 @@ fun ConeSubstitutor.substituteOrNull(type: ConeKotlinType?): ConeKotlinType? {
 }
 
 abstract class AbstractConeSubstitutor : ConeSubstitutor() {
-    private fun wrapProjection(old: ConeKotlinTypeProjection, newType: ConeKotlinType): ConeKotlinTypeProjection {
+    protected fun wrapProjection(old: ConeKotlinTypeProjection, newType: ConeKotlinType): ConeKotlinTypeProjection {
         return when (old) {
             is ConeStarProjection -> old
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
@@ -45,6 +45,11 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     }
 
     abstract fun substituteType(type: ConeKotlinType): ConeKotlinType?
+    open fun substituteArgument(projection: ConeKotlinTypeProjection): ConeKotlinTypeProjection? {
+        val type = (projection as? ConeTypedProjection)?.type ?: return null
+        val newType = substituteOrNull(type) ?: return null
+        return wrapProjection(projection, newType)
+    }
 
     fun makeNullableIfNeed(isNullable: Boolean, type: ConeKotlinType?): ConeKotlinType? {
         if (!isNullable) return type
@@ -70,7 +75,21 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
             is ConeFlexibleType -> this.substituteBounds()
             is ConeCapturedType -> return null
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
+            is ConeIntersectionType -> this.substituteIntersectedTypes()
         }
+    }
+
+    private fun ConeIntersectionType.substituteIntersectedTypes(): ConeIntersectionType? {
+        val substitutedTypes = ArrayList<ConeKotlinType>(intersectedTypes.size)
+        var somethingIsSubstituted = false
+        for (type in intersectedTypes) {
+            val substitutedType = substituteOrNull(type)?.also {
+                somethingIsSubstituted = true
+            } ?: type
+            substitutedTypes += substitutedType
+        }
+        if (!somethingIsSubstituted) return null
+        return ConeIntersectionType(substitutedTypes)
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeDefinitelyNotNullType? {
@@ -93,11 +112,8 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
         val newArguments by lazy { arrayOfNulls<ConeKotlinTypeProjection>(typeArguments.size) }
         var initialized = false
         for ((index, typeArgument) in this.typeArguments.withIndex()) {
-            val type = (typeArgument as? ConeTypedProjection)?.type ?: continue
-            val newType = substituteOrNull(type)
-            if (newType != null) {
+            newArguments[index] = substituteArgument(typeArgument)?.also {
                 initialized = true
-                newArguments[index] = wrapProjection(typeArgument, newType)
             }
         }
 

@@ -7,14 +7,14 @@ FILE: extension.kt
         }
 
         public final operator fun R|kotlin/Int|.invoke(): R|Foo| {
-            ^invoke this@Foo
+            ^invoke this@R|/Foo|
         }
 
         public final val x: R|kotlin/Int| = Int(0)
             public get(): R|kotlin/Int|
 
-        public final fun foo(): R|kotlin/Unit| {
-            ^foo R|/x|()
+        public final fun foo(): R|Foo| {
+            ^foo (this@R|/Foo|, this@R|/Foo|.R|/Foo.x|).R|/Foo.invoke|()
         }
 
     }

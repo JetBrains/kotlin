@@ -1,0 +1,30 @@
+FILE: lambdas.kt
+    public final fun run(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun test_1(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|kotlin/Int|) ->  {
+                R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+                    R|<local>/x|.R|kotlin/Int.inc|()
+                }
+                )
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_2(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|kotlin/Int|) ->  {
+                lval lambda: R|kotlin/Function0<class error: Ambiguity: inc, [kotlin/inc, kotlin/inc]>| = fun <anonymous>(): <ERROR TYPE REF: Ambiguity: inc, [kotlin/inc, kotlin/inc]> {
+                    R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                }
+
+            }
+            else ->  {
+            }
+        }
+
+    }

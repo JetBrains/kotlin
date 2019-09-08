@@ -99,7 +99,7 @@ Development for some particular platform is possible after 'switching' that can 
 cd kotlin-project-dir
 
 # switching to IntelliJ Idea 2018.2
-bunch switch . 182
+bunch switch 182
 ```
 
 ## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA

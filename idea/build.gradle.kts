@@ -181,6 +181,7 @@ dependencies {
         testRuntime(intellijPluginDep("git4idea"))
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
+        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
     }
 
     performanceTestCompile(sourceSets["test"].output)
@@ -215,6 +216,9 @@ projectTest(taskName = "performanceTest") {
 
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+        project.findProperty("cacheRedirectorEnabled")?.let {
+            systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
+        }
     }
 }
 

@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
-import org.jetbrains.kotlin.types.typeUtil.lazyClosure
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.sure
@@ -309,4 +308,28 @@ private fun OrderEntry.toIdeaModuleInfo(
         else -> return emptyList()
     }
     return emptyList()
+}
+
+/**
+ * @see [org.jetbrains.kotlin.types.typeUtil.closure].
+ */
+fun <T> Collection<T>.lazyClosure(f: (T) -> Collection<T>): Sequence<T> = sequence {
+    if (size == 0) return@sequence
+    var sizeBeforeIteration = 0
+
+    yieldAll(this@lazyClosure)
+    var yieldedCount = size
+    var elementsToCheck = this@lazyClosure
+
+    while (yieldedCount > sizeBeforeIteration) {
+        val toAdd = hashSetOf<T>()
+        elementsToCheck.forEach {
+            val neighbours = f(it)
+            yieldAll(neighbours)
+            yieldedCount += neighbours.size
+            toAdd.addAll(neighbours)
+        }
+        elementsToCheck = toAdd
+        sizeBeforeIteration = yieldedCount
+    }
 }

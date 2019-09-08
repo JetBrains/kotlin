@@ -1,8 +1,8 @@
 FILE: Test.kt
     public final fun test(): R|kotlin/Unit| {
         lval jc: R|JavaClass| = R|/JavaClass.JavaClass|()
-        lval result: R|ft<kotlin/String, kotlin/String?>|! = R|<local>/jc|.R|/JavaClass.text|
+        lval result: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/jc|.R|/JavaClass.text|
     }
     public final fun otherTest(jc: R|JavaClass|): R|kotlin/Unit| {
-        lval result: R|ft<kotlin/String, kotlin/String?>|! = R|<local>/jc|.R|/JavaClass.text|
+        lval result: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/jc|.R|/JavaClass.text|
     }

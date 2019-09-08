@@ -1,27 +1,27 @@
 FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [var]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test2> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-test2>' type=kotlin.Int origin=null
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:testMember1 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:testMember1 type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:testMember1 type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember1> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
@@ -38,10 +38,10 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Host
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMember1> (): kotlin.Int declared in <root>.Host'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testMember1 type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testMember1 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember1>' type=<root>.Host origin=null
     PROPERTY name:testMember2 visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember2> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
@@ -49,14 +49,14 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Host
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMember2> (): kotlin.Int declared in <root>.Host'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember2>' type=<root>.Host origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testMember2> visibility:public modality:FINAL <> ($this:<root>.Host, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:testMember2 visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Host
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<set-testMember2>' type=<root>.Host origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Host.<set-testMember2>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InPrimaryCtor modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:testInPrimaryCtor1 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T of <root>.InPrimaryCtor visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T of <root>.InPrimaryCtor visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'testInPrimaryCtor1: T of <root>.InPrimaryCtor declared in <root>.InPrimaryCtor.<init>' type=T of <root>.InPrimaryCtor origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor1> visibility:public modality:FINAL <> ($this:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor>) returnType:T of <root>.InPrimaryCtor
@@ -92,10 +92,10 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testInPrimaryCtor1> (): T of <root>.InPrimaryCtor declared in <root>.InPrimaryCtor'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T of <root>.InPrimaryCtor visibility:public [final]' type=T of <root>.InPrimaryCtor origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T of <root>.InPrimaryCtor visibility:private [final]' type=T of <root>.InPrimaryCtor origin=null
               receiver: GET_VAR '<this>: <root>.InPrimaryCtor<T of <root>.InPrimaryCtor> declared in <root>.InPrimaryCtor.<get-testInPrimaryCtor1>' type=<root>.InPrimaryCtor<T of <root>.InPrimaryCtor> origin=null
     PROPERTY name:testInPrimaryCtor2 visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:private
         EXPRESSION_BODY
           GET_VAR 'testInPrimaryCtor2: kotlin.Int declared in <root>.InPrimaryCtor.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor2> visibility:public modality:FINAL <> ($this:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor>) returnType:kotlin.Int
@@ -103,14 +103,14 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testInPrimaryCtor2> (): kotlin.Int declared in <root>.InPrimaryCtor'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.InPrimaryCtor<T of <root>.InPrimaryCtor> declared in <root>.InPrimaryCtor.<get-testInPrimaryCtor2>' type=<root>.InPrimaryCtor<T of <root>.InPrimaryCtor> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testInPrimaryCtor2> visibility:public modality:FINAL <> ($this:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor>, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:testInPrimaryCtor2 visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.InPrimaryCtor<T of <root>.InPrimaryCtor>
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.InPrimaryCtor<T of <root>.InPrimaryCtor> declared in <root>.InPrimaryCtor.<set-testInPrimaryCtor2>' type=<root>.InPrimaryCtor<T of <root>.InPrimaryCtor> origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.InPrimaryCtor.<set-testInPrimaryCtor2>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean

@@ -36,14 +36,14 @@ FILE: for.kt
             public? get(): Int
 
         public final fun component1(): <implicit> {
-            ^component1 R|/Some.x|
+            ^component1 this@R|/Some|.R|/Some.x|
         }
 
         public final fun component2(): <implicit> {
-            ^component2 R|/Some.y|
+            ^component2 this@R|/Some|.R|/Some.y|
         }
 
-        public final fun copy(x: Int = R|/Some.x|, y: Int = R|/Some.y|): R|Some| {
+        public final fun copy(x: Int = this@R|/Some|.R|/Some.x|, y: Int = this@R|/Some|.R|/Some.y|): R|Some| {
         }
 
     }

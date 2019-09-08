@@ -289,4 +289,28 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testUnresolvedType() {
         doOverrideFileTest()
     }
+
+    fun testImplementFromClassName() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName2() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName3() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName4() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName5() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName6() {
+        doMultiImplementFileTest()
+    }
 }

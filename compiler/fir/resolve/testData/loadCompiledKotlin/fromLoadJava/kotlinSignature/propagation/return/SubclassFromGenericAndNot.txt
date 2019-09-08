@@ -9,7 +9,7 @@ public abstract interface SubclassFromGenericAndNot : R|kotlin/Any| {
     public abstract interface NonGeneric : R|kotlin/Any| {
         public abstract fun dummy(): R|kotlin/Unit|
 
-        public abstract fun foo(): R|kotlin/String|?
+        public abstract fun foo(): R|kotlin/String?|
 
     }
 

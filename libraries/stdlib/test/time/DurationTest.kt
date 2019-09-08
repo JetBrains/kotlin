@@ -199,7 +199,7 @@ class DurationTest {
     }
 
     @Test
-    fun isNegativeAndAbsoluteValue() {
+    fun signAndAbsoluteValue() {
         val negative = -1.seconds
         val positive = 1.seconds
         val zero = Duration.ZERO
@@ -207,6 +207,10 @@ class DurationTest {
         assertTrue(negative.isNegative())
         assertFalse(zero.isNegative())
         assertFalse(positive.isNegative())
+
+        assertFalse(negative.isPositive())
+        assertFalse(zero.isPositive())
+        assertTrue(positive.isPositive())
 
         assertEquals(positive, negative.absoluteValue)
         assertEquals(positive, positive.absoluteValue)

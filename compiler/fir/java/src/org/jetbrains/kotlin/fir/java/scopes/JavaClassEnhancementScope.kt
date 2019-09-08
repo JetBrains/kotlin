@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.*
-import org.jetbrains.kotlin.fir.java.enhancement.EnhancementSignatureParts
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -122,6 +122,7 @@ class JavaClassEnhancementScope(
         if (firMethod !is FirJavaMethod && firMethod !is FirJavaConstructor) {
             return original
         }
+        if (firMethod !is FirMemberFunction<*>) throw AssertionError()
         return enhanceMethod(firMethod, original.callableId, name)
     }
 
@@ -222,7 +223,7 @@ class JavaClassEnhancementScope(
         return function.symbol
     }
 
-    private fun FirFunction.computeJvmDescriptor(): String = buildString {
+    private fun FirFunction<*>.computeJvmDescriptor(): String = buildString {
         if (this@computeJvmDescriptor is FirJavaMethod) {
             append(name.asString())
         } else {
@@ -364,7 +365,7 @@ class JavaClassEnhancementScope(
                 if (hasReceiver && member is FirJavaMethod) {
                     return member.valueParameters[index + 1].returnTypeRef
                 }
-                return (member as FirFunction).valueParameters[index].returnTypeRef
+                return (member as FirFunction<*>).valueParameters[index].returnTypeRef
             }
         }
     }

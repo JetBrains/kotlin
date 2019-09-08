@@ -8,11 +8,11 @@ FILE: access.kt
             public get(): R|kotlin/Int|
 
         public final fun abc(): R|kotlin/Int| {
-            ^abc R|/Foo.x|
+            ^abc this@R|/Foo|.R|/Foo.x|
         }
 
         public final fun cba(): R|kotlin/Int| {
-            ^cba R|/Foo.abc|()
+            ^cba this@R|/Foo|.R|/Foo.abc|()
         }
 
     }
@@ -25,11 +25,11 @@ FILE: access.kt
             public get(): R|kotlin/String|
 
         public final fun R|Foo|.abc(): R|kotlin/Int| {
-            ^abc R|/Foo.x|
+            ^abc this@R|/Foo|.R|/Foo.x|
         }
 
         public final fun bar(): R|Bar| {
-            ^bar this#
+            ^bar this@R|/Bar|
         }
 
         public final operator fun R|kotlin/String|.plus(bar: R|Bar|): R|kotlin/String| {
@@ -37,16 +37,16 @@ FILE: access.kt
         }
 
         public final fun R|Foo|.check(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> {
-            ^check R|/Foo.abc|().<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|/bar|())
+            ^check this@R|/Foo|.R|/Foo.abc|().<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|/Bar|.R|/Bar.bar|())
         }
 
         public final fun R|Foo|.check2(): R|kotlin/String| {
-            ^check2 String().R|kotlin/String.plus|(R|/bar|())
+            ^check2 String().R|kotlin/String.plus|(this@R|/Bar|.R|/Bar.bar|())
         }
 
     }
     public final fun R|Foo|.ext(): R|kotlin/Int| {
-        ^ext R|/Foo.x|
+        ^ext this@R|/Foo|.R|/Foo.x|
     }
     public final fun bar(): R|kotlin/Unit| {
     }

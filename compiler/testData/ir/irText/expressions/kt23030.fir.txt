@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/kt23030.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/Any' type=kotlin.Boolean
+            then: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Char' type=kotlin.Boolean
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -48,8 +48,8 @@ FILE fqName:<root> fileName:/kt23030.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.testEqualsWithSmartCast' type=kotlin.Any origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.testEqualsWithSmartCast' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.testEqualsWithSmartCast' type=kotlin.Int origin=null
+              arg1: GET_VAR 'y: kotlin.Any declared in <root>.testEqualsWithSmartCast' type=kotlin.Char origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/kt23030.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CONST Boolean type=kotlin.Boolean value=false
-              then: ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/Any' type=kotlin.Boolean
+              then: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Char' type=kotlin.Boolean
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Boolean type=kotlin.Boolean value=false

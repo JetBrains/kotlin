@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 object ArrayIterator : IntrinsicMethod() {
@@ -27,11 +29,11 @@ object ArrayIterator : IntrinsicMethod() {
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction {
-        val method = context.state.typeMapper.mapToCallableMethod(expression.descriptor, false)
-        return IrIntrinsicFunction.create(expression, signature, context, method.owner) {
-            val methodSignature = "(${method.owner.descriptor})${method.returnType.descriptor}"
+        val owner = context.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
+        return IrIntrinsicFunction.create(expression, signature, context, owner) {
+            val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
             val intrinsicOwner =
-                if (AsmUtil.isPrimitive(method.owner.elementType))
+                if (AsmUtil.isPrimitive(owner.elementType))
                     "kotlin/jvm/internal/ArrayIteratorsKt"
                 else
                     "kotlin/jvm/internal/ArrayIteratorKt"

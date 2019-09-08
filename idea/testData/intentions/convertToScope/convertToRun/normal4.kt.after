@@ -1,16 +1,12 @@
 // WITH_RUNTIME
 
 class MyClass {
-    fun foo1() = Unit
-    fun foo2() = Unit
-    fun foo3() = Unit
-
-    fun foo4() {
-        val a = MyClass()
+    fun foo(c: Int) {
+        val a = 23
         a.run {
-            foo1()
-            foo2()
-            foo3()
+            dec()
+            dec()
+            dec() + this
         }
     }
 }

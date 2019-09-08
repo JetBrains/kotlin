@@ -5,8 +5,8 @@ FILE: simple.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            R|/Owner.bar|()
-            this#.R|/Owner.bar|()
+            this@R|/Owner|.R|/Owner.bar|()
+            this@R|/Owner|.R|/Owner.bar|()
         }
 
         public final fun bar(): R|kotlin/Unit| {
@@ -20,8 +20,8 @@ FILE: simple.kt
             }
 
             public final fun baz(): R|kotlin/Unit| {
-                R|/Owner.Nested.gau|()
-                this#.R|/Owner.Nested.gau|()
+                this@R|/Owner.Nested|.R|/Owner.Nested.gau|()
+                this@R|/Owner.Nested|.R|/Owner.Nested.gau|()
             }
 
             public final fun gau(): R|kotlin/Unit| {
@@ -31,7 +31,7 @@ FILE: simple.kt
 
             public final fun err(): R|kotlin/Unit| {
                 <Unresolved name: foo>#()
-                this#.<Unresolved name: foo>#()
+                this@R|/Owner.Nested|.<Unresolved name: foo>#()
             }
 
         }

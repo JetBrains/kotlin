@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Value modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Value visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Value visibility:private
         EXPRESSION_BODY
           GET_VAR 'value: T of <root>.Value declared in <root>.Value.<init>' type=T of <root>.Value origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Value<T of <root>.Value>) returnType:T of <root>.Value
@@ -22,18 +22,18 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Value<T of <root>.Value>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.Value declared in <root>.Value'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Value visibility:public' type=T of <root>.Value origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Value visibility:private' type=T of <root>.Value origin=null
               receiver: GET_VAR '<this>: <root>.Value<T of <root>.Value> declared in <root>.Value.<get-value>' type=<root>.Value<T of <root>.Value> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:<root>.Value<T of <root>.Value>, <set-?>:T of <root>.Value) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Value<T of <root>.Value>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Value
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Value visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Value visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Value<T of <root>.Value> declared in <root>.Value.<set-value>' type=<root>.Value<T of <root>.Value> origin=null
             value: GET_VAR '<set-?>: T of <root>.Value declared in <root>.Value.<set-value>' type=T of <root>.Value origin=null
     PROPERTY name:text visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private
         EXPRESSION_BODY
           GET_VAR 'text: kotlin.String? declared in <root>.Value.<init>' type=kotlin.String? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-text> visibility:public modality:FINAL <> ($this:<root>.Value<T of <root>.Value>) returnType:kotlin.String?
@@ -41,14 +41,14 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Value<T of <root>.Value>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-text> (): kotlin.String? declared in <root>.Value'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:public' type=kotlin.String? origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private' type=kotlin.String? origin=null
               receiver: GET_VAR '<this>: <root>.Value<T of <root>.Value> declared in <root>.Value.<get-text>' type=<root>.Value<T of <root>.Value> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-text> visibility:public modality:FINAL <> ($this:<root>.Value<T of <root>.Value>, <set-?>:kotlin.String?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:text visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Value<T of <root>.Value>
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String?
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:text type:kotlin.String? visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Value<T of <root>.Value> declared in <root>.Value.<set-text>' type=<root>.Value<T of <root>.Value> origin=null
             value: GET_VAR '<set-?>: kotlin.String? declared in <root>.Value.<set-text>' type=kotlin.String? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DVal modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:kmember visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:kmember type:kotlin.Any visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:kmember type:kotlin.Any visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'kmember: kotlin.Any declared in <root>.DVal.<init>' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-kmember> visibility:public modality:FINAL <> ($this:<root>.DVal) returnType:kotlin.Any
@@ -112,7 +112,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.DVal
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-kmember> (): kotlin.Any declared in <root>.DVal'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kmember type:kotlin.Any visibility:public [final]' type=kotlin.Any origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:kmember type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.DVal declared in <root>.DVal.<get-kmember>' type=<root>.DVal origin=null
     FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.DVal, t:kotlin.Any?, p:kotlin.Any) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.DVal
@@ -135,34 +135,34 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:recivier visibility:public modality:FINAL [var]
-    FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:public [static]
+    FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:private [static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value="fail"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-recivier> visibility:public modality:FINAL <> () returnType:kotlin.Any?
       correspondingProperty: PROPERTY name:recivier visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-recivier> (): kotlin.Any? declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:public [static]' type=kotlin.Any? origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:private [static]' type=kotlin.Any? origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-recivier> visibility:public modality:FINAL <> (<set-?>:kotlin.Any?) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:recivier visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any?
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:public [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Any? declared in <root>.<set-recivier>' type=kotlin.Any? origin=null
   PROPERTY name:value2 visibility:public modality:FINAL [var]
-    FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:public [static]
+    FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:private [static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value="fail2"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> () returnType:kotlin.Any?
       correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-value2> (): kotlin.Any? declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:public [static]' type=kotlin.Any? origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:private [static]' type=kotlin.Any? origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value2> visibility:public modality:FINAL <> (<set-?>:kotlin.Any?) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any?
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:public [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Any? declared in <root>.<set-value2>' type=kotlin.Any? origin=null
   PROPERTY name:bar visibility:public modality:FINAL [var]
     FUN name:<get-bar> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-bar>) returnType:T of <root>.<get-bar>
@@ -183,7 +183,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         CALL 'public final fun <set-value2> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
           <set-?>: GET_VAR 'value: T of <root>.<set-bar> declared in <root>.<set-bar>' type=T of <root>.<set-bar> origin=null
   PROPERTY name:barRef visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:private [final,static]
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'public final bar: T of <root>.<get-bar> [var]' field=null getter='public final fun <get-bar> <T> (): T of <root>.<get-bar> declared in <root>' setter='public final fun <set-bar> <T> (value: T of <root>.<set-bar>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
           <1>: kotlin.String?
@@ -191,4 +191,4 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       correspondingProperty: PROPERTY name:barRef visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-barRef> (): kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:public [final,static]' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null

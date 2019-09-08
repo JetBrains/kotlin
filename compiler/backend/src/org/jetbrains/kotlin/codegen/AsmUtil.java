@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
@@ -235,7 +236,7 @@ public class AsmUtil {
     }
 
     @Nullable
-    private static Type boxPrimitiveType(@NotNull Type type) {
+    public static Type boxPrimitiveType(@NotNull Type type) {
         JvmPrimitiveType jvmPrimitiveType = primitiveTypeByAsmSort.get(type.getSort());
         return jvmPrimitiveType != null ? asmTypeByFqNameWithoutInnerClasses(jvmPrimitiveType.getWrapperFqName()) : null;
     }
@@ -953,7 +954,7 @@ public class AsmUtil {
                 ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
                     String name = getNameForReceiverParameter(descriptor, state.getBindingContext(), state.getLanguageVersionSettings());
-                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, name, descriptor);
+                    genParamAssertion(v, state, frameMap, receiverParameter, name, descriptor);
                 }
             }
             return;
@@ -962,17 +963,17 @@ public class AsmUtil {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
             String name = getNameForReceiverParameter(descriptor, state.getBindingContext(), state.getLanguageVersionSettings());
-            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, name, descriptor);
+            genParamAssertion(v, state, frameMap, receiverParameter, name, descriptor);
         }
 
         for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
-            genParamAssertion(v, state.getTypeMapper(), frameMap, parameter, parameter.getName().asString(), descriptor);
+            genParamAssertion(v, state, frameMap, parameter, parameter.getName().asString(), descriptor);
         }
     }
 
     private static void genParamAssertion(
             @NotNull InstructionAdapter v,
-            @NotNull KotlinTypeMapper typeMapper,
+            @NotNull GenerationState state,
             @NotNull FrameMap frameMap,
             @NotNull ParameterDescriptor parameter,
             @NotNull String name,
@@ -981,7 +982,7 @@ public class AsmUtil {
         KotlinType type = parameter.getType();
         if (isNullableType(type) || InlineClassesUtilsKt.isNullableUnderlyingType(type)) return;
 
-        Type asmType = typeMapper.mapType(type);
+        Type asmType = state.getTypeMapper().mapType(type);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
             StackValue value;
             if (JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(containingDeclaration) ||
@@ -997,9 +998,10 @@ public class AsmUtil {
             }
             value.put(asmType, v);
             v.visitLdcInsn(name);
-            v.invokestatic(
-                    IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V", false
-            );
+            String methodName = state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0
+                                ? "checkNotNullParameter"
+                                : "checkParameterIsNotNull";
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
         }
     }
 
@@ -1013,7 +1015,6 @@ public class AsmUtil {
         if (runtimeAssertionInfo == null || !runtimeAssertionInfo.getNeedNotNullAssertion()) return stackValue;
 
         return new StackValue(stackValue.type, stackValue.kotlinType) {
-
             @Override
             public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
                 Type innerType = stackValue.type;
@@ -1022,8 +1023,10 @@ public class AsmUtil {
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
                     v.dup();
                     v.visitLdcInsn(runtimeAssertionInfo.getMessage());
-                    v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkExpressionValueIsNotNull",
-                                   "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+                    String methodName = state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0
+                                        ? "checkNotNullExpressionValue"
+                                        : "checkExpressionValueIsNotNull";
+                    v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
                 StackValue.coerce(innerType, innerKotlinType, type, kotlinType, v);
             }

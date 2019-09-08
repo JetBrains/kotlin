@@ -5,7 +5,7 @@ FILE: objects.kt
         }
 
         public final fun foo(): R|A| {
-            ^foo this#
+            ^foo this@R|/A|
         }
 
     }

@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirMemberFunction<F : FirMemberFunction<F>> :
-    @VisitedSupertype FirFunction, FirCallableMemberDeclaration<F> {
+    @VisitedSupertype FirFunction<F>, FirCallableMemberDeclaration<F> {
 
     override val symbol: FirFunctionSymbol<F>
 
@@ -25,5 +24,6 @@ interface FirMemberFunction<F : FirMemberFunction<F>> :
             parameter.accept(visitor, data)
         }
         body?.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
     }
 }

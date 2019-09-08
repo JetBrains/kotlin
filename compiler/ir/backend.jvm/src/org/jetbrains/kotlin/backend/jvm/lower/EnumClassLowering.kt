@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.irArray
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,12 +30,13 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
 internal val enumClassPhase = makeIrFilePhase(
@@ -51,34 +55,6 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
     private interface EnumConstructorCallTransformer {
         fun transform(enumConstructorCall: IrEnumConstructorCall): IrExpression
         fun transform(delegatingConstructorCall: IrDelegatingConstructorCall): IrExpression
-    }
-
-    private fun createArrayOfExpression(arrayElementType: IrSimpleType, arrayElements: List<IrExpression>): IrExpression {
-        val arrayOfFun = context.ir.symbols.arrayOf.owner
-
-        /* Substituted descriptor is only needed to construct IrCall */
-        val unsubstitutedArrayOfFunDescriptor = arrayOfFun.descriptor
-        val typeParameter0 = unsubstitutedArrayOfFunDescriptor.typeParameters[0]
-        val typeSubstitutor = TypeSubstitutor.create(
-            mapOf(typeParameter0.typeConstructor to TypeProjectionImpl(arrayElementType.toKotlinType()))
-        )
-        val substitutedArrayOfDescriptor = unsubstitutedArrayOfFunDescriptor.substitute(typeSubstitutor)!!
-
-        val arrayType = context.irBuiltIns.arrayClass.typeWith(arrayElementType)
-        val arg0 =
-            IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, arrayElementType, arrayElements)
-
-        return IrCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            arrayType,
-            arrayOfFun.symbol,
-            substitutedArrayOfDescriptor,
-            arrayOfFun.typeParameters.size
-        ).apply {
-            putTypeArgument(0, arrayElementType)
-            putValueArgument(0, arg0)
-        }
     }
 
     private inner class EnumClassTransformer(val irClass: IrClass) {
@@ -271,11 +247,11 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
         }
 
         private fun createSyntheticValuesFieldInitializerExpression(): IrExpression =
-            createArrayOfExpression(
-                irClass.defaultType,
-                enumEntryFields.map { irField ->
-                    IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irField.symbol, irField.symbol.owner.type)
-                })
+            context.createJvmIrBuilder(irClass.symbol).irArray(context.irBuiltIns.arrayClass.typeWith(irClass.defaultType)) {
+                enumEntryFields.forEach { irField ->
+                    +IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irField.symbol, irField.symbol.owner.type)
+                }
+            }
 
         private fun lowerEnumClassBody() {
             irClass.transformChildrenVoid(EnumClassBodyTransformer())

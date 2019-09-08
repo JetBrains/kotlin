@@ -13,6 +13,7 @@ fun PropertyDescriptor.hasBackingField(bindingContext: BindingContext?): Boolean
     kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> overriddenDescriptors.any { it.hasBackingField(bindingContext) }
     source is KotlinSourceElement && bindingContext != null -> bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, this) ?: false
     compileTimeInitializer != null -> true
+//    backingField != null -> true // TODO: in case of DeserializedPropetyDescriptor this function returns incorrect result for FO field
     getter != null -> false
     else -> true
 }

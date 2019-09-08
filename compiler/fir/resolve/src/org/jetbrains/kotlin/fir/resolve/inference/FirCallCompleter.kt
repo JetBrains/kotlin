@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.MapArguments
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -32,10 +33,9 @@ import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 class FirCallCompleter(
-    private val transformer: FirBodyResolveTransformer,
-    private val inferenceComponents: InferenceComponents
+    private val transformer: FirBodyResolveTransformer
 ) : BodyResolveComponents by transformer {
-    fun <T : FirQualifiedAccess> completeCall(call: T, expectedTypeRef: FirTypeRef?): T {
+    fun <T : FirResolvable> completeCall(call: T, expectedTypeRef: FirTypeRef?): T {
         val typeRef = typeFromCallee(call)
         if (typeRef.type is ConeKotlinErrorType) {
             if (call is FirExpression) {
@@ -47,6 +47,10 @@ class FirCallCompleter(
         val initialSubstitutor = candidate.substitutor
 
         val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)
+
+        if (call is FirExpression) {
+            call.resultType = typeRef.resolvedTypeFromPrototype(initialType)
+        }
 
         if (expectedTypeRef is FirResolvedTypeRef) {
             candidate.system.addSubtypeConstraint(initialType, expectedTypeRef.type, SimpleConstraintSystemConstraintPosition)
@@ -117,7 +121,7 @@ class FirCallCompleter(
             replacements[lambdaArgument] =
                 newLambdaExpression.transformSingle(transformer, FirBodyResolveTransformer.LambdaResolution(expectedReturnTypeRef))
 
-            return listOfNotNull(newLambdaExpression.body?.statements?.lastOrNull() as? FirExpression) to InferenceSession.default
+            return (newLambdaExpression.body?.returnExpressions() ?: emptyList()) to InferenceSession.default
         }
     }
 }

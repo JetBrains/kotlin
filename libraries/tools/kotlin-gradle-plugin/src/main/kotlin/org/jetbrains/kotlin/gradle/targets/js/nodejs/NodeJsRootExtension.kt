@@ -58,6 +58,9 @@ open class NodeJsRootExtension(val rootProject: Project) {
     val rootPackageDir: File
         get() = rootProject.buildDir.resolve("js")
 
+    internal val rootNodeModulesStateFile: File
+        get() = rootPackageDir.resolve("node_modules.state")
+
     val projectPackagesDir: File
         get() = rootPackageDir.resolve("packages")
 

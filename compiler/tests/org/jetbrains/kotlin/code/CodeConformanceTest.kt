@@ -26,6 +26,8 @@ class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
         private val SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)")
+        private val SOURCES_BUNCH_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
+        private const val MAX_STEPS_COUNT = 100
         private val EXCLUDED_FILES_AND_DIRS = listOf(
             "android.tests.dependencies",
             "buildSrc",
@@ -94,6 +96,46 @@ class CodeConformanceTest : TestCase() {
             if (matcher.find()) {
                 fail("An at-method with side-effects is used inside assert: ${matcher.group()}\nin file: $sourceFile")
             }
+        }
+    }
+
+    private fun isCorrectExtension(filename: String, extensions: Set<String>): Boolean {
+        val additionalExtensions = listOf(
+            "after", "new", "before", "expected",
+            "todo", "delete", "touch", "prefix", "postfix", "map",
+            "fragment", "after2", "result", "log", "messages", "conflicts", "match", "imports", "txt", "xml"
+        )
+        val possibleAdditionalExtensions = extensions.plus(additionalExtensions)
+        val fileExtensions = filename.split("\\.").drop(1)
+        if (fileExtensions.size < 2) {
+            return true
+        }
+        val extension = fileExtensions.last()
+
+        return !(extension !in possibleAdditionalExtensions && extension.toIntOrNull() ?: MAX_STEPS_COUNT >= MAX_STEPS_COUNT)
+    }
+
+    fun testForgottenBunchDirectivesAndFiles() {
+        val root = File("").absoluteFile
+        val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
+        val failBuilder = mutableListOf<String>()
+        for (sourceFile in FileUtil.findFilesByMask(SOURCES_BUNCH_FILE_PATTERN, root)) {
+            if (EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
+
+            val matches = Regex("BUNCH: (\\w+)").findAll(sourceFile.readText())
+                .map { it.groupValues[1] }.toSet().filterNot { it in extensions }
+            for (bunch in matches) {
+                val filename = FileUtil.toSystemIndependentName(sourceFile.absoluteFile.toRelativeString(root))
+                failBuilder.add("$filename has unregistered $bunch bunch directive")
+            }
+
+            if (!isCorrectExtension(sourceFile.name, extensions)) {
+                val filename = FileUtil.toSystemIndependentName(sourceFile.absoluteFile.toRelativeString(root))
+                failBuilder.add("$filename has unknown bunch extension")
+            }
+        }
+        if (failBuilder.isNotEmpty()) {
+            fail("\n" + failBuilder.joinToString("\n"))
         }
     }
 

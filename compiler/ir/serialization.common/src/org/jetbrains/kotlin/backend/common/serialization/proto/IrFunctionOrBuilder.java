@@ -44,24 +44,24 @@ public interface IrFunctionOrBuilder extends
   boolean getIsSuspend();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol overridden = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;
    * </pre>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol> 
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> 
       getOverriddenList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol overridden = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;
    * </pre>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getOverridden(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getOverridden(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol overridden = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex overridden = 5;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;

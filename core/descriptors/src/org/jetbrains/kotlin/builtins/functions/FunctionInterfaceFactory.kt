@@ -50,9 +50,13 @@ class FunctionInterfaceMemberScope(
         TODO()
     }
 
+    private val classifiers = mutableMapOf<Name, ClassifierDescriptor>()
+
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = when {
         classDescriptorFactory.shouldCreateClass(packageName, name) ->
-            classDescriptorFactory.createClass(ClassId.topLevel(packageName.child(name)))
+            classifiers.getOrPut(name) {
+                classDescriptorFactory.createClass(ClassId.topLevel(packageName.child(name)))!!
+            }
         else -> null
     }
 }

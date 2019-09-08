@@ -85,66 +85,50 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         performImport: Boolean = true,
         useQualifiedModuleNames: Boolean = false
     ): Project {
-        // TODO: check whether it's necessary to have templates in sources
-        // Temporary workaround for duplicated bundled template
-        class PrintingFactory : Logger.Factory {
-            override fun getLoggerInstance(category: String): Logger {
-                return PrintingLogger(System.out)
-            }
-        }
+        val project = createProject { step ->
+            if (step is ProjectTypeStep) {
+                TestCase.assertTrue(step.setSelectedTemplate("Kotlin", builder.presentableName))
+                val steps = myWizard.sequence.selectedSteps
+                TestCase.assertEquals(4, steps.size)
+                val projectBuilder = myWizard.projectBuilder
+                UsefulTestCase.assertInstanceOf(projectBuilder, builder::class.java)
+                with(projectBuilder as KotlinGradleAbstractMultiplatformModuleBuilder) {
+                    explicitPluginVersion = pluginVersion
+                }
 
-        val oldFactory = getLoggerFactory()
-
-        try {
-            Logger.setFactory(PrintingFactory::class.java)
-
-            val project = createProject { step ->
-                if (step is ProjectTypeStep) {
-                    TestCase.assertTrue(step.setSelectedTemplate("Kotlin", builder.presentableName))
-                    val steps = myWizard.sequence.selectedSteps
-                    TestCase.assertEquals(4, steps.size)
-                    val projectBuilder = myWizard.projectBuilder
-                    UsefulTestCase.assertInstanceOf(projectBuilder, builder::class.java)
-                    with(projectBuilder as KotlinGradleAbstractMultiplatformModuleBuilder) {
-                        explicitPluginVersion = pluginVersion
-                    }
-
-                    myProject.reconfigureGradleSettings {
-                        distributionType = DistributionType.DEFAULT_WRAPPED
-                    }
+                myProject.reconfigureGradleSettings {
+                    distributionType = DistributionType.DEFAULT_WRAPPED
                 }
             }
-
-            val modules = ModuleManager.getInstance(project).modules
-            TestCase.assertEquals(1, modules.size)
-            val module = modules[0]
-            TestCase.assertTrue(ModuleRootManager.getInstance(module).isSdkInherited)
-
-            val root = ProjectRootManager.getInstance(project).contentRoots[0]
-
-            val settingsScript = VfsUtilCore.findRelativeFile("settings.gradle", root)
-            TestCase.assertNotNull(settingsScript)
-            val settingsScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(settingsScript!!))
-            TestCase.assertTrue("rootProject.name = " in settingsScriptText)
-            if (metadataInside) {
-                TestCase.assertTrue("enableFeaturePreview('GRADLE_METADATA')" in settingsScriptText)
-            }
-
-            File(root.canonicalPath).assertNoEmptyChildren()
-
-            val buildScript = VfsUtilCore.findRelativeFile("build.gradle", root)!!
-            val buildScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(buildScript))
-            println(buildScriptText)
-
-            if (!performImport) return project
-            doImportProject(project, useQualifiedModuleNames)
-            if (testClassNames.isNotEmpty()) {
-                doTestProject(project, *testClassNames)
-            }
-            return project
-        } finally {
-            Logger.setFactory(oldFactory)
         }
+
+        val modules = ModuleManager.getInstance(project).modules
+        TestCase.assertEquals(1, modules.size)
+        val module = modules[0]
+        TestCase.assertTrue(ModuleRootManager.getInstance(module).isSdkInherited)
+
+        val root = ProjectRootManager.getInstance(project).contentRoots[0]
+
+        val settingsScript = VfsUtilCore.findRelativeFile("settings.gradle", root)
+        TestCase.assertNotNull(settingsScript)
+        val settingsScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(settingsScript!!))
+        TestCase.assertTrue("rootProject.name = " in settingsScriptText)
+        if (metadataInside) {
+            TestCase.assertTrue("enableFeaturePreview('GRADLE_METADATA')" in settingsScriptText)
+        }
+
+        File(root.canonicalPath).assertNoEmptyChildren()
+
+        val buildScript = VfsUtilCore.findRelativeFile("build.gradle", root)!!
+        val buildScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(buildScript))
+        println(buildScriptText)
+
+        if (!performImport) return project
+        doImportProject(project, useQualifiedModuleNames)
+        if (testClassNames.isNotEmpty()) {
+            doTestProject(project, *testClassNames)
+        }
+        return project
     }
 
     private fun File.assertNoEmptyChildren() {

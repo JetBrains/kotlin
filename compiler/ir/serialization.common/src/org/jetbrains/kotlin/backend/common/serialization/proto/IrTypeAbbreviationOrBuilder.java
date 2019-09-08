@@ -17,13 +17,13 @@ public interface IrTypeAbbreviationOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
    */
   boolean hasTypeAlias();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getTypeAlias();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getTypeAlias();
 
   /**
    * <code>required bool has_question_mark = 3;</code>

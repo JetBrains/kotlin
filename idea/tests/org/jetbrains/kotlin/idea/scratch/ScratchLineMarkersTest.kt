@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.idea.scratch
 
+import com.intellij.codeInsight.daemon.LineMarkerInfo
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.ExpectedHighlightingData
+import com.intellij.testFramework.FileEditorManagerTestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.AbstractLineMarkersTest
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
@@ -19,11 +23,11 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-abstract class AbstractScratchLineMarkersTest : AbstractLineMarkersTest() {
+abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
     fun doScratchTest(path: String) {
         val fileText = FileUtil.loadFile(File(path))
 
-        val scratchFile = ScratchRootType.getInstance().createScratchFile(
+        val scratchVirtualFile = ScratchRootType.getInstance().createScratchFile(
             project,
             "scratch.kts",
             KotlinLanguage.INSTANCE,
@@ -31,14 +35,14 @@ abstract class AbstractScratchLineMarkersTest : AbstractLineMarkersTest() {
             ScratchFileService.Option.create_if_missing
         ) ?: error("Couldn't create scratch file")
 
-        myFixture.openFileInEditor(scratchFile)
+        myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchFile, project)
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchVirtualFile, project)
 
-        val (_, scratchPanel) = getEditorWithScratchPanel(FileEditorManager.getInstance(project), myFixture.file.virtualFile)
+        val scratchFileEditor = getScratchEditorForSelectedFile(FileEditorManager.getInstance(project), myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
 
-        configureOptions(scratchPanel, fileText, null)
+        configureOptions(scratchFileEditor, fileText, null)
 
         val project = myFixture.project
         val document = myFixture.editor.document
@@ -50,7 +54,7 @@ abstract class AbstractScratchLineMarkersTest : AbstractLineMarkersTest() {
 
         val markers = doAndCheckHighlighting(document, data, File(path))
 
-        assertNavigationElements(myFixture.project, myFixture.file as KtFile, markers)
+        AbstractLineMarkersTest.assertNavigationElements(myFixture.project, myFixture.file as KtFile, markers)
     }
 
     override fun tearDown() {
@@ -60,4 +64,13 @@ abstract class AbstractScratchLineMarkersTest : AbstractLineMarkersTest() {
             runWriteAction { file.delete(this) }
         }
     }
+
+    private fun doAndCheckHighlighting(
+        documentToAnalyze: Document, expectedHighlighting: ExpectedHighlightingData, expectedFile: File
+    ): List<LineMarkerInfo<*>> {
+        myFixture.doHighlighting()
+
+        return AbstractLineMarkersTest.checkHighlighting(myFixture.project, documentToAnalyze, expectedHighlighting, expectedFile)
+    }
+
 }

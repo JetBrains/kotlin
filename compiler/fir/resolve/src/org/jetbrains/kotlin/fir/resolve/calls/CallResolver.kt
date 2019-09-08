@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 
 enum class TowerDataKind {
     EMPTY,
@@ -17,37 +18,126 @@ enum class TowerDataKind {
 class CallResolver(
     val typeCalculator: ReturnTypeCalculator,
     val components: InferenceComponents,
-    val resolutionStageRunner: ResolutionStageRunner
+    val resolutionStageRunner: ResolutionStageRunner,
+    val topLevelScopes: List<FirScope>,
+    val localScopes: List<FirLocalScope>
 ) {
-    var callInfo: CallInfo? = null
-    var scopes: List<FirScope>? = null
 
     val session: FirSession get() = components.session
 
     private fun processImplicitReceiver(
         towerDataConsumer: TowerDataConsumer,
-        implicitReceiverValue: ImplicitReceiverValue,
-        collector: CandidateCollector,
+        implicitReceiverValue: ImplicitReceiverValue<*>,
         oldGroup: Int
     ): Int {
         var group = oldGroup
+        // Member (no explicit receiver) / extension member (with explicit receiver) access via implicit receiver
+        // class Foo(val x: Int) {
+        //     fun Bar.baz() {}
+        //     fun test() { x }
+        //     fun test(b: Bar) { b.baz() }
+        // }
         towerDataConsumer.consume(
             TowerDataKind.TOWER_LEVEL,
             MemberScopeTowerLevel(session, implicitReceiverValue, scopeSession = components.scopeSession),
             group++
         )
 
-        // This is an equivalent to the old "BothTowerLevelAndImplicitReceiver"
+        // Same receiver is dispatch & extension
+//        class Foo {
+//            fun Foo.bar() {}
+//            fun test() { bar() }
+//        }
         towerDataConsumer.consume(
             TowerDataKind.TOWER_LEVEL,
             MemberScopeTowerLevel(session, implicitReceiverValue, implicitReceiverValue, components.scopeSession),
             group++
         )
 
-        for (scope in scopes!!) {
+        // Local scope extensions via implicit receiver
+        // class Foo {
+        //     fun test() {
+        //         fun Foo.bar() {}
+        //         bar()
+        //     }
+        // }
+        for (scope in localScopes) {
             towerDataConsumer.consume(
                 TowerDataKind.TOWER_LEVEL,
-                ScopeTowerLevel(session, scope, implicitReceiverValue),
+                ScopeTowerLevel(session, scope, implicitExtensionReceiver = implicitReceiverValue),
+                group++
+            )
+        }
+
+        var blockDispatchReceivers = false
+
+        for (implicitDispatchReceiverValue in implicitReceiverValues) {
+            val implicitScope = implicitDispatchReceiverValue.implicitScope
+            if (implicitScope != null) {
+                // Extensions in outer object
+                //  object Outer {
+                //     fun Nested.foo() {}
+                //     class Nested {
+                //         fun test() { foo() }
+                //     }
+                // }
+                towerDataConsumer.consume(
+                    TowerDataKind.TOWER_LEVEL,
+                    ScopeTowerLevel(session, implicitScope, implicitExtensionReceiver = implicitReceiverValue),
+                    group++
+                )
+            }
+            if (implicitDispatchReceiverValue is ImplicitDispatchReceiverValue) {
+                val implicitCompanionScope = implicitDispatchReceiverValue.implicitCompanionScope
+                if (implicitCompanionScope != null) {
+                    // Extension in companion
+                    // class My {
+                    //     companion object { fun My.foo() {} }
+                    //     fun test() { foo() }
+                    // }
+                    towerDataConsumer.consume(
+                        TowerDataKind.TOWER_LEVEL,
+                        ScopeTowerLevel(session, implicitCompanionScope, implicitExtensionReceiver = implicitReceiverValue),
+                        group++
+                    )
+                }
+                if (blockDispatchReceivers) {
+                    continue
+                }
+                if (!implicitDispatchReceiverValue.boundSymbol.fir.isInner) {
+                    blockDispatchReceivers = true
+                }
+            }
+            if (implicitDispatchReceiverValue !== implicitReceiverValue) {
+                // Two different implicit receivers (dispatch & extension)
+                // class A
+                // class B {
+                //     fun A.foo() {}
+                // }
+                // fun test(a: A, b: B) {
+                //     with(a) { with(b) { foo() } }
+                // }
+                towerDataConsumer.consume(
+                    TowerDataKind.TOWER_LEVEL,
+                    MemberScopeTowerLevel(
+                        session, scopeSession = components.scopeSession,
+                        dispatchReceiver = implicitDispatchReceiverValue,
+                        implicitExtensionReceiver = implicitReceiverValue
+                    ),
+                    group++
+                )
+            }
+        }
+
+        // Top-level extensions via implicit receiver
+        // fun Foo.bar() {}
+        // class Foo {
+        //     fun test() { bar() }
+        // }
+        for (scope in topLevelScopes) {
+            towerDataConsumer.consume(
+                TowerDataKind.TOWER_LEVEL,
+                ScopeTowerLevel(session, scope, implicitExtensionReceiver = implicitReceiverValue),
                 group++
             )
         }
@@ -57,30 +147,62 @@ class CallResolver(
 
     val collector by lazy { CandidateCollector(components, resolutionStageRunner) }
     lateinit var towerDataConsumer: TowerDataConsumer
-    private lateinit var implicitReceiverValues: List<ImplicitReceiverValue>
+    private lateinit var implicitReceiverValues: List<ImplicitReceiverValue<*>>
 
-    fun runTowerResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue>): CandidateCollector {
+    fun runTowerResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue<*>>): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
         towerDataConsumer = consumer
 
         var group = 0
+        // Member of explicit receiver' type (this stage does nothing without explicit receiver)
+        // class Foo(val x: Int)
+        // fun test(f: Foo) { f.x }
         towerDataConsumer.consume(TowerDataKind.EMPTY, TowerScopeLevel.Empty, group++)
 
-        for (scope in scopes!!) {
+        // Member of local scope
+        // fun test(x: Int) = x
+        for (scope in localScopes) {
             towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, scope), group++)
         }
 
         var blockDispatchReceivers = false
+
+        // Member of implicit receiver' type *and* relevant scope
         for (implicitReceiverValue in implicitReceiverValues) {
+            if (!blockDispatchReceivers || implicitReceiverValue !is ImplicitDispatchReceiverValue) {
+                // Direct use of implicit receiver (see inside)
+                group = processImplicitReceiver(towerDataConsumer, implicitReceiverValue, group)
+            }
+            val implicitScope = implicitReceiverValue.implicitScope
+            if (implicitScope != null) {
+                // Regular implicit receiver scope (outer objects only?)
+                // object Outer {
+                //     val x = 0
+                //     class Nested { val y = x }
+                // }
+                towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, implicitScope), group++)
+            }
             if (implicitReceiverValue is ImplicitDispatchReceiverValue) {
-                if (blockDispatchReceivers) {
-                    continue
+                val implicitCompanionScope = implicitReceiverValue.implicitCompanionScope
+                if (implicitCompanionScope != null) {
+                    // Companion scope bound to implicit receiver scope
+                    // class Outer {
+                    //     companion object { val x = 0 }
+                    //     class Nested { val y = x }
+                    // }
+                    towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, implicitCompanionScope), group++)
                 }
                 if (!implicitReceiverValue.boundSymbol.fir.isInner) {
                     blockDispatchReceivers = true
                 }
             }
-            group = processImplicitReceiver(towerDataConsumer, implicitReceiverValue, collector, group)
+        }
+
+        // Member of top-level scope & importing scope
+        // val x = 0
+        // fun test() { x }
+        for (scope in topLevelScopes) {
+            towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, scope), group++)
         }
 
         return collector

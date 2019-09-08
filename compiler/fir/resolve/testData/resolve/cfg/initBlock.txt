@@ -1,0 +1,23 @@
+FILE: initBlock.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+            lval x: R|kotlin/Int| = Int(1)
+        }
+
+    }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+            lval x: R|kotlin/Int| = Int(1)
+            throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+            lval y: R|kotlin/Int| = Int(2)
+        }
+
+    }

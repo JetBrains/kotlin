@@ -15,11 +15,15 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleData(
     val name: String,
-    val qualifiedName: String,
+    val outputDir: String,
+    val qualifier: String,
     val classpath: List<File>,
     val sources: List<File>,
-    val javaSourceRoots: List<File>
-)
+    val javaSourceRoots: List<File>,
+    val isCommon: Boolean
+) {
+    val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
+}
 
 private fun NodeList.toList(): List<Node> {
     val list = mutableListOf<Node>()
@@ -53,10 +57,11 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val moduleElement = document.childNodes.item(0).childNodesList.first { it.nodeType == Node.ELEMENT_NODE }
         val moduleName = moduleElement.attributes.getNamedItem("name").nodeValue
         val outputDir = moduleElement.attributes.getNamedItem("outputDir").nodeValue
-        val qualifiedModuleName = outputDir.substringAfterLast("/")
+        val moduleNameQualifier = outputDir.substringAfterLast("/")
         val javaSourceRoots = mutableListOf<File>()
         val classpath = mutableListOf<File>()
         val sources = mutableListOf<File>()
+        var isCommon = false
 
         for (index in 0 until moduleElement.childNodes.length) {
             val item = moduleElement.childNodes.item(index)
@@ -73,26 +78,31 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             if (item.nodeName == "sources") {
                 sources += File(item.attributes.getNamedItem("path").nodeValue)
             }
+            if (item.nodeName == "commonSources") {
+                isCommon = true
+            }
         }
 
-        return ModuleData(moduleName, qualifiedModuleName, classpath, sources, javaSourceRoots)
+        return ModuleData(moduleName, outputDir, moduleNameQualifier, classpath, sources, javaSourceRoots, isCommon)
     }
 
 
     protected abstract fun beforePass()
-    protected abstract fun afterPass()
+    protected abstract fun afterPass(pass: Int)
     protected abstract fun processModule(moduleData: ModuleData): ProcessorAction
 
     protected fun runTestOnce(pass: Int) {
         beforePass()
-        val testDataPath = "/Users/jetbrains/jps"
+        val testDataPath = System.getProperty("fir.bench.jps.dir")?.toString() ?: "/Users/jetbrains/jps"
         val root = File(testDataPath)
 
         println("BASE PATH: ${root.absolutePath}")
 
+        val filterRegex = (System.getProperty("fir.bench.filter") ?: ".*").toRegex()
         val modules =
             root.listFiles().sortedBy { it.lastModified() }.map { loadModule(it) }
-                .filter { it.qualifiedName == "kotlin.idea.main" }
+                .filter { it.outputDir.matches(filterRegex) }
+                .filter { !it.isCommon }
 
 
         for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
@@ -101,6 +111,6 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             }
         }
 
-        afterPass()
+        afterPass(pass)
     }
 }

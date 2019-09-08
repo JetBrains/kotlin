@@ -15,7 +15,9 @@ FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/Comparable' type=kotlin.Boolean
+            then: CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+              arg0: GET_VAR 'x: kotlin.Comparable<kotlin.Double> declared in <root>.testD' type=kotlin.Double origin=null
+              arg1: GET_VAR 'y: kotlin.Comparable<kotlin.Double> declared in <root>.testD' type=kotlin.Double origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -35,7 +37,9 @@ FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/Comparable' type=kotlin.Boolean
+            then: CALL 'public final fun less (arg0: kotlin.Float, arg1: kotlin.Float): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+              arg0: GET_VAR 'x: kotlin.Comparable<kotlin.Float> declared in <root>.testF' type=kotlin.Float origin=null
+              arg1: GET_VAR 'y: kotlin.Comparable<kotlin.Float> declared in <root>.testF' type=kotlin.Float origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false

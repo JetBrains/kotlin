@@ -38,6 +38,7 @@ interface TypeMappingConfiguration<out T : Any> {
     fun commonSupertype(types: Collection<@JvmSuppressWildcards KotlinType>): KotlinType
     fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): T?
     fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String?
+    fun getPredefinedFullInternalNameForClass(classDescriptor: ClassDescriptor): String? = null
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
     // returns null when type doesn't need to be preprocessed
     fun preprocessType(kotlinType: KotlinType): KotlinType? = null
@@ -243,6 +244,9 @@ fun computeInternalName(
     typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl,
     isIrBackend: Boolean
 ): String {
+
+    typeMappingConfiguration.getPredefinedFullInternalNameForClass(klass)?.let { return it }
+
     val container = if (isIrBackend) getContainer(klass.containingDeclaration) else klass.containingDeclaration
 
     val name = SpecialNames.safeIdentifier(klass.name).identifier

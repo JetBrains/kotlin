@@ -9,20 +9,24 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
-import org.jetbrains.kotlin.backend.jvm.intrinsics.Not
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
+import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
+import org.jetbrains.kotlin.codegen.CallGenerator
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE_AS
+import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -38,6 +42,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
@@ -105,9 +111,9 @@ class ExpressionCodegen(
 
     var finallyDepth = 0
 
-    val typeMapper = classCodegen.typeMapper
-
     val context = classCodegen.context
+    val typeMapper = context.typeMapper
+    val methodSignatureMapper = context.methodSignatureMapper
 
     private val state = classCodegen.state
 
@@ -175,7 +181,7 @@ class ExpressionCodegen(
             if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
                 irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
             }
-            val returnType = typeMapper.mapReturnType(irFunction)
+            val returnType = methodSignatureMapper.mapReturnType(irFunction)
             val returnIrType = if (irFunction !is IrConstructor) irFunction.returnType else context.irBuiltIns.unitType
             result.coerce(returnType, returnIrType).materialize()
             mv.areturn(returnType)
@@ -206,7 +212,10 @@ class ExpressionCodegen(
         if (!param.type.unboxInlineClass().isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)
             mv.aconst(param.name.asString())
-            mv.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V", false)
+            val methodName =
+                if (state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) "checkNotNullParameter"
+                else "checkParameterIsNotNull"
+            mv.invokestatic(IrIntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false)
         }
     }
 
@@ -233,7 +242,7 @@ class ExpressionCodegen(
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
             getNameForReceiverParameter(
                 irFunction.descriptor,
-                typeMapper.kotlinTypeMapper.bindingContext,
+                state.bindingContext,
                 context.configuration.languageVersionSettings
             )
         } else {
@@ -316,10 +325,9 @@ class ExpressionCodegen(
         classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
             ?.invoke(expression, this, data)?.let { return it.coerce(expression.type) }
 
-        val isSuperCall = (expression as? IrCall)?.superQualifier != null
-        val callable = resolveToCallable(expression, isSuperCall)
+        val callable = methodSignatureMapper.mapToCallableMethod(expression)
         val callee = expression.symbol.owner
-        val callGenerator = getOrCreateCallGenerator(expression, data)
+        val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
         val asmType = if (expression is IrConstructorCall) typeMapper.mapTypeAsDeclaration(expression.type) else expression.asmType
 
         when {
@@ -348,60 +356,27 @@ class ExpressionCodegen(
             }
             expression.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-            callee.isSuspend && !irFunction.isInvokeSuspendInContinuation() -> addInlineMarker(mv, isStartNotEnd = true)
+            callee.isSuspend && !irFunction.isInvokeSuspendInContinuation() ->
+                addInlineMarker(mv, isStartNotEnd = true)
         }
 
-        val receiver = expression.dispatchReceiver
-        receiver?.apply {
-            callGenerator.genValueAndPut(
-                callee.dispatchReceiverParameter!!,
-                this,
-                if (isSuperCall) receiver.asmType else callable.dispatchReceiverType
-                    ?: throw AssertionError("No dispatch receiver type: ${expression.render()}"),
-                this@ExpressionCodegen,
-                data
-            )
+        expression.dispatchReceiver?.let { receiver ->
+            val type = if ((expression as? IrCall)?.superQualifier != null) receiver.asmType else callable.owner
+            callGenerator.genValueAndPut(callee.dispatchReceiverParameter!!, receiver, type, this, data)
         }
 
-        expression.extensionReceiver?.apply {
-            callGenerator.genValueAndPut(
-                callee.extensionReceiverParameter!!,
-                this,
-                callable.extensionReceiverType!!,
-                this@ExpressionCodegen,
-                data
-            )
+        expression.extensionReceiver?.let { receiver ->
+            val type = callable.signature.valueParameters.singleOrNull { it.kind == JvmMethodParameterKind.RECEIVER }?.asmType
+                ?: error("No single extension receiver parameter: ${callable.signature.valueParameters}")
+            callGenerator.genValueAndPut(callee.extensionReceiverParameter!!, receiver, type, this, data)
         }
 
         callGenerator.beforeValueParametersStart()
-        val typeParameters = if (callee is IrConstructor)
-            callee.parentAsClass.typeParameters + callee.typeParameters
-        else
-            callee.typeParameters
-        val typeArguments = (0 until typeParameters.size).map { expression.getTypeArgument(it)!! }
-        val typeSubstitutionMap = typeParameters.map { it.symbol }.zip(typeArguments).toMap()
         expression.symbol.owner.valueParameters.forEachIndexed { i, irParameter ->
             val arg = expression.getValueArgument(i)
             val parameterType = callable.valueParameterTypes[i]
-            when {
-                arg != null -> {
-                    callGenerator.genValueAndPut(irParameter, arg, parameterType, this@ExpressionCodegen, data)
-                }
-                else -> {
-                    assert(irParameter.varargElementType != null)
-                    val type = typeMapper.mapType(
-                        irParameter.type.substitute(typeSubstitutionMap)
-                    )
-                    callGenerator.putValueIfNeeded(
-                        parameterType,
-                        StackValue.operation(type) {
-                            it.aconst(0)
-                            it.newarray(correctElementType(type))
-                        },
-                        ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen
-                    )
-                }
-            }
+            require(arg != null) { "Null argument in ExpressionCodegen for parameter ${irParameter.render()}" }
+            callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
         }
 
         expression.markLineNumber(true)
@@ -411,21 +386,16 @@ class ExpressionCodegen(
             addSuspendMarker(mv, isStartNotEnd = true)
         }
 
-        callGenerator.genCall(
-            callable,
-            this,
-            expression
-        )
-
-        val returnType = callee.returnType
+        callGenerator.genCall(callable, this, expression)
 
         if (callee.isSuspend && !irFunction.isInvokeSuspendInContinuation()) {
             addSuspendMarker(mv, isStartNotEnd = false)
             addInlineMarker(mv, isStartNotEnd = false)
         }
 
+        val returnType = callee.returnType
         return when {
-            returnType.substitute(typeSubstitutionMap).isNothing() -> {
+            returnType.substitute(expression.typeSubstitutionMap).isNothing() -> {
                 mv.aconst(null)
                 mv.athrow()
                 immaterialUnitValue
@@ -436,9 +406,9 @@ class ExpressionCodegen(
                 immaterialUnitValue
             expression.type.isUnit() ->
                 // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
-                MaterialValue(this, callable.returnType, returnType).discard().coerce(expression.type)
+                MaterialValue(this, callable.asmMethod.returnType, returnType).discard().coerce(expression.type)
             else ->
-                MaterialValue(this, callable.returnType, returnType).coerce(expression.type)
+                MaterialValue(this, callable.asmMethod.returnType, returnType).coerce(expression.type)
         }
     }
 
@@ -472,23 +442,24 @@ class ExpressionCodegen(
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
-        expression.symbol.owner.constantValue()?.let {
+        val callee = expression.symbol.owner
+        callee.constantValue()?.let {
             // Handling const reads before codegen is important for constant folding.
-            assert(expression is IrSetField) { "read of const val ${expression.symbol.owner.name} not inlined by ConstLowering" }
+            assert(expression is IrSetField) { "read of const val ${callee.name} not inlined by ConstLowering" }
             // This can only be the field's initializer; JVM implementations are required
             // to generate those for ConstantValue-marked fields automatically, so this is redundant.
             return defaultValue(expression.type)
         }
 
-        val realField = expression.symbol.owner.resolveFakeOverride()!!
+        val realField = callee.resolveFakeOverride()!!
         val fieldType = typeMapper.mapType(realField.type)
-        val ownerType = typeMapper.mapImplementationOwner(expression.symbol.owner).internalName
+        val ownerType = typeMapper.mapClass(callee.parentAsClass).internalName
         val fieldName = realField.name.asString()
         val isStatic = expression.receiver == null
         expression.markLineNumber(startOffset = true)
         expression.receiver?.accept(this, data)?.materialize()
         return if (expression is IrSetField) {
-            expression.value.accept(this, data).coerce(fieldType, expression.symbol.owner.type).materialize()
+            expression.value.accept(this, data).coerce(fieldType, callee.type).materialize()
             when {
                 isStatic -> mv.putstatic(ownerType, fieldName, fieldType.descriptor)
                 else -> mv.putfield(ownerType, fieldName, fieldType.descriptor)
@@ -496,12 +467,10 @@ class ExpressionCodegen(
             defaultValue(expression.type)
         } else {
             when {
-                isStatic ->
-                    mv.getstatic(ownerType, fieldName, fieldType.descriptor)
-                else ->
-                    mv.getfield(ownerType, fieldName, fieldType.descriptor)
+                isStatic -> mv.getstatic(ownerType, fieldName, fieldType.descriptor)
+                else -> mv.getfield(ownerType, fieldName, fieldType.descriptor)
             }
-            MaterialValue(this, fieldType, expression.symbol.owner.type).coerce(expression.type)
+            MaterialValue(this, fieldType, callee.type).coerce(expression.type)
         }
     }
 
@@ -583,101 +552,6 @@ class ExpressionCodegen(
         return immaterialUnitValue
     }
 
-    override fun visitVararg(expression: IrVararg, data: BlockInfo): PromisedValue {
-        expression.markLineNumber(startOffset = true)
-        val outType = expression.type
-        val type = expression.asmType
-        assert(type.sort == Type.ARRAY)
-        val elementType = correctElementType(type)
-        val arguments = expression.elements
-        val size = arguments.size
-
-        val hasSpread = arguments.firstIsInstanceOrNull<IrSpreadElement>() != null
-
-        if (hasSpread) {
-            val arrayOfReferences = outType.makeNotNull().isArray()
-            if (size == 1) {
-                // Arrays.copyOf(receiverValue, newLength)
-                val argument = (arguments[0] as IrSpreadElement).expression
-                val arrayType = if (arrayOfReferences)
-                    Type.getType("[Ljava/lang/Object;")
-                else
-                    Type.getType("[" + elementType.descriptor)
-                argument.accept(this, data).coerce(type, argument.type).materialize()
-                mv.dup()
-                mv.arraylength()
-                mv.invokestatic("java/util/Arrays", "copyOf", Type.getMethodDescriptor(arrayType, arrayType, Type.INT_TYPE), false)
-                if (arrayOfReferences) {
-                    mv.checkcast(type)
-                }
-            } else {
-                val owner: String
-                val addDescriptor: String
-                val toArrayDescriptor: String
-                if (arrayOfReferences) {
-                    owner = "kotlin/jvm/internal/SpreadBuilder"
-                    addDescriptor = "(Ljava/lang/Object;)V"
-                    toArrayDescriptor = "([Ljava/lang/Object;)[Ljava/lang/Object;"
-                } else {
-                    val spreadBuilderClassName =
-                        asmPrimitiveTypeToLangPrimitiveType(elementType)!!.typeName.identifier + "SpreadBuilder"
-                    owner = "kotlin/jvm/internal/$spreadBuilderClassName"
-                    addDescriptor = "(" + elementType.descriptor + ")V"
-                    toArrayDescriptor = "()" + type.descriptor
-                }
-                mv.anew(Type.getObjectType(owner))
-                mv.dup()
-                mv.iconst(size)
-                mv.invokespecial(owner, "<init>", "(I)V", false)
-                for (i in 0 until size) {
-                    mv.dup()
-                    val argument = arguments[i]
-                    if (argument is IrSpreadElement) {
-                        argument.expression.accept(this, data).coerce(OBJECT_TYPE, argument.expression.type).materialize()
-                        mv.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V", false)
-                    } else {
-                        argument.accept(this, data).coerce(elementType, expression.varargElementType).materialize()
-                        mv.invokevirtual(owner, "add", addDescriptor, false)
-                    }
-                }
-                if (arrayOfReferences) {
-                    mv.dup()
-                    mv.invokevirtual(owner, "size", "()I", false)
-                    newArrayInstruction(outType)
-                    mv.invokevirtual(owner, "toArray", toArrayDescriptor, false)
-                    mv.checkcast(type)
-                } else {
-                    mv.invokevirtual(owner, "toArray", toArrayDescriptor, false)
-                }
-            }
-        } else {
-            mv.iconst(size)
-            newArrayInstruction(expression.type)
-            for ((i, element) in expression.elements.withIndex()) {
-                mv.dup()
-                mv.iconst(i)
-                element.accept(this, data).coerce(elementType, expression.varargElementType).materialize()
-                mv.astore(elementType)
-            }
-        }
-        return expression.onStack
-    }
-
-    fun newArrayInstruction(arrayType: IrType) {
-        if (arrayType.isArray()) {
-            val elementIrType = arrayType.safeAs<IrSimpleType>()!!.arguments[0].safeAs<IrTypeProjection>()!!.type
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(
-                elementIrType,
-                ReifiedTypeInliner.OperationKind.NEW_ARRAY,
-                mv,
-                this
-            )
-            mv.newarray(typeMapper.boxType(elementIrType))
-        } else {
-            mv.newarray(correctElementType(arrayType.asmType))
-        }
-    }
-
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
         val returnTarget = expression.returnTargetSymbol.owner
         val owner =
@@ -686,7 +560,8 @@ class ExpressionCodegen(
                 ?: error("Unsupported IrReturnTarget: $returnTarget")
         //TODO: should be owner != irFunction
         val isNonLocalReturn =
-            typeMapper.mapFunctionName(owner, OwnerKind.IMPLEMENTATION) != typeMapper.mapFunctionName(irFunction, OwnerKind.IMPLEMENTATION)
+            methodSignatureMapper.mapFunctionName(owner, OwnerKind.IMPLEMENTATION) !=
+                    methodSignatureMapper.mapFunctionName(irFunction, OwnerKind.IMPLEMENTATION)
         if (isNonLocalReturn && state.isInlineDisabled) {
             //TODO: state.diagnostics.report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE.on(expression))
             genThrow(
@@ -697,7 +572,7 @@ class ExpressionCodegen(
         }
 
         val target = data.findBlock<ReturnableBlockInfo> { it.returnSymbol == expression.returnTargetSymbol }
-        val returnType = typeMapper.mapReturnType(owner)
+        val returnType = methodSignatureMapper.mapReturnType(owner)
         val afterReturnLabel = Label()
         expression.value.accept(this, data).coerce(returnType, owner.returnType).materialize()
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
@@ -755,15 +630,8 @@ class ExpressionCodegen(
         val typeOperand = expression.typeOperand
         val kotlinType = typeOperand.toKotlinType()
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                expression.argument.accept(this, data).discard()
-                expression.argument.markEndOfStatementIfNeeded()
-                defaultValue(expression.type)
-            }
-
-            IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.IMPLICIT_INTEGER_COERCION -> {
+            IrTypeOperator.IMPLICIT_CAST ->
                 expression.argument.accept(this, data).coerce(expression.type)
-            }
 
             IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST -> {
                 val result = expression.argument.accept(this, data)
@@ -772,45 +640,26 @@ class ExpressionCodegen(
                 val boxedRightType = typeMapper.boxType(typeOperand)
 
                 if (typeOperand.isReifiedTypeParameter) {
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(
-                        typeOperand, if (IrTypeOperator.SAFE_CAST == expression.operator) SAFE_AS else AS, mv, this
-                    )
+                    val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind, mv, this)
                     v.checkcast(boxedRightType)
                 } else {
-                    generateAsCast(
-                        mv, kotlinType, boxedRightType, expression.operator == IrTypeOperator.SAFE_CAST,
-                        state.languageVersionSettings.isReleaseCoroutines()
-                    )
+                    assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
+                    TypeIntrinsics.checkcast(mv, kotlinType, boxedRightType, false)
                 }
                 MaterialValue(this, boxedRightType, expression.type).coerce(expression.type)
             }
 
-            IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> {
-                expression.argument.accept(this, data).coerce(OBJECT_TYPE, context.irBuiltIns.anyNType).materialize()
+            IrTypeOperator.INSTANCEOF -> {
+                expression.argument.accept(this, data).coerce(context.irBuiltIns.anyNType).materialize()
                 val type = typeMapper.boxType(typeOperand)
                 if (typeOperand.isReifiedTypeParameter) {
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS, mv, this)
                     v.instanceOf(type)
                 } else {
-                    generateIsCheck(mv, kotlinType, type, state.languageVersionSettings.isReleaseCoroutines())
+                    TypeIntrinsics.instanceOf(mv, kotlinType, type, state.languageVersionSettings.isReleaseCoroutines())
                 }
-                // TODO remove this type operator, generate an intrinsic call around INSTANCEOF instead
-                if (IrTypeOperator.NOT_INSTANCEOF == expression.operator)
-                    Not.BooleanNegation(expression.onStack.coerceToBoolean())
-                else
-                    expression.onStack
-            }
-
-            IrTypeOperator.IMPLICIT_NOTNULL -> {
-                val value = expression.argument.accept(this, data).materialized
-                mv.dup()
-                mv.visitLdcInsn("TODO provide message for IMPLICIT_NOTNULL") /*TODO*/
-                mv.invokestatic(
-                    "kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
-                    "(Ljava/lang/Object;Ljava/lang/String;)V", false
-                )
-                // Unbox primitives.
-                value.coerce(expression.type)
+                expression.onStack
             }
 
             else -> throw AssertionError("type operator ${expression.operator} should have been lowered")
@@ -839,17 +688,17 @@ class ExpressionCodegen(
                 // Convert single arg to string.
                 val arg = expression.arguments[0]
                 val result = arg.accept(this, data).boxInlineClasses(arg.type).materialized
-                if (!arg.type.isString())
-                    AsmUtil.genToString(StackValue.onStack(result.type), result.type, result.kotlinType, typeMapper.kotlinTypeMapper)
-                        .put(expression.asmType, mv)
+                if (!arg.type.isString()) {
+                    result.genToString(mv)
+                }
             }
             arity == 2 && expression.arguments[0].type.isStringClassType() -> {
                 // Call the stringPlus intrinsic
-                expression.arguments.forEach {
-                    val result = it.accept(this, data).boxInlineClasses(it.type).materialized
-                    val type = result.type
-                    if (type.sort != Type.OBJECT)
-                        AsmUtil.genToString(StackValue.onStack(type), type, result.kotlinType, typeMapper.kotlinTypeMapper).put(expression.asmType, mv)
+                for (argument in expression.arguments) {
+                    val result = argument.accept(this, data).boxInlineClasses(argument.type).materialized
+                    if (result.type.sort != Type.OBJECT) {
+                        result.genToString(mv)
+                    }
                 }
                 mv.invokestatic(
                     IrIntrinsicMethods.INTRINSICS_CLASS_NAME,
@@ -861,13 +710,19 @@ class ExpressionCodegen(
             else -> {
                 // Use StringBuilder to concatenate.
                 genStringBuilderConstructor(mv)
-                expression.arguments.forEach {
-                    genInvokeAppendMethod(mv, it.accept(this, data).boxInlineClasses(it.type).materialized.type, null)
+                for (argument in expression.arguments) {
+                    genInvokeAppendMethod(mv, argument.accept(this, data).boxInlineClasses(argument.type).materialized.type, null)
                 }
                 mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
             }
         }
         return expression.onStack
+    }
+
+    private fun MaterialValue.genToString(v: InstructionAdapter) {
+        val asmType =
+            if (irType.getClass()?.isInline == true) OBJECT_TYPE else stringValueOfType(type)
+        v.invokestatic("java/lang/String", "valueOf", Type.getMethodDescriptor(AsmTypes.JAVA_STRING_TYPE, asmType), false)
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): PromisedValue {
@@ -1061,9 +916,7 @@ class ExpressionCodegen(
 
     override fun visitThrow(expression: IrThrow, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        expression.value.accept(this, data)
-            .coerce(AsmTypes.JAVA_THROWABLE_TYPE, context.irBuiltIns.throwableType)
-            .materialize()
+        expression.value.accept(this, data).materialize()
         mv.athrow()
         return immaterialUnitValue
     }
@@ -1092,7 +945,12 @@ class ExpressionCodegen(
                 putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
             }
 
-            putJavaLangClassInstance(mv, typeMapper.mapType(classType), classType.toKotlinType(), typeMapper.kotlinTypeMapper)
+            val asmType = typeMapper.mapType(classType)
+            if (classType.getClass()?.isInline == true || !isPrimitive(asmType)) {
+                mv.aconst(typeMapper.boxType(classType))
+            } else {
+                mv.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")
+            }
         } else {
             throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
         }
@@ -1103,10 +961,9 @@ class ExpressionCodegen(
         return classReference.onStack
     }
 
-    private fun resolveToCallable(irCall: IrFunctionAccessExpression, isSuper: Boolean) =
-        typeMapper.mapToCallableMethod(irCall.symbol.owner, isSuper)
-
-    private fun getOrCreateCallGenerator(element: IrFunctionAccessExpression, data: BlockInfo): IrCallGenerator {
+    private fun getOrCreateCallGenerator(
+        element: IrFunctionAccessExpression, data: BlockInfo, signature: JvmMethodSignature
+    ): IrCallGenerator {
         if (!element.symbol.owner.isInlineFunctionCall(context) ||
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry
         ) {
@@ -1142,7 +999,9 @@ class ExpressionCodegen(
         }
 
         val original = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: irFunction
-        return IrInlineCodegen(this, state, original.descriptor, mappings, IrSourceCompilerForInline(state, element, this, data))
+        val methodOwner = callee.parent.safeAs<IrClass>()?.let(typeMapper::mapClass) ?: MethodSignatureMapper.FAKE_OWNER_TYPE
+        val sourceCompiler = IrSourceCompilerForInline(state, element, this, data)
+        return IrInlineCodegen(this, state, original.descriptor, methodOwner, signature, mappings, sourceCompiler)
     }
 
     private fun consumeReifiedOperationMarker(typeParameter: IrTypeParameter) {
@@ -1227,7 +1086,7 @@ class ExpressionCodegen(
     }
 
     /* From ExpressionCodegen.java */
-    private fun putReifiedOperationMarkerIfTypeIsReifiedParameter(
+    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(
         type: IrType, operationKind: ReifiedTypeInliner.OperationKind, v: InstructionAdapter,
         codegen: ExpressionCodegen?
     ) {

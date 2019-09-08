@@ -25,6 +25,7 @@ import org.gradle.api.tasks.TaskInputs
 import org.gradle.api.tasks.TaskOutputs
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.util.GradleVersion
+import java.io.File
 
 internal val Task.inputsCompatible: TaskInputs get() = inputs
 
@@ -50,7 +51,7 @@ internal fun TaskInputs.dirCompatible(dirPath: Any) {
     inputsDirMethod(this, dirPath)
 }
 
-internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = GradleVersion.version("4.1")) {
+internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = GradleVersion.version("4.3")) {
     val currentVersion = GradleVersion.current()
     if (currentVersion < minSupportedVersion) {
         throw GradleException(
@@ -68,6 +69,15 @@ internal fun AbstractArchiveTask.setArchiveAppendixCompatible(appendixProvider: 
         appendix = appendixProvider()
     }
 }
+
+internal val AbstractArchiveTask.archivePathCompatible: File
+    get() =
+        if (isGradleVersionAtLeast(5, 1)) {
+            archiveFile.get().asFile
+        } else {
+            @Suppress("DEPRECATION")
+            archivePath
+        }
 
 internal fun AbstractArchiveTask.setArchiveClassifierCompatible(classifierProvider: () -> String) {
     if (isGradleVersionAtLeast(5, 2)) {

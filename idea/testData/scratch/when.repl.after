@@ -15,7 +15,7 @@ when(a) {                   // OUTPUT: 1
     else -> println("1")
 }
 
-when(a) {
+when(a) {                   // RESULT: res4: kotlin.Int = 11
     1 -> 11
     else -> 12
 }

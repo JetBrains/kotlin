@@ -217,7 +217,6 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
 
 private fun createDefaultSourceDirectorySet(project: Project, name: String?, resolver: FileResolver?): SourceDirectorySet {
     if (isGradleVersionAtLeast(5, 0)) {
-        @Suppress("UnstableApiUsage")
         val objects = project.objects
         val sourceDirectorySetMethod = objects.javaClass.methods.single { it.name == "sourceDirectorySet" && it.parameterCount == 2 }
         return sourceDirectorySetMethod(objects, name, name) as SourceDirectorySet

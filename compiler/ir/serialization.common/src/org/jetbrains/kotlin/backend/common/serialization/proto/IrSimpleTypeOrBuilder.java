@@ -17,13 +17,13 @@ public interface IrSimpleTypeOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol classifier = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
    */
   boolean hasClassifier();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol classifier = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getClassifier();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassifier();
 
   /**
    * <code>required bool has_question_mark = 3;</code>

@@ -13,7 +13,7 @@ FILE: cast.kt
     }
 
         public get(): R|kotlin/Function0<kotlin/Unit>|
-    public final val h: R|kotlin/Function1<kotlin/String, kotlin/Boolean>| = fun R|kotlin/Function1<kotlin/String, kotlin/Boolean>|.<anonymous>(_: R|kotlin/String|): R|kotlin/Function1<kotlin/String, kotlin/Boolean>| {
+    public final val h: R|kotlin/Function1<kotlin/String, kotlin/Boolean>| = fun <anonymous>(_: R|kotlin/String|): R|kotlin/Boolean| {
         Boolean(false)
     }
 

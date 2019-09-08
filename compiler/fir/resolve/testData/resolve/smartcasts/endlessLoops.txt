@@ -1,0 +1,111 @@
+FILE: endlessLoops.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun test_1(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            (R|<local>/x| as R|A|)
+            when () {
+                R|<local>/b| ->  {
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+        }
+
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_2(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            when () {
+                R|<local>/b| ->  {
+                    (R|<local>/x| as R|A|)
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+        }
+
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_3(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            (R|<local>/x| as R|A|)
+            when () {
+                R|<local>/b| ->  {
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+            when () {
+                R|<local>/b| ->  {
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+        }
+
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_4(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            when () {
+                R|<local>/b| ->  {
+                    (R|<local>/x| as R|A|)
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+            break@@@[Boolean(true)]
+        }
+
+        R|<local>/x|.<Unresolved name: foo>#()
+    }
+    public final fun test_5(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        do {
+            when () {
+                R|<local>/b| ->  {
+                    (R|<local>/x| as R|A|)
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+        }
+        while(Boolean(true))
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_6(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        do {
+            (R|<local>/x| as R|A|)
+            when () {
+                R|<local>/b| ->  {
+                    break@@@[Boolean(true)]
+                }
+                else ->  {
+                }
+            }
+
+        }
+        while(Boolean(true))
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_7(x: R|kotlin/Any|): R|kotlin/Unit| {
+        do {
+            (R|<local>/x| as R|A|)
+        }
+        while(Boolean(true))
+        R|<local>/x|.<Unresolved name: foo>#()
+    }

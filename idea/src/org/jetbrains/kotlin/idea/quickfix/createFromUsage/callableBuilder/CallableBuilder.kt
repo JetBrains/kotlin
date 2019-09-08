@@ -217,7 +217,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     fun build(onFinish: () -> Unit = {}) {
         try {
             assert(config.currentEditor != null) { "Can't run build() without editor" }
-            if (finished) throw IllegalStateException("Current builder has already finished")
+            check(!finished) { "Current builder has already finished" }
             buildNext(config.callableInfos.iterator())
         } finally {
             finished = true
@@ -940,12 +940,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             // it.
             val expression = setupTypeParameterListTemplate(builder, declaration)
 
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(containingFileEditor.document)
             // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
             val templateImpl = builder.buildInlineTemplate() as TemplateImpl
             val variables = templateImpl.variables!!
             if (variables.isNotEmpty()) {
                 val typeParametersVar = if (expression != null) variables.removeAt(0) else null
-                for (i in 0..(callableInfo.parameterInfos.size - 1)) {
+                for (i in callableInfo.parameterInfos.indices) {
                     Collections.swap(variables, i * 2, i * 2 + 1)
                 }
                 typeParametersVar?.let { variables.add(it) }

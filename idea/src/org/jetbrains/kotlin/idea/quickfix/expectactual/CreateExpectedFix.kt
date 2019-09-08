@@ -11,10 +11,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.showOkNoDialog
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -24,22 +24,28 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.makeActual
 import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
+import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
-import org.jetbrains.kotlin.idea.util.allowedValOrVar
+import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
+import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
+import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.hasPrivateModifier
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 sealed class CreateExpectedFix<D : KtNamedDeclaration>(
     declaration: D,
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module,
-    generateIt: KtPsiFactory.(Project, D) -> D?
+    generateIt: KtPsiFactory.(Project, TypeAccessibilityChecker, D) -> D?
 ) : AbstractCreateDeclarationFix<D>(declaration, commonModule, generateIt) {
 
     private val targetExpectedClassPointer = targetExpectedClass?.createSmartPointer()
@@ -83,10 +89,9 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
                 ?: return emptyList()
             return when (actualDeclaration) {
                 is KtClassOrObject -> expectedModules.map { CreateExpectedClassFix(actualDeclaration, expectedContainingClass, it) }
-                is KtFunction -> expectedModules.map { CreateExpectedFunctionFix(actualDeclaration, expectedContainingClass, it) }
-                is KtProperty, is KtParameter -> expectedModules.map {
-                    CreateExpectedPropertyFix(
-                        actualDeclaration,
+                is KtProperty, is KtParameter, is KtFunction -> expectedModules.map {
+                    CreateExpectedCallableMemberFix(
+                        actualDeclaration as KtCallableDeclaration,
                         expectedContainingClass,
                         it
                     )
@@ -110,26 +115,96 @@ class CreateExpectedClassFix(
     klass: KtClassOrObject,
     outerExpectedClass: KtClassOrObject?,
     commonModule: Module
-) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, element ->
-    val originalElements = element.collectDeclarations(false).filter(KtDeclaration::canAddActualModifier).toList()
-    val members = originalElements.filterNot(KtDeclaration::isAlwaysActual)
+) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, checker, element ->
+    val originalElements = element.collectDeclarations(withSelf = false).toList()
+    val existingClasses = checker.findAndApplyExistingClasses(originalElements + klass)
+    if (!checker.isCorrectAndHaveNonPrivateModifier(element)) {
+        showUnknownTypesError(element)
+        return@block null
+    }
+
+    val (members, declarationsWithNonExistentClasses) = originalElements.partition {
+        checker.isCorrectAndHaveNonPrivateModifier(it)
+    }
+
+    if (!showUnknownTypesDialog(project, declarationsWithNonExistentClasses)) return@block null
+
+    val membersForSelection = members.filter {
+        !it.isAlwaysActual() && if (it is KtParameter) it.hasValOrVar() else true
+    }
+
     val selectedElements = when {
-        members.all(KtDeclaration::hasActualModifier) -> originalElements
-        ApplicationManager.getApplication().isUnitTestMode -> members.filter(KtDeclaration::hasActualModifier)
+        membersForSelection.all(KtDeclaration::hasActualModifier) -> membersForSelection
+        ApplicationManager.getApplication().isUnitTestMode -> membersForSelection.filter(KtDeclaration::hasActualModifier)
         else -> {
             val prefix = klass.fqName?.asString()?.plus(".") ?: ""
-            chooseMembers(project, members, prefix) ?: return@block null
+            chooseMembers(project, membersForSelection, prefix) ?: return@block null
         }
+    }.asSequence().plus(klass).plus(members.filter(KtNamedDeclaration::isAlwaysActual)).flatMap(KtNamedDeclaration::selected).toSet()
+
+    val selectedClasses = checker.findAndApplyExistingClasses(selectedElements)
+    val resultDeclarations = if (selectedClasses != existingClasses) {
+        if (!checker.isCorrectAndHaveNonPrivateModifier(element)) {
+            showUnknownTypesError(element)
+            return@block null
+        }
+
+        val (resultDeclarations, withErrors) = selectedElements.partition {
+            checker.isCorrectAndHaveNonPrivateModifier(it)
+        }
+        if (!showUnknownTypesDialog(project, withErrors)) return@block null
+        resultDeclarations
+    } else
+        selectedElements
+
+    project.executeWriteCommand("Repair actual members") {
+        repairActualModifiers(originalElements + klass, resultDeclarations.toSet())
     }
 
-    if (originalElements.isNotEmpty()) {
-        project.executeWriteCommand("Repair actual members") {
-            repairActualModifiers(originalElements, selectedElements)
-        }
-    }
-
-    generateClassOrObject(project, true, element, listOfNotNull(outerExpectedClass))
+    generateClassOrObject(project, true, element, checker)
 })
+
+private fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Collection<KtNamedDeclaration>): HashSet<String> {
+    var classes = elements.filterIsInstance<KtClassOrObject>()
+    while (true) {
+        val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
+        existingTypeNames = existingNames
+
+        val newExistingClasses = classes.filter { isCorrectAndHaveNonPrivateModifier(it) }
+        if (classes.size == newExistingClasses.size) return existingNames
+
+        classes = newExistingClasses
+    }
+}
+
+private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>): Boolean {
+    if (declarationsWithNonExistentClasses.isEmpty()) return true
+    val message = escapeXml(
+        declarationsWithNonExistentClasses.joinToString(
+            prefix = "These declarations cannot be transformed:\n",
+            separator = "\n",
+            transform = ::getExpressionShortText
+        )
+    )
+
+    TypeAccessibilityChecker.testLog?.append("$message\n")
+    return ApplicationManager.getApplication().isUnitTestMode || showOkNoDialog(
+        "Unknown types",
+        message,
+        project
+    )
+}
+
+private fun showUnknownTypesError(element: KtNamedDeclaration) {
+    element.findExistingEditor()?.let { editor ->
+        showErrorHint(
+            element.project,
+            editor,
+            "You cannot create the expect declaration from:\n${escapeXml(getExpressionShortText(element))}",
+            "Unknown types"
+        )
+    }
+}
 
 private fun KtDeclaration.canAddActualModifier() = when (this) {
     is KtEnumEntry, is KtClassInitializer -> false
@@ -141,7 +216,7 @@ private fun KtDeclaration.canAddActualModifier() = when (this) {
 /***
  * @return null if close without OK
  */
-private fun chooseMembers(project: Project, collection: Collection<KtDeclaration>, prefixToRemove: String): List<KtDeclaration>? {
+private fun chooseMembers(project: Project, collection: Collection<KtNamedDeclaration>, prefixToRemove: String): List<KtNamedDeclaration>? {
     val classMembers = collection.mapNotNull {
         it.resolveToDescriptorIfAny()?.let { descriptor -> Member(prefixToRemove, it, descriptor) }
     }
@@ -158,9 +233,9 @@ private fun chooseMembers(project: Project, collection: Collection<KtDeclaration
     ).run {
         title = "Choose actual members"
         setCopyJavadocVisible(false)
-        selectElements(classMembers.filter { filter((it.element as KtDeclaration)) }.toTypedArray())
+        selectElements(classMembers.filter { filter((it.element as KtNamedDeclaration)) }.toTypedArray())
         show()
-        if (!isOK) null else selectedElements?.map { it.element as KtDeclaration }.orEmpty()
+        if (!isOK) null else selectedElements?.map { it.element as KtNamedDeclaration }.orEmpty()
     }
 }
 
@@ -173,19 +248,27 @@ private class Member(val prefix: String, element: KtElement, descriptor: Declara
     }
 }
 
-private fun KtClassOrObject.collectDeclarations(withSelf: Boolean = true): Sequence<KtDeclaration> {
-    val thisSequence = if (withSelf) sequenceOf(this) else emptySequence()
-    val primaryConstructorSequence = primaryConstructorParameters.asSequence() + primaryConstructor.let {
+private fun KtClassOrObject.collectDeclarations(withSelf: Boolean = true): Sequence<KtNamedDeclaration> {
+    val thisSequence: Sequence<KtNamedDeclaration> = if (withSelf) sequenceOf(this) else emptySequence()
+    val primaryConstructorSequence: Sequence<KtNamedDeclaration> = primaryConstructorParameters.asSequence() + primaryConstructor.let {
         if (it != null) sequenceOf(it) else emptySequence()
     }
+
     return thisSequence + primaryConstructorSequence + declarations.asSequence().flatMap {
-        if (it is KtClassOrObject) it.collectDeclarations() else sequenceOf(it)
+        if (it.canAddActualModifier())
+            when (it) {
+                is KtClassOrObject -> it.collectDeclarations()
+                is KtNamedDeclaration -> sequenceOf(it)
+                else -> emptySequence()
+            }
+        else
+            emptySequence()
     }
 }
 
 private fun repairActualModifiers(
-    originalElements: Collection<KtDeclaration>,
-    selectedElements: Collection<KtDeclaration>
+    originalElements: Collection<KtNamedDeclaration>,
+    selectedElements: Collection<KtNamedDeclaration>
 ) {
     if (originalElements.size == selectedElements.size)
         for (original in originalElements) {
@@ -193,7 +276,7 @@ private fun repairActualModifiers(
         }
     else
         for (original in originalElements) {
-            if (original.isAlwaysActual() || original in selectedElements)
+            if (original in selectedElements)
                 original.makeActualWithParents()
             else
                 original.makeNotActual()
@@ -205,27 +288,35 @@ private tailrec fun KtDeclaration.makeActualWithParents() {
     containingClassOrObject?.takeUnless(KtDeclaration::hasActualModifier)?.makeActualWithParents()
 }
 
-private fun KtDeclaration.isAlwaysActual(): Boolean = when (this) {
-    is KtPrimaryConstructor -> this
-    is KtParameter -> (parent as? KtParameterList)?.parent as? KtPrimaryConstructor
-    else -> null
-}?.allowedValOrVar() ?: false
+private fun KtNamedDeclaration.selected(): Sequence<KtNamedDeclaration> {
+    val additionalSequence = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()?.let {
+        sequenceOf(it)
+    } ?: emptySequence()
+    return sequenceOf(this) + additionalSequence + containingClassOrObject?.selected().orEmpty()
+}
 
-class CreateExpectedPropertyFix(
-    property: KtNamedDeclaration,
+class CreateExpectedCallableMemberFix(
+    declaration: KtCallableDeclaration,
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module
-) : CreateExpectedFix<KtNamedDeclaration>(property, targetExpectedClass, commonModule, { project, element ->
-    val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, true, element, descriptor, targetExpectedClass) }
+) : CreateExpectedFix<KtNamedDeclaration>(declaration, targetExpectedClass, commonModule, block@{ project, checker, element ->
+    if (!checker.isCorrectAndHaveNonPrivateModifier(element)) {
+        showUnknownTypesError(element)
+        return@block null
+    }
+    val descriptor = element.toDescriptor() as? CallableMemberDescriptor
+    checker.existingTypeNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
+    descriptor?.let {
+        generateCallable(
+            project,
+            true,
+            element,
+            descriptor,
+            targetExpectedClass,
+            checker = checker
+        )
+    }
 })
 
-class CreateExpectedFunctionFix(
-    function: KtFunction,
-    targetExpectedClass: KtClassOrObject?,
-    commonModule: Module
-) : CreateExpectedFix<KtFunction>(function, targetExpectedClass, commonModule, { project, element ->
-    val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, true, element, descriptor, targetExpectedClass) }
-})
-
+private fun TypeAccessibilityChecker.isCorrectAndHaveNonPrivateModifier(declaration: KtNamedDeclaration): Boolean =
+    !declaration.hasPrivateModifier() && checkAccessibility(declaration)

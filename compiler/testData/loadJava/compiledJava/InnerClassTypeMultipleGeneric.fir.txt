@@ -1,5 +1,5 @@
 public open class InnerClassTypeMultipleGeneric : R|kotlin/Any| {
-    public open operator fun staticType(): R|ft<test/InnerClassTypeMultipleGeneric.Outer.Inner<ft<kotlin/Byte, kotlin/Byte?>, ft<kotlin/Char, kotlin/Char?>, ft<kotlin/Boolean, kotlin/Boolean?>>, test/InnerClassTypeMultipleGeneric.Outer.Inner<ft<kotlin/Byte, kotlin/Byte?>, ft<kotlin/Char, kotlin/Char?>, ft<kotlin/Boolean, kotlin/Boolean?>>?>|!
+    public open operator fun staticType(): R|ft<test/InnerClassTypeMultipleGeneric.Outer.Inner<ft<kotlin/Byte, kotlin/Byte?>!, ft<kotlin/Char, kotlin/Char?>!, ft<kotlin/Boolean, kotlin/Boolean?>!>, test/InnerClassTypeMultipleGeneric.Outer.Inner<ft<kotlin/Byte, kotlin/Byte?>!, ft<kotlin/Char, kotlin/Char?>!, ft<kotlin/Boolean, kotlin/Boolean?>!>?>!|
 
     public constructor(): R|test/InnerClassTypeMultipleGeneric|
 

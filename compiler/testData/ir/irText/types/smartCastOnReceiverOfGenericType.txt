@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Cell modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:private
         EXPRESSION_BODY
           GET_VAR 'value: T of <root>.Cell declared in <root>.Cell.<init>' type=T of <root>.Cell origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Cell<T of <root>.Cell>) returnType:T of <root>.Cell
@@ -85,14 +85,14 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Cell<T of <root>.Cell>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.Cell declared in <root>.Cell'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:public' type=T of <root>.Cell origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:private' type=T of <root>.Cell origin=null
               receiver: GET_VAR '<this>: <root>.Cell<T of <root>.Cell> declared in <root>.Cell.<get-value>' type=<root>.Cell<T of <root>.Cell> origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:<root>.Cell<T of <root>.Cell>, <set-?>:T of <root>.Cell) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Cell<T of <root>.Cell>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Cell
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Cell visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Cell<T of <root>.Cell> declared in <root>.Cell.<set-value>' type=<root>.Cell<T of <root>.Cell> origin=null
             value: GET_VAR '<set-?>: T of <root>.Cell declared in <root>.Cell.<set-value>' type=T of <root>.Cell origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean

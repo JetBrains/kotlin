@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
 
-public class KotlinCodeStyleSettingsProvider extends CodeStyleSettingsProviderCompat {
+public class KotlinCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
     @Override
     public String getConfigurableDisplayName() {
@@ -61,8 +61,6 @@ public class KotlinCodeStyleSettingsProvider extends CodeStyleSettingsProviderCo
                         addBlankLinesTab(settings);
                         addTab(new ImportSettingsPanelWrapper(settings));
 
-                        // BUNCH: 182
-                        //noinspection IncompatibleAPI
                         for (CodeStyleSettingsProvider provider : CodeStyleSettingsProvider.EXTENSION_POINT_NAME.getExtensions()) {
                             if (provider.getLanguage() == KotlinLanguage.INSTANCE && !provider.hasSettingsPage()) {
                                 createTab(provider);

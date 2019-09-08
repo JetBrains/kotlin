@@ -30,15 +30,15 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.console.actions.logError
-import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ConsoleErrorRenderer
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
+import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.math.max
 
 class ReplOutputProcessor(
-        private val runner: KotlinConsoleRunner
+    private val runner: KotlinConsoleRunner
 ) {
     private val project = runner.project
     private val consoleView = runner.consoleView as LanguageConsoleImpl
@@ -46,24 +46,18 @@ class ReplOutputProcessor(
     private val historyDocument = historyEditor.document
     private val historyMarkup = historyEditor.markupModel
 
-    private fun textOffsets(text: String): Pair<Int, Int> {
-        consoleView.flushDeferredText() // flush before getting offsets to calculate them properly
-        val oldLen = historyDocument.textLength
-        val newLen = oldLen + text.length
-
-        return Pair(oldLen, newLen)
-    }
-
     private fun printOutput(output: String, contentType: ConsoleViewContentType, iconWithTooltip: IconWithTooltip? = null) {
-        val (startOffset, endOffset) = textOffsets(output)
+        consoleView.flushDeferredText() // flush before getting offsets to calculate them properly
+        val startOffset = historyDocument.textLength
 
         consoleView.print(output, contentType)
         consoleView.flushDeferredText()
+        val endOffset = historyDocument.textLength
 
         if (iconWithTooltip == null) return
 
         historyMarkup.addRangeHighlighter(
-                startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
+            startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
         ).apply { gutterIconRenderer = ConsoleIndicatorRenderer(iconWithTooltip) }
     }
 
@@ -83,7 +77,10 @@ class ReplOutputProcessor(
 
     fun printBuildInfoWarningIfNeeded() {
         if (ApplicationManager.getApplication().isUnitTestMode) return
-        if (runner.previousCompilationFailed) return printWarningMessage("There were compilation errors in module ${runner.module.name}", false)
+        if (runner.previousCompilationFailed) return printWarningMessage(
+            "There were compilation errors in module ${runner.module.name}",
+            false
+        )
         if (runner.compilerHelper.moduleIsUpToDate()) return
 
         val compilerWarningMessage = "You’re running the REPL with outdated classes: "
@@ -107,8 +104,8 @@ class ReplOutputProcessor(
     fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
         val commandHistory = runner.commandHistory
         val lastUnprocessedHistoryEntry = commandHistory.lastUnprocessedEntry() ?: return@runWriteCommandAction logError(
-                ReplOutputProcessor::class.java,
-                "Processed more commands than were sent. Sent commands: ${commandHistory.size}. Processed: ${commandHistory.processedEntriesCount}"
+            ReplOutputProcessor::class.java,
+            "Processed more commands than were sent. Sent commands: ${commandHistory.size}. Processed: ${commandHistory.processedEntriesCount}"
         )
         val lastCommandStartOffset = lastUnprocessedHistoryEntry.rangeInHistoryDocument.startOffset
         val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
@@ -128,7 +125,7 @@ class ReplOutputProcessor(
 
                 val textAttributes = getAttributesForSeverity(cmdStart, cmdEnd, message.severity)
                 historyMarkup.addRangeHighlighter(
-                        cmdStart, cmdEnd, HighlighterLayer.LAST, textAttributes, HighlighterTargetArea.EXACT_RANGE
+                    cmdStart, cmdEnd, HighlighterLayer.LAST, textAttributes, HighlighterTargetArea.EXACT_RANGE
                 )
             }
             Pair(highlighters.first(), messages)
@@ -153,22 +150,35 @@ class ReplOutputProcessor(
     }
 
     private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes = when (severity) {
-        Severity.ERROR   ->
+        Severity.ERROR ->
             getAttributesForSeverity(HighlightInfoType.ERROR, HighlightSeverity.ERROR, CodeInsightColors.ERRORS_ATTRIBUTES, start, end)
         Severity.WARNING ->
-            getAttributesForSeverity(HighlightInfoType.WARNING, HighlightSeverity.WARNING, CodeInsightColors.WARNINGS_ATTRIBUTES, start, end)
-        Severity.INFO    ->
-            getAttributesForSeverity(HighlightInfoType.WEAK_WARNING, HighlightSeverity.WEAK_WARNING, CodeInsightColors.WEAK_WARNING_ATTRIBUTES, start, end)
+            getAttributesForSeverity(
+                HighlightInfoType.WARNING,
+                HighlightSeverity.WARNING,
+                CodeInsightColors.WARNINGS_ATTRIBUTES,
+                start,
+                end
+            )
+        Severity.INFO ->
+            getAttributesForSeverity(
+                HighlightInfoType.WEAK_WARNING,
+                HighlightSeverity.WEAK_WARNING,
+                CodeInsightColors.WEAK_WARNING_ATTRIBUTES,
+                start,
+                end
+            )
     }
 
     private fun getAttributesForSeverity(
-            infoType: HighlightInfoType,
-            severity: HighlightSeverity,
-            insightColors: TextAttributesKey,
-            start: Int,
-            end: Int
+        infoType: HighlightInfoType,
+        severity: HighlightSeverity,
+        insightColors: TextAttributesKey,
+        start: Int,
+        end: Int
     ): TextAttributes {
-        val highlightInfo = HighlightInfo.newHighlightInfo(infoType).range(start, end).severity(severity).textAttributes(insightColors).create()
+        val highlightInfo =
+            HighlightInfo.newHighlightInfo(infoType).range(start, end).severity(severity).textAttributes(insightColors).create()
 
         val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(consoleView.consoleEditor.document)
         val colorScheme = consoleView.consoleEditor.colorsScheme

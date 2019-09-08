@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.incremental.testingUtils
 import java.io.File
 
 data class BuildLogFinder(
-        private val isDataContainerBuildLogEnabled: Boolean = false,
-        private val isGradleEnabled: Boolean = false,
-        private val isJsEnabled: Boolean = false
+    private val isDataContainerBuildLogEnabled: Boolean = false,
+    private val isGradleEnabled: Boolean = false,
+    private val isJsEnabled: Boolean = false,
+    private val isJsIrEnabled: Boolean = false
 ) {
     companion object {
         private const val JS_LOG = "js-build.log"
+        private const val JS_IR_LOG = "js-ir-build.log"
         private const val GRADLE_LOG = "gradle-build.log"
         private const val DATA_CONTAINER_LOG = "data-container-version-build.log"
         const val JS_JPS_LOG = "js-jps-build.log"
@@ -38,6 +40,7 @@ data class BuildLogFinder(
         val names = dir.list() ?: arrayOf()
         val files = names.filter { File(dir, it).isFile }.toSet()
         val matchedName = when {
+            isJsIrEnabled && JS_IR_LOG in files -> JS_IR_LOG
             isJsEnabled && JS_LOG in files -> JS_LOG
             isGradleEnabled && GRADLE_LOG in files -> GRADLE_LOG
             isJsEnabled && JS_JPS_LOG in files -> JS_JPS_LOG

@@ -1526,6 +1526,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/detectProperties/kt-31700.java");
         }
 
+        @TestMetadata("kt-32253.java")
+        public void testKt_32253() throws Exception {
+            runTest("nj2k/testData/newJ2k/detectProperties/kt-32253.java");
+        }
+
         @TestMetadata("Overrides.java")
         public void testOverrides() throws Exception {
             runTest("nj2k/testData/newJ2k/detectProperties/Overrides.java");
@@ -2441,6 +2446,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("public.java")
         public void testPublic() throws Exception {
             runTest("nj2k/testData/newJ2k/function/public.java");
+        }
+
+        @TestMetadata("referenceToConstructor.java")
+        public void testReferenceToConstructor() throws Exception {
+            runTest("nj2k/testData/newJ2k/function/referenceToConstructor.java");
         }
 
         @TestMetadata("synchronizedMethod.java")
@@ -3470,6 +3480,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("collectionsMethods2.java")
         public void testCollectionsMethods2() throws Exception {
             runTest("nj2k/testData/newJ2k/methodCallExpression/collectionsMethods2.java");
+        }
+
+        @TestMetadata("conflictJavaMethodCall.java")
+        public void testConflictJavaMethodCall() throws Exception {
+            runTest("nj2k/testData/newJ2k/methodCallExpression/conflictJavaMethodCall.java");
+        }
+
+        @TestMetadata("conflictJavaMethodCallWithExplicitImports.java")
+        public void testConflictJavaMethodCallWithExplicitImports() throws Exception {
+            runTest("nj2k/testData/newJ2k/methodCallExpression/conflictJavaMethodCallWithExplicitImports.java");
         }
 
         @TestMetadata("emptyCall.java")

@@ -7,14 +7,14 @@
         @0:0..23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @0:0..23 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @0:12..22 PROPERTY name:x visibility:public modality:FINAL [val]
-      @0:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      @0:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         @0:12..22 EXPRESSION_BODY
           @0:12..22 GET_VAR 'x: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       @0:12..22 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int
         @0:12..22 VALUE_PARAMETER name:<this> type:<root>.Test1
         @0:12..22 BLOCK_BODY
           @0:12..22 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test1'
-            @0:12..22 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            @0:12..22 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               @0:12..22 GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-x>' type=<root>.Test1 origin=null
     @0:0..23 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       @0:0..23 VALUE_PARAMETER name:<this> type:kotlin.Any
@@ -31,14 +31,14 @@
         @2:0..3:32 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @2:0..3:32 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @3:21..31 PROPERTY name:x visibility:public modality:FINAL [val]
-      @3:21..31 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      @3:21..31 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         @3:21..31 EXPRESSION_BODY
           @3:21..31 GET_VAR 'x: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       @3:21..31 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Int
         @3:21..31 VALUE_PARAMETER name:<this> type:<root>.Test2
         @3:21..31 BLOCK_BODY
           @3:21..31 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test2'
-            @3:21..31 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            @3:21..31 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               @3:21..31 GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
     @2:0..3:32 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       @2:0..3:32 VALUE_PARAMETER name:<this> type:kotlin.Any
@@ -55,14 +55,14 @@
         @5:0..9:23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @5:0..9:23 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @9:12..22 PROPERTY name:x visibility:public modality:FINAL [val]
-      @9:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      @9:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         @9:12..22 EXPRESSION_BODY
           @9:12..22 GET_VAR 'x: kotlin.Int declared in <root>.Test3.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       @9:12..22 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Int
         @9:12..22 VALUE_PARAMETER name:<this> type:<root>.Test3
         @9:12..22 BLOCK_BODY
           @9:12..22 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test3'
-            @9:12..22 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            @9:12..22 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               @9:12..22 GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-x>' type=<root>.Test3 origin=null
     @5:0..9:23 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       @5:0..9:23 VALUE_PARAMETER name:<this> type:kotlin.Any
@@ -79,14 +79,14 @@
         @11:0..13:23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @11:0..13:23 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @13:12..22 PROPERTY name:x visibility:public modality:FINAL [val]
-      @13:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      @13:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         @13:12..22 EXPRESSION_BODY
           @13:12..22 GET_VAR 'x: kotlin.Int declared in <root>.Test4.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       @13:12..22 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.Int
         @13:12..22 VALUE_PARAMETER name:<this> type:<root>.Test4
         @13:12..22 BLOCK_BODY
           @13:12..22 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test4'
-            @13:12..22 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            @13:12..22 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               @13:12..22 GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.<get-x>' type=<root>.Test4 origin=null
     @11:0..13:23 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       @11:0..13:23 VALUE_PARAMETER name:<this> type:kotlin.Any

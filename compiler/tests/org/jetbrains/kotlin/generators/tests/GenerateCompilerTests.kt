@@ -17,11 +17,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
-import org.jetbrains.kotlin.fir.AbstractFirDiagnosticsSmokeTest
-import org.jetbrains.kotlin.fir.AbstractFirLoadCompiledKotlin
-import org.jetbrains.kotlin.fir.AbstractFir2IrTextTest
-import org.jetbrains.kotlin.fir.AbstractFirResolveTestCase
-import org.jetbrains.kotlin.fir.AbstractFirResolveTestCaseWithStdlib
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
@@ -54,6 +50,8 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
+import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
+import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -441,11 +439,16 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
         testClass<AbstractFirResolveTestCase> {
-            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib"))
+            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib", "cfg", "smartcasts"))
         }
 
         testClass<AbstractFirResolveTestCaseWithStdlib> {
             model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractFirCfgBuildingTest> {
+            model("resolve/cfg", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("resolve/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
@@ -480,4 +483,23 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("compiler/visualizer/tests", "compiler/fir/psi2fir/testData") {
+        testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
+            model("rawBuilder", testMethod = "doFirBuilderDataTest")
+        }
+
+        testClass<AbstractFirVisualizer>("FirVisualizerForRawFirDataGenerated") {
+            model("rawBuilder", testMethod = "doFirBuilderDataTest")
+        }
+    }
+
+    testGroup("compiler/visualizer/tests", "compiler/visualizer/testData") {
+        testClass<AbstractPsiVisualizer>("PsiVisualizerForUncommonCasesGenerated") {
+            model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
+        }
+
+        testClass<AbstractFirVisualizer>("FirVisualizerForUncommonCasesGenerated") {
+            model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
+        }
+    }
 }

@@ -16,17 +16,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.UniqId as ProtoUn
 data class UniqId(
     val index: Long,
     val isLocal: Boolean
-)
-
-// isLocal=true in UniqId is good while we dealing with a single current module.
-// To disambiguate module local declarations of different modules we use UniqIdKey.
-// It has moduleDescriptor specified for isLocal=true uniqIds.
-
-// TODO: make sure UniqId is really uniq for any global declaration
-
-data class UniqIdKey private constructor(val uniqId: UniqId, val moduleDescriptor: ModuleDescriptor?) {
-    constructor(moduleDescriptor: ModuleDescriptor?, uniqId: UniqId)
-            : this(uniqId, if (uniqId.isLocal) moduleDescriptor!! else null)
+) {
+    val isPublic: Boolean get() = !isLocal
 }
 
 fun protoUniqId(uniqId: UniqId): ProtoUniqId =
@@ -36,8 +27,6 @@ fun protoUniqId(uniqId: UniqId): ProtoUniqId =
         .build()
 
 fun ProtoUniqId.uniqId(): UniqId = UniqId(this.index, this.isLocal)
-fun ProtoUniqId.uniqIdKey(moduleDescriptor: ModuleDescriptor) =
-    UniqIdKey(moduleDescriptor, this.uniqId())
 
 fun <T, M : GeneratedMessageLite.ExtendableMessage<M>> M.tryGetExtension(extension: GeneratedMessageLite.GeneratedExtension<M, T>) =
     if (this.hasExtension(extension)) this.getExtension<T>(extension) else null

@@ -8,7 +8,7 @@ dependencies {
     sources(project(":kotlin-stdlib-common", configuration = "sources"))
 }
 
-val buildSources by tasks.creating(Jar::class.java) {
+val buildSources by tasks.registering(Jar::class) {
     dependsOn(sources)
     from(provider { zipTree(sources.singleFile) })
 }

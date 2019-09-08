@@ -109,12 +109,12 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         }, this, kind)
     }
 
-    fun Module.enableMultiPlatform() {
+    fun Module.enableMultiPlatform(additionalCompilerArguments: String = "") {
         createFacet()
         val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
         facetSettings.useProjectSettings = false
         facetSettings.compilerSettings = CompilerSettings().apply {
-            additionalArguments += " -Xmulti-platform -XXtype-refinement"
+            additionalArguments += " -Xmulti-platform $additionalCompilerArguments"
         }
     }
 

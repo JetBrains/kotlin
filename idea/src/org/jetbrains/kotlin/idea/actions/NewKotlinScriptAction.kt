@@ -58,5 +58,5 @@ open class NewKotlinScriptAction(
 
     override fun hashCode(): Int = 0
 
-    override fun equals(other: Any?): Boolean = this::class.isInstance(other)
+    override fun equals(other: Any?): Boolean = this::class == other?.let { it::class }
 }

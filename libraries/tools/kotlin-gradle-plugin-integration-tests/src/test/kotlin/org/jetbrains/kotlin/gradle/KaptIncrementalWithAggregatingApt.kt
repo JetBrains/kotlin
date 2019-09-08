@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.test.assertFalse
 
 class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
 
@@ -134,6 +135,39 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         project.build("build") {
             assertSuccessful()
             assertTrue(getProcessedSources(output).isEmpty())
+        }
+    }
+
+    @Test
+    fun testIncompatibleClasspathChanges() {
+        val project = getProject()
+        project.projectFile("useB.kt").modify { current ->
+            current + """
+                
+                @example.ExampleAnnotation
+                fun addedFunctionB() = ""
+            """.trimIndent()
+        }
+        project.build("clean", "build") {
+            assertSuccessful()
+        }
+
+        project.projectFile("useB.kt").modify { current ->
+            current.replace("fun addedFunctionB", "fun renamedFunctionB")
+        }
+        project.gradleBuildScript().appendText("""
+            
+            dependencies {
+                compile 'com.google.guava:guava:12.0'
+            }
+        """.trimIndent())
+        project.build("build") {
+            assertSuccessful()
+
+            assertFalse(
+                fileInWorkingDir("build/generated/source/kapt/main/bar/AddedFunctionBGenerated.java").exists(),
+                "Generated file should be deleted for renamed function when classpath changes."
+            )
         }
     }
 }

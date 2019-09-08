@@ -94,9 +94,11 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
 
             put(Option.PROC, "only") // Only process annotations
 
-            if (!withJdk) {
-                @Suppress("SpellCheckingInspection")
-                putJavacOption("BOOTCLASSPATH", "BOOT_CLASS_PATH", "") // No boot classpath
+            if (!withJdk && !isJava9OrLater()) {
+                // No boot classpath for JDK 8 and below. When running on JDK9+ and specifying source level 8 and below,
+                // boot classpath is not set to empty. This is to allow types to be resolved using boot classpath which defaults to
+                // classes defined in java.base module. See https://youtrack.jetbrains.com/issue/KT-33028 for details.
+                put(Option.valueOf("BOOTCLASSPATH"), "")
             }
 
             if (isJava9OrLater()) {

@@ -12,7 +12,8 @@ enum class TargetBackend(
     JVM,
     JVM_IR(JVM),
     JS,
-    JS_IR(JS);
+    JS_IR(JS),
+    WASM;
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY
 }

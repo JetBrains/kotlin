@@ -14,3 +14,4 @@ fun asNullablePrimitive(c: AsNonNullPrimitive?) {}
 fun asNullableReference(c: AsNonNullReference?) {}
 
 // 8 checkParameterIsNotNull
+// 0 checkNotNullParameter

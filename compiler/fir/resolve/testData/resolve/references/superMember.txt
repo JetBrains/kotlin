@@ -14,7 +14,7 @@ FILE: superMember.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            R|/A.foo|()
+            this@R|/A|.R|/A.foo|()
         }
 
     }

@@ -7,7 +7,7 @@ public abstract interface TwoSuperclassesInvariantAndCovariantInferNullability :
     public abstract interface Super1 : R|kotlin/Any| {
         public abstract fun dummy(): R|kotlin/Unit|
 
-        public abstract fun foo(): R|kotlin/collections/List<kotlin/String>|
+        public abstract fun foo(): R|kotlin/collections/List<kotlin/String?>|
 
     }
 

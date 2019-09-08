@@ -12,9 +12,7 @@ import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import com.intellij.psi.impl.light.LightMethodBuilder
-import com.intellij.psi.impl.light.LightModifierList
-import com.intellij.psi.impl.light.LightParameterListBuilder
+import com.intellij.psi.impl.light.*
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
@@ -29,9 +27,10 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -177,6 +177,15 @@ fun createTypeFromCanonicalText(
     return type
 }
 
+fun tryGetPredefinedName(klass: ClassDescriptor): String? {
+
+    val sourceClass = (klass.source as? KotlinSourceElement)?.psi as? KtClassOrObject
+
+    return if (sourceClass?.isLocal == true)
+        (sourceClass.nameAsName ?: SpecialNames.NO_NAME_PROVIDED).asString()
+    else null
+}
+
 // Returns null when type is unchanged
 fun KotlinType.cleanFromAnonymousTypes(): KotlinType? {
     val returnTypeClass = constructor.declarationDescriptor as? ClassDescriptor ?: return null
@@ -309,7 +318,8 @@ internal fun KtModifierListOwner.isHiddenByDeprecation(support: KtUltraLightSupp
     return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
 }
 
-internal fun KtAnnotated.isJvmStatic(support: KtUltraLightSupport): Boolean = support.findAnnotation(this, JVM_STATIC_ANNOTATION_FQ_NAME) !== null
+internal fun KtAnnotated.isJvmStatic(support: KtUltraLightSupport): Boolean =
+    support.findAnnotation(this, JVM_STATIC_ANNOTATION_FQ_NAME) !== null
 
 internal fun KtDeclaration.simpleVisibility(): String = when {
     hasModifier(KtTokens.PRIVATE_KEYWORD) -> PsiModifier.PRIVATE

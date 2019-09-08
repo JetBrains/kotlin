@@ -63,6 +63,11 @@ dependencies {
     }
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
+
+    if (Ide.AS36.orHigher()) {
+        testRuntime(intellijPluginDep("android-layoutlib"))
+        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
+    }
 }
 
 sourceSets {
@@ -78,6 +83,18 @@ testsJar()
 projectTest(parallel = true) {
     workingDir = rootDir
     useAndroidSdk()
+
+    doFirst {
+        val mainResourceDirPath = File(project.buildDir, "resources/main").absolutePath
+        sourceSets["test"].runtimeClasspath = sourceSets["test"].runtimeClasspath.filter { file ->
+            if (!file.absolutePath.contains(mainResourceDirPath)) {
+                true
+            } else {
+                println("Remove `${file.path}` from the test runtime classpath")
+                false
+            }
+        }
+    }
 }
 
 configureFormInstrumentation()

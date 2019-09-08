@@ -18,6 +18,11 @@ import org.jetbrains.kotlin.ir.util.statements
 
 // Return the underlying function for a lambda argument without bound or default parameters or varargs.
 fun IrExpression.asSimpleLambda(): IrSimpleFunction? {
+    if (this is IrFunctionExpression) {
+        if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
+            return null
+        return function
+    }
     // A lambda is represented as a block with a function declaration and a reference to it.
     if (this !is IrBlock || statements.size != 2)
         return null

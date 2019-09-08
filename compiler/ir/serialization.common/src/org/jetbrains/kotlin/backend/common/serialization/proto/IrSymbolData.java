@@ -92,11 +92,11 @@ public final class IrSymbolData extends
             break;
           }
           case 34: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder subBuilder = null;
             if (((bitField0_ & 0x00000008) == 0x00000008)) {
               subBuilder = fqname_.toBuilder();
             }
-            fqname_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.String.PARSER, extensionRegistry);
+            fqname_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FqName.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(fqname_);
               fqname_ = subBuilder.buildPartial();
@@ -197,17 +197,17 @@ public final class IrSymbolData extends
   }
 
   public static final int FQNAME_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.String fqname_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String fqname = 4;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
    */
   public boolean hasFqname() {
     return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String fqname = 4;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.String getFqname() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqname() {
     return fqname_;
   }
 
@@ -230,7 +230,7 @@ public final class IrSymbolData extends
     kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolKind.FUNCTION_SYMBOL;
     uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
     topLevelUniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
-    fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
     descriptorReference_ = org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -422,7 +422,7 @@ public final class IrSymbolData extends
       bitField0_ = (bitField0_ & ~0x00000002);
       topLevelUniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
-      fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000008);
       descriptorReference_ = org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000010);
@@ -705,23 +705,23 @@ public final class IrSymbolData extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.String fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
      */
     public boolean hasFqname() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.String getFqname() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqname() {
       return fqname_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
      */
-    public Builder setFqname(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder setFqname(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -731,23 +731,23 @@ public final class IrSymbolData extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
      */
     public Builder setFqname(
-        org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder builderForValue) {
       fqname_ = builderForValue.build();
 
       bitField0_ |= 0x00000008;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
      */
-    public Builder mergeFqname(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder mergeFqname(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
       if (((bitField0_ & 0x00000008) == 0x00000008) &&
-          fqname_ != org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance()) {
+          fqname_ != org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance()) {
         fqname_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.String.newBuilder(fqname_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.FqName.newBuilder(fqname_).mergeFrom(value).buildPartial();
       } else {
         fqname_ = value;
       }
@@ -756,10 +756,10 @@ public final class IrSymbolData extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String fqname = 4;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqname = 4;</code>
      */
     public Builder clearFqname() {
-      fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      fqname_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000008);
       return this;

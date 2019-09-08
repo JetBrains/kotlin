@@ -43,5 +43,7 @@ enum class FirOperation(val operator: String = "???") {
         )
 
         val COMPARISONS: Set<FirOperation> = EnumSet.of(LT, GT, LT_EQ, GT_EQ)
+
+        val TYPES: Set<FirOperation> = EnumSet.of(IS, NOT_IS, AS, SAFE_AS)
     }
 }

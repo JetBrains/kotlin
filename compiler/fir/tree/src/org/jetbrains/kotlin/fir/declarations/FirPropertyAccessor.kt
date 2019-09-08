@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirPropertyAccessor : @VisitedSupertype FirFunction, FirTypedDeclaration {
+interface FirPropertyAccessor : @VisitedSupertype FirFunction<FirPropertyAccessor> {
     val isGetter: Boolean
 
     val isSetter: Boolean get() = !isGetter
@@ -18,15 +19,13 @@ interface FirPropertyAccessor : @VisitedSupertype FirFunction, FirTypedDeclarati
 
     val visibility: Visibility get() = status.visibility
 
+    override val symbol: FirPropertyAccessorSymbol
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitPropertyAccessor(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirTypedDeclaration>.acceptChildren(visitor, data)
-        for (parameter in valueParameters) {
-            parameter.accept(visitor, data)
-        }
-        body?.accept(visitor, data)
+        super.acceptChildren(visitor, data)
         status.accept(visitor, data)
     }
 }

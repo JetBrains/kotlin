@@ -74,8 +74,8 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     private val LOG = Logger.getInstance(KotlinCopyPasteReferenceProcessor::class.java)
 
     private val IGNORE_REFERENCES_INSIDE: Array<Class<out KtElement>> = arrayOf(
-            KtImportList::class.java,
-            KtPackageDirective::class.java
+        KtImportList::class.java,
+        KtPackageDirective::class.java
     )
 
     override fun extractTransferableData(content: Transferable): List<KotlinReferenceTransferableData> {
@@ -85,10 +85,8 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
                 val data = content.getTransferData(flavor) as? KotlinReferenceTransferableData ?: return listOf()
                 // copy to prevent changing of original by convertLineSeparators
                 return listOf(data.clone())
-            }
-            catch (ignored: UnsupportedFlavorException) {
-            }
-            catch (ignored: IOException) {
+            } catch (ignored: UnsupportedFlavorException) {
+            } catch (ignored: IOException) {
             }
         }
 
@@ -96,23 +94,21 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     }
 
     override fun collectTransferableData(
-            file: PsiFile,
-            editor: Editor,
-            startOffsets: IntArray,
-            endOffsets: IntArray
+        file: PsiFile,
+        editor: Editor,
+        startOffsets: IntArray,
+        endOffsets: IntArray
     ): List<KotlinReferenceTransferableData> {
         if (file !is KtFile || DumbService.getInstance(file.getProject()).isDumb) return listOf()
 
         val collectedData = try {
             collectReferenceData(file, startOffsets, endOffsets)
-        }
-        catch (e: ProcessCanceledException) {
+        } catch (e: ProcessCanceledException) {
             // supposedly analysis can only be canceled from another thread
             // do not log ProcessCanceledException as it is rethrown by IdeaLogger and code won't be copied
             LOG.debug("ProcessCanceledException while analyzing references in ${file.getName()}. References can't be processed.")
             return listOf()
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             LOG.error("Exception in processing references for copy paste in file ${file.getName()}}", e)
             return listOf()
         }
@@ -123,13 +119,13 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     }
 
     fun collectReferenceData(
-            file: KtFile,
-            startOffsets: IntArray,
-            endOffsets: IntArray
+        file: KtFile,
+        startOffsets: IntArray,
+        endOffsets: IntArray
     ): List<KotlinReferenceData> {
         val ranges = toTextRanges(startOffsets, endOffsets)
-        val elementsByRange = ranges.associateBy({ it }, {
-            file.elementsInRange(it).filter { it is KtElement || it is KDocElement }
+        val elementsByRange = ranges.associateBy({ it }, { textRange ->
+            file.elementsInRange(textRange).filter { it is KtElement || it is KDocElement }
         })
 
         val allElementsToResolve = elementsByRange.values.flatten().flatMap { it.collectDescendantsOfType<KtElement>() }
@@ -148,12 +144,12 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     }
 
     private fun MutableCollection<KotlinReferenceData>.addReferenceDataInsideElement(
-            element: PsiElement,
-            file: KtFile,
-            startOffset: Int,
-            startOffsets: IntArray,
-            endOffsets: IntArray,
-            bindingContext: BindingContext
+        element: PsiElement,
+        file: KtFile,
+        startOffset: Int,
+        startOffsets: IntArray,
+        endOffsets: IntArray,
+        bindingContext: BindingContext
     ) {
         if (PsiTreeUtil.getNonStrictParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
@@ -167,8 +163,8 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
             for (descriptor in descriptors) {
                 val effectiveReferencedDescriptors = DescriptorToSourceUtils.getEffectiveReferencedDescriptors(descriptor).asSequence()
                 val declaration = effectiveReferencedDescriptors
-                        .map { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
-                        .singleOrNull()
+                    .map { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
+                    .singleOrNull()
                 if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
 
                 if (!reference.canBeResolvedViaImport(descriptor, bindingContext)) continue
@@ -184,17 +180,17 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     }
 
     private data class ReferenceToRestoreData(
-            val reference: KtReference,
-            val refData: KotlinReferenceData
+        val reference: KtReference,
+        val refData: KotlinReferenceData
     )
 
     override fun processTransferableData(
-            project: Project,
-            editor: Editor,
-            bounds: RangeMarker,
-            caretOffset: Int,
-            indented: Ref<Boolean>,
-            values: List<KotlinReferenceTransferableData>
+        project: Project,
+        editor: Editor,
+        bounds: RangeMarker,
+        caretOffset: Int,
+        indented: Ref<Boolean>,
+        values: List<KotlinReferenceTransferableData>
     ) {
         if (DumbService.getInstance(project).isDumb) return
 
@@ -220,14 +216,17 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         }
     }
 
-    private fun findReferencesToRestore(file: PsiFile, blockStart: Int, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {
+    private fun findReferencesToRestore(
+        file: PsiFile,
+        blockStart: Int,
+        referenceData: Array<out KotlinReferenceData>
+    ): List<ReferenceToRestoreData> {
         if (file !is KtFile) return listOf()
 
         val references = referenceData.map { it to findReference(it, file, blockStart) }
         val bindingContext = try {
             file.getResolutionFacade().analyze(references.mapNotNull { it.second?.element }, BodyResolveMode.PARTIAL)
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             LOG.error("Failed to analyze references after copy paste", e)
             return emptyList()
         }
@@ -258,11 +257,11 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     }
 
     private fun createReferenceToRestoreData(
-            reference: KtReference,
-            refData: KotlinReferenceData,
-            file: KtFile,
-            fileResolutionScope: LexicalScope,
-            bindingContext: BindingContext
+        reference: KtReference,
+        refData: KotlinReferenceData,
+        file: KtFile,
+        fileResolutionScope: LexicalScope,
+        bindingContext: BindingContext
     ): ReferenceToRestoreData? {
         val originalFqName = FqName(refData.fqName)
         val name = originalFqName.shortName()
@@ -272,8 +271,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
                 if (fileResolutionScope.findFunction(name, NoLookupLocation.FROM_IDE) { it.importableFqName == originalFqName } != null) {
                     return null // already imported
                 }
-            }
-            else if (refData.kind == KotlinReferenceData.Kind.PROPERTY) {
+            } else if (refData.kind == KotlinReferenceData.Kind.PROPERTY) {
                 if (fileResolutionScope.findVariable(name, NoLookupLocation.FROM_IDE) { it.importableFqName == originalFqName } != null) {
                     return null // already imported
                 }
@@ -282,9 +280,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
 
         val referencedDescriptors = resolveReference(reference, bindingContext)
         val referencedFqNames = referencedDescriptors
-                .filterNot { ErrorUtils.isError(it) }
-                .mapNotNull { it.importableFqName }
-                .toSet()
+            .filterNot { ErrorUtils.isError(it) }
+            .mapNotNull { it.importableFqName }
+            .toSet()
         if (referencedFqNames.singleOrNull() == originalFqName) return null
 
         // check that descriptor to import exists and is accessible from the current module
@@ -299,7 +297,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         val element = reference.element
         if (element is KtNameReferenceExpression && reference is KtSimpleNameReference) {
             bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element]
-                    ?.let { return listOf(it) }
+                ?.let { return listOf(it) }
         }
 
         return reference.resolveToDescriptors(bindingContext)
@@ -310,8 +308,8 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         val smartPointerManager = SmartPointerManager.getInstance(file.project)
 
         data class BindingRequest(
-                val pointer: SmartPsiElementPointer<KtSimpleNameExpression>,
-                val fqName: FqName
+            val pointer: SmartPsiElementPointer<KtSimpleNameExpression>,
+            val fqName: FqName
         )
 
         val bindingRequests = ArrayList<BindingRequest>()
@@ -324,8 +322,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
                 if (reference is KtSimpleNameReference) {
                     val pointer = smartPointerManager.createSmartPsiElementPointer(reference.element, file)
                     bindingRequests.add(BindingRequest(pointer, fqName))
-                }
-                else if (reference is KDocReference) {
+                } else if (reference is KDocReference) {
                     descriptorsToImport.addAll(findImportableDescriptors(fqName, file))
                 }
             } else {
@@ -337,8 +334,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
             importHelper.importDescriptor(file, descriptor)
         }
         for ((pointer, fqName) in bindingRequests) {
-            val reference = pointer.element!!.mainReference
-            reference.bindToFqName(fqName, KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
+            pointer.element?.mainReference?.bindToFqName(fqName, KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
         }
         performDelayedRefactoringRequests(file.project)
     }
@@ -350,10 +346,13 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         }
     }
 
-    private fun findCallableToImport(fqName: FqName, file: KtFile): CallableDescriptor?
-            = findImportableDescriptors(fqName, file).firstIsInstanceOrNull<CallableDescriptor>()
+    private fun findCallableToImport(fqName: FqName, file: KtFile): CallableDescriptor? =
+        findImportableDescriptors(fqName, file).firstIsInstanceOrNull()
 
-    private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
+    private fun showRestoreReferencesDialog(
+        project: Project,
+        referencesToRestore: List<ReferenceToRestoreData>
+    ): Collection<ReferenceToRestoreData> {
         val fqNames = referencesToRestore.asSequence().map { it.refData.fqName }.toSortedSet()
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
@@ -383,6 +382,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     }
 
     companion object {
-        @get:TestOnly var declarationsToImportSuggested: Collection<String> = emptyList()
+        @get:TestOnly
+        var declarationsToImportSuggested: Collection<String> = emptyList()
     }
 }

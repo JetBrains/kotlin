@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -21,7 +23,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -54,18 +55,17 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
         get() = (this as? IrPropertyReference)?.field
 
     private val IrSimpleFunction.signature: String
-        get() = context.state.typeMapper.mapSignatureSkipGeneric(collectRealOverrides().first().descriptor).toString()
+        get() = context.methodSignatureMapper.mapSignatureSkipGeneric(collectRealOverrides().first()).toString()
 
     // Plain Java fields do not have a getter, but can be referenced nonetheless. The signature should be the one
     // that a getter would have, if it existed.
     private val IrField.signature: String
-        get() = "${JvmAbi.getterName(name.asString())}()${context.state.typeMapper.mapReturnType(descriptor)}"
+        get() = "${JvmAbi.getterName(name.asString())}()${context.methodSignatureMapper.mapReturnType(this)}"
 
     private val IrMemberAccessExpression.signature: String
-        get() = getter?.let { getter -> localPropertyIndices[getter]?.let { "<v#$it>" } } ?: getter?.owner?.signature ?: field!!.owner.signature
-
-    private val IrMemberAccessExpression.symbol: IrSymbol
-        get() = getter?.owner?.symbol ?: field!!.owner.symbol
+        get() = getter?.let { getter ->
+            localPropertyIndices[getter]?.let { "<v#$it>" }
+        } ?: getter?.owner?.signature ?: field!!.owner.signature
 
     private val arrayItemGetter =
         context.ir.symbols.array.owner.functions.single { it.name.asString() == "get" }
@@ -321,11 +321,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
         if (kProperties.isNotEmpty()) {
             irClass.declarations.add(0, kPropertiesField.apply {
                 parent = irClass
-                initializer = context.createIrBuilder(irClass.symbol).run {
+                initializer = context.createJvmIrBuilder(irClass.symbol).run {
                     val initializers = kProperties.values.sortedBy { it.index }.map { it.initializer }
-                    irExprBody(irCall(this@PropertyReferenceLowering.context.ir.symbols.arrayOf).apply {
-                        putValueArgument(0, IrVarargImpl(startOffset, endOffset, kPropertiesFieldType, kPropertyStarType, initializers))
-                    })
+                    irExprBody(irArrayOf(kPropertiesFieldType, initializers))
                 }
             })
 

@@ -5,16 +5,16 @@ FILE: B.kt
         }
 
         public final override fun foo(): R|B| {
-            ^foo this#
+            ^foo this@R|/B|
         }
 
         public final fun bar(): R|B| {
-            ^bar this#
+            ^bar this@R|/B|
         }
 
         public final fun test(): R|kotlin/Unit| {
-            R|/B.foo|()
-            R|/B.bar|()
+            this@R|/B|.R|/B.foo|()
+            this@R|/B|.R|/B.bar|()
         }
 
     }

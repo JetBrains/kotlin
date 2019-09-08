@@ -8,17 +8,12 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.AbstractCopyTask
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
-import java.io.File
 
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
@@ -52,11 +47,11 @@ fun Project.removeArtifacts(configuration: Configuration, task: Task) {
 }
 
 fun Project.noDefaultJar() {
-    tasks.findByName("jar")?.let { defaultJarTask ->
-        defaultJarTask.enabled = false
-        defaultJarTask.actions = emptyList()
+    tasks.named("jar").configure {
+        enabled = false
+        actions = emptyList()
         configurations.forEach { cfg ->
-            removeArtifacts(cfg, defaultJarTask)
+            removeArtifacts(cfg, this)
         }
     }
 }
@@ -69,12 +64,11 @@ fun Project.runtimeJarArtifactBy(task: Task, artifactRef: Any, body: Configurabl
     }
 }
 
-fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
-    extra["runtimeJarTask"] = task
-    tasks.findByName("jar")?.let { defaultJarTask ->
-        removeArtifacts(configurations.getOrCreate("archives"), defaultJarTask)
+fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {}): TaskProvider<T> {
+    tasks.named<Jar>("jar").configure {
+        removeArtifacts(configurations.getOrCreate("archives"), this)
     }
-    return task.apply {
+    task.configure {
         configurations.findByName("embedded")?.let { embedded ->
             dependsOn(embedded)
             from {
@@ -86,9 +80,10 @@ fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
         body()
         project.runtimeJarArtifactBy(this, this)
     }
+    return task
 }
 
-fun Project.runtimeJar(body: Jar.() -> Unit = {}): Jar = runtimeJar(getOrCreateTask("jar", body), { })
+fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = runtimeJar(getOrCreateTask("jar", body), { })
 
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     val task = tasks.register<Jar>("sourcesJar") {
@@ -116,7 +111,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     return task
 }
 
-fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar = getOrCreateTask("javadocJar") {
+fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = getOrCreateTask("javadocJar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     classifier = "javadoc"
     tasks.findByName("javadoc")?.let { it as Javadoc }?.takeIf { it.enabled }?.let {
@@ -150,11 +145,6 @@ fun Project.publish(body: Upload.() -> Unit = {}): Upload {
         body()
     }
 }
-
-private fun Project.runtimeJarTaskIfExists(): Task? =
-    if (extra.has("runtimeJarTask")) extra["runtimeJarTask"] as Task
-    else tasks.findByName("jar")
-
 
 fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
 

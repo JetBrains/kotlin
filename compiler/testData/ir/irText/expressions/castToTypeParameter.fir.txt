@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun castExtFun <T> (): T of <root>.castExtFun declared in <root>'
         TYPE_OP type=T of <root>.castExtFun origin=CAST typeOperand=T of <root>.castExtFun
-          ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
+          GET_VAR '<this>: kotlin.Any declared in <root>.castExtFun' type=kotlin.Any origin=null
   PROPERTY name:castExtVal visibility:public modality:FINAL [val]
     FUN name:<get-castExtVal> visibility:public modality:FINAL <> () returnType:T of <uninitialized parent>
       correspondingProperty: PROPERTY name:castExtVal visibility:public modality:FINAL [val]
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun castMemberExtFun (): T of <root>.Host declared in <root>.Host'
           TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
-            ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
+            GET_VAR '<this>: kotlin.Any declared in <root>.Host.castMemberExtFun' type=kotlin.Any origin=null
     FUN name:castGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host, $receiver:kotlin.Any) returnType:TF of <root>.Host.castGenericMemberExtFun
       TYPE_PARAMETER name:TF index:0 variance: superTypes:[]
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun castGenericMemberExtFun <TF> (): TF of <root>.Host.castGenericMemberExtFun declared in <root>.Host'
           TYPE_OP type=TF of <root>.Host.castGenericMemberExtFun origin=CAST typeOperand=TF of <root>.Host.castGenericMemberExtFun
-            ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
+            GET_VAR '<this>: kotlin.Any declared in <root>.Host.castGenericMemberExtFun' type=kotlin.Any origin=null
     PROPERTY name:castMemberExtVal visibility:public modality:FINAL [val]
       FUN name:<get-castMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:T of <root>.Host
         correspondingProperty: PROPERTY name:castMemberExtVal visibility:public modality:FINAL [val]
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-castMemberExtVal> (): T of <root>.Host declared in <root>.Host'
             TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
-              ERROR_CALL 'Unresolved reference: this#' type=<root>.Host<T of <root>.Host>
+              GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host<T of <root>.Host> origin=null
     PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val]
       FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:TV of <uninitialized parent>
         correspondingProperty: PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val]
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-castGenericMemberExtVal> (): TV of <uninitialized parent> declared in <root>.Host'
             TYPE_OP type=TV of <uninitialized parent> origin=CAST typeOperand=TV of <uninitialized parent>
-              ERROR_CALL 'Unresolved reference: this#' type=<root>.Host<T of <root>.Host>
+              GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host<T of <root>.Host> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

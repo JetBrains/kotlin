@@ -12,8 +12,8 @@ FILE: lists.kt
 
     }
     public final fun R|kotlin/collections/List<kotlin/String>|.convert(): R|MyStringList| {
-        ^convert (this# as R|MyStringList|)
+        ^convert (this@R|/convert| as R|MyStringList|)
     }
     public final fun ret(l: R|kotlin/collections/MutableList<kotlin/String>|): R|MyMutableStringList| {
-        ^ret (this# as R|MyMutableStringList|)
+        ^ret (R|<local>/l| as R|MyMutableStringList|)
     }

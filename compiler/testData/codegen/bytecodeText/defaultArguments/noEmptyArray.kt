@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 // There is one ANEWARRAY instruction here, to generate the default parameter value.
 fun default(vararg s: String = arrayOf("OK")) = s[0]
 

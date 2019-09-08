@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -24,7 +24,7 @@ sealed class FirImplicitBuiltinTypeRef(
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 
-    override val type: ConeKotlinType = ConeClassTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, isNullable)
+    override val type: ConeClassLikeType = ConeClassTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, isNullable)
 }
 
 class FirImplicitUnitTypeRef(
@@ -54,6 +54,10 @@ class FirImplicitBooleanTypeRef(
 class FirImplicitNothingTypeRef(
     psi: PsiElement?
 ) : FirImplicitBuiltinTypeRef(psi, StandardClassIds.Nothing)
+
+class FirImplicitNullableNothingTypeRef(
+    psi: PsiElement?
+) : FirImplicitBuiltinTypeRef(psi, StandardClassIds.Nothing, isNullable = true)
 
 class FirImplicitStringTypeRef(
     psi: PsiElement?

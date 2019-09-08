@@ -1,5 +1,5 @@
-public final fun array(a: R|kotlin/Array<kotlin/Int>|): R|ft<kotlin/Array<ft<kotlin/Int, kotlin/Int?>>, kotlin/Array<out ft<kotlin/Int, kotlin/Int?>>?>|!
+public final fun array(a: R|kotlin/Array<kotlin/Int>|): R|ft<kotlin/Array<ft<kotlin/Int, kotlin/Int?>!>, kotlin/Array<out ft<kotlin/Int, kotlin/Int?>!>?>!|
 
-public final fun list(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|!
+public final fun list(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>!>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>!>?>!|
 
-public final fun printStream(): R|ft<java/io/PrintStream, java/io/PrintStream?>|!
+public final fun printStream(): R|ft<java/io/PrintStream, java/io/PrintStream?>!|

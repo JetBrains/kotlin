@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/kt16904.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:<root>.B visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:<root>.B visibility:private [final]
         EXPRESSION_BODY
           CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B
@@ -14,10 +14,10 @@ FILE fqName:<root> fileName:/kt16904.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): <root>.B declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.B visibility:public [final]' type=<root>.B origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.B visibility:private [final]' type=<root>.B origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-x>' type=<root>.A origin=null
     PROPERTY name:y visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
@@ -25,14 +25,14 @@ FILE fqName:<root> fileName:/kt16904.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-y>' type=<root>.A origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-y>' type=<root>.A origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.A.<set-y>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
@@ -94,18 +94,12 @@ FILE fqName:<root> fileName:/kt16904.kt
                 $this: GET_VAR 'val tmp1_this: <root>.Test1 [val] declared in <root>.Test1.<init>' type=<root>.Test1 origin=null
               other: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
-      FIELD FAKE_OVERRIDE name:x type:<root>.B visibility:public [final]
-        overridden:
-          FIELD PROPERTY_BACKING_FIELD name:x type:<root>.B visibility:public [final]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
         overridden:
           public final fun <get-x> (): <root>.B declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.A
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
-      FIELD FAKE_OVERRIDE name:y type:kotlin.Int visibility:public
-        overridden:
-          FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
         overridden:

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.nj2k.conversions.parentOfType
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.getDisplayName
 import org.jetbrains.kotlin.nj2k.tree.*

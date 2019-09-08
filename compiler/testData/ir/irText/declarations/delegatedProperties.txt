@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:map visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any> declared in <root>.C.<init>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.collections.MutableMap<kotlin.String, kotlin.Any>
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-map> (): kotlin.collections.MutableMap<kotlin.String, kotlin.Any> declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:public [final]' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-map>' type=<root>.C origin=null
     PROPERTY name:test2 visibility:public modality:FINAL [delegated,val]
       FIELD DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]

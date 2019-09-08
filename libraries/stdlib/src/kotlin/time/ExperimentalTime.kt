@@ -8,9 +8,10 @@ package kotlin.time
 import kotlin.annotation.AnnotationTarget.*
 
 /**
- * This annotation marks the experimental standard library API for measuring time and working with durations.
+ * This annotation marks the experimental preview of the standard library API for measuring time and working with durations.
  *
- * > Beware using the annotated API especially if you're developing a library, since your library might become binary incompatible
+ * > Note that this API is in a preview state and has a very high chance of being changed in the future.
+ * Do not use it if you develop a library since your library will become binary incompatible
  * with the future versions of the standard library.
  *
  * Any usage of a declaration annotated with `@ExperimentalTime` must be accepted either by
@@ -18,6 +19,7 @@ import kotlin.annotation.AnnotationTarget.*
  * or by using the compiler argument `-Xuse-experimental=kotlin.time.ExperimentalTime`.
  */
 @Experimental(level = Experimental.Level.ERROR)
+@MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 @Target(
     CLASS,

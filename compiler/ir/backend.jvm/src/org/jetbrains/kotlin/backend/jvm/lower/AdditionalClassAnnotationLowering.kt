@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -47,8 +50,7 @@ internal val additionalClassAnnotationPhase = makeIrFilePhase(
 )
 
 private class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-
-    val typeMapper = context.state.typeMapper
+    private val jvmTarget = context.state.target
 
     // TODO: import IR structures from the library?
 
@@ -112,8 +114,6 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     private val etField = buildEnumEntry(elementTypeEnum, "FIELD")
     private val etLocalVariable = buildEnumEntry(elementTypeEnum, "LOCAL_VARIABLE")
     private val etMethod = buildEnumEntry(elementTypeEnum, "METHOD")
-    private val etModule = buildEnumEntry(elementTypeEnum, "MODULE")
-    private val etPackage = buildEnumEntry(elementTypeEnum, "PACKAGE")
     private val etParameter = buildEnumEntry(elementTypeEnum, "PARAMETER")
     private val etType = buildEnumEntry(elementTypeEnum, "TYPE")
     private val etTypeParameter = buildEnumEntry(elementTypeEnum, "TYPE_PARAMETER")
@@ -209,8 +209,8 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
     private fun generateTargetAnnotation(irClass: IrClass) {
         if (irClass.hasAnnotation(FqName("java.lang.annotation.Target"))) return
-        val annotationTargetMap = annotationTargetMaps[typeMapper.jvmTarget]
-            ?: throw AssertionError("No annotation target map for JVM target ${typeMapper.jvmTarget}")
+        val annotationTargetMap = annotationTargetMaps[jvmTarget]
+            ?: throw AssertionError("No annotation target map for JVM target $jvmTarget")
 
         val targets = irClass.applicableTargetSet() ?: return
         val javaTargets = targets.mapNotNull { annotationTargetMap[it] }

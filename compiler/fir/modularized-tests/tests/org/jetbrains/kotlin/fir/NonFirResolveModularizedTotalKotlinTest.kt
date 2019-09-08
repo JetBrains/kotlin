@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import kotlin.system.measureNanoTime
 
-private val PASSES = 1
 
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
@@ -83,7 +82,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
 
-    override fun afterPass() {}
+    override fun afterPass(pass: Int) {}
     override fun beforePass() {}
 
     fun testTotalKotlin() {

@@ -5,7 +5,7 @@ FILE: Test.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            R|/Inheritor.foo|(String(abc), Int(456))
+            (this@R|/Inheritor|, this@R|/Tester|).R|/Inheritor.foo|(String(abc), Int(456))
         }
 
     }

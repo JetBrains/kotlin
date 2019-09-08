@@ -1,0 +1,27 @@
+FILE: intersectionTypes.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final class Clazz1 : R|A|, R|B| {
+        public constructor(): R|Clazz1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Clazz2 : R|A|, R|B| {
+        public constructor(): R|Clazz2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <K> select(x: R|K|, y: R|K|): R|K|
+    public final fun test(): R|it(A & B)| {
+        ^test R|/select|<R|it(A & B)|>(R|/Clazz1.Clazz1|(), R|/Clazz2.Clazz2|())
+    }
+    public final fun <T> makeNull(x: R|T|): R|T?| {
+        ^makeNull Null(null)
+    }
+    public final fun testNull(): R|it(A? & B?)| {
+        ^testNull R|/makeNull|<R|it(A & B)|>(R|/select|<R|it(A & B)|>(R|/Clazz1.Clazz1|(), R|/Clazz2.Clazz2|()))
+    }
