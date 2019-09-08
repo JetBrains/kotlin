@@ -14,8 +14,10 @@ import java.awt.event.*;
 public final class ShowSplashAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    final Splash splash = new Splash(ApplicationInfoImpl.getShadowInstance());
-    final SplashListener listener = new SplashListener(splash);
+    Splash splash = new Splash(ApplicationInfoImpl.getShadowInstance());
+    splash.doShow();
+
+    SplashListener listener = new SplashListener(splash);
     splash.addFocusListener(listener);
     splash.addKeyListener(listener);
     splash.addMouseListener(listener);
