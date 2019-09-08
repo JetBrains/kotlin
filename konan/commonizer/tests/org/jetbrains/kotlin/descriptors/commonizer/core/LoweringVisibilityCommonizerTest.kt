@@ -20,7 +20,7 @@ class LoweringVisibilityCommonizerTest : AbstractCommonizerTest<Visibility, Visi
     @Test
     fun internalOnly() = doTestSuccess(INTERNAL, INTERNAL, INTERNAL, INTERNAL)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun privateOnly() = doTestFailure(PRIVATE)
 
     @Test
@@ -29,13 +29,13 @@ class LoweringVisibilityCommonizerTest : AbstractCommonizerTest<Visibility, Visi
     @Test
     fun publicAndInternal() = doTestSuccess(INTERNAL, PUBLIC, INTERNAL, PUBLIC)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun protectedAndInternal() = doTestFailure(PUBLIC, INTERNAL, PROTECTED)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndPrivate() = doTestFailure(PUBLIC, INTERNAL, PRIVATE)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun somethingUnexpected() = doTestFailure(PUBLIC, LOCAL)
 
     override fun createCommonizer() = VisibilityCommonizer.lowering()

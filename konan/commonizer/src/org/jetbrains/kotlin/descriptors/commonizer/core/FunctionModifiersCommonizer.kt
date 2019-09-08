@@ -19,7 +19,7 @@ private class DefaultFunctionModifiersCommonizer : FunctionModifiersCommonizer {
     private var error = false
 
     override val result: FunctionModifiers
-        get() = modifiers?.takeIf { !error } ?: error("Function modifiers setter can't be commonized")
+        get() = modifiers?.takeIf { !error } ?: throw IllegalCommonizerStateException()
 
     override fun commonizeWith(next: SimpleFunctionDescriptor): Boolean {
         if (error)

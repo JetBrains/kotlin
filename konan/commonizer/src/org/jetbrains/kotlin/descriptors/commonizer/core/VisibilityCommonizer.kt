@@ -19,7 +19,7 @@ abstract class VisibilityCommonizer : Commonizer<Visibility, Visibility> {
 
     override val result: Visibility
         get() {
-            return temp?.takeIf { it != Visibilities.UNKNOWN } ?: error("Visibility can't be commonized")
+            return temp?.takeIf { it != Visibilities.UNKNOWN } ?: throw IllegalCommonizerStateException()
         }
 
     override fun commonizeWith(next: Visibility): Boolean {

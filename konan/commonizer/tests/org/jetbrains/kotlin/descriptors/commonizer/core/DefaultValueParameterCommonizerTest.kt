@@ -33,21 +33,21 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<ValueParamete
         create("org.sample.Foo").toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentReturnTypes1() = doTestFailure(
         create("kotlin.String").toMockParam(),
         create("kotlin.String").toMockParam(),
         create("kotlin.Int").toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentReturnTypes2() = doTestFailure(
         create("kotlin.String").toMockParam(),
         create("kotlin.String").toMockParam(),
         create("org.sample.Foo").toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentReturnTypes3() = doTestFailure(
         create("org.sample.Foo").toMockParam(),
         create("org.sample.Foo").toMockParam(),
@@ -70,14 +70,14 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<ValueParamete
         create("org.sample.Foo", hasVarargElementType = true).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun someDoesNotHaveVararg1() = doTestFailure(
         create("kotlin.String", hasVarargElementType = true).toMockParam(),
         create("kotlin.String", hasVarargElementType = true).toMockParam(),
         create("kotlin.String", hasVarargElementType = false).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun someDoesNotHaveVararg2() = doTestFailure(
         create("org.sample.Foo", hasVarargElementType = false).toMockParam(),
         create("org.sample.Foo", hasVarargElementType = false).toMockParam(),
@@ -132,7 +132,7 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<ValueParamete
         create("kotlin.String", isNoinline = true).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun anyDeclaresDefaultValue() = doTestFailure(
         create("kotlin.String").toMockParam(declaresDefaultValue = false),
         create("kotlin.String").toMockParam(declaresDefaultValue = false),

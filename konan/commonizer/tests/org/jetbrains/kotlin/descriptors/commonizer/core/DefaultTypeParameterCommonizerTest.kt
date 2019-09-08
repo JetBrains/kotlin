@@ -35,49 +35,49 @@ class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<TypeParameterD
         create(isReified = false).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun someAreReified1() = doTestFailure(
         create(isReified = true).toMockParam(),
         create(isReified = true).toMockParam(),
         create(isReified = false).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun someAreReified2() = doTestFailure(
         create(isReified = false).toMockParam(),
         create(isReified = false).toMockParam(),
         create(isReified = true).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentVariance1() = doTestFailure(
         create(variance = Variance.IN_VARIANCE).toMockParam(),
         create(variance = Variance.IN_VARIANCE).toMockParam(),
         create(variance = Variance.OUT_VARIANCE).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentVariance2() = doTestFailure(
         create(variance = Variance.OUT_VARIANCE).toMockParam(),
         create(variance = Variance.OUT_VARIANCE).toMockParam(),
         create(variance = Variance.INVARIANT).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds1() = doTestFailure(
         create(upperBounds = listOf("kotlin.String")).toMockParam(),
         create(upperBounds = listOf("kotlin.String")).toMockParam(),
         create(upperBounds = listOf("kotlin.Int")).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds2() = doTestFailure(
         create(upperBounds = listOf("kotlin.String", "kotlin.Int")).toMockParam(),
         create(upperBounds = listOf("kotlin.String", "kotlin.Int")).toMockParam(),
         create(upperBounds = listOf("kotlin.String")).toMockParam()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds3() = doTestFailure(
         create(upperBounds = listOf("kotlin.String", "kotlin.Int")).toMockParam(),
         create(upperBounds = listOf("kotlin.String", "kotlin.Int")).toMockParam(),

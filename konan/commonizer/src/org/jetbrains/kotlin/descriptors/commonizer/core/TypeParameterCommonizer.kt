@@ -34,7 +34,7 @@ private class DefaultTypeParameterCommonizer : TypeParameterCommonizer {
 
     override val result: TypeParameter
         get() = when (state) {
-            State.EMPTY, State.ERROR -> error("Can't commonize type parameter")
+            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
             State.IN_PROGRESS -> CommonTypeParameter(
                 name = name,
                 isReified = isReified,
@@ -66,7 +66,6 @@ private class DefaultTypeParameterCommonizer : TypeParameterCommonizer {
 }
 
 private class TypeParameterUpperBoundsCommonizer : AbstractListCommonizer<KotlinType, UnwrappedType>(
-    subject = "type parameter upper bounds",
     singleElementCommonizerFactory = { TypeCommonizer.default() }
 )
 
@@ -79,6 +78,5 @@ interface TypeParameterListCommonizer : Commonizer<List<TypeParameterDescriptor>
 private class DefaultTypeParameterListCommonizer :
     TypeParameterListCommonizer,
     AbstractNamedListCommonizer<TypeParameterDescriptor, TypeParameter>(
-        subject = "type parameters",
         singleElementCommonizerFactory = { TypeParameterCommonizer.default() }
     )

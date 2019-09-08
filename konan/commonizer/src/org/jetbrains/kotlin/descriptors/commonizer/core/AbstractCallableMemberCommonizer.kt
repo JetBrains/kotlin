@@ -16,7 +16,7 @@ abstract class AbstractCallableMemberCommonizer<T : CallableMemberDescriptor, R:
         IN_PROGRESS
     }
 
-    protected var name: Name? = null
+    protected lateinit var name: Name
     protected val modality = ModalityCommonizer.default()
     // TODO: visibility - what if virtual declaration?
     protected val visibility = VisibilityCommonizer.lowering()
@@ -30,7 +30,7 @@ abstract class AbstractCallableMemberCommonizer<T : CallableMemberDescriptor, R:
         if (state == State.ERROR)
             return false
 
-        if (name == null)
+        if (state == State.EMPTY)
             name = next.name
 
         val result = canBeCommonized(next)

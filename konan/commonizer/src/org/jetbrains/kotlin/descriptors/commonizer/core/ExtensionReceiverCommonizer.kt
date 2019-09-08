@@ -23,12 +23,12 @@ private class DefaultExtensionReceiverCommonizer : ExtensionReceiverCommonizer {
     }
 
     private var state = State.EMPTY
-    private var receiverType: TypeCommonizer? = null
+    private lateinit var receiverType: TypeCommonizer
 
     override val result: UnwrappedType?
         get() = when (state) {
-            State.EMPTY, State.ERROR -> error("Receiver parameter type can't be commonized")
-            State.WITH_RECEIVER -> receiverType!!.result
+            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
+            State.WITH_RECEIVER -> receiverType.result
             State.WITHOUT_RECEIVER -> null // null receiverType means there is no extension receiver
         }
 
@@ -47,5 +47,5 @@ private class DefaultExtensionReceiverCommonizer : ExtensionReceiverCommonizer {
     }
 
     private fun doCommonizeWith(receiverParameter: ReceiverParameterDescriptor) =
-        if (receiverType!!.commonizeWith(receiverParameter.type)) State.WITH_RECEIVER else State.ERROR
+        if (receiverType.commonizeWith(receiverParameter.type)) State.WITH_RECEIVER else State.ERROR
 }

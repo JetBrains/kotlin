@@ -28,12 +28,12 @@ private class DefaultTypeCommonizer : TypeCommonizer {
     }
 
     private var state = State.EMPTY
-    private var temp: UnwrappedType? = null
+    private lateinit var temp: UnwrappedType
 
     override val result: UnwrappedType
         get() = when (state) {
-            State.EMPTY, State.ERROR -> error("Can't commonize type")
-            State.IN_PROGRESS -> temp!!
+            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
+            State.IN_PROGRESS -> temp
         }
 
     override fun commonizeWith(next: KotlinType): Boolean {
@@ -45,7 +45,7 @@ private class DefaultTypeCommonizer : TypeCommonizer {
             }
             // TODO: maybe cache type comparison results?
             State.IN_PROGRESS -> {
-                if (!areTypesEqual(temp!!, next.unwrap())) State.ERROR else State.IN_PROGRESS
+                if (!areTypesEqual(temp, next.unwrap())) State.ERROR else State.IN_PROGRESS
             }
         }
 
@@ -89,11 +89,10 @@ private fun areAbbreviatedTypesEqual(a: SimpleType, aExpanded: SimpleType, b: Si
         // N.B. only for descriptors that represent classes or type aliases, but not type parameters:
 
         val aFqName = aDescriptor.fqNameSafe
-        val bFqName = bDescriptor.fqNameSafe
 
         aFqName.isUnderStandardKotlinPackages
                 // make sure that FQ names of abbreviated types (e.g. representing type aliases) are equal
-                && aFqName == bFqName
+                && aFqName == bDescriptor.fqNameSafe
                 // if classes are from the standard Kotlin packages, compare them only by type constructors
                 // effectively, this includes 1) comparison of FQ names and 2) number of type constructor parameters
                 // see org.jetbrains.kotlin.types.AbstractClassTypeConstructor.equals() for details
@@ -110,9 +109,7 @@ private fun areAbbreviatedTypesEqual(a: SimpleType, aExpanded: SimpleType, b: Si
     if (!descriptorsCanBeCommonized)
         return false
 
-    if (a.arguments.size != b.arguments.size)
-        return false
-
+    // N.B. both lists of arguments are already known to be of the same size
     for (i in 0 until a.arguments.size) {
         val aArg = a.arguments[i]
         val bArg = b.arguments[i]
@@ -170,7 +167,7 @@ private fun canBeCommonized(a: TypeAliasDescriptor, b: TypeAliasDescriptor): Boo
 }
 
 private fun canBeCommonized(a: TypeParameterDescriptor, b: TypeParameterDescriptor): Boolean {
-    // N.B. real type parameter commonization is performed in TypeParameterCommonizer,
+    // real type parameter commonization is performed in TypeParameterCommonizer,
     // here it is enough to check FQ names
     return areFqNamesEqual(a, b)
 }

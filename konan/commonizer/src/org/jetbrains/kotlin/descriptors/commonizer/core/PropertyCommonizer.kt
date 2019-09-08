@@ -16,9 +16,9 @@ class PropertyCommonizer : AbstractCallableMemberCommonizer<PropertyDescriptor, 
 
     override val result: Property
         get() = when (state) {
-            State.EMPTY, State.ERROR -> error("Can't commonize property")
+            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
             State.IN_PROGRESS -> CommonProperty(
-                name = name!!,
+                name = name,
                 modality = modality.result,
                 visibility = visibility.result,
                 isExternal = isExternal,

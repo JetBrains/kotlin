@@ -33,14 +33,14 @@ class DefaultFunctionModifiersCommonizerTest : AbstractCommonizerTest<SimpleFunc
         create(isSuspend = true).toMockFunction()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun suspendAndNotSuspend() = doTestFailure(
         create(isSuspend = true).toMockFunction(),
         create(isSuspend = true).toMockFunction(),
         create().toMockFunction()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun notSuspendAndSuspend() = doTestFailure(
         create().toMockFunction(),
         create().toMockFunction(),

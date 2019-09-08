@@ -10,7 +10,7 @@ import org.junit.Test
 
 abstract class AbstractCommonizerTest<T, R> {
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun failOnNoVariantsSubmitted() {
         createCommonizer().result
         fail()

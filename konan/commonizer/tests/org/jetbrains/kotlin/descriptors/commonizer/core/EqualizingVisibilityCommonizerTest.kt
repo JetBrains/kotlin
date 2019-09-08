@@ -20,22 +20,22 @@ class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<Visibility, Vi
     @Test
     fun internalOnly() = doTestSuccess(INTERNAL, INTERNAL, INTERNAL, INTERNAL)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun privateOnly() = doTestFailure(PRIVATE)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndProtected() = doTestFailure(PROTECTED, PROTECTED, PROTECTED, PUBLIC)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndInternal() = doTestFailure(INTERNAL, INTERNAL, INTERNAL, PUBLIC)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun protectedAndInternal() = doTestFailure(PROTECTED, PROTECTED, PROTECTED, INTERNAL)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndPrivate() = doTestFailure(PUBLIC, PUBLIC, PRIVATE)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun somethingUnexpected() = doTestFailure(PUBLIC, LOCAL)
 
     override fun createCommonizer() = VisibilityCommonizer.equalizing()

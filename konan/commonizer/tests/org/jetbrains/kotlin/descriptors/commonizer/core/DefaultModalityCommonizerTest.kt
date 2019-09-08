@@ -23,13 +23,13 @@ class DefaultModalityCommonizerTest : AbstractCommonizerTest<Modality, Modality>
     @Test
     fun onlyAbstract() = doTestSuccess(ABSTRACT, ABSTRACT, ABSTRACT, ABSTRACT)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun sealedAndAbstract() = doTestFailure(SEALED, ABSTRACT)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun sealedAndFinal() = doTestFailure(SEALED, FINAL)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun abstractAndFinal() = doTestFailure(ABSTRACT, FINAL)
 
     @Test

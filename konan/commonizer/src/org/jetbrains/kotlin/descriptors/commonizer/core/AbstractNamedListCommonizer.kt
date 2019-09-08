@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.descriptors.Named
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractNamedListCommonizer<T : Named, R>(
-    private val subject: String,
     private val singleElementCommonizerFactory: () -> Commonizer<T, R>
 ) : Commonizer<List<T>, List<R>> {
     private var commonizers: List<Pair<Name, Commonizer<T, R>>>? = null
     private var error = false
 
     final override val result: List<R>
-        get() = commonizers?.takeIf { !error }?.map { it.second.result } ?: error("Can't commonize list of $subject")
+        get() = commonizers?.takeIf { !error }?.map { it.second.result } ?: throw IllegalCommonizerStateException()
 
     final override fun commonizeWith(next: List<T>): Boolean {
         if (error)

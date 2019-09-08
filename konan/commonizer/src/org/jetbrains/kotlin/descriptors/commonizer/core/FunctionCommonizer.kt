@@ -16,9 +16,9 @@ class FunctionCommonizer : AbstractCallableMemberCommonizer<SimpleFunctionDescri
 
     override val result: Function
         get() = when (state) {
-            State.EMPTY, State.ERROR -> error("Can't commonize function")
+            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
             State.IN_PROGRESS -> CommonFunction(
-                name = name!!,
+                name = name,
                 modality = modality.result,
                 visibility = visibility.result,
                 extensionReceiver = extensionReceiver.result?.toReceiverNoAnnotations(),

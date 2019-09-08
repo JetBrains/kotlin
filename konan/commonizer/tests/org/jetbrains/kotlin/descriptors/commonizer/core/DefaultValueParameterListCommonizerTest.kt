@@ -45,7 +45,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
         ).toMockParams()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize1() = doTestFailure(
         create(
             "a" to "kotlin.String",
@@ -60,7 +60,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
         emptyList()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize2() = doTestFailure(
         create(
             "a" to "kotlin.String",
@@ -83,7 +83,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
         ).toMockParams()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize3() = doTestFailure(
         create(
             "a" to "kotlin.String",
@@ -108,7 +108,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
         ).toMockParams()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterNames1() = doTestFailure(
         create(
             "a" to "kotlin.String",
@@ -127,7 +127,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
         ).toMockParams()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterNames2() = doTestFailure(
         create(
             "a" to "kotlin.String",
@@ -146,7 +146,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
         ).toMockParams()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterTypes() = doTestFailure(
         create(
             "a" to "kotlin.String",

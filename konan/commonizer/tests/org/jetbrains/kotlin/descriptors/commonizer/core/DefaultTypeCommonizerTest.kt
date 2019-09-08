@@ -24,21 +24,21 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockClassType("kotlin.collections.List")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNames1() = doTestFailure(
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.fictitiousPackageName.List")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNames2() = doTestFailure(
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.Set")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNames3() = doTestFailure(
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List"),
@@ -53,21 +53,21 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockClassType("kotlinx.cinterop.CPointer")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinxPackageWithDifferentNames1() = doTestFailure(
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.fictitiousPackageName.CPointer")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinxPackageWithDifferentNames2() = doTestFailure(
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.ObjCObject")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinxPackageWithDifferentNames3() = doTestFailure(
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer"),
@@ -82,21 +82,21 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockClassType("org.sample.Foo")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames1() = doTestFailure(
         mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo"),
         mockClassType("org.fictitiousPackageName.Foo")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames2() = doTestFailure(
         mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Bar")
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames3() = doTestFailure(
         mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo"),
@@ -119,14 +119,14 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockClassType("kotlin.collections.List", nullable = true)
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNullability1() = doTestFailure(
         mockClassType("kotlin.collections.List", nullable = false),
         mockClassType("kotlin.collections.List", nullable = false),
         mockClassType("kotlin.collections.List", nullable = true)
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNullability2() = doTestFailure(
         mockClassType("kotlin.collections.List", nullable = true),
         mockClassType("kotlin.collections.List", nullable = true),
@@ -149,14 +149,14 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockClassType("org.sample.Foo", nullable = true)
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNullability1() = doTestFailure(
         mockClassType("org.sample.Foo", nullable = false),
         mockClassType("org.sample.Foo", nullable = false),
         mockClassType("org.sample.Foo", nullable = true)
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNullability2() = doTestFailure(
         mockClassType("org.sample.Foo", nullable = true),
         mockClassType("org.sample.Foo", nullable = true),
@@ -171,14 +171,14 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinPackageWithDifferentNames() = doTestFailure(
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.FictitiousTypeAlias") { mockClassType("kotlin.sequences.SequenceScope") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinPackageWithDifferentClasses() = doTestFailure(
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
@@ -193,14 +193,14 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinxPackageWithDifferentNames() = doTestFailure(
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.FictitiousTypeAlias") { mockClassType("kotlinx.cinterop.CPointer") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinxPackageWithDifferentClasses() = doTestFailure(
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
@@ -241,21 +241,21 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNames() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.BarAlias") { mockClassType("org.sample.Foo") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentClasses() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Bar") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass() = doTestFailure(
         mockTAType("org.sample.FooAlias") {
             mockClassType("org.sample.Foo")
@@ -284,14 +284,14 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinPackageWithDifferentNullability1() = doTestFailure(
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinPackageWithDifferentNullability2() = doTestFailure(
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
@@ -330,28 +330,28 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability1() = doTestFailure(
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability2() = doTestFailure(
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability3() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) }
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability4() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },

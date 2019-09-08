@@ -18,7 +18,6 @@ interface PropertySetterCommonizer : Commonizer<PropertySetterDescriptor?, Sette
 private class DefaultPropertySetterCommonizer :
     PropertySetterCommonizer,
     AbstractNullableCommonizer<PropertySetterDescriptor, Setter, Visibility, Visibility>(
-        subject = "Property",
         wrappedCommonizerFactory = { VisibilityCommonizer.equalizing() },
         extractor = { it.visibility },
         builder = { Setter.createDefaultNoAnnotations(it) }

@@ -64,7 +64,7 @@ private class DefaultModalityCommonizer : ModalityCommonizer {
             State.CAN_HAVE_ONLY_ABSTRACT -> Modality.ABSTRACT
             State.HAS_FINAL, State.HAS_FINAL_AND_OPEN -> Modality.FINAL
             State.HAS_OPEN -> Modality.OPEN
-            else -> error("Modality can't be commonized")
+            else -> throw IllegalCommonizerStateException()
         }
 
     override fun commonizeWith(next: Modality): Boolean {

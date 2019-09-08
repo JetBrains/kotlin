@@ -19,16 +19,16 @@ class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<PropertySette
     @Test
     fun absentOnly() = super.doTestSuccess(null, null, null, null)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun absentAndPublic() = doTestFailure(null, null, null, PUBLIC)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndAbsent() = doTestFailure(PUBLIC, PUBLIC, PUBLIC, null)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun protectedAndAbsent() = doTestFailure(PROTECTED, PROTECTED, null)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun absentAndInternal() = doTestFailure(null, null, INTERNAL)
 
     @Test
@@ -40,22 +40,22 @@ class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<PropertySette
     @Test
     fun internalOnly() = doTestSuccess(INTERNAL, INTERNAL, INTERNAL, INTERNAL)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun privateOnly() = doTestFailure(PRIVATE)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndProtected() = doTestFailure(PUBLIC, PUBLIC, PROTECTED)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndInternal() = doTestFailure(PUBLIC, PUBLIC, INTERNAL)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun protectedAndInternal() = doTestFailure(PROTECTED, PROTECTED, INTERNAL)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndPrivate() = doTestFailure(PUBLIC, PUBLIC, PRIVATE)
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun somethingUnexpected() = doTestFailure(PUBLIC, LOCAL)
 
     private fun doTestSuccess(expected: Visibility?, vararg variants: Visibility?) =

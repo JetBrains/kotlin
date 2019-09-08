@@ -9,3 +9,5 @@ interface Commonizer<T, R> {
     val result: R
     fun commonizeWith(next: T): Boolean
 }
+
+class IllegalCommonizerStateException : IllegalStateException("Illegal commonizer state: error or empty")

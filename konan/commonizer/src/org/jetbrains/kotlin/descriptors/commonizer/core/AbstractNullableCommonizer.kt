@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 abstract class AbstractNullableCommonizer<T : Any, R : Any, WT, WR>(
-    private val subject: String,
     private val wrappedCommonizerFactory: () -> Commonizer<WT, WR>,
     private val extractor: (T) -> WT,
     private val builder: (WR) -> R
@@ -19,12 +18,12 @@ abstract class AbstractNullableCommonizer<T : Any, R : Any, WT, WR>(
     }
 
     private var state = State.EMPTY
-    private var wrapped: Commonizer<WT, WR>? = null
+    private lateinit var wrapped: Commonizer<WT, WR>
 
     final override val result: R?
         get() = when (state) {
-            State.EMPTY, State.ERROR -> error("$subject setter can't be commonized")
-            State.WITH_WRAPPED -> builder(wrapped!!.result)
+            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
+            State.WITH_WRAPPED -> builder(wrapped.result)
             State.WITHOUT_WRAPPED -> null // null means there is no commonized result
         }
 
@@ -43,5 +42,5 @@ abstract class AbstractNullableCommonizer<T : Any, R : Any, WT, WR>(
     }
 
     private fun doCommonizeWith(next: T) =
-        if (wrapped!!.commonizeWith(extractor(next))) State.WITH_WRAPPED else State.ERROR
+        if (wrapped.commonizeWith(extractor(next))) State.WITH_WRAPPED else State.ERROR
 }

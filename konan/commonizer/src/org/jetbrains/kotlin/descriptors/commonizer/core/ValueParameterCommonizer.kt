@@ -25,7 +25,7 @@ private class DefaultValueParameterCommonizer : ValueParameterCommonizer {
         IN_PROGRESS
     }
 
-    private var name: Name? = null
+    private lateinit var name: Name
     private val returnType = TypeCommonizer.default()
     private var varargElementType: UnwrappedType? = null
     private var isCrossinline = true
@@ -35,9 +35,9 @@ private class DefaultValueParameterCommonizer : ValueParameterCommonizer {
 
     override val result: ValueParameter
         get() = when (state) {
-            State.EMPTY, State.ERROR -> error("Can't commonize value parameter")
+            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
             State.IN_PROGRESS -> CommonValueParameter(
-                name = name!!,
+                name = name,
                 returnType = returnType.result,
                 varargElementType = varargElementType,
                 isCrossinline = isCrossinline,
@@ -83,6 +83,5 @@ interface ValueParameterListCommonizer : Commonizer<List<ValueParameterDescripto
 private class DefaultValueParameterListCommonizer :
     ValueParameterListCommonizer,
     AbstractNamedListCommonizer<ValueParameterDescriptor, ValueParameter>(
-        subject = "value parameters",
         singleElementCommonizerFactory = { ValueParameterCommonizer.default() }
     )

@@ -31,21 +31,21 @@ class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<ReceiverPa
         mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun differentReceivers() = doTestFailure(
         mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
         mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
         mock(receiverTypeFqName = "kotlin.Int").extensionReceiverParameter
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun nullAndNonNullReceivers1() = doTestFailure(
         mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
         mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
         mock(receiverTypeFqName = null).extensionReceiverParameter
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun nullAndNonNullReceivers2() = doTestFailure(
         mock(receiverTypeFqName = null).extensionReceiverParameter,
         mock(receiverTypeFqName = null).extensionReceiverParameter,

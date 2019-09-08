@@ -45,7 +45,7 @@ class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<TypeP
         ).toMockParams()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize1() = doTestFailure(
         create(
             "T" to "kotlin.Any?",
@@ -60,7 +60,7 @@ class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<TypeP
         emptyList()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize2() = doTestFailure(
         create(
             "T" to "kotlin.Any?",
@@ -78,7 +78,7 @@ class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<TypeP
         ).toMockParams()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize3() = doTestFailure(
         create(
             "T" to "kotlin.Any?",
@@ -98,7 +98,7 @@ class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<TypeP
         ).toMockParams()
     )
 
-    @Test(expected = IllegalStateException::class)
+    @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterNames() = doTestFailure(
         create(
             "T" to "kotlin.Any?",
