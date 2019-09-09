@@ -18,6 +18,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.DumbAware;
@@ -33,6 +34,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.concurrency.NonUrgentExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
@@ -119,10 +121,15 @@ public class ScratchProjectViewPane extends ProjectViewPane {
         }
       }
     });
-    for (RootType rootType : RootType.getAllRootTypes()) {
-      if (rootType.isHidden()) continue;
-      rootType.registerTreeUpdater(project, disposable, onUpdate);
-    }
+    ReadAction
+      .nonBlocking(() -> {
+        for (RootType rootType : RootType.getAllRootTypes()) {
+          if (rootType.isHidden()) continue;
+          rootType.registerTreeUpdater(project, disposable, onUpdate);
+        }
+      })
+      .expireWith(disposable)
+      .submit(NonUrgentExecutor.getInstance());
   }
 
   @NotNull
