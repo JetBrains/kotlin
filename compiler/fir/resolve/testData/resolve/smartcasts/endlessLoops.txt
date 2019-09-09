@@ -107,5 +107,5 @@ FILE: endlessLoops.kt
             (R|<local>/x| as R|A|)
         }
         while(Boolean(true))
-        R|<local>/x|.<Unresolved name: foo>#()
+        R|<local>/x|.R|/A.foo|()
     }

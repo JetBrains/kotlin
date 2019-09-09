@@ -733,7 +733,7 @@ digraph endlessLoops_kt {
         244 [label="Exit do-whileloop" style="filled" fillcolor=gray];
       }
       245 [label="Access variable R|<local>/x|" style="filled" fillcolor=gray];
-      246 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()" style="filled" fillcolor=gray];
+      246 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=gray];
       247 [label="Exit block" style="filled" fillcolor=gray];
     }
     248 [label="Exit function test_7" style="filled" fillcolor=red style="filled" fillcolor=gray];

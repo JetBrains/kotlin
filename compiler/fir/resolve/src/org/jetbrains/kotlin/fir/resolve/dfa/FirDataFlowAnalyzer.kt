@@ -367,20 +367,23 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     }
 
     fun exitWhileLoopCondition(loop: FirLoop) {
-        graphBuilder.exitWhileLoopCondition(loop).mergeIncomingFlow()
+        val (loopConditionExitNode, loopBlockEnterNode) = graphBuilder.exitWhileLoopCondition(loop)
+        loopConditionExitNode.mergeIncomingFlow()
+        loopBlockEnterNode.mergeIncomingFlow()
     }
 
     fun exitWhileLoop(loop: FirLoop) {
-        graphBuilder.exitWhileLoop(loop).also { (blockExitNode, exitNode) ->
-            blockExitNode.mergeIncomingFlow()
-            exitNode.mergeIncomingFlow()
-        }
+        val (blockExitNode, exitNode) = graphBuilder.exitWhileLoop(loop)
+        blockExitNode.mergeIncomingFlow()
+        exitNode.mergeIncomingFlow()
     }
 
     // ----------------------------------- Do while Loop -----------------------------------
 
     fun enterDoWhileLoop(loop: FirLoop) {
-        graphBuilder.enterDoWhileLoop(loop).mergeIncomingFlow()
+        val (loopEnterNode, loopBlockEnterNode) = graphBuilder.enterDoWhileLoop(loop)
+        loopEnterNode.mergeIncomingFlow()
+        loopBlockEnterNode.mergeIncomingFlow()
     }
 
     fun enterDoWhileLoopCondition(loop: FirLoop) {
@@ -390,7 +393,9 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     }
 
     fun exitDoWhileLoop(loop: FirLoop) {
-        graphBuilder.exitDoWhileLoop(loop).mergeIncomingFlow()
+        val (loopConditionExitNode, loopExitNode) = graphBuilder.exitDoWhileLoop(loop)
+        loopConditionExitNode.mergeIncomingFlow()
+        loopExitNode.mergeIncomingFlow()
     }
 
     // ----------------------------------- Try-catch-finally -----------------------------------

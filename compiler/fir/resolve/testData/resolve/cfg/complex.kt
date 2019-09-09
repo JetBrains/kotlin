@@ -27,3 +27,8 @@ internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
             cause.addSuppressed(closeException)
         }
 }
+
+inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
+    for (element in this) if (element is T) return element
+    return null
+}

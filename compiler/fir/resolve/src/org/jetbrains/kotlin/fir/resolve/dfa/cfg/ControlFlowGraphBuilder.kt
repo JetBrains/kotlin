@@ -238,7 +238,7 @@ class ControlFlowGraphBuilder {
         return loopEnterNode to conditionEnterNode
     }
 
-    fun exitWhileLoopCondition(loop: FirLoop): LoopConditionExitNode {
+    fun exitWhileLoopCondition(loop: FirLoop): Pair<LoopConditionExitNode, LoopBlockEnterNode> {
         levelCounter--
         val conditionExitNode = createLoopConditionExitNode(loop.condition)
         addNewSimpleNode(conditionExitNode)
@@ -247,7 +247,7 @@ class ControlFlowGraphBuilder {
         val loopBlockEnterNode = createLoopBlockEnterNode(loop)
         addNewSimpleNode(loopBlockEnterNode, conditionConstBooleanValue == false)
         levelCounter++
-        return conditionExitNode
+        return conditionExitNode to loopBlockEnterNode
     }
 
     fun exitWhileLoop(loop: FirLoop): Pair<LoopBlockExitNode, LoopExitNode> {
@@ -269,8 +269,9 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Do while Loop -----------------------------------
 
-    fun enterDoWhileLoop(loop: FirLoop): LoopBlockEnterNode {
-        addNewSimpleNode(createLoopEnterNode(loop))
+    fun enterDoWhileLoop(loop: FirLoop): Pair<LoopEnterNode, LoopBlockEnterNode> {
+        val loopEnterNode = createLoopEnterNode(loop)
+        addNewSimpleNode(loopEnterNode)
         loopExitNodes.push(createLoopExitNode(loop))
         levelCounter++
         val blockEnterNode = createLoopBlockEnterNode(loop)
@@ -279,7 +280,7 @@ class ControlFlowGraphBuilder {
         lastNodes.push(blockEnterNode)
         loopEnterNodes.push(blockEnterNode)
         levelCounter++
-        return blockEnterNode
+        return loopEnterNode to blockEnterNode
     }
 
     fun enterDoWhileLoopCondition(loop: FirLoop): Pair<LoopBlockExitNode, LoopConditionEnterNode> {
@@ -290,7 +291,7 @@ class ControlFlowGraphBuilder {
         return blockExitNode to conditionEnterNode
     }
 
-    fun exitDoWhileLoop(loop: FirLoop): LoopExitNode {
+    fun exitDoWhileLoop(loop: FirLoop): Pair<LoopConditionExitNode, LoopExitNode> {
         loopEnterNodes.pop()
         levelCounter--
         val conditionExitNode = createLoopConditionExitNode(loop.condition)
@@ -304,7 +305,7 @@ class ControlFlowGraphBuilder {
         loopExit.markAsDeadIfNecessary()
         lastNodes.push(loopExit)
         levelCounter--
-        return loopExit
+        return conditionExitNode to loopExit
     }
 
     // ----------------------------------- Boolean operators -----------------------------------

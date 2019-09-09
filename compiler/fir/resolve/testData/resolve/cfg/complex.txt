@@ -38,3 +38,20 @@ FILE: complex.kt
         }
 
     }
+    public final inline fun <reified T : R|kotlin/Any|> R|kotlin/sequences/Sequence<*>|.firstIsInstanceOrNull(): R|T?| {
+        lval <range>: R|kotlin/sequences/Sequence<*>| = this@R|/firstIsInstanceOrNull|
+        lval <iterator>: R|kotlin/collections/Iterator<T>| = R|<local>/<range>|.R|kotlin/sequences/Sequence.iterator|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval element: R|T| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|T|>|()
+            when () {
+                (R|<local>/element| is R|T|) ->  {
+                    ^firstIsInstanceOrNull R|<local>/element|
+                }
+                else ->  {
+                }
+            }
+
+        }
+
+        ^firstIsInstanceOrNull Null(null)
+    }

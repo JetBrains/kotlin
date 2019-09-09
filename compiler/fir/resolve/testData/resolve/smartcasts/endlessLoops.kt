@@ -70,5 +70,5 @@ fun test_7(x: Any) {
     do {
         x as A
     } while (true)
-    x.foo() // No smartcast
+    x.foo()
 }
