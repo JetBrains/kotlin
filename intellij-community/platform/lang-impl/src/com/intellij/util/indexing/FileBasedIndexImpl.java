@@ -131,7 +131,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   private final MessageBusConnection myConnection;
   private final FileDocumentManager myFileDocumentManager;
-  private final FileTypeManagerImpl myFileTypeManager;
 
   private final Set<ID<?, ?>> myUpToDateIndicesForUnsavedOrTransactedDocuments = ContainerUtil.newConcurrentSet();
   private volatile SmartFMap<Document, PsiFile> myTransactionMap = SmartFMap.emptyMap();
@@ -170,7 +169,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   public FileBasedIndexImpl() {
     myFileDocumentManager = FileDocumentManager.getInstance();
-    myFileTypeManager = ((FileTypeManagerImpl)FileTypeManager.getInstance());
     myIsUnitTestMode = ApplicationManager.getApplication().isUnitTestMode();
 
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
@@ -194,8 +192,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       public void beforeFileTypesChanged(@NotNull final FileTypeEvent event) {
         cleanupProcessedFlag();
         myTypeToExtensionMap = new THashMap<>();
-        for (FileType type : myFileTypeManager.getRegisteredFileTypes()) {
-          myTypeToExtensionMap.put(type, getExtensions(type));
+        FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+        for (FileType type : fileTypeManager.getRegisteredFileTypes()) {
+          myTypeToExtensionMap.put(type, getExtensions(type, fileTypeManager));
         }
       }
 
@@ -203,36 +202,39 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       public void fileTypesChanged(@NotNull final FileTypeEvent event) {
         final Map<FileType, Set<String>> oldTypeToExtensionsMap = myTypeToExtensionMap;
         myTypeToExtensionMap = null;
-        if (oldTypeToExtensionsMap != null) {
-          final Map<FileType, Set<String>> newTypeToExtensionsMap = new THashMap<>();
-          for (FileType type : myFileTypeManager.getRegisteredFileTypes()) {
-            newTypeToExtensionsMap.put(type, getExtensions(type));
-          }
-          // we are interested only in extension changes or removals.
-          // addition of an extension is handled separately by RootsChanged event
-          if (!newTypeToExtensionsMap.keySet().containsAll(oldTypeToExtensionsMap.keySet())) {
-            Set<FileType> removedFileTypes = new HashSet<>(oldTypeToExtensionsMap.keySet());
-            removedFileTypes.removeAll(newTypeToExtensionsMap.keySet());
-            rebuildAllIndices("The following file types were removed/are no longer associated: " + removedFileTypes);
+        if (oldTypeToExtensionsMap == null) {
+          return;
+        }
+
+        final Map<FileType, Set<String>> newTypeToExtensionsMap = new THashMap<>();
+        FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+        for (FileType type : fileTypeManager.getRegisteredFileTypes()) {
+          newTypeToExtensionsMap.put(type, getExtensions(type, fileTypeManager));
+        }
+        // we are interested only in extension changes or removals.
+        // addition of an extension is handled separately by RootsChanged event
+        if (!newTypeToExtensionsMap.keySet().containsAll(oldTypeToExtensionsMap.keySet())) {
+          Set<FileType> removedFileTypes = new HashSet<>(oldTypeToExtensionsMap.keySet());
+          removedFileTypes.removeAll(newTypeToExtensionsMap.keySet());
+          rebuildAllIndices("The following file types were removed/are no longer associated: " + removedFileTypes);
+          return;
+        }
+        for (Map.Entry<FileType, Set<String>> entry : oldTypeToExtensionsMap.entrySet()) {
+          FileType fileType = entry.getKey();
+          Set<String> strings = entry.getValue();
+          if (!newTypeToExtensionsMap.get(fileType).containsAll(strings)) {
+            Set<String> removedExtensions = new HashSet<>(strings);
+            removedExtensions.removeAll(newTypeToExtensionsMap.get(fileType));
+            rebuildAllIndices(fileType.getName() + " is no longer associated with extension(s) " + String.join(",", removedExtensions));
             return;
-          }
-          for (Map.Entry<FileType, Set<String>> entry : oldTypeToExtensionsMap.entrySet()) {
-            FileType fileType = entry.getKey();
-            Set<String> strings = entry.getValue();
-            if (!newTypeToExtensionsMap.get(fileType).containsAll(strings)) {
-              Set<String> removedExtensions = new HashSet<>(strings);
-              removedExtensions.removeAll(newTypeToExtensionsMap.get(fileType));
-              rebuildAllIndices(fileType.getName() + " is no longer associated with extension(s) " + String.join(",", removedExtensions));
-              return;
-            }
           }
         }
       }
 
       @NotNull
-      private Set<String> getExtensions(@NotNull FileType type) {
+      private Set<String> getExtensions(@NotNull FileType type, @NotNull FileTypeManager fileTypeManager) {
         final Set<String> set = new THashSet<>();
-        for (FileNameMatcher matcher : myFileTypeManager.getAssociations(type)) {
+        for (FileNameMatcher matcher : fileTypeManager.getAssociations(type)) {
           set.add(matcher.getPresentableString());
         }
         return set;
@@ -1360,7 +1362,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     if (previousDocStamp == currentDocStamp) return;
 
     final CharSequence contentText = content.getText();
-    myFileTypeManager.freezeFileTypeTemporarilyIn(vFile, () -> {
+    getFileTypeManager().freezeFileTypeTemporarilyIn(vFile, () -> {
       if (getAffectedIndexCandidates(vFile).contains(requestedIndexId) &&
           getInputFilter(requestedIndexId).acceptInput(vFile)) {
         final int inputId = Math.abs(getFileId(vFile));
@@ -1597,7 +1599,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
   private boolean doIndexFileContent(@Nullable Project project, @NotNull final com.intellij.ide.caches.FileContent content) {
     final VirtualFile file = content.getVirtualFile();
     Ref<Boolean> setIndexedStatus = Ref.create(Boolean.TRUE);
-    myFileTypeManager.freezeFileTypeTemporarilyIn(file, () -> {
+    getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
       final FileType fileType = file.getFileType();
       final Project finalProject = project == null ? ProjectUtil.guessProjectForFile(file) : project;
       PsiFile psiFile = null;
@@ -1897,7 +1899,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         myChangedFilesCollector.getValue().removeScheduledFileFromUpdate(file);
       }
       else {
-        myFileTypeManager.freezeFileTypeTemporarilyIn(file, () -> {
+        getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
           final List<ID<?, ?>> candidates = getAffectedIndexCandidates(file);
 
           boolean scheduleForUpdate = false;
@@ -1921,6 +1923,10 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         });
       }
     }
+  }
+
+  private FileTypeManagerImpl getFileTypeManager() {
+    return (FileTypeManagerImpl)FileTypeManager.getInstance();
   }
 
   static final class ChangedFilesCollector extends IndexedFilesListener {
@@ -2213,7 +2219,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         if (!(file instanceof VirtualFileWithId)) {
           return true;
         }
-        myFileTypeManager.freezeFileTypeTemporarilyIn(file, () -> {
+        getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
           boolean isUptoDate = true;
           boolean isDirectory = file.isDirectory();
           if (!isDirectory && !isTooLarge(file)) {

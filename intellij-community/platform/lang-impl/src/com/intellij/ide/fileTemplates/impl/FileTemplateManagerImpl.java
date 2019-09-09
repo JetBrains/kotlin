@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.fileTemplates.impl;
 
@@ -8,6 +8,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplatesScheme;
 import com.intellij.ide.fileTemplates.InternalTemplateBean;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -34,12 +35,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @State(name = "FileTemplateManagerImpl", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
-public class FileTemplateManagerImpl extends FileTemplateManager implements PersistentStateComponent<FileTemplateManagerImpl.State> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.fileTemplates.impl.FileTemplateManagerImpl");
+public final class FileTemplateManagerImpl extends FileTemplateManager implements PersistentStateComponent<FileTemplateManagerImpl.State> {
+  private static final Logger LOG = Logger.getInstance(FileTemplateManagerImpl.class);
 
   private final State myState = new State();
-  private final FileTypeManagerEx myTypeManager;
-  private final FileTemplateSettings myProjectSettings;
   private final ExportableFileTemplateSettings myDefaultSettings;
   private final Project myProject;
 
@@ -51,13 +50,8 @@ public class FileTemplateManagerImpl extends FileTemplateManager implements Pers
     return (FileTemplateManagerImpl)getInstance(project);
   }
 
-  FileTemplateManagerImpl(@NotNull FileTypeManagerEx typeManager,
-                          FileTemplateSettings projectSettings,
-                          ExportableFileTemplateSettings defaultSettings,
-                          final Project project) {
-    myTypeManager = typeManager;
-    myProjectSettings = projectSettings;
-    myDefaultSettings = defaultSettings;
+  FileTemplateManagerImpl(@NotNull Project project) {
+    myDefaultSettings = ApplicationManager.getApplication().getService(ExportableFileTemplateSettings.class);
     myProject = project;
 
     myProjectScheme = project.isDefault() ? null : new FileTemplatesScheme("Project") {
@@ -76,7 +70,7 @@ public class FileTemplateManagerImpl extends FileTemplateManager implements Pers
   }
 
   private FileTemplateSettings getSettings() {
-      return myScheme == FileTemplatesScheme.DEFAULT ? myDefaultSettings : myProjectSettings;
+    return myScheme == FileTemplatesScheme.DEFAULT ? myDefaultSettings : myProject.getService(FileTemplateSettings.class);
   }
 
   @NotNull
@@ -317,7 +311,7 @@ public class FileTemplateManagerImpl extends FileTemplateManager implements Pers
 
   @NotNull
   private String getQualifiedName(@NotNull String name) {
-    return myTypeManager.getExtension(name).isEmpty() ? FileTemplateBase.getQualifiedName(name, "java") : name;
+    return FileTypeManagerEx.getInstanceEx().getExtension(name).isEmpty() ? FileTemplateBase.getQualifiedName(name, "java") : name;
   }
 
   @Override
