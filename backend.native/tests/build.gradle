@@ -873,7 +873,8 @@ task worker4(type: KonanLocalTest) {
     source = "runtime/workers/worker4.kt"
 }
 
-task worker5(type: KonanLocalTest) {
+// This tests changes main thread worker queue state, so better be executed alone.
+standaloneTest("worker5") {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     goldValue = "Got 3\nOK\n"
     source = "runtime/workers/worker5.kt"

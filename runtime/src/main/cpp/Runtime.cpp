@@ -21,15 +21,17 @@
 #include "Memory.h"
 #include "Porting.h"
 #include "Runtime.h"
+#include "Worker.h"
 
 struct RuntimeState {
   MemoryState* memoryState;
+  Worker* worker;
   volatile int executionStatus;
 };
 
 typedef void (*Initializer)(int initialize);
 struct InitNode {
-  Initializer      init;
+  Initializer init;
   InitNode* next;
 };
 
@@ -89,6 +91,7 @@ RuntimeState* initRuntime() {
   RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
   ::runtimeState = result;
   result->memoryState = InitMemory();
+  result->worker = WorkerInit(true);
   bool firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
   // Keep global variables in state as well.
   if (firstRuntime) {
@@ -106,6 +109,7 @@ void deinitRuntime(RuntimeState* state) {
   InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS);
   if (lastRuntime)
     InitOrDeinitGlobalVariables(DEINIT_GLOBALS);
+  WorkerDeinit(state->worker);
   DeinitMemory(state->memoryState);
   konanDestructInstance(state);
 }
@@ -160,6 +164,7 @@ RuntimeState* Kotlin_suspendRuntime() {
     auto result = ::runtimeState;
     RuntimeCheck(updateStatusIf(result, RUNNING, SUSPENDED), "Cannot transition state to SUSPENDED for suspend");
     result->memoryState = SuspendMemory();
+    result->worker = WorkerSuspend();
     ::runtimeState = kInvalidRuntime;
     return result;
 }
@@ -169,6 +174,7 @@ void Kotlin_resumeRuntime(RuntimeState* state) {
     RuntimeCheck(updateStatusIf(state, SUSPENDED, RUNNING), "Cannot transition state to RUNNING for resume");
     ::runtimeState = state;
     ResumeMemory(state->memoryState);
+    WorkerResume(state->worker);
 }
 
 RuntimeState* RUNTIME_USED Kotlin_getRuntime() {

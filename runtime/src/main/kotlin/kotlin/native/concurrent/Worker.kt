@@ -39,14 +39,11 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
         public fun start(errorReporting: Boolean = true): Worker = Worker(startInternal(errorReporting))
 
         /**
-         * Return the current worker, if known, null otherwise. null value will be returned in the main thread
-         * or platform thread without an associated worker, non-null - if called inside worker started with
-         * [Worker.start].
+         * Return the current worker. Worker context is accessible to any valid Kotlin context,
+         * but only actual active worker produced with [Worker.start] automatically processes execution requests.
+         * For other situations [processQueue] must be called explicitly to process request queue.
          */
-        public val current: Worker? get() {
-            val id = currentInternal()
-            return if (id != 0) Worker(id) else null
-        }
+        public val current: Worker get() = Worker(currentInternal())
 
         /**
          * Create worker object from a C pointer.
@@ -92,7 +89,6 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
              */
             throw RuntimeException("Shall not be called directly")
 
-
     /**
      * Plan job for further execution in the worker. [operation] parameter must be either frozen, or execution to be
      * planned on the current worker. Otherwise [IllegalStateException] will be thrown.
@@ -105,7 +101,6 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
         if (afterMicroseconds < 0) throw IllegalArgumentException("Timeout parameter must be non-negative")
         executeAfterInternal(id, operation, afterMicroseconds)
     }
-
 
     /**
      * Process pending job(s) on the queue of this worker, returns `true` if something was processed

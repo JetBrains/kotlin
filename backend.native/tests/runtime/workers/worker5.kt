@@ -3,13 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-package runtime.workers.worker5
-
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
 
-@Test fun runTest() {
+@Test fun runTest0() {
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { "zzz" }) {
         input -> input.length
@@ -19,4 +17,36 @@ import kotlin.native.concurrent.*
     }
     worker.requestTermination().result
     println("OK")
+}
+
+var done = false
+
+@Test fun runTest1() {
+    val worker = Worker.current
+    done = false
+    // Here we request execution of the operation on the current worker.
+    worker.executeAfter(0, {
+        done = true
+    }.freeze())
+    while (!done)
+        worker.processQueue()
+}
+
+// Ensure that termination of current worker on main thread doesn't lead to problems.
+@Test fun runTest2() {
+    val worker = Worker.current
+    val future = worker.requestTermination(false)
+    worker.processQueue()
+    assertEquals(future.state, FutureState.COMPUTED)
+    future.consume {}
+    // After termination request this worker is no longer addressable.
+    assertFailsWith<IllegalStateException> { worker.executeAfter(0, {
+        println("BUG!")
+    }.freeze()) }
+}
+
+fun main() {
+    runTest0()
+    runTest1()
+    runTest2()
 }
