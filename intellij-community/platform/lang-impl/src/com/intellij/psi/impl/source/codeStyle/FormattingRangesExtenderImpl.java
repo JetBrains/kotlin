@@ -4,6 +4,7 @@ package com.intellij.psi.impl.source.codeStyle;
 import com.intellij.formatting.FormatTextRanges;
 import com.intellij.formatting.FormattingRangesExtender;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -19,6 +20,8 @@ import java.util.List;
 
 @SuppressWarnings("SameParameterValue")
 class FormattingRangesExtenderImpl implements FormattingRangesExtender {
+  private final static Logger LOG = Logger.getInstance(FormattingRangesExtenderImpl.class);
+
   private final Document myDocument;
   private final PsiFile  myFile;
 
@@ -33,11 +36,23 @@ class FormattingRangesExtenderImpl implements FormattingRangesExtender {
   }
 
   private TextRange processRange(@NotNull TextRange originalRange) {
-    ASTNode containingNode = CodeFormatterFacade.findContainingNode(myFile, expandToLine(originalRange));
+    TextRange validRange = ensureRangeIsValid(originalRange);
+    ASTNode containingNode = CodeFormatterFacade.findContainingNode(myFile, expandToLine(validRange));
     if (containingNode != null) {
       return getRangeWithSiblings(containingNode);
     }
-    return originalRange;
+    return validRange;
+  }
+
+  private TextRange ensureRangeIsValid(@NotNull TextRange range) {
+    int startOffset = range.getStartOffset();
+    int endOffset = range.getEndOffset();
+    final int docLength = myDocument.getTextLength();
+    if (endOffset > docLength) {
+      LOG.warn("The given range " + endOffset + " exceeds the document length " + docLength);
+      return new TextRange(Math.min(startOffset, docLength), docLength);
+    }
+    return range;
   }
 
   @Nullable
