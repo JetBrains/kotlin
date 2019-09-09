@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.name.Name
 
-class JsIrArithBuilder(val context: JsIrBackendContext) {
+class JsIrArithBuilder(val context: JsIrBackendContext) : ArithBuilder {
 
     val symbols = context.ir.symbols
 
@@ -38,11 +38,11 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     fun shl(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.SHL, l, r)
     fun shr(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.SHR, l, r)
     fun shru(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.SHRU, l, r)
-    fun not(v: IrExpression): IrExpression = buildUnaryOperator(OperatorNames.NOT, v)
+    override fun not(v: IrExpression): IrExpression = buildUnaryOperator(OperatorNames.NOT, v)
     fun inv(v: IrExpression): IrExpression = buildUnaryOperator(OperatorNames.INV, v)
 
-    fun andand(l: IrExpression, r: IrExpression) = // if (l) r else false
+    override fun andand(l: IrExpression, r: IrExpression) = // if (l) r else false
         JsIrBuilder.buildIfElse(context.irBuiltIns.booleanType, l, r, JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false))
-    fun oror(l: IrExpression, r: IrExpression) = // if (l) true else r
+    override fun oror(l: IrExpression, r: IrExpression) = // if (l) true else r
         JsIrBuilder.buildIfElse(context.irBuiltIns.booleanType, l, JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true), r)
 }

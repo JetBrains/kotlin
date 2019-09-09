@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.backend.wasm.ast
 
-sealed class WasmValueType(val mnemonic: String)
+sealed class WasmValueType
+sealed class WasmSimpleValueType(val mnemonic: String): WasmValueType()
+object WasmI32 : WasmSimpleValueType("i32")
+object WasmI64 : WasmSimpleValueType("i64")
+object WasmF32 : WasmSimpleValueType("f32")
+object WasmF64 : WasmSimpleValueType("f64")
+object WasmAnyRef : WasmSimpleValueType("anyref")
 
-object WasmI32 : WasmValueType("i32")
-object WasmI64 : WasmValueType("i64")
-object WasmF32 : WasmValueType("f32")
-object WasmF64 : WasmValueType("f64")
-
-object WasmAnyRef : WasmValueType("anyref")
+class WasmStructRef(val structType: WasmSymbol<WasmStructType>) : WasmValueType()

@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.backend.wasm
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.wasm.codegen.IrModuleToWasm
+import org.jetbrains.kotlin.backend.wasm.ast.WatGenerator
+import org.jetbrains.kotlin.backend.wasm.codegen.WasmCodeGenerator
+import org.jetbrains.kotlin.backend.wasm.codegen.WasmCompiledModuleFragment
+import org.jetbrains.kotlin.backend.wasm.codegen.generateStringLiteralsSupport
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -59,5 +62,15 @@ fun compileWasm(
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
-    return IrModuleToWasm(context).generateModule(moduleFragment)
+    val fragment = WasmCompiledModuleFragment()
+    val generator = WasmCodeGenerator(context, fragment)
+    generator.generateModule(moduleFragment)
+    generator.generatePackageFragment(context.internalPackageFragment)
+
+    val compiledModule = fragment.linkWasmCompiledFragments()
+    val watGenerator = WatGenerator()
+    watGenerator.generate(compiledModule)
+    val wat = watGenerator.toString()
+
+    return WasmCompilerResult(wat, generateStringLiteralsSupport(fragment.stringLiterals))
 }

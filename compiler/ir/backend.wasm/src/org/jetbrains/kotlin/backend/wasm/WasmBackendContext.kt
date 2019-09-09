@@ -14,15 +14,19 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsSharedVariablesManager
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
@@ -48,11 +52,18 @@ class WasmBackendContext(
     val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
     override val internalPackageFqn = FqName("kotlin.wasm")
 
-    private val internalPackageFragment = IrExternalPackageFragmentImpl(
+    val internalPackageFragment = IrExternalPackageFragmentImpl(
         IrExternalPackageFragmentSymbolImpl(
             EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.wasm.internal"))
         )
     )
+
+    val startFunction = internalPackageFragment.addFunction {
+        name = Name.identifier("wasm.startFunction")
+        returnType = irBuiltIns.unitType
+    }.apply {
+        body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+    }
 
     override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, internalPackageFragment)
 
