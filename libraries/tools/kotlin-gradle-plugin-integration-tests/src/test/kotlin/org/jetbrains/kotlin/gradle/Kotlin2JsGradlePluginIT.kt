@@ -432,5 +432,16 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
                 ":yarnFolderCheck"
             )
         }
+
+        gradleBuildScript().appendText("\nyarn.version = \"1.9.3\"")
+
+        build("yarnConcreteVersionFolderChecker") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":kotlinYarnSetup",
+                ":yarnConcreteVersionFolderChecker"
+            )
+        }
     }
 }
