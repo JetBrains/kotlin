@@ -60,8 +60,10 @@ class JavaToJKTreeBuilder constructor(
     converterServices: NewJavaToKotlinServices,
     private val importStorage: ImportStorage
 ) {
-    private fun PsiType.toJK() =
-        typeFactory.fromPsiType(this)
+    private fun PsiType?.toJK(): JKType {
+        if (this == null) return JKNoType
+        return typeFactory.fromPsiType(this)
+    }
 
     private val expressionTreeMapper = ExpressionTreeMapper()
 
@@ -128,14 +130,19 @@ class JavaToJKTreeBuilder constructor(
                 is PsiInstanceOfExpression -> toJK()
                 is PsiThisExpression ->
                     JKThisExpression(
-                        qualifier?.referenceName?.let { JKLabelText(JKNameIdentifier(it)) } ?: JKLabelEmpty()
+                        qualifier?.referenceName?.let { JKLabelText(JKNameIdentifier(it)) } ?: JKLabelEmpty(),
+                        type.toJK()
                     )
                 is PsiSuperExpression ->
                     JKSuperExpression(
-                        qualifier?.referenceName?.let { JKLabelText(JKNameIdentifier(it)) } ?: JKLabelEmpty()
+                        qualifier?.referenceName?.let { JKLabelText(JKNameIdentifier(it)) } ?: JKLabelEmpty(),
+                        type.toJK()
                     )
                 is PsiConditionalExpression -> JKIfElseExpression(
-                    condition.toJK(), thenExpression.toJK(), elseExpression.toJK()
+                    condition.toJK(),
+                    thenExpression.toJK(),
+                    elseExpression.toJK(),
+                    type.toJK()
                 )
                 is PsiPolyadicExpression -> {
                     val token = JKOperatorToken.fromElementType(operationTokenType)
@@ -175,7 +182,7 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiInstanceOfExpression.toJK(): JKIsExpression =
-            JKIsExpression(operand.toJK(), JKTypeElement(checkType?.type?.toJK() ?: JKNoTypeImpl))
+            JKIsExpression(operand.toJK(), JKTypeElement(checkType?.type?.toJK() ?: JKNoType))
                 .also {
                     it.assignNonCodeElements(this)
                 }
@@ -293,8 +300,8 @@ class JavaToJKTreeBuilder constructor(
             return when {
                 methodExpression.referenceNameElement is PsiKeyword -> {
                     val callee = when ((methodExpression.referenceNameElement as PsiKeyword).tokenType) {
-                        SUPER_KEYWORD -> JKSuperExpression()
-                        THIS_KEYWORD -> JKThisExpression(JKLabelEmpty())
+                        SUPER_KEYWORD -> JKSuperExpression(JKLabelEmpty(), JKNoType)
+                        THIS_KEYWORD -> JKThisExpression(JKLabelEmpty(), JKNoType)
                         else -> throwCanNotConvertError("unknown keyword in callee position")
                     }
                     JKDelegationConstructorCall(symbol as JKMethodSymbol, callee, arguments.toJK())
@@ -337,7 +344,7 @@ class JavaToJKTreeBuilder constructor(
                                     propertyAccessExpression
                                 )
                                 else propertyAccessExpression
-                            } else propertyAccessExpression.qualified(qualifier) as JKExpression
+                            } else propertyAccessExpression.qualified(qualifier)
 
                             when (if (isExtension) parameterCount - 1 else parameterCount) {
                                 0 /* getter */ ->
@@ -383,7 +390,7 @@ class JavaToJKTreeBuilder constructor(
                 }?.takeUnless { type ->
                     type.isKotlinFunctionalType
                 }?.toJK()
-                ?.asTypeElement() ?: JKTypeElement(JKNoTypeImpl)
+                ?.asTypeElement() ?: JKTypeElement(JKNoType)
 
         fun PsiMethodReferenceExpression.toJK(): JKMethodReferenceExpression {
             val symbol = symbolProvider.provideSymbolForReference<JKSymbol>(this).let { symbol ->
@@ -494,14 +501,15 @@ class JavaToJKTreeBuilder constructor(
                 }
 
 
-        fun PsiArrayAccessExpression.toJK(): JKExpression {
-            return JKArrayAccessExpression(
-                arrayExpression.toJK(),
-                indexExpression?.toJK() ?: throwCanNotConvertError()
-            ).also {
-                it.assignNonCodeElements(this)
-            }
-        }
+        fun PsiArrayAccessExpression.toJK(): JKExpression =
+            arrayExpression.toJK()
+                .callOn(
+                    symbolProvider.provideMethodSymbol("kotlin.Array.get"),
+                    arguments = listOf(indexExpression?.toJK() ?: JKStubExpression())
+                ).also {
+                    it.assignNonCodeElements(this)
+                }
+
 
         fun PsiTypeCastExpression.toJK(): JKExpression {
             return JKTypeCastExpression(
@@ -622,7 +630,7 @@ class JavaToJKTreeBuilder constructor(
                 with(expressionTreeMapper) { argumentList?.toJK() ?: JKArgumentList() },
                 initializingClass?.createClassBody() ?: JKClassBody(),
                 JKTypeElement(
-                    JKClassTypeImpl(
+                    JKClassType(
                         symbolProvider.provideDirectSymbol(containingClass ?: throwCanNotConvertError()) as JKClassSymbol,
                         emptyList()
                     )
@@ -784,7 +792,6 @@ class JavaToJKTreeBuilder constructor(
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
-            }.also {
                 it.assignNonCodeElements(this)
             }
         }

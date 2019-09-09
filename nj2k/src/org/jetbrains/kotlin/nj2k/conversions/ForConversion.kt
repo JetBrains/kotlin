@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
 import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
-import org.jetbrains.kotlin.nj2k.types.JKNoTypeImpl
-import org.jetbrains.kotlin.nj2k.types.type
+import org.jetbrains.kotlin.nj2k.types.JKNoType
 import kotlin.math.abs
 
 
@@ -136,11 +135,11 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 KtTokens.EXCLEQ -> false
                 else -> return null
             }
-            val range = forIterationRange(start, right, reversed, inclusive, loopVarPsi)
+            val range = forIterationRange(start, right, reversed, inclusive)
             val explicitType =
                 if (context.converter.settings.specifyLocalVariableTypeByDefault)
                     JKJavaPrimitiveType.INT
-                else JKNoTypeImpl
+                else JKNoType
             val loopVarDeclaration =
                 JKForLoopVariable(
                     JKTypeElement(explicitType),
@@ -169,8 +168,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         start: JKExpression,
         bound: JKExpression,
         reversed: Boolean,
-        inclusiveComparison: Boolean,
-        psiContext: PsiElement
+        inclusiveComparison: Boolean
     ): JKExpression {
         indicesIterationRange(start, bound, reversed, inclusiveComparison)?.also { return it }
         return when {
@@ -262,7 +260,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
 
     private fun indicesByArrayLength(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKFieldAccessExpression ?: return null
-        val receiverType = javaSizeCall.receiver.type(typeFactory)
+        val receiverType = javaSizeCall.receiver.calculateType(typeFactory)
         if (methodCall.identifier.name == "length" && receiverType is JKJavaArrayType) {
             return toIndicesCall(javaSizeCall)
         }

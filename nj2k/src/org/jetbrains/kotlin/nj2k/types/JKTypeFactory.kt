@@ -51,6 +51,9 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
         val unit = typeByFqName(KotlinBuiltIns.FQ_NAMES.unit)
         val nothing = typeByFqName(KotlinBuiltIns.FQ_NAMES.nothing)
         val nullableAny = typeByFqName(KotlinBuiltIns.FQ_NAMES.any, nullability = Nullability.Nullable)
+
+        val javaKlass = typeByFqName(FqNameUnsafe(CommonClassNames.JAVA_LANG_CLASS))
+        val kotlinClass = typeByFqName(KotlinBuiltIns.FQ_NAMES.kClass)
     }
 
     fun fromPrimitiveType(primitiveType: JKJavaPrimitiveType) = when (primitiveType.jvmPrimitiveType) {

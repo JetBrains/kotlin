@@ -74,7 +74,7 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
             is JKJavaVoidType -> typeFactory.types.unit
 
             is JKJavaArrayType ->
-                JKClassTypeImpl(
+                JKClassType(
                     symbolProvider.provideClassSymbol(type.arrayFqName()),
                     if (type is JKJavaPrimitiveType) emptyList() else listOf(type.mapType(typeElement)),
                     nullability
@@ -102,7 +102,7 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
     }
 
     private fun JKClassType.mapClassType(): JKClassType =
-        JKClassTypeImpl(
+        JKClassType(
             classReference.mapClassSymbol(),
             parameters.map { it.mapType(null) },
             nullability
@@ -123,7 +123,7 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
         if (this is JKClassType && parameters.isEmpty()) {
             val parametersCount = classReference.expectedTypeParametersCount()
             val typeParameters = List(parametersCount) { typeParameter }
-            JKClassTypeImpl(
+            JKClassType(
                 classReference,
                 typeParameters,
                 nullability

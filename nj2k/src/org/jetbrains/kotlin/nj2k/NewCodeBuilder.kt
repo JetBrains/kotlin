@@ -904,7 +904,7 @@ private class JKPrinter(
     }
 
     fun renderType(type: JKType, owner: JKTreeElement?) {
-        if (type is JKNoTypeImpl) return
+        if (type is JKNoType) return
         if (type is JKCapturedType) {
             when (val wildcard = type.wildcardType) {
                 is JKVarianceTypeParameterType -> {

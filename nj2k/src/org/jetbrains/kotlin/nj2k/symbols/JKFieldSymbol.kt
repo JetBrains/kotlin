@@ -7,13 +7,9 @@ package org.jetbrains.kotlin.nj2k.symbols
 
 
 import com.intellij.psi.PsiVariable
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.tree.JKVariable
-import org.jetbrains.kotlin.nj2k.types.toJK
-import org.jetbrains.kotlin.nj2k.types.JKClassTypeImpl
-import org.jetbrains.kotlin.nj2k.types.JKType
-import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
+import org.jetbrains.kotlin.nj2k.types.*
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -22,7 +18,7 @@ sealed class JKFieldSymbol : JKSymbol {
     abstract val fieldType: JKType?
 }
 
-class JKUniverseFieldSymbol(    override val typeFactory: JKTypeFactory) : JKFieldSymbol(), JKUniverseSymbol<JKVariable> {
+class JKUniverseFieldSymbol(override val typeFactory: JKTypeFactory) : JKFieldSymbol(), JKUniverseSymbol<JKVariable> {
     override val fieldType: JKType
         get() = target.type.type
 
@@ -50,7 +46,7 @@ class JKMultiverseKtEnumEntrySymbol(
     override val typeFactory: JKTypeFactory
 ) : JKFieldSymbol(), JKMultiverseKtSymbol<KtEnumEntry> {
     override val fieldType: JKType?
-        get() = JKClassTypeImpl(
+        get() = JKClassType(
             symbolProvider.provideDirectSymbol(target.containingClass()!!) as JKClassSymbol,
             emptyList(),
             Nullability.NotNull
@@ -62,6 +58,6 @@ class JKUnresolvedField(
     override val typeFactory: JKTypeFactory
 ) : JKFieldSymbol(), JKUnresolvedSymbol {
     override val fieldType: JKType
-        get() = JKClassTypeImpl(symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.nothing.toSafe()), emptyList())
+        get() = typeFactory.types.nullableAny
 }
 

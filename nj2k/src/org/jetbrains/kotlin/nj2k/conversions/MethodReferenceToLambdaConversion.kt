@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.lang.jvm.JvmModifier
+import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.nj2k.qualified
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.*
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -37,7 +39,7 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
             ?.let { classAccessExpression ->
                 JKParameter(
                     JKTypeElement(
-                        parametersTypesByFunctionalInterface?.firstOrNull() ?: JKClassTypeImpl(classAccessExpression.identifier)
+                        parametersTypesByFunctionalInterface?.firstOrNull() ?: JKClassType(classAccessExpression.identifier)
                     ),
                     JKNameIdentifier(RECEIVER_NAME),
                     isVarArgs = false
@@ -90,8 +92,8 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
             element::functionalType.detached(),
             JKTypeElement(
                 when (symbol) {
-                    is JKMethodSymbol -> symbol.returnType ?: JKNoTypeImpl
-                    is JKClassSymbol -> JKClassTypeImpl(symbol)
+                    is JKMethodSymbol -> symbol.returnType ?: JKNoType
+                    is JKClassSymbol -> JKClassType(symbol)
                     is JKUnresolvedSymbol -> return recurse(element)
                     else -> error("Symbol should be either method symbol or class symbol, but it is ${symbol::class}")
                 }
@@ -126,6 +128,26 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
             else -> null
         }
     }
+
+
+    private val JKMethodSymbol.isStatic: Boolean
+        get() = when (this) {
+            is JKMultiverseFunctionSymbol -> target.parent is KtObjectDeclaration
+            is JKMultiverseMethodSymbol -> target.hasModifierProperty(PsiModifier.STATIC)
+            is JKUniverseMethodSymbol -> target.parent?.parent?.safeAs<JKClass>()?.classKind == JKClass.ClassKind.COMPANION
+            is JKUnresolvedMethod -> false
+        }
+
+    private val JKMethodSymbol.parameterNames: List<String>?
+        get() {
+            return when (this) {
+                is JKMultiverseFunctionSymbol -> target.valueParameters.map { it.name ?: return null }
+                is JKMultiverseMethodSymbol -> target.parameters.map { it.name ?: return null }
+                is JKUniverseMethodSymbol -> target.parameters.map { it.name.value }
+                is JKUnresolvedMethod -> null
+            }
+        }
+
 
     companion object {
         private const val RECEIVER_NAME = "obj" //name taken from old j2k

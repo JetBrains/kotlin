@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 
 import org.jetbrains.kotlin.nj2k.types.JKClassType
-import org.jetbrains.kotlin.nj2k.types.JKClassTypeImpl
 import org.jetbrains.kotlin.nj2k.types.JKJavaVoidType
 import org.jetbrains.kotlin.nj2k.types.updateNullability
 
@@ -36,7 +35,7 @@ class JavaStandardMethodsConversion(context: NewJ2kConverterContext) : Recursive
                 if (hasNoCloneableInSuperClasses) {
                     element.inheritance.implements +=
                         JKTypeElement(
-                            JKClassTypeImpl(
+                            JKClassType(
                                 JKUnresolvedClassSymbol("Cloneable", typeFactory),
                                 emptyList(), Nullability.NotNull
                             )

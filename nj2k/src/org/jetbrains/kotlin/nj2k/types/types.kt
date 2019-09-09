@@ -16,15 +16,8 @@ interface JKType {
 
 interface JKWildCardType : JKType
 
-interface JKNoType : JKType
-
 interface JKParametrizedType : JKType {
     val parameters: List<JKType>
-}
-
-interface JKClassType : JKParametrizedType {
-    val classReference: JKClassSymbol
-    override val nullability: Nullability
 }
 
 interface JKStarProjectionType : JKWildCardType {
@@ -32,15 +25,15 @@ interface JKStarProjectionType : JKWildCardType {
         get() = Nullability.NotNull
 }
 
-object JKNoTypeImpl : JKNoType {
+object JKNoType : JKType {
     override val nullability: Nullability = Nullability.NotNull
 }
 
-data class JKClassTypeImpl(
-    override val classReference: JKClassSymbol,
+data class JKClassType(
+    val classReference: JKClassSymbol,
     override val parameters: List<JKType> = emptyList(),
     override val nullability: Nullability = Nullability.Default
-) : JKClassType
+) : JKParametrizedType
 
 
 object JKStarProjectionTypeImpl : JKStarProjectionType

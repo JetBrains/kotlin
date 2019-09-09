@@ -20,7 +20,7 @@ class ParameterModificationInMethodCallsConversion(context: NewJ2kConverterConte
                 if (parameter.hasWritableUsages(element.block, context)) {
                     val parameterType =
                         if (parameter.isVarArgs) {
-                            JKClassTypeImpl(
+                            JKClassType(
                                 symbolProvider.provideClassSymbol(parameter.type.type.arrayFqName()),
                                 if (parameter.type.type is JKJavaPrimitiveType) emptyList()
                                 else listOf(

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.nj2k.symbols.deepestFqName
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.isArrayType
 import org.jetbrains.kotlin.nj2k.types.isStringType
-import org.jetbrains.kotlin.nj2k.types.type
 
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -268,7 +267,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             Method("java.lang.String.indexOf") convertTo Method("kotlin.text.indexOf"),
             Method("java.lang.String.lastIndexOf") convertTo Method("kotlin.text.lastIndexOf"),
             Method("java.lang.String.getBytes") convertTo Method("kotlin.text.toByteArray")
-                    withByArgumentsFilter { it.singleOrNull()?.type(typeFactory)?.isStringType() == true }
+                    withByArgumentsFilter { it.singleOrNull()?.calculateType(typeFactory)?.isStringType() == true }
                     withArgumentsProvider { arguments ->
                 val argument = arguments.arguments.single()::value.detached()
                 val call = JKCallExpressionImpl(
@@ -281,7 +280,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             Method("java.lang.String.valueOf")
                     convertTo ExtensionMethod("kotlin.Any.toString")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
-                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(typeFactory)?.isArrayType() == false },
+                    withByArgumentsFilter { it.isNotEmpty() && it.first().calculateType(typeFactory)?.isArrayType() == false },
 
             Method("java.lang.String.getChars")
                     convertTo Method("kotlin.text.toCharArray")
@@ -297,12 +296,12 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             Method("java.lang.String.valueOf")
                     convertTo Method("kotlin.String")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
-                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(typeFactory)?.isArrayType() == true },
+                    withByArgumentsFilter { it.isNotEmpty() && it.first().calculateType(typeFactory)?.isArrayType() == true },
 
             Method("java.lang.String.copyValueOf")
                     convertTo Method("kotlin.String")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
-                    withByArgumentsFilter { it.isNotEmpty() && it.first().type(typeFactory)?.isArrayType() == true },
+                    withByArgumentsFilter { it.isNotEmpty() && it.first().calculateType(typeFactory)?.isArrayType() == true },
 
             Method("java.lang.String.replaceAll")
                     convertTo Method("kotlin.text.replace")

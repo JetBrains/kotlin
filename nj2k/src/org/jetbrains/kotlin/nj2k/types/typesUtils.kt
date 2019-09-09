@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
-import org.jetbrains.kotlin.nj2k.toJkType
 import org.jetbrains.kotlin.nj2k.tree.*
-
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -26,57 +24,11 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun JKExpression.type(typeFactory: JKTypeFactory): JKType? =
-    when (this) {
-        is JKLiteralExpression -> type.toJkType(typeFactory)
-        is JKOperatorExpression -> {
-            when (val operator = operator) {
-                is JKKtOperatorImpl -> operator.returnType
-                is JKKtSpreadOperator -> (this as JKPrefixExpression).expression.type(typeFactory)//TODO ger real type
-                else -> error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
-            }
-        }
-        is JKCallExpression -> identifier.returnType
-        is JKFieldAccessExpression -> identifier.fieldType
-        is JKQualifiedExpression -> selector.type(typeFactory)
-        is JKKtThrowExpression -> typeFactory.types.nothing
-        is JKClassAccessExpression ->
-            JKClassTypeImpl(identifier, emptyList(), Nullability.NotNull)
-        is JKIsExpression -> typeFactory.types.boolean
-        is JKParenthesizedExpression -> expression.type(typeFactory)
-        is JKTypeCastExpression -> type.type
-        is JKThisExpression -> null// TODO return actual type
-        is JKSuperExpression -> null// TODO return actual type
-        is JKStubExpression -> null
-        is JKIfElseExpression -> thenBranch.type(typeFactory)// TODO return actual type
-        is JKArrayAccessExpression ->
-            (expression.type(typeFactory) as? JKParametrizedType)?.parameters?.lastOrNull()
-        is JKClassLiteralExpression -> {
-            val symbol = when (literalType) {
-                JKClassLiteralExpression.ClassLiteralType.KOTLIN_CLASS ->
-                    typeFactory.symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.kClass.toSafe())
-                JKClassLiteralExpression.ClassLiteralType.JAVA_CLASS,
-                JKClassLiteralExpression.ClassLiteralType.JAVA_PRIMITIVE_CLASS, JKClassLiteralExpression.ClassLiteralType.JAVA_VOID_TYPE ->
-                    typeFactory.symbolProvider.provideClassSymbol("java.lang.Class")
-            }
-            JKClassTypeImpl(symbol, listOf(classType.type), Nullability.NotNull)
-        }
-        is JKKtAnnotationArrayInitializerExpression -> JKNoTypeImpl //TODO
-        is JKLambdaExpression -> returnType.type
-        is JKLabeledExpression -> typeFactory.types.unit
-        is JKMethodReferenceExpression -> JKNoTypeImpl //TODO
-        is JKAssignmentChainAlsoLink -> receiver.type(typeFactory)
-        is JKAssignmentChainLetLink -> field.type(typeFactory)
-        is JKKtItExpression -> type
-        is JKNewExpression -> JKClassTypeImpl(classSymbol)
-        else -> TODO(this::class.java.toString())
-    }
-
 fun JKType.asTypeElement() =
     JKTypeElement(this)
 
 fun JKClassSymbol.asType(nullability: Nullability = Nullability.Default): JKClassType =
-    JKClassTypeImpl(this, emptyList(), nullability)
+    JKClassType(this, emptyList(), nullability)
 
 val PsiType.isKotlinFunctionalType: Boolean
     get() {
@@ -112,8 +64,8 @@ private val jvmPrimitiveTypesPriority =
 fun JKType.applyRecursive(transform: (JKType) -> JKType?): JKType =
     transform(this) ?: when (this) {
         is JKTypeParameterType -> this
-        is JKClassTypeImpl ->
-            JKClassTypeImpl(
+        is JKClassType ->
+            JKClassType(
                 classReference,
                 parameters.map { it.applyRecursive(transform) },
                 nullability
@@ -133,7 +85,7 @@ inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability)
     if (nullability == newNullability) this
     else when (this) {
         is JKTypeParameterType -> JKTypeParameterType(identifier, newNullability)
-        is JKClassTypeImpl -> JKClassTypeImpl(classReference, parameters, newNullability)
+        is JKClassType -> JKClassType(classReference, parameters, newNullability)
         is JKNoType -> this
         is JKJavaVoidType -> this
         is JKJavaPrimitiveType -> this
@@ -148,8 +100,8 @@ fun <T : JKType> T.updateNullabilityRecursively(newNullability: Nullability): T 
     applyRecursive {
         when (it) {
             is JKTypeParameterType -> JKTypeParameterType(it.identifier, newNullability)
-            is JKClassTypeImpl ->
-                JKClassTypeImpl(
+            is JKClassType ->
+                JKClassType(
                     it.classReference,
                     it.parameters.map { it.updateNullabilityRecursively(newNullability) },
                     newNullability
@@ -271,7 +223,7 @@ fun JKType.isInterface(): Boolean =
 fun JKType.replaceJavaClassWithKotlinClassType(symbolProvider: JKSymbolProvider): JKType =
     applyRecursive { type ->
         if (type is JKClassType && type.classReference.fqName == "java.lang.Class") {
-            JKClassTypeImpl(
+            JKClassType(
                 symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.kClass.toSafe()),
                 type.parameters.map { it.replaceJavaClassWithKotlinClassType(symbolProvider) },
                 Nullability.NotNull

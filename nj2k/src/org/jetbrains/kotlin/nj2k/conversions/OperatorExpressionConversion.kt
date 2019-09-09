@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.callOn
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.isStringType
-import org.jetbrains.kotlin.nj2k.types.type
 
 
 class AnyWithStringConcatenationConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKBinaryExpression) return recurse(element)
         if (element.operator.token == JKOperatorToken.PLUS
-            && element.right.type(typeFactory)?.isStringType() == true
-            && element.left.type(typeFactory)?.isStringType() == false
+            && element.right.calculateType(typeFactory).isStringType()
+            && !element.left.calculateType(typeFactory).isStringType()
         ) {
             return recurse(
                 JKBinaryExpression(

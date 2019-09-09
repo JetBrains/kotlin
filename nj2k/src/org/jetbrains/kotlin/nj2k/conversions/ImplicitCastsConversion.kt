@@ -149,6 +149,7 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
         )
     }
 
+
     private fun JKExpression.castTo(toType: JKType, strict: Boolean = false): JKExpression? {
         val expressionType = calculateType(typeFactory)
         if (expressionType == toType) return null

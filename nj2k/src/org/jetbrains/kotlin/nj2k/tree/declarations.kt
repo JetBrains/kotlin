@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.nj2k.tree
 
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
-import org.jetbrains.kotlin.nj2k.types.JKNoTypeImpl
+import org.jetbrains.kotlin.nj2k.types.JKNoType
 
 abstract class JKDeclaration : JKTreeElement(), PsiOwner by PsiOwnerImpl() {
     abstract val name: JKNameIdentifier
@@ -168,15 +168,13 @@ class JKConstructorImpl(
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKConstructor() {
-    override var returnType: JKTypeElement by child(JKTypeElement(JKNoTypeImpl))
-
+    override var returnType: JKTypeElement by child(JKTypeElement(JKNoType))
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)
     override var block: JKBlock by child(block)
     override var delegationCall: JKExpression by child(delegationCall)
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterList())
     override var annotationList: JKAnnotationList by child(annotationList)
-
     override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
@@ -194,8 +192,7 @@ class JKKtPrimaryConstructor(
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKConstructor() {
-    override var returnType: JKTypeElement by child(JKTypeElement(JKNoTypeImpl))
-
+    override var returnType: JKTypeElement by child(JKTypeElement(JKNoType))
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)
     override var block: JKBlock by child(JKBodyStub)
