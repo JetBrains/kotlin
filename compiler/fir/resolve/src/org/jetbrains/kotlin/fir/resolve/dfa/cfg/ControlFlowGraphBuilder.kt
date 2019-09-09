@@ -522,6 +522,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Block -----------------------------------
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer): InitBlockEnterNode {
+        graphs.push(ControlFlowGraph("init block"))
         val enterNode = createInitBlockEnterNode(initBlock).also {
             lexicalScopes.push(stackOf(it))
         }
@@ -539,6 +540,7 @@ class ControlFlowGraphBuilder {
             it.markAsDeadIfNecessary()
             lexicalScopes.pop()
             exitNodes.pop()
+            graphs.pop()
         }
     }
 

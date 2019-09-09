@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -618,7 +619,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     // ----------------------------------- Init block -----------------------------------
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer) {
-        graphBuilder.enterInitBlock(initBlock)
+        graphBuilder.enterInitBlock(initBlock).mergeIncomingFlow()
     }
 
     fun exitInitBlock(initBlock: FirAnonymousInitializer) {
@@ -631,7 +632,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         getOrCreateVariable(leftOperand) to getOrCreateVariable(rightOperand)
 
     private var CFGNode<*>.flow: DelegatingFlow
-        get() = flowOnNodes[this.origin] ?: DelegatingFlow.createDefaultFlow()
+        get() = flowOnNodes.getValue(this.origin)
         set(value) {
             flowOnNodes[this.origin] = value
         }
