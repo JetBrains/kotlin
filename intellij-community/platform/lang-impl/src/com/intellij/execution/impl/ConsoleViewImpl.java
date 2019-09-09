@@ -1095,7 +1095,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     }
 
     int oStart = document.getLineStartOffset(startLine);
-    if (oStart > 0) oStart--;
+    if (oStart > 0 && folding.shouldBeAttachedToThePreviousLine()) oStart--;
     int oEnd = CharArrayUtil.shiftBackward(document.getImmutableCharSequence(), document.getLineEndOffset(endLine) - 1, " \t") + 1;
 
     String placeholder = folding.getPlaceholderText(getProject(), toFold);
