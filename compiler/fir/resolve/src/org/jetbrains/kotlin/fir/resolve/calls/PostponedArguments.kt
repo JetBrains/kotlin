@@ -106,7 +106,7 @@ private fun extraLambdaInfo(
     val isSuspend = expectedType?.isSuspendFunctionType ?: false
 
     val isFunctionSupertype =
-        expectedType != null && expectedType.isBuiltinFunctionalType//isNotNullOrNullableFunctionSupertype(expectedType)
+        expectedType != null && expectedType.lowerBoundIfFlexible().isBuiltinFunctionalType//isNotNullOrNullableFunctionSupertype(expectedType)
     val argumentAsFunctionExpression = argument//.safeAs<FunctionExpression>()
 
     val typeVariable = TypeVariableForLambdaReturnType(argument, "_L")
@@ -133,7 +133,9 @@ internal fun extractLambdaInfoFromFunctionalType(
     expectedTypeRef: FirTypeRef,
     argument: FirAnonymousFunction
 ): ResolvedLambdaAtom? {
-    if (expectedType == null || !expectedType.isBuiltinFunctionalType) return null
+    if (expectedType == null) return null
+    if (expectedType is ConeFlexibleType) return extractLambdaInfoFromFunctionalType(expectedType.lowerBound, expectedTypeRef, argument)
+    if (!expectedType.isBuiltinFunctionalType) return null
     val parameters = extractLambdaParameters(expectedType, argument)
 
     val argumentAsFunctionExpression = argument//.safeAs<FunctionExpression>()

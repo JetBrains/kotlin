@@ -46,6 +46,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/complexFlexibleInference.kt");
         }
 
+        @TestMetadata("FunctionTypeInJava.kt")
+        public void testFunctionTypeInJava() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/FunctionTypeInJava.kt");
+        }
+
         @TestMetadata("KJKComplexHierarchy.kt")
         public void testKJKComplexHierarchy() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/KJKComplexHierarchy.kt");

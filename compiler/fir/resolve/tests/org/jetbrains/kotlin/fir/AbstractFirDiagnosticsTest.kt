@@ -6,10 +6,15 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractFirDiagnosticsTest : AbstractFirDiagnosticsSmokeTest() {
+
+    override fun getConfigurationKind(): ConfigurationKind {
+        return ConfigurationKind.ALL
+    }
 
     override fun checkResultingFirFiles(
         firFiles: MutableList<FirFile>,
