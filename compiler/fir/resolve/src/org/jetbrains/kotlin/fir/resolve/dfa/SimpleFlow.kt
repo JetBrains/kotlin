@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import com.google.common.collect.HashMultimap
 
-class Flow private constructor(
+class SimpleFlow private constructor(
     val approvedInfos: MutableMap<RealDataFlowVariable, FirDataFlowInfo>,
     val conditionalInfos: HashMultimap<DataFlowVariable, ConditionalFirDataFlowInfo>,
     private var state: State = State.Building
@@ -18,7 +18,7 @@ class Flow private constructor(
     ) : this(approvedInfos, conditionalInfos, State.Building)
 
     companion object {
-        val EMPTY = Flow(mutableMapOf(), HashMultimap.create(), State.Frozen)
+        val EMPTY = SimpleFlow(mutableMapOf(), HashMultimap.create(), State.Frozen)
     }
 
     private val isFrozen: Boolean get() = state == State.Frozen
@@ -27,7 +27,7 @@ class Flow private constructor(
         state = State.Frozen
     }
 
-    fun addApprovedFact(variable: RealDataFlowVariable, info: FirDataFlowInfo): Flow {
+    fun addApprovedFact(variable: RealDataFlowVariable, info: FirDataFlowInfo): SimpleFlow {
         if (isFrozen) return copyForBuilding().addApprovedFact(variable, info)
         approvedInfos.compute(variable) { _, existingInfo ->
             if (existingInfo == null) info
@@ -36,7 +36,7 @@ class Flow private constructor(
         return this
     }
 
-    fun addNotApprovedFact(variable: DataFlowVariable, info: ConditionalFirDataFlowInfo): Flow {
+    fun addNotApprovedFact(variable: DataFlowVariable, info: ConditionalFirDataFlowInfo): SimpleFlow {
         if (isFrozen) return copyForBuilding().addNotApprovedFact(variable, info)
         conditionalInfos.put(variable, info)
         return this
@@ -46,7 +46,7 @@ class Flow private constructor(
         from: DataFlowVariable,
         to: DataFlowVariable,
         transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo)? = null
-    ): Flow {
+    ): SimpleFlow {
         if (isFrozen) {
             return copyForBuilding().copyNotApprovedFacts(from, to, transform)
         }
@@ -67,7 +67,7 @@ class Flow private constructor(
         return approvedInfos[variable]
     }
 
-    fun removeVariableFromFlow(variable: DataFlowVariable): Flow {
+    fun removeVariableFromFlow(variable: DataFlowVariable): SimpleFlow {
         if (isFrozen) return copyForBuilding().removeVariableFromFlow(variable)
         conditionalInfos.removeAll(variable)
         approvedInfos.remove(variable)
@@ -78,15 +78,15 @@ class Flow private constructor(
         Building, Frozen
     }
 
-    fun copy(): Flow {
+    fun copy(): SimpleFlow {
         return when (state) {
             State.Frozen -> this
             State.Building -> copyForBuilding()
         }
     }
 
-    fun copyForBuilding(): Flow {
-        return Flow(approvedInfos.toMutableMap(), conditionalInfos.copy(), State.Building)
+    fun copyForBuilding(): SimpleFlow {
+        return SimpleFlow(approvedInfos.toMutableMap(), conditionalInfos.copy(), State.Building)
     }
 }
 

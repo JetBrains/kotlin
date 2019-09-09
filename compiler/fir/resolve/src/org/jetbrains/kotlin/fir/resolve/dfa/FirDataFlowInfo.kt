@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Multimap
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.render
 
@@ -25,8 +25,9 @@ data class ConditionalFirDataFlowInfo(
     private fun Set<ConeKotlinType>.render(): String = joinToString { it.render() }
 }
 
-typealias ApprovedInfos = MutableMap<RealDataFlowVariable, FirDataFlowInfo>
-typealias ConditionalInfos = ArrayListMultimap<DataFlowVariable, ConditionalFirDataFlowInfo>
+typealias ApprovedInfos = Map<RealDataFlowVariable, FirDataFlowInfo>
+typealias MutableApprovedInfos = MutableMap<RealDataFlowVariable, MutableFirDataFlowInfo>
+typealias ConditionalInfos = Multimap<DataFlowVariable, ConditionalFirDataFlowInfo>
 
 interface FirDataFlowInfo {
     companion object {
@@ -74,9 +75,14 @@ operator fun FirDataFlowInfo.plus(other: FirDataFlowInfo?): FirDataFlowInfo = ot
 fun FirDataFlowInfo.toConditional(condition: Condition, variable: RealDataFlowVariable): ConditionalFirDataFlowInfo =
     ConditionalFirDataFlowInfo(condition, variable, this)
 
-fun ApprovedInfos.addInfo(variable: RealDataFlowVariable, info: FirDataFlowInfo) {
-    compute(variable) { _, existingInfo ->
-        if (existingInfo != null) (existingInfo as MutableFirDataFlowInfo).apply { this += info }
-        else info
+fun MutableApprovedInfos.addInfo(variable: RealDataFlowVariable, info: FirDataFlowInfo) {
+    merge(variable, info as MutableFirDataFlowInfo) { existingInfo, newInfo ->
+        existingInfo.apply { this += newInfo }
+    }
+}
+
+fun MutableApprovedInfos.mergeInfo(other: Map<RealDataFlowVariable, FirDataFlowInfo>) {
+    other.forEach { (variable, info) ->
+        addInfo(variable, info)
     }
 }

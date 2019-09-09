@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -42,9 +41,9 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     private val receiverStack: ImplicitReceiverStackImpl = transformer.implicitReceiverStack
 
     private val graphBuilder = ControlFlowGraphBuilder()
-    private val logicSystem = DelegatingLogicSystemImpl(context)
+    private val logicSystem: LogicSystem = LogicSystemImpl(context)
     private val variableStorage = DataFlowVariableStorage()
-    private val flowOnNodes = mutableMapOf<CFGNode<*>, DelegatingFlow>()
+    private val flowOnNodes = mutableMapOf<CFGNode<*>, Flow>()
 
     private val variablesForWhenConditions = mutableMapOf<WhenBranchConditionExitNode, DataFlowVariable>()
 
@@ -309,8 +308,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     // ----------------------------------- When -----------------------------------
 
     fun enterWhenExpression(whenExpression: FirWhenExpression) {
-        val node = graphBuilder.enterWhenExpression(whenExpression).mergeIncomingFlow()
-        node.flow = node.flow.createNewFlow()
+        graphBuilder.enterWhenExpression(whenExpression).mergeIncomingFlow()
     }
 
     fun enterWhenBranchCondition(whenBranch: FirWhenBranch) {
@@ -321,7 +319,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
                 variablesForWhenConditions.remove(previousNode)!!,
                 EqFalse,
                 node.flow,
-                shouldCreateNewFlow = true,
+                shouldForkFlow = true,
                 shouldRemoveSynthetics = true
             )
         }
@@ -337,7 +335,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
             conditionVariable,
             EqTrue,
             conditionExitNode.flow,
-            shouldCreateNewFlow = true,
+            shouldForkFlow = true,
             shouldRemoveSynthetics = false
         )
     }
@@ -349,7 +347,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     fun exitWhenExpression(whenExpression: FirWhenExpression) {
         val node = graphBuilder.exitWhenExpression(whenExpression)
         val previousFlows = node.alivePreviousNodes.map { it.flow }
-        val flow = logicSystem.mergeFlows(previousFlows)
+        val flow = logicSystem.joinFlow(previousFlows)
         node.flow = flow
         // TODO
         // val subjectSymbol = whenExpression.subjectVariable?.symbol
@@ -541,13 +539,13 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
     private fun exitLeftArgumentOfBinaryBooleanOperator(leftNode: CFGNode<*>, rightNode: CFGNode<*>, isAnd: Boolean) {
         val parentFlow = leftNode.alivePreviousNodes.first().flow
-        leftNode.flow = parentFlow.createNewFlow()
+        leftNode.flow = logicSystem.forkFlow(parentFlow)
         val leftOperandVariable = getOrCreateVariable(leftNode.previousNodes.first().fir)
         rightNode.flow = logicSystem.approveFactsInsideFlow(
             leftOperandVariable,
             if (isAnd) EqTrue else EqFalse,
             parentFlow,
-            shouldCreateNewFlow = true,
+            shouldForkFlow = true,
             shouldRemoveSynthetics = false
         )
     }
@@ -561,6 +559,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         val onlyLeftEvaluated = bothEvaluated.invert()
 
         // Naming for all variables was chosen in assumption that we processing && expression
+        val flowFromLeft = node.leftOperandNode.flow
         val flowFromRight = node.rightOperandNode.flow
 
         val flow = node.mergeIncomingFlow().flow
@@ -568,15 +567,20 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         val (leftVariable, rightVariable) = binaryLogicExpression.getVariables()
         val andVariable = getOrCreateVariable(binaryLogicExpression)
 
-        val conditionalFromLeft = flow.conditionalInfosFromTopFlow()[leftVariable]
-        val conditionalFromRight = flowFromRight.conditionalInfosFromTopFlow()[rightVariable]
+        val (conditionalFromLeft, conditionalFromRight, approvedFromRight) = logicSystem.collectInfoForBooleanOperator(
+            flowFromLeft,
+            flowFromRight
+        )
+
+        val conditionalFromLeftArgument = conditionalFromLeft[leftVariable]
+        val conditionalFromRightArgument = conditionalFromRight[rightVariable]
 
         // left && right == True
         // left || right == False
-        val approvedIfTrue: ApprovedInfos = mutableMapOf()
-        logicSystem.approveFactTo(approvedIfTrue, bothEvaluated, conditionalFromLeft)
-        logicSystem.approveFactTo(approvedIfTrue, bothEvaluated, conditionalFromRight)
-        flowFromRight.approvedInfosFromTopFlow().forEach { (variable, info) ->
+        val approvedIfTrue: MutableApprovedInfos = mutableMapOf()
+        logicSystem.approveFactTo(approvedIfTrue, bothEvaluated, conditionalFromLeftArgument)
+        logicSystem.approveFactTo(approvedIfTrue, bothEvaluated, conditionalFromRightArgument)
+        approvedFromRight.forEach { (variable, info) ->
             approvedIfTrue.addInfo(variable, info)
         }
         approvedIfTrue.forEach { (variable, info) ->
@@ -585,9 +589,9 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
         // left && right == False
         // left || right == True
-        val approvedIfFalse: ApprovedInfos = mutableMapOf()
-        val leftIsFalse = logicSystem.approveFact(onlyLeftEvaluated, conditionalFromLeft)
-        val rightIsFalse = logicSystem.approveFact(onlyLeftEvaluated, conditionalFromRight)
+        val approvedIfFalse: MutableApprovedInfos = mutableMapOf()
+        val leftIsFalse = logicSystem.approveFact(onlyLeftEvaluated, conditionalFromLeftArgument)
+        val rightIsFalse = logicSystem.approveFact(onlyLeftEvaluated, conditionalFromRightArgument)
         approvedIfFalse.mergeInfo(logicSystem.orForVerifiedFacts(leftIsFalse, rightIsFalse))
         approvedIfFalse.forEach { (variable, info) ->
             logicSystem.addConditionalInfo(flow, andVariable, info.toConditional(onlyLeftEvaluated, variable))
@@ -631,7 +635,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     private fun FirBinaryLogicExpression.getVariables(): Pair<DataFlowVariable, DataFlowVariable> =
         getOrCreateVariable(leftOperand) to getOrCreateVariable(rightOperand)
 
-    private var CFGNode<*>.flow: DelegatingFlow
+    private var CFGNode<*>.flow: Flow
         get() = flowOnNodes.getValue(this.origin)
         set(value) {
             flowOnNodes[this.origin] = value
@@ -641,7 +645,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
     private fun <T : CFGNode<*>> T.mergeIncomingFlow(): T = this.also { node ->
         val previousFlows = node.alivePreviousNodes.map { it.flow }
-        node.flow = logicSystem.mergeFlows(previousFlows)
+        node.flow = logicSystem.joinFlow(previousFlows)
     }
 
     // -------------------------------- get or create variable --------------------------------
@@ -709,8 +713,8 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         return result
     }
 
-    private inner class DelegatingLogicSystemImpl(context: DataFlowInferenceContext) : DelegatingLogicSystem(context) {
-        override fun processUpdatedReceiverVariable(flow: DelegatingFlow, variable: RealDataFlowVariable) {
+    private inner class LogicSystemImpl(context: DataFlowInferenceContext) : DelegatingLogicSystem(context) {
+        override fun processUpdatedReceiverVariable(flow: Flow, variable: RealDataFlowVariable) {
             val symbol = (variable.fir as? FirSymbolOwner<*>)?.symbol ?: return
 
             val index = receiverStack.getReceiverIndex(symbol) ?: return
@@ -726,7 +730,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
             }
         }
 
-        override fun updateAllReceivers(flow: DelegatingFlow) {
+        override fun updateAllReceivers(flow: Flow) {
             receiverStack.mapNotNull { variableStorage[it.boundSymbol] }.forEach { processUpdatedReceiverVariable(flow, it) }
         }
     }

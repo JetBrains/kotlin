@@ -7,26 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-interface DelegatingFlow {
-    companion object {
-        fun createDefaultFlow(): DelegatingFlow = DelegatingFlowImpl(null)
-    }
-
-    fun getApprovedInfo(variable: RealDataFlowVariable): FirDataFlowInfo?
-    fun getConditionalInfos(variable: DataFlowVariable): Collection<ConditionalFirDataFlowInfo>
-
-    fun getVariablesInApprovedInfos(): Collection<RealDataFlowVariable>
-
-    fun createNewFlow(): DelegatingFlow
-}
-
-private class DelegatingFlowImpl(
-    val previousFlow: DelegatingFlowImpl?,
-    val approvedInfos: ApprovedInfos = mutableMapOf(),
+class DelegatingFlow(
+    val previousFlow: DelegatingFlow?,
+    val approvedInfos: MutableApprovedInfos = mutableMapOf(),
     val conditionalInfos: ConditionalInfos = ArrayListMultimap.create()
-) : DelegatingFlow {
+) : Flow {
     val level: Int = previousFlow?.level?.plus(1) ?: 0
 
     override fun getApprovedInfo(variable: RealDataFlowVariable): FirDataFlowInfo? {
@@ -64,12 +50,8 @@ private class DelegatingFlowImpl(
         return result
     }
 
-    override fun createNewFlow(): DelegatingFlowImpl {
-        return DelegatingFlowImpl(this)
-    }
-
-    private inline fun collect(block: (DelegatingFlowImpl) -> Boolean) {
-        var flow: DelegatingFlowImpl? = this
+    private inline fun collect(block: (DelegatingFlow) -> Boolean) {
+        var flow: DelegatingFlow? = this
         while (flow != null) {
             val shouldContinue = block(flow)
             if (!shouldContinue) break
@@ -78,23 +60,12 @@ private class DelegatingFlowImpl(
     }
 }
 
-fun DelegatingFlow.approvedInfosFromTopFlow(): Map<RealDataFlowVariable, FirDataFlowInfo> {
-    require(this is DelegatingFlowImpl)
+fun DelegatingFlow.approvedInfosFromTopFlow(): ApprovedInfos {
     return approvedInfos
 }
 
-fun DelegatingFlow.conditionalInfosFromTopFlow(): Multimap<DataFlowVariable, ConditionalFirDataFlowInfo> {
-    require(this is DelegatingFlowImpl)
+fun DelegatingFlow.conditionalInfosFromTopFlow(): ConditionalInfos {
     return ImmutableMultimap(conditionalInfos)
-}
-
-fun ApprovedInfos.mergeInfo(other: Map<RealDataFlowVariable, FirDataFlowInfo>) {
-    other.forEach { (variable, info) ->
-        merge(variable, info) { existingInfo, newInfo ->
-            (existingInfo as MutableFirDataFlowInfo) += newInfo
-            existingInfo
-        }
-    }
 }
 
 private class ImmutableMultimap<K, V>(private val original: Multimap<K, V>) : Multimap<K, V> by original {
@@ -123,16 +94,33 @@ private class ImmutableMultimap<K, V>(private val original: Multimap<K, V>) : Mu
     }
 }
 
-abstract class DelegatingLogicSystem(private val context: DataFlowInferenceContext) {
+abstract class DelegatingLogicSystem(context: DataFlowInferenceContext) : LogicSystem(context) {
+    override fun createEmptyFlow(): Flow {
+        return DelegatingFlow(null)
+    }
+
+    override fun forkFlow(flow: Flow): Flow {
+        require(flow is DelegatingFlow)
+        return DelegatingFlow(flow)
+    }
+
+    override fun collectInfoForBooleanOperator(leftFlow: Flow, rightFlow: Flow): InfoForBooleanOperator {
+        require(leftFlow is DelegatingFlow && rightFlow is DelegatingFlow)
+        return InfoForBooleanOperator(
+            leftFlow.previousFlow!!.conditionalInfosFromTopFlow(),
+            rightFlow.conditionalInfosFromTopFlow(),
+            rightFlow.approvedInfosFromTopFlow()
+        )
+    }
 
     // ------------------------------- Flow operations -------------------------------
 
-    fun mergeFlows(flows: Collection<DelegatingFlow>): DelegatingFlow {
-        if (flows.isEmpty()) return DelegatingFlow.createDefaultFlow()
+    override fun joinFlow(flows: Collection<Flow>): Flow {
+        if (flows.isEmpty()) return createEmptyFlow()
         flows.singleOrNull()?.let { return it }
 
         @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
-        val flows = flows as Collection<DelegatingFlowImpl>
+        val flows = flows as Collection<DelegatingFlow>
         val commonFlow = flows.reduce(this::lowestCommonFlow)
 
         val approvedInfosFromAllFlows = mutableListOf<ApprovedInfos>()
@@ -151,7 +139,7 @@ abstract class DelegatingLogicSystem(private val context: DataFlowInferenceConte
             if (existingInfo == null) {
                 commonFlow.approvedInfos[variable] = intersectedInfo
             } else {
-                (existingInfo as MutableFirDataFlowInfo) += intersectedInfo
+                existingInfo += intersectedInfo
             }
         }
 
@@ -160,19 +148,13 @@ abstract class DelegatingLogicSystem(private val context: DataFlowInferenceConte
         return commonFlow
     }
 
-    /*
-     *  used for:
-     *   1. val b = x is String
-     *   2. b = x is String
-     *   3. !b | b.not()   for Booleans
-     */
-    fun changeVariableForConditionFlow(
-        flow: DelegatingFlow,
+    override fun changeVariableForConditionFlow(
+        flow: Flow,
         sourceVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
-        transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo)? = null
+        transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo)?
     ) {
-        require(flow is DelegatingFlowImpl)
+        require(flow is DelegatingFlow)
         var infos = flow.getConditionalInfos(sourceVariable)
         if (transform != null) {
             infos = infos.map(transform)
@@ -183,14 +165,14 @@ abstract class DelegatingLogicSystem(private val context: DataFlowInferenceConte
         }
     }
 
-    fun approveFactsInsideFlow(
+    override fun approveFactsInsideFlow(
         variable: DataFlowVariable,
         condition: Condition,
-        flow: DelegatingFlow,
-        shouldCreateNewFlow: Boolean,
+        flow: Flow,
+        shouldForkFlow: Boolean,
         shouldRemoveSynthetics: Boolean
-    ): DelegatingFlow {
-        require(flow is DelegatingFlowImpl)
+    ): Flow {
+        require(flow is DelegatingFlow)
 
         val notApprovedFacts: Collection<ConditionalFirDataFlowInfo> = if (shouldRemoveSynthetics && variable.isSynthetic()) {
             flow.conditionalInfos.removeAll(variable)
@@ -198,7 +180,7 @@ abstract class DelegatingLogicSystem(private val context: DataFlowInferenceConte
             flow.getConditionalInfos(variable)
         }
 
-        val resultFlow = if (shouldCreateNewFlow) flow.createNewFlow() else flow
+        val resultFlow = if (shouldForkFlow) forkFlow(flow) else flow
         if (notApprovedFacts.isEmpty()) {
             return resultFlow
         }
@@ -229,102 +211,23 @@ abstract class DelegatingLogicSystem(private val context: DataFlowInferenceConte
         return resultFlow
     }
 
-    fun addApprovedInfo(flow: DelegatingFlow, variable: RealDataFlowVariable, info: FirDataFlowInfo) {
+    override fun addApprovedInfo(flow: Flow, variable: RealDataFlowVariable, info: FirDataFlowInfo) {
         assert(info is MutableFirDataFlowInfo)
-        require(flow is DelegatingFlowImpl)
+        require(flow is DelegatingFlow)
         flow.approvedInfos.addInfo(variable, info)
         if (variable.isThisReference) {
             processUpdatedReceiverVariable(flow, variable)
         }
     }
 
-    fun addConditionalInfo(flow: DelegatingFlow, variable: DataFlowVariable, info: ConditionalFirDataFlowInfo) {
-        require(flow is DelegatingFlowImpl)
+    override fun addConditionalInfo(flow: Flow, variable: DataFlowVariable, info: ConditionalFirDataFlowInfo) {
+        require(flow is DelegatingFlow)
         flow.conditionalInfos.put(variable, info)
     }
 
-    // ------------------------------- DataFlowInfo operations -------------------------------
-
-    fun orForVerifiedFacts(
-        left: Map<RealDataFlowVariable, FirDataFlowInfo>,
-        right: Map<RealDataFlowVariable, FirDataFlowInfo>
-    ): ApprovedInfos {
-        if (left.isNullOrEmpty() || right.isNullOrEmpty()) return mutableMapOf()
-        val map = mutableMapOf<RealDataFlowVariable, FirDataFlowInfo>()
-        for (variable in left.keys.intersect(right.keys)) {
-            val leftInfo = left.getValue(variable)
-            val rightInfo = right.getValue(variable)
-            map[variable] = or(listOf(leftInfo, rightInfo))
-        }
-        return map
-    }
-
-    fun approveFactTo(
-        destination: ApprovedInfos,
-        condition: Condition,
-        notApprovedFacts: Collection<ConditionalFirDataFlowInfo>
-    ) {
-        if (notApprovedFacts.isEmpty()) {
-            return
-        }
-        notApprovedFacts.forEach {
-            if (it.condition == condition) {
-                destination.addInfo(it.variable, it.info)
-            }
-        }
-    }
-
-    fun approveFactTo(
-        destination: ApprovedInfos,
-        variable: DataFlowVariable,
-        condition: Condition,
-        flow: DelegatingFlow
-    ) {
-        require(flow is DelegatingFlowImpl)
-        val notApprovedFacts: Collection<ConditionalFirDataFlowInfo> = flow.getConditionalInfos(variable)
-        approveFactTo(destination, condition, notApprovedFacts)
-    }
-
-    fun approveFact(condition: Condition, notApprovedFacts: Collection<ConditionalFirDataFlowInfo>): ApprovedInfos {
-        return mutableMapOf<RealDataFlowVariable, FirDataFlowInfo>().apply { approveFactTo(this, condition, notApprovedFacts)}
-    }
-
-    fun approveFact(
-        variable: DataFlowVariable,
-        condition: Condition,
-        flow: DelegatingFlow
-    ): ApprovedInfos {
-        return mutableMapOf<RealDataFlowVariable, FirDataFlowInfo>().apply { approveFactTo(this, variable, condition, flow)}
-    }
-
     // ------------------------------- Util functions -------------------------------
 
-    abstract fun processUpdatedReceiverVariable(flow: DelegatingFlow, variable: RealDataFlowVariable)
-
-    abstract fun updateAllReceivers(flow: DelegatingFlow)
-
-    // ------------------------------- Util functions -------------------------------
-
-    private fun <E> Collection<Set<E>>.intersectSets(): Set<E> = takeIf { isNotEmpty() }?.reduce { x, y -> x.intersect(y) } ?: emptySet()
-
-    private fun or(infos: Collection<FirDataFlowInfo>): FirDataFlowInfo {
-        infos.singleOrNull()?.let { return it }
-        val exactType = orTypes(infos.map { it.exactType })
-        val exactNotType = orTypes(infos.map { it.exactNotType })
-        return FirDataFlowInfo(exactType, exactNotType)
-    }
-
-    private fun orTypes(types: Collection<Set<ConeKotlinType>>): Set<ConeKotlinType> {
-        if (types.any { it.isEmpty() }) return emptySet()
-        val allTypes = types.flatMapTo(mutableSetOf()) { it }
-        val commonTypes = allTypes.toMutableSet()
-        types.forEach { commonTypes.retainAll(it) }
-        val differentTypes = allTypes - commonTypes
-        context.commonSuperTypeOrNull(differentTypes.toList())?.let { commonTypes += it }
-        return commonTypes
-    }
-
-    private fun lowestCommonFlow(left: DelegatingFlowImpl, right: DelegatingFlowImpl): DelegatingFlowImpl {
+    private fun lowestCommonFlow(left: DelegatingFlow, right: DelegatingFlow): DelegatingFlow {
         val level = minOf(left.level, right.level)
         @Suppress("NAME_SHADOWING")
         var left = left
@@ -343,8 +246,8 @@ abstract class DelegatingLogicSystem(private val context: DataFlowInferenceConte
         return left
     }
 
-    private fun DelegatingFlowImpl.collectInfos(untilFlow: DelegatingFlowImpl): ApprovedInfos {
-        val approvedInfos: ApprovedInfos = mutableMapOf()
+    private fun DelegatingFlow.collectInfos(untilFlow: DelegatingFlow): ApprovedInfos {
+        val approvedInfos: MutableApprovedInfos = mutableMapOf()
 
         // val conditionalInfos: ConditionalInfos = ArrayListMultimap.create()
 
