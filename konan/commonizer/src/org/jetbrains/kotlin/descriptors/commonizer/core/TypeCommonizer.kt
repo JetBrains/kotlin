@@ -5,73 +5,60 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.commonizer.isUnderStandardKotlinPackages
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Node
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.isClassType
 
 interface TypeCommonizer : Commonizer<KotlinType, UnwrappedType> {
     companion object {
-        fun default(): TypeCommonizer = DefaultTypeCommonizer()
+        fun default(cache: ClassifiersCache): TypeCommonizer = DefaultTypeCommonizer(cache)
     }
 }
 
-private class DefaultTypeCommonizer : TypeCommonizer {
-    private enum class State {
-        EMPTY,
-        ERROR,
-        IN_PROGRESS
-    }
+private class DefaultTypeCommonizer(private val cache: ClassifiersCache) :
+    TypeCommonizer,
+    AbstractStandardCommonizer<KotlinType, UnwrappedType>() {
 
-    private var state = State.EMPTY
     private lateinit var temp: UnwrappedType
 
-    override val result: UnwrappedType
-        get() = when (state) {
-            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
-            State.IN_PROGRESS -> temp
-        }
+    override fun commonizationResult() = temp
 
-    override fun commonizeWith(next: KotlinType): Boolean {
-        state = when (state) {
-            State.ERROR -> State.ERROR
-            State.EMPTY -> {
-                temp = next.unwrap()
-                State.IN_PROGRESS
-            }
-            // TODO: maybe cache type comparison results?
-            State.IN_PROGRESS -> {
-                if (!areTypesEqual(temp, next.unwrap())) State.ERROR else State.IN_PROGRESS
-            }
-        }
-
-        return state != State.ERROR
+    override fun initialize(first: KotlinType) {
+        temp = first.unwrap()
     }
+
+    override fun doCommonizeWith(next: KotlinType) = areTypesEqual(cache, temp, next.unwrap())
 }
 
 /**
  * See also [AbstractStrictEqualityTypeChecker].
  */
-internal fun areTypesEqual(a: UnwrappedType, b: UnwrappedType): Boolean = when {
+internal fun areTypesEqual(cache: ClassifiersCache, a: UnwrappedType, b: UnwrappedType): Boolean = when {
     a === b -> true
-    a is SimpleType -> (b is SimpleType) && areSimpleTypesEqual(a, b)
+    a is SimpleType -> (b is SimpleType) && areSimpleTypesEqual(cache, a, b)
     a is FlexibleType -> (b is FlexibleType)
-            && areSimpleTypesEqual(a.lowerBound, b.lowerBound) && areSimpleTypesEqual(a.upperBound, b.upperBound)
+            && areSimpleTypesEqual(cache, a.lowerBound, b.lowerBound) && areSimpleTypesEqual(cache, a.upperBound, b.upperBound)
     else -> false
 }
 
-private fun areSimpleTypesEqual(a: SimpleType, b: SimpleType): Boolean = areAbbreviatedTypesEqual(
+private fun areSimpleTypesEqual(cache: ClassifiersCache, a: SimpleType, b: SimpleType): Boolean = areAbbreviatedTypesEqual(
+    cache,
     a = a.getAbbreviation() ?: a,
     aExpanded = a,
     b = b.getAbbreviation() ?: b,
     bExpandedType = b
 )
 
-private fun areAbbreviatedTypesEqual(a: SimpleType, aExpanded: SimpleType, b: SimpleType, bExpandedType: SimpleType): Boolean {
+private fun areAbbreviatedTypesEqual(
+    cache: ClassifiersCache,
+    a: SimpleType,
+    aExpanded: SimpleType,
+    b: SimpleType,
+    bExpandedType: SimpleType
+): Boolean {
     if (a.arguments.size != b.arguments.size
         || a.isMarkedNullable != b.isMarkedNullable
         || a.isDefinitelyNotNullType != b.isDefinitelyNotNullType
@@ -82,27 +69,36 @@ private fun areAbbreviatedTypesEqual(a: SimpleType, aExpanded: SimpleType, b: Si
     val aDescriptor = requireNotNull(a.constructor.declarationDescriptor, a::nonNullDescriptorExpectedErrorMessage)
     val bDescriptor = requireNotNull(b.constructor.declarationDescriptor, b::nonNullDescriptorExpectedErrorMessage)
 
-    val isUnderStandardKotlinPackages = if (
+    val aFqName = aDescriptor.fqNameSafe
+    val bFqName = bDescriptor.fqNameSafe
+
+    if (aFqName != bFqName)
+        return false
+
+    val isClassOrTypeAliasUnderStandardKotlinPackages =
+        // N.B. only for descriptors that represent classes or type aliases, but not type parameters!
         aDescriptor is ClassifierDescriptorWithTypeParameters
-        && bDescriptor is ClassifierDescriptorWithTypeParameters
-    ) {
-        // N.B. only for descriptors that represent classes or type aliases, but not type parameters:
-
-        val aFqName = aDescriptor.fqNameSafe
-
-        aFqName.isUnderStandardKotlinPackages
-                // make sure that FQ names of abbreviated types (e.g. representing type aliases) are equal
-                && aFqName == bDescriptor.fqNameSafe
-                // if classes are from the standard Kotlin packages, compare them only by type constructors
-                // effectively, this includes 1) comparison of FQ names and 2) number of type constructor parameters
-                // see org.jetbrains.kotlin.types.AbstractClassTypeConstructor.equals() for details
+                && bDescriptor is ClassifierDescriptorWithTypeParameters
+                && aFqName.isUnderStandardKotlinPackages
+                // If classes are from the standard Kotlin packages, compare them only by type constructors.
+                // Effectively, this includes 1) comparison of FQ names and 2) number of type constructor parameters.
+                // See org.jetbrains.kotlin.types.AbstractClassTypeConstructor.equals() for details.
                 && aExpanded.constructor == bExpandedType.constructor
-    } else false
 
-    val descriptorsCanBeCommonized = isUnderStandardKotlinPackages || when (aDescriptor) {
-        is TypeParameterDescriptor -> (bDescriptor is TypeParameterDescriptor) && canBeCommonized(aDescriptor, bDescriptor)
-        is TypeAliasDescriptor -> (bDescriptor is TypeAliasDescriptor) && canBeCommonized(aDescriptor, bDescriptor)
-        is ClassDescriptor -> (bDescriptor is ClassDescriptor) && canBeCommonized(aDescriptor, bDescriptor)
+    val descriptorsCanBeCommonized =
+        /* either class or type alias from Kotlin stdlib */ isClassOrTypeAliasUnderStandardKotlinPackages
+            || /* or descriptors themselves can be commonized */ when (aDescriptor) {
+        is TypeParameterDescriptor -> {
+            // Real type parameter commonization is performed in TypeParameterCommonizer.
+            // Here it is enough to check that FQ names are equal (already done above).
+            bDescriptor is TypeParameterDescriptor
+        }
+        is ClassDescriptor -> {
+            (bDescriptor is ClassDescriptor) && cache.classes[aFqName].canBeCommonized()
+        }
+        is TypeAliasDescriptor -> {
+            (bDescriptor is TypeAliasDescriptor) && cache.typeAliases[aFqName].canBeCommonized()
+        }
         else -> false
     }
 
@@ -121,7 +117,7 @@ private fun areAbbreviatedTypesEqual(a: SimpleType, aExpanded: SimpleType, b: Si
             if (aArg.projectionKind != bArg.projectionKind)
                 return false
 
-            if (!areTypesEqual(aArg.type.unwrap(), bArg.type.unwrap()))
+            if (!areTypesEqual(cache, aArg.type.unwrap(), bArg.type.unwrap()))
                 return false
         }
     }
@@ -133,59 +129,13 @@ private fun areAbbreviatedTypesEqual(a: SimpleType, aExpanded: SimpleType, b: Si
 private inline fun SimpleType.nonNullDescriptorExpectedErrorMessage() =
     "${TypeCommonizer::class} couldn't obtain non-null descriptor from: $this, ${this::class}"
 
-private val standardKotlinPackages = setOf(
-    KotlinBuiltIns.BUILT_INS_PACKAGE_NAME,
-    Name.identifier("kotlinx")
-)
-
-private val FqName.isUnderStandardKotlinPackages: Boolean
-    get() = pathSegments().firstOrNull() in standardKotlinPackages
-
-// TODO: extract this method to class commonizer
-private fun canBeCommonized(a: ClassDescriptor, b: ClassDescriptor) = when {
-    a.kind != b.kind -> false
-    !areFqNamesEqual(a, b) -> false
-    // TODO: compare class descriptors (visibility, modifiers, etc)
-    else -> true
-}
-
-// TODO: extract this method to type alias commonizer
-private fun canBeCommonized(a: TypeAliasDescriptor, b: TypeAliasDescriptor): Boolean {
-    if (!areFqNamesEqual(a, b))
-        return false
-
-    val aUnderlyingType = a.underlyingType
-    val bUnderlyingType = b.underlyingType
-
-    if (aUnderlyingType.arguments.isNotEmpty() || bUnderlyingType.arguments.isNotEmpty())
-        return false // type aliases with functional types at the right-hand side can't be commonized
-
-    if (!aUnderlyingType.isClassType || !bUnderlyingType.isClassType)
-        return false // right-hand side could have only classes
-
-    return areTypesEqual(aUnderlyingType, bUnderlyingType)
-}
-
-private fun canBeCommonized(a: TypeParameterDescriptor, b: TypeParameterDescriptor): Boolean {
-    // real type parameter commonization is performed in TypeParameterCommonizer,
-    // here it is enough to check FQ names
-    return areFqNamesEqual(a, b)
-}
-
-private fun <T : ClassifierDescriptor> areFqNamesEqual(d1: T, d2: T): Boolean {
-    val p1 = d1.parentsWithSelf.iterator()
-    val p2 = d2.parentsWithSelf.iterator()
-
-    while (p1.hasNext() && p2.hasNext()) {
-        val n1 = p1.next()
-        val n2 = p2.next()
-
-        when (n1) {
-            is ModuleDescriptor -> return n2 is ModuleDescriptor
-            is PackageFragmentDescriptor -> return (n2 is PackageFragmentDescriptor) && n1.fqName == n2.fqName
-            else -> if (n1.name != n2.name) return false
-        }
+@Suppress("NOTHING_TO_INLINE")
+private inline fun Node<*, *>?.canBeCommonized() =
+    if (this == null) {
+        // No node means that the class or type alias was not subject for commonization at all, probably it lays
+        // not in commonized module descriptors but somewhere in their dependencies.
+        true
+    } else {
+        // If entry is present, then contents (common declaration) should not be null.
+        common() != null
     }
-
-    return false
-}

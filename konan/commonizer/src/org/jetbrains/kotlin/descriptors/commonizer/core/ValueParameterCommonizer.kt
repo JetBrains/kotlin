@@ -5,83 +5,67 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.isNull
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface ValueParameterCommonizer : Commonizer<ValueParameterDescriptor, ValueParameter> {
+interface ValueParameterCommonizer : Commonizer<ValueParameter, ValueParameter> {
     companion object {
-        fun default(): ValueParameterCommonizer = DefaultValueParameterCommonizer()
+        fun default(cache: ClassifiersCache): ValueParameterCommonizer = DefaultValueParameterCommonizer(cache)
     }
 }
 
-private class DefaultValueParameterCommonizer : ValueParameterCommonizer {
-    private enum class State {
-        EMPTY,
-        ERROR,
-        IN_PROGRESS
-    }
+private class DefaultValueParameterCommonizer(cache: ClassifiersCache) :
+    ValueParameterCommonizer,
+    AbstractStandardCommonizer<ValueParameter, ValueParameter>() {
 
     private lateinit var name: Name
-    private val returnType = TypeCommonizer.default()
+    private val returnType = TypeCommonizer.default(cache)
     private var varargElementType: UnwrappedType? = null
     private var isCrossinline = true
     private var isNoinline = true
 
-    private var state = State.EMPTY
+    override fun commonizationResult() = CommonValueParameter(
+        name = name,
+        returnType = returnType.result,
+        varargElementType = varargElementType,
+        isCrossinline = isCrossinline,
+        isNoinline = isNoinline
+    )
 
-    override val result: ValueParameter
-        get() = when (state) {
-            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
-            State.IN_PROGRESS -> CommonValueParameter(
-                name = name,
-                returnType = returnType.result,
-                varargElementType = varargElementType,
-                isCrossinline = isCrossinline,
-                isNoinline = isNoinline
-            )
+    override fun initialize(first: ValueParameter) {
+        name = first.name
+        varargElementType = first.varargElementType
+        isCrossinline = first.isCrossinline
+        isNoinline = first.isNoinline
+    }
+
+    override fun doCommonizeWith(next: ValueParameter): Boolean {
+        val result = !next.declaresDefaultValue
+                && varargElementType.isNull() == next.varargElementType.isNull()
+                && name == next.name
+                && returnType.commonizeWith(next.returnType)
+
+        if (result) {
+            isCrossinline = isCrossinline && next.isCrossinline
+            isNoinline = isNoinline && next.isNoinline
         }
 
-    override fun commonizeWith(next: ValueParameterDescriptor): Boolean {
-        if (state == State.ERROR)
-            return true
-
-        val result = !next.declaresDefaultValue() && returnType.commonizeWith(next.type)
-        state = if (!result)
-            State.ERROR
-        else when {
-            state == State.EMPTY -> {
-                name = next.name
-                varargElementType = next.varargElementType?.unwrap()
-                isCrossinline = next.isCrossinline
-                isNoinline = next.isNoinline
-
-                State.IN_PROGRESS
-            }
-            varargElementType.isNull() != next.varargElementType.isNull() -> State.ERROR
-            else -> {
-                isCrossinline = isCrossinline && next.isCrossinline
-                isNoinline = isNoinline && next.isNoinline
-
-                State.IN_PROGRESS
-            }
-        }
-
-        return state != State.ERROR
+        return result
     }
 }
 
-interface ValueParameterListCommonizer : Commonizer<List<ValueParameterDescriptor>, List<ValueParameter>> {
+interface ValueParameterListCommonizer : Commonizer<List<ValueParameter>, List<ValueParameter>> {
     companion object {
-        fun default(): ValueParameterListCommonizer = DefaultValueParameterListCommonizer()
+        fun default(cache: ClassifiersCache): ValueParameterListCommonizer = DefaultValueParameterListCommonizer(cache)
     }
 }
 
-private class DefaultValueParameterListCommonizer :
+private class DefaultValueParameterListCommonizer(cache: ClassifiersCache) :
     ValueParameterListCommonizer,
-    AbstractNamedListCommonizer<ValueParameterDescriptor, ValueParameter>(
-        singleElementCommonizerFactory = { ValueParameterCommonizer.default() }
+    AbstractListCommonizer<ValueParameter, ValueParameter>(
+        singleElementCommonizerFactory = { ValueParameterCommonizer.default(cache) }
     )

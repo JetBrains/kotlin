@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.getAbbreviation
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -90,15 +92,29 @@ private class ComparingDeclarationsVisitor(
     }
 
     fun visitMemberScopes(expected: MemberScope, actual: MemberScope, context: Context) {
-        fun collectProperties(memberScope: MemberScope): Map<PropertyKey, PropertyDescriptor> =
-            mutableMapOf<PropertyKey, PropertyDescriptor>().also {
-                memberScope.collectProperties { propertyKey, property ->
-                    it[propertyKey] = property
-                }
-            }
+        val expectedProperties = mutableMapOf<PropertyApproximationKey, PropertyDescriptor>()
+        val expectedFunctions = mutableMapOf<FunctionApproximationKey, SimpleFunctionDescriptor>()
+        val expectedClasses = mutableMapOf<FqName, ClassDescriptor>()
+        val expectedTypeAliases = mutableMapOf<FqName, TypeAliasDescriptor>()
 
-        val expectedProperties = collectProperties(expected)
-        val actualProperties = collectProperties(actual)
+        expected.collectMembers(
+            CallableMemberCollector<PropertyDescriptor> { expectedProperties[PropertyApproximationKey(it)] = it },
+            CallableMemberCollector<SimpleFunctionDescriptor> { expectedFunctions[FunctionApproximationKey(it)] = it },
+            Collector<ClassDescriptor> { expectedClasses[it.fqNameSafe] = it },
+            Collector<TypeAliasDescriptor> { expectedTypeAliases[it.fqNameSafe] = it }
+        )
+
+        val actualProperties = mutableMapOf<PropertyApproximationKey, PropertyDescriptor>()
+        val actualFunctions = mutableMapOf<FunctionApproximationKey, SimpleFunctionDescriptor>()
+        val actualClasses = mutableMapOf<FqName, ClassDescriptor>()
+        val actualTypeAliases = mutableMapOf<FqName, TypeAliasDescriptor>()
+
+        actual.collectMembers(
+            CallableMemberCollector<PropertyDescriptor> { actualProperties[PropertyApproximationKey(it)] = it },
+            CallableMemberCollector<SimpleFunctionDescriptor> { actualFunctions[FunctionApproximationKey(it)] = it },
+            Collector<ClassDescriptor> { actualClasses[it.fqNameSafe] = it },
+            Collector<TypeAliasDescriptor> { actualTypeAliases[it.fqNameSafe] = it }
+        )
 
         context.assertSetsEqual(expectedProperties.keys, actualProperties.keys, "sets of properties")
 
@@ -107,16 +123,6 @@ private class ComparingDeclarationsVisitor(
             expectedProperty.accept(this, context.nextLevel(actualProperty))
         }
 
-        fun collectFunctions(memberScope: MemberScope): Map<FunctionKey, SimpleFunctionDescriptor> =
-            mutableMapOf<FunctionKey, SimpleFunctionDescriptor>().also {
-                memberScope.collectFunctions { functionKey, function ->
-                    it[functionKey] = function
-                }
-            }
-
-        val expectedFunctions = collectFunctions(expected)
-        val actualFunctions = collectFunctions(actual)
-
         context.assertSetsEqual(expectedFunctions.keys, actualFunctions.keys, "sets of functions")
 
         expectedFunctions.forEach { (functionKey, expectedFunction) ->
@@ -124,9 +130,20 @@ private class ComparingDeclarationsVisitor(
             expectedFunction.accept(this, context.nextLevel(actualFunction))
         }
 
-        // FIXME: traverse the rest - classes, typealiases
-    }
+        context.assertSetsEqual(expectedClasses.keys, actualClasses.keys, "sets of classes")
 
+        expectedClasses.forEach { (classFqName, expectedClass) ->
+            val actualClass = actualClasses.getValue(classFqName)
+            expectedClass.accept(this, context.nextLevel(actualClass))
+        }
+
+        context.assertSetsEqual(expectedTypeAliases.keys, actualTypeAliases.keys, "sets of type aliases")
+
+        expectedTypeAliases.forEach { (typeAliasFqName, expectedTypeAlias) ->
+            val actualTypeAlias = actualTypeAliases.getValue(typeAliasFqName)
+            expectedTypeAlias.accept(this, context.nextLevel(actualTypeAlias))
+        }
+    }
 
     override fun visitFunctionDescriptor(expected: FunctionDescriptor, context: Context) {
         @Suppress("NAME_SHADOWING")
@@ -146,6 +163,8 @@ private class ComparingDeclarationsVisitor(
         context.assertFieldsEqual(expected::isExternal, actual::isExternal)
         context.assertFieldsEqual(expected::isExpect, actual::isExpect)
         context.assertFieldsEqual(expected::isActual, actual::isActual)
+        context.assertFieldsEqual(expected::hasStableParameterNames, actual::hasStableParameterNames)
+        context.assertFieldsEqual(expected::hasSynthesizedParameterNames, actual::hasSynthesizedParameterNames)
 
         visitType(expected.returnType, actual.returnType, context.nextLevel("Function type"))
 
@@ -214,15 +233,97 @@ private class ComparingDeclarationsVisitor(
     }
 
     override fun visitClassDescriptor(expected: ClassDescriptor, context: Context) {
-        TODO("not implemented")
+        val actual = context.getActualAs<ClassDescriptor>()
+
+        visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Class annotations"))
+        context.assertFieldsEqual(expected::getName, actual::getName)
+        context.assertFieldsEqual(expected::getVisibility, actual::getVisibility)
+        context.assertFieldsEqual(expected::getModality, actual::getModality)
+        context.assertFieldsEqual(expected::getKind, actual::getKind)
+        context.assertFieldsEqual(expected::isCompanionObject, actual::isCompanionObject)
+        context.assertFieldsEqual(expected::isData, actual::isData)
+        context.assertFieldsEqual(expected::isInline, actual::isInline)
+        context.assertFieldsEqual(expected::isInner, actual::isInner)
+        context.assertFieldsEqual(expected::isExternal, actual::isExternal)
+        context.assertFieldsEqual(expected::isExpect, actual::isExpect)
+        context.assertFieldsEqual(expected::isActual, actual::isActual)
+
+        visitTypeParameters(
+            expected.declaredTypeParameters,
+            actual.declaredTypeParameters,
+            context.nextLevel("Class declared type parameters")
+        )
+
+        if (expected.sealedSubclasses.isNotEmpty() || actual.sealedSubclasses.isNotEmpty()) {
+            val expectedSealedSubclassesFqNames = expected.sealedSubclasses.mapTo(HashSet()) { it.fqNameSafe }
+            val actualSealedSubclassesFqNames = actual.sealedSubclasses.mapTo(HashSet()) { it.fqNameSafe }
+
+            context.assertSetsEqual(expectedSealedSubclassesFqNames, actualSealedSubclassesFqNames, "Sealed subclasses FQ names")
+        }
+
+        val expectedSupertypeFqNames = expected.typeConstructor.supertypes.mapTo(HashSet()) { it.fqNameWithTypeParameters }
+        val actualSupertypeFqNames = actual.typeConstructor.supertypes.mapTo(HashSet()) { it.fqNameWithTypeParameters }
+
+        context.assertSetsEqual(expectedSupertypeFqNames, actualSupertypeFqNames, "Supertypes FQ names")
+
+        if (expected.constructors.isNotEmpty() || actual.constructors.isNotEmpty()) {
+            val expectedConstructors = expected.constructors.associateBy { ConstructorApproximationKey(it) }
+            val actualConstructors = actual.constructors.associateBy { ConstructorApproximationKey(it) }
+
+            context.assertSetsEqual(expectedConstructors.keys, actualConstructors.keys, "sets of class constructors")
+
+            for (key in expectedConstructors.keys) {
+                val expectedConstructor = expectedConstructors.getValue(key)
+                val actualConstructor = actualConstructors.getValue(key)
+
+                visitConstructorDescriptor(expectedConstructor, context.nextLevel(actualConstructor))
+            }
+        }
+
+        visitMemberScopes(
+            expected.unsubstitutedMemberScope,
+            actual.unsubstitutedMemberScope,
+            context.nextLevel("class member scope [${expected.fqNameSafe}]")
+        )
     }
 
     override fun visitConstructorDescriptor(expected: ConstructorDescriptor, context: Context) {
-        TODO("not implemented")
+        val actual = context.getActualAs<ConstructorDescriptor>()
+
+        visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Constructor annotations"))
+        context.assertFieldsEqual(expected::getVisibility, actual::getVisibility)
+        context.assertFieldsEqual(expected::isPrimary, actual::isPrimary)
+        context.assertFieldsEqual(expected::getKind, actual::getKind)
+        context.assertFieldsEqual(expected::hasStableParameterNames, actual::hasStableParameterNames)
+        context.assertFieldsEqual(expected::hasSynthesizedParameterNames, actual::hasSynthesizedParameterNames)
+        context.assertFieldsEqual(expected::isExpect, actual::isExpect)
+        context.assertFieldsEqual(expected::isActual, actual::isActual)
+
+        visitValueParameterDescriptorList(
+            expected.valueParameters,
+            actual.valueParameters,
+            context.nextLevel("Constructor value parameters")
+        )
+
+        visitTypeParameters(expected.typeParameters, actual.typeParameters, context.nextLevel("Constructor type parameters"))
     }
 
     override fun visitTypeAliasDescriptor(expected: TypeAliasDescriptor, context: Context) {
-        TODO("not implemented")
+        val actual = context.getActualAs<TypeAliasDescriptor>()
+
+        visitAnnotations(expected.annotations, actual.annotations, context.nextLevel("Type alias annotations"))
+        context.assertFieldsEqual(expected::getName, actual::getName)
+        context.assertFieldsEqual(expected::getVisibility, actual::getVisibility)
+        context.assertFieldsEqual(expected::isActual, actual::isActual)
+
+        visitTypeParameters(
+            expected.declaredTypeParameters,
+            actual.declaredTypeParameters,
+            context.nextLevel("Type alias declared type parameters")
+        )
+
+        visitType(expected.underlyingType, actual.underlyingType, context.nextLevel("Type alias underlying type"))
+        visitType(expected.expandedType, actual.expandedType, context.nextLevel("Type alias expanded type"))
     }
 
     override fun visitPropertyDescriptor(expected: PropertyDescriptor, context: Context) {
@@ -305,10 +406,10 @@ private class ComparingDeclarationsVisitor(
 
 
     private fun visitAnnotations(expected: Annotations?, actual: Annotations?, context: Context) {
-        if (expected === actual) return
+        if (expected === actual || (expected?.isEmpty() != false && actual?.isEmpty() != false)) return
 
-        val expectedAnnotationFqNames = (expected ?: Annotations.EMPTY).map { it.fqName }.toSet()
-        val actualAnnotationFqNames = (actual ?: Annotations.EMPTY).map { it.fqName }.toSet()
+        val expectedAnnotationFqNames: Set<FqName?> = expected?.mapTo(HashSet()) { it.fqName } ?: emptySet()
+        val actualAnnotationFqNames: Set<FqName?> = actual?.mapTo(HashSet()) { it.fqName } ?: emptySet()
 
         context.assertSetsEqual(expectedAnnotationFqNames, actualAnnotationFqNames, "annotations")
     }
@@ -318,8 +419,8 @@ private class ComparingDeclarationsVisitor(
 
         check(actual != null && expected != null)
 
-        val expectedUnwrapped = expected.unwrap()
-        val actualUnwrapped = actual.unwrap()
+        val expectedUnwrapped = expected.getAbbreviation() ?: expected.unwrap()
+        val actualUnwrapped = actual.getAbbreviation() ?: actual.unwrap()
 
         if (expectedUnwrapped === actualUnwrapped) return
 

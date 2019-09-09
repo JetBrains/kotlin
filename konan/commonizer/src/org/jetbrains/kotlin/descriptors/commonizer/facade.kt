@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.descriptors.commonizer
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor
+import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.mergeRoots
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class CommonizationSession {
-    // TODO: add progress tracker
-    // TODO: add logger
+    // TODO (???): add progress tracker
+    // TODO (???): add logger
 }
 
 class CommonizationParameters {
@@ -63,13 +64,17 @@ fun runCommonization(parameters: CommonizationParameters): CommonizationResult {
     if (!parameters.hasIntersection())
         return NothingToCommonize
 
-    val mergedTree = mergeRoots(parameters.getModulesByTargets())
-
+    // build merged tree:
     val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
+    val mergedTree = mergeRoots(storageManager, parameters.getModulesByTargets())
+
+    // commonize:
+    mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
 
     var commonModules: Collection<ModuleDescriptor>? = null
     val otherModulesByTargets = LinkedHashMap<String, Collection<ModuleDescriptor>>()
 
+    // build resulting descriptors:
     val visitor = DeclarationsBuilderVisitor(storageManager, DefaultBuiltIns.Instance) { targetId, commonizedModules ->
         when (targetId) {
             is CommonTargetId -> {

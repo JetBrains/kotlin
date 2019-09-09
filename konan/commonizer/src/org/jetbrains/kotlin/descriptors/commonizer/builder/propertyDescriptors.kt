@@ -22,13 +22,13 @@ internal fun PropertyNode.buildDescriptors(
     containingDeclarations: List<DeclarationDescriptor?>,
     storageManager: StorageManager
 ) {
-    val isCommonized = common != null
+    val commonProperty = common()
 
     target.forEachIndexed { index, property ->
-        property?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = isCommonized)
+        property?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = commonProperty != null)
     }
 
-    common?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = isCommonized)
+    commonProperty?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = true)
 }
 
 private fun Property.buildDescriptor(
@@ -50,7 +50,7 @@ private fun Property.buildDescriptor(
         name,
         kind,
         SourceElement.NO_SOURCE,
-        lateInit,
+        isLateInit,
         isConst,
         isExpect,
         isActual,

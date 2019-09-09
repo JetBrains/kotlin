@@ -1,4 +1,4 @@
-class Planet(val name: String, val diameter: Double)
+actual class Planet actual constructor(actual val name: String, actual val diameter: Double)
 
 actual val intProperty get() = 42
 actual val Int.intProperty get() = this

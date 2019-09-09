@@ -1,6 +1,6 @@
 expect suspend fun suspendFunction1(): Int
 
-class Qux
+expect class Qux()
 
 expect operator fun Qux.get(index: Int): String
 expect fun Qux.set(index: Int, value: String)

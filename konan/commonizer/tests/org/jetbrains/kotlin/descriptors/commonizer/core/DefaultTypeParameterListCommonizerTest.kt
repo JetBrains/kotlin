@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
 @TypeRefinement
-class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<TypeParameterDescriptor>, List<TypeParameter>>() {
+class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<TypeParameter>, List<TypeParameter>>() {
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
@@ -23,108 +23,104 @@ class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<TypeP
 
     @Test
     fun matchedParameters() = doTestSuccess(
-        create(
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
         ),
-        create(
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams(),
-        create(
+        ),
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams(),
-        create(
+        ),
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams()
+        )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize1() = doTestFailure(
-        create(
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams(),
-        create(
+        ),
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams(),
+        ),
         emptyList()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize2() = doTestFailure(
-        create(
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams(),
-        create(
+        ),
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams(),
-        create(
+        ),
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence"
-        ).toMockParams()
+        )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize3() = doTestFailure(
-        create(
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams(),
-        create(
+        ),
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?"
-        ).toMockParams(),
-        create(
+        ),
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence",
             "Q" to "org.sample.Foo?",
             "V" to "org.sample.Bar"
-        ).toMockParams()
+        )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterNames() = doTestFailure(
-        create(
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "R" to "kotlin.CharSequence"
-        ).toMockParams(),
-        create(
+        ),
+        mockTypeParams(
             "T" to "kotlin.Any?",
             "Q" to "kotlin.CharSequence"
-        ).toMockParams()
+        )
     )
 
-    override fun createCommonizer() = TypeParameterListCommonizer.default()
+    override fun createCommonizer() = TypeParameterListCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
 
     private companion object {
-        fun create(vararg params: Pair<String, String>): List<TypeParameter> {
+        fun mockTypeParams(vararg params: Pair<String, String>): List<TypeParameter> {
             check(params.isNotEmpty())
             return params.map { (name, returnTypeFqName) ->
-                DefaultTypeParameterCommonizerTest.create(
+                DefaultTypeParameterCommonizerTest.mockTypeParam(
                     name = name,
                     upperBounds = listOf(returnTypeFqName)
                 )
             }
-        }
-
-        fun List<TypeParameter>.toMockParams() = DefaultTypeParameterCommonizerTest.run {
-            mapIndexed { index, param -> param.toMockParam(index) }
         }
     }
 }

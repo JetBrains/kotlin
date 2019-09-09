@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-// Fixed-size list that represents a commonized group of same-rank elements
+/** Fixed-size ordered collection that represents a commonized group of same-rank elements */
 internal class CommonizedGroup<T : Any>(
     val size: Int,
     initialize: (Int) -> T?

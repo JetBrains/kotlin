@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
 import org.jetbrains.kotlin.name.Name
@@ -13,70 +13,53 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
 
-interface TypeParameterCommonizer : Commonizer<TypeParameterDescriptor, TypeParameter> {
+interface TypeParameterCommonizer : Commonizer<TypeParameter, TypeParameter> {
     companion object {
-        fun default(): TypeParameterCommonizer = DefaultTypeParameterCommonizer()
+        fun default(cache: ClassifiersCache): TypeParameterCommonizer = DefaultTypeParameterCommonizer(cache)
     }
 }
 
-private class DefaultTypeParameterCommonizer : TypeParameterCommonizer {
-    private enum class State {
-        EMPTY,
-        ERROR,
-        IN_PROGRESS
-    }
+private class DefaultTypeParameterCommonizer(cache: ClassifiersCache) :
+    TypeParameterCommonizer,
+    AbstractStandardCommonizer<TypeParameter, TypeParameter>() {
 
-    private var state = State.EMPTY
     private lateinit var name: Name
     private var isReified = false
     private lateinit var variance: Variance
-    private val upperBounds = TypeParameterUpperBoundsCommonizer()
+    private val upperBounds = TypeParameterUpperBoundsCommonizer(cache)
 
-    override val result: TypeParameter
-        get() = when (state) {
-            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
-            State.IN_PROGRESS -> CommonTypeParameter(
-                name = name,
-                isReified = isReified,
-                variance = variance,
-                upperBounds = upperBounds.result
-            )
-        }
+    override fun commonizationResult() = CommonTypeParameter(
+        name = name,
+        isReified = isReified,
+        variance = variance,
+        upperBounds = upperBounds.result
+    )
 
-    override fun commonizeWith(next: TypeParameterDescriptor): Boolean {
-        state = when (state) {
-            State.ERROR -> State.ERROR
-            State.EMPTY -> {
-                name = next.name
-                isReified = next.isReified
-                variance = next.variance
-
-                if (!upperBounds.commonizeWith(next.upperBounds)) State.ERROR else State.IN_PROGRESS
-            }
-            State.IN_PROGRESS -> {
-                if (isReified != next.isReified
-                    || variance != next.variance
-                    || !upperBounds.commonizeWith(next.upperBounds)
-                ) State.ERROR else State.IN_PROGRESS
-            }
-        }
-
-        return state != State.ERROR
+    override fun initialize(first: TypeParameter) {
+        name = first.name
+        isReified = first.isReified
+        variance = first.variance
     }
+
+    override fun doCommonizeWith(next: TypeParameter) =
+        name == next.name
+                && isReified == next.isReified
+                && variance == next.variance
+                && upperBounds.commonizeWith(next.upperBounds)
 }
 
-private class TypeParameterUpperBoundsCommonizer : AbstractListCommonizer<KotlinType, UnwrappedType>(
-    singleElementCommonizerFactory = { TypeCommonizer.default() }
+private class TypeParameterUpperBoundsCommonizer(cache: ClassifiersCache) : AbstractListCommonizer<KotlinType, UnwrappedType>(
+    singleElementCommonizerFactory = { TypeCommonizer.default(cache) }
 )
 
-interface TypeParameterListCommonizer : Commonizer<List<TypeParameterDescriptor>, List<TypeParameter>> {
+interface TypeParameterListCommonizer : Commonizer<List<TypeParameter>, List<TypeParameter>> {
     companion object {
-        fun default(): TypeParameterListCommonizer = DefaultTypeParameterListCommonizer()
+        fun default(cache: ClassifiersCache): TypeParameterListCommonizer = DefaultTypeParameterListCommonizer(cache)
     }
 }
 
-private class DefaultTypeParameterListCommonizer :
+private class DefaultTypeParameterListCommonizer(cache: ClassifiersCache) :
     TypeParameterListCommonizer,
-    AbstractNamedListCommonizer<TypeParameterDescriptor, TypeParameter>(
-        singleElementCommonizerFactory = { TypeParameterCommonizer.default() }
+    AbstractListCommonizer<TypeParameter, TypeParameter>(
+        singleElementCommonizerFactory = { TypeParameterCommonizer.default(cache) }
     )

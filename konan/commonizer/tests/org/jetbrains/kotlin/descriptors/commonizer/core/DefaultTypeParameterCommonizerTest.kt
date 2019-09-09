@@ -5,87 +5,86 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
-import org.jetbrains.kotlin.descriptors.commonizer.mockTypeParameter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
 @TypeRefinement
-class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<TypeParameterDescriptor, TypeParameter>() {
-    override fun createCommonizer() = TypeParameterCommonizer.default()
+class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<TypeParameter, TypeParameter>() {
+    override fun createCommonizer() = TypeParameterCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
 
     @Test
     fun allAreReified() = doTestSuccess(
-        create(isReified = true),
-        create(isReified = true).toMockParam(),
-        create(isReified = true).toMockParam(),
-        create(isReified = true).toMockParam()
+        mockTypeParam(isReified = true),
+        mockTypeParam(isReified = true),
+        mockTypeParam(isReified = true),
+        mockTypeParam(isReified = true)
     )
 
     @Test
     fun allAreNotReified() = doTestSuccess(
-        create(isReified = false),
-        create(isReified = false).toMockParam(),
-        create(isReified = false).toMockParam(),
-        create(isReified = false).toMockParam()
+        mockTypeParam(isReified = false),
+        mockTypeParam(isReified = false),
+        mockTypeParam(isReified = false),
+        mockTypeParam(isReified = false)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun someAreReified1() = doTestFailure(
-        create(isReified = true).toMockParam(),
-        create(isReified = true).toMockParam(),
-        create(isReified = false).toMockParam()
+        mockTypeParam(isReified = true),
+        mockTypeParam(isReified = true),
+        mockTypeParam(isReified = false)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun someAreReified2() = doTestFailure(
-        create(isReified = false).toMockParam(),
-        create(isReified = false).toMockParam(),
-        create(isReified = true).toMockParam()
+        mockTypeParam(isReified = false),
+        mockTypeParam(isReified = false),
+        mockTypeParam(isReified = true)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentVariance1() = doTestFailure(
-        create(variance = Variance.IN_VARIANCE).toMockParam(),
-        create(variance = Variance.IN_VARIANCE).toMockParam(),
-        create(variance = Variance.OUT_VARIANCE).toMockParam()
+        mockTypeParam(variance = Variance.IN_VARIANCE),
+        mockTypeParam(variance = Variance.IN_VARIANCE),
+        mockTypeParam(variance = Variance.OUT_VARIANCE)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentVariance2() = doTestFailure(
-        create(variance = Variance.OUT_VARIANCE).toMockParam(),
-        create(variance = Variance.OUT_VARIANCE).toMockParam(),
-        create(variance = Variance.INVARIANT).toMockParam()
+        mockTypeParam(variance = Variance.OUT_VARIANCE),
+        mockTypeParam(variance = Variance.OUT_VARIANCE),
+        mockTypeParam(variance = Variance.INVARIANT)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds1() = doTestFailure(
-        create(upperBounds = listOf("kotlin.String")).toMockParam(),
-        create(upperBounds = listOf("kotlin.String")).toMockParam(),
-        create(upperBounds = listOf("kotlin.Int")).toMockParam()
+        mockTypeParam(upperBounds = listOf("kotlin.String")),
+        mockTypeParam(upperBounds = listOf("kotlin.String")),
+        mockTypeParam(upperBounds = listOf("kotlin.Int"))
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds2() = doTestFailure(
-        create(upperBounds = listOf("kotlin.String", "kotlin.Int")).toMockParam(),
-        create(upperBounds = listOf("kotlin.String", "kotlin.Int")).toMockParam(),
-        create(upperBounds = listOf("kotlin.String")).toMockParam()
+        mockTypeParam(upperBounds = listOf("kotlin.String", "kotlin.Int")),
+        mockTypeParam(upperBounds = listOf("kotlin.String", "kotlin.Int")),
+        mockTypeParam(upperBounds = listOf("kotlin.String"))
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds3() = doTestFailure(
-        create(upperBounds = listOf("kotlin.String", "kotlin.Int")).toMockParam(),
-        create(upperBounds = listOf("kotlin.String", "kotlin.Int")).toMockParam(),
-        create(upperBounds = listOf("kotlin.Int", "kotlin.String")).toMockParam()
+        mockTypeParam(upperBounds = listOf("kotlin.String", "kotlin.Int")),
+        mockTypeParam(upperBounds = listOf("kotlin.String", "kotlin.Int")),
+        mockTypeParam(upperBounds = listOf("kotlin.Int", "kotlin.String"))
     )
 
     internal companion object {
-        fun create(
+        fun mockTypeParam(
             name: String = "T",
             isReified: Boolean = false,
             variance: Variance = Variance.INVARIANT,
@@ -95,16 +94,6 @@ class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<TypeParameterD
             isReified = isReified,
             variance = variance,
             upperBounds = upperBounds.map { mockClassType(it).unwrap() }
-        )
-
-        fun TypeParameter.toMockParam(
-            index: Int = 0
-        ): TypeParameterDescriptor = mockTypeParameter(
-            name = name.asString(),
-            index = index,
-            isReified = isReified,
-            variance = variance,
-            upperBounds = upperBounds
         )
     }
 }

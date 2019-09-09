@@ -22,7 +22,7 @@ internal fun ModuleNode.buildDescriptors(
         module?.buildDescriptor(output, index, storageManager, builtIns)
     }
 
-    common?.buildDescriptor(output, indexOfCommon, storageManager, builtIns)
+    common()?.buildDescriptor(output, indexOfCommon, storageManager, builtIns)
 }
 
 private fun Module.buildDescriptor(

@@ -1,4 +1,4 @@
-class Planet(val name: String, val diameter: Double)
+actual class Planet actual constructor(actual val name: String, actual val diameter: Double)
 
 actual val propertyWithInferredType1 get() = 1
 actual val propertyWithInferredType2 get() = "hello"
@@ -7,7 +7,7 @@ actual val propertyWithInferredType4 get() = null
 actual val propertyWithInferredType5 get() = Planet("Earth", 12742)
 
 typealias B = Planet
-typealias C = Planet
+actual typealias C = Planet
 
 actual val property1 = 1
 actual val property2 = "hello"
@@ -37,8 +37,8 @@ fun functionWithMismatchedType3(): Number = 1
 fun functionWithMismatchedType4(): Comparable<Int> = 1
 fun functionWithMismatchedType5(): String = 1.toString()
 
-class Box<T>(val value: T)
-class Fox
+actual class Box<T> actual constructor(actual val value: T)
+actual class Fox actual constructor()
 
 actual fun functionWithTypeParametersInReturnType1() = arrayOf(1)
 fun functionWithTypeParametersInReturnType2() = arrayOf("hello")

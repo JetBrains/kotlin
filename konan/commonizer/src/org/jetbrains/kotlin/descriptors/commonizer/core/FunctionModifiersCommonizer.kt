@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
 
-interface FunctionModifiersCommonizer : Commonizer<SimpleFunctionDescriptor, FunctionModifiers> {
+interface FunctionModifiersCommonizer : Commonizer<FunctionModifiers, FunctionModifiers> {
     companion object {
         fun default(): FunctionModifiersCommonizer = DefaultFunctionModifiersCommonizer()
     }
@@ -21,7 +20,7 @@ private class DefaultFunctionModifiersCommonizer : FunctionModifiersCommonizer {
     override val result: FunctionModifiers
         get() = modifiers?.takeIf { !error } ?: throw IllegalCommonizerStateException()
 
-    override fun commonizeWith(next: SimpleFunctionDescriptor): Boolean {
+    override fun commonizeWith(next: FunctionModifiers): Boolean {
         if (error)
             return false
 
@@ -51,7 +50,7 @@ private class DefaultFunctionModifiersCommonizer : FunctionModifiersCommonizer {
         override var isSuspend: Boolean,
         override var isExternal: Boolean
     ) : FunctionModifiers {
-        constructor(function: SimpleFunctionDescriptor) : this(
+        constructor(function: FunctionModifiers) : this(
             function.isOperator,
             function.isInfix,
             function.isInline,

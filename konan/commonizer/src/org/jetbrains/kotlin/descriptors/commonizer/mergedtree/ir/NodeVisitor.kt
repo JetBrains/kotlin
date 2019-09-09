@@ -11,4 +11,7 @@ interface NodeVisitor<R, T> {
     fun visitPackageNode(node: PackageNode, data: T): R
     fun visitPropertyNode(node: PropertyNode, data: T): R
     fun visitFunctionNode(node: FunctionNode, data: T): R
+    fun visitClassNode(node: ClassNode, data: T): R
+    fun visitClassConstructorNode(node: ClassConstructorNode, data: T): R
+    fun visitTypeAliasNode(node: TypeAliasNode, data: T): R
 }

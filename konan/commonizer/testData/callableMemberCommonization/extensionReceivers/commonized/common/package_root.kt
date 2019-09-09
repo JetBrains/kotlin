@@ -1,4 +1,7 @@
-class Planet(val name: String, val diameter: Double)
+expect class Planet(name: String, diameter: Double) {
+    val name: String
+    val diameter: Double
+}
 
 expect val intProperty: Int
 expect val Int.intProperty: Int

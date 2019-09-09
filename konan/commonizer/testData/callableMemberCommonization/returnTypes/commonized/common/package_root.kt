@@ -1,4 +1,7 @@
-class Planet(val name: String, val diameter: Double)
+expect class Planet(name: String, diameter: Double) {
+    val name: String
+    val diameter: Double
+}
 
 expect val propertyWithInferredType1: Int
 expect val propertyWithInferredType2: String
@@ -6,7 +9,7 @@ expect val propertyWithInferredType3: String
 expect val propertyWithInferredType4: Nothing?
 expect val propertyWithInferredType5: Planet
 
-typealias C = Planet
+expect class C
 
 expect val property1: Int
 expect val property2: String
@@ -20,8 +23,10 @@ expect fun function3(): Planet
 expect fun function6(): Planet
 expect fun function7(): C
 
-class Box<T>(val value: T)
-class Fox
+expect class Box<T>(value: T) {
+    val value: T
+}
+expect class Fox()
 
 expect fun functionWithTypeParametersInReturnType1(): Array<Int>
 expect fun functionWithTypeParametersInReturnType3(): Array<String>

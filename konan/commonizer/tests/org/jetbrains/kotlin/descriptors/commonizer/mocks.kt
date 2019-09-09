@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.builder.buildDispatchReceiver
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -105,184 +104,11 @@ internal fun mockTAType(
         override val constructors: Collection<TypeAliasConstructorDescriptor> = emptyList()
         override fun substitute(substitutor: TypeSubstitutor) = this
         override val expandedType by lazy { rightHandSideType }
+    }.apply {
+        initialize(emptyList())
     }
 
     (rightHandSideType.getAbbreviatedType()?.expandedType ?: rightHandSideType).withAbbreviation(typeAliasDescriptor.defaultType)
-}
-
-internal fun mockProperty(
-    name: String,
-    setterVisibility: Visibility?,
-    extensionReceiverType: KotlinType?,
-    returnType: KotlinType
-): PropertyDescriptor {
-    val propertyName = Name.identifier(name)
-
-    val propertyDescriptor = PropertyDescriptorImpl.create(
-        /*containingDeclaration =*/ fakeContainingDeclaration(),
-        /*annotations =*/ Annotations.EMPTY,
-        /*modality =*/ Modality.FINAL,
-        /*visibility =*/ Visibilities.PUBLIC,
-        /*isVar =*/ setterVisibility != null,
-        /*name =*/ propertyName,
-        /*kind =*/ CallableMemberDescriptor.Kind.DECLARATION,
-        /*source =*/ SourceElement.NO_SOURCE,
-        /*lateInit =*/ false,
-        /*isConst =*/ false,
-        /*isExpect =*/ false,
-        /*isActual =*/ false,
-        /*isExternal =*/ false,
-        /*isDelegated =*/ false
-    )
-
-    val extensionReceiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
-        /*owner =*/ propertyDescriptor,
-        /*receiverParameterType =*/ extensionReceiverType,
-        /*annotations =*/ Annotations.EMPTY
-    )
-
-    val dispatchReceiverDescriptor = buildDispatchReceiver(propertyDescriptor)
-
-    propertyDescriptor.setType(
-        /*outType =*/ returnType,
-        /*typeParameters =*/ emptyList(),
-        /*dispatchReceiverParameter =*/ dispatchReceiverDescriptor,
-        /*extensionReceiverParameter =*/ extensionReceiverDescriptor
-    )
-
-    val getter = DescriptorFactory.createDefaultGetter(
-        /*propertyDescriptor =*/ propertyDescriptor,
-        /*annotations =*/ Annotations.EMPTY
-    ).apply {
-        initialize(null) // use return type from the property descriptor
-    }
-
-    val setter = setterVisibility?.let {
-        DescriptorFactory.createSetter(
-            /*propertyDescriptor =*/ propertyDescriptor,
-            /*annotations =*/ Annotations.EMPTY,
-            /*parameterAnnotations =*/ Annotations.EMPTY,
-            /*isDefault =*/ false,
-            /*isExternal =*/ false,
-            /*isInline =*/ false,
-            /*visibility =*/ setterVisibility,
-            /*sourceElement =*/ SourceElement.NO_SOURCE
-        )
-    }
-
-    propertyDescriptor.initialize(getter, setter)
-
-    return propertyDescriptor
-}
-
-internal data class TestFunctionModifiers(
-    override val isOperator: Boolean = false,
-    override val isInfix: Boolean = false,
-    override val isInline: Boolean = false,
-    override val isTailrec: Boolean = false,
-    override val isSuspend: Boolean = false,
-    override val isExternal: Boolean = false
-) : FunctionModifiers {
-    companion object {
-        fun areEqual(a: FunctionModifiers, b: FunctionModifiers) =
-            a.isOperator == b.isOperator && a.isInfix == b.isInfix && a.isInline == b.isInline
-                    && a.isTailrec == b.isTailrec && a.isSuspend == b.isSuspend && a.isExternal == b.isExternal
-    }
-}
-
-internal fun mockFunction(
-    name: String,
-    returnType: KotlinType,
-    modifiers: FunctionModifiers
-): SimpleFunctionDescriptor {
-    val functionName = Name.identifier(name)
-
-    val functionDescriptor = SimpleFunctionDescriptorImpl.create(
-        /*containingDeclaration =*/ fakeContainingDeclaration(),
-        /*annotations =*/ Annotations.EMPTY,
-        /*name =*/ functionName,
-        /*kind =*/ CallableMemberDescriptor.Kind.DECLARATION,
-        /*source =*/ SourceElement.NO_SOURCE
-    )
-
-    functionDescriptor.isOperator = modifiers.isOperator
-    functionDescriptor.isInfix = modifiers.isInfix
-    functionDescriptor.isInline = modifiers.isInline
-    functionDescriptor.isTailrec = modifiers.isTailrec
-    functionDescriptor.isSuspend = modifiers.isSuspend
-    functionDescriptor.isExternal = modifiers.isExternal
-
-    val dispatchReceiverDescriptor = buildDispatchReceiver(functionDescriptor)
-
-    functionDescriptor.initialize(
-        /*extensionReceiverParameter =*/ null,
-        /*dispatchReceiverDescriptor =*/ dispatchReceiverDescriptor,
-        /*typeParameters =*/ emptyList(),
-        /*unsubstitutedValueParameters =*/ emptyList(),
-        /*returnType =*/ returnType,
-        /*modality =*/ Modality.FINAL,
-        /*visibility =*/ Visibilities.PUBLIC
-    )
-
-    return functionDescriptor
-}
-
-internal fun mockValueParameter(
-    containingDeclaration: CallableDescriptor? = null,
-    name: String,
-    index: Int,
-    returnType: KotlinType,
-    varargElementType: KotlinType?,
-    declaresDefaultValue: Boolean,
-    isCrossinline: Boolean,
-    isNoinline: Boolean
-): ValueParameterDescriptor {
-    check(index >= 0)
-
-    val effectiveContainingDeclaration = containingDeclaration
-        ?: /* use fake function if no real containing declaration specified */ mockFunction(
-            "fakeFunction",
-            returnType,
-            TestFunctionModifiers()
-        )
-
-    return ValueParameterDescriptorImpl(
-        containingDeclaration = effectiveContainingDeclaration,
-        original = null,
-        index = index,
-        annotations = Annotations.EMPTY,
-        name = Name.identifier(name),
-        outType = returnType,
-        declaresDefaultValue = declaresDefaultValue,
-        isCrossinline = isCrossinline,
-        isNoinline = isNoinline,
-        varargElementType = varargElementType,
-        source = SourceElement.NO_SOURCE
-    )
-}
-
-internal fun mockTypeParameter(
-    containingDeclaration: CallableDescriptor? = null,
-    name: String,
-    index: Int,
-    isReified: Boolean,
-    variance: Variance,
-    upperBounds: List<KotlinType>
-): TypeParameterDescriptor {
-    check(index >= 0)
-
-    return TypeParameterDescriptorImpl.createForFurtherModification(
-        containingDeclaration ?: fakeContainingDeclaration(),
-        Annotations.EMPTY,
-        isReified,
-        variance,
-        Name.identifier(name),
-        index,
-        SourceElement.NO_SOURCE
-    ).apply {
-        upperBounds.forEach(this::addUpperBound)
-        setInitialized()
-    }
 }
 
 private fun createPackageFragmentForClassifier(classifierFqName: FqName): PackageFragmentDescriptor =
@@ -310,8 +136,7 @@ private fun createSimpleType(typeConstructor: TypeConstructor, nullable: Boolean
         refinedTypeFactory = { null }
     )
 
-private fun fakeContainingDeclaration() =
-    object : DeclarationDescriptorImpl(Annotations.EMPTY, Name.special("<fake containing declaration>")) {
-        override fun getContainingDeclaration() = error("not supported")
-        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D) = error("not supported")
-    }
+internal val EMPTY_CLASSIFIERS_CACHE = object : ClassifiersCache {
+    override val classes: Map<FqName, ClassNode> get() = emptyMap()
+    override val typeAliases: Map<FqName, TypeAliasNode> get() = emptyMap()
+}

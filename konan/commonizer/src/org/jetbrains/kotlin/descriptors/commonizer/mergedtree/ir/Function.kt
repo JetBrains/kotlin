@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface FunctionModifiers {
     val isOperator: Boolean
@@ -22,9 +23,13 @@ interface FunctionModifiers {
     val isExternal: Boolean
 }
 
-interface Function : CallableMember, FunctionModifiers, Declaration {
+interface CallableMemberWithParameters {
     val valueParameters: List<ValueParameter>
+    val hasStableParameterNames: Boolean
+    val hasSynthesizedParameterNames: Boolean
 }
+
+interface Function : FunctionOrProperty, FunctionModifiers, CallableMemberWithParameters
 
 data class CommonFunction(
     override val name: Name,
@@ -34,16 +39,20 @@ data class CommonFunction(
     override val returnType: UnwrappedType,
     private val modifiers: FunctionModifiers,
     override val valueParameters: List<ValueParameter>,
-    override val typeParameters: List<TypeParameter>
-) : CommonCallableMember(), Function, FunctionModifiers by modifiers
+    override val typeParameters: List<TypeParameter>,
+    override val hasStableParameterNames: Boolean,
+    override val hasSynthesizedParameterNames: Boolean
+) : CommonFunctionOrProperty(), Function, FunctionModifiers by modifiers
 
-class TargetFunction(descriptor: SimpleFunctionDescriptor) : TargetCallableMember<SimpleFunctionDescriptor>(descriptor), Function {
-    override val isOperator: Boolean get() = descriptor.isOperator
-    override val isInfix: Boolean get() = descriptor.isInfix
-    override val isInline: Boolean get() = descriptor.isInline
-    override val isTailrec: Boolean get() = descriptor.isTailrec
-    override val isSuspend: Boolean get() = descriptor.isSuspend
-    override val valueParameters: List<ValueParameter> get() = descriptor.valueParameters.map(::PlatformValueParameter)
+class TargetFunction(descriptor: SimpleFunctionDescriptor) : TargetFunctionOrProperty<SimpleFunctionDescriptor>(descriptor), Function {
+    override val isOperator get() = descriptor.isOperator
+    override val isInfix get() = descriptor.isInfix
+    override val isInline get() = descriptor.isInline
+    override val isTailrec get() = descriptor.isTailrec
+    override val isSuspend get() = descriptor.isSuspend
+    override val valueParameters by lazy(PUBLICATION) { descriptor.valueParameters.map(::PlatformValueParameter) }
+    override val hasStableParameterNames: Boolean get() = descriptor.hasStableParameterNames()
+    override val hasSynthesizedParameterNames: Boolean get() = descriptor.hasSynthesizedParameterNames()
 }
 
 interface ValueParameter {
@@ -63,16 +72,16 @@ data class CommonValueParameter(
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
 ) : ValueParameter {
-    override val annotations: Annotations get() = Annotations.EMPTY
-    override val declaresDefaultValue: Boolean get() = false
+    override val annotations get() = Annotations.EMPTY
+    override val declaresDefaultValue get() = false
 }
 
 data class PlatformValueParameter(private val descriptor: ValueParameterDescriptor) : ValueParameter {
-    override val name: Name get() = descriptor.name
-    override val annotations: Annotations get() = descriptor.annotations
-    override val returnType: UnwrappedType get() = descriptor.returnType!!.unwrap()
-    override val varargElementType: UnwrappedType? get() = descriptor.varargElementType?.unwrap()
-    override val declaresDefaultValue: Boolean get() = descriptor.declaresDefaultValue()
-    override val isCrossinline: Boolean get() = descriptor.isCrossinline
-    override val isNoinline: Boolean get() = descriptor.isNoinline
+    override val name get() = descriptor.name
+    override val annotations get() = descriptor.annotations
+    override val returnType by lazy(PUBLICATION) { descriptor.returnType!!.unwrap() }
+    override val varargElementType by lazy(PUBLICATION) { descriptor.varargElementType?.unwrap() }
+    override val declaresDefaultValue get() = descriptor.declaresDefaultValue()
+    override val isCrossinline get() = descriptor.isCrossinline
+    override val isNoinline get() = descriptor.isNoinline
 }

@@ -1,7 +1,7 @@
 actual suspend fun suspendFunction1() = 1
 suspend fun suspendFunction2() = 1
 
-class Qux
+actual class Qux actual constructor()
 
 actual operator fun Qux.get(index: Int) = "$index"
 actual operator fun Qux.set(index: Int, value: String) = Unit

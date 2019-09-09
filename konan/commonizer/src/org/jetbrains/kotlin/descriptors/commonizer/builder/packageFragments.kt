@@ -23,7 +23,7 @@ internal fun PackageNode.buildDescriptors(
         pkg?.buildDescriptor(output, index, modules)
     }
 
-    common?.buildDescriptor(output, indexOfCommon, modules)
+    common()?.buildDescriptor(output, indexOfCommon, modules)
 }
 
 private fun Package.buildDescriptor(

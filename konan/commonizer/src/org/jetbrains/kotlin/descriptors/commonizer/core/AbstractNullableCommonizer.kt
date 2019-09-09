@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+/**
+ * A wrapper around [Commonizer] that checks that
+ * - either all commonized elements are null
+ * - or all commonized elements are non-null and can be commonized according to the wrapped commonized
+ */
 abstract class AbstractNullableCommonizer<T : Any, R : Any, WT, WR>(
     private val wrappedCommonizerFactory: () -> Commonizer<WT, WR>,
     private val extractor: (T) -> WT,
@@ -41,6 +46,7 @@ abstract class AbstractNullableCommonizer<T : Any, R : Any, WT, WR>(
         return state != State.ERROR
     }
 
-    private fun doCommonizeWith(next: T) =
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun doCommonizeWith(next: T) =
         if (wrapped.commonizeWith(extractor(next))) State.WITH_WRAPPED else State.ERROR
 }

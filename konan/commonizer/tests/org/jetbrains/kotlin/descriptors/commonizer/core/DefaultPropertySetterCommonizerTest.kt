@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Setter
-import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
-import org.jetbrains.kotlin.descriptors.commonizer.mockProperty
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
-class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<PropertySetterDescriptor?, Setter?>() {
+class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<Setter?, Setter?>() {
 
     @Test
     fun absentOnly() = super.doTestSuccess(null, null, null, null)
@@ -61,22 +57,13 @@ class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<PropertySette
     private fun doTestSuccess(expected: Visibility?, vararg variants: Visibility?) =
         super.doTestSuccess(
             expected?.let { Setter.createDefaultNoAnnotations(expected) },
-            *variants.map { it?.let(Visibility::toMockProperty) }.toTypedArray()
+            *variants.map { it?.let(Setter.Companion::createDefaultNoAnnotations) }.toTypedArray()
         )
 
     private fun doTestFailure(vararg variants: Visibility?) =
         super.doTestFailure(
-            *variants.map { it?.let(Visibility::toMockProperty) }.toTypedArray()
+            *variants.map { it?.let(Setter.Companion::createDefaultNoAnnotations) }.toTypedArray()
         )
 
     override fun createCommonizer() = PropertySetterCommonizer.default()
 }
-
-
-@UseExperimental(TypeRefinement::class)
-private fun Visibility.toMockProperty() = mockProperty(
-    name = "myProperty",
-    setterVisibility = this,
-    extensionReceiverType = null,
-    returnType = mockClassType("kotlin.String")
-).setter!!

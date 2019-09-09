@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -20,7 +22,7 @@ internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
 internal inline fun <reified T> Iterable<T?>.firstNonNull() = firstIsInstance<T>()
 
 internal val KotlinType.fqName: FqName
-    get() = constructor.declarationDescriptor!!.fqNameSafe
+    get() = (constructor.declarationDescriptor ?: throw IllegalStateException("No declaration descriptor found for $constructor")).fqNameSafe
 
 internal val KotlinType.fqNameWithTypeParameters: String
     get() = buildString { buildFqNameWithTypeParameters(this@fqNameWithTypeParameters) }
@@ -48,4 +50,9 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType) {
     }
 }
 
-internal fun Any?.isNull() = this == null
+internal fun Any?.isNull(): Boolean = this == null
+
+private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
+
+internal val FqName.isUnderStandardKotlinPackages: Boolean
+    get() = startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) || startsWith(KOTLINX_PACKAGE_NAME)

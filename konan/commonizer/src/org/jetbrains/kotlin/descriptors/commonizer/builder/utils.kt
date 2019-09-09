@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -34,6 +33,24 @@ internal fun List<TypeParameter>.buildDescriptors(
 
         descriptor
     }
+}
+
+internal fun List<ValueParameter>.buildDescriptors(
+    containingDeclaration: CallableDescriptor
+) = mapIndexed { index, param ->
+    ValueParameterDescriptorImpl(
+        containingDeclaration,
+        null,
+        index,
+        param.annotations,
+        param.name,
+        param.returnType,
+        param.declaresDefaultValue,
+        param.isCrossinline,
+        param.isNoinline,
+        param.varargElementType,
+        SourceElement.NO_SOURCE
+    )
 }
 
 internal fun ExtensionReceiver.buildExtensionReceiver(

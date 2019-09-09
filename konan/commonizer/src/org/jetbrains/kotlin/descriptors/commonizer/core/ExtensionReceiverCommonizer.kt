@@ -5,47 +5,21 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface ExtensionReceiverCommonizer : Commonizer<ReceiverParameterDescriptor?, UnwrappedType?> {
+interface ExtensionReceiverCommonizer : Commonizer<ExtensionReceiver?, UnwrappedType?> {
     companion object {
-        fun default(): ExtensionReceiverCommonizer = DefaultExtensionReceiverCommonizer()
+        fun default(cache: ClassifiersCache): ExtensionReceiverCommonizer = DefaultExtensionReceiverCommonizer(cache)
     }
 }
 
-private class DefaultExtensionReceiverCommonizer : ExtensionReceiverCommonizer {
-    private enum class State {
-        EMPTY,
-        ERROR,
-        WITH_RECEIVER,
-        WITHOUT_RECEIVER
-    }
-
-    private var state = State.EMPTY
-    private lateinit var receiverType: TypeCommonizer
-
-    override val result: UnwrappedType?
-        get() = when (state) {
-            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
-            State.WITH_RECEIVER -> receiverType.result
-            State.WITHOUT_RECEIVER -> null // null receiverType means there is no extension receiver
-        }
-
-    override fun commonizeWith(next: ReceiverParameterDescriptor?): Boolean {
-        state = when (state) {
-            State.ERROR -> State.ERROR
-            State.EMPTY -> next?.let {
-                receiverType = TypeCommonizer.default()
-                doCommonizeWith(next)
-            } ?: State.WITHOUT_RECEIVER
-            State.WITH_RECEIVER -> next?.let(::doCommonizeWith) ?: State.ERROR
-            State.WITHOUT_RECEIVER -> next?.let { State.ERROR } ?: State.WITHOUT_RECEIVER
-        }
-
-        return state != State.ERROR
-    }
-
-    private fun doCommonizeWith(receiverParameter: ReceiverParameterDescriptor) =
-        if (receiverType.commonizeWith(receiverParameter.type)) State.WITH_RECEIVER else State.ERROR
-}
+private class DefaultExtensionReceiverCommonizer(cache: ClassifiersCache) :
+    ExtensionReceiverCommonizer,
+    AbstractNullableCommonizer<ExtensionReceiver, UnwrappedType, KotlinType, UnwrappedType>(
+        wrappedCommonizerFactory = { TypeCommonizer.default(cache) },
+        extractor = { it.type },
+        builder = { it }
+    )

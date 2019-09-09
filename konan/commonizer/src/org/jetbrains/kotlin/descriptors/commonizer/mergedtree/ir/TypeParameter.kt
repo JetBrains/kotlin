@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface TypeParameter {
     val annotations: Annotations
@@ -19,23 +20,19 @@ interface TypeParameter {
     val upperBounds: List<UnwrappedType>
 }
 
-interface DeclarationWithTypeParameters : Declaration {
-    val typeParameters: List<TypeParameter>
-}
-
 data class CommonTypeParameter(
     override val name: Name,
     override val isReified: Boolean,
     override val variance: Variance,
     override val upperBounds: List<UnwrappedType>
 ) : TypeParameter {
-    override val annotations: Annotations get() = Annotations.EMPTY
+    override val annotations get() = Annotations.EMPTY
 }
 
 data class TargetTypeParameter(private val descriptor: TypeParameterDescriptor) : TypeParameter {
-    override val annotations: Annotations get() = descriptor.annotations
-    override val name: Name get() = descriptor.name
-    override val isReified: Boolean get() = descriptor.isReified
-    override val variance: Variance get() = descriptor.variance
-    override val upperBounds: List<UnwrappedType> get() = descriptor.upperBounds.map { it.unwrap() }
+    override val annotations get() = descriptor.annotations
+    override val name get() = descriptor.name
+    override val isReified get() = descriptor.isReified
+    override val variance get() = descriptor.variance
+    override val upperBounds by lazy(PUBLICATION) { descriptor.upperBounds.map { it.unwrap() } }
 }

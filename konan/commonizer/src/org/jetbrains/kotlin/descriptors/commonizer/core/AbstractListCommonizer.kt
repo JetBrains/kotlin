@@ -5,6 +5,17 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.UnwrappedType
+
+/**
+ * Unlike [Commonizer] which commonizes only single elements, this [AbstractListCommonizer] commonizes lists of elements using
+ * [Commonizer]s produced by [singleElementCommonizerFactory].
+ *
+ * Example:
+ *   Input: N lists of [KotlinType]
+ *   Output: list of [UnwrappedType]
+ */
 abstract class AbstractListCommonizer<T, R>(
     private val singleElementCommonizerFactory: () -> Commonizer<T, R>
 ) : Commonizer<List<T>, List<R>> {
@@ -27,13 +38,14 @@ abstract class AbstractListCommonizer<T, R>(
                 this.commonizers = it
             }
 
-        if (commonizers.size != next.size)
+        if (commonizers.size != next.size) // lists must be of the same size
             error = true
         else
             for (index in 0 until next.size) {
                 val commonizer = commonizers[index]
                 val nextElement = next[index]
 
+                // commonize each element in the list:
                 if (!commonizer.commonizeWith(nextElement)) {
                     error = true
                     break

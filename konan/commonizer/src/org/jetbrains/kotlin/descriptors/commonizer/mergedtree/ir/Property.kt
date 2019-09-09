@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Getter.Companion.toGetter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Setter.Companion.toSetter
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 
-interface Property : CallableMember, Declaration {
+interface Property : FunctionOrProperty {
     val isVar: Boolean
-    val lateInit: Boolean
+    val isLateInit: Boolean
     val isConst: Boolean
     val isDelegate: Boolean
     val getter: Getter?
@@ -34,28 +35,27 @@ data class CommonProperty(
     override val returnType: UnwrappedType,
     override val setter: Setter?,
     override val typeParameters: List<TypeParameter>
-) : CommonCallableMember(), Property {
-    override val isVar: Boolean get() = setter != null
-    override val lateInit: Boolean get() = false
-    override val isConst: Boolean get() = false
-    override val isDelegate: Boolean get() = false
-    override val getter: Getter get() = Getter.DEFAULT_NO_ANNOTATIONS
+) : CommonFunctionOrProperty(), Property {
+    override val isVar get() = setter != null
+    override val isLateInit get() = false
+    override val isConst get() = false
+    override val isDelegate get() = false
+    override val getter get() = Getter.DEFAULT_NO_ANNOTATIONS
     override val backingFieldAnnotations: Annotations? get() = null
     override val delegateFieldAnnotations: Annotations? get() = null
     override val compileTimeInitializer: ConstantValue<*>? get() = null
 }
 
-class TargetProperty(descriptor: PropertyDescriptor) : TargetCallableMember<PropertyDescriptor>(descriptor), Property {
-    override val isVar: Boolean get() = descriptor.isVar
-    override val lateInit: Boolean get() = descriptor.isLateInit
-    override val isConst: Boolean get() = descriptor.isConst
-    @Suppress("DEPRECATION")
-    override val isDelegate: Boolean get() = descriptor.isDelegated
-    override val getter: Getter? get() = descriptor.getter?.toGetter()
-    override val setter: Setter? get() = descriptor.setter?.toSetter()
-    override val backingFieldAnnotations: Annotations? get() = descriptor.backingField?.annotations
-    override val delegateFieldAnnotations: Annotations? get() = descriptor.delegateField?.annotations
-    override val compileTimeInitializer: ConstantValue<*>? get() = descriptor.compileTimeInitializer
+class TargetProperty(descriptor: PropertyDescriptor) : TargetFunctionOrProperty<PropertyDescriptor>(descriptor), Property {
+    override val isVar get() = descriptor.isVar
+    override val isLateInit get() = descriptor.isLateInit
+    override val isConst get() = descriptor.isConst
+    override val isDelegate get() = @Suppress("DEPRECATION") descriptor.isDelegated
+    override val getter by lazy(PUBLICATION) { descriptor.getter?.toGetter() }
+    override val setter by lazy(PUBLICATION) { descriptor.setter?.toSetter() }
+    override val backingFieldAnnotations get() = descriptor.backingField?.annotations
+    override val delegateFieldAnnotations get() = descriptor.delegateField?.annotations
+    override val compileTimeInitializer get() = descriptor.compileTimeInitializer
 }
 
 interface PropertyAccessor {
@@ -85,11 +85,13 @@ data class Getter(
 data class Setter(
     override val annotations: Annotations,
     val parameterAnnotations: Annotations,
-    val visibility: Visibility,
+    override val visibility: Visibility,
     override val isDefault: Boolean,
     override val isExternal: Boolean,
     override val isInline: Boolean
-) : PropertyAccessor {
+) : PropertyAccessor, MaybeVirtualCallableMember {
+    override val isVirtual get() = false
+
     companion object {
         fun createDefaultNoAnnotations(visibility: Visibility) = Setter(
             Annotations.EMPTY,

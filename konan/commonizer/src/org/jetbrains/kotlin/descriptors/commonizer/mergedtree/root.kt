@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.descriptors.commonizer.ConcreteTargetId
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildRootNode
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.storage.StorageManager
 
-internal fun mergeRoots(modulesByTargets: List<Pair<ConcreteTargetId, Collection<ModuleDescriptor>>>): RootNode {
+internal fun mergeRoots(
+    storageManager: StorageManager,
+    modulesByTargets: List<Pair<ConcreteTargetId, Collection<ModuleDescriptor>>>
+): RootNode {
     val node = buildRootNode(modulesByTargets.map { it.first })
 
     val modulesMap = CommonizedGroupMap<Name, ModuleDescriptor>(modulesByTargets.size)
@@ -23,8 +27,8 @@ internal fun mergeRoots(modulesByTargets: List<Pair<ConcreteTargetId, Collection
         }
     }
 
-    for ((_, modulesGroup) in modulesMap) {
-        node.modules += mergeModules(modulesGroup.toList())
+    for ((moduleName, modulesGroup) in modulesMap) {
+        node.modules += mergeModules(storageManager, node.cache, moduleName, modulesGroup.toList())
     }
 
     return node

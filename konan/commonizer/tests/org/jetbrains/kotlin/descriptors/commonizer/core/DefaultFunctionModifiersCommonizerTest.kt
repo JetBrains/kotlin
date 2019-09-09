@@ -5,177 +5,179 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.TestFunctionModifiers
-import org.jetbrains.kotlin.descriptors.commonizer.TestFunctionModifiers.Companion.areEqual
+import org.jetbrains.kotlin.descriptors.commonizer.core.TestFunctionModifiers.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
-import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
-import org.jetbrains.kotlin.descriptors.commonizer.mockFunction
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
-@TypeRefinement
-class DefaultFunctionModifiersCommonizerTest : AbstractCommonizerTest<SimpleFunctionDescriptor, FunctionModifiers>() {
+class DefaultFunctionModifiersCommonizerTest : AbstractCommonizerTest<FunctionModifiers, FunctionModifiers>() {
 
     @Test
     fun allDefault() = doTestSuccess(
-        create(),
-        create().toMockFunction(),
-        create().toMockFunction(),
-        create().toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(),
+        mockFunctionModifiers(),
+        mockFunctionModifiers()
     )
 
     @Test
     fun allSuspend() = doTestSuccess(
-        create(isSuspend = true),
-        create(isSuspend = true).toMockFunction(),
-        create(isSuspend = true).toMockFunction(),
-        create(isSuspend = true).toMockFunction()
+        mockFunctionModifiers(isSuspend = true),
+        mockFunctionModifiers(isSuspend = true),
+        mockFunctionModifiers(isSuspend = true),
+        mockFunctionModifiers(isSuspend = true)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun suspendAndNotSuspend() = doTestFailure(
-        create(isSuspend = true).toMockFunction(),
-        create(isSuspend = true).toMockFunction(),
-        create().toMockFunction()
+        mockFunctionModifiers(isSuspend = true),
+        mockFunctionModifiers(isSuspend = true),
+        mockFunctionModifiers()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun notSuspendAndSuspend() = doTestFailure(
-        create().toMockFunction(),
-        create().toMockFunction(),
-        create(isSuspend = true).toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isSuspend = true)
     )
 
     @Test
     fun allOperator() = doTestSuccess(
-        create(isOperator = true),
-        create(isOperator = true).toMockFunction(),
-        create(isOperator = true).toMockFunction(),
-        create(isOperator = true).toMockFunction()
+        mockFunctionModifiers(isOperator = true),
+        mockFunctionModifiers(isOperator = true),
+        mockFunctionModifiers(isOperator = true),
+        mockFunctionModifiers(isOperator = true)
     )
 
     @Test
     fun notOperatorAndOperator() = doTestSuccess(
-        create(),
-        create().toMockFunction(),
-        create(isOperator = true).toMockFunction(),
-        create(isOperator = true).toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isOperator = true),
+        mockFunctionModifiers(isOperator = true)
     )
 
     @Test
     fun operatorAndNotOperator() = doTestSuccess(
-        create(),
-        create(isOperator = true).toMockFunction(),
-        create(isOperator = true).toMockFunction(),
-        create().toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isOperator = true),
+        mockFunctionModifiers(isOperator = true),
+        mockFunctionModifiers()
     )
 
     @Test
     fun allInfix() = doTestSuccess(
-        create(isInfix = true),
-        create(isInfix = true).toMockFunction(),
-        create(isInfix = true).toMockFunction(),
-        create(isInfix = true).toMockFunction()
+        mockFunctionModifiers(isInfix = true),
+        mockFunctionModifiers(isInfix = true),
+        mockFunctionModifiers(isInfix = true),
+        mockFunctionModifiers(isInfix = true)
     )
 
     @Test
     fun notInfixAndInfix() = doTestSuccess(
-        create(),
-        create().toMockFunction(),
-        create(isInfix = true).toMockFunction(),
-        create(isInfix = true).toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isInfix = true),
+        mockFunctionModifiers(isInfix = true)
     )
 
     @Test
     fun infixAndNotInfix() = doTestSuccess(
-        create(),
-        create(isInfix = true).toMockFunction(),
-        create(isInfix = true).toMockFunction(),
-        create().toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isInfix = true),
+        mockFunctionModifiers(isInfix = true),
+        mockFunctionModifiers()
     )
 
     @Test
     fun allInline() = doTestSuccess(
-        create(isInline = true),
-        create(isInline = true).toMockFunction(),
-        create(isInline = true).toMockFunction(),
-        create(isInline = true).toMockFunction()
+        mockFunctionModifiers(isInline = true),
+        mockFunctionModifiers(isInline = true),
+        mockFunctionModifiers(isInline = true),
+        mockFunctionModifiers(isInline = true)
     )
 
     @Test
     fun notInlineAndInline() = doTestSuccess(
-        create(),
-        create().toMockFunction(),
-        create(isInline = true).toMockFunction(),
-        create(isInline = true).toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isInline = true),
+        mockFunctionModifiers(isInline = true)
     )
 
     @Test
     fun inlineAndNotInline() = doTestSuccess(
-        create(),
-        create(isInline = true).toMockFunction(),
-        create(isInline = true).toMockFunction(),
-        create().toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isInline = true),
+        mockFunctionModifiers(isInline = true),
+        mockFunctionModifiers()
     )
 
     @Test
     fun allTailrec() = doTestSuccess(
-        create(isTailrec = true),
-        create(isTailrec = true).toMockFunction(),
-        create(isTailrec = true).toMockFunction(),
-        create(isTailrec = true).toMockFunction()
+        mockFunctionModifiers(isTailrec = true),
+        mockFunctionModifiers(isTailrec = true),
+        mockFunctionModifiers(isTailrec = true),
+        mockFunctionModifiers(isTailrec = true)
     )
 
     @Test
     fun notTailrecAndTailrec() = doTestSuccess(
-        create(),
-        create().toMockFunction(),
-        create(isTailrec = true).toMockFunction(),
-        create(isTailrec = true).toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isTailrec = true),
+        mockFunctionModifiers(isTailrec = true)
     )
 
     @Test
     fun tailrecAndNotTailrec() = doTestSuccess(
-        create(),
-        create(isTailrec = true).toMockFunction(),
-        create(isTailrec = true).toMockFunction(),
-        create().toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isTailrec = true),
+        mockFunctionModifiers(isTailrec = true),
+        mockFunctionModifiers()
     )
 
     @Test
     fun allExternal() = doTestSuccess(
-        create(isExternal = true),
-        create(isExternal = true).toMockFunction(),
-        create(isExternal = true).toMockFunction(),
-        create(isExternal = true).toMockFunction()
+        mockFunctionModifiers(isExternal = true),
+        mockFunctionModifiers(isExternal = true),
+        mockFunctionModifiers(isExternal = true),
+        mockFunctionModifiers(isExternal = true)
     )
 
     @Test
     fun notExternalAndExternal() = doTestSuccess(
-        create(),
-        create().toMockFunction(),
-        create(isExternal = true).toMockFunction(),
-        create(isExternal = true).toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isExternal = true),
+        mockFunctionModifiers(isExternal = true)
     )
 
     @Test
     fun externalAndNotExternal() = doTestSuccess(
-        create(),
-        create(isExternal = true).toMockFunction(),
-        create(isExternal = true).toMockFunction(),
-        create().toMockFunction()
+        mockFunctionModifiers(),
+        mockFunctionModifiers(isExternal = true),
+        mockFunctionModifiers(isExternal = true),
+        mockFunctionModifiers()
     )
 
     override fun createCommonizer() = FunctionModifiersCommonizer.default()
     override fun isEqual(a: FunctionModifiers?, b: FunctionModifiers?) = (a === b) || (a != null && b != null && areEqual(a, b))
 }
 
-private typealias create = TestFunctionModifiers
+private typealias mockFunctionModifiers = TestFunctionModifiers
 
-@TypeRefinement
-private fun TestFunctionModifiers.toMockFunction() = mockFunction(
-    name = "myFunction",
-    returnType = mockClassType("kotlin.String"),
-    modifiers = this
-)
+private data class TestFunctionModifiers(
+    override val isOperator: Boolean = false,
+    override val isInfix: Boolean = false,
+    override val isInline: Boolean = false,
+    override val isTailrec: Boolean = false,
+    override val isSuspend: Boolean = false,
+    override val isExternal: Boolean = false
+) : FunctionModifiers {
+    companion object {
+        fun areEqual(a: FunctionModifiers, b: FunctionModifiers) =
+            a.isOperator == b.isOperator && a.isInfix == b.isInfix && a.isInline == b.isInline
+                    && a.isTailrec == b.isTailrec && a.isSuspend == b.isSuspend && a.isExternal == b.isExternal
+    }
+}

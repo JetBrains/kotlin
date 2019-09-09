@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.core.TestValueParameter.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
 @TypeRefinement
-class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<ValueParameterDescriptor>, List<ValueParameter>>() {
+class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<ValueParameter>, List<ValueParameter>>() {
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
@@ -23,163 +24,173 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
 
     @Test
     fun matchedParameters() = doTestSuccess(
-        create(
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
         ),
-        create(
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams()
+        )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize1() = doTestFailure(
-        create(
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
+        ),
         emptyList()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize2() = doTestFailure(
-        create(
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int"
-        ).toMockParams()
+        )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize3() = doTestFailure(
-        create(
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo",
             "d" to "org.sample.Bar"
-        ).toMockParams()
+        )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterNames1() = doTestFailure(
-        create(
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a1" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams()
+        )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterNames2() = doTestFailure(
-        create(
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c1" to "org.sample.Foo"
-        ).toMockParams()
+        )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterTypes() = doTestFailure(
-        create(
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.String",
             "b" to "kotlin.Int",
             "c" to "org.sample.Foo"
-        ).toMockParams(),
-        create(
+        ),
+        mockValueParams(
             "a" to "kotlin.Int",
             "b" to "kotlin.String",
             "c" to "org.sample.Bar"
-        ).toMockParams()
+        )
     )
 
-    override fun createCommonizer() = ValueParameterListCommonizer.default()
+    override fun createCommonizer() = ValueParameterListCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
+
+    override fun isEqual(a: List<ValueParameter>?, b: List<ValueParameter>?): Boolean {
+        if (a === b)
+            return true
+        else if (a == null || b == null || a.size != b.size)
+            return false
+
+        for (i in 0 until a.size) {
+            if (!areEqual(EMPTY_CLASSIFIERS_CACHE, a[i], b[i]))
+                return false
+        }
+
+        return true
+    }
 
     private companion object {
-        fun create(vararg params: Pair<String, String>): List<ValueParameter> {
+        fun mockValueParams(vararg params: Pair<String, String>): List<ValueParameter> {
             check(params.isNotEmpty())
             return params.map { (name, returnTypeFqName) ->
-                DefaultValueParameterCommonizerTest.create(
+                DefaultValueParameterCommonizerTest.mockValueParam(
                     name = name,
                     returnTypeFqName = returnTypeFqName
                 )
             }
-        }
-
-        fun List<ValueParameter>.toMockParams() = DefaultValueParameterCommonizerTest.run {
-            mapIndexed { index, param -> param.toMockParam(index) }
         }
     }
 }

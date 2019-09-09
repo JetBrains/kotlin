@@ -20,7 +20,7 @@ abstract class AbstractCommonizerTest<T, R> {
 
     protected open fun isEqual(a: R?, b: R?): Boolean = a == b
 
-    protected fun doTestSuccess(expected: R, vararg variants: T) {
+    protected open fun doTestSuccess(expected: R, vararg variants: T) {
         check(variants.isNotEmpty())
 
         val commonized = createCommonizer().apply {
@@ -34,7 +34,7 @@ abstract class AbstractCommonizerTest<T, R> {
     }
 
     // should fail on the last variant
-    protected fun doTestFailure(vararg variants: T) {
+    protected open fun doTestFailure(vararg variants: T) {
         check(variants.isNotEmpty())
 
         val commonized = createCommonizer().apply {

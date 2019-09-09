@@ -5,16 +5,33 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.mockTAType
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.getAbbreviation
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.junit.Before
 import org.junit.Test
 
-// TODO: add tests for type parameters
 @TypeRefinement
 class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedType>() {
+
+    private lateinit var cache: ClassifiersCacheImpl
+
+    @Before
+    fun initialize() {
+        cache = ClassifiersCacheImpl() // reset cache
+    }
 
     @Test
     fun classTypesInKotlinPackageWithSameName() = doTestSuccess(
@@ -85,20 +102,17 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames1() = doTestFailure(
         mockClassType("org.sample.Foo"),
-        mockClassType("org.sample.Foo"),
         mockClassType("org.fictitiousPackageName.Foo")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames2() = doTestFailure(
         mockClassType("org.sample.Foo"),
-        mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Bar")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames3() = doTestFailure(
-        mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo"),
         mockClassType("kotlin.String")
     )
@@ -244,13 +258,11 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNames() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.BarAlias") { mockClassType("org.sample.Foo") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentClasses() = doTestFailure(
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Bar") }
     )
@@ -347,17 +359,58 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability3() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability4() = doTestFailure(
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) }
     )
 
-    override fun createCommonizer() = TypeCommonizer.default()
-    override fun isEqual(a: UnwrappedType?, b: UnwrappedType?) = (a === b) || (a != null && b != null && areTypesEqual(a, b))
+    private fun prepareCache(vararg variants: KotlinType) {
+        check(variants.isNotEmpty())
+
+        val classesMap = CommonizedGroupMap<FqName, ClassDescriptor>(variants.size)
+        val typeAliasesMap = CommonizedGroupMap<FqName, TypeAliasDescriptor>(variants.size)
+
+        fun recurse(type: KotlinType, index: Int) {
+            @Suppress("MoveVariableDeclarationIntoWhen")
+            val descriptor = (type.getAbbreviation() ?: type).constructor.declarationDescriptor
+            when (descriptor) {
+                is ClassDescriptor -> classesMap[descriptor.fqNameSafe][index] = descriptor
+                is TypeAliasDescriptor -> {
+                    typeAliasesMap[descriptor.fqNameSafe][index] = descriptor
+                    recurse(descriptor.underlyingType, index) // expand underlying types recursively
+                }
+                else -> IllegalStateException("Unexpected descriptor of KotlinType: $descriptor, $type")
+            }
+        }
+
+        variants.forEachIndexed { index, type ->
+            recurse(type, index)
+        }
+
+        for ((_, classesGroup) in classesMap) {
+            buildClassNode(LockBasedStorageManager.NO_LOCKS, cache, null, classesGroup.toList())
+        }
+
+        for ((_, typeAliasesGroup) in typeAliasesMap) {
+            buildTypeAliasNode(LockBasedStorageManager.NO_LOCKS, cache, typeAliasesGroup.toList())
+        }
+    }
+
+    override fun doTestSuccess(expected: UnwrappedType, vararg variants: KotlinType) {
+        prepareCache(*variants)
+        super.doTestSuccess(expected, *variants)
+    }
+
+    override fun doTestFailure(vararg variants: KotlinType) {
+        prepareCache(*variants)
+        super.doTestFailure(*variants)
+    }
+
+    override fun createCommonizer() = TypeCommonizer.default(cache)
+
+    override fun isEqual(a: UnwrappedType?, b: UnwrappedType?) = (a === b) || (a != null && b != null && areTypesEqual(cache, a, b))
 }

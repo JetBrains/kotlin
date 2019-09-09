@@ -5,60 +5,59 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.commonizer.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
-import org.jetbrains.kotlin.descriptors.commonizer.mockProperty
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
 @TypeRefinement
-class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<ReceiverParameterDescriptor?, UnwrappedType?>() {
+class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<ExtensionReceiver?, UnwrappedType?>() {
 
     @Test
     fun nullReceiver() = doTestSuccess(
         null,
-        mock().extensionReceiverParameter,
-        mock().extensionReceiverParameter,
-        mock().extensionReceiverParameter
+        null,
+        null,
+        null
     )
 
     @Test
     fun sameReceiver() = doTestSuccess(
         mockClassType("kotlin.String").unwrap(),
-        mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
-        mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
-        mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter
+        mockExtensionReceiver("kotlin.String"),
+        mockExtensionReceiver("kotlin.String"),
+        mockExtensionReceiver("kotlin.String")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentReceivers() = doTestFailure(
-        mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
-        mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
-        mock(receiverTypeFqName = "kotlin.Int").extensionReceiverParameter
+        mockExtensionReceiver("kotlin.String"),
+        mockExtensionReceiver("kotlin.String"),
+        mockExtensionReceiver("kotlin.Int")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun nullAndNonNullReceivers1() = doTestFailure(
-        mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
-        mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter,
-        mock(receiverTypeFqName = null).extensionReceiverParameter
+        mockExtensionReceiver("kotlin.String"),
+        mockExtensionReceiver("kotlin.String"),
+        null
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun nullAndNonNullReceivers2() = doTestFailure(
-        mock(receiverTypeFqName = null).extensionReceiverParameter,
-        mock(receiverTypeFqName = null).extensionReceiverParameter,
-        mock(receiverTypeFqName = "kotlin.String").extensionReceiverParameter
+        null,
+        null,
+        mockExtensionReceiver("kotlin.String")
     )
 
-    override fun createCommonizer() = ExtensionReceiverCommonizer.default()
+    override fun createCommonizer() = ExtensionReceiverCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
 }
 
 @TypeRefinement
-private fun mock(name: String = "myLength", receiverTypeFqName: String? = null) = mockProperty(
-    name = name,
-    setterVisibility = null,
-    extensionReceiverType = receiverTypeFqName?.let { mockClassType(receiverTypeFqName) },
-    returnType = mockClassType("kotlin.Int")
+private fun mockExtensionReceiver(typeFqName: String) = ExtensionReceiver(
+    annotations = Annotations.EMPTY,
+    type = mockClassType(typeFqName).unwrap()
 )

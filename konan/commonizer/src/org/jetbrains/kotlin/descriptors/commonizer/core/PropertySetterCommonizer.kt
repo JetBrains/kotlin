@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.DeclarationWithVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Setter
 
-interface PropertySetterCommonizer : Commonizer<PropertySetterDescriptor?, Setter?> {
+interface PropertySetterCommonizer : Commonizer<Setter?, Setter?> {
     companion object {
         fun default(): PropertySetterCommonizer = DefaultPropertySetterCommonizer()
     }
@@ -17,8 +17,8 @@ interface PropertySetterCommonizer : Commonizer<PropertySetterDescriptor?, Sette
 
 private class DefaultPropertySetterCommonizer :
     PropertySetterCommonizer,
-    AbstractNullableCommonizer<PropertySetterDescriptor, Setter, Visibility, Visibility>(
+    AbstractNullableCommonizer<Setter, Setter, DeclarationWithVisibility, Visibility>(
         wrappedCommonizerFactory = { VisibilityCommonizer.equalizing() },
-        extractor = { it.visibility },
+        extractor = { it },
         builder = { Setter.createDefaultNoAnnotations(it) }
     )

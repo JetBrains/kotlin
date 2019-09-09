@@ -8,16 +8,24 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ModuleNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildModuleNode
 import org.jetbrains.kotlin.descriptors.commonizer.toList
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.alwaysTrue
 
-internal fun mergeModules(modules: List<ModuleDescriptor?>): ModuleNode {
-    val node = buildModuleNode(modules)
+internal fun mergeModules(
+    storageManager: StorageManager,
+    cacheRW: RootNode.ClassifiersCacheImpl,
+    moduleName: Name,
+    modules: List<ModuleDescriptor?>
+): ModuleNode {
+    val node = buildModuleNode(moduleName, modules)
 
     val packageMemberScopesMap = CommonizedGroupMap<FqName, MemberScope>(modules.size)
 
@@ -28,7 +36,7 @@ internal fun mergeModules(modules: List<ModuleDescriptor?>): ModuleNode {
     }
 
     for ((packageFqName, packageMemberScopesGroup) in packageMemberScopesMap) {
-        node.packages += mergePackages(packageFqName, packageMemberScopesGroup.toList())
+        node.packages += mergePackages(storageManager, cacheRW, packageFqName, packageMemberScopesGroup.toList())
     }
 
     return node

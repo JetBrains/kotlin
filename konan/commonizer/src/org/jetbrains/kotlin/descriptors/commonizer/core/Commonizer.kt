@@ -10,4 +10,38 @@ interface Commonizer<T, R> {
     fun commonizeWith(next: T): Boolean
 }
 
+abstract class AbstractStandardCommonizer<T, R> : Commonizer<T, R> {
+    private enum class State {
+        EMPTY,
+        ERROR,
+        IN_PROGRESS
+    }
+
+    private var state = State.EMPTY
+
+    final override val result: R
+        get() = when (state) {
+            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
+            State.IN_PROGRESS -> commonizationResult()
+        }
+
+    final override fun commonizeWith(next: T): Boolean {
+        if (state == State.ERROR)
+            return false
+
+        if (state == State.EMPTY)
+            initialize(next)
+
+        val result = doCommonizeWith(next)
+        state = if (!result) State.ERROR else State.IN_PROGRESS
+
+        return result
+    }
+
+    protected abstract fun commonizationResult(): R
+
+    protected abstract fun initialize(first: T)
+    protected abstract fun doCommonizeWith(next: T): Boolean
+}
+
 class IllegalCommonizerStateException : IllegalStateException("Illegal commonizer state: error or empty")

@@ -5,82 +5,56 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.fqNameWithTypeParameters
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PackageNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPackageNode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PackageNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPackageNode
+import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun mergePackages(
+    storageManager: StorageManager,
+    cacheRW: RootNode.ClassifiersCacheImpl,
     packageFqName: FqName,
     packageMemberScopes: List<MemberScope?>
 ): PackageNode {
     val node = buildPackageNode(packageFqName, packageMemberScopes)
 
-    val propertiesMap = CommonizedGroupMap<PropertyKey, PropertyDescriptor>(packageMemberScopes.size)
-    val functionsMap = CommonizedGroupMap<FunctionKey, SimpleFunctionDescriptor>(packageMemberScopes.size)
+    val propertiesMap = CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(packageMemberScopes.size)
+    val functionsMap = CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(packageMemberScopes.size)
+    val classesMap = CommonizedGroupMap<Name, ClassDescriptor>(packageMemberScopes.size)
+    val typeAliasesMap = CommonizedGroupMap<Name, TypeAliasDescriptor>(packageMemberScopes.size)
 
     packageMemberScopes.forEachIndexed { index, memberScope ->
-        memberScope?.collectProperties { propertyKey, property ->
-            propertiesMap[propertyKey][index] = property
-        }
-        memberScope?.collectFunctions { functionKey, function ->
-            functionsMap[functionKey][index] = function
-        }
+        memberScope?.collectMembers(
+            CallableMemberCollector<PropertyDescriptor> { propertiesMap[PropertyApproximationKey(it)][index] = it },
+            CallableMemberCollector<SimpleFunctionDescriptor> { functionsMap[FunctionApproximationKey(it)][index] = it },
+            Collector<ClassDescriptor> { classesMap[it.name][index] = it },
+            Collector<TypeAliasDescriptor> { typeAliasesMap[it.name][index] = it }
+        )
     }
 
     for ((_, propertiesGroup) in propertiesMap) {
-        node.properties += mergeProperties(propertiesGroup.toList())
+        node.properties += mergeProperties(storageManager, cacheRW, null, propertiesGroup.toList())
     }
 
     for ((_, functionsGroup) in functionsMap) {
-        node.functions += mergeFunctions(functionsGroup.toList())
+        node.functions += mergeFunctions(storageManager, cacheRW, null, functionsGroup.toList())
     }
 
-    // FIXME: traverse the rest - classes, typealiases
+    for ((_, classesGroup) in classesMap) {
+        node.classes += mergeClasses(storageManager, cacheRW, null, classesGroup.toList())
+    }
+
+    for ((_, typeAliasesGroup) in typeAliasesMap) {
+        node.typeAliases += mergeTypeAliases(storageManager, cacheRW, typeAliasesGroup.toList())
+    }
 
     return node
-}
-
-internal data class PropertyKey(
-    val name: Name,
-    val extensionReceiverParameter: String?
-) {
-    constructor(property: PropertyDescriptor) : this(
-        property.name,
-        property.extensionReceiverParameter?.type?.fqNameWithTypeParameters
-    )
-}
-
-internal fun MemberScope.collectProperties(collector: (PropertyKey, PropertyDescriptor) -> Unit) {
-    getContributedDescriptors(DescriptorKindFilter.VARIABLES).asSequence()
-        .filterIsInstance<PropertyDescriptor>()
-        .forEach { property ->
-            collector(PropertyKey(property), property)
-        }
-}
-
-internal data class FunctionKey(
-    val name: Name,
-    val valueParameters: List<Pair<Name, String>>,
-    val extensionReceiverParameter: String?
-) {
-    constructor(function: SimpleFunctionDescriptor) : this(
-        function.name,
-        function.valueParameters.map { it.name to it.type.fqNameWithTypeParameters },
-        function.extensionReceiverParameter?.type?.fqNameWithTypeParameters
-    )
-}
-
-internal fun MemberScope.collectFunctions(collector: (FunctionKey, SimpleFunctionDescriptor) -> Unit) {
-    getContributedDescriptors(DescriptorKindFilter.FUNCTIONS).asSequence()
-        .filterIsInstance<SimpleFunctionDescriptor>()
-        .forEach { function ->
-            collector(FunctionKey(function), function)
-        }
 }
