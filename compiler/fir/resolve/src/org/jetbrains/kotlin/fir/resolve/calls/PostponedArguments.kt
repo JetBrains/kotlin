@@ -43,11 +43,10 @@ fun preprocessLambdaArgument(
 }
 
 
-private val ConeKotlinType.isBuiltinFunctionalType: Boolean
-    get () {
-        val type = this
-        return when (type) {
-            is ConeClassType -> type.lookupTag.classId.asString().startsWith("kotlin/Function")
+val ConeKotlinType.isBuiltinFunctionalType: Boolean
+    get() {
+        return when (this) {
+            is ConeClassType -> this.lookupTag.classId.asString().startsWith("kotlin/Function")
             else -> false
         }
     }
