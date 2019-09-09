@@ -396,7 +396,9 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     // ----------------------------------- Try-catch-finally -----------------------------------
 
     fun enterTryExpression(tryExpression: FirTryExpression) {
-        graphBuilder.enterTryExpression(tryExpression).mergeIncomingFlow()
+        val (tryExpressionEnterNode, tryMainBlockEnterNode) = graphBuilder.enterTryExpression(tryExpression)
+        tryExpressionEnterNode.mergeIncomingFlow()
+        tryMainBlockEnterNode.mergeIncomingFlow()
     }
 
     fun exitTryMainBlock(tryExpression: FirTryExpression) {

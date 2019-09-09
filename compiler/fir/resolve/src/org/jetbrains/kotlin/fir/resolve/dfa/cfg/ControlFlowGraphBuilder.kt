@@ -387,30 +387,31 @@ class ControlFlowGraphBuilder {
 
     private val finallyEnterNodes: Stack<FinallyBlockEnterNode> = stackOf()
 
-    fun enterTryExpression(tryExpression: FirTryExpression): TryMainBlockEnterNode {
+    fun enterTryExpression(tryExpression: FirTryExpression): Pair<TryExpressionEnterNode, TryMainBlockEnterNode> {
         catchNodeStorages.push(NodeStorage())
-        addNewSimpleNode(createTryExpressionEnterNode(tryExpression))
+        val enterTryExpressionNode = createTryExpressionEnterNode(tryExpression)
+        addNewSimpleNode(enterTryExpressionNode)
         tryExitNodes.push(createTryExpressionExitNode(tryExpression))
         levelCounter++
-        val tryNode = createTryMainBlockEnterNode(tryExpression)
-        addNewSimpleNode(tryNode)
-        addEdge(tryNode, exitNodes.top())
+        val enterTryNodeBlock = createTryMainBlockEnterNode(tryExpression)
+        addNewSimpleNode(enterTryNodeBlock)
+        addEdge(enterTryNodeBlock, exitNodes.top())
 
         for (catch in tryExpression.catches) {
             val catchNode = createCatchClauseEnterNode(catch)
             catchNodeStorage.push(catchNode)
-            addEdge(tryNode, catchNode)
+            addEdge(enterTryNodeBlock, catchNode)
             addEdge(catchNode, exitNodes.top())
         }
         levelCounter++
 
         if (tryExpression.finallyBlock != null) {
             val finallyEnterNode = createFinallyBlockEnterNode(tryExpression)
-            addEdge(tryNode, finallyEnterNode)
+            addEdge(enterTryNodeBlock, finallyEnterNode)
             finallyEnterNodes.push(finallyEnterNode)
         }
 
-        return tryNode
+        return enterTryExpressionNode to enterTryNodeBlock
     }
 
     fun exitTryMainBlock(tryExpression: FirTryExpression): TryMainBlockExitNode {

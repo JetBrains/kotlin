@@ -11,21 +11,19 @@ fun fetchPluginReleaseDate(pluginId: PluginId, version: String, channel: String?
     } catch (syntaxException: JsonSyntaxException) {
         throw ResponseParseException("Can't parse json response", syntaxException)
     }
+}
 
-//    val selectedPluginDTO = pluginDTOs
-//        .firstOrNull {
-//            it.listed && it.approve && (it.channel == channel || (it.channel == "" && channel == null))
-//        }
-//        ?: return null
-//
-//    val dateString = selectedPluginDTO.cdate ?: throw ResponseParseException("Empty cdate")
-//
-//    return try {
-//        val dateLong = dateString.toLong()
-//        Instant.ofEpochMilli(dateLong).atZone(ZoneOffset.UTC).toLocalDate()
-//    } catch (e: NumberFormatException) {
-//        throw ResponseParseException("Can't parse long date", e)
-//    } catch (e: DateTimeException) {
-//        throw ResponseParseException("Can't convert to date", e)
-//    }
+interface AutoCloseable {
+    fun close()
+}
+
+internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
+    this == null -> {}
+    cause == null -> close()
+    else ->
+        try {
+            close()
+        } catch (closeException: Throwable) {
+            cause.addSuppressed(closeException)
+        }
 }

@@ -123,4 +123,166 @@ digraph complex_kt {
   39 -> {40};
   40 -> {41};
 
+  subgraph cluster_10 {
+    color=red
+    42 [label="Enter function close" style="filled" fillcolor=red];
+    43 [label="Exit function close" style="filled" fillcolor=red];
+  }
+
+  42 -> {43};
+
+  subgraph cluster_11 {
+    color=red
+    44 [label="Enter function closeFinally" style="filled" fillcolor=red];
+    subgraph cluster_12 {
+      color=blue
+      45 [label="Enter block"];
+      subgraph cluster_13 {
+        color=blue
+        46 [label="Enter when"];
+        subgraph cluster_14 {
+          color=blue
+          47 [label="Enter when branch condition "];
+          48 [label="Access variable this@R|/closeFinally|"];
+          49 [label="Const: Null(null)"];
+          50 [label="Operator =="];
+          51 [label="Exit when branch condition"];
+        }
+        subgraph cluster_15 {
+          color=blue
+          52 [label="Enter when branch condition "];
+          53 [label="Access variable R|<local>/cause|"];
+          54 [label="Const: Null(null)"];
+          55 [label="Operator =="];
+          56 [label="Exit when branch condition"];
+        }
+        subgraph cluster_16 {
+          color=blue
+          57 [label="Enter when branch condition else"];
+          58 [label="Exit when branch condition"];
+        }
+        59 [label="Enter when branch result"];
+        subgraph cluster_17 {
+          color=blue
+          60 [label="Enter block"];
+          subgraph cluster_18 {
+            color=blue
+            61 [label="Try expression enter"];
+            subgraph cluster_19 {
+              color=blue
+              62 [label="Try main block enter"];
+              subgraph cluster_20 {
+                color=blue
+                63 [label="Enter block"];
+                64 [label="Function call: this@R|/AutoCloseable|.R|/AutoCloseable.close|()"];
+                65 [label="Exit block"];
+              }
+              66 [label="Try main block exit"];
+            }
+            subgraph cluster_21 {
+              color=blue
+              67 [label="Catch enter"];
+              subgraph cluster_22 {
+                color=blue
+                68 [label="Enter block"];
+                69 [label="Access variable R|<local>/cause|"];
+                70 [label="Access variable R|<local>/closeException|"];
+                71 [label="Function call: R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)"];
+                72 [label="Exit block"];
+              }
+              73 [label="Catch exit"];
+            }
+            74 [label="Try expression exit"];
+          }
+          75 [label="Exit block"];
+        }
+        76 [label="Exit when branch result"];
+        77 [label="Enter when branch result"];
+        subgraph cluster_23 {
+          color=blue
+          78 [label="Enter block"];
+          79 [label="Function call: this@R|/AutoCloseable|.R|/AutoCloseable.close|()"];
+          80 [label="Exit block"];
+        }
+        81 [label="Exit when branch result"];
+        82 [label="Enter when branch result"];
+        subgraph cluster_24 {
+          color=blue
+          83 [label="Enter block"];
+          84 [label="Exit block"];
+        }
+        85 [label="Exit when branch result"];
+        86 [label="Exit when"];
+      }
+      87 [label="Jump: ^closeFinally when () {
+    ==(this@R|/closeFinally|, Null(null)) ->  {
+    }
+    ==(R|<local>/cause|, Null(null)) ->  {
+        this@R|/AutoCloseable|.R|/AutoCloseable.close|()
+    }
+    else ->  {
+        try {
+            this@R|/AutoCloseable|.R|/AutoCloseable.close|()
+        }
+        catch (closeException: R|kotlin/Throwable|) {
+            R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)
+        }
+
+    }
+}
+"];
+      88 [label="Stub" style="filled" fillcolor=gray];
+      89 [label="Exit block" style="filled" fillcolor=gray];
+    }
+    90 [label="Exit function closeFinally" style="filled" fillcolor=red];
+  }
+
+  44 -> {45};
+  45 -> {46};
+  46 -> {47};
+  47 -> {48};
+  48 -> {49};
+  49 -> {50};
+  50 -> {51};
+  51 -> {82 52};
+  52 -> {53};
+  53 -> {54};
+  54 -> {55};
+  55 -> {56};
+  56 -> {77 57};
+  57 -> {58};
+  58 -> {59};
+  59 -> {60};
+  60 -> {61};
+  61 -> {62};
+  62 -> {90 67 63};
+  63 -> {64};
+  64 -> {65};
+  65 -> {66};
+  66 -> {74};
+  67 -> {90 68};
+  68 -> {69};
+  69 -> {70};
+  70 -> {71};
+  71 -> {72};
+  72 -> {73};
+  73 -> {74};
+  74 -> {75};
+  75 -> {76};
+  76 -> {86};
+  77 -> {78};
+  78 -> {79};
+  79 -> {80};
+  80 -> {81};
+  81 -> {86};
+  82 -> {83};
+  83 -> {84};
+  84 -> {85};
+  85 -> {86};
+  86 -> {87};
+  87 -> {90};
+  87 -> {88} [style=dotted];
+  88 -> {89} [style=dotted];
+  89 -> {90} [style=dotted];
+
 }
