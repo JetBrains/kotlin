@@ -43,6 +43,7 @@ class SingleLanguageInlayHintsSettingsPanel(
   private val myCurrentProviderCasesPane = JBScrollPane().also { it.border = null }
   private val myBottomPanel = createBottomPanel()
   private var myCasesPanel: CasesPanel? = null
+  private val myRightPanel: JPanel = JPanel()
 
 
   init {
@@ -102,7 +103,7 @@ class SingleLanguageInlayHintsSettingsPanel(
 
     val horizontalSplitter = JBSplitter(false, TOP_PANEL_PROPORTION)
     horizontalSplitter.firstComponent = createLeftPanel()
-    horizontalSplitter.secondComponent = createRightPanel()
+    horizontalSplitter.secondComponent = fillRightPanel()
 
     panel.add(horizontalSplitter)
     return panel
@@ -110,13 +111,12 @@ class SingleLanguageInlayHintsSettingsPanel(
 
   private fun createLeftPanel() = JBScrollPane(myProviderList)
 
-  private fun createRightPanel(): JPanel {
-    val panel = JPanel()
-    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-    panel.add(myCurrentProviderCasesPane)
-    panel.add(Box.createRigidArea(Dimension(0, 5)))
-    panel.add(withInset(myCurrentProviderCustomSettingsPane))
-    return withInset(panel)
+  private fun fillRightPanel(): JPanel {
+    myRightPanel.layout = BoxLayout(myRightPanel, BoxLayout.Y_AXIS)
+    myRightPanel.add(myCurrentProviderCasesPane)
+    myRightPanel.add(Box.createRigidArea(Dimension(0, 5)))
+    myRightPanel.add(withInset(myCurrentProviderCustomSettingsPane))
+    return withInset(myRightPanel)
   }
 
   private fun createBottomPanel(): JPanel {
@@ -188,6 +188,7 @@ class SingleLanguageInlayHintsSettingsPanel(
   private fun updateWithNewProvider() {
     myCurrentProviderCasesPane.setViewportView(createMainCheckBoxPanel())
     myCurrentProviderCustomSettingsPane.setViewportView(myCurrentProvider.component)
+    myRightPanel.validate()
     val previewText = myCurrentProvider.previewText
     if (previewText == null) {
       myBottomPanel.isVisible = false
