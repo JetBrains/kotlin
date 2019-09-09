@@ -34,6 +34,9 @@ public open class Throwable(open val message: String?, open val cause: Throwable
 
     public fun getStackTrace(): Array<String> = stackTraceStrings
 
+    internal fun Throwable.getStackTraceAddressesInternal(): List<Long> =
+            (0 until stackTrace.size).map { index -> stackTrace[index].toLong() }
+
     public fun printStackTrace(): Unit = dumpStackTrace { println(it) }
 
     internal fun dumpStackTrace(): String = buildString {

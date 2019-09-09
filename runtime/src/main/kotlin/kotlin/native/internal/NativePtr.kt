@@ -52,6 +52,9 @@ internal class NativePtrArray {
     @SymbolName("Kotlin_NativePtrArray_set")
     external public operator fun set(index: Int, value: NativePtr): Unit
 
+    val size: Int
+        get() = getArrayLength()
+
     @SymbolName("Kotlin_NativePtrArray_getArrayLength")
     external private fun getArrayLength(): Int
 }
