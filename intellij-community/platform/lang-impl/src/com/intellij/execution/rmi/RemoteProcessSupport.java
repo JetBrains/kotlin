@@ -23,7 +23,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.concurrency.FixedFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +30,7 @@ import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
@@ -159,13 +159,12 @@ public abstract class RemoteProcessSupport<Target, EntryPoint, Parameters> {
         }
       }
     }
-    if (infos.isEmpty()) return new FixedFuture<>(null);
-    return ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        destroyProcessesImpl(infos);
-        fireModificationCountChanged();
-        for (Info o : infos) {
-          o.handler.waitFor();
-        }
+    return infos.isEmpty() ? CompletableFuture.completedFuture(null) : ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      destroyProcessesImpl(infos);
+      fireModificationCountChanged();
+      for (Info o : infos) {
+        o.handler.waitFor();
+      }
     });
   }
 
