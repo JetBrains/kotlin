@@ -248,10 +248,7 @@ public class RunConfigurationsServiceViewContributor
       Content content = myNode.getContent();
       if (content == null) return;
 
-      ContentManager contentManager = content.getManager();
-      if (contentManager == null || content == contentManager.getSelectedContent()) return;
-
-      contentManager.setSelectedContent(content);
+      ((RunDashboardManagerImpl)RunDashboardManager.getInstance(myNode.getProject())).setSelectedContent(content);
     }
 
     @Override
@@ -259,10 +256,7 @@ public class RunConfigurationsServiceViewContributor
       Content content = myNode.getContent();
       if (content == null) return;
 
-      ContentManager contentManager = content.getManager();
-      if (contentManager == null || content != contentManager.getSelectedContent()) return;
-
-      contentManager.removeFromSelection(content);
+      ((RunDashboardManagerImpl)RunDashboardManager.getInstance(myNode.getProject())).removeFromSelection(content);
     }
 
     @Nullable

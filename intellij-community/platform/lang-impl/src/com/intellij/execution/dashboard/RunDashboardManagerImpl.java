@@ -69,7 +69,8 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
   private final Project myProject;
   private final ContentManager myContentManager;
-  private final ContentManagerListener myContentManagerListener;
+  private final ContentManagerListener myServiceContentManagerListener;
+  private final ContentManagerListener myDashboardContentManagerListener;
 
   private State myState = new State();
 
@@ -93,8 +94,9 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
     ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
     myContentManager = contentFactory.createContentManager(new PanelContentUI(), false, project);
-    myContentManagerListener = new DashboardContentManagerListener();
-    myContentManager.addContentManagerListener(myContentManagerListener);
+    myDashboardContentManagerListener = new DashboardContentManagerListener();
+    myContentManager.addContentManagerListener(myDashboardContentManagerListener);
+    myServiceContentManagerListener = new ServiceContentManagerListener();
     myReuseCondition = this::canReuseContent;
 
     myGroupers = ContainerUtil.map(RunDashboardGroupingRule.EP_NAME.getExtensions(), RunDashboardGrouper::new);
@@ -170,44 +172,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
         updateDashboard(false);
       }
     });
-    myContentManager.addContentManagerListener(new ContentManagerAdapter() {
-      @Override
-      public void selectionChanged(@NotNull ContentManagerEvent event) {
-        boolean onAdd = event.getOperation() == ContentManagerEvent.ContentOperation.add;
-        Content content = event.getContent();
-        if (onAdd) {
-          updateContentToolbar(content, false);
-          updateServiceContent(content);
-        }
-
-        updateToolWindowContent();
-        updateDashboard(true);
-
-        if (Registry.is("ide.service.view") && onAdd) {
-          RunnerAndConfigurationSettings settings = findSettings(content);
-          if (settings != null) {
-            RunDashboardServiceImpl service = new RunDashboardServiceImpl(settings);
-            service.setContent(content);
-            RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
-            RunConfigurationNode node = new RunConfigurationNode(myProject, service, getCustomizers(settings, descriptor));
-            ServiceViewManager.getInstance(myProject).select(node, RunConfigurationsServiceViewContributor.class, true, false);
-          }
-        }
-      }
-
-      @Override
-      public void contentAdded(@NotNull ContentManagerEvent event) {
-        addServiceContent(event.getContent());
-      }
-
-      @Override
-      public void contentRemoved(@NotNull ContentManagerEvent event) {
-        if (myContentManager.getContentCount() == 0 && !isShowConfigurations()) {
-          setShowConfigurations(true);
-        }
-        removeServiceContent(event.getContent());
-      }
-    });
+    myContentManager.addContentManagerListener(myServiceContentManagerListener);
   }
 
   @Override
@@ -758,6 +723,35 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     }
   }
 
+  void setSelectedContent(@NotNull Content content) {
+    ContentManager contentManager = content.getManager();
+    if (contentManager == null || content == contentManager.getSelectedContent()) return;
+
+    if (contentManager != myContentManager) {
+      contentManager.setSelectedContent(content);
+      return;
+    }
+
+    myContentManager.removeContentManagerListener(myServiceContentManagerListener);
+    myContentManager.setSelectedContent(content);
+    updateContentToolbar(content, false);
+    myContentManager.addContentManagerListener(myServiceContentManagerListener);
+  }
+
+  void removeFromSelection(@NotNull Content content) {
+    ContentManager contentManager = content.getManager();
+    if (contentManager == null || content != contentManager.getSelectedContent()) return;
+
+    if (contentManager != myContentManager) {
+      contentManager.removeFromSelection(content);
+      return;
+    }
+
+    myContentManager.removeContentManagerListener(myServiceContentManagerListener);
+    myContentManager.removeFromSelection(content);
+    myContentManager.addContentManagerListener(myServiceContentManagerListener);
+  }
+
   @NotNull
   public RunDashboardStatusFilter getStatusFilter() {
     return myStatusFilter;
@@ -884,6 +878,45 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     }
   }
 
+  private class ServiceContentManagerListener extends ContentManagerAdapter {
+    @Override
+    public void selectionChanged(@NotNull ContentManagerEvent event) {
+      boolean onAdd = event.getOperation() == ContentManagerEvent.ContentOperation.add;
+      Content content = event.getContent();
+      if (onAdd) {
+        updateContentToolbar(content, false);
+        updateServiceContent(content);
+      }
+
+      updateToolWindowContent();
+      updateDashboard(true);
+
+      if (Registry.is("ide.service.view") && onAdd) {
+        RunnerAndConfigurationSettings settings = findSettings(content);
+        if (settings != null) {
+          RunDashboardServiceImpl service = new RunDashboardServiceImpl(settings);
+          service.setContent(content);
+          RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
+          RunConfigurationNode node = new RunConfigurationNode(myProject, service, getCustomizers(settings, descriptor));
+          ServiceViewManager.getInstance(myProject).select(node, RunConfigurationsServiceViewContributor.class, true, false);
+        }
+      }
+    }
+
+    @Override
+    public void contentAdded(@NotNull ContentManagerEvent event) {
+      addServiceContent(event.getContent());
+    }
+
+    @Override
+    public void contentRemoved(@NotNull ContentManagerEvent event) {
+      if (myContentManager.getContentCount() == 0 && !isShowConfigurations()) {
+        setShowConfigurations(true);
+      }
+      removeServiceContent(event.getContent());
+    }
+  }
+
   private class DashboardContentManagerListener extends ContentManagerAdapter {
     @Override
     public void contentAdded(@NotNull ContentManagerEvent event) {
@@ -956,9 +989,9 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
       Content dashboardContent = getDashboardContent(event.getContent());
       if (dashboardContent == null || dashboardContent.getManager() == null || myContentManager.isSelected(dashboardContent)) return;
 
-      myContentManager.removeContentManagerListener(myContentManagerListener);
+      myContentManager.removeContentManagerListener(myDashboardContentManagerListener);
       myContentManager.setSelectedContent(dashboardContent);
-      myContentManager.addContentManagerListener(myContentManagerListener);
+      myContentManager.addContentManagerListener(myDashboardContentManagerListener);
     }
 
     private Content getDashboardContent(Content content) {

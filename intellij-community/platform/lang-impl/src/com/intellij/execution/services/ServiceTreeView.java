@@ -28,6 +28,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.function.Consumer;
 
 class ServiceTreeView extends ServiceView {
@@ -39,6 +40,7 @@ class ServiceTreeView extends ServiceView {
 
   private volatile ServiceViewItem myLastSelection;
   private boolean mySelected;
+  private volatile Promise<?> myUpdateSelectionPromise;
 
   ServiceTreeView(@NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewUi ui, @NotNull ServiceViewState state) {
     super(new BorderLayout(), project, model, ui);
@@ -117,9 +119,15 @@ class ServiceTreeView extends ServiceView {
       AsyncPromise<Void> result = new AsyncPromise<>();
       myTreeModel.findPath(service, contributorClass)
         .onError(result::setError)
-        .onSuccess(path -> TreeUtil.promiseSelect(myTree, new PathSelectionVisitor(path))
-          .onError(result::setError)
-          .onSuccess(selectedPath -> result.setResult(null)));
+        .onSuccess(path -> {
+          TreeUtil.promiseSelect(myTree, new PathSelectionVisitor(path))
+            .onError(result::setError)
+            .onSuccess(selectedPath -> {
+              result.setResult(null);
+              cancelSelectionUpdate();
+            });
+          cancelSelectionUpdate();
+        });
       return result;
     }
     return Promises.resolvedPromise();
@@ -264,6 +272,13 @@ class ServiceTreeView extends ServiceView {
     return Collections.emptyList();
   }
 
+  private void cancelSelectionUpdate() {
+    Promise<?> selectPromise = myUpdateSelectionPromise;
+    if (selectPromise instanceof AsyncPromise) {
+      ((AsyncPromise<?>)selectPromise).cancel();
+    }
+  }
+
   private class MyViewModelListener implements ServiceViewModel.ServiceViewModelListener {
     @Override
     public void rootsChanged() {
@@ -282,7 +297,16 @@ class ServiceTreeView extends ServiceView {
             });
           Promises.collectResults(pathPromises, true).onProcessed(paths -> {
             if (paths != null && !paths.isEmpty() && !paths.equals(selectedPaths)) {
-              TreeUtil.promiseSelect(myTree, paths.stream().map(PathSelectionVisitor::new));
+              Promise<?> newSelectPromise = TreeUtil.promiseSelect(myTree, paths.stream().map(PathSelectionVisitor::new));
+              cancelSelectionUpdate();
+              if (newSelectPromise instanceof AsyncPromise) {
+                ((AsyncPromise<?>)newSelectPromise).onError(t -> {
+                  if (t instanceof CancellationException) {
+                    TreeUtil.promiseExpand(myTree, paths.stream().map(path -> new PathSelectionVisitor(path.getParentPath())));
+                  }
+                });
+              }
+              myUpdateSelectionPromise = newSelectPromise;
             }
           });
         });
