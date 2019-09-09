@@ -192,6 +192,11 @@ public class RunAnythingPopupUI extends BigPopupUI {
                     IdeBundle.message("run.anything.main.list.empty.secondary.text"));
   }
 
+  @Nullable
+  public String getLastInputText() {
+    return myLastInputText;
+  }
+
   private static boolean isHelpMode(@NotNull String pattern) {
     return pattern.startsWith(HELP_PLACEHOLDER);
   }

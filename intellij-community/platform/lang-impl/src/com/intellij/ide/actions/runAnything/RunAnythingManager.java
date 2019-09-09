@@ -110,8 +110,8 @@ public class RunAnythingManager {
       return;
     }
 
-    String searchText = myRunAnythingUI.getSearchField().getText();
-    if (!searchText.isEmpty()) {
+    String searchText = myRunAnythingUI.getLastInputText();
+    if (StringUtil.isNotEmpty(searchText)) {
       mySelectedText = searchText;
     }
   }
