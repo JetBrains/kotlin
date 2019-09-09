@@ -29,7 +29,7 @@ class CastsBenchmark {
     interface I8: I0, I1
     open class C8: C3(), I8
 
-    private fun foo(c: Any, x: Int, i: Int): Int {
+    private fun foo_class(c: Any, x: Int, i: Int): Int {
         var x = x
         if (c is C0) x += i
         if (c is C1) x = x xor i
@@ -41,6 +41,21 @@ class CastsBenchmark {
         if (c is C7) x = x xor i
         if (c is C8) x += i
         if (c is C9) x = x xor i
+        return x
+    }
+
+    private fun foo_iface(c: Any, x: Int, i: Int): Int {
+        var x = x
+        if (c is I0) x += i
+        if (c is I1) x = x xor i
+        if (c is I2) x += i
+        if (c is I3) x = x xor i
+        if (c is I4) x += i
+        if (c is I5) x = x xor i
+        if (c is I6) x += i
+        if (c is I7) x = x xor i
+        if (c is I8) x += i
+        if (c is I9) x = x xor i
         return x
     }
 
@@ -58,16 +73,44 @@ class CastsBenchmark {
 
         var x = 0
         for (i in 0 until RUNS) {
-            x = foo(c0, x, i)
-            x = foo(c1, x, i)
-            x = foo(c2, x, i)
-            x = foo(c3, x, i)
-            x = foo(c4, x, i)
-            x = foo(c5, x, i)
-            x = foo(c6, x, i)
-            x = foo(c7, x, i)
-            x = foo(c8, x, i)
-            x = foo(c9, x, i)
+            x += foo_class(c0, x, i)
+            x += foo_class(c1, x, i)
+            x += foo_class(c2, x, i)
+            x += foo_class(c3, x, i)
+            x += foo_class(c4, x, i)
+            x += foo_class(c5, x, i)
+            x += foo_class(c6, x, i)
+            x += foo_class(c7, x, i)
+            x += foo_class(c8, x, i)
+            x += foo_class(c9, x, i)
+        }
+        return x
+    }
+
+    fun interfaceCast(): Int {
+        val c0: Any = C0()
+        val c1: Any = C1()
+        val c2: Any = C2()
+        val c3: Any = C3()
+        val c4: Any = C4()
+        val c5: Any = C5()
+        val c6: Any = C6()
+        val c7: Any = C7()
+        val c8: Any = C8()
+        val c9: Any = C9()
+
+        var x = 0
+        for (i in 0 until RUNS) {
+            x += foo_iface(c0, x, i)
+            x += foo_iface(c1, x, i)
+            x += foo_iface(c2, x, i)
+            x += foo_iface(c3, x, i)
+            x += foo_iface(c4, x, i)
+            x += foo_iface(c5, x, i)
+            x += foo_iface(c6, x, i)
+            x += foo_iface(c7, x, i)
+            x += foo_iface(c8, x, i)
+            x += foo_iface(c9, x, i)
         }
         return x
     }

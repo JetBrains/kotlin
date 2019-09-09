@@ -138,6 +138,18 @@ open class CallsBenchmark {
         override fun foo() = 314
     }
 
+    open class X : A() {
+        override fun foo() = 456456
+    }
+
+    open class Y : A() {
+        override fun foo() = -398473
+    }
+
+    open class Z : A() {
+        override fun foo() = 78298734
+    }
+
     val d = D()
     val a1: A = B()
     val a2: A = C()
@@ -145,6 +157,9 @@ open class CallsBenchmark {
     val i1: I = a1
     val i2: I = a2
     val i3: I = d
+    val i4: I = X()
+    val i5: I = Y()
+    val i6: I = Z()
 
     fun finalMethodCall(): Int {
         var x = 0
@@ -219,6 +234,27 @@ open class CallsBenchmark {
                 1 -> i1
                 2 -> i2
                 else -> i3
+            }).foo()
+        return x
+    }
+
+    fun interfaceMethodCall_HexamorphicCallsite(): Int {
+        var x = 0
+        // TODO: optimize fields accesses
+        val i1 = i1
+        val i2 = i2
+        val i3 = i3
+        val i4 = i4
+        val i5 = i5
+        val i6 = i6
+        for (i in 0 until RUNS)
+            x += (when (i % 6) {
+                1 -> i1
+                2 -> i2
+                3 -> i3
+                4 -> i4
+                5 -> i5
+                else -> i6
             }).foo()
         return x
     }
