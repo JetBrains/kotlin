@@ -43,6 +43,7 @@ struct Args {
     unsigned long long a12;
     enum E a13;
     struct S a14;
+    void* a15;
 };
 
 static struct Args getVarargs(int ignore, ...) {
@@ -63,7 +64,8 @@ static struct Args getVarargs(int ignore, ...) {
         va_arg(args, unsigned int),
         va_arg(args, unsigned long long),
         va_arg(args, enum E),
-        va_arg(args, struct S)
+        va_arg(args, struct S),
+        va_arg(args, void*)
     };
 
     va_end(args);

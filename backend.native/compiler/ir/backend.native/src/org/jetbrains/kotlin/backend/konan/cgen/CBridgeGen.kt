@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.isObjCMetaClass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -751,6 +752,9 @@ private fun KotlinStubs.mapBlockType(
 private fun KotlinStubs.mapType(type: IrType, retained: Boolean, variadic: Boolean, location: TypeLocation): ValuePassing =
         mapType(type, retained, variadic, location, { reportUnsupportedType(it, type, location) })
 
+private fun IrType.isTypeOfNullLiteral(): Boolean = this is IrSimpleType && hasQuestionMark
+        && classifier.isClassWithFqName(KotlinBuiltIns.FQ_NAMES.nothing)
+
 private fun KotlinStubs.mapType(
         type: IrType,
         retained: Boolean,
@@ -770,6 +774,7 @@ private fun KotlinStubs.mapType(
     type.isFloat() -> TrivialValuePassing(irBuiltIns.floatType, CTypes.float)
     type.isDouble() -> TrivialValuePassing(irBuiltIns.doubleType, CTypes.double)
     type.classifierOrNull == symbols.interopCPointer -> TrivialValuePassing(type, CTypes.voidPtr)
+    type.isTypeOfNullLiteral() && variadic  -> TrivialValuePassing(symbols.interopCPointer.typeWithStarProjections.makeNullable(), CTypes.voidPtr)
     type.isUByte() -> UnsignedValuePassing(type, CTypes.signedChar, CTypes.unsignedChar)
     type.isUShort() -> UnsignedValuePassing(type, CTypes.short, CTypes.unsignedShort)
     type.isUInt() -> UnsignedValuePassing(type, CTypes.int, CTypes.unsignedInt)

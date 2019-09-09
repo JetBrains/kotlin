@@ -31,7 +31,8 @@ fun main(args: Array<String>) {
             111u,
             ULong.MAX_VALUE,
             E.TWO,
-            cValue<S> { x = 15 }
+            cValue<S> { x = 15 },
+            null
     ).useContents {
         assertEquals(1, a1)
         assertEquals(2.toByte(), a2)
@@ -47,5 +48,6 @@ fun main(args: Array<String>) {
         assertEquals(ULong.MAX_VALUE, a12)
         assertEquals(E.TWO, a13)
         assertEquals(15, a14.x)
+        assertEquals(null, a15)
     }
 }
