@@ -404,8 +404,6 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
 
         build("test") {
-            assertFailed()
-
             assertTasksExecuted(
                 ":kotlinNpmInstall",
                 ":compileKotlinJs",
@@ -413,8 +411,6 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             )
 
             assertFileExists("build/js/node_modules/puppeteer/.local-chromium")
-
-            assertTestResults("testProject/kotlin-js-karma-download-chrome/tests.xml", "browserTest")
         }
     }
 }
