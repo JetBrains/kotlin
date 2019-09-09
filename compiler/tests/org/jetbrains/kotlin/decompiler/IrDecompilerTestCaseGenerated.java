@@ -50,5 +50,10 @@ public class IrDecompilerTestCaseGenerated extends AbstractIrDecompilerTestCase 
         public void testClasses() throws Exception {
             runTest("compiler/testData/decompiler/classes/classes.kt");
         }
+
+        @TestMetadata("primaryConstructor.kt")
+        public void testPrimaryConstructor() throws Exception {
+            runTest("compiler/testData/decompiler/classes/primaryConstructor.kt");
+        }
     }
 }

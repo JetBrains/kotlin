@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.decompiler
 
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -24,10 +26,28 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.util.regex.Pattern
+
+abstract class AbstractIrDecompilerBoxCase : AbstractIrGeneratorTestCase() {
+    private val blackBoxTestRunner = object: AbstractIrBlackBoxCodegenTest() {
+        fun doTest(wholeFile: File, files: List<TestFile>) {
+            doMultiFileTest(wholeFile, files)
+        }
+
+        override fun getBackend(): TargetBackend {
+            return TargetBackend.JS_IR
+        }
+    }
+
+    override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
+        val decompiledFile: File = TODO("not implemented")
+        blackBoxTestRunner.doTest(decompiledFile, TODO())
+    }
+}
 
 abstract class AbstractIrDecompilerTestCase : AbstractIrGeneratorTestCase() {
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
@@ -40,7 +60,7 @@ abstract class AbstractIrDecompilerTestCase : AbstractIrGeneratorTestCase() {
         val ignoreErrors = shouldIgnoreErrors(wholeFile)
         val irModule = generateIrModule(ignoreErrors)
 
-        val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
+        val ktFiles: List<TestFile> = testFiles.filter { it.name.endsWith(".kt") }
         for ((testFile, irFile) in ktFiles.zip(irModule.files)) {
             doTestIrFileAgainstExpectations(dir, testFile, irFile)
         }
