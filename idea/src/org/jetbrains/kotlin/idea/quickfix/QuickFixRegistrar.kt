@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.inspections.InfixCallFixActionFactory
 import org.jetbrains.kotlin.idea.inspections.PlatformUnresolvedProvider
 import org.jetbrains.kotlin.idea.inspections.RemoveAnnotationFix
-import org.jetbrains.kotlin.idea.intentions.AbstractAddAccessorsIntention
-import org.jetbrains.kotlin.idea.intentions.AddValVarToConstructorParameterAction
-import org.jetbrains.kotlin.idea.intentions.ConvertPropertyInitializerToGetterIntention
-import org.jetbrains.kotlin.idea.intentions.MoveMemberToCompanionObjectIntention
+import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -153,6 +150,9 @@ class QuickFixRegistrar : QuickFixContributor {
         DEPRECATED_BINARY_MOD.registerFactory(RenameModToRemFix.Factory)
         FORBIDDEN_BINARY_MOD.registerFactory(removeModifierFactory)
         FORBIDDEN_BINARY_MOD.registerFactory(RenameModToRemFix.Factory)
+
+        NO_EXPLICIT_RETURN_TYPE_IN_API_MODE.registerActions(SpecifyTypeExplicitlyFix())
+        NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_MIGRATION.registerActions(SpecifyTypeExplicitlyFix())
 
 
         UNRESOLVED_REFERENCE.registerFactory(ImportFix)

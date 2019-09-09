@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.ApiMode
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.effectiveVisibility
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.resolve.checkers.ApiModeDeclarationChecker
 import javax.swing.JComponent
 
 class PublicApiImplicitTypeInspection(
@@ -20,20 +19,11 @@ class PublicApiImplicitTypeInspection(
     @JvmField var reportPrivate: Boolean = false
 ) : AbstractImplicitTypeInspection(
     { element, inspection ->
-        element.containingClassOrObject?.isLocal != true &&
-                when (element) {
-                    is KtFunction -> !element.isLocal
-                    is KtProperty -> !element.isLocal
-                    else -> false
-                } && run {
-            val callableMemberDescriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor
-            val forInternal = (inspection as PublicApiImplicitTypeInspection).reportInternal
-            val forPrivate = inspection.reportPrivate
-
-            val visibility = callableMemberDescriptor?.effectiveVisibility()?.toVisibility()
-            visibility?.isPublicAPI == true || (forInternal && visibility == Visibilities.INTERNAL) ||
-                    (forPrivate && visibility == Visibilities.PRIVATE)
-        }
+        val shouldCheckForPublic = element.languageVersionSettings.getFlag(AnalysisFlags.apiMode) == ApiMode.DISABLED
+        val callableMemberDescriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor
+        val forInternal = (inspection as PublicApiImplicitTypeInspection).reportInternal
+        val forPrivate = inspection.reportPrivate
+        ApiModeDeclarationChecker.returnTypeRequired(element, callableMemberDescriptor, shouldCheckForPublic, forInternal, forPrivate)
     }
 ) {
 
