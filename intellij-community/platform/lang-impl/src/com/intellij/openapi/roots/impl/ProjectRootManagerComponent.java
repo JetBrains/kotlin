@@ -138,7 +138,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
     myCollectWatchRootsFuture.cancel(false);
     myCollectWatchRootsFuture = myExecutor.submit(() -> {
-      Pair<Set<String>, Set<String>> watchRoots = ReadAction.compute(() -> myProject.isDisposed() ? Pair.empty() : collectWatchRoots(newDisposable));
+      Pair<Set<String>, Set<String>> watchRoots = ReadAction.compute(() -> myProject.isDisposed() ? null : collectWatchRoots(newDisposable));
       GuiUtils.invokeLaterIfNeeded(() -> {
         if (myProject.isDisposed()) return;
         myRootPointersDisposable = newDisposable;
