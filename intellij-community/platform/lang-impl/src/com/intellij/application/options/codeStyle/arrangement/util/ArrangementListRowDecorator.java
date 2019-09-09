@@ -28,7 +28,6 @@ import com.intellij.psi.codeStyle.arrangement.model.ArrangementMatchCondition;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementUiComponent;
 import com.intellij.ui.SimpleColoredComponent;
-import com.intellij.util.ThreeState;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -191,7 +190,7 @@ public class ArrangementListRowDecorator extends JPanel implements ArrangementUi
     Rectangle bounds = getButtonScreenBounds();
     if (!myBeingEdited && bounds != null) {
       boolean selected = bounds.contains(event.getLocationOnScreen());
-      boolean wasSelected = Toggleable.isSelected(myEditButton.getPresentation()) == ThreeState.YES;
+      boolean wasSelected = Toggleable.isSelected(myEditButton.getPresentation());
       Toggleable.setSelected(myEditButton.getPresentation(), selected);
       if (selected ^ wasSelected) {
         return myScreenBounds;
