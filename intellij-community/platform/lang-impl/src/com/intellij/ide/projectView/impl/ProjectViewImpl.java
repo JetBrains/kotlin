@@ -2119,7 +2119,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
   private class ScrollFromSourceAction extends AnAction implements DumbAware {
     private ScrollFromSourceAction() {
-      super("Select Opened File" + getScrollToSourceShortcut(), "Select the file open in the active editor", AllIcons.General.Locate);
+      super("Select Opened File", "Select the file open in the active editor", AllIcons.General.Locate);
     }
 
     @Override
@@ -2129,7 +2129,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
     @Override
     public void update(@NotNull AnActionEvent event) {
-      event.getPresentation().setEnabledAndVisible(!isAutoscrollFromSource(myCurrentViewId));
+      Presentation presentation = event.getPresentation();
+      presentation.setText("Select Opened File" + getScrollToSourceShortcut());
+      presentation.setEnabledAndVisible(!isAutoscrollFromSource(myCurrentViewId));
     }
   }
 
