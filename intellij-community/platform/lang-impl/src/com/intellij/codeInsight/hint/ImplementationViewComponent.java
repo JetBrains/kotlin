@@ -353,12 +353,10 @@ public class ImplementationViewComponent extends JPanel {
     factory.releaseEditor(myEditor);
     myEditor = (EditorEx)factory.createEditor(document, project);
     tuneEditor(vFile);
-    documentFactory.tuneEditor(myEditor);
-
+    documentFactory.tuneEditorBeforeShow(myEditor);
     myViewingPanel.add(myEditor.getComponent(), TEXT_PAGE_KEY);
     myBinarySwitch.show(myViewingPanel, TEXT_PAGE_KEY);
-
-    myEditor.getComponent().requestFocus();
+    documentFactory.tuneEditorAfterShow(myEditor);
   }
 
   private void disposeNonTextEditor() {
