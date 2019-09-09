@@ -62,7 +62,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
 
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         val newType = substituteType(type)
-        return (newType ?: type.substituteRecursive()) ?: newType
+        return (newType ?: type.substituteRecursive())
     }
 
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
