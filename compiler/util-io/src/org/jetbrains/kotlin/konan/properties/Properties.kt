@@ -28,7 +28,9 @@ fun File.saveProperties(properties: Properties) {
     }
 
     // TODO: don't act like this
-    outputStream().write(String(byteStream.toByteArray()).split("\n").drop(1).joinToString("\n").toByteArray())
+    outputStream().use {
+        it.write(String(byteStream.toByteArray()).split("\n").drop(1).joinToString("\n").toByteArray())
+    }
 }
 
 fun Properties.saveToFile(file: File) = file.saveProperties(this)
