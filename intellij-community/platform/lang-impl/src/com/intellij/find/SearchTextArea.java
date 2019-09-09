@@ -203,7 +203,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
         if (SystemInfo.isMac) {
           myTextArea.setFont(JBUI.Fonts.smallFont());
         } else {
-          myTextArea.setFont(UIManager.getFont("TextArea.font"));
+          myTextArea.setFont(JBUI.Fonts.toolbarFont());
         }
       }
     }
