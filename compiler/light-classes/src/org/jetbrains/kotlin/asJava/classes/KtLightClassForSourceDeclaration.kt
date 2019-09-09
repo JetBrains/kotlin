@@ -71,6 +71,12 @@ abstract class KtLightClassForSourceDeclaration(
     private val forceUsingOldLightClasses: Boolean = false
 ) : KtLazyLightClass(classOrObject.manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+
+    override val myInnersCache: KotlinClassInnerStuffCache = KotlinClassInnerStuffCache(
+        this,
+        classOrObject.getExternalDependencies()
+    )
+
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
     override fun getText() = kotlinOrigin.text ?: ""

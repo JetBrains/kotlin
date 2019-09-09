@@ -10,30 +10,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.light.LightClass
 import com.intellij.psi.impl.light.LightMethod
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 open class KtLightClassForLocalDeclaration(
     classOrObject: KtClassOrObject
 ) : KtLightClassForSourceDeclaration(classOrObject) {
-    override val myInnersCache: KotlinClassInnerStuffCache =
-        KotlinClassInnerStuffCache(
-            this,
-            with(KotlinModificationTrackerService.getInstance(classOrObject.project)) {
-                val file = classOrObject.containingFile
-                if (file is KtFile) {
-                    listOf(outOfBlockModificationTracker, fileModificationTracker(file))
-                } else {
-                    listOf(outOfBlockModificationTracker)
-                }
-            }
-        )
 
     override fun copy(): PsiElement = KtLightClassForLocalDeclaration(classOrObject.copy() as KtClassOrObject)
 

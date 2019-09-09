@@ -14,7 +14,6 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -302,7 +301,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         {
             CachedValueProvider.Result.create(
                 ownMethods(),
-                KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker
+                classOrObject.getExternalDependencies()
             )
         }, false
     )
