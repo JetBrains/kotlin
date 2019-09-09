@@ -30,7 +30,7 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
     IdeaTestApplication.getInstance();
     Application application = ApplicationManager.getApplication();
     // Necessary to properly update button states
-    HeadlessDataManager manager = new HeadlessDataManager() {
+    ServiceContainerUtil.replaceService(application, DataManager.class, new HeadlessDataManager() {
       @NotNull
       @Override
       public DataContext getDataContext(Component component) {
@@ -39,8 +39,7 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
         }
         return super.getDataContext(component);
       }
-    };
-    ServiceContainerUtil.registerComponentInstance(application, DataManager.class, manager, getTestRootDisposable());
+    }, getTestRootDisposable());
     super.setUp();
   }
 
