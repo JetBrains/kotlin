@@ -3,7 +3,10 @@ package com.intellij.openapi.roots.impl;
 
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.ApplicationListener;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.impl.stores.BatchUpdateListener;
 import com.intellij.openapi.diagnostic.Logger;
@@ -62,7 +65,9 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   private static final boolean LOG_CACHES_UPDATE =
     ApplicationManager.getApplication().isInternal() && !ApplicationManager.getApplication().isUnitTestMode();
 
-  private final ExecutorService myExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor("Project Root Manager", 1);
+  private final ExecutorService myExecutor = ApplicationManager.getApplication().isUnitTestMode()
+                                             ? ConcurrencyUtil.newSameThreadExecutorService()
+                                             : AppExecutorUtil.createBoundedApplicationPoolExecutor("Project Root Manager", 1);
   private Future<?> myCollectWatchRootsFuture = CompletableFuture.completedFuture(null);
 
   private boolean myPointerChangesDetected;
@@ -131,11 +136,9 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     Disposable oldDisposable = myRootPointersDisposable;
     Disposable newDisposable = Disposer.newDisposable();
 
-    ExecutorService service = ApplicationManager.getApplication().isUnitTestMode() ? ConcurrencyUtil.newSameThreadExecutorService() : myExecutor;
-
     myCollectWatchRootsFuture.cancel(false);
-    myCollectWatchRootsFuture = service.submit(() -> {
-      Pair<Set<String>, Set<String>> watchRoots = ReadAction.compute(() -> myProject.isDisposed() ? null : collectWatchRoots(newDisposable));
+    myCollectWatchRootsFuture = myExecutor.submit(() -> {
+      Pair<Set<String>, Set<String>> watchRoots = ReadAction.compute(() -> myProject.isDisposed() ? Pair.empty() : collectWatchRoots(newDisposable));
       GuiUtils.invokeLaterIfNeeded(() -> {
         if (myProject.isDisposed()) return;
         myRootPointersDisposable = newDisposable;
