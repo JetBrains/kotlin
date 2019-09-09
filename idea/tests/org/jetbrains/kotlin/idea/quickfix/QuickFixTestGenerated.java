@@ -862,6 +862,34 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addJvmNameAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddJvmNameAnnotation extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddJvmNameAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/addJvmNameAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/quickfix/addJvmNameAnnotation/basic.kt");
+        }
+
+        @TestMetadata("hasAnnotation.kt")
+        public void testHasAnnotation() throws Exception {
+            runTest("idea/testData/quickfix/addJvmNameAnnotation/hasAnnotation.kt");
+        }
+
+        @TestMetadata("hasAnnotation2.kt")
+        public void testHasAnnotation2() throws Exception {
+            runTest("idea/testData/quickfix/addJvmNameAnnotation/hasAnnotation2.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addNewLineAfterAnnotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
