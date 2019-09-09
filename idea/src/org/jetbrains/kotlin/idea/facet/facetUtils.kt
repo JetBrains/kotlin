@@ -188,6 +188,8 @@ fun KotlinFacet.configureFacet(
     module.externalCompilerVersion = compilerVersion
 }
 
+fun Module.externalSystemTestTasks() = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this).externalSystemTestTasks
+
 @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
 @Deprecated(
     message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",

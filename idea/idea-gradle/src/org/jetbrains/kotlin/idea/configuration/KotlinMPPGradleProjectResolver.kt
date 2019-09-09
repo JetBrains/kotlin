@@ -30,10 +30,12 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.config.ExternalSystemTestTask
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -259,6 +261,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val sourceSetMap = projectDataNode.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS)!!
 
+            val sourceSetToTestTasks = calculateTestTasks(mppModel, gradleModule, resolverCtx)
+
             val sourceSetToCompilationData = LinkedHashMap<KotlinSourceSet, MutableSet<GradleSourceSetData>>()
             for (target in mppModel.targets) {
                 if (target.platform == KotlinPlatform.ANDROID) continue
@@ -305,7 +309,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         it.sdkName = jdkName
                     }
 
-                    val kotlinSourceSet = createSourceSetInfo(compilation, gradleModule, resolverCtx) ?: continue
+                    val kotlinSourceSet = createSourceSetInfo(
+                        compilation,
+                        gradleModule,
+                        resolverCtx
+                    ) ?: continue
+                    kotlinSourceSet.externalSystemTestTasks =
+                        compilation.sourceSets.firstNotNullResult { sourceSetToTestTasks[it] } ?: emptyList()
 
                     if (compilation.platform == KotlinPlatform.JVM || compilation.platform == KotlinPlatform.ANDROID) {
                         compilationData.targetCompatibility = (kotlinSourceSet.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget
@@ -364,6 +374,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 }
 
                 val kotlinSourceSet = createSourceSetInfo(sourceSet, gradleModule, resolverCtx) ?: continue
+                kotlinSourceSet.externalSystemTestTasks = sourceSetToTestTasks[sourceSet] ?: emptyList()
 
                 val sourceSetDataNode =
                     (existingSourceSetDataNode ?: mainModuleNode.createChild(GradleSourceSetData.KEY, sourceSetData)).also {
@@ -383,6 +394,34 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             mainModuleNode.coroutines = mppModel.extraFeatures.coroutinesState
             mainModuleNode.isHmpp = mppModel.extraFeatures.isHMPPEnabled
+            //TODO improve passing version of used multiplatform
+        }
+
+        private fun calculateTestTasks(
+            mppModel: KotlinMPPGradleModel,
+            gradleModule: IdeaModule,
+            resolverCtx: ProjectResolverContext
+        ): Map<KotlinSourceSet, Collection<ExternalSystemTestTask>> {
+            val sourceSetToTestTasks: MutableMap<KotlinSourceSet, MutableCollection<ExternalSystemTestTask>> = HashMap()
+            val dependsOnReverseGraph: MutableMap<String, MutableSet<KotlinSourceSet>> = HashMap()
+            mppModel.targets.forEach { target ->
+                target.compilations.forEach { compilation ->
+                    val testTasks = target.testTasks.filter { testTask -> testTask.compilationName == compilation.name }
+                        .map { ExternalSystemTestTask(it.taskName, getKotlinModuleId(gradleModule, compilation, resolverCtx), target.name) }
+                    compilation.sourceSets.forEach { sourceSet ->
+                        sourceSetToTestTasks.getOrPut(sourceSet) { LinkedHashSet() } += testTasks
+                        sourceSet.dependsOnSourceSets.forEach { dependentModule ->
+                            dependsOnReverseGraph.getOrPut(dependentModule) { LinkedHashSet() } += sourceSet
+                        }
+                    }
+                }
+            }
+            mppModel.sourceSets.forEach { (sourceSetName, sourceSet) ->
+                dependsOnReverseGraph[sourceSetName]?.forEach { dependingSourceSet ->
+                    sourceSetToTestTasks.getOrPut(sourceSet) { LinkedHashSet() } += sourceSetToTestTasks[dependingSourceSet] ?: emptyList()
+                }
+            }
+            return sourceSetToTestTasks
         }
 
         fun populateContentRoots(
@@ -567,7 +606,12 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             return ideModule.findChildModuleById(usedModuleId)
         }
 
-        private fun createContentRootData(sourceDirs: Set<File>, sourceType: ExternalSystemSourceType, packagePrefix: String?, parentNode: DataNode<*>) {
+        private fun createContentRootData(
+            sourceDirs: Set<File>,
+            sourceType: ExternalSystemSourceType,
+            packagePrefix: String?,
+            parentNode: DataNode<*>
+        ) {
             for (sourceDir in sourceDirs) {
                 val contentRootData = ContentRootData(GradleConstants.SYSTEM_ID, sourceDir.absolutePath)
                 contentRootData.storePath(sourceType, sourceDir.absolutePath, packagePrefix)
@@ -652,7 +696,11 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             return PathUtilRt.suggestFileName(moduleName.toString(), true, false)
         }
 
-        private fun createExternalSourceSet(compilation: KotlinCompilation, compilationData: GradleSourceSetData, mppModel: KotlinMPPGradleModel): ExternalSourceSet {
+        private fun createExternalSourceSet(
+            compilation: KotlinCompilation,
+            compilationData: GradleSourceSetData,
+            mppModel: KotlinMPPGradleModel
+        ): ExternalSourceSet {
             return DefaultExternalSourceSet().also { sourceSet ->
                 val effectiveClassesDir = compilation.output.effectiveClassesDir
                 val resourcesDir = compilation.output.resourcesDir
@@ -688,7 +736,11 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         }
 
 
-        private fun createExternalSourceSet(ktSourceSet: KotlinSourceSet, ktSourceSetData: GradleSourceSetData, mppModel: KotlinMPPGradleModel): ExternalSourceSet {
+        private fun createExternalSourceSet(
+            ktSourceSet: KotlinSourceSet,
+            ktSourceSetData: GradleSourceSetData,
+            mppModel: KotlinMPPGradleModel
+        ): ExternalSourceSet {
             return DefaultExternalSourceSet().also { sourceSet ->
                 sourceSet.name = ktSourceSet.name
                 sourceSet.targetCompatibility = ktSourceSetData.targetCompatibility
@@ -745,6 +797,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         }
 
         // TODO: Unite with other createSourceSetInfo
+        // This method is used in Android side of import and it's signature could not be changed
         fun createSourceSetInfo(
             compilation: KotlinCompilation,
             gradleModule: IdeaModule,

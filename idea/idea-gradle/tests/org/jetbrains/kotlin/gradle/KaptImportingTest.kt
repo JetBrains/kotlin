@@ -38,7 +38,7 @@ class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
         configureByFiles()
         importProject(true)
 
-        checkProjectStructure(myProject, projectPath, true, true, true) {
+        checkProjectStructure(myProject, projectPath, true, true, true, false) {
             module("project")
             module("project_main") {
                 sourceFolder("build/generated/source/kapt/main", JavaSourceRootType.SOURCE)
@@ -65,7 +65,7 @@ class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
         configureByFiles()
         importProject(false)
 
-        checkProjectStructure(myProject, projectPath, true, true, true) {
+        checkProjectStructure(myProject, projectPath, true, true, true, false) {
             module("project") {
                 sourceFolder("build/generated/source/kapt/main", JavaSourceRootType.SOURCE)
                 sourceFolder("build/generated/source/kaptKotlin/main", JavaSourceRootType.SOURCE)

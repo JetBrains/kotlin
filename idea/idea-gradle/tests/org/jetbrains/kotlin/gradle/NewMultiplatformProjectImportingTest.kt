@@ -395,6 +395,33 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
+
+    //TODObub(auskov): enable this test after publishing new api in gradle plugin
+    //@Test
+    fun testImportTestsAndTargets() {
+        configureByFiles()
+        importProject()
+
+        checkProjectStructure(exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false, exhaustiveTestsList = true) {
+            module("project")
+            module("project_commonMain")
+            module("project_commonTest") {
+                externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
+                externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
+                externalSystemTestTask("test", "project:jvmTest", "jvm")
+            }
+            module("project_jsMain")
+            module("project_jsTest") {
+                externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
+                externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
+            }
+            module("project_jvmMain")
+            module("project_jvmTest") {
+                externalSystemTestTask("test", "project:jvmTest", "jvm")
+            }
+        }
+    }
+
     @Test
     fun testDependencyOnRoot() {
         configureByFiles()
@@ -773,6 +800,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,
         exhaustiveDependencyList: Boolean = true,
+        exhaustiveTestsList: Boolean = false,
         body: ProjectInfo.() -> Unit = {}
     ) {
         checkProjectStructure(
@@ -781,6 +809,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             exhaustiveModuleList,
             exhaustiveSourceSourceRootList,
             exhaustiveDependencyList,
+            exhaustiveTestsList,
             body)
     }
 

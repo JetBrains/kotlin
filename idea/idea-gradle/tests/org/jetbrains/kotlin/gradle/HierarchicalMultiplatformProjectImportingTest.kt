@@ -348,6 +348,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             exhaustiveModuleList,
             exhaustiveSourceSourceRootList,
             exhaustiveDependencyList,
+            false,
             body
         )
     }

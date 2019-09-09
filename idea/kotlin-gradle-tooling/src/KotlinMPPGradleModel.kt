@@ -151,6 +151,7 @@ interface KotlinTarget : Serializable {
 
 interface KotlinTestTask : Serializable {
     val taskName: String
+    val compilationName: String
 }
 
 interface ExtraFeatures : Serializable {

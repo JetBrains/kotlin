@@ -150,7 +150,7 @@ data class KotlinTargetImpl(
             }
         }.toList(),
         target.testTasks.map { initialTestTask ->
-            (cloningCache[initialTestTask] as? KotlinTestTask) ?: KotlinTestTaskImpl(initialTestTask.taskName).also {
+            (cloningCache[initialTestTask] as? KotlinTestTask) ?: KotlinTestTaskImpl(initialTestTask.taskName, initialTestTask.compilationName).also {
                 cloningCache[initialTestTask] = it
             }
         },
@@ -160,7 +160,8 @@ data class KotlinTargetImpl(
 }
 
 data class KotlinTestTaskImpl(
-    override val taskName: String
+    override val taskName: String,
+    override val compilationName: String
 ) : KotlinTestTask
 
 data class ExtraFeaturesImpl(

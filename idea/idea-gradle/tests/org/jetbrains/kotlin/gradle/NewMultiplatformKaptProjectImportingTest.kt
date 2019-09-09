@@ -33,7 +33,8 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
             projectPath,
             exhaustiveModuleList = true,
             exhaustiveSourceSourceRootList = false,
-            exhaustiveDependencyList = false
+            exhaustiveDependencyList = false,
+            exhaustiveTestsList = false
         ) {
             module("project")
 
