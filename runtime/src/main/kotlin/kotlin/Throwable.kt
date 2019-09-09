@@ -5,6 +5,7 @@
 
 package kotlin
 
+import kotlin.native.concurrent.freeze
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.NativePtrArray
@@ -28,7 +29,7 @@ public open class Throwable(open val message: String?, open val cause: Throwable
     private val stackTrace = getCurrentStackTrace()
 
     private val stackTraceStrings: Array<String> by lazy {
-        getStackTraceStrings(stackTrace)
+        getStackTraceStrings(stackTrace).freeze()
     }
 
     public fun getStackTrace(): Array<String> = stackTraceStrings
