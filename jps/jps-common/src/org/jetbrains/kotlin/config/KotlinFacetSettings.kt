@@ -153,6 +153,18 @@ enum class KotlinMultiplatformVersion(val version: Int) {
         get() = version >= 3
 }
 
+data class ExternalSystemTestTask(val testName: String, val externalSystemProjectId: String, val targetName: String?) {
+
+    fun toStringRepresentation() = "$testName|$externalSystemProjectId|$targetName"
+
+    companion object {
+        fun fromStringRepresentation(line: String) =
+            line.split("|").let { if (it.size == 3) ExternalSystemTestTask(it[0], it[1], it[2]) else null }
+    }
+
+    override fun toString() = "$testName@$externalSystemProjectId [$targetName]"
+}
+
 class KotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data
@@ -219,6 +231,7 @@ class KotlinFacetSettings {
             return field
         }
 
+    var externalSystemTestTasks: List<ExternalSystemTestTask> = emptyList()
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(

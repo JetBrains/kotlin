@@ -136,8 +136,11 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
         val targetPlatform = element.getFacetPlatformByConfigurationElement()
         this.targetPlatform = targetPlatform
-        readModulesList(element, "implements", "implement")?.let { implementedModuleNames = it }
-        readModulesList(element, "dependsOnModuleNames", "dependsOn")?.let { dependsOnModuleNames = it }
+        readElementsList(element, "implements", "implement")?.let { implementedModuleNames = it }
+        readElementsList(element, "dependsOnModuleNames", "dependsOn")?.let { dependsOnModuleNames = it }
+        readElementsList(element, "externalSystemTestTasks", "externalSystemTestTask")?.let {
+            externalSystemTestTasks = it.mapNotNull { ExternalSystemTestTask.fromStringRepresentation(it) }
+        }
 
         element.getChild("sourceSets")?.let {
             val items = it.getChildren("sourceSet")
@@ -178,7 +181,7 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
     }
 }
 
-private fun readModulesList(element: Element, rootElementName: String, elementName: String): List<String>? {
+private fun readElementsList(element: Element, rootElementName: String, elementName: String): List<String>? {
     element.getChild(rootElementName)?.let {
         val items = it.getChildren(elementName)
         return if (items.isNotEmpty()) {
@@ -310,8 +313,8 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
     }
-    saveModulesList(element, implementedModuleNames, "implements", "implement")
-    saveModulesList(element, dependsOnModuleNames, "dependsOnModuleNames", "dependsOn")
+    saveElementsList(element, implementedModuleNames, "implements", "implement")
+    saveElementsList(element, dependsOnModuleNames, "dependsOnModuleNames", "dependsOn")
 
     if (sourceSetNames.isNotEmpty()) {
         element.addContent(
@@ -329,6 +332,14 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     if (isHmppEnabled) {
         element.setAttribute("isHmppProject", isHmppEnabled.toString())
+    }
+    if (externalSystemTestTasks.isNotEmpty()) {
+        saveElementsList(
+            element,
+            externalSystemTestTasks.map { it.toStringRepresentation() },
+            "externalSystemTestTasks",
+            "externalSystemTestTask"
+        )
     }
     if (pureKotlinSourceFolders.isNotEmpty()) {
         element.setAttribute("pureKotlinSourceFolders", pureKotlinSourceFolders.joinToString(";"))
@@ -354,15 +365,15 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
 }
 
-private fun saveModulesList(element: Element, moduleList: List<String>, rootElementName: String, elementName: String) {
-    if (moduleList.isNotEmpty()) {
+private fun saveElementsList(element: Element, elementsList: List<String>, rootElementName: String, elementName: String) {
+    if (elementsList.isNotEmpty()) {
         element.addContent(
             Element(rootElementName).apply {
-                val singleModule = moduleList.singleOrNull()
+                val singleModule = elementsList.singleOrNull()
                 if (singleModule != null) {
                     addContent(singleModule)
                 } else {
-                    moduleList.map { addContent(Element(elementName).apply { addContent(it) }) }
+                    elementsList.map { addContent(Element(elementName).apply { addContent(it) }) }
                 }
             }
         )
