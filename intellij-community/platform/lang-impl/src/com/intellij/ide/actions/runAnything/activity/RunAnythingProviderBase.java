@@ -1,6 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.activity;
 
+import com.intellij.ide.actions.runAnything.RunAnythingChooseContextAction;
+import com.intellij.ide.actions.runAnything.RunAnythingContext;
+import com.intellij.ide.actions.runAnything.RunAnythingContext.ProjectContext;
 import com.intellij.ide.actions.runAnything.items.RunAnythingHelpItem;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItemBase;
@@ -70,6 +73,18 @@ public abstract class RunAnythingProviderBase<V> implements RunAnythingProvider<
   @Override
   public Matcher getMatcher(@NotNull DataContext dataContext, @NotNull String pattern) {
     return null;
+  }
+
+  @NotNull
+  @Override
+  public Class<? extends RunAnythingContext>[] getAvailableExecutionContexts() {
+    return RunAnythingChooseContextAction.Companion.allContexts();
+  }
+
+  @Nullable
+  @Override
+  public RunAnythingContext getPreferableContext(@NotNull DataContext dataContext) {
+    return ProjectContext.INSTANCE;
   }
 
   @Nullable

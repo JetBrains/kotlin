@@ -30,24 +30,46 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.nio.file.Paths
 import java.util.function.Supplier
-import javax.swing.*
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JList
+import javax.swing.JPanel
 
-abstract class RunAnythingChooseContextAction : CustomComponentAction, DumbAware, ActionGroup() {
+abstract class RunAnythingChooseContextAction(private val containingPanel: JPanel) : CustomComponentAction, DumbAware, ActionGroup() {
   override fun canBePerformed(context: DataContext): Boolean = true
   override fun isPopup(): Boolean = true
   override fun getChildren(e: AnActionEvent?): Array<AnAction> = EMPTY_ARRAY
 
-  open var currentContext: RunAnythingContext = RunAnythingContext.ProjectContext
+  abstract var executionContext: RunAnythingContext?
+  abstract var preferableContext: RunAnythingContext?
+  abstract var availableContexts: Array<out Class<RunAnythingContext>>
 
   override fun createCustomComponent(presentation: Presentation, place: String): JComponent {
     return ActionButtonWithText(this, presentation, place, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE)
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.text = currentContext.presentation.label
-    e.presentation.icon = currentContext.presentation.icon
+    when {
+      executionContext != null -> updateByContext(e, executionContext!!)
+      preferableContext != null -> updateByContext(e, preferableContext!!)
+      else -> e.presentation.isEnabledAndVisible = false
+    }
+  }
+
+  private fun updateByContext(e: AnActionEvent, context: RunAnythingContext) {
+    when {
+      availableContexts.contains(context::class.java) -> {
+        updatePresentation(e, context)
+      }
+      availableContexts.isNotEmpty() -> {
+        executionContext = RunAnythingContext.ProjectContext
+        updatePresentation(e, executionContext!!)
+      }
+      else -> e.presentation.isEnabledAndVisible = false
+    }
+
+    containingPanel.revalidate()
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -61,35 +83,34 @@ abstract class RunAnythingChooseContextAction : CustomComponentAction, DumbAware
       return
     }
 
-    val dataContext = e.dataContext
-    val actionItems = PopupFactoryImpl.ActionGroupPopup.getActionItems(createGroup(project, component), dataContext, false, false, true,
-                                                                       true, ActionPlaces.POPUP)
-
-    ChooseContextPopup(ChooseContextPopupStep(actionItems, dataContext), dataContext)
-      .also { it.size = Dimension(500, 300) }
-      .showUnderneathOf(component)
-  }
-
-  private fun createGroup(project: Project, component: JComponent): ActionGroup {
     val updateToolbar = {
       val toolbar = UIUtil.uiParents(component, true).filter(ActionToolbar::class.java).first()
       toolbar!!.updateActionsImmediately()
     }
 
-    return DefaultActionGroup(createItems(project, updateToolbar))
+    val dataContext = e.dataContext
+    val actionItems = PopupFactoryImpl.ActionGroupPopup.getActionItems(DefaultActionGroup(createItems(project)), dataContext,
+                                                                       false,
+                                                                       false, true,
+                                                                       true, ActionPlaces.POPUP)
+
+    ChooseContextPopup(ChooseContextPopupStep(actionItems, dataContext, updateToolbar), dataContext)
+      .also { it.size = Dimension(500, 300) }
+      .showUnderneathOf(component)
   }
 
-  private fun createItems(project: Project, updateToolbar: () -> Unit): List<AnAction> {
-    return sequenceOf<AnAction>(ProjectItem(project, updateToolbar))
-      .plus(BrowseDirectoryItem(updateToolbar))
-      .plus(RunAnythingContextRecentDirectoryCache.getInstance(project).state.paths.reversed().map<String, AnAction> {
-        RecentDirectoryItem(it, updateToolbar)
+  private fun createItems(project: Project): List<ContextItem> {
+    return sequenceOf<ContextItem>(ProjectItem(project))
+      .plus(BrowseDirectoryItem())
+      .plus(RunAnythingContextRecentDirectoryCache.getInstance(project).state.paths.reversed().map<String, ContextItem> {
+        RecentDirectoryItem(it)
       })
-      .plus(ModuleManager.getInstance(project).modules.map { ModuleItem(it, updateToolbar) }.let { if (it.size > 1) it else emptyList() })
+      .plus(ModuleManager.getInstance(project).modules.map { ModuleItem(it) }.let { if (it.size > 1) it else emptyList<ContextItem>() })
+      .filter { item -> availableContexts.any { it == item.contextType } }
       .toList()
   }
 
-  inner class ModuleItem(val module: Module, updateToolbar: () -> Unit) : ContextItem(updateToolbar) {
+  inner class ModuleItem(val module: Module) : ContextItem(RunAnythingContext.ModuleContext::class.java) {
     override fun actionPerformed(e: AnActionEvent) {
       applyContext(RunAnythingContext.ModuleContext(module))
     }
@@ -106,7 +127,7 @@ abstract class RunAnythingChooseContextAction : CustomComponentAction, DumbAware
     }
   }
 
-  inner class ProjectItem(val project: Project, updateToolbar: () -> Unit) : ContextItem(updateToolbar) {
+  inner class ProjectItem(val project: Project) : ContextItem(RunAnythingContext.ProjectContext::class.java) {
     override fun actionPerformed(e: AnActionEvent) {
       applyContext(RunAnythingContext.ProjectContext)
     }
@@ -118,7 +139,7 @@ abstract class RunAnythingChooseContextAction : CustomComponentAction, DumbAware
     }
   }
 
-  inner class BrowseDirectoryItem(updateToolbar: () -> Unit) : ContextItem(updateToolbar) {
+  inner class BrowseDirectoryItem : ContextItem(RunAnythingContext.RecentDirectoryContext::class.java) {
     override fun actionPerformed(e: AnActionEvent) {
       ApplicationManager.getApplication().invokeLater {
         val project = e.project!!
@@ -144,7 +165,7 @@ abstract class RunAnythingChooseContextAction : CustomComponentAction, DumbAware
     }
   }
 
-  inner class RecentDirectoryItem(val path: String, updateToolbar: () -> Unit) : ContextItem(updateToolbar) {
+  inner class RecentDirectoryItem(val path: String) : ContextItem(RunAnythingContext.RecentDirectoryContext::class.java) {
     override fun actionPerformed(e: AnActionEvent) {
       applyContext(RunAnythingContext.RecentDirectoryContext(path))
     }
@@ -156,11 +177,9 @@ abstract class RunAnythingChooseContextAction : CustomComponentAction, DumbAware
     }
   }
 
-  abstract inner class ContextItem(val updateToolbar: () -> Unit) : AnAction() {
+  abstract inner class ContextItem(val contextType: Class<out RunAnythingContext>) : AnAction() {
     fun applyContext(context: RunAnythingContext) {
-      currentContext = context
-
-      kotlin.run { updateToolbar }
+      executionContext = context
     }
   }
 
@@ -199,7 +218,7 @@ abstract class RunAnythingChooseContextAction : CustomComponentAction, DumbAware
       }
   }
 
-  class ChooseContextPopupStep(val actions: List<PopupFactoryImpl.ActionItem>, dataContext: DataContext)
+  class ChooseContextPopupStep(val actions: List<PopupFactoryImpl.ActionItem>, dataContext: DataContext, val updateToolbar: () -> Unit)
     : ActionPopupStep(actions, IdeBundle.message("run.anything.context.title.working.directory"), Supplier { dataContext }, null, true,
                       Condition { false }, false, true) {
 
@@ -212,18 +231,27 @@ abstract class RunAnythingChooseContextAction : CustomComponentAction, DumbAware
         else -> return super.getSeparatorAbove(value)
       }
     }
+
+    override fun getFinalRunnable(): Runnable? {
+      return super.getFinalRunnable().also { updateToolbar }
+    }
   }
 
-  data class ContextPresentation(val label: String, val description: String? = null, val icon: Icon? = null)
+  companion object {
+    fun allContexts(): Array<Class<out RunAnythingContext>> {
+      return arrayOf(RunAnythingContext.ProjectContext::class.java,
+                     RunAnythingContext.ModuleContext::class.java,
+                     RunAnythingContext.RecentDirectoryContext::class.java)
+    }
 
-  abstract class RunAnythingContext(var presentation: ContextPresentation) {
-    object ProjectContext : RunAnythingContext(ContextPresentation("Project"))
+    fun noneContext(): Array<Class<out RunAnythingContext>> {
+      return arrayOf()
+    }
 
-    data class ModuleContext(val module: Module) : RunAnythingContext(
-      ContextPresentation(module.name, module.moduleFile?.parent.toString(), AllIcons.Actions.ModuleDirectory))
-
-    data class RecentDirectoryContext(val path: String) : RunAnythingContext(
-      ContextPresentation(FileUtil.getLocationRelativeToUserHome(Paths.get(path).toString()), icon = AllIcons.Nodes.Folder)
-    )
+    private fun updatePresentation(e: AnActionEvent, context: RunAnythingContext) {
+      e.presentation.isEnabledAndVisible = true
+      e.presentation.text = context.presentation.label
+      e.presentation.icon = context.presentation.icon
+    }
   }
 }

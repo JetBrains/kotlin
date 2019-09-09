@@ -37,4 +37,10 @@ public class RunAnythingRunConfigurationProvider extends com.intellij.ide.action
     Project project = fetchProject(dataContext);
     return ChooseRunConfigurationPopup.createFlatSettingsList(project);
   }
+
+  @NotNull
+  @Override
+  public Class<? extends RunAnythingContext>[] getAvailableExecutionContexts() {
+    return RunAnythingChooseContextAction.Companion.noneContext();
+  }
 }

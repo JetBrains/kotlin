@@ -1,8 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything.activity;
 
+import com.intellij.ide.actions.runAnything.RunAnythingContext;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.text.Matcher;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +47,11 @@ import java.util.Collection;
  */
 public interface RunAnythingProvider<V> {
   ExtensionPointName<RunAnythingProvider> EP_NAME = ExtensionPointName.create("com.intellij.runAnything.executionProvider");
+  /**
+   * Use it to retrieve command executing context, e.g. project base directory, module or custom working directory
+   * that'd been chosen by the "Choose context" dropdown
+   */
+  DataKey<RunAnythingContext> EXECUTING_CONTEXT = DataKey.create("EXECUTING_CONTEXT");
 
   /**
    * Finds matching value by input {@code pattern}.
@@ -139,6 +146,22 @@ public interface RunAnythingProvider<V> {
    */
   @Nullable
   Matcher getMatcher(@NotNull DataContext dataContext, @NotNull String pattern);
+
+  /**
+   * Provides context types that can be chosen as execution contexts:
+   * - project, {@link RunAnythingContext.ProjectContext}
+   * - module, {@link RunAnythingContext.ModuleContext}
+   * - working directory, {@link RunAnythingContext.RecentDirectoryContext}
+   */
+  @NotNull
+  Class<? extends RunAnythingContext>[] getAvailableExecutionContexts();
+
+  /**
+   * Provides execution context that will be used as initial context for "execution context" dropdown
+   * when one of {@code getValues()} is selected in the list.
+   */
+  @Nullable
+  RunAnythingContext getPreferableContext(@NotNull DataContext dataContext);
 
   /**
    * Finds provider that matches {@code pattern}

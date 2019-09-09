@@ -19,6 +19,7 @@ import com.intellij.ide.actions.runAnything.ui.RunAnythingScrollingUtil;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.ElementsChooser;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -69,6 +70,7 @@ import static com.intellij.ide.actions.runAnything.RunAnythingAction.ALT_IS_PRES
 import static com.intellij.ide.actions.runAnything.RunAnythingAction.SHIFT_IS_PRESSED;
 import static com.intellij.ide.actions.runAnything.RunAnythingIconHandler.MATCHED_PROVIDER_PROPERTY;
 import static com.intellij.openapi.wm.IdeFocusManager.getGlobalInstance;
+import static java.awt.FlowLayout.RIGHT;
 
 public class RunAnythingPopupUI extends BigPopupUI {
   public static final int SEARCH_FIELD_COLUMNS = 25;
@@ -100,7 +102,10 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private Project myProject;
   private Module myModule;
 
-  private RunAnythingChooseContextAction.RunAnythingContext myExecutionContext = RunAnythingChooseContextAction.RunAnythingContext.ProjectContext.INSTANCE;
+  private RunAnythingContext myExecutingContext;
+  private RunAnythingContext myPreferableContext = RunAnythingContext.ProjectContext.INSTANCE;
+  private Class<RunAnythingContext>[] myAvailableContexts = ContainerUtil.ar();
+  private RunAnythingChooseContextAction myChooseContextAction;
 
   private void onMouseClicked(@NotNull MouseEvent event) {
     int clickCount = event.getClickCount();
@@ -135,6 +140,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
           }
 
           if (!isHelpMode(pattern)) {
+            updateContextCombobox();
             adjustMainListEmptyText(mySearchField);
             return;
           }
@@ -227,6 +233,10 @@ public class RunAnythingPopupUI extends BigPopupUI {
                                                                         SHIFT_IS_PRESSED.get(), ALT_IS_PRESSED.get());
     }
     DataContext dataContext = createDataContext(myDataContext, ALT_IS_PRESSED.get());
+    RunAnythingContext executingContext = myChooseContextAction.getExecutionContext();
+    if (executingContext != null) {
+      dataContext = SimpleDataContext.getSimpleContext(RunAnythingProvider.EXECUTING_CONTEXT.getName(), executingContext, dataContext);
+    }
     RunAnythingUtil.executeMatched(dataContext, pattern);
 
     searchFinishedHandler.run();
@@ -373,6 +383,20 @@ public class RunAnythingPopupUI extends BigPopupUI {
         if (myLastInputText == null) myLastInputText = lastInput;
       }
     });
+  }
+
+  private void updateContextCombobox() {
+    DataContext dataContext = createDataContext(myDataContext, ALT_IS_PRESSED.get());
+    Object value = myResultsList.getSelectedValue();
+    String text = value instanceof RunAnythingItem ? ((RunAnythingItem)value).getCommand() : getSearchPattern();
+    RunAnythingProvider provider = RunAnythingProvider.findMatchedProvider(dataContext, text);
+    if (provider != null) {
+      myChooseContextAction.setAvailableContexts(provider.getAvailableExecutionContexts());
+      myChooseContextAction.setPreferableContext(provider.getPreferableContext(myDataContext));
+    }
+
+    AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
+    ActionUtil.performDumbAwareUpdate(false, myChooseContextAction, event, false);
   }
 
   @Override
@@ -904,24 +928,45 @@ public class RunAnythingPopupUI extends BigPopupUI {
   @NotNull
   @Override
   protected JPanel createSettingsPanel() {
-    JPanel res = new JPanel();
-    BoxLayout bl = new BoxLayout(res, BoxLayout.X_AXIS);
-    res.setLayout(bl);
+    JPanel res = new JPanel(new FlowLayout(RIGHT, 0, 0));
     res.setOpaque(false);
 
     DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.addAction(new RunAnythingChooseContextAction(){
+    myChooseContextAction = new RunAnythingChooseContextAction(res) {
       @Override
-      public void setCurrentContext(@NotNull RunAnythingContext context) {
-        myExecutionContext = context;
+      public void setAvailableContexts(@NotNull Class<RunAnythingContext>[] availableContexts) {
+        myAvailableContexts = availableContexts;
       }
 
       @NotNull
       @Override
-      public RunAnythingContext getCurrentContext() {
-        return myExecutionContext;
+      public Class<RunAnythingContext>[] getAvailableContexts() {
+        return myAvailableContexts;
       }
-    });
+
+      @Override
+      public void setPreferableContext(@Nullable RunAnythingContext preferableContext) {
+        myPreferableContext = preferableContext;
+      }
+
+      @Nullable
+      @Override
+      public RunAnythingContext getPreferableContext() {
+        return myPreferableContext;
+      }
+
+      @Override
+      public void setExecutionContext(@Nullable RunAnythingContext context) {
+        myExecutingContext = context;
+      }
+
+      @Nullable
+      @Override
+      public RunAnythingContext getExecutionContext() {
+        return myExecutingContext;
+      }
+    };
+    actionGroup.addAction(myChooseContextAction);
     actionGroup.addAction(new RunAnythingShowFilterAction());
 
     ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("run.anything.toolbar", actionGroup, true);
@@ -929,7 +974,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
     toolbar.updateActionsImmediately();
     JComponent toolbarComponent = toolbar.getComponent();
     toolbarComponent.setOpaque(false);
-    toolbarComponent.setBorder(JBUI.Borders.empty(2, 18, 2, 9));
     res.add(toolbarComponent);
     return res;
   }

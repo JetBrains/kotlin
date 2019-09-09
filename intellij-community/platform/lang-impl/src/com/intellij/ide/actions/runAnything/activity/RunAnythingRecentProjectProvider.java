@@ -4,6 +4,8 @@ package com.intellij.ide.actions.runAnything.activity;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.ReopenProjectAction;
+import com.intellij.ide.actions.runAnything.RunAnythingChooseContextAction;
+import com.intellij.ide.actions.runAnything.RunAnythingContext;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItemBase;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -77,5 +79,11 @@ public class RunAnythingRecentProjectProvider extends RunAnythingAnActionProvide
     public String getDescription() {
       return myValue.getProjectPath();
     }
+  }
+
+  @NotNull
+  @Override
+  public Class<? extends RunAnythingContext>[] getAvailableExecutionContexts() {
+    return RunAnythingChooseContextAction.Companion.noneContext();
   }
 }
