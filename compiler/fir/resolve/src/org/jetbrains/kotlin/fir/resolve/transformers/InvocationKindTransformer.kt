@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -39,8 +40,16 @@ object InvocationKindTransformer : FirTransformer<InvocationKind?>() {
         return lambdaArgumentExpression.compose()
     }
 
+    override fun transformNamedArgumentExpression(
+        namedArgumentExpression: FirNamedArgumentExpression,
+        data: InvocationKind?
+    ): CompositeTransformResult<FirStatement> {
+        namedArgumentExpression.transformChildren(this, data)
+        return namedArgumentExpression.compose()
+    }
+
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: InvocationKind?): CompositeTransformResult<FirStatement> {
-        // TODO: add contracts handling
+        // TODO: add contracts handling and inline handling
         return (functionCall.transformChildren(this, InvocationKind.EXACTLY_ONCE) as FirFunctionCall).compose()
     }
 }

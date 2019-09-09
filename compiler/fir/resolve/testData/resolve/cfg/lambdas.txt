@@ -28,3 +28,19 @@ FILE: lambdas.kt
         }
 
     }
+    public final fun getInt(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Int| {
+        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        ^getInt Int(1)
+    }
+    public final fun test_3(): R|kotlin/Int| {
+        ^test_3 R|/getInt|(<L> = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            ^test_3 Int(1)
+        }
+        )
+    }
+    public final fun test_4(): R|kotlin/Int| {
+        ^test_4 R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            ^test_4 Int(1)
+        }
+        )
+    }

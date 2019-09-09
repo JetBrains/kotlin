@@ -17,3 +17,14 @@ fun test_2(x: Any?) {
         }
     }
 }
+
+
+fun getInt(block: () -> Unit): Int {
+    block()
+    return 1
+}
+
+fun test_3(): Int = getInt { return@test_3 1 }
+
+
+fun test_4(): Int = getInt(block = { return@test_4 1 })
