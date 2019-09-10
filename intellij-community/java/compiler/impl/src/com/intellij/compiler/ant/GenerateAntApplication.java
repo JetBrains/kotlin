@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.ant;
 
 import com.intellij.codeInspection.InspectionsBundle;
@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * @author max
@@ -60,7 +61,7 @@ public class GenerateAntApplication {
       }
 
       logMessage(0, "Loading project...");
-      myProject = ProjectManagerEx.getInstanceEx().loadProject(myProjectPath);
+      myProject = ProjectManagerEx.getInstanceEx().loadProject(Paths.get(myProjectPath).toAbsolutePath());
 
       logMessageLn(0, " done");
 
