@@ -52,11 +52,6 @@ public class ProjectViewTree extends DnDAwareTree {
     this(model);
   }
 
-  @Override
-  public boolean isLargeModel() {
-    return true;
-  }
-
   public ProjectViewTree(TreeModel model) {
     super(model);
     setCellRenderer(createCellRenderer());
