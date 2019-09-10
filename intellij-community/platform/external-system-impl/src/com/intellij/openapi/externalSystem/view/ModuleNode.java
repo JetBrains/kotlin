@@ -20,6 +20,7 @@ import java.util.List;
  */
 @Order(ExternalSystemNode.BUILTIN_MODULE_DATA_NODE_ORDER)
 public class ModuleNode extends ExternalSystemNode<ModuleData> {
+  private final boolean myIsRoot;
   private final ModuleData myData;
   // registry of all modules since we can't use getExternalProjectsView for getting modules withing a module
   private Collection<ModuleNode> myAllModules = Collections.emptyList();
@@ -27,18 +28,20 @@ public class ModuleNode extends ExternalSystemNode<ModuleData> {
 
   public ModuleNode(ExternalProjectsView externalProjectsView,
                     DataNode<ModuleData> dataNode,
-                    @Nullable ExternalSystemNode parent) {
+                    @Nullable ExternalSystemNode parent,
+                    boolean isRoot) {
     super(externalProjectsView, parent, dataNode);
+    myIsRoot = isRoot;
     myData = dataNode.getData();
     myRunConfigurationsNode = new RunConfigurationsNode(externalProjectsView, this);
   }
 
-  public boolean isRoot() {
-    return myData.isRoot();
-  }
-
   public void setAllModules(Collection<ModuleNode> allModules) {
     myAllModules = allModules;
+  }
+
+  public boolean isRoot() {
+    return myIsRoot;
   }
 
   @Override
@@ -47,7 +50,7 @@ public class ModuleNode extends ExternalSystemNode<ModuleData> {
     presentation.setIcon(getUiAware().getProjectIcon());
 
     String hint = null;
-    if (isRoot()) {
+    if (myIsRoot) {
       hint = "root";
     }
 
@@ -80,7 +83,7 @@ public class ModuleNode extends ExternalSystemNode<ModuleData> {
 
   @Override
   public int compareTo(@NotNull ExternalSystemNode node) {
-    return isRoot() ? -1 : (node instanceof ModuleNode && ((ModuleNode)node).isRoot()) ? 1 : super.compareTo(node);
+    return myIsRoot ? -1 : (node instanceof ModuleNode && ((ModuleNode)node).myIsRoot) ? 1 : super.compareTo(node);
   }
 
   public void updateRunConfigurations() {

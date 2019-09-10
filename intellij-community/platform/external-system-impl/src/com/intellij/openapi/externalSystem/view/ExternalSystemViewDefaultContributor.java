@@ -10,6 +10,8 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl;
+import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
+import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.project.Project;
@@ -142,13 +144,23 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
                                      @NotNull List<? super ExternalSystemNode<?>> result) {
     final Collection<DataNode<?>> moduleDataNodes = dataNodes.get(ProjectKeys.MODULE);
     if (!moduleDataNodes.isEmpty()) {
+      final AbstractExternalSystemSettings systemSettings =
+        ExternalSystemApiUtil.getSettings(externalProjectsView.getProject(), externalProjectsView.getSystemId());
+
       final Map<String, ModuleNode> groupToModule = new HashMap<>(moduleDataNodes.size());
 
       List<ModuleNode> moduleNodes = new ArrayList<>();
 
       for (DataNode<?> dataNode : moduleDataNodes) {
+        final ModuleData data = (ModuleData)dataNode.getData();
+
+        final ExternalProjectSettings projectSettings = systemSettings.getLinkedProjectSettings(data.getLinkedExternalProjectPath());
+        DataNode<ProjectData> projectDataNode = ExternalSystemApiUtil.findParent(dataNode, PROJECT);
+        final boolean isRoot =
+          projectSettings != null && data.getLinkedExternalProjectPath().equals(projectSettings.getExternalProjectPath()) &&
+          projectDataNode != null && projectDataNode.getData().getInternalName().equals(data.getInternalName());
         //noinspection unchecked
-        final ModuleNode moduleNode = new ModuleNode(externalProjectsView, (DataNode<ModuleData>)dataNode, null);
+        final ModuleNode moduleNode = new ModuleNode(externalProjectsView, (DataNode<ModuleData>)dataNode, null, isRoot);
         moduleNodes.add(moduleNode);
 
         String group = moduleNode.getIdeGrouping();
