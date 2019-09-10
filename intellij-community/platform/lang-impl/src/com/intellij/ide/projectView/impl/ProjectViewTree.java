@@ -53,7 +53,9 @@ public class ProjectViewTree extends DnDAwareTree {
   }
 
   public ProjectViewTree(TreeModel model) {
-    super(model);
+    super((TreeModel)null);
+    setLargeModel(true);
+    setModel(model);
     setCellRenderer(createCellRenderer());
     HintUpdateSupply.installDataContextHintUpdateSupply(this);
   }
