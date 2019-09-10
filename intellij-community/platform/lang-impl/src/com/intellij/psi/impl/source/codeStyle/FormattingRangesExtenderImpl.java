@@ -31,8 +31,8 @@ class FormattingRangesExtenderImpl implements FormattingRangesExtender {
   }
 
   @Override
-  public List<TextRange> getExtendedRanges(@NotNull FormatTextRanges ranges) {
-    return ContainerUtil.map(ranges.getTextRanges(), range -> processRange(range));
+  public List<TextRange> getExtendedRanges(@NotNull List<TextRange> ranges) {
+    return ContainerUtil.map(ranges, range -> processRange(range));
   }
 
   private TextRange processRange(@NotNull TextRange originalRange) {

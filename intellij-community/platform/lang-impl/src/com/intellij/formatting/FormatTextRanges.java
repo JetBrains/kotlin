@@ -110,7 +110,7 @@ public class FormatTextRanges implements FormattingRangesInfo {
   }
   
   public List<TextRange> getExtendedRanges() {
-    return myRangesExtender != null ? myRangesExtender.getExtendedRanges(this) : getTextRanges();
+    return myRangesExtender != null ? myRangesExtender.getExtendedRanges(this.getTextRanges()) : getTextRanges();
   }
 
   private static List<TextRange> optimizedChangedRanges(@NotNull List<TextRange> allChangedRanges) {

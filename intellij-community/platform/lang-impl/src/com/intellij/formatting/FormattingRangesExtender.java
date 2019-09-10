@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface FormattingRangesExtender {
 
-  List<TextRange> getExtendedRanges(@NotNull FormatTextRanges ranges);
+  List<TextRange> getExtendedRanges(@NotNull List<TextRange> ranges);
 }
