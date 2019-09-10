@@ -69,9 +69,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     myModelFilter = new ServiceModelFilter();
     myGroups = loadGroups();
     myProject.getMessageBus().connect(myModel).subscribe(ServiceEventListener.TOPIC, e -> myModel.refresh(e).onSuccess(o -> {
-      boolean available = myModel.getRoots().stream().anyMatch(root -> e.contributorClass.isInstance(root.getRootContributor()));
-      if (available) {
-        activateToolWindow(e.contributorClass, true);
+      ServiceViewItem eventRoot = ContainerUtil.find(myModel.getRoots(), root -> e.contributorClass.isInstance(root.getRootContributor()));
+      if (eventRoot != null) {
+        activateToolWindow(e.contributorClass,
+                           !(eventRoot.getViewDescriptor() instanceof ServiceViewNonActivatingDescriptor), false);
       }
       AppUIUtil.invokeOnEdt(() -> {
         ServiceViewContentHolder holder = getContentHolder(e.contributorClass);
@@ -82,7 +83,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     }));
     myModel.initRoots().onSuccess(o -> {
       for (ServiceViewItem root : myModel.getRoots()) {
-        activateToolWindow(root.getRootContributor().getClass(), false);
+        activateToolWindow(root.getRootContributor().getClass(),
+                           !(root.getViewDescriptor() instanceof ServiceViewNonActivatingDescriptor), true);
       }
     });
   }
@@ -99,7 +101,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     return null;
   }
 
-  private void activateToolWindow(@NotNull Class<?> contributorClass, boolean show) {
+  private void activateToolWindow(@NotNull Class<?> contributorClass, boolean show, boolean onInit) {
     ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
     if (toolWindowManager == null) return;
 
@@ -117,7 +119,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       String toolWindowId = getToolWindowId(contributorClass);
       if (toolWindowId == null) return;
 
-      boolean doShow = show || getContentHolder(contributorClass) != null;
+      boolean doShow = !onInit || getContentHolder(contributorClass) != null;
       ToolWindow toolWindow = toolWindowManager.getToolWindow(toolWindowId);
       if (toolWindow == null) {
         toolWindow = createToolWindow(toolWindowId, toolWindowManager);
@@ -128,7 +130,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       }
 
       if (toolWindow.getContentManager().getContentCount() > 0) {
-        doShow = !toolWindow.isAvailable() && doShow;
+        doShow = show && !toolWindow.isAvailable() && doShow;
         toolWindow.setAvailable(true, null);
         if (doShow) {
           toolWindow.show(null);
