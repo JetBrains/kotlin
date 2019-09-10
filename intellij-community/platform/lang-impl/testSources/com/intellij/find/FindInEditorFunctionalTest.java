@@ -13,9 +13,12 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.testFramework.ServiceContainerUtil;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.ComponentWithEmptyText;
 import com.intellij.util.ui.UIUtil;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
@@ -97,6 +100,21 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
     assertEquals(ApplicationBundle.message("editorsearch.matches", 3), component.getStatusText());
     editor.getSelectionModel().removeSelection();
     assertEquals(ApplicationBundle.message("editorsearch.noselection"), component.getStatusText());
+  }
+
+  public void testFindEmptyText() {
+    String origText = "first foo\n<selection>foo bar baz\nbaz bar foo</selection>\nlast foo";
+    init(origText);
+    initFind();
+    EditorSearchSession session = getEditorSearchComponent();
+    FindModel model = session.getFindModel();
+    SearchReplaceComponent component = session.getComponent();
+    model.setStringToFind("");
+    Shortcut shortcut = ArrayUtil.getFirstElement(ActionManager.getInstance().getAction(IdeActions.ACTION_FIND).getShortcutSet().getShortcuts());
+    assertEquals(ApplicationBundle.message("editorsearch.in.selection.with.hint", KeymapUtil.getShortcutText(shortcut)),
+                 ((ComponentWithEmptyText)component.getSearchTextComponent()).getEmptyText().getText());
+    getEditor().getSelectionModel().removeSelection();
+    assertEquals(ApplicationBundle.message("editorsearch.in.selection"), ((ComponentWithEmptyText)component.getSearchTextComponent()).getEmptyText().getText());
   }
 
   public void testFindToggleInSelection() {

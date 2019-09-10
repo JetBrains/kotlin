@@ -391,8 +391,7 @@ public class EditorSearchSession implements SearchSession,
   private String getEmptyText() {
     if (myFindModel.isGlobal() || !myFindModel.getStringToFind().isEmpty()) return "";
     String text = getEditor().getSelectionModel().getSelectedText();
-    if (text == null) return "";
-    if (text.contains("\n")) {
+    if (text != null && text.contains("\n")) {
       boolean replaceState = myFindModel.isReplaceState();
       AnAction action = ActionManager.getInstance().getAction(
         replaceState ? IdeActions.ACTION_REPLACE : IdeActions.ACTION_FIND);
