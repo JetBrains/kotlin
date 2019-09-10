@@ -89,6 +89,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     protected abstract fun beforePass()
     protected abstract fun afterPass(pass: Int)
+    protected open fun afterAllPasses() {}
     protected abstract fun processModule(moduleData: ModuleData): ProcessorAction
 
     protected fun runTestOnce(pass: Int) {

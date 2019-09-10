@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -30,7 +28,6 @@ import java.io.FileOutputStream
 import java.io.PrintStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.system.measureNanoTime
 
 
 private const val FAIL_FAST = true
@@ -44,8 +41,10 @@ internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
 
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
-    private lateinit var bench: FirResolveBench
     private lateinit var dump: MultiModuleHtmlFirDump
+    private lateinit var bench: FirResolveBench
+    private var bestStatistics: FirResolveBench.TotalStatistics? = null
+    private var bestPass: Int = 0
 
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
         val project = environment.project
@@ -129,12 +128,22 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     override fun afterPass(pass: Int) {
-        bench.report(System.out, errorTypeReports = false)
+        val statistics = bench.getTotalStatistics()
+        statistics.report(System.out, "Pass $pass", errorTypeReports = false)
 
-        saveReport(pass)
+        saveReport(pass, statistics)
+        if (statistics.totalTime < (bestStatistics?.totalTime ?: Long.MAX_VALUE)) {
+            bestStatistics = statistics
+            bestPass = pass
+        }
         if (FAIL_FAST) {
             bench.throwFailure()
         }
+    }
+
+    override fun afterAllPasses() {
+        val bestStatistics = bestStatistics ?: return
+        printStatistics(bestStatistics, "Best pass: $bestPass", false)
     }
 
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -155,8 +164,12 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         reportDateFormat.format(startDate)
     }
 
-    private fun saveReport(pass: Int) {
+    private fun saveReport(pass: Int, statistics: FirResolveBench.TotalStatistics) {
         if (DUMP_FIR) dump.finish()
+        printStatistics(statistics, "PASS $pass")
+    }
+
+    private fun printStatistics(statistics: FirResolveBench.TotalStatistics, header: String, errorTypeReports: Boolean = true) {
         PrintStream(
             FileOutputStream(
                 reportDir().resolve("report-$reportDateStr.log"),
@@ -164,8 +177,8 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             )
         ).use { stream ->
             val sep = "=".repeat(10)
-            stream.println("$sep PASS $pass $sep")
-            bench.report(stream)
+            stream.println("$sep $header $sep")
+            statistics.report(stream, header)
             stream.println()
             stream.println()
         }
@@ -178,5 +191,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             bench = FirResolveBench(withProgress = false)
             runTestOnce(i)
         }
+        afterAllPasses()
     }
 }

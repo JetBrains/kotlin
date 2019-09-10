@@ -32,10 +32,37 @@ fun checkFirProvidersConsistency(firFiles: List<FirFile>) {
 }
 
 private data class FailureInfo(val transformer: KClass<*>, val throwable: Throwable, val file: String)
-private data class ErrorTypeReport(val report: String, var count: Int = 0)
+data class ErrorTypeReport(val report: String, var count: Int = 0)
 
 class FirResolveBench(val withProgress: Boolean) {
+    data class TotalStatistics(
+        val unresolvedTypes: Int,
+        val resolvedTypes: Int,
+        val errorTypes: Int,
+        val implicitTypes: Int,
+        val errorFunctionCallTypes: Int,
+        val errorQualifiedAccessTypes: Int,
+        val fileCount: Int,
+        val errorTypesReports: Map<String, ErrorTypeReport>,
+        val timePerTransformer: Map<String, Measure>
+    ) {
+        val totalTypes: Int = unresolvedTypes + resolvedTypes
+        val goodTypes: Int = resolvedTypes - errorTypes - implicitTypes
+        val uniqueErrorTypes: Int = errorTypesReports.size
 
+        val totalMeasure = Measure().apply {
+            with(timePerTransformer.values) {
+                time = sumByLong { it.time }
+                user = sumByLong { it.user }
+                cpu = sumByLong { it.cpu }
+                gcTime = sumByLong { it.gcTime }
+                gcCollections = sumBy { it.gcCollections }
+                files = map { it.files }.average().toInt()
+            }
+        }
+
+        val totalTime: Long get() = totalMeasure.time
+    }
 
     data class Measure(
         var time: Long = 0,
@@ -44,7 +71,7 @@ class FirResolveBench(val withProgress: Boolean) {
         var gcTime: Long = 0,
         var gcCollections: Int = 0,
         var files: Int = 0
-    ) {}
+    )
 
     val timePerTransformer = mutableMapOf<KClass<*>, Measure>()
     var resolvedTypes = 0
@@ -54,6 +81,7 @@ class FirResolveBench(val withProgress: Boolean) {
     var errorQualifiedAccessTypes = 0
     var implicitTypes = 0
     var fileCount = 0
+    var totalTime = 0L
 
 
     private val fails = mutableListOf<FailureInfo>()
@@ -76,6 +104,8 @@ class FirResolveBench(val withProgress: Boolean) {
             val diff = after - before
             recordTime(builder::class, diff, time)
             firFile!!
+        }.also {
+            totalTime = timePerTransformer.values.sumByLong { it.time }
         }
     }
 
@@ -228,75 +258,17 @@ class FirResolveBench(val withProgress: Boolean) {
         }
     }
 
-    fun report(stream: PrintStream, errorTypeReports: Boolean = true) {
-
-        if (errorTypeReports)
-            errorTypesReports.values.sortedByDescending { it.count }.forEach {
-                stream.print("${it.count}:")
-                stream.println(it.report)
-            }
-
-        infix fun Int.percentOf(other: Int): String {
-            return String.format("%.1f%%", this * 100.0 / other)
-        }
-
-        val totalTypes = unresolvedTypes + resolvedTypes
-        stream.println("UNRESOLVED (UNTOUCHED) IMPLICIT TYPES: $unresolvedTypes (${unresolvedTypes percentOf totalTypes})")
-        stream.println("RESOLVED TYPES: $resolvedTypes (${resolvedTypes percentOf totalTypes})")
-        val goodTypes = resolvedTypes - errorTypes - implicitTypes
-        stream.println("CORRECTLY RESOLVED TYPES: $goodTypes (${goodTypes percentOf resolvedTypes} of resolved)")
-        stream.println("ERRONEOUSLY RESOLVED TYPES: $errorTypes (${errorTypes percentOf resolvedTypes} of resolved)")
-        stream.println("   - unresolved calls: $errorFunctionCallTypes")
-        stream.println("   - unresolved q.accesses: $errorQualifiedAccessTypes")
-        stream.println("ERRONEOUSLY RESOLVED IMPLICIT TYPES: $implicitTypes (${implicitTypes percentOf resolvedTypes} of resolved)")
-        stream.println("UNIQUE ERROR TYPES: ${errorTypesReports.size}")
-
-        printTable(stream) {
-            row {
-                cell("Stage", LEFT)
-                cells("Time", "Time per file", "Files: OK/E/T", "CPU", "User", "GC", "GC count")
-            }
-            separator()
-            timePerTransformer.forEach { (transformer, measure) ->
-                val time = measure.time
-                val counter = measure.files
-                row {
-                    cell(transformer.simpleName.toString(), LEFT)
-                    timeCell(time, fractionDigits = 0)
-                    timeCell(time / counter)
-                    cell("$counter/${fileCount - counter}/$fileCount")
-                    timeCell(measure.cpu, fractionDigits = 0)
-                    timeCell(measure.user)
-                    timeCell(measure.gcTime, inputUnit = TableTimeUnit.MS)
-                    cell(measure.gcCollections.toString())
-                }
-            }
-
-            if (timePerTransformer.keys.size > 0) {
-                separator()
-                val totalTime = timePerTransformer.values.sumByLong { it.time }
-                val totalCpuTime = timePerTransformer.values.sumByLong { it.cpu }
-                val totalUserTime = timePerTransformer.values.sumByLong { it.user }
-                val totalGcTime = timePerTransformer.values.sumByLong { it.gcTime }
-                val totalGcCollections = timePerTransformer.values.sumBy { it.gcCollections }
-                val averageFiles = timePerTransformer.values.map { it.files }.average().toLong()
-
-
-                row {
-                    cell("Total", LEFT)
-                    timeCell(totalTime, fractionDigits = 0)
-                    timeCell(totalTime / averageFiles)
-                    cell("$averageFiles")
-                    timeCell(totalCpuTime, fractionDigits = 0)
-                    timeCell(totalUserTime)
-                    timeCell(totalGcTime, inputUnit = TableTimeUnit.MS)
-                    cell(totalGcCollections.toString())
-                }
-            }
-
-        }
-
-    }
+    fun getTotalStatistics(): TotalStatistics = TotalStatistics(
+        unresolvedTypes,
+        resolvedTypes,
+        errorTypes,
+        implicitTypes,
+        errorFunctionCallTypes,
+        errorQualifiedAccessTypes,
+        fileCount,
+        errorTypesReports,
+        timePerTransformer.mapKeys { (klass, _) -> klass.simpleName!!.toString() }
+    )
 }
 
 fun doFirResolveTestBench(
@@ -313,7 +285,7 @@ fun doFirResolveTestBench(
 
     val bench = FirResolveBench(withProgress)
     bench.processFiles(firFiles, transformers)
-    if (!silent) bench.report(System.out)
+    if (!silent) bench.getTotalStatistics().report(System.out, "")
     bench.throwFailure()
 }
 
@@ -344,5 +316,60 @@ fun <T> Collection<T>.progress(step: Double = 0.1, computeLabel: (T) -> String):
             println("${computeLabel(it)}: ${progress * 100 / size}% ($progress/${this.size}), ETA: $eta, Elapsed: ${elapsed.formatTime()}")
         }
         progress++
+    }
+}
+
+fun FirResolveBench.TotalStatistics.report(stream: PrintStream, header: String, errorTypeReports: Boolean = true) {
+    with(stream) {
+        if (errorTypeReports)
+            errorTypesReports.values.sortedByDescending { it.count }.forEach {
+                print("${it.count}:")
+                println(it.report)
+            }
+
+        infix fun Int.percentOf(other: Int): String {
+            return String.format("%.1f%%", this * 100.0 / other)
+        }
+        println()
+        println("---------- $header ----------")
+        println("Unresolved (untouched) implicit types: $unresolvedTypes (${unresolvedTypes percentOf totalTypes})")
+        println("Resolved types: $resolvedTypes (${resolvedTypes percentOf totalTypes})")
+        println("Correctly resolved types: $goodTypes (${goodTypes percentOf resolvedTypes} of resolved)")
+        println("Erroneously resolved types: $errorTypes (${errorTypes percentOf resolvedTypes} of resolved)")
+        println("   - unresolved calls: $errorFunctionCallTypes")
+        println("   - unresolved q.accesses: $errorQualifiedAccessTypes")
+        println("Erroneously resolved implicit types: $implicitTypes (${implicitTypes percentOf resolvedTypes} of resolved)")
+        println("Unique error types: $uniqueErrorTypes")
+
+        printTable(stream) {
+            row {
+                cell("Stage", LEFT)
+                cells("Time", "Time per file", "Files: OK/E/T", "CPU", "User", "GC", "GC count")
+            }
+            separator()
+            timePerTransformer.forEach { (transformer, measure) ->
+                printMeasureAsTable(measure, this@report, transformer)
+            }
+
+            if (timePerTransformer.keys.isNotEmpty()) {
+                separator()
+                printMeasureAsTable(totalMeasure, this@report, "Total time")
+            }
+        }
+    }
+}
+
+private fun RTableContext.printMeasureAsTable(measure: FirResolveBench.Measure, statistics: FirResolveBench.TotalStatistics, label: String) {
+    val time = measure.time
+    val counter = measure.files
+    row {
+        cell(label, LEFT)
+        timeCell(time, fractionDigits = 0)
+        timeCell(time / counter)
+        cell("$counter/${statistics.fileCount - counter}/${statistics.fileCount}")
+        timeCell(measure.cpu, fractionDigits = 0)
+        timeCell(measure.user)
+        timeCell(measure.gcTime, inputUnit = TableTimeUnit.MS)
+        cell(measure.gcCollections.toString())
     }
 }
