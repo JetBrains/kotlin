@@ -127,10 +127,12 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         return;
       }
 
-      doShow = !toolWindow.isAvailable() && doShow;
-      toolWindow.setAvailable(true, null);
-      if (doShow) {
-        toolWindow.show(null);
+      if (toolWindow.getContentManager().getContentCount() > 0) {
+        doShow = !toolWindow.isAvailable() && doShow;
+        toolWindow.setAvailable(true, null);
+        if (doShow) {
+          toolWindow.show(null);
+        }
       }
     });
   }
