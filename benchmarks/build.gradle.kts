@@ -24,7 +24,6 @@ apply(plugin = "kotlinx.benchmark")
 plugins {
     java
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 repositories {
