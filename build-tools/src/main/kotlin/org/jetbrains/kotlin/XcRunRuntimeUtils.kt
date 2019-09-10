@@ -38,7 +38,7 @@ fun Xcode.getLatestSimulatorRuntimeFor(target: KonanTarget, osMinVersion: String
         else -> error("Unexpected simulator target: $target")
     }
     return getSimulatorRuntimeDescriptors().firstOrNull {
-        it.isAvailable && it.name.startsWith(osName) && compareStringsAsVersions(it.version, osMinVersion) >= 0
+        it.checkAvailability() && it.name.startsWith(osName) && compareStringsAsVersions(it.version, osMinVersion) >= 0
     }
 }
 
@@ -51,9 +51,21 @@ data class ListRuntimesReport(
 @Serializable
 data class SimulatorRuntimeDescriptor(
         val version: String,
-        val bundlePath: String,
-        val isAvailable: Boolean,
+        // bundlePath field may not exist in the old Xcode (prior to 10.3).
+        val bundlePath: String? = null,
+        val isAvailable: Boolean? = null,
+        val availability: String? = null,
         val name: String,
         val identifier: String,
         val buildversion: String
-)
+) {
+    /**
+     * Different Xcode/macOS combinations give different fields that checks
+     * runtime availability. This method is an umbrella for these fields.
+     */
+    fun checkAvailability(): Boolean {
+        if (isAvailable == true) return true
+        if (availability?.contains("unavailable") == true) return false
+        return false
+    }
+}

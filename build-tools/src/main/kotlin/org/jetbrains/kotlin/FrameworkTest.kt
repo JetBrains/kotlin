@@ -102,14 +102,17 @@ open class FrameworkTest : DefaultTask() {
             KonanTarget.MACOS_X64 -> "macosx"
             else -> throw IllegalStateException("Test target $target is not supported")
         }
-        return when (target) {
+        val simulatorPath = when (target) {
             KonanTarget.TVOS_X64,
             KonanTarget.IOS_X64,
-            KonanTarget.WATCHOS_X64 -> Xcode.current.getLatestSimulatorRuntimeFor(target, configs.osVersionMin)?.let {
-                "${it.bundlePath}/Contents/Resources/RuntimeRoot/usr/lib/swift"
-            } ?: error("Simulator runtime for $target ${configs.osVersionMin} is not available")
-            else -> configs.absoluteTargetToolchain + "/usr/lib/swift/$swiftPlatform"
+            KonanTarget.WATCHOS_X64 -> Xcode.current.getLatestSimulatorRuntimeFor(target, configs.osVersionMin)?.bundlePath?.let {
+                "$it/Contents/Resources/RuntimeRoot/usr/lib/swift"
+            }
+            else -> null
         }
+        // Use default path from toolchain if we cannot get `bundlePath` for target.
+        // It may be the case for simulators if Xcode/macOS is old.
+        return simulatorPath ?: configs.absoluteTargetToolchain + "/usr/lib/swift/$swiftPlatform"
     }
 
     private fun buildEnvironment(): Map<String, String> {
