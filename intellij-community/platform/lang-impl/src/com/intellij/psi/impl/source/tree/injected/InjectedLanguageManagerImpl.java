@@ -65,7 +65,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
       }
     }, false, this);
 
-    LanguageInjector.EXTENSION_POINT_NAME.getPoint(null).addExtensionPointListener(new ExtensionPointListener<LanguageInjector>() {
+    LanguageInjector.EXTENSION_POINT_NAME.addExtensionPointListener(new ExtensionPointListener<LanguageInjector>() {
       @Override
       public void extensionAdded(@NotNull LanguageInjector extension, @NotNull PluginDescriptor pluginDescriptor) {
         clearInjectorCache();
