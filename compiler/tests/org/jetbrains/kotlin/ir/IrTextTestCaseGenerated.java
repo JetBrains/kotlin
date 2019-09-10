@@ -747,6 +747,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/breakContinueInLoopHeader.kt");
         }
 
+        @TestMetadata("breakContinueInWhen.kt")
+        public void testBreakContinueInWhen() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/breakContinueInWhen.kt");
+        }
+
         @TestMetadata("callWithReorderedArguments.kt")
         public void testCallWithReorderedArguments() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/callWithReorderedArguments.kt");
