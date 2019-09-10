@@ -1,0 +1,19 @@
+package
+
+public fun </*0*/ Ts> v0(/*0*/ args: Ts): kotlin.Unit
+public fun </*0*/ Ts> v1(/*0*/ args: kotlin.Tuple<Ts>): kotlin.Unit
+public fun </*0*/ Ts> v2(/*0*/ vararg args: Ts /*kotlin.Array<out Ts>*/): kotlin.Unit
+public fun </*0*/ Ts> v3(/*0*/ vararg args: Ts /*kotlin.Tuple<Ts>*/): kotlin.Unit
+public fun </*0*/ Ts> v4(/*0*/ args: Ts): kotlin.Unit
+public fun </*0*/ Ts> v5(/*0*/ args: kotlin.Tuple<Ts>): kotlin.Unit
+public fun </*0*/ Ts> v6(/*0*/ vararg args: Ts /*kotlin.Array<out Ts>*/): kotlin.Unit
+public fun </*0*/ Ts> v7(/*0*/ vararg args: Ts /*kotlin.Tuple<Ts>*/): kotlin.Unit
+public fun </*0*/ Ts> v8(/*0*/ vararg args: Box<kotlin.Tuple<Ts>> /*kotlin.Tuple<Box<kotlin.Tuple<Ts>>>*/): kotlin.Unit
+public fun </*0*/ Ts> v9(/*0*/ vararg args: Box<Ts> /*kotlin.Array<out Box<Ts>>*/): kotlin.Unit
+
+public final class Box</*0*/ T> {
+    public constructor Box</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

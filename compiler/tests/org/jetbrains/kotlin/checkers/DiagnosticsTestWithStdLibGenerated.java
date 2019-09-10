@@ -3553,6 +3553,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/errorNoWrapper.kt");
         }
 
+        @TestMetadata("incorrectArguments.kt")
+        public void testIncorrectArguments() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/incorrectArguments.kt");
+        }
+
         @TestMetadata("incorrectCalls.kt")
         public void testIncorrectCalls() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/incorrectCalls.kt");
@@ -3571,6 +3576,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("suspendLambda.kt")
         public void testSuspendLambda() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/suspendLambda.kt");
+        }
+
+        @TestMetadata("unsupported.kt")
+        public void testUnsupported() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/variadicGenerics/unsupported.kt");
         }
 
         @TestMetadata("varargDeclarations.kt")

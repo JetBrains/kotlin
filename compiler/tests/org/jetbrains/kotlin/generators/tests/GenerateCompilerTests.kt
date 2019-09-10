@@ -83,10 +83,6 @@ fun main(args: Array<String>) {
             model("diagnostics/testsWithStdLib")
         }
 
-        testClass<AbstractDiagnosticsTestWithVariadicGenerics> {
-            model("diagnostics/testsWithVariadicGenerics")
-        }
-
         testClass<AbstractDiagnosticsTestWithStdLibUsingJavac> {
             model("diagnostics/testsWithStdLib")
         }
@@ -294,10 +290,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractWriteSignatureTest> {
             model("writeSignature")
-        }
-
-        testClass<AbstractWriteSignatureTestWithVariadicGenerics> {
-            model("writeSignatureWithVariadicGenerics")
         }
 
         testClass<AbstractCliTest> {
