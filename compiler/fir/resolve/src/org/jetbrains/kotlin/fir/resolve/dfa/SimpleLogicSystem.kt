@@ -5,134 +5,101 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.HashMultimap
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import com.google.common.collect.Multimap
 
-class SimpleLogicSystem(private val context: DataFlowInferenceContext) {
-    private fun <E> List<Set<E>>.intersectSets(): Set<E> = takeIf { isNotEmpty() }?.reduce { x, y -> x.intersect(y) } ?: emptySet()
+private class SimpleFlow(
+    val approvedInfos: MutableApprovedInfos = mutableMapOf(),
+    val conditionalInfos: ConditionalInfos = HashMultimap.create()
+) : Flow {
+    override fun getApprovedInfo(variable: RealDataFlowVariable): FirDataFlowInfo? {
+        return approvedInfos[variable]
+    }
 
-    fun or(storages: Collection<SimpleFlow>): SimpleFlow {
-        storages.singleOrNull()?.let {
-            return it
-        }
-        val approvedFacts = mutableMapOf<RealDataFlowVariable, FirDataFlowInfo>()
-        storages.map { it.approvedInfos.keys }
+    override fun getConditionalInfos(variable: DataFlowVariable): Collection<ConditionalFirDataFlowInfo> {
+        return conditionalInfos[variable]
+    }
+
+    override fun getVariablesInApprovedInfos(): Collection<RealDataFlowVariable> {
+        return approvedInfos.keys
+    }
+
+    override fun removeConditionalInfos(variable: DataFlowVariable): Collection<ConditionalFirDataFlowInfo> {
+        return conditionalInfos.removeAll(variable)
+    }
+}
+
+abstract class SimpleLogicSystem(context: DataFlowInferenceContext) : LogicSystem(context) {
+    override val Flow.approvedInfos: MutableApprovedInfos
+        get() = (this as SimpleFlow).approvedInfos
+
+    override val Flow.conditionalInfos: ConditionalInfos
+        get() = (this as SimpleFlow).conditionalInfos
+
+    override fun createEmptyFlow(): Flow {
+        return SimpleFlow()
+    }
+
+    override fun forkFlow(flow: Flow): Flow {
+        require(flow is SimpleFlow)
+        return SimpleFlow(
+            flow.approvedInfos.mapValuesTo(mutableMapOf()) { (_, info) -> info.copy() },
+            flow.conditionalInfos.copy()
+        )
+    }
+
+    override fun joinFlow(flows: Collection<Flow>): Flow {
+        @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
+        val flows = flows as Collection<SimpleFlow>
+        flows.singleOrNull()?.let { return it }
+        val approvedFacts: MutableApprovedInfos = mutableMapOf()
+        flows.map { it.approvedInfos.keys }
             .intersectSets()
             .forEach { variable ->
-                val infos = storages.map { it.approvedInfos[variable]!! }
+                val infos = flows.map { it.approvedInfos[variable]!! }
                 if (infos.isNotEmpty()) {
                     approvedFacts[variable] = or(infos)
                 }
             }
 
-
-        val notApprovedFacts = HashMultimap.create<DataFlowVariable, ConditionalFirDataFlowInfo>()
-        storages.map { it.conditionalInfos.keySet() }
+        val notApprovedFacts: ConditionalInfos = ArrayListMultimap.create()
+        flows.map { it.conditionalInfos.keySet() }
             .intersectSets()
             .forEach { variable ->
-                val infos = storages.map { it.conditionalInfos[variable] }.intersectSets()
+                val infos = flows.map { it.conditionalInfos[variable] }.intersectSets()
                 if (infos.isNotEmpty()) {
                     notApprovedFacts.putAll(variable, infos)
                 }
             }
 
-        return SimpleFlow(approvedFacts, notApprovedFacts)
+        val result = SimpleFlow(approvedFacts, notApprovedFacts)
+        updateAllReceivers(result)
+        return result
     }
 
-    fun andForVerifiedFacts(
-        left: Map<RealDataFlowVariable, FirDataFlowInfo>?,
-        right: Map<RealDataFlowVariable, FirDataFlowInfo>?
-    ): Map<RealDataFlowVariable, FirDataFlowInfo>? {
-        if (left.isNullOrEmpty()) return right
-        if (right.isNullOrEmpty()) return left
-
-        val map = mutableMapOf<RealDataFlowVariable, FirDataFlowInfo>()
-        for (variable in left.keys.union(right.keys)) {
-            val leftInfo = left[variable]
-            val rightInfo = right[variable]
-            map[variable] = and(listOfNotNull(leftInfo, rightInfo))
-        }
-        return map
+    override fun collectInfoForBooleanOperator(
+        leftFlow: Flow,
+        leftVariable: DataFlowVariable,
+        rightFlow: Flow,
+        rightVariable: DataFlowVariable
+    ): InfoForBooleanOperator {
+        require(leftFlow is SimpleFlow && rightFlow is SimpleFlow)
+        return InfoForBooleanOperator(
+            leftFlow.conditionalInfos[leftVariable],
+            rightFlow.conditionalInfos[rightVariable],
+            rightFlow.approvedInfos - leftFlow.approvedInfos
+        )
     }
 
-    fun orForVerifiedFacts(
-        left: Map<RealDataFlowVariable, FirDataFlowInfo>?,
-        right: Map<RealDataFlowVariable, FirDataFlowInfo>?
-    ): Map<RealDataFlowVariable, FirDataFlowInfo>? {
-        if (left.isNullOrEmpty() || right.isNullOrEmpty()) return null
-        val map = mutableMapOf<RealDataFlowVariable, FirDataFlowInfo>()
-        for (variable in left.keys.intersect(right.keys)) {
-            val leftInfo = left[variable]!!
-            val rightInfo = right[variable]!!
-            map[variable] = or(listOf(leftInfo, rightInfo))
+    private operator fun ApprovedInfos.minus(other: ApprovedInfos): ApprovedInfos {
+        val result: MutableApprovedInfos = mutableMapOf()
+        forEach { (variable, info) ->
+            require(info is MutableFirDataFlowInfo)
+            result[variable] = other[variable]?.let { info - it } ?: info
         }
-        return map
-    }
-
-    fun approveFactsInsideFlow(variable: DataFlowVariable, condition: Condition, flow: SimpleFlow): Pair<SimpleFlow, Collection<RealDataFlowVariable>> {
-        val notApprovedFacts: Set<ConditionalFirDataFlowInfo> = flow.conditionalInfos[variable]
-        if (notApprovedFacts.isEmpty()) {
-            return flow to emptyList()
-        }
-        @Suppress("NAME_SHADOWING")
-        val flow = flow.copyForBuilding()
-        val newFacts = HashMultimap.create<RealDataFlowVariable, FirDataFlowInfo>()
-        notApprovedFacts.forEach {
-            if (it.condition == condition) {
-                newFacts.put(it.variable, it.info)
-            }
-        }
-        val updatedReceivers = mutableSetOf<RealDataFlowVariable>()
-
-        newFacts.asMap().forEach { (variable, infos) ->
-            @Suppress("NAME_SHADOWING")
-            val infos = ArrayList(infos)
-            flow.approvedInfos[variable]?.let {
-                infos.add(it)
-            }
-            flow.approvedInfos[variable] = and(infos)
-            if (variable.isThisReference) {
-                updatedReceivers += variable
-            }
-        }
-        return flow to updatedReceivers
-    }
-
-    fun approveFact(variable: DataFlowVariable, condition: Condition, flow: SimpleFlow): MutableMap<RealDataFlowVariable, FirDataFlowInfo> {
-        val notApprovedFacts: Set<ConditionalFirDataFlowInfo> = flow.conditionalInfos[variable]
-        if (notApprovedFacts.isEmpty()) {
-            return mutableMapOf()
-        }
-        val newFacts = HashMultimap.create<RealDataFlowVariable, FirDataFlowInfo>()
-        notApprovedFacts.forEach {
-            if (it.condition == condition) {
-                newFacts.put(it.variable, it.info)
-            }
-        }
-        return newFacts.asMap().mapValuesTo(mutableMapOf()) { (_, infos) -> and(infos) }
-    }
-
-    private fun or(infos: Collection<FirDataFlowInfo>): FirDataFlowInfo {
-        infos.singleOrNull()?.let { return it }
-        val exactType = orTypes(infos.map { it.exactType })
-        val exactNotType = orTypes(infos.map { it.exactNotType })
-        return FirDataFlowInfo(exactType, exactNotType)
-    }
-
-    private fun orTypes(types: Collection<Set<ConeKotlinType>>): Set<ConeKotlinType> {
-        if (types.any { it.isEmpty() }) return emptySet()
-        val allTypes = types.flatMapTo(mutableSetOf()) { it }
-        val commonTypes = allTypes.toMutableSet()
-        types.forEach { commonTypes.retainAll(it) }
-        val differentTypes = allTypes - commonTypes
-        context.commonSuperTypeOrNull(differentTypes.toList())?.let { commonTypes += it }
-        return commonTypes
-    }
-
-    private fun and(infos: Collection<FirDataFlowInfo>): FirDataFlowInfo {
-        infos.singleOrNull()?.let { return it }
-        val exactType = infos.flatMapTo(mutableSetOf()) { it.exactType }
-        val exactNotType = infos.flatMapTo(mutableSetOf()) { it.exactNotType }
-        return FirDataFlowInfo(exactType, exactNotType)
+        return result
     }
 }
+
+private fun <K, V> Multimap<K, V>.copy(): Multimap<K, V> = ArrayListMultimap.create(this)

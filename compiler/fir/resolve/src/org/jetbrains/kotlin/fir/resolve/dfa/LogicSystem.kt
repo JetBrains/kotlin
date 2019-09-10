@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import com.google.common.collect.ArrayListMultimap
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 interface Flow {
@@ -12,17 +13,29 @@ interface Flow {
     fun getConditionalInfos(variable: DataFlowVariable): Collection<ConditionalFirDataFlowInfo>
 
     fun getVariablesInApprovedInfos(): Collection<RealDataFlowVariable>
+
+    fun removeConditionalInfos(variable: DataFlowVariable): Collection<ConditionalFirDataFlowInfo>
 }
 
 abstract class LogicSystem(private val context: DataFlowInferenceContext) {
+
     // ------------------------------- Flow operations -------------------------------
 
     abstract fun createEmptyFlow(): Flow
     abstract fun forkFlow(flow: Flow): Flow
     abstract fun joinFlow(flows: Collection<Flow>): Flow
 
-    abstract fun addApprovedInfo(flow: Flow, variable: RealDataFlowVariable, info: FirDataFlowInfo)
-    abstract fun addConditionalInfo(flow: Flow, variable: DataFlowVariable, info: ConditionalFirDataFlowInfo)
+    open fun addApprovedInfo(flow: Flow, variable: RealDataFlowVariable, info: FirDataFlowInfo) {
+        assert(info is MutableFirDataFlowInfo)
+        flow.approvedInfos.addInfo(variable, info)
+        if (variable.isThisReference) {
+            processUpdatedReceiverVariable(flow, variable)
+        }
+    }
+
+    open fun addConditionalInfo(flow: Flow, variable: DataFlowVariable, info: ConditionalFirDataFlowInfo) {
+        flow.conditionalInfos.put(variable, info)
+    }
 
     /*
      *  used for:
@@ -30,35 +43,90 @@ abstract class LogicSystem(private val context: DataFlowInferenceContext) {
      *   2. b = x is String
      *   3. !b | b.not()   for Booleans
      */
-    abstract fun changeVariableForConditionFlow(
+    open fun changeVariableForConditionFlow(
         flow: Flow,
         sourceVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
         transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo)? = null
-    )
+    ) {
+        var infos = flow.getConditionalInfos(sourceVariable)
+        if (transform != null) {
+            infos = infos.map(transform)
+        }
+        flow.conditionalInfos.putAll(newVariable, infos)
+        if (sourceVariable.isSynthetic()) {
+            flow.conditionalInfos.removeAll(sourceVariable)
+        }
+    }
 
-    abstract fun approveFactsInsideFlow(
+    open fun approveFactsInsideFlow(
         variable: DataFlowVariable,
         condition: Condition,
         flow: Flow,
         shouldForkFlow: Boolean,
         shouldRemoveSynthetics: Boolean
-    ): Flow
+    ): Flow {
+        val notApprovedFacts: Collection<ConditionalFirDataFlowInfo> = if (shouldRemoveSynthetics && variable.isSynthetic()) {
+            flow.removeConditionalInfos(variable)
+        } else {
+            flow.getConditionalInfos(variable)
+        }
+
+        val resultFlow = if (shouldForkFlow) forkFlow(flow) else flow
+        if (notApprovedFacts.isEmpty()) {
+            return resultFlow
+        }
+
+        val newFacts = ArrayListMultimap.create<RealDataFlowVariable, FirDataFlowInfo>()
+        notApprovedFacts.forEach {
+            if (it.condition == condition) {
+                newFacts.put(it.variable, it.info)
+            }
+        }
+
+        val updatedReceivers = mutableSetOf<RealDataFlowVariable>()
+
+        newFacts.asMap().forEach { (variable, infos) ->
+            @Suppress("NAME_SHADOWING")
+            val info = MutableFirDataFlowInfo()
+            infos.forEach {
+                info += it
+            }
+            if (variable.isThisReference) {
+                updatedReceivers += variable
+            }
+            addApprovedInfo(resultFlow, variable, info)
+        }
+        updatedReceivers.forEach {
+            processUpdatedReceiverVariable(resultFlow, it)
+        }
+        return resultFlow
+    }
 
     // ------------------------------- Callbacks for updating implicit receiver stack -------------------------------
 
     abstract fun processUpdatedReceiverVariable(flow: Flow, variable: RealDataFlowVariable)
     abstract fun updateAllReceivers(flow: Flow)
 
+    // ------------------------------- Accessors to flow implementation -------------------------------
+
+    protected abstract val Flow.approvedInfos: MutableApprovedInfos
+    protected abstract val Flow.conditionalInfos: ConditionalInfos
+
     // ------------------------------- Public DataFlowInfo util functions -------------------------------
 
     data class InfoForBooleanOperator(
-        val conditionalFromLeft: ConditionalInfos,
-        val conditionalFromRight: ConditionalInfos,
+        val conditionalFromLeft: Collection<ConditionalFirDataFlowInfo>,
+        val conditionalFromRight: Collection<ConditionalFirDataFlowInfo>,
         val approvedFromRight: ApprovedInfos
     )
 
-    abstract fun collectInfoForBooleanOperator(leftFlow: Flow, rightFlow: Flow): InfoForBooleanOperator
+    abstract fun collectInfoForBooleanOperator(
+        leftFlow: Flow,
+        leftVariable: DataFlowVariable,
+        rightFlow: Flow,
+        rightVariable: DataFlowVariable
+    ): InfoForBooleanOperator
 
     fun orForVerifiedFacts(
         left: ApprovedInfos,

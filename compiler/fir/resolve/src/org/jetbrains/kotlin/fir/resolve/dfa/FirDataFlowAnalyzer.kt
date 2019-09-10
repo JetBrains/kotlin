@@ -569,17 +569,16 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
 
         val (conditionalFromLeft, conditionalFromRight, approvedFromRight) = logicSystem.collectInfoForBooleanOperator(
             flowFromLeft,
-            flowFromRight
+            leftVariable,
+            flowFromRight,
+            rightVariable
         )
-
-        val conditionalFromLeftArgument = conditionalFromLeft[leftVariable]
-        val conditionalFromRightArgument = conditionalFromRight[rightVariable]
 
         // left && right == True
         // left || right == False
         val approvedIfTrue: MutableApprovedInfos = mutableMapOf()
-        logicSystem.approveFactTo(approvedIfTrue, bothEvaluated, conditionalFromLeftArgument)
-        logicSystem.approveFactTo(approvedIfTrue, bothEvaluated, conditionalFromRightArgument)
+        logicSystem.approveFactTo(approvedIfTrue, bothEvaluated, conditionalFromLeft)
+        logicSystem.approveFactTo(approvedIfTrue, bothEvaluated, conditionalFromRight)
         approvedFromRight.forEach { (variable, info) ->
             approvedIfTrue.addInfo(variable, info)
         }
@@ -590,8 +589,8 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         // left && right == False
         // left || right == True
         val approvedIfFalse: MutableApprovedInfos = mutableMapOf()
-        val leftIsFalse = logicSystem.approveFact(onlyLeftEvaluated, conditionalFromLeftArgument)
-        val rightIsFalse = logicSystem.approveFact(onlyLeftEvaluated, conditionalFromRightArgument)
+        val leftIsFalse = logicSystem.approveFact(onlyLeftEvaluated, conditionalFromLeft)
+        val rightIsFalse = logicSystem.approveFact(onlyLeftEvaluated, conditionalFromRight)
         approvedIfFalse.mergeInfo(logicSystem.orForVerifiedFacts(leftIsFalse, rightIsFalse))
         approvedIfFalse.forEach { (variable, info) ->
             logicSystem.addConditionalInfo(flow, andVariable, info.toConditional(onlyLeftEvaluated, variable))

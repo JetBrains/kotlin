@@ -68,6 +68,7 @@ data class MutableFirDataFlowInfo(
         exactNotType += info.exactNotType
     }
 
+    fun copy(): MutableFirDataFlowInfo = MutableFirDataFlowInfo(exactType.toMutableSet(), exactNotType.toMutableSet())
 }
 
 operator fun FirDataFlowInfo.plus(other: FirDataFlowInfo?): FirDataFlowInfo = other?.let { this + other } ?: this

@@ -50,6 +50,10 @@ class DelegatingFlow(
         return result
     }
 
+    override fun removeConditionalInfos(variable: DataFlowVariable): Collection<ConditionalFirDataFlowInfo> {
+        return conditionalInfos.removeAll(variable)
+    }
+
     private inline fun collect(block: (DelegatingFlow) -> Boolean) {
         var flow: DelegatingFlow? = this
         while (flow != null) {
@@ -95,6 +99,12 @@ private class ImmutableMultimap<K, V>(private val original: Multimap<K, V>) : Mu
 }
 
 abstract class DelegatingLogicSystem(context: DataFlowInferenceContext) : LogicSystem(context) {
+    override val Flow.approvedInfos: MutableApprovedInfos
+        get() = (this as DelegatingFlow).approvedInfos
+
+    override val Flow.conditionalInfos: ConditionalInfos
+        get() = (this as DelegatingFlow).conditionalInfos
+
     override fun createEmptyFlow(): Flow {
         return DelegatingFlow(null)
     }
@@ -104,11 +114,16 @@ abstract class DelegatingLogicSystem(context: DataFlowInferenceContext) : LogicS
         return DelegatingFlow(flow)
     }
 
-    override fun collectInfoForBooleanOperator(leftFlow: Flow, rightFlow: Flow): InfoForBooleanOperator {
+    override fun collectInfoForBooleanOperator(
+        leftFlow: Flow,
+        leftVariable: DataFlowVariable,
+        rightFlow: Flow,
+        rightVariable: DataFlowVariable
+    ): InfoForBooleanOperator {
         require(leftFlow is DelegatingFlow && rightFlow is DelegatingFlow)
         return InfoForBooleanOperator(
-            leftFlow.previousFlow!!.conditionalInfosFromTopFlow(),
-            rightFlow.conditionalInfosFromTopFlow(),
+            leftFlow.previousFlow!!.conditionalInfosFromTopFlow()[leftVariable],
+            rightFlow.conditionalInfosFromTopFlow()[rightVariable],
             rightFlow.approvedInfosFromTopFlow()
         )
     }
@@ -146,83 +161,6 @@ abstract class DelegatingLogicSystem(context: DataFlowInferenceContext) : LogicS
         updateAllReceivers(commonFlow)
 
         return commonFlow
-    }
-
-    override fun changeVariableForConditionFlow(
-        flow: Flow,
-        sourceVariable: DataFlowVariable,
-        newVariable: DataFlowVariable,
-        transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo)?
-    ) {
-        require(flow is DelegatingFlow)
-        var infos = flow.getConditionalInfos(sourceVariable)
-        if (transform != null) {
-            infos = infos.map(transform)
-        }
-        flow.conditionalInfos.putAll(newVariable, infos)
-        if (sourceVariable.isSynthetic()) {
-            flow.conditionalInfos.removeAll(sourceVariable)
-        }
-    }
-
-    override fun approveFactsInsideFlow(
-        variable: DataFlowVariable,
-        condition: Condition,
-        flow: Flow,
-        shouldForkFlow: Boolean,
-        shouldRemoveSynthetics: Boolean
-    ): Flow {
-        require(flow is DelegatingFlow)
-
-        val notApprovedFacts: Collection<ConditionalFirDataFlowInfo> = if (shouldRemoveSynthetics && variable.isSynthetic()) {
-            flow.conditionalInfos.removeAll(variable)
-        } else {
-            flow.getConditionalInfos(variable)
-        }
-
-        val resultFlow = if (shouldForkFlow) forkFlow(flow) else flow
-        if (notApprovedFacts.isEmpty()) {
-            return resultFlow
-        }
-
-        val newFacts = ArrayListMultimap.create<RealDataFlowVariable, FirDataFlowInfo>()
-        notApprovedFacts.forEach {
-            if (it.condition == condition) {
-                newFacts.put(it.variable, it.info)
-            }
-        }
-
-        val updatedReceivers = mutableSetOf<RealDataFlowVariable>()
-
-        newFacts.asMap().forEach { (variable, infos) ->
-            @Suppress("NAME_SHADOWING")
-            val info = MutableFirDataFlowInfo()
-            infos.forEach {
-                info += it
-            }
-            if (variable.isThisReference) {
-                updatedReceivers += variable
-            }
-            addApprovedInfo(resultFlow, variable, info)
-        }
-        updatedReceivers.forEach {
-            processUpdatedReceiverVariable(resultFlow, it)
-        }
-        return resultFlow
-    }
-
-    override fun addApprovedInfo(flow: Flow, variable: RealDataFlowVariable, info: FirDataFlowInfo) {
-        assert(info is MutableFirDataFlowInfo)
-        require(flow is DelegatingFlow)
-        flow.approvedInfos.addInfo(variable, info)
-        if (variable.isThisReference) {
-            processUpdatedReceiverVariable(flow, variable)
-        }
-    }
-
-    override fun addConditionalInfo(flow: Flow, variable: DataFlowVariable, info: ConditionalFirDataFlowInfo) {
-        require(flow is DelegatingFlow)
-        flow.conditionalInfos.put(variable, info)
     }
 
     // ------------------------------- Util functions -------------------------------
