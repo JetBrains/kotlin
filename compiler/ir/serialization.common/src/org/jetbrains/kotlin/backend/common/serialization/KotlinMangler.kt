@@ -58,6 +58,10 @@ abstract class KotlinManglerImpl : KotlinMangler {
 
         if (declaration.isPlatformSpecificExported()) return true
 
+        if (declaration is IrTypeAlias && declaration.parent is IrPackageFragment) {
+            return true
+        }
+
         if (descriptorAnnotations.hasAnnotation(publishedApiAnnotation)) {
             return true
         }
