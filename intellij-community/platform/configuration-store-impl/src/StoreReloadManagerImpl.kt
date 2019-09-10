@@ -28,7 +28,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.UserDataHolderEx
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.VirtualFileManagerListener
 import com.intellij.ui.AppUIUtil
 import com.intellij.util.ExceptionUtil
@@ -91,16 +90,16 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
     }
   }, delay = 300, parentDisposable = this)
 
-  init {
-    VirtualFileManager.getInstance().addVirtualFileManagerListener(object : VirtualFileManagerListener {
-      override fun beforeRefreshStart(asynchronous: Boolean) {
-        blockReloadingProjectOnExternalChanges()
-      }
+  internal class MyVirtualFileManagerListener : VirtualFileManagerListener {
+    private val manager = StoreReloadManager.getInstance()
 
-      override fun afterRefreshFinish(asynchronous: Boolean) {
-        unblockReloadingProjectOnExternalChanges()
-      }
-    })
+    override fun beforeRefreshStart(asynchronous: Boolean) {
+      manager.blockReloadingProjectOnExternalChanges()
+    }
+
+    override fun afterRefreshFinish(asynchronous: Boolean) {
+      manager.unblockReloadingProjectOnExternalChanges()
+    }
   }
 
   private fun isReloadUnblocked(): Boolean {
