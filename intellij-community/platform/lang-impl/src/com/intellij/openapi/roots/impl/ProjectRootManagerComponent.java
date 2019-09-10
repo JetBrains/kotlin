@@ -68,7 +68,8 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   private final ExecutorService myExecutor = ApplicationManager.getApplication().isUnitTestMode()
                                              ? ConcurrencyUtil.newSameThreadExecutorService()
                                              : AppExecutorUtil.createBoundedApplicationPoolExecutor("Project Root Manager", 1);
-  private Future<?> myCollectWatchRootsFuture = CompletableFuture.completedFuture(null);
+  @NotNull
+  private Future<?> myCollectWatchRootsFuture = CompletableFuture.completedFuture(null); // accessed in EDT only
 
   private boolean myPointerChangesDetected;
   private int myInsideRefresh;
