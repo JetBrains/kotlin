@@ -7,6 +7,7 @@ package org.jetbrains.konan.execution
 
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.Executor
+import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
@@ -36,7 +37,7 @@ class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, na
                 (canRunOnApple && target is AppleDevice) ||
                 (canRunOnAndroid && target is AndroidDevice)
 
-    override fun getState(executor: Executor, environment: ExecutionEnvironment): CidrCommandLineState? =
+    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
         (environment.executionTarget as? Device)?.createState(this, environment)
 
     fun getProductBundle(environment: ExecutionEnvironment): File {

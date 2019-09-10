@@ -36,7 +36,7 @@ import java.io.OutputStream
 class AndroidCommandLineState(
     configuration: MobileRunConfiguration,
     environment: ExecutionEnvironment
-) : CidrCommandLineState(environment, FakeLauncher()) {
+) : CommandLineState(environment) {
     private val project = configuration.project
     private val device = environment.executionTarget as AndroidDevice
     private val apk = configuration.getProductBundle(environment)
@@ -90,25 +90,17 @@ class AndroidCommandLineState(
         return DefaultExecutionResult(runConsole, wrapper)
     }
 
+    private class DebugProcessHandlerWrapper(val wrapped: AndroidProcessHandler) : ProcessHandler() {
+        override fun getProcessInput(): OutputStream? = wrapped.processInput
+        override fun detachIsDefault(): Boolean = wrapped.detachIsDefault()
+
+        override fun destroyProcessImpl() {}
+        override fun detachProcessImpl() {
+            notifyProcessDetached()
+        }
+    }
+
     companion object {
         private val log = logger<AndroidCommandLineState>()
     }
-}
-
-private class DebugProcessHandlerWrapper(val wrapped: AndroidProcessHandler) : ProcessHandler() {
-    override fun getProcessInput(): OutputStream? = wrapped.processInput
-    override fun detachIsDefault(): Boolean = wrapped.detachIsDefault()
-
-    override fun destroyProcessImpl() {}
-    override fun detachProcessImpl() {
-        notifyProcessDetached()
-    }
-}
-
-private class FakeLauncher : CidrLauncher() {
-    private fun error(): Nothing = throw IllegalStateException("this function should never be called")
-
-    override fun getProject(): Project = error()
-    override fun createProcess(state: CommandLineState): ProcessHandler = error()
-    override fun createDebugProcess(state: CommandLineState, session: XDebugSession): CidrDebugProcess = error()
 }

@@ -6,9 +6,9 @@
 package org.jetbrains.konan.execution
 
 import com.intellij.execution.ExecutionTarget
+import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.jetbrains.cidr.execution.CidrCommandLineState
 import javax.swing.Icon
 
 abstract class Device(
@@ -24,5 +24,5 @@ abstract class Device(
     override fun canRun(configuration: RunConfiguration): Boolean =
         configuration is MobileRunConfiguration
 
-    abstract fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): CidrCommandLineState
+    abstract fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): CommandLineState
 }
