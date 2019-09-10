@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +VariadicGenerics
 // FILE: A.kt
 
 package a

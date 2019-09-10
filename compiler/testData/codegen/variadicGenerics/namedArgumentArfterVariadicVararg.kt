@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +VariadicGenerics
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
 

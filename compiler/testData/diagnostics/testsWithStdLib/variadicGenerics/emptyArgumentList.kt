@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +VariadicGenerics
 
 fun <T, R, vararg Ts> T.receiverWithOthers (
     vararg others: *Ts,

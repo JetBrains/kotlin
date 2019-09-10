@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +VariadicGenerics
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <R, vararg Ts> variadicFn(

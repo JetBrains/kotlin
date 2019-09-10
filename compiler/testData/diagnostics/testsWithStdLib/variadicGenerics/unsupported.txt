@@ -1,0 +1,3 @@
+package
+
+public fun </*0*/ Ts> variadic(/*0*/ args: kotlin.Tuple<Ts>): kotlin.Unit

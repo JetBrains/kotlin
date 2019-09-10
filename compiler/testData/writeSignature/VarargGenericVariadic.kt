@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// !LANGUAGE: +VariadicGenerics
 
 class Box<T>
 

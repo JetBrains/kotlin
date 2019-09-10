@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +VariadicGenerics
 
 suspend fun <vararg Ts, R> variadic(
     first: Any,

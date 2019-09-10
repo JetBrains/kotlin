@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +VariadicGenerics
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 
 class Box<T>(val value: T)

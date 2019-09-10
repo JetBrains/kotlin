@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +VariadicGenerics
 // !DIAGNOSTICS: -UNCHECKED_CAST -UNUSED_PARAMETER
 
 fun <vararg Ts> variadic(vararg args: *Ts) {}

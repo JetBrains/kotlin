@@ -1,3 +1,4 @@
+// !LANGUAGE: +VariadicGenerics
 // !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
 
 class VariadicClass<<!WRONG_MODIFIER_TARGET!>vararg<!> Ts>
