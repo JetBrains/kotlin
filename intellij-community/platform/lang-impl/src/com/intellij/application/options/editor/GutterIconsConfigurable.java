@@ -28,7 +28,6 @@ import com.intellij.util.NullableFunction;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import java.util.HashSet;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -247,7 +246,7 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      ShowSettingsUtil.getInstance().showSettingsDialog(null, GutterIconsConfigurable.class);
+      ShowSettingsUtil.getInstance().showSettingsDialog(e.getProject(), GutterIconsConfigurable.class);
     }
   }
 }
