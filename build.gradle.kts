@@ -234,6 +234,7 @@ extra["compilerModules"] = arrayOf(
     ":core:metadata.jvm",
     ":core:descriptors",
     ":core:descriptors.jvm",
+    ":core:descriptors.runtime",
     ":core:deserialization",
     ":core:util.runtime",
     ":core:type-system",
