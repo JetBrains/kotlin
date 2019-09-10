@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.references.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -31,14 +32,19 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.Variance
 
 class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransformer) : BodyResolveComponents by transformer {
+    private val whenSelectFunction: FirMemberFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
+    private val trySelectFunction: FirMemberFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
+
     fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression): FirWhenExpression? {
         val stubReference = whenExpression.calleeReference
         assert(stubReference is FirStubReference)
 
-        val function = generateWhenCallDeclaration()
-
         val arguments = whenExpression.branches.map { it.result }
-        val reference = generateCalleeReferenceWithCandidate(function, arguments, SyntheticCallableId.WHEN.callableName) ?: return null // TODO
+        val reference = generateCalleeReferenceWithCandidate(
+            whenSelectFunction,
+            arguments,
+            SyntheticCallableId.WHEN.callableName
+        ) ?: return null // TODO
 
         return whenExpression.copy(calleeReference = reference)
     }
@@ -47,59 +53,22 @@ class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransform
         val stubReference = tryExpression.calleeReference
         assert(stubReference is FirStubReference)
 
-        val function = generateTryCallDeclaration(tryExpression)
         val arguments = mutableListOf<FirExpression>()
 
         with(tryExpression) {
             arguments += tryBlock
-            catches.map {
+            catches.forEach {
                 arguments += it.block
             }
         }
 
-        val reference = generateCalleeReferenceWithCandidate(function, arguments, SyntheticCallableId.TRY.callableName) ?: return null // TODO
+        val reference = generateCalleeReferenceWithCandidate(
+            trySelectFunction,
+            arguments,
+            SyntheticCallableId.TRY.callableName
+        ) ?: return null // TODO
 
         return tryExpression.copy(calleeReference = reference)
-    }
-
-    private fun generateTryCallDeclaration(tryExpression: FirTryExpression): FirMemberFunctionImpl {
-        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.TRY, file)
-        val typeParameterSymbol = FirTypeParameterSymbol()
-        val typeParameter = FirTypeParameterImpl(session, null, typeParameterSymbol, Name.identifier("K"), Variance.INVARIANT, false)
-
-        val returnType = FirResolvedTypeRefImpl(null, ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false))
-
-        val tryType = FirResolvedTypeRefImpl(null, returnType.coneTypeUnsafe())
-        val catchTypes = tryExpression.catches.map {
-            FirResolvedTypeRefImpl(null, returnType.coneTypeUnsafe())
-        }
-
-        val typeArgument = FirTypeProjectionWithVarianceImpl(null, Variance.INVARIANT, returnType)
-
-        return generateMemberFunction(session, functionSymbol, SyntheticCallableId.TRY.callableName, typeArgument.typeRef).apply {
-            typeParameters += typeParameter
-
-            valueParameters += tryType.toValueParameter(session, "tryBlock")
-            catchTypes.forEachIndexed { i, type ->
-                valueParameters += type.toValueParameter(session, "catchBlock_$i")
-            }
-        }
-    }
-
-    private fun generateWhenCallDeclaration(): FirMemberFunctionImpl {
-        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.WHEN, file)
-        val typeParameterSymbol = FirTypeParameterSymbol()
-        val typeParameter = FirTypeParameterImpl(session, null, typeParameterSymbol, Name.identifier("K"), Variance.INVARIANT, false)
-
-        val returnType = FirResolvedTypeRefImpl(null, ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false))
-        val branchType = FirResolvedTypeRefImpl(null, returnType.coneTypeUnsafe<ConeKotlinType>().createArrayOf(session))
-
-        val typeArgument = FirTypeProjectionWithVarianceImpl(null, Variance.INVARIANT, returnType)
-
-        return generateMemberFunction(session, functionSymbol, SyntheticCallableId.WHEN.callableName, typeArgument.typeRef).apply {
-            typeParameters += typeParameter
-            valueParameters += branchType.toValueParameter(session, "branches", true)
-        }
     }
 
     private fun generateCalleeReferenceWithCandidate(
@@ -135,6 +104,22 @@ class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransform
         containingFile = file,
         container = container
     ) { it.resultType }
+
+    private fun generateSyntheticSelectFunction(callableId: CallableId): FirMemberFunctionImpl {
+        val functionSymbol = FirSyntheticFunctionSymbol(callableId)
+        val typeParameterSymbol = FirTypeParameterSymbol()
+        val typeParameter = FirTypeParameterImpl(session, null, typeParameterSymbol, Name.identifier("K"), Variance.INVARIANT, false)
+
+        val returnType = FirResolvedTypeRefImpl(null, ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false))
+
+        val argumentType = FirResolvedTypeRefImpl(null, returnType.coneTypeUnsafe<ConeKotlinType>().createArrayOf(session))
+        val typeArgument = FirTypeProjectionWithVarianceImpl(null, Variance.INVARIANT, returnType)
+
+        return generateMemberFunction(session, functionSymbol, callableId.callableName, typeArgument.typeRef).apply {
+            typeParameters += typeParameter
+            valueParameters += argumentType.toValueParameter(session, "branches", isVararg = true)
+        }
+    }
 
     private fun generateMemberFunction(session: FirSession, symbol: FirNamedFunctionSymbol, name: Name, returnType: FirTypeRef) =
         FirMemberFunctionImpl(

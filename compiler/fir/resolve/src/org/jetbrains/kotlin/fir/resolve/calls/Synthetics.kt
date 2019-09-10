@@ -26,8 +26,7 @@ interface SyntheticSymbol : ConeSymbol
 class SyntheticPropertySymbol(callableId: CallableId) : FirPropertySymbol(callableId), SyntheticSymbol
 
 class FirSyntheticFunctionSymbol(
-    callableId: CallableId,
-    val file: FirFile
+    callableId: CallableId
 ) : FirNamedFunctionSymbol(callableId), SyntheticSymbol
 
 class FirSyntheticPropertiesScope(

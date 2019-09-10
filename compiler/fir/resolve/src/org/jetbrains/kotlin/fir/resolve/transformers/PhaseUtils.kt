@@ -25,7 +25,6 @@ fun <D> AbstractFirBasedSymbol<D>.phasedFir(
     if (availablePhase < requiredPhase) {
         val provider = FirProvider.getInstance(session)
         val containingFile = when (this) {
-            is FirSyntheticFunctionSymbol -> file
             is ConeCallableSymbol -> provider.getFirCallableContainerFile(this)
             is ConeClassLikeSymbol -> provider.getFirClassifierContainerFile(this)
             else -> null
