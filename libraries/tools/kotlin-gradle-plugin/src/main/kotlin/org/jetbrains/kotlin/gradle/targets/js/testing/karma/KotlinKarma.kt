@@ -301,14 +301,27 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
             override fun createClient(testResultProcessor: TestResultProcessor, log: Logger) =
                 object : TCServiceMessagesClient(testResultProcessor, clientSettings, log) {
-                    override fun printNonTestOutput(actualText: String) {
-                        val value = actualText.trimEnd()
-                        suppressedOutput.appendln(value)
-                        progressLogger.progress(value)
-                    }
-
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
+
+                    lateinit var clientId: String
+
+                    override fun printNonTestOutput(text: String) {
+                        val value = text.trimEnd()
+                        progressLogger.progress(value)
+
+                        if (text.contains(CLIENT_ID_MARKER)) {
+                            clientId = text
+                                .substringBeforeLast("]")
+                                .substringAfterLast("[")
+                        }
+
+                        if (::clientId.isInitialized && text.startsWith(clientId)) {
+                            parseConsole(text)
+                        } else {
+                            suppressedOutput.appendln(value)
+                        }
+                    }
 
                     override fun getSuiteName(message: BaseTestSuiteMessage): String {
                         val src = message.suiteName.trim()
@@ -335,6 +348,20 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
                         return rawSuiteNameOnly.replace(" ", ".") // sample.a.DeepPackageTest.Inner
                     }
+
+                    private fun parseConsole(text: String) {
+                        val logLevel = text
+                            .substringAfter(clientId)
+                            .substringBefore(":")
+                            .trim()
+
+                        return when (logLevel) {
+                            "WARN" -> log.warn(text)
+                            "ERROR" -> log.error(text)
+                            "DEBUG" -> log.debug(text)
+                            else -> log.info(text)
+                        }
+                    }
                 }
         }
     }
@@ -354,5 +381,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     companion object {
         const val CHROME_BIN = "CHROME_BIN"
         const val CHROME_CANARY_BIN = "CHROME_CANARY_BIN"
+
+
+        const val CLIENT_ID_MARKER = "Connected on socket"
     }
 }

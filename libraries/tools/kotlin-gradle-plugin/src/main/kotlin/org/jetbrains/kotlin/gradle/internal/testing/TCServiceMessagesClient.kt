@@ -99,8 +99,8 @@ internal open class TCServiceMessagesClient(
         afterMessage = false
     }
 
-    protected open fun printNonTestOutput(actualText: String) {
-        print(actualText)
+    protected open fun printNonTestOutput(text: String) {
+        print(text)
     }
 
     protected open val testNameSuffix: String?
