@@ -43,10 +43,9 @@ public class FormatTextRanges implements FormattingRangesInfo {
     add(range, processHeadingWhitespace);
   }
 
-  public FormatTextRanges(@NotNull ChangedRangesInfo changedRangesInfo) {
-    List<TextRange> optimized = optimizedChangedRanges(changedRangesInfo.allChangedRanges);
-    optimized.forEach((range) -> add(range, true));
+  public FormatTextRanges(@NotNull ChangedRangesInfo changedRangesInfo, @NotNull List<TextRange> contextRanges) {
     myInsertedRanges = changedRangesInfo.insertedRanges;
+    contextRanges.forEach(range -> add(range, true));
   }
 
   public void add(TextRange range, boolean processHeadingWhitespace) {
@@ -111,28 +110,6 @@ public class FormatTextRanges implements FormattingRangesInfo {
   
   public List<TextRange> getExtendedRanges() {
     return myRangesExtender != null ? myRangesExtender.getExtendedRanges(this.getTextRanges()) : getTextRanges();
-  }
-
-  private static List<TextRange> optimizedChangedRanges(@NotNull List<TextRange> allChangedRanges) {
-    if (allChangedRanges.isEmpty()) return allChangedRanges;
-    List<TextRange> sorted = ContainerUtil.sorted(allChangedRanges, Segment.BY_START_OFFSET_THEN_END_OFFSET);
-
-    List<TextRange> result = ContainerUtil.newSmartList();
-
-    TextRange prev = sorted.get(0);
-    for (TextRange next : sorted) {
-      if (next.getStartOffset() <= prev.getEndOffset() + 5) {
-        int newEndOffset = Math.max(prev.getEndOffset(), next.getEndOffset());
-        prev = new TextRange(prev.getStartOffset(), newEndOffset);
-      }
-      else {
-        result.add(prev);
-        prev = next;
-      }
-    }
-    result.add(prev);
-
-    return result;
   }
 
 
