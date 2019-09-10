@@ -23,9 +23,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PsiTestUtil
-import org.jetbrains.kotlin.config.CompilerSettings
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -141,20 +139,46 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
 fun Module.createFacet(
     platformKind: TargetPlatform? = null,
+    useProjectSettings: Boolean = true
+) {
+    createFacetWithAdditionalSetup(platformKind, useProjectSettings) { }
+}
+
+fun Module.createMultiplatformFacetM1(
+    platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    implementedModuleNames: List<String>? = null
+    implementedModuleNames: List<String>
+) {
+    createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
+        this.implementedModuleNames = implementedModuleNames
+    }
+}
+
+fun Module.createMultiplatformFacetM3(
+    platformKind: TargetPlatform? = null,
+    useProjectSettings: Boolean = true,
+    dependsOnModuleNames: List<String>
+) {
+    createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
+        this.dependsOnModuleNames = dependsOnModuleNames
+        this.isHmppEnabled = true
+    }
+}
+
+private fun Module.createFacetWithAdditionalSetup(
+    platformKind: TargetPlatform?,
+    useProjectSettings: Boolean,
+    additionalSetup: KotlinFacetSettings.() -> Unit
 ) {
     WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
-        with (getOrCreateFacet(modelsProvider, useProjectSettings).configuration.settings)  {
+        with(getOrCreateFacet(modelsProvider, useProjectSettings).configuration.settings) {
             initializeIfNeeded(
-                    this@createFacet,
-                    modelsProvider.getModifiableRootModel(this@createFacet),
-                    platformKind
+                this@createFacetWithAdditionalSetup,
+                modelsProvider.getModifiableRootModel(this@createFacetWithAdditionalSetup),
+                platformKind
             )
-            if (implementedModuleNames != null) {
-                this.implementedModuleNames = implementedModuleNames
-            }
+            additionalSetup()
         }
         modelsProvider.commit()
     }
