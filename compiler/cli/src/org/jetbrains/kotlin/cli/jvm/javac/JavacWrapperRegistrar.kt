@@ -21,6 +21,7 @@ import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -39,7 +40,8 @@ object JavacWrapperRegistrar {
         arguments: Array<String>?,
         bootClasspath: List<File>?,
         sourcePath: List<File>?,
-        lightClassGenerationSupport: LightClassGenerationSupport
+        lightClassGenerationSupport: LightClassGenerationSupport,
+        packagePartsProviders: List<JvmPackagePartProvider>
     ): Boolean {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -60,7 +62,7 @@ object JavacWrapperRegistrar {
 
         val javacWrapper = JavacWrapper(
             javaFiles, kotlinFiles, arguments, jvmClasspathRoots, bootClasspath, sourcePath,
-            kotlinSupertypesResolver, compileJava, outputDirectory, context
+            kotlinSupertypesResolver, packagePartsProviders, compileJava, outputDirectory, context
         )
 
         project.registerService(JavacWrapper::class.java, javacWrapper)

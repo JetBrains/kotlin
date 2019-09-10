@@ -319,7 +319,7 @@ class KotlinCoreEnvironment private constructor(
     ): Boolean {
         return JavacWrapperRegistrar.registerJavac(
             projectEnvironment.project, configuration, javaFiles, kotlinFiles, arguments, bootClasspath, sourcePath,
-            LightClassGenerationSupport.getInstance(project)
+            LightClassGenerationSupport.getInstance(project), packagePartProviders
         )
     }
 
