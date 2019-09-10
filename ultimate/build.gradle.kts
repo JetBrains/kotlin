@@ -39,11 +39,12 @@ dependencies {
     compile(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
     compile(project(":compiler:util")) { isTransitive = false }
     compile(project(":idea:idea-jps-common")) { isTransitive = false }
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     if (intellijUltimateEnabled) {
         compileOnly(nodeJSPlugin())
-        compileOnly(intellijUltimateDep()) { includeJars("trove4j", "openapi", "platform-api", "platform-impl", "idea", "util", "jdom") }
+        compileOnly(intellijUltimateDep()) {
+            includeJars("trove4j", "openapi", "platform-api", "platform-impl", "idea", "util", "jdom", "extensions")
+        }
 
         Platform[191].orLower {
             compileOnly(intellijUltimateDep()) { includeJars("java-api", "java-impl") }
@@ -83,17 +84,16 @@ dependencies {
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
-    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
-    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
 
     if (intellijUltimateEnabled) {
         testCompileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "gson", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject) }
     }
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-script-runtime"))
-    testRuntimeOnly(project(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
