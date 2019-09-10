@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.find.findUsages;
 
 import com.intellij.codeInsight.hint.HintManager;
@@ -64,8 +63,8 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * see {@link com.intellij.find.impl.FindManagerImpl#getFindUsagesManager()}
  */
-public class FindUsagesManager {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.find.findParameterUsages.FindUsagesManager");
+public final class FindUsagesManager {
+  private static final Logger LOG = Logger.getInstance(FindUsagesManager.class);
 
   private enum FileSearchScope {
     FROM_START,
@@ -77,14 +76,20 @@ public class FindUsagesManager {
   private static final Key<String> KEY_START_USAGE_AGAIN = Key.create("KEY_START_USAGE_AGAIN");
   @NonNls private static final String VALUE_START_USAGE_AGAIN = "START_AGAIN";
   private final Project myProject;
-  private final UsageViewManager myAnotherManager;
 
   private PsiElement2UsageTargetComposite myLastSearchInFileData; // EDT only
   private final UsageHistory myHistory = new UsageHistory();
 
-  public FindUsagesManager(@NotNull Project project, @NotNull UsageViewManager anotherManager) {
+  public FindUsagesManager(@NotNull Project project) {
     myProject = project;
-    myAnotherManager = anotherManager;
+  }
+
+  /**
+   * @deprecated Use {@link #FindUsagesManager(Project)}
+   */
+  @Deprecated
+  public FindUsagesManager(@NotNull Project project, @SuppressWarnings("unused") UsageViewManager anotherManager) {
+    myProject = project;
   }
 
   public boolean canFindUsages(@NotNull final PsiElement element) {
@@ -362,7 +367,7 @@ public class FindUsagesManager {
           if (!handler.processElementUsages(element, usageInfoProcessor, optionsClone)) {
             return;
           }
-          
+
           for (CustomUsageSearcher searcher : CustomUsageSearcher.EP_NAME.getExtensionList()) {
             try {
               searcher.processElementUsages(element, processor, optionsClone);
@@ -422,11 +427,11 @@ public class FindUsagesManager {
     PsiElement2UsageTargetAdapter[] secondaryTargets = convertToUsageTargets(Arrays.asList(secondaryElements), findUsagesOptions);
     PsiElement2UsageTargetAdapter[] targets = ArrayUtil.mergeArrays(primaryTargets, secondaryTargets);
     Factory<UsageSearcher> factory = () -> createUsageSearcher(primaryTargets, secondaryTargets, handler, findUsagesOptions, null);
-    UsageView usageView = myAnotherManager.searchAndShowUsages(targets,
-                                                               factory, !toSkipUsagePanelWhenOneUsage,
-                                                               true,
-                                                               createPresentation(primaryElements[0], findUsagesOptions, shouldOpenInNewTab()),
-                                                               null);
+    UsageView usageView = UsageViewManager.getInstance(myProject).searchAndShowUsages(targets,
+                                                                                    factory, !toSkipUsagePanelWhenOneUsage,
+                                                                                    true,
+                                                                                    createPresentation(primaryElements[0], findUsagesOptions, shouldOpenInNewTab()),
+                                                                                    null);
     myHistory.add(targets[0]);
     return usageView;
   }
