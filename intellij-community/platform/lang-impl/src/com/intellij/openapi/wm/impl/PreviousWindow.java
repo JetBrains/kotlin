@@ -2,7 +2,7 @@
 package com.intellij.openapi.wm.impl;
 
 
-import com.intellij.ide.IdeEventQueue;
+import com.intellij.ide.ActiveWindowsWatcher;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +10,6 @@ import org.jetbrains.annotations.NotNull;
 final class PreviousWindow extends AbstractTraverseWindowAction implements DumbAware {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    doPerform(w -> IdeEventQueue.getInstance().nextWindowBefore(w));
+    doPerform(w -> ActiveWindowsWatcher.nextWindowBefore(w));
   }
 }
