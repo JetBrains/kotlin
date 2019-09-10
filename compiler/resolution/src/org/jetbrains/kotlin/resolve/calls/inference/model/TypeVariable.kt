@@ -55,11 +55,10 @@ class TypeVariableTypeConstructor(
 }
 
 sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) : TypeVariableMarker {
-    // TODO remove duplication: isStub is unnecessary in type variable
     val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
-    var isStub: Boolean = false
+    var isStub: Boolean
+        get() = freshTypeConstructor.safeAs<TypeVariableTypeConstructor>()!!.isStub
         set(value) {
-            field = value
             freshTypeConstructor.safeAs<TypeVariableTypeConstructor>()!!.isStub = value
         }
 
