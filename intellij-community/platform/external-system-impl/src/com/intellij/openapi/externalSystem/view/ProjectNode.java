@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.view;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -34,7 +20,7 @@ import java.util.List;
  */
 public class ProjectNode extends ExternalSystemNode<ProjectData> {
   private String myTooltipCache;
-  private boolean singleModuleProject = false;
+  private ModuleNode effectiveRoot = null;
 
   public ProjectNode(ExternalProjectsView externalProjectsView, DataNode<ProjectData> projectDataNode) {
     super(externalProjectsView, null, projectDataNode);
@@ -57,22 +43,17 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
     setIdeGrouping(null);
     final List<? extends ExternalSystemNode<?>> children = super.doBuildChildren();
     final List<ExternalSystemNode<?>> visibleChildren = ContainerUtil.filter(children, node -> node.isVisible());
-    if (visibleChildren.size() == 1 && visibleChildren.get(0).getName().equals(getName())) {
-      singleModuleProject = true;
-      final ExternalSystemNode<?> node = visibleChildren.get(0);
-      if (node instanceof ModuleNode) {
-        setIdeGrouping(((ModuleNode)node).getIdeGrouping());
-      }
-      return node.doBuildChildren();
-    }
-    else {
-      singleModuleProject = false;
-      return visibleChildren;
-    }
-  }
+    if (getExternalProjectsView().getGroupModules()) {
+      ModuleNode root = (ModuleNode) ContainerUtil.find(visibleChildren, node -> node instanceof ModuleNode && ((ModuleNode)node).isRoot());
 
-  public boolean isSingleModuleProject() {
-    return singleModuleProject;
+      if (root != null) {
+        effectiveRoot = root;
+        return root.doBuildChildren();
+      }
+    }
+
+    effectiveRoot = null;
+    return visibleChildren;
   }
 
   void updateProject() {
@@ -126,5 +107,9 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
   @NonNls
   protected String getMenuId() {
     return "ExternalSystemView.ProjectMenu";
+  }
+
+  public ModuleNode getEffectiveRoot() {
+    return effectiveRoot;
   }
 }
