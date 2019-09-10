@@ -21,15 +21,20 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.events.VFileCopyEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent;
 import com.intellij.psi.*;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiUtilCore;
@@ -41,12 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import static com.intellij.openapi.vfs.VirtualFileManager.VFS_CHANGES;
+import java.util.*;
 
 /**
  * @author gregsh
@@ -106,21 +106,23 @@ public class ScratchProjectViewPane extends ProjectViewPane {
 
   private static void registerUpdaters(@NotNull Project project, @NotNull Disposable disposable, @NotNull Runnable onUpdate) {
     String scratchPath = FileUtil.toSystemIndependentName(FileUtil.toCanonicalPath(PathManager.getScratchPath()));
-    project.getMessageBus().connect(disposable).subscribe(VFS_CHANGES, new BulkFileListener() {
-      @Override
-      public void after(@NotNull List<? extends VFileEvent> events) {
-        boolean update = JBIterable.from(events).find(e -> {
-          VirtualFile file = e.getFile();
-          VirtualFile parent = file == null ? null : file.getParent();
-          if (parent == null) return false;
-          return ScratchUtil.isScratch(parent) ||
-                 file.isDirectory() && parent.getPath().startsWith(scratchPath);
-        }) != null;
-        if (update) {
+    VirtualFileManager.getInstance().addAsyncFileListener(events -> {
+      boolean update = JBIterable.from(events).find(e -> {
+        ProgressManager.checkCanceled();
+
+        final boolean isDirectory = isDirectory(e);
+        final VirtualFile parent = getNewParent(e);
+        return parent != null && (ScratchUtil.isScratch(parent) ||
+                                  isDirectory && parent.getPath().startsWith(scratchPath));
+      }) != null;
+
+      return !update ? null : new AsyncFileListener.ChangeApplier() {
+        @Override
+        public void afterVfsChange() {
           onUpdate.run();
         }
-      }
-    });
+      };
+    }, disposable);
     ReadAction
       .nonBlocking(() -> {
         for (RootType rootType : RootType.getAllRootTypes()) {
@@ -162,6 +164,30 @@ public class ScratchProjectViewPane extends ProjectViewPane {
         return ScratchProjectViewPane.this.getWeight();
       }
     };
+  }
+
+  private static VirtualFile getNewParent(@NotNull VFileEvent e) {
+    if (e instanceof VFileMoveEvent) {
+      return ((VFileMoveEvent)e).getNewParent();
+    }
+    else if (e instanceof VFileCopyEvent) {
+      return ((VFileCopyEvent)e).getNewParent();
+    }
+    else if (e instanceof VFileCreateEvent) {
+      return ((VFileCreateEvent)e).getParent();
+    }
+    else {
+      return Objects.requireNonNull(e.getFile()).getParent();
+    }
+  }
+
+  private static boolean isDirectory(@NotNull VFileEvent e) {
+    if (e instanceof VFileCreateEvent) {
+      return ((VFileCreateEvent)e).isDirectory();
+    }
+    else {
+      return Objects.requireNonNull(e.getFile()).isDirectory();
+    }
   }
 
   @Nullable
