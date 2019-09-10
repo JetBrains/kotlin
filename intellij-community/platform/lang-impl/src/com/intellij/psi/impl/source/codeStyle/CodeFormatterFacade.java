@@ -67,7 +67,6 @@ public class CodeFormatterFacade {
   private final FormatterTagHandler myTagHandler;
   private final int myRightMargin;
   private final boolean myCanChangeWhitespaceOnly;
-  private boolean myReformatContext;
 
   public CodeFormatterFacade(CodeStyleSettings settings, @Nullable Language language) {
     this(settings, language, false);
@@ -80,10 +79,6 @@ public class CodeFormatterFacade {
     myTagHandler = new FormatterTagHandler(settings);
     myRightMargin = mySettings.getRightMargin(language);
     myCanChangeWhitespaceOnly = canChangeWhitespaceOnly;
-  }
-
-  public void setReformatContext(boolean value) {
-    myReformatContext = value;
   }
 
   public ASTNode processElement(ASTNode element) {
@@ -207,7 +202,7 @@ public class CodeFormatterFacade {
           CommonCodeStyleSettings.IndentOptions indentOptions =
             mySettings.getIndentOptionsByFile(file, textRanges.size() == 1 ? textRanges.get(0).getTextRange() : null);
 
-          formatter.format(model, mySettings, indentOptions, ranges, myReformatContext);
+          formatter.format(model, mySettings, indentOptions, ranges);
           for (FormatTextRange range : textRanges) {
             TextRange textRange = range.getTextRange();
             wrapLongLinesIfNecessary(file, document, textRange.getStartOffset(), textRange.getEndOffset());

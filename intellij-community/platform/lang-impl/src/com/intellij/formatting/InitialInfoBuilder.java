@@ -85,7 +85,7 @@ public class InitialInfoBuilder {
     CommonCodeStyleSettings.IndentOptions options,
     @NotNull FormattingProgressCallback progressCallback) {
     InitialInfoBuilder builder = new InitialInfoBuilder(root, model, formatOptions.myAffectedRanges, settings, options, formatOptions.myInterestingOffset, progressCallback);
-    builder.setCollectAlignmentsInsideFormattingRange(formatOptions.myReformatContext);
+    builder.setCollectAlignmentsInsideFormattingRange(formatOptions.isReformatWithContext());
     builder.buildFrom(root, 0, null, null, null);
     return builder;
   }

@@ -48,7 +48,7 @@ public class FormatProcessor {
                          @Nullable FormatTextRanges affectedRanges,
                          @NotNull FormattingProgressCallback progressCallback)
   {
-    this(docModel, rootBlock, new FormatOptions(settings, indentOptions, affectedRanges, false), progressCallback);
+    this(docModel, rootBlock, new FormatOptions(settings, indentOptions, affectedRanges), progressCallback);
   }
 
   public FormatProcessor(final FormattingDocumentModel model,
@@ -63,7 +63,7 @@ public class FormatProcessor {
     BlockIndentOptions blockIndentOptions = new BlockIndentOptions(settings, defaultIndentOption, block);
     
     myDocument = model.getDocument();
-    myReformatContext = options.myReformatContext;
+    myReformatContext = options.isReformatWithContext();
     
     final InitialInfoBuilder builder = prepareToBuildBlocksSequentially(block, model, options, settings, defaultIndentOption, myProgressCallback);
     myWrapState = new WrapBlocksState(builder, blockIndentOptions);
@@ -391,27 +391,27 @@ public class FormatProcessor {
     public CommonCodeStyleSettings.IndentOptions myIndentOptions;
 
     public FormatTextRanges myAffectedRanges;
-    public boolean myReformatContext;
 
     public int myInterestingOffset;
 
     public FormatOptions(CodeStyleSettings settings,
                          CommonCodeStyleSettings.IndentOptions options,
-                         FormatTextRanges ranges,
-                         boolean reformatContext) {
-      this(settings, options, ranges, reformatContext, -1);
+                         FormatTextRanges ranges) {
+      this(settings, options, ranges,  -1);
     }
 
     public FormatOptions(CodeStyleSettings settings,
                          CommonCodeStyleSettings.IndentOptions options,
                          FormatTextRanges ranges,
-                         boolean reformatContext,
                          int interestingOffset) {
       mySettings = settings;
       myIndentOptions = options;
       myAffectedRanges = ranges;
-      myReformatContext = reformatContext;
       myInterestingOffset = interestingOffset;
+    }
+
+    public boolean isReformatWithContext() {
+      return myAffectedRanges != null && myAffectedRanges.isExtendToContext();
     }
   }
 }

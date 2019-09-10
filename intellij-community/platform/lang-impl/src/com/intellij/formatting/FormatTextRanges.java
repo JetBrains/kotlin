@@ -32,6 +32,8 @@ public class FormatTextRanges implements FormattingRangesInfo {
   private final List<FormatTextRange> myRanges = new ArrayList<>();
   private @Nullable FormattingRangesExtender myRangesExtender;
 
+  private boolean myExtendToContext;
+
   public FormatTextRanges() {
     myInsertedRanges = null;
   }
@@ -144,5 +146,12 @@ public class FormatTextRanges implements FormattingRangesInfo {
            new TextRange(ranges.get(0).getStartOffset(), ranges.get(ranges.size() - 1).getEndOffset()) :
            null;
   }
-  
+
+  public boolean isExtendToContext() {
+    return myExtendToContext;
+  }
+
+  public void setExtendToContext(boolean extendToContext) {
+    myExtendToContext = extendToContext;
+  }
 }
