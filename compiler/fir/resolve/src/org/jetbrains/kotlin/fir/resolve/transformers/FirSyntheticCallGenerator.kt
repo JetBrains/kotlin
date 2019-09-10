@@ -95,7 +95,7 @@ class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransform
         )
 
     private fun generateCallInfo(arguments: List<FirExpression>) = CallInfo(
-        callKind = CallKind.Function,
+        callKind = CallKind.SyntheticSelect,
         explicitReceiver = null,
         arguments = arguments,
         isSafeCall = false,

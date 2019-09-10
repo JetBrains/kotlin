@@ -8,6 +8,18 @@ package org.jetbrains.kotlin.fir.resolve.calls
 sealed class CallKind {
     abstract val resolutionSequence: List<ResolutionStage>
 
+    /*
+     * Used for resolution of synthetic calls for `when` and `try` expression
+     *   that are equal to `fun <K> select(vararg values: K): K`
+     */
+    object SyntheticSelect : CallKind() {
+        override val resolutionSequence: List<ResolutionStage> = listOf(
+            MapArguments,
+            CreateFreshTypeVariableSubstitutorStage,
+            CheckArguments
+        )
+    }
+
     object Function : CallKind() {
         override val resolutionSequence: List<ResolutionStage> = listOf(
             CheckVisibility,
