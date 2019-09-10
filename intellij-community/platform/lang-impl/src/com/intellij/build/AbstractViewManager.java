@@ -49,9 +49,9 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   // todo [Vlad] remove the map when BuildProgressListener.onEvent(BuildEvent) method will be removed
   private final Map<Object, Object> idsMap = ContainerUtil.newConcurrentMap();
 
-  public AbstractViewManager(Project project, BuildContentManager buildContentManager) {
+  public AbstractViewManager(Project project) {
     myProject = project;
-    myBuildContentManager = buildContentManager;
+    myBuildContentManager = project.getService(BuildContentManager.class);
     myBuildsViewValue = new AtomicClearableLazyValue<MultipleBuildsView>() {
       @NotNull
       @Override

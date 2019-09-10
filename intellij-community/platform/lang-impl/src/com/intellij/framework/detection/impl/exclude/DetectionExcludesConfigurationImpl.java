@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.framework.detection.impl.exclude;
 
 import com.intellij.framework.FrameworkType;
@@ -33,9 +33,9 @@ public class DetectionExcludesConfigurationImpl extends DetectionExcludesConfigu
   private boolean myDetectionEnabled = true;
   private boolean myConverted;
 
-  public DetectionExcludesConfigurationImpl(Project project, VirtualFilePointerManager pointerManager) {
+  public DetectionExcludesConfigurationImpl(@NotNull Project project) {
     myProject = project;
-    myPointerManager = pointerManager;
+    myPointerManager = VirtualFilePointerManager.getInstance();
     myExcludedFrameworks = new HashSet<>();
     myExcludedFiles = FactoryMap.create(key -> myPointerManager.createContainer(this));
   }
