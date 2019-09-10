@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.InternalFileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -125,7 +126,7 @@ public class ScratchFileActions {
       context.filePrefix = "buffer";
       context.createOption = ScratchFileService.Option.create_if_missing;
       context.fileCounter = ScratchFileActions::nextBufferIndex;
-      if (context.language == null) context.language = StdLanguages.TEXT;
+      if (context.language == null) context.language = PlainTextLanguage.INSTANCE;
       doCreateNewScratch(project, context);
     }
   }
@@ -214,7 +215,7 @@ public class ScratchFileActions {
     PsiElement element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, offset);
     PsiFile file = element != null ? element.getContainingFile() : psiFile;
     Language language = file.getLanguage();
-    if (language == StdLanguages.TEXT && file.getFileType() instanceof InternalFileType) {
+    if (language == PlainTextLanguage.INSTANCE && file.getFileType() instanceof InternalFileType) {
       return StdLanguages.XML;
     }
     return language;
