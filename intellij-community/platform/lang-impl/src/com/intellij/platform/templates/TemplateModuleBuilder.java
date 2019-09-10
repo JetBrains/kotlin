@@ -2,7 +2,6 @@
 package com.intellij.platform.templates;
 
 import com.intellij.application.options.CodeStyle;
-import com.intellij.conversion.CannotConvertException;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ModuleBasedConfiguration;
@@ -131,7 +130,7 @@ public class TemplateModuleBuilder extends ModuleBuilder {
     }
   }
 
-  @Nullable
+  @NotNull
   @Override
   public String getBuilderId() {
     return myTemplate.getName();
@@ -190,7 +189,7 @@ public class TemplateModuleBuilder extends ModuleBuilder {
     RunManager runManager = RunManager.getInstance(module.getProject());
     for (RunConfiguration configuration : runManager.getAllConfigurationsList()) {
       if (configuration instanceof ModuleBasedConfiguration) {
-        ((ModuleBasedConfiguration)configuration).getConfigurationModule().setModule(module);
+        ((ModuleBasedConfiguration<?, ?>)configuration).getConfigurationModule().setModule(module);
       }
     }
   }
@@ -396,11 +395,7 @@ public class TemplateModuleBuilder extends ModuleBuilder {
         try {
           myProjectMode = true;
           unzip(name, path, false, indicator, false);
-          return ProjectManagerEx.getInstanceEx().convertAndLoadProject(baseDir);
-        }
-        catch (IOException | CannotConvertException e) {
-          LOG.error(e);
-          return null;
+          return ProjectManagerEx.getInstanceEx().loadProject(baseDir);
         }
         finally {
           cleanup();
