@@ -1212,7 +1212,9 @@ private fun StatementGenerator.lambdaExpression(
         startOffset = startOffset,
         endOffset = endOffset,
         type = type,
-        origin = IrStatementOrigin.IR_TRANSFORM,
+        // Important: The origin must be LAMBDA here or the JVM IR backend will create a class
+        // for function when it is inlined
+        origin = IrStatementOrigin.LAMBDA,
         statements = mutableListOf(
             declaration,
             IrFunctionReferenceImpl(

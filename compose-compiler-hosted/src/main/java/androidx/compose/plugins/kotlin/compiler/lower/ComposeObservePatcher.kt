@@ -113,7 +113,10 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
 
         val descriptor = declaration.descriptor
 
-        // Do not insert an observe scope in an inline composable
+        // Do not insert observe scope in an inline  function
+        if (descriptor.isInline) return declaration
+
+        // Do not insert an observe scope in an inline composable lambda
         descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {
                 if (InlineUtil.isInlinedArgument(

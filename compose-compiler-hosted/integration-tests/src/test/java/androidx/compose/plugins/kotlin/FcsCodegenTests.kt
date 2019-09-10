@@ -22,13 +22,14 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import java.net.URLClassLoader
+
+private val noParameters = { emptyMap<String, String>() }
 
 @RunWith(ComposeRobolectricTestRunner::class)
 @Config(
@@ -51,7 +52,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             fun bar() {
                 noise(text="Hello World")
             }
-            """, { emptyMap<String, String>() },
+            """, noParameters,
             """
             """
         )
@@ -68,7 +69,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             fun bar() {
                 TextView(text="Hello World")
             }
-            """, { emptyMap<String, String>() },
+            """, noParameters,
             """
             """
         )
@@ -115,7 +116,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                   TextView(text = value.toString(), id = 100)
                 }
             """,
-            { emptyMap<String, String>() },
+            noParameters,
             "TestCall()"
         ).then { activity ->
             val textView = activity.findViewById<TextView>(100)
@@ -146,7 +147,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                     Button(text=("Clicked "+state.x+" times"), onClick={state.x++}, id=42)
                 }
             """,
-            { mapOf<String, String>() },
+            noParameters,
             "SimpleComposable()"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
@@ -184,7 +185,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                     children()
                 }
             """,
-            { emptyMap<String, String>() },
+            noParameters,
             "SimpleComposable(state=+memo { FancyButtonCount() })"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
@@ -214,7 +215,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 )
             }
         """,
-            { emptyMap<String, String>() },
+            noParameters,
             "SimpleComposable(state=+memo { Counter() }, value=\"Value\")"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
@@ -246,7 +247,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             val myCounter = Counter()
             """,
-            { emptyMap<String, String>() },
+            noParameters,
             "myCounter.Composable()"
         ).then { activity ->
             val button = activity.findViewById<Button>(42)
@@ -280,7 +281,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             val myCounter = Counter()
             """,
-            { emptyMap<String, String>() },
+            noParameters,
             "SimpleWrapper(counter = myCounter)"
         ).then { activity ->
             val button = activity.findViewById<Button>(42)
@@ -324,7 +325,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
             }
         """,
-            { emptyMap<String, String>() },
+            noParameters,
             "SimpleComposable(state=counter)"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
@@ -356,7 +357,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 )
             }
         """,
-            { emptyMap<String, String>() },
+            noParameters,
             "SimpleComposable(state=counter, b = 4)"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
@@ -395,7 +396,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 )
             }
         """,
-            { emptyMap<String, String>() },
+            noParameters,
             "SimpleComposable(state=counter)"
         ).then { activity ->
             // Check that the text view is in the view
@@ -437,7 +438,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                     Bar()
                 }
             """,
-            { mapOf<String, String>() },
+            noParameters,
             """
                 Foo()
             """
@@ -459,7 +460,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                     x.Bar()
                 }
             """,
-            { mapOf<String, String>() },
+            noParameters,
             """
                 Foo(x="Hello, world!")
             """
@@ -488,7 +489,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                     }
                 }
             """,
-            { mapOf<String, String>() },
+            noParameters,
             """
                 Bam(bar=Bar("Hello, world!"))
             """
@@ -511,7 +512,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                     x()
                 }
             """,
-            { mapOf<String, String>() },
+            noParameters,
             """
                 Foo(x="Hello, world!")
             """
@@ -538,7 +539,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testTrivialInvokeExtensionFunction(): Unit = ensureSetup {
         compose(
             """ """,
-            { mapOf<String, String>() },
+            noParameters,
             """
                 val x = "Hello"
                 @Composable operator fun String.invoke() {}
@@ -626,6 +627,129 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 Foo(onClick={})
             """
         ).then {}
+    }
+
+    // NOTE: DirectRuntime tests do not test compose. They test if the IR can handle the case
+    // compose generates. If a DirectRuntime test fails then the related tests will probably fail
+    // in a similar way and a fix will likely be required in IR.
+    //
+    // If they pass but the corresponding Composable or NonComposable test fails then the bug is
+    // in the rewrites made by compose. It is then useful to compare the how the IR inlines the
+    // DirectRuntime byte-code compared to how it inlines the byte-code generated from compose
+    // generated IR.
+
+    @Test
+    fun testInline_DirectRuntime_Identity(): Unit = ensureSetup {
+        compose("""
+            inline fun inlineWrapper(base: Int, children: () -> Unit) {
+              children()
+            }
+
+            fun example() {
+              inlineWrapper(200) {
+                composer.emit(
+                  12,
+                  { context -> TextView(context) },
+                  {
+                    set("Test") { text = it }
+                    set(101) { id = it }
+                  }
+                )
+              }
+            }
+        """, noParameters, "example()", dumpClasses = true).then { activity ->
+            assertEquals("Test", activity.findViewById<TextView>(101).text)
+        }
+    }
+
+    @Test
+    fun testInline_NonComposable_Identity(): Unit = ensureSetup {
+        compose("""
+            inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
+              children()
+            }
+            """,
+            noParameters,
+            """
+            InlineWrapper(200) {
+              TextView(text = "Test", id=101)
+            }
+            """, dumpClasses = true).then { activity ->
+            assertEquals("Test", activity.findViewById<TextView>(101).text)
+        }
+    }
+
+    @Test
+    fun testInline_Composable_Identity(): Unit = ensureSetup {
+        compose("""
+            @Composable
+            inline fun InlineWrapper(base: Int, children: @Composable() ()->Unit) {
+              children()
+            }
+            """,
+            noParameters,
+            """
+            InlineWrapper(200) {
+              TextView(text = "Test", id=101)
+            }
+            """, dumpClasses = true).then { activity ->
+            assertEquals("Test", activity.findViewById<TextView>(101).text)
+        }
+    }
+
+    @Test
+    fun testInline_DirectRuntime_EmitChildren(): Unit = ensureSetup {
+        compose("""
+            inline fun InlineWrapper(base: Int, crossinline children: () -> Unit) {
+              val tmp = base + 0
+              composer.emit(
+                10,
+                { context -> LinearLayout(context) },
+                { set(tmp) { id = it } }
+              ) {
+                 children()
+              }
+            }
+
+        """, noParameters, """
+              InlineWrapper(200) {
+                composer.emit(
+                  12,
+                  { context -> TextView(context) },
+                  { set("Test") { text = it }; set(101) { id = it } }
+                )
+              }
+        """, dumpClasses = true).then { activity ->
+            val tv = activity.findViewById<TextView>(101)
+            // Assert the TextView was created with the correct text
+            assertEquals("Test", tv.text)
+            // and it is the first child of the linear layout
+            assertEquals(tv, activity.findViewById<LinearLayout>(200).getChildAt(0))
+        }
+    }
+
+    @Test
+    fun testInline_Composable_EmitChildren(): Unit = ensureSetup {
+        compose("""
+            @Composable
+            inline fun InlineWrapper(base: Int, crossinline children: @Composable() ()->Unit) {
+              LinearLayout(id = base + 0) {
+                children()
+              }
+            }
+            """,
+            noParameters,
+            """
+            InlineWrapper(200) {
+              TextView(text = "Test", id=101)
+            }
+            """, dumpClasses = true).then { activity ->
+            val tv = activity.findViewById<TextView>(101)
+            // Assert the TextView was created with the correct text
+            assertEquals("Test", tv.text)
+            // and it is the first child of the linear layout
+            assertEquals(tv, activity.findViewById<LinearLayout>(200).getChildAt(0))
+        }
     }
 
     @Test
@@ -1903,7 +2027,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                     }
                 }
             }
-            """, { emptyMap<String, String>() },
+            """, noParameters,
             """
                Reordering()
             """
@@ -1957,7 +2081,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                         children()
                     }
                 }
-            """, { emptyMap<String, String>() },
+            """, noParameters,
             """
                SimpleComposable()
             """
@@ -1969,7 +2093,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             button.performClick()
             button.performClick()
         }.then { activity ->
-            TestCase.assertNotNull(activity.findViewById(46))
+            assertNotNull(activity.findViewById(46))
         }
     }
 
@@ -2004,7 +2128,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 val count = +state { 0 }
                 Button(text="Clicked ${'$'}{count.value} times!", onClick={ count.value++ })
             }
-            """, { emptyMap<String, String>() },
+            """, noParameters,
             """
                Reordering()
             """
@@ -2032,7 +2156,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             fun foo(context: Context): TextView = MyTextView(context=context)
 
-            """, { emptyMap<String, String>() },
+            """, noParameters,
             """
             """
         )
