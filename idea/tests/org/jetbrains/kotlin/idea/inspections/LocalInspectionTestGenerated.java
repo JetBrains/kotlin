@@ -12407,6 +12407,44 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/unusedUnaryOperator")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnusedUnaryOperator extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInUnusedUnaryOperator() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/unusedUnaryOperator"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/basic.kt");
+        }
+
+        @TestMetadata("basic2.kt")
+        public void testBasic2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/basic2.kt");
+        }
+
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/usedAsExpression.kt");
+        }
+
+        @TestMetadata("usedAsExpression2.kt")
+        public void testUsedAsExpression2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/usedAsExpression2.kt");
+        }
+
+        @TestMetadata("userOperator.kt")
+        public void testUserOperator() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/userOperator.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/useExpressionBody")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

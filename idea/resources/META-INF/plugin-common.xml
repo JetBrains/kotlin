@@ -3459,6 +3459,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedUnaryOperatorInspection"
+                     displayName="Unused unary operator"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"
                     serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
