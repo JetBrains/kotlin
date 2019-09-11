@@ -10,18 +10,21 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityType
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.extensions.LightClassApplicabilityType.LightClass
+import org.jetbrains.kotlin.extensions.LightClassApplicabilityType.UltraLightClass
+
 
 class IDEParcelableApplicabilityExtension : LightClassApplicabilityCheckExtension {
     override fun checkApplicabilityType(declaration: KtDeclaration, descriptor: Lazy<DeclarationDescriptor?>): LightClassApplicabilityType {
 
-        if (!declaration.isOrdinaryClass || !declaration.isAnnotated) return LightClassApplicabilityType.UltraLightClass
+        if (!declaration.isOrdinaryClass || !declaration.isAnnotated) return UltraLightClass
 
-        val descriptorValue = descriptor.value ?: return LightClassApplicabilityType.UltraLightClass
+        val descriptorValue = descriptor.value ?: return UltraLightClass
 
         val classDescriptor = (descriptorValue as? ClassDescriptor)
             ?: descriptorValue.containingDeclaration as? ClassDescriptor
-            ?: return LightClassApplicabilityType.UltraLightClass
+            ?: return UltraLightClass
 
-        return if (classDescriptor.isParcelize) LightClassApplicabilityType.LightClass else LightClassApplicabilityType.UltraLightClass
+        return if (classDescriptor.isParcelize) LightClass else UltraLightClass
     }
 }

@@ -12,14 +12,20 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityType
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serializableAnnotationFqName
+import org.jetbrains.kotlin.extensions.LightClassApplicabilityType.LightClass
+import org.jetbrains.kotlin.extensions.LightClassApplicabilityType.UltraLightClass
 
 class IdeSerializationPluginApplicabilityExtension : LightClassApplicabilityCheckExtension {
     override fun checkApplicabilityType(declaration: KtDeclaration, descriptor: Lazy<DeclarationDescriptor?>): LightClassApplicabilityType {
 
-        if (!declaration.isOrdinaryClass || !declaration.isAnnotated) return LightClassApplicabilityType.UltraLightClass
+        if (!declaration.isOrdinaryClass || !declaration.isAnnotated) return UltraLightClass
 
         return (descriptor.value as? ClassDescriptor)?.let {
-            getIfEnabledOn(it) { LightClassApplicabilityType.LightClass }
-        } ?: LightClassApplicabilityType.UltraLightClass
+            getIfEnabledOn(it) {
+                if (it.annotations.hasAnnotation(serializableAnnotationFqName)) LightClass
+                else UltraLightClass
+            }
+        } ?: UltraLightClass
     }
 }
