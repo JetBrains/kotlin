@@ -14,6 +14,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
 import com.intellij.openapi.externalSystem.util.Order
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import org.jetbrains.jps.model.java.compiler.ProcessorConfigProfile
 import org.jetbrains.jps.model.java.impl.compiler.ProcessorConfigProfileImpl
 import org.jetbrains.plugins.gradle.model.data.AnnotationProcessingData
@@ -50,6 +51,40 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
     }
   }
 
+  override fun computeOrphanData(toImport: MutableCollection<DataNode<AnnotationProcessingData>>,
+                                 projectData: ProjectData,
+                                 project: Project,
+                                 modelsProvider: IdeModifiableModelsProvider): Computable<MutableCollection<ProcessorConfigProfile>> =
+    Computable {
+      val config = CompilerConfiguration.getInstance(project) as CompilerConfigurationImpl
+      val importedProcessingProfiles = ArrayList(toImport).asSequence()
+        .map { it.data }
+        .distinct()
+        .map { createProcessorConfigProfile(it) }
+        .toList()
+
+      val orphans = config
+        .moduleProcessorProfiles
+        .filter { importedProcessingProfiles.none { imported -> imported.matches(it) } }
+        .toMutableList()
+
+      orphans
+    }
+
+  override fun removeData(toRemoveComputable: Computable<MutableCollection<ProcessorConfigProfile>>,
+                          toIgnore: MutableCollection<DataNode<AnnotationProcessingData>>,
+                          projectData: ProjectData,
+                          project: Project,
+                          modelsProvider: IdeModifiableModelsProvider) {
+    val toRemove = toRemoveComputable.compute()
+    val config = CompilerConfiguration.getInstance(project) as CompilerConfigurationImpl
+    val newProfiles = config
+      .moduleProcessorProfiles
+      .toMutableList()
+      .apply { removeAll(toRemove) }
+    config.setModuleProcessorProfiles(newProfiles)
+  }
+
   private fun CompilerConfigurationImpl.configureAnnotationProcessing(ideModule: Module, data: AnnotationProcessingData) {
     val profile = findOrCreateProcessorConfigProfile(data)
     with (profile) {
@@ -61,23 +96,32 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
 
   private fun CompilerConfigurationImpl.findOrCreateProcessorConfigProfile(data: AnnotationProcessingData): ProcessorConfigProfile {
     return configurationProfileCache.computeIfAbsent(data) { newData ->
-      val newProfile = ProcessorConfigProfileImpl("Gradle Imported")
-      newProfile.setProcessorPath(newData.path.joinToString(separator = File.pathSeparator))
-      newData.arguments
-        .map { it.removePrefix("-A").split('=', limit = 2) }
-        .forEach { newProfile.setOption(it[0], if (it.size > 1) it[1] else "") }
+      val newProfile = createProcessorConfigProfile(newData)
 
       return@computeIfAbsent this.moduleProcessorProfiles
-                               .find {
-                                 it.processorPath == newProfile.processorPath
-                                 && it.processorOptions == newProfile.processorOptions
-                               } ?: newProfile.also { addModuleProcessorProfile(it) }
+                               .find { existing -> existing.matches(newProfile) }
+                             ?: newProfile.also { addModuleProcessorProfile(it) }
 
     }
   }
 
+  private fun createProcessorConfigProfile(annotationProcessingData: AnnotationProcessingData): ProcessorConfigProfileImpl {
+    val newProfile = ProcessorConfigProfileImpl(IMPORTED_PROFILE_NAME)
+    newProfile.setProcessorPath(annotationProcessingData.path.joinToString(separator = File.pathSeparator))
+    annotationProcessingData.arguments
+      .map { it.removePrefix("-A").split('=', limit = 2) }
+      .forEach { newProfile.setOption(it[0], if (it.size > 1) it[1] else "") }
+    return newProfile
+  }
+
+  private fun ProcessorConfigProfile.matches(other: ProcessorConfigProfile): Boolean {
+    return this.name == other.name
+           && this.processorPath == other.processorPath
+           && this.processorOptions == other.processorOptions
+  }
 
   companion object {
     private val LOG = Logger.getInstance(AnnotationProcessingDataService::class.java)
+    val IMPORTED_PROFILE_NAME = "Gradle Imported"
   }
 }

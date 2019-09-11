@@ -4,12 +4,14 @@ package org.jetbrains.plugins.gradle.importing
 import com.intellij.compiler.CompilerConfiguration
 import com.intellij.compiler.CompilerConfigurationImpl
 import org.assertj.core.api.BDDAssertions.then
+import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
 class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
 
   @Test
-  fun `test annotation processor config imported`() {
+  @TargetVersions("4.6+")
+  fun `test annotation processor config imported in module per project mode`() {
     importProjectUsingSingeModulePerGradleProject(
       GradleBuildScriptBuilderEx()
         .withJavaPlugin()
@@ -29,11 +31,152 @@ class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
 
     then(moduleProcessorProfiles)
       .describedAs("An annotation processor profile should be created for Gradle module")
-      .isNotEmpty
+      .hasSize(1)
+
+    with (moduleProcessorProfiles[0]) {
+      then(isEnabled).isTrue()
+      then(isObtainProcessorsFromClasspath).isFalse()
+      then(processorPath).contains("lombok")
+      then(moduleNames).containsExactly("project")
+    }
+
+    importProjectUsingSingeModulePerGradleProject()
+
+    val moduleProcessorProfilesAfterReImport = config.moduleProcessorProfiles
+    then(moduleProcessorProfilesAfterReImport)
+      .describedAs("Duplicate annotation processor profile should not appear")
+      .hasSize(1)
   }
 
-  // fun `test repeated import does not cause multiple profiles`() {}
-  // fun `test annotation processor modification`() {}
-  // fun `test two different annotation processors`() {}
+  @Test
+  @TargetVersions("4.6+")
+  fun `test annotation processor modification`() {
+    importProjectUsingSingeModulePerGradleProject(
+      GradleBuildScriptBuilderEx()
+        .withJavaPlugin()
+        .withMavenCentral()
+        .addPostfix(
+          """
+      apply plugin: 'java'
+      
+      dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.8'
+        annotationProcessor 'org.projectlombok:lombok:1.18.8'
+      }
+    """.trimIndent()).generate());
+
+    val config = CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl
+    val moduleProcessorProfiles = config.moduleProcessorProfiles
+
+    then(moduleProcessorProfiles)
+      .describedAs("An annotation processor profile should be created for Gradle module")
+      .hasSize(1)
+
+    importProjectUsingSingeModulePerGradleProject(
+      GradleBuildScriptBuilderEx()
+        .withJavaPlugin()
+        .withMavenCentral()
+        .addPostfix(
+          """
+      apply plugin: 'java'
+      
+      dependencies {
+        compileOnly 'com.google.dagger:dagger:2.24'
+        annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+      }
+    """.trimIndent()).generate());
+
+    val modifiedProfiles = config.moduleProcessorProfiles
+
+    then(modifiedProfiles)
+      .describedAs("An annotation processor should be updated, not added")
+      .hasSize(1)
+
+    with (modifiedProfiles[0]) {
+      then(isEnabled).isTrue()
+      then(isObtainProcessorsFromClasspath).isFalse()
+      then(processorPath)
+        .describedAs("annotation processor config path should point to new annotation processor")
+        .contains("dagger")
+      then(moduleNames).containsExactly("project")
+    }
+  }
+
+  @Test
+  @TargetVersions("4.6+")
+  fun `test annotation processor config imported in modules per source set mode`() {
+    importProject(
+      GradleBuildScriptBuilderEx()
+        .withJavaPlugin()
+        .withMavenCentral()
+        .addPostfix(
+          """
+      apply plugin: 'java'
+      
+      dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.8'
+        annotationProcessor 'org.projectlombok:lombok:1.18.8'
+      }
+    """.trimIndent()).generate());
+
+    val config = CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl
+    val moduleProcessorProfiles = config.moduleProcessorProfiles
+
+    then(moduleProcessorProfiles)
+      .describedAs("An annotation processor profile should be created for Gradle module")
+      .hasSize(1)
+
+    with (moduleProcessorProfiles[0]) {
+      then(isEnabled).isTrue()
+      then(isObtainProcessorsFromClasspath).isFalse()
+      then(processorPath).contains("lombok")
+      then(moduleNames).containsExactly("project.main")
+    }
+  }
+
+  @Test
+  @TargetVersions("4.6+")
+  fun `test two different annotation processors`() {
+    createProjectSubFile("settings.gradle", "include 'project1','project2'")
+    importProject(
+      GradleBuildScriptBuilderEx()
+        .withMavenCentral()
+        .addPostfix(
+          """
+            |  allprojects { apply plugin: 'java' }
+            |  project("project1") {
+            |      dependencies {
+            |        compileOnly 'org.projectlombok:lombok:1.18.8'
+            |        annotationProcessor 'org.projectlombok:lombok:1.18.8'
+            |      }
+            |  }
+            |  
+            |  project("project2") {
+            |    dependencies {
+            |        compileOnly 'com.google.dagger:dagger:2.24'
+            |        annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
+            |    }
+            |  }
+    """.trimMargin()).generate());
+
+    val config = CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl
+    val moduleProcessorProfiles = config.moduleProcessorProfiles
+
+    then(moduleProcessorProfiles)
+      .describedAs("Annotation processors profiles should be created correctly")
+      .hasSize(2)
+      .anyMatch {
+        it.isEnabled && !it.isObtainProcessorsFromClasspath
+        && it.processorPath.contains("lombok")
+        && it.moduleNames == setOf("project.project1.main")
+      }
+      .anyMatch {
+        it.isEnabled && !it.isObtainProcessorsFromClasspath
+        && it.processorPath.contains("dagger")
+        && it.moduleNames == setOf("project.project2.main")
+      }
+  }
+
+  // fun `test change modules set in processor profile`() {}
   // fun `test annotation processor with transitive deps`() {}
 }
