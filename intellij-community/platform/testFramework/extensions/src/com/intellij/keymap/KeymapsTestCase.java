@@ -109,7 +109,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "button2",                  "EditorPasteFromX11", "GotoDeclaration", "EditorCreateRectangularSelectionOnMouseDrag"},
     { "PAGE_DOWN",                "EditorPageDown", "SearchEverywhere.NavigateToNextGroup"},
     { "PAGE_UP",                  "EditorPageUp", "SearchEverywhere.NavigateToPrevGroup"},
-    { "ESCAPE",                   "EditorEscape", "Terminal.SwitchFocusToEditor"},
+    { "ESCAPE",                   "EditorEscape", "FocusEditor", "Terminal.SwitchFocusToEditor"},
     { "shift ctrl alt LEFT",      "MoveElementLeft", "Terminal.MoveToolWindowTabLeft"},
     { "shift ctrl alt RIGHT",     "MoveElementRight", "Terminal.MoveToolWindowTabRight"},
     });
@@ -201,7 +201,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift control X",          SECOND_STROKE, "com.jetbrains.php.framework.FrameworkRunConsoleAction"},
     { "shift ctrl DOWN",          "EditorForwardParagraphWithSelection", "ResizeToolWindowDown"},
     { "shift ctrl UP",            "EditorBackwardParagraphWithSelection", "ResizeToolWindowUp"},
-    { "ESCAPE",                   SECOND_STROKE, "Terminal.SwitchFocusToEditor"},
+    { "ESCAPE",                   SECOND_STROKE, "FocusEditor", "Terminal.SwitchFocusToEditor"},
     });
     put("Visual Studio", new String[][] {
     { "F5",                       "Resume", "Graph.ApplyCurrentLayout"},
