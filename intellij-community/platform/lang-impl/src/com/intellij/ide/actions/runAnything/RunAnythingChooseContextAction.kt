@@ -96,6 +96,7 @@ abstract class RunAnythingChooseContextAction(private val containingPanel: JPane
 
     ChooseContextPopup(ChooseContextPopupStep(actionItems, dataContext, updateToolbar), dataContext)
       .also { it.size = Dimension(500, 300) }
+      .also { it.setRequestFocus(false)}
       .showUnderneathOf(component)
   }
 
@@ -213,7 +214,6 @@ abstract class RunAnythingChooseContextAction(private val containingPanel: JPane
 
           myTextLabel.text = event.presentation.text
           myInfoLabel.foreground = if (isSelected) UIUtil.getListSelectionForeground(true) else UIUtil.getInactiveTextColor()
-
         }
       }
   }

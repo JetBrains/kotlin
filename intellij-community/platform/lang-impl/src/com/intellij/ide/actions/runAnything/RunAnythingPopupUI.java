@@ -178,6 +178,8 @@ public class RunAnythingPopupUI extends BigPopupUI {
             myAlarm.cancelAllRequests();
 
             ApplicationManager.getApplication().invokeLater(() -> ActionToolbarImpl.updateAllToolbarsImmediately());
+
+            searchFinishedHandler.run();
           }
           finally {
             result.setDone();
@@ -190,11 +192,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private static void adjustMainListEmptyText(@NotNull JBTextField editor) {
     adjustEmptyText(editor, field -> field.getText().isEmpty(), IdeBundle.message("run.anything.main.list.empty.primary.text"),
                     IdeBundle.message("run.anything.main.list.empty.secondary.text"));
-  }
-
-  @Nullable
-  public String getLastInputText() {
-    return myLastInputText;
   }
 
   private static boolean isHelpMode(@NotNull String pattern) {
