@@ -43,9 +43,10 @@ open class FunctionCodegen(
         }
 
     private fun doGenerate(): JvmMethodGenericSignature {
-        val signature = classCodegen.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
+        val functionView = irFunction.getOrCreateSuspendFunctionViewIfNeeded(context)
+        val signature = classCodegen.methodSignatureMapper.mapSignatureWithGeneric(functionView)
 
-        val flags = calculateMethodFlags(irFunction.isStatic)
+        val flags = calculateMethodFlags(functionView.isStatic)
         var methodVisitor = createMethod(flags, signature)
 
         val hasSyntheticFlag = flags.and(Opcodes.ACC_SYNTHETIC) != 0
@@ -81,15 +82,17 @@ open class FunctionCodegen(
                 ?: context.suspendLambdaToOriginalFunctionMap[irFunction.parent]?.symbol?.descriptor?.psiElement) as? KtElement
             val continuationClassBuilder = context.continuationClassBuilders[irClass]
             methodVisitor = when {
-                irFunction.isSuspend -> generateStateMachineForNamedFunction(
-                    irFunction, classCodegen, methodVisitor, flags, signature, continuationClassBuilder, element!!
-                )
+                // We do not generate continuation and state-machine for synthetic accessors, in a sence, they are tail-call
+                irFunction.isSuspend && irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ->
+                    generateStateMachineForNamedFunction(
+                        irFunction, classCodegen, methodVisitor, flags, signature, continuationClassBuilder, element!!
+                    )
                 irFunction.isInvokeSuspendOfLambda(context) -> generateStateMachineForLambda(
                     classCodegen, methodVisitor, flags, signature, element!!
                 )
                 else -> methodVisitor
             }
-            ExpressionCodegen(irFunction, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
+            ExpressionCodegen(functionView, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, isInlineLambda).generate()
             methodVisitor.visitMaxs(-1, -1)
             continuationClassBuilder?.done()
         }
@@ -182,15 +185,17 @@ open class FunctionCodegen(
 
     private fun createFrameMapWithReceivers(signature: JvmMethodSignature): IrFrameMap {
         val frameMap = IrFrameMap()
+        val functionView = irFunction.getOrCreateSuspendFunctionViewIfNeeded(context)
+
         if (irFunction is IrConstructor) {
             frameMap.enterDispatchReceiver(irFunction.constructedClass.thisReceiver!!)
-        } else if (irFunction.dispatchReceiverParameter != null) {
-            frameMap.enterDispatchReceiver(irFunction.dispatchReceiverParameter!!)
+        } else if (functionView.dispatchReceiverParameter != null) {
+            frameMap.enterDispatchReceiver(functionView.dispatchReceiverParameter!!)
         }
 
         for (parameter in signature.valueParameters) {
             if (parameter.kind == JvmMethodParameterKind.RECEIVER) {
-                val receiverParameter = irFunction.extensionReceiverParameter
+                val receiverParameter = functionView.extensionReceiverParameter
                 if (receiverParameter != null) {
                     frameMap.enter(receiverParameter, classCodegen.typeMapper.mapType(receiverParameter))
                 } else {
@@ -201,7 +206,7 @@ open class FunctionCodegen(
             }
         }
 
-        for (parameter in irFunction.valueParameters) {
+        for (parameter in functionView.valueParameters) {
             frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter.type))
         }
 

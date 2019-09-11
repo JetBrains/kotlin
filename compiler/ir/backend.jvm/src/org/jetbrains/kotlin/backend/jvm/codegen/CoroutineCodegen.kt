@@ -5,18 +5,46 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptorWithContainerSource
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
+import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.createType
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
-fun generateStateMachineForNamedFunction(
+internal fun generateStateMachineForNamedFunction(
     irFunction: IrFunction,
     classCodegen: ClassCodegen,
     methodVisitor: MethodVisitor,
@@ -44,7 +72,7 @@ fun generateStateMachineForNamedFunction(
     )
 }
 
-fun generateStateMachineForLambda(
+internal fun generateStateMachineForLambda(
     classCodegen: ClassCodegen,
     methodVisitor: MethodVisitor,
     access: Int,
@@ -66,5 +94,79 @@ fun generateStateMachineForLambda(
     )
 }
 
-fun IrFunction.isInvokeSuspendOfLambda(context: JvmBackendContext): Boolean =
+internal fun IrFunction.isInvokeSuspendOfLambda(context: JvmBackendContext): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parent in context.suspendLambdaToOriginalFunctionMap
+
+internal fun IrFunction.isInvokeSuspendOfContinuation(context: JvmBackendContext): Boolean =
+    name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass in context.suspendFunctionContinuations.values
+
+// Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
+// the result is called 'view', just to be consistent with old backend.
+internal fun IrFunction.getOrCreateSuspendFunctionViewIfNeeded(context: JvmBackendContext): IrFunction {
+    if (!isSuspend) return this
+    // TODO: Optimize
+    if (context.suspendFunctionViews.values.contains(this)) return this
+    return if (isSuspend) context.suspendFunctionViews.getOrPut(this) { suspendFunctionView(context) } else this
+}
+
+private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFunction {
+    require(this.isSuspend && this is IrSimpleFunction)
+    val originalDescriptor = this.descriptor
+    val descriptor =
+        if (originalDescriptor is DescriptorWithContainerSource && originalDescriptor.containerSource != null)
+            WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource!!)
+        else
+            WrappedSimpleFunctionDescriptor(sourceElement = originalDescriptor.source)
+    return IrFunctionImpl(
+        startOffset, endOffset, origin, IrSimpleFunctionSymbolImpl(descriptor),
+        name, visibility, modality, context.irBuiltIns.anyNType,
+        isInline, isExternal, isTailrec, isSuspend
+    ).also {
+        descriptor.bind(it)
+        it.parent = parent
+        it.copyTypeParametersFrom(this)
+
+        it.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(it)
+        it.extensionReceiverParameter = extensionReceiverParameter?.copyTo(it)
+
+        valueParameters.mapTo(it.valueParameters) { p -> p.copyTo(it) }
+        it.addValueParameter(
+            SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, context.getTopLevelClass(
+                context.state.languageVersionSettings.coroutinesPackageFqName().child(
+                    Name.identifier("Continuation")
+                )
+            ).createType(false, listOf(makeTypeProjection(returnType, Variance.INVARIANT)))
+        )
+        val valueParametersMapping = explicitParameters.zip(it.explicitParameters).toMap()
+        it.body = body?.deepCopyWithSymbols(this)
+        it.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitGetValue(expression: IrGetValue): IrGetValue =
+                valueParametersMapping[expression.symbol.owner]?.let { newParam ->
+                    expression.run { IrGetValueImpl(startOffset, endOffset, type, newParam.symbol, origin) }
+                } ?: expression
+
+            override fun visitCall(expression: IrCall): IrExpression {
+                if (!expression.isSuspend) return super.visitCall(expression)
+                return super.visitCall(expression.createView(context, it))
+            }
+        })
+    }
+}
+
+internal fun IrCall.createView(context: JvmBackendContext, caller: IrFunction): IrCall {
+    if (!isSuspend) return this
+    val view = (symbol.owner as IrSimpleFunction).getOrCreateSuspendFunctionViewIfNeeded(context)
+    if (view == symbol.owner) return this
+    return IrCallImpl(startOffset, endOffset, view.returnType, view.symbol).also {
+        it.copyTypeArgumentsFrom(this)
+        it.dispatchReceiver = dispatchReceiver
+        for (i in 0 until valueArgumentsCount) {
+            it.putValueArgument(i, getValueArgument(i))
+        }
+        val continuationParameter =
+            if (caller.isInvokeSuspendOfLambda(context) || caller.isInvokeSuspendOfContinuation(context)) caller.dispatchReceiverParameter!!
+            else caller.valueParameters.last()
+        val continuation = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, continuationParameter.symbol)
+        it.putValueArgument(valueArgumentsCount, continuation)
+    }
+}
