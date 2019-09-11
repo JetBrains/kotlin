@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -63,7 +64,7 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
         val argumentType = valueArguments.firstOrNull()?.getArgumentExpression()?.getType(context)
         if (argumentType != null && !KotlinBuiltIns.isStringOrNullableString(argumentType)) return false
         if (element.isUsedAsExpression(context)) return false
-        val fqName = call.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe?.parent()
+        val fqName = call.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe?.parentOrNull()
         return fqName == FqName("kotlin.$calleeText") || fqName == FqName("java.lang.$calleeText")
     }
 
