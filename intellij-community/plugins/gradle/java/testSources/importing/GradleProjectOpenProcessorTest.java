@@ -193,7 +193,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
       assertTrue(GradleSettings.getInstance(fooProject).getStoreProjectFilesExternally());
       GradleProjectSettings fooSettings = GradleSettings.getInstance(fooProject).getLinkedProjectSettings(foo.getPath());
       assertTrue(fooSettings.isResolveModulePerSourceSet());
-      assertFalse(fooSettings.isResolveExternalAnnotations());
+      assertTrue(fooSettings.isResolveExternalAnnotations());
       assertTrue(fooSettings.getDelegatedBuild());
       assertEquals(TestRunner.GRADLE, fooSettings.getTestRunner());
       assertFalse(fooSettings.isUseAutoImport());
