@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.documentation;
 
 import com.intellij.ide.IdeTooltipManager;
@@ -42,7 +42,7 @@ import java.util.Map;
  *
  * @author Denis Zhdanov
  */
-public class QuickDocOnMouseOverManager {
+public final class QuickDocOnMouseOverManager {
   private static final Logger LOG = Logger.getInstance(QuickDocOnMouseOverManager.class);
 
   @NotNull private final MyEditorMouseListener     myMouseListener       = new MyEditorMouseListener();
@@ -63,15 +63,16 @@ public class QuickDocOnMouseOverManager {
 
   private MyShowQuickDocRequest myCurrentRequest; // accessed only in EDT
 
-  public QuickDocOnMouseOverManager(@NotNull Application application) {
-    myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, application);
+  public QuickDocOnMouseOverManager() {
+    Application app = ApplicationManager.getApplication();
+    myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, app);
 
     EditorFactory factory = EditorFactory.getInstance();
     if (factory != null) {
-      factory.addEditorFactoryListener(new MyEditorFactoryListener(), application);
+      factory.addEditorFactoryListener(new MyEditorFactoryListener(), app);
     }
 
-    ApplicationManager.getApplication().getMessageBus().connect().subscribe(
+    app.getMessageBus().connect().subscribe(
       ApplicationActivationListener.TOPIC, new ApplicationActivationListener() {
         @Override
         public void applicationActivated(@NotNull IdeFrame ideFrame) {

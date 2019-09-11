@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.highlighting;
 
 import com.intellij.injected.editor.EditorWindow;
@@ -37,10 +36,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-public class HighlightManagerImpl extends HighlightManager {
+public final class HighlightManagerImpl extends HighlightManager {
   private final Project myProject;
 
-  public HighlightManagerImpl(Project project, EditorFactory editorFactory) {
+  public HighlightManagerImpl(Project project) {
     myProject = project;
     ApplicationManager.getApplication().getMessageBus().connect(myProject).subscribe(AnActionListener.TOPIC, new MyAnActionListener());
 
@@ -68,7 +67,7 @@ public class HighlightManagerImpl extends HighlightManager {
         }
       }
     };
-    editorFactory.getEventMulticaster().addDocumentListener(documentListener, myProject);
+    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(documentListener, myProject);
   }
 
   @Nullable
@@ -302,7 +301,7 @@ public class HighlightManagerImpl extends HighlightManager {
   private final Key<Map<RangeHighlighter, HighlightFlags>> HIGHLIGHT_INFO_MAP_KEY = Key.create("HIGHLIGHT_INFO_MAP_KEY");
 
   private static class HighlightFlags {
-    @NotNull 
+    @NotNull
     final Editor editor;
     @HideFlags final int flags;
 

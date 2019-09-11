@@ -48,9 +48,9 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
     return (InjectedLanguageManagerImpl)InjectedLanguageManager.getInstance(project);
   }
 
-  public InjectedLanguageManagerImpl(Project project, DumbService dumbService) {
+  public InjectedLanguageManagerImpl(Project project) {
     myProject = project;
-    myDumbService = dumbService;
+    myDumbService = DumbService.getInstance(myProject);
     myDocManager = PsiDocumentManager.getInstance(project);
 
     MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointListener<MultiHostInjector>() {
