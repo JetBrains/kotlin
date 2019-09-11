@@ -73,7 +73,17 @@ fun resolveArgumentExpression(
             acceptLambdaAtoms,
             typeProvider
         )
-        is FirBlock -> resolveBlockArgument(csBuilder, argument, expectedType, expectedTypeRef, sink, isReceiver, isSafeCall, acceptLambdaAtoms, typeProvider)
+        is FirBlock -> resolveBlockArgument(
+            csBuilder,
+            argument,
+            expectedType,
+            expectedTypeRef,
+            sink,
+            isReceiver,
+            isSafeCall,
+            acceptLambdaAtoms,
+            typeProvider
+        )
         else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
     }
 }
@@ -103,7 +113,17 @@ private fun resolveBlockArgument(
         return
     }
     for (argument in returnArguments) {
-        resolveArgumentExpression(csBuilder, argument, expectedType, expectedTypeRef, sink, isReceiver, isSafeCall, acceptLambdaAtoms, typeProvider)
+        resolveArgumentExpression(
+            csBuilder,
+            argument,
+            expectedType,
+            expectedTypeRef,
+            sink,
+            isReceiver,
+            isSafeCall,
+            acceptLambdaAtoms,
+            typeProvider
+        )
     }
 }
 
@@ -116,7 +136,15 @@ fun resolveSubCallArgument(
     isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
-    val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(csBuilder, argument as FirExpression, expectedType, sink, isReceiver, isSafeCall, typeProvider)
+    val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(
+        csBuilder,
+        argument as FirExpression,
+        expectedType,
+        sink,
+        isReceiver,
+        isSafeCall,
+        typeProvider
+    )
     val type = sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).coneTypeUnsafe<ConeKotlinType>()
     val argumentType = candidate.substitutor.substituteOrSelf(type)
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isSafeCall)
