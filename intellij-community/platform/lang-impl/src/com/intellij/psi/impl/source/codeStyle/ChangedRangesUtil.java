@@ -10,6 +10,8 @@ import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 class ChangedRangesUtil {
@@ -20,12 +22,18 @@ class ChangedRangesUtil {
   static List<TextRange> processChangedRanges(@NotNull PsiFile file,
                                               @NotNull ChangedRangesInfo changedRangesInfo) {
     Document document = file.getViewProvider().getDocument();
-    List<TextRange> changedRanges = optimizedChangedRanges(changedRangesInfo.allChangedRanges);
+    List<TextRange> result = new ArrayList<>();
     if (document != null) {
       FormattingRangesExtender extender = new FormattingRangesExtenderImpl(document, file);
-      changedRanges = extender.getExtendedRanges(changedRanges);
+      for (TextRange range : changedRangesInfo.allChangedRanges) {
+        List<TextRange> extended = extender.getExtendedRanges(Collections.singletonList(range));
+        result.addAll(extended);
+      }
     }
-    return changedRanges;
+    else {
+      result.addAll(changedRangesInfo.allChangedRanges);
+    }
+    return optimizedChangedRanges(result);
   }
 
   private static List<TextRange> optimizedChangedRanges(@NotNull List<TextRange> allChangedRanges) {
@@ -36,7 +44,7 @@ class ChangedRangesUtil {
 
     TextRange prev = sorted.get(0);
     for (TextRange next : sorted) {
-      if (next.getStartOffset() <= prev.getEndOffset() + 5) {
+      if (next.getStartOffset() <= prev.getEndOffset()) {
         int newEndOffset = Math.max(prev.getEndOffset(), next.getEndOffset());
         prev = new TextRange(prev.getStartOffset(), newEndOffset);
       }
