@@ -318,9 +318,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         AnalyzerWithCompilerReport.Companion.reportDiagnostics(translationResult.getDiagnostics(), messageCollector);
 
-        if (!(translationResult instanceof TranslationResult.Success)) return ExitCode.COMPILATION_ERROR;
+        if (translationResult instanceof TranslationResult.Fail) return ExitCode.COMPILATION_ERROR;
 
-        TranslationResult.Success successResult = (TranslationResult.Success) translationResult;
+        TranslationResult.SuccessBase successResult = (TranslationResult.SuccessBase) translationResult;
         OutputFileCollection outputFiles = successResult.getOutputFiles(outputFile, outputPrefixFile, outputPostfixFile);
 
         if (outputFile.isDirectory()) {
@@ -434,6 +434,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             List<String> friendPaths = ArraysKt.filterNot(arguments.getFriendModules().split(File.pathSeparator), String::isEmpty);
             configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths);
         }
+
+        configuration.put(JSConfigurationKeys.METADATA_ONLY, arguments.getMetadataOnly());
 
         String moduleKindName = arguments.getModuleKind();
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;

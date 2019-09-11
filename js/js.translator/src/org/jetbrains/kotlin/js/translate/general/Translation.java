@@ -324,7 +324,7 @@ public final class Translation {
 
         Map<String, TranslationUnit> inlineFunctionTagMap = new HashMap<>();
 
-        Map<TranslationUnit.SourceFile, SourceFileTranslationResult> translatedSourceFiles = new LinkedHashMap<>();
+        Map<KtFile, SourceFileTranslationResult> translatedSourceFiles = new LinkedHashMap<>();
 
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
@@ -344,7 +344,7 @@ public final class Translation {
 
                 fragment.setTests(mayBeGenerateTests(context, file, fileMemberScope));
                 fragment.setMainFunction(maybeGenerateCallToMain(context, config, moduleDescriptor, fileMemberScope, mainCallParameters));
-                translatedSourceFiles.put(sourceFileUnit, new SourceFileTranslationResult(fragment, staticContext.getInlineFunctionTags(), fileMemberScope));
+                translatedSourceFiles.put(file, new SourceFileTranslationResult(fragment, staticContext.getInlineFunctionTags(), fileMemberScope));
             }
             else if (unit instanceof TranslationUnit.BinaryAst) {
                 byte[] inlineDataArray = ((TranslationUnit.BinaryAst) unit).getInlineData();

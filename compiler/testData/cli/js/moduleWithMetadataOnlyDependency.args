@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/separateModules/sepModule1.kt
+-meta-info
+-Xmetadata-only
+-output
+$TEMP_DIR$/m1/m1.js
+---
+$TESTDATA_DIR$/separateModules/sepModule2.kt
+-libraries
+$TEMP_DIR$/m1
+-output
+$TEMP_DIR$/m2/m2.js

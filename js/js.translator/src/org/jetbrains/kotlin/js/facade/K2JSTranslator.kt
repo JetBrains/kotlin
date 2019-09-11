@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.coroutine.transformCoroutines
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNamesInAllScopes
-import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
+import org.jetbrains.kotlin.js.translate.general.SourceFileTranslationResult
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -101,7 +101,47 @@ class K2JSTranslator @JvmOverloads constructor(
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        return translate(reporter, files, units, mainCallParameters, actualAnalysisResult, packageMetadata)
+        if (config.configuration.getBoolean(JSConfigurationKeys.METADATA_ONLY)) {
+            return translateWithoutCode(files, actualAnalysisResult, packageMetadata)
+        } else {
+            return translate(reporter, files, units, mainCallParameters, actualAnalysisResult, packageMetadata)
+        }
+    }
+
+    private fun translateWithoutCode(
+        files: List<KtFile>,
+        analysisResult: JsAnalysisResult,
+        packageMetadata: MutableMap<FqName, ByteArray>
+    ): TranslationResult {
+        val bindingTrace = analysisResult.bindingTrace
+        TopDownAnalyzerFacadeForJS.checkForErrors(files, bindingTrace.bindingContext)
+        val moduleDescriptor = analysisResult.moduleDescriptor
+        val diagnostics = bindingTrace.bindingContext.diagnostics
+        val pathResolver = SourceFilePathResolver.create(config)
+        val bindingContext = bindingTrace.bindingContext
+
+        checkCanceled()
+
+        updateMetadataMap(bindingTrace.bindingContext, moduleDescriptor, packageMetadata)
+        trySaveIncrementalData(files, pathResolver, bindingTrace, moduleDescriptor) { sourceFile ->
+            TranslationData(sourceFile.declarations.map {
+                BindingUtils.getDescriptorForElement(bindingContext, it)
+            })
+        }
+
+        return if (hasError(diagnostics)) {
+            TranslationResult.Fail(diagnostics)
+        } else {
+            TranslationResult.SuccessNoCode(
+                config,
+                files,
+                diagnostics,
+                emptyList(),
+                moduleDescriptor,
+                bindingTrace.bindingContext,
+                packageMetadata
+            )
+        }
     }
 
     @Throws(TranslationException::class)
@@ -142,7 +182,9 @@ class K2JSTranslator @JvmOverloads constructor(
         checkCanceled()
 
         updateMetadataMap(bindingTrace.bindingContext, moduleDescriptor, packageMetadata)
-        trySaveIncrementalData(translationResult, pathResolver, bindingTrace, moduleDescriptor)
+        trySaveIncrementalData(translationResult.translatedSourceFiles.keys, pathResolver, bindingTrace, moduleDescriptor) { sourceFile ->
+            toTranslationData(translationResult.translatedSourceFiles[sourceFile]!!)
+        }
         checkCanceled()
 
         // Global phases
@@ -177,7 +219,8 @@ class K2JSTranslator @JvmOverloads constructor(
             bindingContext,
             moduleDescriptor,
             config.configuration.languageVersionSettings,
-            config.configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE)
+            config.configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE
+        )
 
         for ((packageName, metadata) in additionalMetadata) {
             incrementalResults?.processPackageMetadata(packageName.asString(), metadata)
@@ -207,11 +250,33 @@ class K2JSTranslator @JvmOverloads constructor(
         )
     }
 
+    private class TranslationData(
+        val memberScope: Collection<DeclarationDescriptor>,
+        val binaryAst: ByteArray? = null,
+        val inlineData: ByteArray? = null
+    )
+
+    private fun JsAstSerializer.toTranslationData(fileTranslationResult: SourceFileTranslationResult): TranslationData {
+        val fragment = fileTranslationResult.fragment
+        val output = ByteArrayOutputStream()
+        serialize(fragment, output)
+        val binaryAst = output.toByteArray()
+
+        val inlineData = serializeInlineData(fileTranslationResult.inlineFunctionTags)
+
+        return TranslationData(
+            memberScope = fileTranslationResult.memberScope,
+            binaryAst = binaryAst,
+            inlineData = inlineData
+        )
+    }
+
     private fun trySaveIncrementalData(
-        translationResult: AstGenerationResult,
+        sourceFiles: Iterable<KtFile>,
         pathResolver: SourceFilePathResolver,
         bindingTrace: BindingTrace,
-        moduleDescriptor: ModuleDescriptor
+        moduleDescriptor: ModuleDescriptor,
+        translationData: JsAstSerializer.(KtFile) -> TranslationData
     ) {
         // TODO Maybe switch validation on for recompile
         if (incrementalResults == null && !shouldValidateJsAst) return
@@ -224,19 +289,19 @@ class K2JSTranslator @JvmOverloads constructor(
             }
         }
 
-        for ((sourceUnit, fileTranslationResult) in translationResult.translatedSourceFiles) {
-            val file = sourceUnit.file
-            val fragment = fileTranslationResult.fragment
-            val output = ByteArrayOutputStream()
-            serializer.serialize(fragment, output)
-            val binaryAst = output.toByteArray()
+        for (file in sourceFiles) {
+            val fileTranslationData = serializer.translationData(file)
 
-            val packagePart = serializeScope(bindingTrace.bindingContext, moduleDescriptor, file.packageFqName, fileTranslationResult.memberScope)
-
-            val inlineData = serializeInlineData(fileTranslationResult.inlineFunctionTags)
+            val packagePart =
+                serializeScope(bindingTrace.bindingContext, moduleDescriptor, file.packageFqName, fileTranslationData.memberScope)
 
             val ioFile = VfsUtilCore.virtualToIoFile(file.virtualFile)
-            incrementalResults?.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst, inlineData)
+            incrementalResults?.processPackagePart(
+                ioFile,
+                packagePart.toByteArray(),
+                fileTranslationData.binaryAst ?: ByteArray(0),
+                fileTranslationData.inlineData ?: ByteArray(0)
+            )
         }
 
         val settings = config.configuration.languageVersionSettings

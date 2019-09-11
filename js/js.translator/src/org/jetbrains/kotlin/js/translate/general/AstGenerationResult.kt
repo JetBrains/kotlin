@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.protobuf.CodedInputStream
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
 import java.io.ByteArrayInputStream
@@ -30,7 +31,7 @@ import java.util.HashSet
 
 class AstGenerationResult(
     val units: Collection<TranslationUnit>,
-    val translatedSourceFiles: Map<TranslationUnit.SourceFile, SourceFileTranslationResult>,
+    val translatedSourceFiles: Map<KtFile, SourceFileTranslationResult>,
     val inlineFunctionTagMap: Map<String, TranslationUnit>,
     moduleDescriptor: ModuleDescriptor,
     config: JsConfig
@@ -47,7 +48,7 @@ class AstGenerationResult(
 
     fun getTranslationResult(unit: TranslationUnit): FileTranslationResult =
         when (unit) {
-            is TranslationUnit.SourceFile -> translatedSourceFiles[unit]!!
+            is TranslationUnit.SourceFile -> translatedSourceFiles[unit.file]!!
             is TranslationUnit.BinaryAst -> cache.getOrPut(unit) {
                 // TODO Don't deserialize header twice
                 val inlineData = JsAstProtoBuf.InlineData.parseFrom(CodedInputStream.newInstance(unit.inlineData))
