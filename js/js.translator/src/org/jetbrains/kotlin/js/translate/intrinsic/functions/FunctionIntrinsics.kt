@@ -39,7 +39,8 @@ class FunctionIntrinsics {
         AsDynamicFIF,
         CoroutineContextFIF,
         SuspendCoroutineUninterceptedOrReturnFIF,
-        InterceptedFIF
+        InterceptedFIF,
+        TypeOfFIF
     )
 
     fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.KTypeConstructor
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.psi.*
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.DFS
 
@@ -126,7 +128,9 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
 }
 
 fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression =
-    getReferenceToJsClass(type.constructor.declarationDescriptor, context)
+    getReferenceToJsClass(type.constructor.declarationDescriptor, context).also {
+        it.kType = KTypeConstructor(context).createKType(type as SimpleType)
+    }
 
 fun getReferenceToJsClass(classifierDescriptor: ClassifierDescriptor?, context: TranslationContext): JsExpression {
     return when (classifierDescriptor) {

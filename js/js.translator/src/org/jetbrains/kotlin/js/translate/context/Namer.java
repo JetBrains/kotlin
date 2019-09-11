@@ -75,6 +75,15 @@ public final class Namer {
     public static final String GET_KCLASS = "getKClass";
     public static final String GET_KCLASS_FROM_EXPRESSION = "getKClassFromExpression";
 
+    public static final String CREATE_KTYPE = "createKType";
+    public static final String MARK_KTYPE_NULLABLE = "markKTypeNullable";
+    public static final String CREATE_KTYPE_PARAMETER = "createKTypeParameter";
+    public static final String CREATE_REIFIED_KTYPE_PARAMETER = "getReifiedTypeParameterKType";
+    public static final String GET_START_KTYPE_PROJECTION = "getStarKTypeProjection";
+    public static final String CREATE_COVARIANT_KTYPE_PROJECTION = "createCovariantKTypeProjection";
+    public static final String CREATE_INVARIANT_KTYPE_PROJECTION = "createInvariantKTypeProjection";
+    public static final String CREATE_CONTRAVARIANT_KTYPE_PROJECTION = "createContravariantKTypeProjection";
+
     public static final String CALLEE_NAME = "$fun";
 
     public static final String CALL_FUNCTION = "call";
