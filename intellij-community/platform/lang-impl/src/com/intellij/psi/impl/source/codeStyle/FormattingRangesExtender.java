@@ -38,7 +38,7 @@ class FormattingRangesExtender {
     TextRange validRange = ensureRangeIsValid(originalRange);
     ASTNode containingNode = CodeFormatterFacade.findContainingNode(myFile, expandToLine(validRange));
     if (containingNode != null) {
-      return narrowToMaxExtensionLines(originalRange, getRangeWithSiblings(containingNode));
+      return narrowToMaxExtensionLines(validRange, getRangeWithSiblings(containingNode));
     }
     return validRange;
   }
@@ -46,8 +46,8 @@ class FormattingRangesExtender {
   private TextRange narrowToMaxExtensionLines(@NotNull TextRange original, @NotNull TextRange result) {
     int startLine = Math.max(myDocument.getLineNumber(result.getStartOffset()),
                              myDocument.getLineNumber(original.getStartOffset()) - MAX_EXTENSION_LINES);
-    int endLine = Math.min(myDocument.getLineNumber(result.getEndOffset()),
-                           myDocument.getLineNumber(original.getEndOffset()) + MAX_EXTENSION_LINES);
+    int endLine = Math.min(myDocument.getLineNumber(result.getEndOffset() - 1),
+                           myDocument.getLineNumber(original.getEndOffset() - 1) + MAX_EXTENSION_LINES);
     int rangeStart = Math.max(result.getStartOffset(), myDocument.getLineStartOffset(startLine));
     int rangeEnd = Math.min(result.getEndOffset(), myDocument.getLineEndOffset(endLine));
     return new TextRange(rangeStart, rangeEnd);
