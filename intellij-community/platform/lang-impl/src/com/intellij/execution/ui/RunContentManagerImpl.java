@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.ui;
 
 import com.intellij.execution.*;
@@ -42,7 +42,7 @@ import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class RunContentManagerImpl implements RunContentManager, Disposable {
+public final class RunContentManagerImpl implements RunContentManager, Disposable {
   public static final Key<Boolean> ALWAYS_USE_DEFAULT_STOPPING_BEHAVIOUR_KEY = Key.create("ALWAYS_USE_DEFAULT_STOPPING_BEHAVIOUR_KEY");
   @ApiStatus.Internal
   public static final Key<RunnerAndConfigurationSettings> TEMPORARY_CONFIGURATION_KEY = Key.create("TemporaryConfiguration");
@@ -55,10 +55,10 @@ public class RunContentManagerImpl implements RunContentManager, Disposable {
   private final Map<String, Icon> myToolwindowIdToBaseIconMap = new THashMap<>();
   private final ConcurrentLinkedDeque<String> myToolwindowIdZBuffer = new ConcurrentLinkedDeque<>();
 
-  public RunContentManagerImpl(@NotNull Project project, @NotNull DockManager dockManager) {
+  public RunContentManagerImpl(@NotNull Project project) {
     myProject = project;
     DockableGridContainerFactory containerFactory = new DockableGridContainerFactory();
-    dockManager.register(DockableGridContainerFactory.TYPE, containerFactory);
+    DockManager.getInstance(project).register(DockableGridContainerFactory.TYPE, containerFactory);
     Disposer.register(myProject, containerFactory);
 
     AppUIUtil.invokeOnEdt(() -> init(), myProject.getDisposed());

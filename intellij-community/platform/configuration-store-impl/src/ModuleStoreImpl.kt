@@ -12,7 +12,9 @@ import java.nio.file.Paths
 
 private val MODULE_FILE_STORAGE_ANNOTATION = FileStorageAnnotation(StoragePathMacros.MODULE_FILE, false)
 
-private open class ModuleStoreImpl(module: Module, private val pathMacroManager: PathMacroManager) : ModuleStoreBase() {
+private open class ModuleStoreImpl(module: Module) : ModuleStoreBase() {
+  private val pathMacroManager = PathMacroManager.getInstance(module)
+
   override val project = module.project
 
   override val storageManager = ModuleStateStorageManager(TrackingPathMacroSubstitutorImpl(pathMacroManager), module)
@@ -32,7 +34,7 @@ private open class ModuleStoreImpl(module: Module, private val pathMacroManager:
   }
 }
 
-private class TestModuleStore(module: Module, pathMacroManager: PathMacroManager) : ModuleStoreImpl(module, pathMacroManager) {
+private class TestModuleStore(module: Module) : ModuleStoreImpl(module) {
   private var moduleComponentLoadPolicy: StateLoadPolicy? = null
 
   override fun setPath(path: String, isNew: Boolean) {

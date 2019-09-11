@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.facet.impl;
 
@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,16 +21,16 @@ import java.util.Map;
 /**
  * @author nik
  */
-public class ProjectWideFacetListenersRegistryImpl extends ProjectWideFacetListenersRegistry {
+public final class ProjectWideFacetListenersRegistryImpl extends ProjectWideFacetListenersRegistry {
   private final Map<FacetTypeId, EventDispatcher<ProjectWideFacetListener>> myDispatchers = new HashMap<>();
   private final Map<FacetTypeId, Map<Facet, Boolean>> myFacetsByType = new HashMap<>();
   private final Map<Module, MessageBusConnection> myModule2Connection = new HashMap<>();
   private final FacetManagerAdapter myFacetListener;
   private final EventDispatcher<ProjectWideFacetListener> myAllFacetsListener = EventDispatcher.create(ProjectWideFacetListener.class);
 
-  public ProjectWideFacetListenersRegistryImpl(MessageBus messageBus, ModuleManager moduleManager) {
+  public ProjectWideFacetListenersRegistryImpl(@NotNull Project project) {
     myFacetListener = new MyFacetManagerAdapter();
-    messageBus.connect().subscribe(ProjectTopics.MODULES, new ModuleListener() {
+    project.getMessageBus().connect().subscribe(ProjectTopics.MODULES, new ModuleListener() {
       @Override
       public void moduleAdded(@NotNull Project project, @NotNull Module module) {
         onModuleAdded(module);
@@ -51,7 +50,7 @@ public class ProjectWideFacetListenersRegistryImpl extends ProjectWideFacetListe
       }
     });
 
-    for (Module module : moduleManager.getModules()) {
+    for (Module module : ModuleManager.getInstance(project).getModules()) {
       onModuleAdded(module);
     }
   }

@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.psi.impl.include;
 
 import com.intellij.openapi.fileTypes.FileTypes;
@@ -33,12 +32,10 @@ import java.util.*;
 /**
  * @author Dmitry Avdeev
  */
-public class FileIncludeManagerImpl extends FileIncludeManager {
-
+public final class FileIncludeManagerImpl extends FileIncludeManager {
   private final Project myProject;
   private final PsiManager myPsiManager;
   private final PsiFileFactory myPsiFileFactory;
-  private final CachedValuesManager myCachedValuesManager;
 
   private final IncludeCacheHolder myIncludedHolder = new IncludeCacheHolder("compile time includes", "runtime includes") {
     @Override
@@ -119,11 +116,10 @@ public class FileIncludeManagerImpl extends FileIncludeManager {
     return names;
   }
 
-  public FileIncludeManagerImpl(Project project, PsiManager psiManager, PsiFileFactory psiFileFactory,
-                                CachedValuesManager cachedValuesManager) {
+  public FileIncludeManagerImpl(Project project) {
     myProject = project;
-    myPsiManager = psiManager;
-    myPsiFileFactory = psiFileFactory;
+    myPsiManager = PsiManager.getInstance(project);
+    myPsiFileFactory = PsiFileFactory.getInstance(myProject);
 
     List<FileIncludeProvider> providers = FileIncludeProvider.EP_NAME.getExtensionList();
     myProviderMap = new HashMap<>(providers.size());
@@ -131,7 +127,6 @@ public class FileIncludeManagerImpl extends FileIncludeManager {
       FileIncludeProvider old = myProviderMap.put(provider.getId(), provider);
       assert old == null;
     }
-    myCachedValuesManager = cachedValuesManager;
   }
 
   @Override
@@ -230,9 +225,10 @@ public class FileIncludeManagerImpl extends FileIncludeManager {
         return VirtualFile.EMPTY_ARRAY;
       }
       if (compileTimeOnly) {
-        return myCachedValuesManager.getParameterizedCachedValue(psiFile, COMPILE_TIME_KEY, COMPILE_TIME_PROVIDER, false, psiFile);
+        return CachedValuesManager.getManager(myProject)
+          .getParameterizedCachedValue(psiFile, COMPILE_TIME_KEY, COMPILE_TIME_PROVIDER, false, psiFile);
       }
-      return myCachedValuesManager.getParameterizedCachedValue(psiFile, RUNTIME_KEY, RUNTIME_PROVIDER, false, psiFile);
+      return CachedValuesManager.getManager(myProject).getParameterizedCachedValue(psiFile, RUNTIME_KEY, RUNTIME_PROVIDER, false, psiFile);
     }
 
     protected abstract VirtualFile[] computeFiles(PsiFile file, boolean compileTimeOnly);

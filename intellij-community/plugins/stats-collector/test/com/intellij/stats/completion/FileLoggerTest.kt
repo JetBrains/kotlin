@@ -1,11 +1,13 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.CaretModel
 import com.intellij.openapi.editor.Editor
 import com.intellij.stats.storage.FilePathProvider
 import com.intellij.testFramework.HeavyPlatformTestCase
+import com.intellij.testFramework.replaceService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.ArgumentMatchers
@@ -53,7 +55,10 @@ class FileLoggerTest : HeavyPlatformTestCase() {
       `when`(installationId()).thenReturn(UUID.randomUUID().toString())
     }
 
-    val loggerProvider = CompletionFileLoggerProvider(pathProvider, uidProvider)
+    ApplicationManager.getApplication().replaceService(FilePathProvider::class.java, pathProvider, testRootDisposable)
+    ApplicationManager.getApplication().replaceService(InstallationIdProvider::class.java, uidProvider, testRootDisposable)
+
+    val loggerProvider = CompletionFileLoggerProvider()
 
     val logger = loggerProvider.newCompletionLogger()
 

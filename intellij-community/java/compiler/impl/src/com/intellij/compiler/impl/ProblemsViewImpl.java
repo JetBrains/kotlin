@@ -1,6 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.impl;
 
 import com.intellij.compiler.ProblemsView;
@@ -38,7 +36,7 @@ public class ProblemsViewImpl extends ProblemsView{
   private final ProblemsViewPanel myPanel;
   private final ExecutorService myViewUpdater = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("ProblemsView Pool");
 
-  public ProblemsViewImpl(final Project project, final ToolWindowManager wm) {
+  public ProblemsViewImpl(final Project project) {
     super(project);
     myPanel = new ProblemsViewPanel(project);
     Disposer.register(project, new Disposable() {
@@ -51,7 +49,7 @@ public class ProblemsViewImpl extends ProblemsView{
       if (project.isDisposed()) {
         return;
       }
-      final ToolWindow tw = wm.registerToolWindow(PROBLEMS_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+      final ToolWindow tw = ToolWindowManager.getInstance(project).registerToolWindow(PROBLEMS_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
       final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
       content.setHelpId("reference.problems.tool.window");
       // todo: setup content?
@@ -82,7 +80,7 @@ public class ProblemsViewImpl extends ProblemsView{
         if (scope != null) {
           final VirtualFile file = ((GroupingElement)element).getFile();
           if (file != null && !scope.belongs(file.getUrl())) {
-            continue; 
+            continue;
           }
         }
         if (!currentSessionId.equals(element.getData())) {

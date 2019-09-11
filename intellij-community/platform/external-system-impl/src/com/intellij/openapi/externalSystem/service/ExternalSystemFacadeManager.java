@@ -2,6 +2,8 @@
 package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
@@ -38,11 +40,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * Entry point to work with remote {@link RemoteExternalSystemFacade}.
  * <p/>
  * Thread-safe.
- *
- * @author Denis Zhdanov
  */
-public class ExternalSystemFacadeManager {
-
+public final class ExternalSystemFacadeManager {
   private static final int REMOTE_FAIL_RECOVERY_ATTEMPTS_NUMBER = 3;
 
   private final ConcurrentMap<IntegrationKey, RemoteExternalSystemFacade> myFacadeWrappers = ContainerUtil.newConcurrentMap();
@@ -56,13 +55,12 @@ public class ExternalSystemFacadeManager {
   @NotNull private final RemoteExternalSystemCommunicationManager        myRemoteCommunicationManager;
   @NotNull private final InProcessExternalSystemCommunicationManager     myInProcessCommunicationManager;
 
-  public ExternalSystemFacadeManager(@NotNull ExternalSystemProgressNotificationManager notificationManager,
-                                     @NotNull RemoteExternalSystemCommunicationManager remoteCommunicationManager,
-                                     @NotNull InProcessExternalSystemCommunicationManager inProcessCommunicationManager)
-  {
-    myProgressManager = (RemoteExternalSystemProgressNotificationManager)notificationManager;
-    myRemoteCommunicationManager = remoteCommunicationManager;
-    myInProcessCommunicationManager = inProcessCommunicationManager;
+  public ExternalSystemFacadeManager() {
+    Application app = ApplicationManager.getApplication();
+
+    myProgressManager = (RemoteExternalSystemProgressNotificationManager)app.getService(ExternalSystemProgressNotificationManager.class);
+    myRemoteCommunicationManager = app.getService(RemoteExternalSystemCommunicationManager.class);
+    myInProcessCommunicationManager = app.getService(InProcessExternalSystemCommunicationManager.class);
   }
 
   @NotNull

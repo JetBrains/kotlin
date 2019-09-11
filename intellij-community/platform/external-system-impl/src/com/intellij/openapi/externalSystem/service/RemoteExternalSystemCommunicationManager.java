@@ -17,6 +17,7 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.rmi.RemoteProcessSupport;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
@@ -59,11 +60,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * @author Denis Zhdanov
- */
-public class RemoteExternalSystemCommunicationManager implements ExternalSystemCommunicationManager, Disposable {
-
+public final class RemoteExternalSystemCommunicationManager implements ExternalSystemCommunicationManager, Disposable {
   private static final Logger LOG = Logger.getInstance(RemoteExternalSystemCommunicationManager.class);
 
   private static final String MAIN_CLASS_NAME = RemoteExternalSystemFacadeImpl.class.getName();
@@ -76,8 +73,8 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
   @NotNull private final ExternalSystemProgressNotificationManagerImpl                    myProgressManager;
   @NotNull private final RemoteProcessSupport<Object, RemoteExternalSystemFacade, String> mySupport;
 
-  public RemoteExternalSystemCommunicationManager(@NotNull ExternalSystemProgressNotificationManager notificationManager) {
-    myProgressManager = (ExternalSystemProgressNotificationManagerImpl)notificationManager;
+  public RemoteExternalSystemCommunicationManager() {
+    myProgressManager = (ExternalSystemProgressNotificationManagerImpl)ApplicationManager.getApplication().getService(ExternalSystemProgressNotificationManager.class);
     mySupport = new RemoteProcessSupport<Object, RemoteExternalSystemFacade, String>(RemoteExternalSystemFacade.class) {
       @Override
       protected void fireModificationCountChanged() {

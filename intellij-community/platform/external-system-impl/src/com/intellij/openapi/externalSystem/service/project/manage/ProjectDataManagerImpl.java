@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
@@ -35,7 +36,6 @@ import java.util.function.Supplier;
  * @author Denis Zhdanov
  */
 public class ProjectDataManagerImpl implements ProjectDataManager {
-
   private static final Logger LOG = Logger.getInstance(ProjectDataManagerImpl.class);
 
   @NotNull private final NotNullLazyValue<Map<Key<?>, List<ProjectDataService<?, ?>>>> myServices;
@@ -56,10 +56,12 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
   }
 
   @TestOnly
+  @NonInjectable
   ProjectDataManagerImpl(ProjectDataService... dataServices) {
     this(() -> dataServices);
   }
 
+  @NonInjectable
   private ProjectDataManagerImpl(Supplier<ProjectDataService[]> supplier) {
     myServices = new NotNullLazyValue<Map<Key<?>, List<ProjectDataService<?, ?>>>>() {
       @NotNull
