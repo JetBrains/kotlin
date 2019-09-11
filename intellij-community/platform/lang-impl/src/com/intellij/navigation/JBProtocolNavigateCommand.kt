@@ -88,7 +88,7 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
     private const val PATH_GROUP = "path"
     private const val LINE_GROUP = "line"
     private const val COLUMN_GROUP = "column"
-    private val PATH_WITH_LOCATION: Pattern = Pattern.compile("(?<$PATH_GROUP>[^:]*)(?<$LINE_GROUP>:[\\d]+)?(?<$COLUMN_GROUP>:[\\d]+)?")
+    private val PATH_WITH_LOCATION: Pattern = Pattern.compile("(?<$PATH_GROUP>[^:]*)(:(?<$LINE_GROUP>[\\d]+))?(:(?<$COLUMN_GROUP>[\\d]+))?")
 
     private fun findAndNavigateToReference(project: Project, parameters: Map<String, String>) {
       parameters.filter { it.key.startsWith(FQN_KEY) }.forEach {
