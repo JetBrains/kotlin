@@ -158,6 +158,7 @@ public class ExtractIncludeDialog extends DialogWrapper {
     super.doOKAction();
   }
 
+  @Deprecated
   @ApiStatus.ScheduledForRemoval(inVersion = "2019.1")
   protected String getHelpTopic() {
     return ExtractIncludeFileBase.HELP_ID;
