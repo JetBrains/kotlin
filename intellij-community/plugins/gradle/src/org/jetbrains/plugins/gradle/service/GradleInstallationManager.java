@@ -14,6 +14,8 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -37,6 +39,10 @@ import org.jetbrains.plugins.gradle.util.GradleUtil;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -226,7 +232,47 @@ public class GradleInstallationManager {
   @Nullable
   public File getAutodetectedGradleHome() {
     File result = getGradleHomeFromPath();
-    return result == null ? getGradleHomeFromEnvProperty() : result;
+    if (result != null) return result;
+
+    result = getGradleHomeFromEnvProperty();
+    if (result != null) return result;
+
+    if (SystemInfo.isMac) {
+      return getGradleHomeFromBrew();
+    }
+    return null;
+  }
+
+  @Nullable
+  private File getGradleHomeFromBrew() {
+    Path basePath = Paths.get("/usr/local/Cellar/gradle/");
+    try {
+      try (DirectoryStream<Path> ds = Files.newDirectoryStream(basePath)) {
+        Path bestPath = null;
+        Version highestVersion = null;
+        for (Path path : ds) {
+          String fileName = path.getFileName().toString();
+          try {
+            Version version = Version.parseVersion(fileName);
+            if (version == null) continue;
+            if (highestVersion == null || version.compareTo(highestVersion) > 0) {
+              highestVersion = version;
+              bestPath = path;
+            }
+          } catch (NumberFormatException ignored) {
+          }
+        }
+        if (bestPath != null) {
+          Path libexecPath = bestPath.resolve("libexec");
+          if (Files.exists(libexecPath)) {
+            return libexecPath.toFile();
+          }
+        }
+      }
+    }
+    catch (Exception ignored) {
+    }
+    return null;
   }
 
   /**
@@ -241,9 +287,6 @@ public class GradleInstallationManager {
       return null;
     }
     final VirtualFile[] roots = OrderEnumerator.orderEntries(module).getAllLibrariesAndSdkClassesRoots();
-    if (roots == null) {
-      return null;
-    }
     for (VirtualFile root : roots) {
       if (root != null && isGradleSdkHome(root)) {
         return root;
