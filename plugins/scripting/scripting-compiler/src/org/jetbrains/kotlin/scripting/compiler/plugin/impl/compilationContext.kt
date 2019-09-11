@@ -185,7 +185,7 @@ private fun createInitialCompilerConfiguration(
         scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.let { dependencies ->
             addJvmClasspathRoots(
                 dependencies.flatMap {
-                    (it as JvmDependency).classpath
+                    (it as? JvmDependency)?.classpath ?: emptyList()
                 }
             )
         }

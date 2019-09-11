@@ -12,6 +12,7 @@ dependencies {
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":core:descriptors.runtime"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-jvm"))
     compile(project(":kotlin-scripting-compiler-impl"))

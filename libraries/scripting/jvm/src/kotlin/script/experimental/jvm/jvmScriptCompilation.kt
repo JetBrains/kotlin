@@ -19,6 +19,12 @@ data class JvmDependency(val classpath: List<File>) : ScriptDependency {
     companion object { private const val serialVersionUID: Long = 1L }
 }
 
+typealias ClassLoaderByConfiguration = (ScriptCompilationConfiguration) -> ClassLoader
+
+class JvmDependencyFromClassLoader(val classLoaderGetter: ClassLoaderByConfiguration) : ScriptDependency {
+    fun getClassLoader(configuration: ScriptCompilationConfiguration): ClassLoader = classLoaderGetter(configuration)
+}
+
 interface JvmScriptCompilationConfigurationKeys
 
 open class JvmScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptCompilationConfigurationKeys {
