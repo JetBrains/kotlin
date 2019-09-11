@@ -1,8 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.source.codeStyle;
 
-import com.intellij.formatting.FormatTextRanges;
-import com.intellij.formatting.FormattingRangesExtender;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -19,18 +17,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @SuppressWarnings("SameParameterValue")
-class FormattingRangesExtenderImpl implements FormattingRangesExtender {
-  private final static Logger LOG = Logger.getInstance(FormattingRangesExtenderImpl.class);
+class FormattingRangesExtender {
+  private final static Logger LOG = Logger.getInstance(FormattingRangesExtender.class);
 
   private final Document myDocument;
   private final PsiFile  myFile;
 
-  FormattingRangesExtenderImpl(@NotNull Document document, PsiFile file) {
+  FormattingRangesExtender(@NotNull Document document, PsiFile file) {
     myDocument = document;
     myFile = file;
   }
 
-  @Override
   public List<TextRange> getExtendedRanges(@NotNull List<TextRange> ranges) {
     return ContainerUtil.map(ranges, range -> processRange(range));
   }

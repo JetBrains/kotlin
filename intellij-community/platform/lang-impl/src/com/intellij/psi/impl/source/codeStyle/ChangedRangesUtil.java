@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.source.codeStyle;
 
-import com.intellij.formatting.FormattingRangesExtender;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
@@ -27,7 +26,7 @@ class ChangedRangesUtil {
     Document document = file.getViewProvider().getDocument();
     List<TextRange> result = new ArrayList<>();
     if (document != null) {
-      FormattingRangesExtender extender = new FormattingRangesExtenderImpl(document, file);
+      FormattingRangesExtender extender = new FormattingRangesExtender(document, file);
       for (TextRange range : changedRangesInfo.allChangedRanges) {
         List<TextRange> extended = extender.getExtendedRanges(Collections.singletonList(range));
         result.addAll(extended);
