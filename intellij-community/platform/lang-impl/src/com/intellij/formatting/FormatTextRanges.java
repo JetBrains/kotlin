@@ -30,7 +30,7 @@ import java.util.Optional;
 public class FormatTextRanges implements FormattingRangesInfo {
   private final List<TextRange> myInsertedRanges;
   private final List<FormatTextRange> myRanges = new ArrayList<>();
-  private @Nullable FormattingRangesExtender myRangesExtender;
+  private final List<TextRange> myExtendedRanges = new ArrayList<>();
 
   private boolean myExtendToContext;
 
@@ -108,12 +108,12 @@ public class FormatTextRanges implements FormattingRangesInfo {
     return ranges;
   }
 
-  public void setRangesExtender(@Nullable FormattingRangesExtender extender) {
-    myRangesExtender = extender;
+  public void setExtendedRanges(@NotNull List<TextRange> extendedRanges) {
+    myExtendedRanges.addAll(extendedRanges);
   }
   
   public List<TextRange> getExtendedRanges() {
-    return myRangesExtender != null ? myRangesExtender.getExtendedRanges(this.getTextRanges()) : getTextRanges();
+    return myExtendedRanges.isEmpty() ? getTextRanges() : myExtendedRanges;
   }
 
 

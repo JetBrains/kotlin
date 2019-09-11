@@ -171,7 +171,7 @@ public class CodeFormatterFacade {
     if (builder != null) {
       if (file.getTextLength() > 0) {
         LOG.assertTrue(document != null);
-        ranges.setRangesExtender(new FormattingRangesExtenderImpl(document, file));
+        ranges.setExtendedRanges(new FormattingRangesExtenderImpl(document, file).getExtendedRanges(ranges.getTextRanges()));
         try {
           ASTNode containingNode = findContainingNode(file, ranges.getBoundRange());
           if (containingNode != null) {
