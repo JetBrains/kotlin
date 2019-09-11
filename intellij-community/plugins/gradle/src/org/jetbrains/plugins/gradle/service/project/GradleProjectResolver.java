@@ -413,9 +413,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     }
 
     for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
-      if (resolver instanceof AbstractProjectResolverExtension) {
-        ((AbstractProjectResolverExtension)resolver).onResolveEnd(projectDataNode);
-      }
+      resolver.resolveFinished(projectDataNode);
     }
 
     projectDataNode.putUserData(RESOLVED_SOURCE_SETS, null);

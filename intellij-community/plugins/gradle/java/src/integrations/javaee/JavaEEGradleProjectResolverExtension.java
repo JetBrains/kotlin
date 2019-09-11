@@ -123,7 +123,7 @@ public class JavaEEGradleProjectResolverExtension extends AbstractProjectResolve
   }
 
   @Override
-  public void onResolveEnd(@NotNull DataNode<ProjectData> projectDataNode) {
+  public void resolveFinished(@NotNull DataNode<ProjectData> projectDataNode) {
     List<Pair<DataNode<? extends ModuleData>, EarConfiguration>> earConfigurations = projectDataNode.getUserData(EAR_CONFIGURATIONS);
     if (earConfigurations == null) return;
     for (Pair<DataNode<? extends ModuleData>, EarConfiguration> pair : earConfigurations) {

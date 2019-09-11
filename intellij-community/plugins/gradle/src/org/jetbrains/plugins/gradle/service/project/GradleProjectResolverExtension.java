@@ -101,6 +101,13 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
                                            @NotNull DataNode<ModuleData> ideModule,
                                            @NotNull DataNode<ProjectData> ideProject);
 
+  /**
+   * Called when the project data has been obtained and resolved
+   * @param projectDataNode project data graph
+   */
+  @ApiStatus.Experimental
+  default void resolveFinished(@NotNull DataNode<ProjectData> projectDataNode) {}
+
   @NotNull
   Set<Class> getExtraProjectModelClasses();
 

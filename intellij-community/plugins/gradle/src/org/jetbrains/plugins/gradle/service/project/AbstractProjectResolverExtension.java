@@ -174,7 +174,4 @@ public abstract class AbstractProjectResolverExtension implements GradleProjectR
                                     @Nullable String jvmParametersSetup,
                                     @NotNull Consumer<String> initScriptConsumer) {
   }
-
-  @ApiStatus.Experimental
-  public void onResolveEnd(@NotNull DataNode<ProjectData> projectDataNode) {}
 }
