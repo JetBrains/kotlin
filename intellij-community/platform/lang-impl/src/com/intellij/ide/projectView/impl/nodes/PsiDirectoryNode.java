@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl.nodes;
 
 import com.intellij.ide.IconProvider;
@@ -12,6 +12,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleGrouperKt;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -169,6 +170,7 @@ public class PsiDirectoryNode extends BasePsiNode<PsiDirectory> implements Navig
     }
     else {
       for (final IconProvider provider : IconProvider.EXTENSION_POINT_NAME.getExtensionList()) {
+        ProgressManager.checkCanceled();
         final Icon icon = provider.getIcon(psiDirectory, 0);
         if (icon != null) {
           data.setIcon(icon);
