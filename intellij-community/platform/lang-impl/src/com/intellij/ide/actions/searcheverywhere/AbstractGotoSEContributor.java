@@ -100,27 +100,7 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
       });
       myProjectScope = ObjectUtils.notNull(result.get(), myEverywhereScope);
     }
-    String selectedScope = myProject == null ? null : getSelectedScopes(myProject).get(getClass().getSimpleName());
-    if (Registry.is("search.everywhere.show.scopes") && Registry.is("search.everywhere.sticky.scopes") &&
-        StringUtil.isNotEmpty(selectedScope)) {
-      Ref<ScopeDescriptor> result = Ref.create();
-      processScopes(SimpleDataContext.getProjectContext(myProject), o -> {
-        if (!selectedScope.equals(o.getDisplayName()) || o.scopeEquals(null)) return true;
-        result.set(o);
-        return false;
-      });
-      myScopeDescriptor = !result.isNull() ? result.get() : new ScopeDescriptor(myProjectScope);
-    }
-    else {
-      myScopeDescriptor = new ScopeDescriptor(myProjectScope);
-    }
-  }
-
-  @NotNull
-  private static Map<String, String> getSelectedScopes(@NotNull Project project) {
-    Map<String, String> map = SE_SELECTED_SCOPES.get(project);
-    if (map == null) SE_SELECTED_SCOPES.set(project, map = new HashMap<>(3));
-    return map;
+    myScopeDescriptor = getInitialSelectedScope();
   }
 
   @NotNull
@@ -151,11 +131,8 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
 
         @Override
         void onScopeSelected(@NotNull ScopeDescriptor o) {
-          myScopeDescriptor = o;
+          setSelectedScope(o);
           onChanged.run();
-          getSelectedScopes(myProject).put(
-            AbstractGotoSEContributor.this.getClass().getSimpleName(),
-            o.scopeEquals(myEverywhereScope) || o.scopeEquals(myProjectScope) ? null : o.getDisplayName());
         }
 
         @NotNull
@@ -176,7 +153,7 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
 
         @Override
         public void setEverywhere(boolean everywhere) {
-          myScopeDescriptor = new ScopeDescriptor(everywhere ? myEverywhereScope : myProjectScope);
+          setSelectedScope(new ScopeDescriptor(everywhere ? myEverywhereScope : myProjectScope));
           onChanged.run();
         }
 
@@ -204,6 +181,38 @@ public abstract class AbstractGotoSEContributor implements SearchEverywhereContr
     }
     result.add(new SearchEverywhereUI.FiltersAction(filter, onChanged));
     return result;
+  }
+
+  @NotNull
+  private ScopeDescriptor getInitialSelectedScope() {
+    String selectedScope = myProject == null ? null : getSelectedScopes(myProject).get(getClass().getSimpleName());
+    if (Registry.is("search.everywhere.show.scopes") && Registry.is("search.everywhere.sticky.scopes") &&
+        StringUtil.isNotEmpty(selectedScope)) {
+      Ref<ScopeDescriptor> result = Ref.create();
+      processScopes(SimpleDataContext.getProjectContext(myProject), o -> {
+        if (!selectedScope.equals(o.getDisplayName()) || o.scopeEquals(null)) return true;
+        result.set(o);
+        return false;
+      });
+      return !result.isNull() ? result.get() : new ScopeDescriptor(myProjectScope);
+    }
+    else {
+      return new ScopeDescriptor(myProjectScope);
+    }
+  }
+
+  private void setSelectedScope(@NotNull ScopeDescriptor o) {
+    myScopeDescriptor = o;
+    getSelectedScopes(myProject).put(
+      getClass().getSimpleName(),
+      o.scopeEquals(myEverywhereScope) || o.scopeEquals(myProjectScope) ? null : o.getDisplayName());
+  }
+
+  @NotNull
+  private static Map<String, String> getSelectedScopes(@NotNull Project project) {
+    Map<String, String> map = SE_SELECTED_SCOPES.get(project);
+    if (map == null) SE_SELECTED_SCOPES.set(project, map = new HashMap<>(3));
+    return map;
   }
 
   @Override
