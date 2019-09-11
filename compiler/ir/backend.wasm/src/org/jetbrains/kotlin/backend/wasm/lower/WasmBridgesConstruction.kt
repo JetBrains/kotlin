@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.BridgesConstruction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.name.Name
 
 class WasmBridgesConstruction(context: CommonBackendContext) : BridgesConstruction<WasmSignature>(context) {
     override fun getFunctionSignature(function: IrSimpleFunction): WasmSignature =
@@ -25,6 +26,7 @@ class WasmBridgesConstruction(context: CommonBackendContext) : BridgesConstructi
 }
 
 data class WasmSignature(
+    val name: Name,
     val dispatchReceiverType: IrType?,
     val extensionReceiverType: IrType?,
     val valueParametersType: List<IrType>,
@@ -33,6 +35,7 @@ data class WasmSignature(
 
 fun IrSimpleFunction.wasmSignature(): WasmSignature =
     WasmSignature(
+        name,
         dispatchReceiverParameter?.type,
         extensionReceiverParameter?.type,
         valueParameters.map { it.type },

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
+import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
+import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.Signature
 import org.jetbrains.kotlin.ir.backend.js.utils.jsFunctionSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -35,24 +37,26 @@ class ClassMetadata(
             klass.declarations
                 .filterIsInstance<IrSimpleFunction>()
                 .filterVirtualFunctions()
-                .map { VirtualMethodMetadata(it, jsFunctionSignature(it)) }
+                .map { VirtualMethodMetadata(it, it.wasmSignature()) }
 
         val signatureToVirtualFunction = virtualFunctions.associateBy { it.signature }
 
         val newVirtualMethods = virtualFunctions.filter { it.signature !in superClass?.virtualMethodsSignatures.orEmpty() }
-        val superVirtualMethods = superClass?.virtualMethods.orEmpty().map { signatureToVirtualFunction.getValue(it.signature) }
+        val superVirtualMethods = superClass?.virtualMethods.orEmpty().map {
+            signatureToVirtualFunction.getValue(it.signature)
+        }
         val orderedVirtualFunctions = superVirtualMethods + newVirtualMethods
 
         orderedVirtualFunctions
     }
 
-    val virtualMethodsSignatures: Set<Signature> =
+    val virtualMethodsSignatures: Set<WasmSignature> =
         virtualMethods.map { it.signature }.toHashSet()
 }
 
 class VirtualMethodMetadata(
     val function: IrSimpleFunction,
-    val signature: Signature
+    val signature: WasmSignature
 )
 
 private val IrClass.superBroadClasses: List<IrClass>
