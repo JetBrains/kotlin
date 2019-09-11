@@ -388,10 +388,10 @@ class KotlinFacetEditorGeneralTab(
             editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
             editor.targetPlatformsCurrentlySelected = configuration.settings.targetPlatform
             editor.targetPlatformLabel.text =
-                editor.targetPlatformsCurrentlySelected?.componentPlatforms?.map { it.oldFashionedDescription }?.joinToString(", ")
+                editor.targetPlatformsCurrentlySelected?.componentPlatforms?.map { it.oldFashionedDescription.trim() }?.joinToString(", ")
                     ?: "<none>"
             editor.dependsOnLabel.isVisible = configuration.settings.dependsOnModuleNames.isNotEmpty()
-            editor.dependsOnLabel.text = configuration.settings.dependsOnModuleNames.joinToString(",","Depends on: ", ".")
+            editor.dependsOnLabel.text = configuration.settings.dependsOnModuleNames.joinToString(", ","Depends on: ", ".")
 
             editor.targetPlatformSelectSingleCombobox.selectedItem = configuration.settings.targetPlatform?.let {
                 val index = editor.targetPlatformWrappers.indexOf(TargetPlatformWrapper(it))
