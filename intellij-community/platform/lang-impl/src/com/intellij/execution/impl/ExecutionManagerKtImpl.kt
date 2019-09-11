@@ -12,6 +12,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.ide.SaveAndSyncHandler
+import com.intellij.internal.statistic.IdeActivity
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -29,13 +30,15 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
   @Volatile var forceCompilationInTests: Boolean = false
 
   override fun startRunProfile(starter: RunProfileStarter, state: RunProfileState, environment: ExecutionEnvironment) {
-    triggerUsage(environment)
+    val activity = triggerUsage(environment)
+
     val project = environment.project
     val reuseContent = contentManager.getReuseContent(environment)
     if (reuseContent != null) {
       reuseContent.executionId = environment.executionId
       environment.contentToReuse = reuseContent
     }
+
 
     val executor = environment.executor
     project.messageBus.syncPublisher(ExecutionManager.EXECUTION_TOPIC).processStartScheduled(executor.id, environment)
@@ -74,6 +77,8 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
               if(!descriptor.isHiddenContent) {
                 contentManager.showRunContent(executor, descriptor, environment.contentToReuse)
               }
+              activity?.stageStarted("ui.shown")
+
               val processHandler = descriptor.processHandler
               if (processHandler != null) {
                 if (!processHandler.isStartNotified) {
@@ -81,7 +86,7 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
                 }
                 project.messageBus.syncPublisher(ExecutionManager.EXECUTION_TOPIC).processStarted(executor.id, environment, processHandler)
 
-                val listener = ProcessExecutionListener(project, executor.id, environment, processHandler, descriptor)
+                val listener = ProcessExecutionListener(project, executor.id, environment, processHandler, descriptor, activity)
                 processHandler.addProcessListener(listener)
 
                 // Since we cannot guarantee that the listener is added before process handled is start notified,
@@ -122,17 +127,18 @@ class ExecutionManagerKtImpl(project: Project) : ExecutionManagerImpl(project) {
   }
 }
 
-private fun triggerUsage(environment: ExecutionEnvironment) {
-  val runConfiguration = environment.runnerAndConfigurationSettings?.configuration ?: return
-  val configurationFactory = runConfiguration.factory ?: return
-  RunConfigurationUsageTriggerCollector.trigger(environment.project, configurationFactory, environment.executor)
+private fun triggerUsage(environment: ExecutionEnvironment): IdeActivity? {
+  val runConfiguration = environment.runnerAndConfigurationSettings?.configuration ?: return null
+  val configurationFactory = runConfiguration.factory ?: return null
+  return RunConfigurationUsageTriggerCollector.trigger(environment.project, configurationFactory, environment.executor)
 }
 
 private class ProcessExecutionListener(private val project: Project,
                                        private val executorId: String,
                                        private val environment: ExecutionEnvironment,
                                        private val processHandler: ProcessHandler,
-                                       private val descriptor: RunContentDescriptor) : ProcessAdapter() {
+                                       private val descriptor: RunContentDescriptor,
+                                       private val activity : IdeActivity?) : ProcessAdapter() {
   private val willTerminateNotified = AtomicBoolean()
   private val terminateNotified = AtomicBoolean()
 
@@ -149,6 +155,8 @@ private class ProcessExecutionListener(private val project: Project,
     }, ModalityState.any())
 
     project.messageBus.syncPublisher(ExecutionManager.EXECUTION_TOPIC).processTerminated(executorId, environment, processHandler, event.exitCode)
+
+    activity?.finished();
 
     SaveAndSyncHandler.getInstance().scheduleRefresh()
   }

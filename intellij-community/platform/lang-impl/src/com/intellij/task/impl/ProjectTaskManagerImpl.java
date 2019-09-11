@@ -2,6 +2,7 @@
 package com.intellij.task.impl;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.internal.statistic.IdeActivity;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
@@ -168,6 +169,12 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
         return tasks;
       }
     });
+
+
+    IdeActivity activity = new IdeActivity(myProject, "build").startedWithData(data -> {
+      data.addData("task_runner_class", map(toRun, it -> it.first.getClass().getName()));
+    });
+
     myEventPublisher.started(context);
 
     Runnable runnable = () -> {
@@ -177,17 +184,19 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
         }
         catch (ExecutionException e) {
           sendAbortedNotify(context, new ListenerNotificator(callback));
+          activity.finished();
           return;
         }
       }
 
       if (toRun.isEmpty()) {
         sendSuccessNotify(context, new ListenerNotificator(callback));
+        activity.finished();
         return;
       }
 
       ProjectTaskResultsAggregator callbacksCollector =
-        new ProjectTaskResultsAggregator(context, new ListenerNotificator(callback), toRun.size());
+        new ProjectTaskResultsAggregator(context, new ListenerNotificator(callback), toRun.size(), activity);
       for (Pair<ProjectTaskRunner, Collection<? extends ProjectTask>> pair : toRun) {
         ProjectTaskRunnerNotification notification = new ProjectTaskRunnerNotification(pair.second, callbacksCollector);
         if (pair.second.isEmpty()) {
@@ -368,6 +377,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     private final ProjectTaskContext myContext;
     private final ProjectTaskNotification myDelegate;
     private final AtomicInteger myProgressCounter;
+    private final IdeActivity myActivity;
     private final AtomicInteger myErrorsCounter;
     private final AtomicInteger myWarningsCounter;
     private final AtomicBoolean myAbortedFlag;
@@ -375,10 +385,12 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
 
     private ProjectTaskResultsAggregator(@NotNull ProjectTaskContext context,
                                          @NotNull ProjectTaskNotification delegate,
-                                         int expectedResults) {
+                                         int expectedResults,
+                                         @NotNull IdeActivity activity) {
       myContext = context;
       myDelegate = delegate;
       myProgressCounter = new AtomicInteger(expectedResults);
+      myActivity = activity;
       myErrorsCounter = new AtomicInteger();
       myWarningsCounter = new AtomicInteger();
       myAbortedFlag = new AtomicBoolean(false);
@@ -393,8 +405,13 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
         myAbortedFlag.set(true);
       }
       if (inProgress <= 0) {
-        ProjectTaskResult result = new ProjectTaskResult(myAbortedFlag.get(), allErrors, allWarnings, myTasksState);
-        myDelegate.finished(myContext, result);
+        try {
+          ProjectTaskResult result = new ProjectTaskResult(myAbortedFlag.get(), allErrors, allWarnings, myTasksState);
+          myDelegate.finished(myContext, result);
+        }
+        finally {
+          myActivity.finished();
+        }
       }
     }
   }

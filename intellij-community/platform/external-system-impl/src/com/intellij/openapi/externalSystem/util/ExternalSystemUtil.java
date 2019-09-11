@@ -23,6 +23,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.icons.AllIcons;
+import com.intellij.internal.statistic.IdeActivity;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.Disposable;
@@ -58,6 +59,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataMan
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemLocalSettings;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
+import com.intellij.openapi.externalSystem.statistics.ExternalSystemStatUtilKt;
 import com.intellij.openapi.externalSystem.task.TaskCallback;
 import com.intellij.openapi.externalSystem.view.ExternalProjectsView;
 import com.intellij.openapi.externalSystem.view.ExternalProjectsViewImpl;
@@ -385,7 +387,14 @@ public class ExternalSystemUtil {
       @Override
       public void execute(@NotNull ProgressIndicator indicator) {
         String title = ExternalSystemBundle.message("progress.refresh.text", projectName, externalSystemId.getReadableName());
-        DumbService.getInstance(project).suspendIndexingAndRun(title, () -> executeImpl(indicator));
+        IdeActivity activity = ExternalSystemStatUtilKt.importActivityStarted(project, externalSystemId, data -> {
+        });
+        try {
+          DumbService.getInstance(project).suspendIndexingAndRun(title, () -> executeImpl(indicator));
+        }
+        finally {
+          activity.finished();
+        }
       }
 
       private void executeImpl(@NotNull ProgressIndicator indicator) {
