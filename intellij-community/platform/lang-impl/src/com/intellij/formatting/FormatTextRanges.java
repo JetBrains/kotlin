@@ -45,7 +45,11 @@ public class FormatTextRanges implements FormattingRangesInfo {
 
   public FormatTextRanges(@NotNull ChangedRangesInfo changedRangesInfo, @NotNull List<TextRange> contextRanges) {
     myInsertedRanges = changedRangesInfo.insertedRanges;
-    contextRanges.forEach(range -> add(range, true));
+    boolean processHeadingWhitespace = false;
+    for (TextRange range : contextRanges) {
+      add(range, processHeadingWhitespace);
+      processHeadingWhitespace = true;
+    }
   }
 
   public void add(TextRange range, boolean processHeadingWhitespace) {
