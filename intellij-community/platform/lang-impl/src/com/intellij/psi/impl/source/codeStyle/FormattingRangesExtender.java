@@ -20,6 +20,8 @@ import java.util.List;
 class FormattingRangesExtender {
   private final static Logger LOG = Logger.getInstance(FormattingRangesExtender.class);
 
+  private final static int MAX_EXTENSION_LINES = 10;
+
   private final Document myDocument;
   private final PsiFile  myFile;
 
@@ -36,9 +38,19 @@ class FormattingRangesExtender {
     TextRange validRange = ensureRangeIsValid(originalRange);
     ASTNode containingNode = CodeFormatterFacade.findContainingNode(myFile, expandToLine(validRange));
     if (containingNode != null) {
-      return getRangeWithSiblings(containingNode);
+      return narrowToMaxExtensionLines(originalRange, getRangeWithSiblings(containingNode));
     }
     return validRange;
+  }
+
+  private TextRange narrowToMaxExtensionLines(@NotNull TextRange original, @NotNull TextRange result) {
+    int startLine = Math.max(myDocument.getLineNumber(result.getStartOffset()),
+                             myDocument.getLineNumber(original.getStartOffset()) - MAX_EXTENSION_LINES);
+    int endLine = Math.min(myDocument.getLineNumber(result.getEndOffset()),
+                           myDocument.getLineNumber(original.getEndOffset()) + MAX_EXTENSION_LINES);
+    int rangeStart = Math.max(result.getStartOffset(), myDocument.getLineStartOffset(startLine));
+    int rangeEnd = Math.min(result.getEndOffset(), myDocument.getLineEndOffset(endLine));
+    return new TextRange(rangeStart, rangeEnd);
   }
 
   private TextRange ensureRangeIsValid(@NotNull TextRange range) {
