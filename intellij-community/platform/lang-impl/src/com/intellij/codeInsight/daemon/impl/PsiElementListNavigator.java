@@ -10,6 +10,7 @@ import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ListComponentUpdater;
 import com.intellij.openapi.ui.popup.IPopupChooserBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -110,85 +111,184 @@ public class PsiElementListNavigator {
                                               final ListCellRenderer listRenderer,
                                               @Nullable final BackgroundUpdaterTask listUpdaterTask,
                                               @NotNull final Consumer<Object[]> consumer) {
-    if (targets.length == 0) return null;
-    if (targets.length == 1 && (listUpdaterTask == null || listUpdaterTask.isFinished())) {
-      consumer.consume(targets);
-      return null;
-    }
-    List<NavigatablePsiElement> initialTargetsList = Arrays.asList(targets);
-    Ref<NavigatablePsiElement[]> updatedTargetsList = Ref.create(targets);
-
-    final IPopupChooserBuilder<NavigatablePsiElement> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(initialTargetsList);
-    if (listRenderer instanceof PsiElementListCellRenderer) {
-      ((PsiElementListCellRenderer)listRenderer).installSpeedSearch(builder);
-    }
-
-    IPopupChooserBuilder<NavigatablePsiElement> popupChooserBuilder = builder.
-      setTitle(title).
-      setMovable(true).
-      setFont(EditorUtil.getEditorFont()).
-      setRenderer(listRenderer).
-      withHintUpdateSupply().
-      setResizable(true).
-      setItemsChosenCallback(selectedValues -> consumer.consume(ArrayUtil.toObjectArray(selectedValues))).
-      setCancelCallback(() -> {
-        if (listUpdaterTask != null) {
-          listUpdaterTask.cancelTask();
-        }
-        return true;
-      });
-    final Ref<UsageView> usageView = new Ref<>();
-    if (findUsagesTitle != null) {
-      popupChooserBuilder = popupChooserBuilder.setCouldPin(popup -> {
-        usageView.set(FindUtil.showInUsageView(null, updatedTargetsList.get(), findUsagesTitle, targets[0].getProject()));
-        popup.cancel();
-        return false;
-      });
-    }
-
-    final JBPopup popup = popupChooserBuilder.createPopup();
-    if (builder instanceof PopupChooserBuilder) {
-      JBList<NavigatablePsiElement> list = (JBList)((PopupChooserBuilder)builder).getChooserComponent();
-      list.setTransferHandler(new TransferHandler() {
-        @Override
-        protected Transferable createTransferable(JComponent c) {
-          final Object[] selectedValues = list.getSelectedValues();
-          final PsiElement[] copy = new PsiElement[selectedValues.length];
-          for (int i = 0; i < selectedValues.length; i++) {
-            copy[i] = (PsiElement)selectedValues[i];
-          }
-          return new PsiCopyPasteManager.MyTransferable(copy);
-        }
-
-        @Override
-        public int getSourceActions(JComponent c) {
-          return COPY;
-        }
-      });
-
-      JScrollPane pane = ((PopupChooserBuilder)builder).getScrollPane();
-      pane.setBorder(null);
-      pane.setViewportBorder(null);
-    }
-
-    if (listUpdaterTask != null) {
-      ListComponentUpdater popupUpdater = builder.getBackgroundUpdater();
-      listUpdaterTask.init(popup, new ListComponentUpdater() {
-        @Override
-        public void replaceModel(@NotNull List<? extends PsiElement> data) {
-          updatedTargetsList.set(data.toArray(NavigatablePsiElement.EMPTY_NAVIGATABLE_ELEMENT_ARRAY));
-          popupUpdater.replaceModel(data);
-        }
-
-        @Override
-        public void paintBusy(boolean paintBusy) {
-          popupUpdater.paintBusy(paintBusy);
-        }
-      }, usageView);
-    }
-    return popup;
+    return new NavigateOrPopupHelper(targets, title)
+      .setFindUsagesTitle(findUsagesTitle)
+      .setListRenderer(listRenderer)
+      .setListUpdaterTask(listUpdaterTask)
+      .setTargetsConsumer(consumer)
+      .navigateOrCreatePopup();
   }
 
+  // Helper makes it easier to customize shown popup.
+  public static class NavigateOrPopupHelper {
+
+    @NotNull
+    private final NavigatablePsiElement[] myTargets;
+
+    private final String myTitle;
+
+    @NotNull
+    private Consumer<Object[]> myTargetsConsumer;
+
+    @Nullable
+    private String myFindUsagesTitle;
+
+    @Nullable
+    private ListCellRenderer myListRenderer;
+
+    @Nullable
+    private BackgroundUpdaterTask myListUpdaterTask;
+
+    @Nullable
+    private Project myProject;
+
+    public NavigateOrPopupHelper(@NotNull NavigatablePsiElement[] targets, String title) {
+      myTargets = targets;
+      myTitle = title;
+      myTargetsConsumer = selectedElements -> {
+        for (Object element : selectedElements) {
+          PsiElement selected = (PsiElement)element;
+          if (selected.isValid()) {
+            ((NavigatablePsiElement)selected).navigate(true);
+          }
+        }
+      };
+    }
+
+    @NotNull
+    public NavigateOrPopupHelper setFindUsagesTitle(@Nullable String findUsagesTitle) {
+      myFindUsagesTitle = findUsagesTitle;
+      return this;
+    }
+
+    @NotNull
+    public NavigateOrPopupHelper setListRenderer(@Nullable ListCellRenderer listRenderer) {
+      myListRenderer = listRenderer;
+      return this;
+    }
+
+    @NotNull
+    public NavigateOrPopupHelper setListUpdaterTask(@Nullable BackgroundUpdaterTask listUpdaterTask) {
+      myListUpdaterTask = listUpdaterTask;
+      return this;
+    }
+
+    @NotNull
+    public NavigateOrPopupHelper setTargetsConsumer(@NotNull Consumer<Object[]> targetsConsumer) {
+      myTargetsConsumer = targetsConsumer;
+      return this;
+    }
+
+    @NotNull
+    public NavigateOrPopupHelper setProject(@Nullable Project project) {
+      myProject = project;
+      return this;
+    }
+
+    @Nullable
+    public final JBPopup navigateOrCreatePopup() {
+      if (myTargets.length == 0) {
+        if (!allowEmptyTargets())
+          return null; // empty initial targets are not allowed
+        if (myListUpdaterTask == null || myListUpdaterTask.isFinished())
+          return null; // there will be no targets.
+      }
+      if (myTargets.length == 1 && (myListUpdaterTask == null || myListUpdaterTask.isFinished())) {
+        myTargetsConsumer.consume(myTargets);
+        return null;
+      }
+      List<NavigatablePsiElement> initialTargetsList = Arrays.asList(myTargets);
+      Ref<NavigatablePsiElement[]> updatedTargetsList = Ref.create(myTargets);
+
+      final IPopupChooserBuilder<NavigatablePsiElement> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(initialTargetsList);
+      afterPopupBuilderCreated(builder);
+      if (myListRenderer instanceof PsiElementListCellRenderer) {
+        ((PsiElementListCellRenderer)myListRenderer).installSpeedSearch(builder);
+      }
+
+      IPopupChooserBuilder<NavigatablePsiElement> popupChooserBuilder = builder.
+        setTitle(myTitle).
+        setMovable(true).
+        setFont(EditorUtil.getEditorFont()).
+        setRenderer(myListRenderer).
+        withHintUpdateSupply().
+        setResizable(true).
+        setItemsChosenCallback(selectedValues -> myTargetsConsumer.consume(ArrayUtil.toObjectArray(selectedValues))).
+        setCancelCallback(() -> {
+          if (myListUpdaterTask != null) {
+            myListUpdaterTask.cancelTask();
+          }
+          return true;
+        });
+      final Ref<UsageView> usageView = new Ref<>();
+      if (myFindUsagesTitle != null) {
+        popupChooserBuilder = popupChooserBuilder.setCouldPin(popup -> {
+          usageView.set(FindUtil.showInUsageView(null, updatedTargetsList.get(), myFindUsagesTitle, getProject()));
+          popup.cancel();
+          return false;
+        });
+      }
+
+      final JBPopup popup = popupChooserBuilder.createPopup();
+      if (builder instanceof PopupChooserBuilder) {
+        JBList<NavigatablePsiElement> list = (JBList)((PopupChooserBuilder)builder).getChooserComponent();
+        list.setTransferHandler(new TransferHandler() {
+          @Override
+          protected Transferable createTransferable(JComponent c) {
+            final Object[] selectedValues = list.getSelectedValues();
+            final PsiElement[] copy = new PsiElement[selectedValues.length];
+            for (int i = 0; i < selectedValues.length; i++) {
+              copy[i] = (PsiElement)selectedValues[i];
+            }
+            return new PsiCopyPasteManager.MyTransferable(copy);
+          }
+
+          @Override
+          public int getSourceActions(JComponent c) {
+            return COPY;
+          }
+        });
+
+        JScrollPane pane = ((PopupChooserBuilder)builder).getScrollPane();
+        pane.setBorder(null);
+        pane.setViewportBorder(null);
+      }
+
+      if (myListUpdaterTask != null) {
+        ListComponentUpdater popupUpdater = builder.getBackgroundUpdater();
+        myListUpdaterTask.init(popup, new ListComponentUpdater() {
+          @Override
+          public void replaceModel(@NotNull List<? extends PsiElement> data) {
+            updatedTargetsList.set(data.toArray(NavigatablePsiElement.EMPTY_NAVIGATABLE_ELEMENT_ARRAY));
+            popupUpdater.replaceModel(data);
+          }
+
+          @Override
+          public void paintBusy(boolean paintBusy) {
+            popupUpdater.paintBusy(paintBusy);
+          }
+        }, usageView);
+      }
+      return popup;
+    }
+
+    @NotNull
+    private Project getProject() {
+      if (myProject != null) {
+        return myProject;
+      }
+      assert !allowEmptyTargets() : "Project was not set and cannot be taken from targets";
+      return myTargets[0].getProject();
+    }
+
+    protected boolean allowEmptyTargets() {
+      return false;
+    }
+
+    protected void afterPopupBuilderCreated(@NotNull IPopupChooserBuilder<NavigatablePsiElement> builder) {
+      // Do nothing by default
+    }
+  }
 
   /**
    * @deprecated use {@link #openTargets(MouseEvent, NavigatablePsiElement[], String, String, ListCellRenderer, BackgroundUpdaterTask)} instead
