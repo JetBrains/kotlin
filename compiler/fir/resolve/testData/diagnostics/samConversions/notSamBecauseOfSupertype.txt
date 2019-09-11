@@ -1,0 +1,18 @@
+FILE: main.kt
+    public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        Q|JavaUsage|.R|/JavaUsage.foo|(<L> = foo@fun <anonymous>(x: R|kotlin/Nothing|): kotlin/Boolean <kind=EXACTLY_ONCE>  {
+            >(R|<local>/x|, Int(1))
+        }
+        )
+        Q|JavaUsage|.R|/JavaUsage.foo|(foo@fun <anonymous>(): kotlin/Boolean <kind=EXACTLY_ONCE>  {
+            >(<Unresolved name: it>#, Int(1))
+        }
+        )
+        lval x: R|kotlin/Function1<kotlin/Int, kotlin/Boolean>| = fun <anonymous>(x: R|kotlin/Int|): kotlin/Boolean {
+            >(R|<local>/x|, Int(1))
+        }
+
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(R|<local>/x|)
+    }

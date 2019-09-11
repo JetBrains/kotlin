@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
@@ -234,8 +235,30 @@ internal fun Candidate.resolveArgument(
 }
 
 private fun Candidate.prepareExpectedType(session: FirSession, argument: FirExpression, parameter: FirValueParameter): ConeKotlinType {
-    val expectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
+    val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
+    val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
+}
+
+private fun Candidate.getExpectedTypeWithSAMConversion(
+    session: FirSession,
+    argument: FirExpression,
+    candidateExpectedType: ConeKotlinType
+): ConeKotlinType? {
+    if (candidateExpectedType.isBuiltinFunctionalType) return null
+    // TODO: if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return null
+    val firNamedFunction = symbol.fir as? FirNamedFunction ?: return null
+    if (!samResolver.shouldRunSamConversionForFunction(firNamedFunction)) return null
+
+    val argumentIsFunctional = when ((argument as? FirWrappedArgumentExpression)?.expression ?: argument) {
+        is FirAnonymousFunction, is FirCallableReferenceAccess -> true
+        else -> argument.typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType == true
+    }
+    if (!argumentIsFunctional) return null
+
+    // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
+
+    return samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType) ?: return null
 }
 
 internal fun FirExpression.getExpectedType(

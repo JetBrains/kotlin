@@ -978,7 +978,7 @@ private fun inferenceComponents(session: FirSession, returnTypeCalculator: Retur
             require(this is ErrorTypeConstructor)
             return ConeClassErrorType(reason)
         }
-    }, session, returnTypeCalculator, scopeSession)
+    }, session, returnTypeCalculator, scopeSession, FirSamResolverImpl(session, scopeSession))
 
 
 class FirDesignatedBodyResolveTransformer(

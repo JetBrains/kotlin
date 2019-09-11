@@ -58,6 +58,9 @@ class Candidate(
         system.addOtherSystem(baseSystem)
         system
     }
+
+    val samResolver get() = inferenceComponents.samResolver
+
     lateinit var substitutor: ConeSubstitutor
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
