@@ -179,7 +179,8 @@ fun generateKLib(
         moduleFragment,
         expectDescriptorToSymbol,
         icData,
-        nopack
+        nopack,
+        false
     )
 }
 
@@ -447,7 +448,8 @@ fun serializeModuleIntoKlib(
     moduleFragment: IrModuleFragment,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     cleanFiles: List<KotlinFileSerializedData>,
-    nopack: Boolean
+    nopack: Boolean,
+    perFile: Boolean
 ) {
     assert(files.size == moduleFragment.files.size)
 
@@ -525,6 +527,7 @@ fun serializeModuleIntoKlib(
         manifestProperties = null,
         moduleName = moduleName,
         nopack = nopack,
+        perFile = perFile,
         output = klibPath,
         versions = versions,
         builtInsPlatform = BuiltInsPlatform.JS

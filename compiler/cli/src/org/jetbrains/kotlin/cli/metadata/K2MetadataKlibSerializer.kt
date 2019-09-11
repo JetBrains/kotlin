@@ -91,6 +91,7 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             destDir.absolutePath,
             configuration[CommonConfigurationKeys.MODULE_NAME]!!,
             nopack = true,
+            perFile = false,
             manifestProperties = null,
             dataFlowGraph = null,
             builtInsPlatform = BuiltInsPlatform.COMMON
