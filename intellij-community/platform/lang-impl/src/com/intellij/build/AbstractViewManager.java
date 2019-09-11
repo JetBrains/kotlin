@@ -19,6 +19,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.ui.SystemNotifications;
 import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
@@ -35,9 +36,10 @@ import java.util.stream.Collectors;
 import static com.intellij.build.ExecutionNode.getEventResultIcon;
 
 /**
+ * Provides base implementation of the {@link ViewManager}
+ *
  * @author Vladislav.Soroka
  */
-@ApiStatus.Experimental
 public abstract class AbstractViewManager implements ViewManager, BuildProgressListener, Disposable {
   private static final Key<Boolean> PINNED_EXTRACTED_CONTENT = new Key<>("PINNED_EXTRACTED_CONTENT");
 
@@ -85,6 +87,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   public void onEvent(@NotNull Object buildId, @NotNull BuildEvent event) {
     if (isDisposed.get()) return;
 
+    //noinspection deprecation
     if (buildId == UNKNOWN_BUILD_ID) {
       Object buildIdCandidate = event instanceof StartBuildEvent ? event.getId() :
                                 idsMap.get(ObjectUtils.notNull(event.getParentId(), event.getId()));
@@ -175,10 +178,11 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
 
   private void clearIdsOf(@NotNull Collection<? extends BuildDescriptor> builds) {
     if (idsMap.isEmpty()) return;
-    Set ids = builds.stream().map(BuildDescriptor::getId).collect(Collectors.toSet());
+    Set<?> ids = builds.stream().map(BuildDescriptor::getId).collect(Collectors.toSet());
     idsMap.values().removeIf(val -> ids.contains(val));
   }
 
+  @ApiStatus.Internal
   static class BuildInfo extends DefaultBuildDescriptor {
     String message;
     String statusMessage;
@@ -187,9 +191,9 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
     Content content;
 
     BuildInfo(@NotNull Object id,
-                     @NotNull String title,
-                     @NotNull String workingDir,
-                     long startTime) {
+              @NotNull String title,
+              @NotNull String workingDir,
+              long startTime) {
       super(id, title, workingDir, startTime);
     }
 
@@ -266,7 +270,8 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
         return;
       }
 
-      boolean isActiveTab = myContent.getManager().getSelectedContent() == myContent;
+      ContentManager contentManager = myContent.getManager();
+      boolean isActiveTab = contentManager != null && contentManager.getSelectedContent() == myContent;
       boolean selected = myContent.isPinned();
 
       e.getPresentation().setIcon(AllIcons.General.Pin_tab);
