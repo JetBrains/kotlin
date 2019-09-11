@@ -244,4 +244,49 @@ class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
       .describedAs("Annotation processor path should include junit and hamcrest")
       .contains("junit", "hamcrest")
   }
+
+  @Test
+  @TargetVersions("4.3+")
+  fun `test gradle-apt-plugin settings are imported`() {
+    importProject(
+      GradleBuildScriptBuilderEx()
+        .withJavaPlugin()
+        .withMavenCentral()
+        .addPrefix(
+          """
+      buildscript {
+        repositories {
+          maven {
+            url 'http://maven.labs.intellij.net/plugins-gradle-org'
+          }
+        }
+        dependencies {
+          classpath "net.ltgt.gradle:gradle-apt-plugin:0.21"
+        }
+      }
+      """.trimIndent())
+        .addPostfix("""
+      apply plugin: "net.ltgt.apt"
+      apply plugin: 'java'
+      
+      dependencies {
+        compileOnly("org.immutables:value-annotations:2.7.1")
+        annotationProcessor("org.immutables:value:2.7.1")
+      }
+    """.trimIndent()).generate());
+
+    val config = CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl
+    val moduleProcessorProfiles = config.moduleProcessorProfiles
+
+    then(moduleProcessorProfiles)
+      .describedAs("An annotation processor profile should be created for Gradle module")
+      .hasSize(1)
+
+    with (moduleProcessorProfiles[0]) {
+      then(isEnabled).isTrue()
+      then(isObtainProcessorsFromClasspath).isFalse()
+      then(processorPath).contains("immutables")
+      then(moduleNames).containsExactly("project.main")
+    }
+  }
 }
