@@ -79,6 +79,18 @@ struct ExtendedTypeInfo {
   // TODO: do we want any other info here?
 };
 
+typedef void const* VTableElement;
+
+typedef int32_t ClassId;
+
+const ClassId kInvalidInterfaceId = 0;
+
+struct InterfaceTableRecord {
+    ClassId id;
+    uint32_t vtableSize;
+    VTableElement const* vtable;
+};
+
 // This struct represents runtime type information and by itself is the compile time
 // constant.
 struct TypeInfo {
@@ -102,6 +114,8 @@ struct TypeInfo {
     // Null for abstract classes and interfaces.
     const MethodTableRecord* openMethods_;
     uint32_t openMethodsCount_;
+    int32_t interfaceTableSize_;
+    InterfaceTableRecord const* interfaceTable_;
 
     // String for the fully qualified dot-separated name of the package containing class,
     // or `null` if the class is local or anonymous.
@@ -116,7 +130,7 @@ struct TypeInfo {
     int32_t flags_;
 
     // Class id built with the whole class hierarchy taken into account. The details are in ClassLayoutBuilder.
-    int32_t classId_;
+    ClassId classId_;
 
 #if KONAN_TYPE_INFO_HAS_WRITABLE_PART
     WritableTypeInfo* writableInfo_;
@@ -128,12 +142,12 @@ struct TypeInfo {
     // vtable starts just after declared contents of the TypeInfo:
     // void* const vtable_[];
 #ifdef __cplusplus
-    inline const void* const * vtable() const {
-      return reinterpret_cast<void * const *>(this + 1);
+    inline VTableElement const* vtable() const {
+      return reinterpret_cast<VTableElement const*>(this + 1);
     }
 
-    inline const void** vtable() {
-      return reinterpret_cast<const void**>(this + 1);
+    inline VTableElement* vtable() {
+      return reinterpret_cast<VTableElement*>(this + 1);
     }
 #endif
 };
@@ -148,6 +162,9 @@ extern "C" {
 // and 'hash' numeric values and doesn't really depends on global memory state
 // (as TypeInfo is compile time constant and type info pointers are stable).
 void* LookupOpenMethod(const TypeInfo* info, MethodNameHash nameSignature) RUNTIME_CONST;
+
+InterfaceTableRecord const* LookupInterfaceTableRecord(InterfaceTableRecord const* interfaceTable,
+                                                       int interfaceTableSize, ClassId interfaceId) RUNTIME_CONST;
 
 #ifdef __cplusplus
 } // extern "C"

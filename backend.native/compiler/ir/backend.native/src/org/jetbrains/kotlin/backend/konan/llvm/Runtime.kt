@@ -23,6 +23,7 @@ class Runtime(bitcodeFile: String) {
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
     val methodTableRecordType = getStructType("MethodTableRecord")
+    val interfaceTableRecordType = getStructType("InterfaceTableRecord")
     val globalHashType = getStructType("GlobalHash")
     val associatedObjectTableRecordType = getStructType("AssociatedObjectTableRecord")
 

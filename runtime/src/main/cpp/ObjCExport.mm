@@ -51,6 +51,8 @@ struct ObjCToKotlinMethodAdapter {
 struct KotlinToObjCMethodAdapter {
   const char* selector;
   MethodNameHash nameSignature;
+  ClassId interfaceId;
+  int itableIndex;
   int vtableIndex;
   const void* kotlinImpl;
 };
@@ -63,6 +65,8 @@ struct ObjCTypeAdapter {
 
   const MethodTableRecord* kotlinMethodTable;
   int kotlinMethodTableSize;
+
+  int kotlinItableSize;
 
   const char* objCName;
 
@@ -717,11 +721,70 @@ static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj) {
   return converter(obj);
 }
 
+static void buildITable(TypeInfo* result, const KStdOrderedMap<ClassId, KStdVector<VTableElement>>& interfaceVTables) {
+  // Check if can use fast optimistic version - check if the size of the itable could be 2^k and <= 32.
+  bool useFastITable;
+  int itableSize = 1;
+  for (; itableSize <= 32; itableSize <<= 1) {
+    useFastITable = true;
+    bool used[32];
+    memset(used, 0, sizeof(used));
+    for (auto& pair : interfaceVTables) {
+      auto interfaceId = pair.first;
+      auto index = interfaceId & (itableSize - 1);
+      if (used[index]) {
+        useFastITable = false;
+        break;
+      }
+      used[index] = true;
+    }
+    if (useFastITable) break;
+  }
+  if (!useFastITable)
+    itableSize = interfaceVTables.size();
+
+  auto itable_ = konanAllocArray<InterfaceTableRecord>(itableSize);
+  result->interfaceTable_ = itable_;
+  result->interfaceTableSize_ = useFastITable ? itableSize - 1 : -itableSize;
+
+  if (useFastITable) {
+    for (auto& pair : interfaceVTables) {
+      auto interfaceId = pair.first;
+      auto index = interfaceId & (itableSize - 1);
+      itable_[index].id = interfaceId;
+    }
+  } else {
+    // Otherwise: conservative version.
+    // The table will be sorted since we're using KStdOrderedMap.
+    int index = 0;
+    for (auto& pair : interfaceVTables) {
+      auto interfaceId = pair.first;
+      itable_[index++].id = interfaceId;
+    }
+  }
+
+  for (int i = 0; i < itableSize; ++i) {
+    auto interfaceId = itable_[i].id;
+    if (interfaceId == kInvalidInterfaceId) continue;
+    auto interfaceVTableIt = interfaceVTables.find(interfaceId);
+    RuntimeAssert(interfaceVTableIt != interfaceVTables.end(), "");
+    auto const& interfaceVTable = interfaceVTableIt->second;
+    int interfaceVTableSize = interfaceVTable.size();
+    auto interfaceVTable_ = interfaceVTableSize == 0 ? nullptr : konanAllocArray<VTableElement>(interfaceVTableSize);
+    for (int j = 0; j < interfaceVTableSize; ++j)
+      interfaceVTable_[j] = interfaceVTable[j];
+    itable_[i].vtable = interfaceVTable_;
+    itable_[i].vtableSize = interfaceVTableSize;
+  }
+}
+
 static const TypeInfo* createTypeInfo(
   const TypeInfo* superType,
   const KStdVector<const TypeInfo*>& superInterfaces,
-  const KStdVector<const void*>& vtable,
-  const KStdVector<MethodTableRecord>& methodTable
+  const KStdVector<VTableElement>& vtable,
+  const KStdVector<MethodTableRecord>& methodTable,
+  const KStdOrderedMap<ClassId, KStdVector<VTableElement>>& interfaceVTables,
+  bool itableEqualsSuper
 ) {
   TypeInfo* result = (TypeInfo*)konanAllocMemory(sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
@@ -756,6 +819,15 @@ static const TypeInfo* createTypeInfo(
 
   result->implementedInterfaces_ = implementedInterfaces_;
   result->implementedInterfacesCount_ = implementedInterfaces.size();
+  const InterfaceTableRecord* superItable = superType->interfaceTable_;
+  if (superItable != nullptr) {
+    if (itableEqualsSuper) {
+      result->interfaceTableSize_ = superType->interfaceTableSize_;
+      result->interfaceTable_ = superType->interfaceTable_;
+    } else {
+      buildITable(result, interfaceVTables);
+    }
+  }
 
   MethodTableRecord* openMethods_ = konanAllocArray<MethodTableRecord>(methodTable.size());
   for (int i = 0; i < methodTable.size(); ++i) openMethods_[i] = methodTable[i];
@@ -906,6 +978,23 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
         superMethodTable, superMethodTable + superMethodTableSize
   );
 
+  InterfaceTableRecord const* superITable = superType->interfaceTable_;
+  KStdOrderedMap<ClassId, KStdVector<VTableElement>> interfaceVTables;
+  if (superITable != nullptr) {
+    int superITableSize = superType->interfaceTableSize_;
+    superITableSize = superITableSize >= 0 ? superITableSize + 1 : -superITableSize;
+    for (int i = 0; i < superITableSize; ++i) {
+      auto& record = superITable[i];
+      auto interfaceId = record.id;
+      if (interfaceId == kInvalidInterfaceId) continue;
+      int vtableSize = record.vtableSize;
+      KStdVector<VTableElement> interfaceVTable(vtableSize);
+      for (int j = 0; j < vtableSize; ++j)
+        interfaceVTable[j] = record.vtable[j];
+      interfaceVTables.emplace(interfaceId, std::move(interfaceVTable));
+    }
+  }
+
   KStdVector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
 
   KStdVector<const TypeInfo*> supers(
@@ -917,6 +1006,16 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
     supers.push_back(t);
   }
 
+  auto addToITable = [&interfaceVTables](ClassId interfaceId, int methodIndex, VTableElement entry) {
+    RuntimeAssert(interfaceId != kInvalidInterfaceId, "");
+    auto interfaceVTableIt = interfaceVTables.find(interfaceId);
+    RuntimeAssert(interfaceVTableIt != interfaceVTables.end(), "");
+    auto& interfaceVTable = interfaceVTableIt->second;
+    RuntimeAssert(methodIndex >= 0 && methodIndex < interfaceVTable.size(), "");
+    interfaceVTable[methodIndex] = entry;
+  };
+
+  bool itableEqualsSuper = true;
   for (const TypeInfo* t : supers) {
     const ObjCTypeAdapter* typeAdapter = getTypeAdapter(t);
     if (typeAdapter == nullptr) continue;
@@ -927,27 +1026,50 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
 
       throwIfCantBeOverridden(clazz, adapter);
 
+      itableEqualsSuper = false;
       insertOrReplace(methodTable, adapter->nameSignature, const_cast<void*>(adapter->kotlinImpl));
       if (adapter->vtableIndex != -1) vtable[adapter->vtableIndex] = adapter->kotlinImpl;
+
+      if (adapter->itableIndex != -1 && superITable != nullptr)
+        addToITable(adapter->interfaceId, adapter->itableIndex, adapter->kotlinImpl);
     }
   }
 
   for (const TypeInfo* typeInfo : addedInterfaces) {
     const ObjCTypeAdapter* typeAdapter = getTypeAdapter(typeInfo);
+
     if (typeAdapter == nullptr) continue;
 
+    if (superITable != nullptr) {
+      auto interfaceId = typeInfo->classId_;
+      int interfaceVTableSize = typeAdapter->kotlinItableSize;
+      RuntimeAssert(interfaceVTableSize >= 0, "");
+      auto interfaceVTablesIt = interfaceVTables.find(interfaceId);
+      if (interfaceVTablesIt == interfaceVTables.end()) {
+        itableEqualsSuper = false;
+        interfaceVTables.emplace(interfaceId, std::move(KStdVector<VTableElement>(interfaceVTableSize)));
+      } else {
+        auto const& interfaceVTable = interfaceVTablesIt->second;
+        RuntimeAssert(interfaceVTable.size() == interfaceVTableSize, "");
+      }
+    }
+
     for (int i = 0; i < typeAdapter->reverseAdapterNum; ++i) {
+      itableEqualsSuper = false;
       const KotlinToObjCMethodAdapter* adapter = &typeAdapter->reverseAdapters[i];
       throwIfCantBeOverridden(clazz, adapter);
 
       insertOrReplace(methodTable, adapter->nameSignature, const_cast<void*>(adapter->kotlinImpl));
       RuntimeAssert(adapter->vtableIndex == -1, "");
+
+      if (adapter->itableIndex != -1 && superITable != nullptr)
+        addToITable(adapter->interfaceId, adapter->itableIndex, adapter->kotlinImpl);
     }
   }
 
   // TODO: consider forbidding the class being abstract.
 
-  const TypeInfo* result = createTypeInfo(superType, addedInterfaces, vtable, methodTable);
+  const TypeInfo* result = createTypeInfo(superType, addedInterfaces, vtable, methodTable, interfaceVTables, itableEqualsSuper);
 
   // TODO: it will probably never be requested, since such a class can't be instantiated in Kotlin.
   result->writableInfo_->objCExport.objCClass = clazz;

@@ -42,6 +42,13 @@ private class ConstGetElementPtr(val pointer: ConstPointer, val index: Int) : Co
 internal fun ConstPointer.bitcast(toType: LLVMTypeRef) = constPointer(LLVMConstBitCast(this.llvm, toType)!!)
 
 internal class ConstArray(elementType: LLVMTypeRef?, val elements: List<ConstValue>) : ConstValue {
+    init {
+        elements.forEach {
+            assert(it.llvmType == elementType) {
+                "Expected element type: ${llvmtype2string(elementType)}, actual: ${llvmtype2string(it.llvmType)}"
+            }
+        }
+    }
     override val llvm = LLVMConstArray(elementType, elements.map { it.llvm }.toCValues(), elements.size)!!
 }
 
@@ -144,6 +151,7 @@ internal val kBoolean      = kInt1
 internal val kInt8Ptr      = pointerType(int8Type)
 internal val kInt8PtrPtr   = pointerType(kInt8Ptr)
 internal val kNullInt8Ptr  = LLVMConstNull(kInt8Ptr)!!
+internal val kImmInt32Zero = Int32(0).llvm
 internal val kImmInt32One  = Int32(1).llvm
 internal val ContextUtils.kNullObjHeaderPtr: LLVMValueRef
     get() = LLVMConstNull(this.kObjHeaderPtr)!!

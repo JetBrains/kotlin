@@ -529,6 +529,9 @@ internal object DataFlowIR {
                 layoutBuilder.methodTableEntries.forEach {
                     type.itable[it.overriddenFunction.functionName.localHash.value] = mapFunction(it.getImplementation(context)!!)
                 }
+            } else if (irClass.isInterface) {
+                // Warmup interface table so it is computed before DCE.
+                context.getLayoutBuilder(irClass).interfaceTableEntries
             }
             return type
         }

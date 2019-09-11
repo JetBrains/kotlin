@@ -435,6 +435,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val enterFrameFunction = importModelSpecificRtFunction("EnterFrame")
     val leaveFrameFunction = importModelSpecificRtFunction("LeaveFrame")
     val lookupOpenMethodFunction = importRtFunction("LookupOpenMethod")
+    val lookupInterfaceTableRecord = importRtFunction("LookupInterfaceTableRecord")
     val isInstanceFunction = importRtFunction("IsInstance")
     val isInstanceOfClassFastFunction = importRtFunction("IsInstanceOfClassFast")
     val throwExceptionFunction = importRtFunction("ThrowException")

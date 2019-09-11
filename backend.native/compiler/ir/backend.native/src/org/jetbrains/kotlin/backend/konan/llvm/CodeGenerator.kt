@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -699,21 +700,63 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return switch
     }
 
+    fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
+        val typeInfoOrMetaPtr = structGep(objPtr, 0  /* typeInfoOrMeta_ */)
+        val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr)
+        // Clear two lower bits.
+        val typeInfoOrMetaWithFlagsRaw = ptrToInt(typeInfoOrMetaWithFlags, codegen.intPtrType)
+        val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlagsRaw, codegen.immTypeInfoMask)
+        val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
+        val typeInfoPtrPtr = structGep(typeInfoOrMeta, 0 /* typeInfo */)
+        return load(typeInfoPtrPtr)
+    }
+
+    fun lookupInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
+        val interfaceTableSize = load(structGep(typeInfo, 11 /* interfaceTableSize_ */))
+        val interfaceTable = load(structGep(typeInfo, 12 /* interfaceTable_ */))
+
+        fun fastPath(): LLVMValueRef {
+            // The fastest optimistic version.
+            val interfaceTableIndex = and(interfaceTableSize, Int32(interfaceId).llvm)
+            return gep(interfaceTable, interfaceTableIndex)
+        }
+
+        // See details in ClassLayoutBuilder.
+        return if (context.globalHierarchyAnalysisResult.bitsPerColor <= ClassGlobalHierarchyInfo.MAX_BITS_PER_COLOR
+                && context.config.produce != CompilerOutputKind.FRAMEWORK) {
+            // All interface tables are small and no unknown interface inheritance.
+            fastPath()
+        } else {
+            val startLocationInfo = position()?.start
+            val fastPathBB = basicBlock("fast_path", startLocationInfo)
+            val slowPathBB = basicBlock("slow_path", startLocationInfo)
+            val takeResBB = basicBlock("take_res", startLocationInfo)
+            condBr(icmpGe(interfaceTableSize, kImmInt32Zero), fastPathBB, slowPathBB)
+            positionAtEnd(takeResBB)
+            val resultPhi = phi(pointerType(runtime.interfaceTableRecordType))
+            appendingTo(fastPathBB) {
+                val fastValue = fastPath()
+                br(takeResBB)
+                addPhiIncoming(resultPhi, currentBlock to fastValue)
+            }
+            appendingTo(slowPathBB) {
+                val actualInterfaceTableSize = sub(kImmInt32Zero, interfaceTableSize) // -interfaceTableSize
+                val slowValue = call(context.llvm.lookupInterfaceTableRecord,
+                        listOf(interfaceTable, actualInterfaceTableSize, Int32(interfaceId).llvm))
+                br(takeResBB)
+                addPhiIncoming(resultPhi, currentBlock to slowValue)
+            }
+            resultPhi
+        }
+    }
+
     fun lookupVirtualImpl(receiver: LLVMValueRef, irFunction: IrFunction): LLVMValueRef {
         assert(LLVMTypeOf(receiver) == codegen.kObjHeaderPtr)
 
-        val typeInfoPtr: LLVMValueRef = if (irFunction.getObjCMethodInfo() != null) {
+        val typeInfoPtr: LLVMValueRef = if (irFunction.getObjCMethodInfo() != null)
             call(context.llvm.getObjCKotlinTypeInfo, listOf(receiver))
-        } else {
-            val typeInfoOrMetaPtr = structGep(receiver, 0  /* typeInfoOrMeta_ */)
-            val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr)
-            // Clear two lower bits.
-            val typeInfoOrMetaWithFlagsRaw = ptrToInt(typeInfoOrMetaWithFlags, codegen.intPtrType)
-            val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlagsRaw, codegen.immTypeInfoMask)
-            val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
-            val typeInfoPtrPtr = structGep(typeInfoOrMeta, 0 /* typeInfo */)
-            load(typeInfoPtrPtr)
-        }
+        else
+            loadTypeInfo(receiver)
 
         assert(typeInfoPtr.type == codegen.kTypeInfoPtr) { LLVMPrintTypeToString(typeInfoPtr.type)!!.toKString() }
 
@@ -724,25 +767,29 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
          */
         val anyMethod = (irFunction as IrSimpleFunction).findOverriddenMethodOfAny()
         val owner = (anyMethod ?: irFunction).parentAsClass
+        val methodHash = codegen.functionHash(irFunction)
 
-        val llvmMethod = if (!owner.isInterface) {
-            // If this is a virtual method of the class - we can call via vtable.
-            val index = context.getLayoutBuilder(owner).vtableIndex(anyMethod ?: irFunction)
-            val vtablePlace = gep(typeInfoPtr, Int32(1).llvm) // typeInfoPtr + 1
-            val vtable = bitcast(kInt8PtrPtr, vtablePlace)
-            val slot = gep(vtable, Int32(index).llvm)
-            load(slot)
-        } else {
-            // Otherwise, call by hash.
-            // TODO: optimize by storing interface number in lower bits of 'this' pointer
-            //       when passing object as an interface. This way we can use those bits as index
-            //       for an additional per-interface vtable.
-            val methodHash = codegen.functionHash(irFunction)                       // Calculate hash of the method to be invoked
-            val lookupArgs = listOf(typeInfoPtr, methodHash)                        // Prepare args for lookup
-            call(context.llvm.lookupOpenMethodFunction, lookupArgs)
+        val llvmMethod = when {
+            !owner.isInterface -> {
+                // If this is a virtual method of the class - we can call via vtable.
+                val index = context.getLayoutBuilder(owner).vtableIndex(anyMethod ?: irFunction)
+                val vtablePlace = gep(typeInfoPtr, Int32(1).llvm) // typeInfoPtr + 1
+                val vtable = bitcast(kInt8PtrPtr, vtablePlace)
+                val slot = gep(vtable, Int32(index).llvm)
+                load(slot)
+            }
+
+            !context.shouldOptimize() -> call(context.llvm.lookupOpenMethodFunction, listOf(typeInfoPtr, methodHash))
+
+            else -> {
+                // Essentially: typeInfo.itable[place(interfaceId)].vtable[method]
+                val itablePlace = context.getLayoutBuilder(owner).itablePlace(irFunction)
+                val interfaceTableRecord = lookupInterfaceTableRecord(typeInfoPtr, itablePlace.interfaceId)
+                load(gep(load(structGep(interfaceTableRecord, 2 /* vtable */)), Int32(itablePlace.methodIndex).llvm))
+            }
         }
-        val functionPtrType = pointerType(codegen.getLlvmFunctionType(irFunction))   // Construct type of the method to be invoked
-        return bitcast(functionPtrType, llvmMethod)           // Cast method address to the type
+        val functionPtrType = pointerType(codegen.getLlvmFunctionType(irFunction))
+        return bitcast(functionPtrType, llvmMethod)
     }
 
     private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {

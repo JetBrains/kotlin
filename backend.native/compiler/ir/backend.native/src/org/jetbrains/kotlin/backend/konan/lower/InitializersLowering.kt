@@ -33,6 +33,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
     object DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER : IrDeclarationOriginImpl("ANONYMOUS_INITIALIZER")
 
     override fun lower(irClass: IrClass) {
+        if (irClass.isInterface) return
         InitializersTransformer(irClass).lowerInitializers()
     }
 

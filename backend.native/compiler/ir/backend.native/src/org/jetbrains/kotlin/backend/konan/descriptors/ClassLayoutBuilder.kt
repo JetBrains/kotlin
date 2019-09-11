@@ -81,14 +81,52 @@ internal class OverriddenFunctionInfo(
     }
 }
 
-internal class ClassGlobalHierarchyInfo(val classIdLo: Int, val classIdHi: Int) {
+internal class ClassGlobalHierarchyInfo(val classIdLo: Int, val classIdHi: Int,
+                                        val interfaceId: Int, val interfaceColor: Int) {
     companion object {
-        val DUMMY = ClassGlobalHierarchyInfo(0, 0)
+        val DUMMY = ClassGlobalHierarchyInfo(0, 0, 0, 0)
+
+        // 32-items table seems like a good threshold.
+        val MAX_BITS_PER_COLOR = 5
     }
 }
 
+internal class GlobalHierarchyAnalysisResult(val bitsPerColor: Int)
+
 internal class GlobalHierarchyAnalysis(val context: Context) {
     fun run() {
+        /*
+         * The algorithm for fast interface call and check:
+         * Consider the following graph: the vertices are interfaces and two interfaces are
+         * connected with an edge if there exists a class which inherits both of them.
+         * Now find a proper vertex-coloring of that graph (such that no edge connects vertices of same color).
+         * Assign to each interface a unique id in such a way that its color is stored in the lower bits of its id.
+         * Assuming the number of colors used is reasonably small build then a perfect hash table for each class:
+         *     for each interfaceId inherited: itable[interfaceId % size] == interfaceId
+         * Since we store the color in the lower bits the division can be replaced with (interfaceId & (size - 1)).
+         * This is indeed a perfect hash table by construction of the coloring of the interface graph.
+         * Now to perform an interface call store in all itables pointers to vtables of that particular interface.
+         * Interface call: *(itable[interfaceId & (size - 1)].vtable[methodIndex])(...)
+         * Interface check: itable[interfaceId & (size - 1)].id == interfaceId
+         *
+         * Note that we have a fallback to a more conservative version if the size of an itable is too large:
+         * just save all interface ids and vtables in sorted order and find the needed one with the binary search.
+         * We can signal that using the sign bit of the type info's size field:
+         *     if (size >= 0) { .. fast path .. }
+         *     else binary_search(0, -size)
+         */
+        val interfaceColors = assignColorsToInterfaces()
+        val maxColor = interfaceColors.values.max() ?: 0
+        var bitsPerColor = 0
+        var x = maxColor
+        while (x > 0) {
+            ++bitsPerColor
+            x /= 2
+        }
+
+        val maxInterfaceId = Int.MAX_VALUE shr bitsPerColor
+        val colorCounts = IntArray(maxColor + 1)
+
         /*
          * Here's the explanation of what's happening here:
          * Given a tree we can traverse it with the DFS and save for each vertex two times:
@@ -110,9 +148,17 @@ internal class GlobalHierarchyAnalysis(val context: Context) {
             }
 
             override fun visitClass(declaration: IrClass) {
-                if (declaration.isInterface)
-                    context.getLayoutBuilder(declaration).hierarchyInfo = ClassGlobalHierarchyInfo(0, 0)
-                else {
+                if (declaration.isInterface) {
+                    val color = interfaceColors[declaration]!!
+                    // Numerate from 1 (reserve 0 for invalid value).
+                    val interfaceId = ++colorCounts[color]
+                    assert (interfaceId <= maxInterfaceId) {
+                        "Unable to assign interface id to ${declaration.name}"
+                    }
+                    context.getLayoutBuilder(declaration).hierarchyInfo =
+                            ClassGlobalHierarchyInfo(0, 0,
+                                    color or (interfaceId shl bitsPerColor), color)
+                } else {
                     allClasses += declaration
                     if (declaration != root) {
                         val superClass = declaration.getSuperClassNotAny() ?: root
@@ -131,10 +177,83 @@ internal class GlobalHierarchyAnalysis(val context: Context) {
             val enterTime = if (irClass == root) -1 else time
             immediateInheritors[irClass]?.forEach { dfs(it) }
             val exitTime = time
-            context.getLayoutBuilder(irClass).hierarchyInfo = ClassGlobalHierarchyInfo(enterTime, exitTime)
+            context.getLayoutBuilder(irClass).hierarchyInfo = ClassGlobalHierarchyInfo(enterTime, exitTime, 0, 0)
         }
 
         dfs(root)
+
+        context.globalHierarchyAnalysisResult = GlobalHierarchyAnalysisResult(bitsPerColor)
+    }
+
+    class InterfacesForbiddennessGraph(val nodes: List<IrClass>, val forbidden: List<List<Int>>) {
+
+        fun computeColoringGreedy(): IntArray {
+            val colors = IntArray(nodes.size) { -1 }
+            var numberOfColors = 0
+            val usedColors = BooleanArray(nodes.size)
+            for (v in nodes.indices) {
+                for (c in 0 until numberOfColors)
+                    usedColors[c] = false
+                for (u in forbidden[v])
+                    if (colors[u] >= 0)
+                        usedColors[colors[u]] = true
+                var found = false
+                for (c in 0 until numberOfColors)
+                    if (!usedColors[c]) {
+                        colors[v] = c
+                        found = true
+                        break
+                    }
+                if (!found)
+                    colors[v] = numberOfColors++
+            }
+            return colors
+        }
+
+        companion object {
+            fun build(irModuleFragment: IrModuleFragment): InterfacesForbiddennessGraph {
+                val interfaceIndices = mutableMapOf<IrClass, Int>()
+                val interfaces = mutableListOf<IrClass>()
+                val forbidden = mutableListOf<MutableList<Int>>()
+                irModuleFragment.acceptVoid(object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    fun registerInterface(iface: IrClass) {
+                        interfaceIndices.getOrPut(iface) {
+                            forbidden.add(mutableListOf())
+                            interfaces.add(iface)
+                            interfaces.size - 1
+                        }
+                    }
+
+                    override fun visitClass(declaration: IrClass) {
+                        if (declaration.isInterface)
+                            registerInterface(declaration)
+                        else {
+                            val implementedInterfaces = declaration.implementedInterfaces
+                            implementedInterfaces.forEach { registerInterface(it) }
+                            for (i in 0 until implementedInterfaces.size)
+                                for (j in i + 1 until implementedInterfaces.size) {
+                                    val v = interfaceIndices[implementedInterfaces[i]]!!
+                                    val u = interfaceIndices[implementedInterfaces[j]]!!
+                                    forbidden[v].add(u)
+                                    forbidden[u].add(v)
+                                }
+                        }
+                        super.visitClass(declaration)
+                    }
+                })
+                return InterfacesForbiddennessGraph(interfaces, forbidden)
+            }
+        }
+    }
+
+    private fun assignColorsToInterfaces(): Map<IrClass, Int> {
+        val graph = InterfacesForbiddennessGraph.build(context.irModule!!)
+        val coloring = graph.computeColoringGreedy()
+        return graph.nodes.mapIndexed { v, irClass -> irClass to coloring[v] }.toMap()
     }
 }
 
@@ -232,6 +351,30 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }
 
+    val interfaceTableEntries: List<IrSimpleFunction> by lazy {
+        irClass.sortedOverridableOrOverridingMethods
+                .filter { f ->
+                    f.isReal || f.overriddenSymbols.any { OverriddenFunctionInfo(f, it.owner).needBridge }
+                }
+                .toList()
+    }
+
+    data class InterfaceTablePlace(val interfaceId: Int, val methodIndex: Int) {
+        companion object {
+            val INVALID = InterfaceTablePlace(0, -1)
+        }
+    }
+
+    fun itablePlace(function: IrSimpleFunction): InterfaceTablePlace {
+        assert (irClass.isInterface) { "An interface expected but was ${irClass.name}" }
+        val itable = interfaceTableEntries
+        val index = itable.indexOf(function)
+        if (index >= 0)
+            return InterfaceTablePlace(hierarchyInfo.interfaceId, index)
+        val superFunction = function.overriddenSymbols.first().owner
+        return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
+    }
+
     /**
      * All fields of the class instance.
      * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
@@ -302,8 +445,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     private val IrClass.sortedOverridableOrOverridingMethods: List<IrSimpleFunction>
         get() =
             this.simpleFunctions()
-                    .filter { (it.isOverridable || it.overriddenSymbols.isNotEmpty())
-                               && it.bridgeTarget == null }
+                    .filter { it.isOverridableOrOverrides && it.bridgeTarget == null }
                     .sortedBy { it.uniqueId }
 
     private val functionIds = mutableMapOf<IrFunction, Long>()
