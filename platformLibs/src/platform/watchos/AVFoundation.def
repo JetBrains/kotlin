@@ -1,0 +1,7 @@
+depends = CoreAudio CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.AVFoundation
+modules = AVFoundation
+
+compilerOpts = -framework AVFoundation
+linkerOpts = -framework AVFoundation

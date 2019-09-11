@@ -1,0 +1,7 @@
+depends = CoreFoundation CoreGraphics CoreLocation Foundation Security darwin posix
+language = Objective-C
+package = platform.EventKit
+modules = EventKit
+
+compilerOpts = -framework EventKit
+linkerOpts = -framework EventKit
