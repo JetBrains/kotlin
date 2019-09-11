@@ -74,17 +74,49 @@ class CompoundParallelOperationTraceTest : CompoundParallelOperationTraceTestCas
   }
 
   @Test
+  fun `test super compound operation`() = testTrace<Int> {
+    operation {
+      trace.startTask(1)
+      operation {
+        trace.startTask(2)
+        operation {
+          trace.startTask(3)
+          trace.finishTask(3)
+          trace.finishTask(1)
+          trace.finishTask(2)
+        }
+      }
+    }
+  }
+
+  @Test
+  fun `test unidentified operation`() = testTrace<Nothing?> {
+    operation {
+      trace.startTask(null)
+      operation {
+        trace.startTask(null)
+        trace.finishTask(null)
+        trace.finishTask(null)
+      }
+    }
+  }
+
+  @Test
   fun `test parallel execution`() = testTrace<Int> {
-    repeat(10000) {
+    generate(1000) {
       val latch = CountDownLatch(1)
+      val startedOperations = AtomicInteger(0)
       val completedOperations = AtomicInteger(0)
-      trace.onOperationCompleted {
+      trace.beforeOperation {
+        startedOperations.incrementAndGet()
+      }
+      trace.afterOperation {
         completedOperations.incrementAndGet()
       }
 
       operation {
-        repeat(10, trace::startTask)
-        val threads = repeat(10) {
+        generate(10, trace::startTask)
+        val threads = generate(10) {
           thread {
             latch.await()
             trace.finishTask(it)
@@ -94,6 +126,38 @@ class CompoundParallelOperationTraceTest : CompoundParallelOperationTraceTestCas
         threads.forEach(Thread::join)
       }
 
+      assertEquals(1, startedOperations.get())
+      assertEquals(1, completedOperations.get())
+    }
+  }
+
+  @Test
+  fun `test super compound parallel execution`() {
+    val trace = CompoundParallelOperationTrace<Int>()
+    generate(1000) {
+      val latch = CountDownLatch(1)
+      val startedOperations = AtomicInteger(0)
+      val completedOperations = AtomicInteger(0)
+      trace.beforeOperation {
+        startedOperations.incrementAndGet()
+      }
+      trace.afterOperation {
+        completedOperations.incrementAndGet()
+      }
+
+      val threads = generate(10) {
+        thread {
+          latch.await()
+          trace.startOperation()
+          trace.startTask(it)
+        }
+      }
+      latch.countDown()
+      threads.forEach(Thread::join)
+      generate(10, trace::finishTask)
+      assertEquals(it.toString(), true, trace.isOperationCompleted())
+
+      assertEquals(1, startedOperations.get())
       assertEquals(1, completedOperations.get())
     }
   }

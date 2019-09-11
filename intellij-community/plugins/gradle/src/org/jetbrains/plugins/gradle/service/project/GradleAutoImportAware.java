@@ -129,11 +129,12 @@ public class GradleAutoImportAware implements ExternalSystemAutoImportAware {
       try {
         Files.walkFileTree(Paths.get(path), EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
           @Override
-          public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-            String fileName = file.getFileName().toString();
+          public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+            String fileName = path.getFileName().toString();
             if (fileName.endsWith('.' + GradleConstants.EXTENSION) ||
                 fileName.endsWith('.' + GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION)) {
-              files.add(file.toFile());
+              File file = path.toFile();
+              if (file.isFile()) files.add(file);
             }
             return FileVisitResult.CONTINUE;
           }

@@ -61,7 +61,6 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
     ExternalProjectsManagerImpl.getInstance(project).runWhenInitialized {
       ExternalSystemUtil.ensureToolWindowInitialized(project, SYSTEM_ID)
     }
-    ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project)
     ExternalSystemApiUtil.getSettings(project, SYSTEM_ID).linkProject(settings)
     ExternalSystemUtil.refreshProject(externalProjectPath,
                                       ImportSpecBuilder(project, SYSTEM_ID)

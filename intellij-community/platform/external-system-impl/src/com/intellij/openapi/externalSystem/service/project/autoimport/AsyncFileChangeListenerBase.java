@@ -17,19 +17,24 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
-  protected abstract boolean isRelevant(String path);
-  
-  protected abstract void prepareFileDeletion(@NotNull VirtualFile file); 
+  protected boolean isRelevant(String path) { return true; }
 
-  protected abstract void updateFile(@NotNull VirtualFile file, @NotNull VFileEvent event);
+  protected void prepareFileDeletion(@NotNull VirtualFile file) {}
 
-  protected abstract void reset();
+  protected void updateFile(@NotNull VirtualFile file, @NotNull VFileEvent event) {}
 
-  protected abstract void apply();
+  protected void reset() {}
+
+  protected void apply() {}
+
+  protected void beforeVfsChange() {}
+
+  protected void afterVfsChange() {}
 
   @Nullable
   @Override
   public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    beforeVfsChange();
     List<VFileEvent> relevantEvents = new ArrayList<>();
     try {
       for (VFileEvent each : events) {
@@ -70,6 +75,7 @@ public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
       @Override
       public void afterVfsChange() {
         after(relevantEvents);
+        AsyncFileChangeListenerBase.this.afterVfsChange();
       }
     };
   }

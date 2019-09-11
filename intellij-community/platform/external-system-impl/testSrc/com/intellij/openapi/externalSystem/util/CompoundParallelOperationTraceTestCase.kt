@@ -4,7 +4,7 @@ package com.intellij.openapi.externalSystem.util
 import org.junit.Assert.assertEquals
 
 abstract class CompoundParallelOperationTraceTestCase {
-  protected fun <R> repeat(times: Int, action: (Int) -> R): Iterable<R> {
+  protected fun <R> generate(times: Int, action: (Int) -> R): Iterable<R> {
     return (0 until times).map(action)
   }
 

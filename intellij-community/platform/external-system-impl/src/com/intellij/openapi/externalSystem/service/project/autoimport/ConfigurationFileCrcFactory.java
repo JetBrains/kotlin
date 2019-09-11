@@ -24,7 +24,7 @@ import java.util.zip.CRC32;
  */
 public class ConfigurationFileCrcFactory {
 
-  private static final Logger LOG = Logger.getInstance(ConfigurationFileCrcFactory.class);
+  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport");
 
   private final VirtualFile myFile;
 

@@ -5,13 +5,15 @@ package com.intellij.openapi.externalSystem.service.project.autoimport
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus.ProjectEvent.*
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus.ProjectState.*
-import java.lang.Long.max
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.max
 
-class ProjectStatus {
-  private val LOG = Logger.getInstance(ProjectStatus::class.java)
+class ProjectStatus(private val debugName: String? = null) {
+  private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
   private var state = AtomicReference(Synchronized(-1) as ProjectState)
+
+  fun isDirty() = state.get() is Dirty
 
   fun isUpToDate() = when (state.get()) {
     is Modified, is Dirty -> false
@@ -36,7 +38,8 @@ class ProjectStatus {
 
   fun update(event: ProjectEvent): ProjectState {
     if (LOG.isDebugEnabled) {
-      LOG.debug("Event ${event::class.simpleName} is happened at ${event.stamp}")
+      val debugPrefix = if (debugName == null) "" else "$debugName: "
+      LOG.debug("${debugPrefix}Event ${event::class.simpleName} is happened at ${event.stamp}")
     }
     return state.updateAndGet { currentState ->
       when (currentState) {
