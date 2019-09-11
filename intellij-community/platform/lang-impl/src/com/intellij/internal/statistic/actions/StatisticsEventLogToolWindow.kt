@@ -45,6 +45,7 @@ class StatisticsEventLogToolWindow(project: Project, private val recorderId: Str
     val toolbarActions = DefaultActionGroup()
     toolbarActions.add(consoleLog.orCreateActions)
     toolbarActions.add(ConfigureWhitelistAction())
+    toolbarActions.add(UpdateWhitelistAction(recorderId))
     toolbar = ActionManager.getInstance().createActionToolbar("FusEventLogToolWindow", toolbarActions, false).component
 
     Disposer.register(this, consoleLog)
