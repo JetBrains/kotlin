@@ -54,9 +54,9 @@ class UnsupportedGradleImportingTest : SyncViewMessagesImportingTestCase() {
 
   companion object {
     private val OLD_GRADLE_VERSIONS = arrayOf(
-      arrayOf<Any>("0.7"), arrayOf<Any>("0.8"), arrayOf<Any>("0.9.2"),
+      arrayOf<Any>("0.7"), /*arrayOf<Any>("0.8"), arrayOf<Any>("0.9"), ..., */arrayOf<Any>("0.9.2"),
       arrayOf<Any>("1.0"), /*arrayOf<Any>("1.1"), arrayOf<Any>("1.2"), ..., */arrayOf<Any>("1.12"),
-      arrayOf<Any>("2.0"), /*arrayOf<Any>("2.1"),arrayOf<Any>("2.2"), ..., */arrayOf<Any>("2.5"))
+      arrayOf<Any>("2.0"), /*arrayOf<Any>("2.1"), arrayOf<Any>("2.2"), ..., */arrayOf<Any>("2.5"))
 
     /**
      * Run the test against very old not-supported Gradle versions also
