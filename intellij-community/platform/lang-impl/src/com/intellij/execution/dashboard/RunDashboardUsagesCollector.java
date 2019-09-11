@@ -2,8 +2,10 @@
 package com.intellij.execution.dashboard;
 
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.impl.statistics.RunConfigurationTypeUsagesCollector;
 import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.beans.MetricEventFactoryKt;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
 import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
@@ -28,6 +30,11 @@ public class RunDashboardUsagesCollector extends ProjectUsagesCollector {
     return "run.dashboard";
   }
 
+  @Override
+  public int getVersion() {
+    return 2;
+  }
+
   @NotNull
   @Override
   public Set<MetricEvent> getMetrics(@NotNull Project project) {
@@ -41,8 +48,8 @@ public class RunDashboardUsagesCollector extends ProjectUsagesCollector {
         ConfigurationType configurationType = ContainerUtil.find(configurationTypes, type -> type.getId().equals(dashboardType));
         if (configurationType == null) continue;
 
-        String key = PluginInfoDetectorKt.getPluginInfo(configurationType.getClass()).isDevelopedByJetBrains() ?  dashboardType : "third.party";
-        metricEvents.add(MetricEventFactoryKt.newMetric(key));
+        final FeatureUsageData data = RunConfigurationTypeUsagesCollector.newFeatureUsageData(configurationType, null);
+        metricEvents.add(MetricEventFactoryKt.newMetric("added.run.configuration", data));
       }
     }
     return metricEvents;

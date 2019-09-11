@@ -96,10 +96,10 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
   }
 
   @NotNull
-  public static FeatureUsageData newFeatureUsageData(@NotNull ConfigurationType configuration, @NotNull ConfigurationFactory factory) {
+  public static FeatureUsageData newFeatureUsageData(@NotNull ConfigurationType configuration, @Nullable ConfigurationFactory factory) {
     final String id = configuration instanceof UnknownConfigurationType ? "unknown" : configuration.getId();
     final FeatureUsageData data = new FeatureUsageData().addData(ID_FIELD, id);
-    if (configuration.getConfigurationFactories().length > 1) {
+    if (factory != null && configuration.getConfigurationFactories().length > 1) {
       data.addData(FACTORY_FIELD, factory.getId());
     }
     return data;
