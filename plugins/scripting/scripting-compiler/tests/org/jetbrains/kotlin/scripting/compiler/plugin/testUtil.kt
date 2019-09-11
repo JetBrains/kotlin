@@ -98,15 +98,21 @@ fun runWithKotlinc(
 fun runWithK2JVMCompiler(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
-    expectedExitCode: Int = 0
+    expectedExitCode: Int = 0,
+    classpath: List<File> = emptyList()
 ) {
-    val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
-    Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
-
+    val args = arrayListOf("-kotlin-home", "dist/kotlinc").apply {
+        if (classpath.isNotEmpty()) {
+            add("-cp")
+            add(classpath.joinToString(File.pathSeparator))
+        }
+        add("-script")
+        add(scriptPath)
+    }
     val (out, err, ret) = captureOutErrRet {
         CLITool.doMainNoExit(
             K2JVMCompiler(),
-            arrayOf("-kotlin-home", "dist/kotlinc", "-cp", mainKtsJar.absolutePath, "-script", scriptPath)
+            args.toTypedArray()
         )
     }
     try {

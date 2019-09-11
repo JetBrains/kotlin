@@ -20,7 +20,14 @@ class MainKtsIT {
 
     @Test
     fun testImport() {
-        runWithK2JVMCompiler("$TEST_DATA_ROOT/import-test.main.kts", listOf("Hi from common", "Hi from middle", "sharedVar == 5"))
+        val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
+        Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
+
+        runWithK2JVMCompiler(
+            "$TEST_DATA_ROOT/import-test.main.kts",
+            listOf("Hi from common", "Hi from middle", "sharedVar == 5"),
+            classpath = listOf(mainKtsJar)
+        )
     }
 
     @Test
