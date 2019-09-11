@@ -125,7 +125,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
     return myContent;
   }
 
-  public Map<AbstractViewManager.BuildInfo, BuildView> getBuildsMap() {
+  public Map<BuildDescriptor, BuildView> getBuildsMap() {
     return Collections.unmodifiableMap(myViewMap);
   }
 

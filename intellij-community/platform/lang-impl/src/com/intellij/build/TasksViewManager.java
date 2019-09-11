@@ -20,7 +20,7 @@ public abstract class TasksViewManager extends AbstractViewManager {
   protected void onBuildStart(BuildDescriptor buildDescriptor) {
     BuildInfo buildInfo = (BuildInfo)buildDescriptor;
     Content content = buildInfo.content;
-    Map<BuildInfo, BuildView> buildsMap = getBuildsMap();
+    Map<BuildDescriptor, BuildView> buildsMap = getBuildsMap();
     String tabName = buildsMap.size() > 1 ? getViewName() : getViewName() + ": " + buildInfo.getTitle();
     ((BuildContentManagerImpl)myBuildContentManager).updateTabDisplayName(content, tabName);
   }

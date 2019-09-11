@@ -103,17 +103,26 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   }
 
   @NotNull
+  protected GradleVersion getCurrentGradleVersion() {
+    return GradleVersion.version(gradleVersion);
+  }
+
+  @NotNull
+  protected GradleVersion getCurrentGradleBaseVersion() {
+    return GradleVersion.version(gradleVersion).getBaseVersion();
+  }
+
+  protected void assumeTestJavaRuntime(@NotNull JavaVersion javaRuntimeVersion) {
+    Assume.assumeFalse("Skip integration tests running on JDK 9+ for Gradle < 3.0",
+                       javaRuntimeVersion.feature > 9 && getCurrentGradleBaseVersion().compareTo(GradleVersion.version("3.0")) < 0);
+  }
+
+  @NotNull
   private String requireRealJdkHome() {
-    Properties properties = System.getProperties();
-    JavaVersion javaRuntimeVersion = JavaVersion.tryParse(
-      properties.getProperty("java.runtime.version", properties.getProperty("java.version", "unknown")));
+    JavaVersion javaRuntimeVersion = JavaVersion.current();
+    assumeTestJavaRuntime(javaRuntimeVersion);
     GradleVersion baseVersion = GradleVersion.version(gradleVersion).getBaseVersion();
     if (javaRuntimeVersion.feature > 9 && baseVersion.compareTo(GradleVersion.version("4.8")) < 0) {
-      if (baseVersion.compareTo(GradleVersion.version("3.0")) < 0) {
-        Assume.assumeTrue("Skip integration tests running on JDK 9+ for Gradle < 3.0", false);
-        return null;
-      }
-
       List<String> paths = JavaHomeFinder.suggestHomePaths();
       for (String path : paths) {
         if (JdkUtil.checkForJdk(path)) {

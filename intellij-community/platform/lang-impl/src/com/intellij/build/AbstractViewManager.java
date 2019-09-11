@@ -77,7 +77,7 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   @NotNull
   protected abstract String getViewName();
 
-  protected Map<BuildInfo, BuildView> getBuildsMap() {
+  protected Map<BuildDescriptor, BuildView> getBuildsMap() {
     return myBuildsViewValue.getValue().getBuildsMap();
   }
 
@@ -222,9 +222,9 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   }
 
   private String getPinnedTabName(MultipleBuildsView buildsView) {
-    Map<BuildInfo, BuildView> buildsMap = buildsView.getBuildsMap();
+    Map<BuildDescriptor, BuildView> buildsMap = buildsView.getBuildsMap();
 
-    AbstractViewManager.BuildInfo buildInfo =
+    BuildDescriptor buildInfo =
       buildsMap.keySet().stream()
                .reduce((b1, b2) -> b1.getStartTime() <= b2.getStartTime() ? b1 : b2)
                .orElse(null);
