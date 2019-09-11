@@ -7,6 +7,7 @@ import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.util.io.StreamUtil;
@@ -20,9 +21,13 @@ import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.model.AnnotationProcessingConfig;
+import org.jetbrains.plugins.gradle.model.AnnotationProcessingModel;
 import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel;
 import org.jetbrains.plugins.gradle.model.ClasspathEntryModel;
+import org.jetbrains.plugins.gradle.model.data.AnnotationProcessingData;
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData;
+import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionErrorHandler;
 import org.jetbrains.plugins.gradle.service.notification.ApplyGradlePluginCallback;
 import org.jetbrains.plugins.gradle.service.notification.GotoSourceNotificationCallback;
@@ -32,7 +37,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Vladislav.Soroka
@@ -73,6 +78,62 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
 
   @Override
   public void populateModuleExtraModels(@NotNull IdeaModule gradleModule, @NotNull DataNode<ModuleData> ideModule) {
+    populateBuildScriptClasspathData(gradleModule, ideModule);
+    populateAnnotationProcessorData(gradleModule, ideModule);
+    nextResolver.populateModuleExtraModels(gradleModule, ideModule);
+  }
+
+  private void populateAnnotationProcessorData(@NotNull IdeaModule gradleModule,
+                                               @NotNull DataNode<ModuleData> ideModule) {
+    final AnnotationProcessingModel apModel = resolverCtx.getExtraProject(gradleModule, AnnotationProcessingModel.class);
+    if (apModel == null) {
+      return;
+    }
+    if (!resolverCtx.isResolveModulePerSourceSet()) {
+      final AnnotationProcessingData apData = getMergedAnnotationProcessingData(apModel);
+      ideModule.createChild(AnnotationProcessingData.KEY, apData);
+    } else {
+      Collection<DataNode<GradleSourceSetData>> all = ExternalSystemApiUtil.findAll(ideModule, GradleSourceSetData.KEY);
+      for (DataNode<GradleSourceSetData> node : all) {
+        final AnnotationProcessingData apData = getAnnotationProcessingData(apModel, node.getData().getModuleName());
+        if (apData != null) {
+          node.createChild(AnnotationProcessingData.KEY, apData);
+        }
+      }
+    }
+  }
+
+  @NotNull
+  private static AnnotationProcessingData getMergedAnnotationProcessingData(@NotNull AnnotationProcessingModel apModel) {
+
+    final Set<String> mergedAnnotationProcessorPath = new LinkedHashSet<>();
+    for (AnnotationProcessingConfig config : apModel.allConfigs().values()) {
+      mergedAnnotationProcessorPath.addAll(config.getAnnotationProcessorPath());
+    }
+
+    final List<String> apArguments = new ArrayList<>();
+    final AnnotationProcessingConfig mainConfig = apModel.bySourceSetName("main");
+    if (mainConfig != null) {
+       apArguments.addAll(mainConfig.getAnnotationProcessorArguments());
+    }
+
+    return AnnotationProcessingData.create(mergedAnnotationProcessorPath, apArguments);
+  }
+
+  @Nullable
+  private static AnnotationProcessingData getAnnotationProcessingData(@NotNull AnnotationProcessingModel apModel,
+                                                                      @NotNull String sourceSetName) {
+    AnnotationProcessingConfig config = apModel.bySourceSetName(sourceSetName);
+    if (config == null) {
+      return null;
+    } else {
+      return AnnotationProcessingData.create(config.getAnnotationProcessorPath(),
+                                             config.getAnnotationProcessorArguments());
+    }
+  }
+
+  private void populateBuildScriptClasspathData(@NotNull IdeaModule gradleModule,
+                                                @NotNull DataNode<ModuleData> ideModule) {
     final BuildScriptClasspathModel buildScriptClasspathModel = resolverCtx.getExtraProject(gradleModule, BuildScriptClasspathModel.class);
     final List<BuildScriptClasspathData.ClasspathEntry> classpathEntries;
     if (buildScriptClasspathModel != null) {
@@ -86,8 +147,6 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
     BuildScriptClasspathData buildScriptClasspathData = new BuildScriptClasspathData(GradleConstants.SYSTEM_ID, classpathEntries);
     buildScriptClasspathData.setGradleHomeDir(buildScriptClasspathModel != null ? buildScriptClasspathModel.getGradleHomeDir() : null);
     ideModule.createChild(BuildScriptClasspathData.KEY, buildScriptClasspathData);
-
-    nextResolver.populateModuleExtraModels(gradleModule, ideModule);
   }
 
   @NotNull
@@ -163,5 +222,11 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
         LOG.info(e);
       }
     }
+  }
+
+  @NotNull
+  @Override
+  public Set<Class> getExtraProjectModelClasses() {
+    return Collections.singleton(AnnotationProcessingModel.class);
   }
 }
