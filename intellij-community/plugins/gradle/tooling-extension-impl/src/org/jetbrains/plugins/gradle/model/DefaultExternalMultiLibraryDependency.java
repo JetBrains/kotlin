@@ -4,7 +4,7 @@ package org.jetbrains.plugins.gradle.model;
 import org.gradle.internal.impldep.com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
-import org.jetbrains.plugins.gradle.tooling.util.ContainerUtil;
+import org.jetbrains.plugins.gradle.tooling.util.GradleContainerUtil;
 
 import java.io.File;
 import java.util.Collection;
@@ -53,7 +53,7 @@ public final class DefaultExternalMultiLibraryDependency extends AbstractExterna
     if (!(o instanceof DefaultExternalMultiLibraryDependency)) return false;
     if (!super.equals(o)) return false;
     DefaultExternalMultiLibraryDependency that = (DefaultExternalMultiLibraryDependency)o;
-    return ContainerUtil.match(files.iterator(), that.files.iterator(), new BooleanBiFunction<File, File>() {
+    return GradleContainerUtil.match(files.iterator(), that.files.iterator(), new BooleanBiFunction<File, File>() {
       @Override
       public Boolean fun(File o1, File o2) {
         return Objects.equal(o1.getPath(), o2.getPath());

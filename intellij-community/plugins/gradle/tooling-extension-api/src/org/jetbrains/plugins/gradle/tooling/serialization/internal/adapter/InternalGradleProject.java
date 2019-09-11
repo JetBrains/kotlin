@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.plugins.gradle.tooling.serialization.internal.adapter.AdapterUtils.wrap;
-import static org.jetbrains.plugins.gradle.tooling.util.ContainerUtil.emptyDomainObjectSet;
+import static org.jetbrains.plugins.gradle.tooling.util.GradleContainerUtil.emptyDomainObjectSet;
 
 public class InternalGradleProject implements GradleProject {
   private final InternalGradleScript buildScript = new InternalGradleScript();

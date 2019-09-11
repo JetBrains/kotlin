@@ -10,12 +10,12 @@ import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.ExternalDependencyId;
 import org.jetbrains.plugins.gradle.tooling.util.BiFunction;
 import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
-import org.jetbrains.plugins.gradle.tooling.util.ContainerUtil;
+import org.jetbrains.plugins.gradle.tooling.util.GradleContainerUtil;
 
 import java.io.File;
 import java.util.*;
 
-import static org.jetbrains.plugins.gradle.tooling.util.ContainerUtil.reduce;
+import static org.jetbrains.plugins.gradle.tooling.util.GradleContainerUtil.reduce;
 
 /**
  * @author Vladislav.Soroka
@@ -165,7 +165,7 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
                                @NotNull Collection<ExternalDependency> dependencies2) {
     final DependenciesIterator iterator1 = new DependenciesIterator(dependencies1);
     final DependenciesIterator iterator2 = new DependenciesIterator(dependencies2);
-    return ContainerUtil.match(iterator1, iterator2, new BooleanBiFunction<AbstractExternalDependency, AbstractExternalDependency>() {
+    return GradleContainerUtil.match(iterator1, iterator2, new BooleanBiFunction<AbstractExternalDependency, AbstractExternalDependency>() {
       @Override
       public Boolean fun(AbstractExternalDependency o1, AbstractExternalDependency o2) {
         if (!Objects.equal(iterator1.myProcessedStructure, iterator2.myProcessedStructure)) return false;

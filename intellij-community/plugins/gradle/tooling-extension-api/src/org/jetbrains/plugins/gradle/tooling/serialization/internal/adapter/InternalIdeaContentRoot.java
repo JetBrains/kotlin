@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static org.jetbrains.plugins.gradle.tooling.Exceptions.unsupportedMethod;
 import static org.jetbrains.plugins.gradle.tooling.serialization.internal.adapter.AdapterUtils.wrap;
-import static org.jetbrains.plugins.gradle.tooling.util.ContainerUtil.emptyDomainObjectSet;
+import static org.jetbrains.plugins.gradle.tooling.util.GradleContainerUtil.emptyDomainObjectSet;
 
 public class InternalIdeaContentRoot implements IdeaContentRoot {
   private File rootDirectory;

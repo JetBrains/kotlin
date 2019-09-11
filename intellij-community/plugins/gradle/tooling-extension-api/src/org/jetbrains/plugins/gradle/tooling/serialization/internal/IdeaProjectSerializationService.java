@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.tooling.serialization.SerializationService;
 import org.jetbrains.plugins.gradle.tooling.serialization.internal.adapter.*;
-import org.jetbrains.plugins.gradle.tooling.util.ContainerUtil;
+import org.jetbrains.plugins.gradle.tooling.util.GradleContainerUtil;
 import org.jetbrains.plugins.gradle.tooling.util.GradleVersionComparator;
 import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap;
 import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap.SimpleObjectFactory;
@@ -1077,7 +1077,7 @@ public class IdeaProjectSerializationService implements SerializationService<Ide
 
   @NotNull
   public static <T> DomainObjectSet<T> notNullize(@Nullable DomainObjectSet<T> set) {
-    return set == null ? ContainerUtil.<T>emptyDomainObjectSet() : set;
+    return set == null ? GradleContainerUtil.<T>emptyDomainObjectSet() : set;
   }
 
   private static class ResourceDirectoriesGetter implements Getter<DomainObjectSet<? extends IdeaSourceDirectory>> {
