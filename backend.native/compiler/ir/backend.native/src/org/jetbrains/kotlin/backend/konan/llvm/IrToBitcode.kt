@@ -1587,6 +1587,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 val diScope = functionScope ?: return null
                 val outerFileEntry = outerFileEntry()
                 val inlinedAt = outerContext.location(outerFileEntry.line(returnableBlock.startOffset), outerFileEntry.column(returnableBlock.startOffset))
+                        ?: error("no location for inlinedAt:\n" +
+                                "${returnableBlock.startOffset} ${returnableBlock.endOffset}\n" +
+                                returnableBlock.render())
                 LocationInfo(diScope, line, column, inlinedAt)
             } else {
                 outerContext.location(line, column)
@@ -1809,7 +1812,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     @Suppress("UNCHECKED_CAST")
     private fun IrFunction.scope(startLine:Int): DIScopeOpaqueRef? {
-        if (codegen.isExternal(this) || !context.shouldContainLocationDebugInfo())
+        if (!context.shouldContainLocationDebugInfo())
             return null
         val functionLlvmValue = codegen.llvmFunctionOrNull(this)
         return if (functionLlvmValue != null) {
@@ -1818,7 +1821,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val subroutineType = subroutineType(context, codegen.llvmTargetData)
                     val functionLlvmValue = codegen.llvmFunction(this@scope)
                     diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType).also {
-                        DIFunctionAddSubprogram(functionLlvmValue, it)
+                        if (!codegen.isExternal(this@scope)) {
+                            DIFunctionAddSubprogram(functionLlvmValue, it)
+                            // TODO: don't add [functionLlvmValue] itself in this case.
+                        }
                     }
                 }
             } as DIScopeOpaqueRef
