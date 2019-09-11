@@ -8,6 +8,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -16,9 +17,11 @@ import java.util.List;
 
 class ChangedRangesUtil {
 
+  @Contract(pure = true)
   private ChangedRangesUtil() {
   }
 
+  @NotNull
   static List<TextRange> processChangedRanges(@NotNull PsiFile file,
                                               @NotNull ChangedRangesInfo changedRangesInfo) {
     Document document = file.getViewProvider().getDocument();
@@ -36,6 +39,7 @@ class ChangedRangesUtil {
     return optimizedChangedRanges(result);
   }
 
+  @NotNull
   private static List<TextRange> optimizedChangedRanges(@NotNull List<TextRange> allChangedRanges) {
     if (allChangedRanges.isEmpty()) return allChangedRanges;
     List<TextRange> sorted = ContainerUtil.sorted(allChangedRanges, Segment.BY_START_OFFSET_THEN_END_OFFSET);
