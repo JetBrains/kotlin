@@ -77,17 +77,21 @@ class WasmCompiledModuleFragment {
             WasmData(id, it.toBytes())
         }
 
-        println("Interfaces: ")
-        for ((index, iface: IrClassSymbol) in interfaces.withIndex()) {
-            println("  -- $index ${iface.owner.fqNameWhenAvailable}")
-        }
+        val logTypeInfo = false
 
-        println("Virtual functions: ")
-        for ((index, vf: IrSimpleFunctionSymbol) in virtualFunctions.withIndex()) {
-            println("  -- $index ${vf.owner.fqNameWhenAvailable}")
-        }
+        if (logTypeInfo) {
+            println("Interfaces: ")
+            for ((index, iface: IrClassSymbol) in interfaces.withIndex()) {
+                println("  -- $index ${iface.owner.fqNameWhenAvailable}")
+            }
 
-        println(ConstantDataStruct("typeInfo", typeInfo.elements).dump("", 0))
+            println("Virtual functions: ")
+            for ((index, vf: IrSimpleFunctionSymbol) in virtualFunctions.withIndex()) {
+                println("  -- $index ${vf.owner.fqNameWhenAvailable}")
+            }
+
+            println(ConstantDataStruct("typeInfo", typeInfo.elements).dump("", 0))
+        }
 
         val table = WasmTable(virtualFunctions.map { functions.defined.getValue(it) })
         val typeInfoSize = classId

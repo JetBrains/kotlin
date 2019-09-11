@@ -207,6 +207,11 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 }
             }
 
+            override fun lowerCoercionToUnit(expression: IrTypeOperatorCall): IrExpression {
+                assert(expression.operator === IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
+                return expression.run { IrCompositeImpl(startOffset, endOffset, unit, null, listOf(argument, unitValue)) }
+            }
+
             override fun lowerIntegerCoercion(expression: IrTypeOperatorCall, declaration: IrDeclarationParent): IrExpression {
                 assert(expression.operator === IrTypeOperator.IMPLICIT_INTEGER_COERCION)
                 assert(expression.argument.type.isInt())
@@ -234,12 +239,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
                 return expression.run { IrCompositeImpl(startOffset, endOffset, toType, null, newStatements) }
             }
-
-            override fun lowerCoercionToUnit(expression: IrTypeOperatorCall): IrExpression {
-                assert(expression.operator === IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
-                return expression.run { IrCompositeImpl(startOffset, endOffset, unit, null, listOf(argument, unitValue)) }
-            }
-
         }, irFile)
     }
 }
