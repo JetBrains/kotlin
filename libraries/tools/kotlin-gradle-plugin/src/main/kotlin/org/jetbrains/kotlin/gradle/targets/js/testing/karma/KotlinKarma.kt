@@ -288,10 +288,16 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             lateinit var progressLogger: ProgressLogger
             val suppressedOutput = StringBuilder()
 
+            var isLaunchFailed: Boolean = false
+
             override fun wrapExecute(body: () -> Unit) {
                 project.operation("Running and building tests with karma and webpack") {
                     progressLogger = this
                     body()
+
+                    if (isLaunchFailed) {
+                        throw IllegalStateException("Launch of some browsers was failed")
+                    }
                 }
             }
 
@@ -310,17 +316,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                         val value = text.trimEnd()
                         progressLogger.progress(value)
 
-                        if (text.contains(CLIENT_ID_MARKER)) {
-                            clientId = text
+                        if (value.contains(CLIENT_ID_MARKER)) {
+                            clientId = value
                                 .substringBeforeLast("]")
                                 .substringAfterLast("[")
                         }
 
-                        if (::clientId.isInitialized && text.startsWith(clientId)) {
-                            parseConsole(text)
-                        } else {
-                            suppressedOutput.appendln(value)
-                        }
+                        parseConsole(value)
                     }
 
                     override fun getSuiteName(message: BaseTestSuiteMessage): String {
@@ -350,17 +352,27 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                     }
 
                     private fun parseConsole(text: String) {
-                        val logLevel = text
-                            .substringAfter(clientId)
-                            .substringBefore(":")
-                            .trim()
-
-                        return when (logLevel) {
-                            "WARN" -> log.warn(text)
-                            "ERROR" -> log.error(text)
-                            "DEBUG" -> log.debug(text)
-                            else -> log.info(text)
+                        if (KARMA_PROBLEM.matches(text)) {
+                            log.error(text)
+                            isLaunchFailed = true
+                            return
                         }
+
+                        if (::clientId.isInitialized && text.startsWith(clientId)) {
+                            val logLevel = text
+                                .substringAfter(clientId)
+                                .substringBefore(":")
+                                .trim()
+
+                            when (logLevel) {
+                                "WARN" -> log.warn(text)
+                                "ERROR" -> log.error(text)
+                                "DEBUG" -> log.debug(text)
+                                else -> log.info(text)
+                            }
+                        }
+
+                        suppressedOutput.appendln(text)
                     }
                 }
         }
@@ -382,7 +394,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         const val CHROME_BIN = "CHROME_BIN"
         const val CHROME_CANARY_BIN = "CHROME_CANARY_BIN"
 
-
         const val CLIENT_ID_MARKER = "Connected on socket"
+
+        val KARMA_PROBLEM = "(?m)^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN) \\[.*]: (.*)\$".toRegex()
     }
 }
