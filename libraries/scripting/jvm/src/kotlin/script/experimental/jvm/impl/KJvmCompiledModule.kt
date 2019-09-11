@@ -28,7 +28,7 @@ class KJvmCompiledModuleFromClassLoader(val moduleClassLoader: ClassLoader) : KJ
         else DualClassLoader(moduleClassLoader, baseClassLoader)
 }
 
-private class DualClassLoader(fallbackLoader: ClassLoader, parentLoader: ClassLoader?) :
+internal class DualClassLoader(fallbackLoader: ClassLoader, parentLoader: ClassLoader?) :
     ClassLoader(singleClassLoader(fallbackLoader, parentLoader) ?: parentLoader) {
 
     private class Wrapper(parent: ClassLoader) : ClassLoader(parent) {

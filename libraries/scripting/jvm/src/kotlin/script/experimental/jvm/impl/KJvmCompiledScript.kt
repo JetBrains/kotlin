@@ -141,23 +141,21 @@ fun getConfigurationWithClassloader(
 
 private fun CompiledScript<*>.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?): ClassLoader? {
     val processedScripts = mutableSetOf<CompiledScript<*>>()
-    fun seq(res: Sequence<CompiledScript<*>>, script: CompiledScript<*>): Sequence<CompiledScript<*>> {
-        if (processedScripts.contains(script)) return res
-        processedScripts.add(script)
-        return script.otherScripts.asSequence().fold(res + script, ::seq)
-    }
+    fun recursiveScriptsSeq(res: Sequence<CompiledScript<*>>, script: CompiledScript<*>): Sequence<CompiledScript<*>> =
+        if (processedScripts.add(script)) script.otherScripts.asSequence().fold(res + script, ::recursiveScriptsSeq)
+        else res
 
-    val dependencies = seq(emptySequence(), this).flatMap { script ->
+    val dependenciesWithConfigurations = recursiveScriptsSeq(emptySequence(), this).flatMap { script ->
         script.compilationConfiguration[ScriptCompilationConfiguration.dependencies]
-            ?.asSequence()
-            ?.flatMap { dep ->
-                (dep as? JvmDependency)?.classpath?.asSequence()?.map { it.toURI().toURL() } ?: emptySequence()
-            }
-            ?: emptySequence()
-    }.distinct().toList()
-    // TODO: previous dependencies and classloaders should be taken into account here
-    return if (dependencies.isEmpty()) baseClassLoader
-    else URLClassLoader(dependencies.toTypedArray(), baseClassLoader)
+            ?.asSequence()?.map { script.compilationConfiguration to it } ?: emptySequence()
+    }
+    return dependenciesWithConfigurations.fold(baseClassLoader) { parentClassLoader, (compilationConfiguration, scriptDependency) ->
+        when (scriptDependency) {
+            is JvmDependency -> URLClassLoader(scriptDependency.classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoader)
+            is JvmDependencyFromClassLoader -> DualClassLoader(scriptDependency.getClassLoader(compilationConfiguration), baseClassLoader)
+            else -> baseClassLoader
+        }
+    }
 }
 
 const val KOTLIN_SCRIPT_METADATA_PATH = "META-INF/kotlin/script"

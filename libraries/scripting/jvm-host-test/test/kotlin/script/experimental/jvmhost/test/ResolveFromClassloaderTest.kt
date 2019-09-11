@@ -8,13 +8,12 @@ package kotlin.script.experimental.jvmhost.test
 import junit.framework.TestCase
 import org.junit.Test
 import java.io.File
-import kotlin.script.experimental.api.ResultValue
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.dependencies
-import kotlin.script.experimental.api.valueOrThrow
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 
 class ResolveFromClassloaderTest : TestCase() {
@@ -27,6 +26,25 @@ class ResolveFromClassloaderTest : TestCase() {
         }
         val res = BasicJvmScriptingHost().eval(script, compilationConfiguration, null).valueOrThrow().returnValue as ResultValue.Value
         assertEquals(42, res.value)
+    }
+
+    @Test
+    fun testResolveFromClassloaderIsolated() {
+        val script = "${ShouldBeVisibleFromScript::class.java.name}().x".toScriptSource()
+        val compilationConfiguration = ScriptCompilationConfiguration {
+            dependencies(JvmDependencyFromClassLoader { ShouldBeVisibleFromScript::class.java.classLoader })
+        }
+        val evaluationConfiguration = ScriptEvaluationConfiguration {
+            jvm {
+                baseClassLoader(null)
+            }
+        }
+        val res = BasicJvmScriptingHost().eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
+        when (res) {
+            is ResultValue.Value -> assertEquals(42, res.value)
+            is ResultValue.Error -> throw res.error
+            else -> throw Exception("Unexpected evaluation result: $res")
+        }
     }
 
     @Test
