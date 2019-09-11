@@ -28,7 +28,7 @@ import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
  * {@link LibraryDataNodeSubstitutor} provides the facility to replace library dependencies with the related module dependencies
  * based on artifacts and source compilation output mapping
  */
-@ApiStatus.Experimental
+@ApiStatus.Internal
 public class LibraryDataNodeSubstitutor {
   private @NotNull final ProjectResolverContext resolverContext;
   private @Nullable final File gradleUserHomeDir;
