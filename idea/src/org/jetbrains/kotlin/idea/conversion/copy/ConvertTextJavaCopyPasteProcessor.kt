@@ -107,10 +107,10 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         val text = (values.single() as MyTransferableData).text
 
         val psiDocumentManager = PsiDocumentManager.getInstance(project)
-        psiDocumentManager.commitDocument(editor.document)
         val targetFile = psiDocumentManager.getPsiFile(editor.document) as? KtFile ?: return
-        val useNewJ2k = checkUseNewJ2k(targetFile)
+        psiDocumentManager.commitDocument(editor.document)
 
+        val useNewJ2k = checkUseNewJ2k(targetFile)
         val targetModule = targetFile.module
         val pasteTarget = detectPasteTarget(targetFile, bounds.startOffset, bounds.endOffset) ?: return
         val conversionContext = detectConversionContext(pasteTarget.pasteContext, text, project) ?: return
