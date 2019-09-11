@@ -109,9 +109,9 @@ fun provideTypeHint(element: KtCallableDeclaration, offset: Int): List<InlayInfo
         val equalsTokenLine = element.equalsToken?.getLineNumber() ?: -1
         val initializerLine = element.initializer?.getLineNumber() ?: -1
         if (propertyLine == equalsTokenLine && propertyLine != initializerLine) {
-            val spaceBeforeProperty = (element.prevSibling as? PsiWhiteSpace)?.text?.reversed()?.takeWhile { it != '\n' }
-            val spaceBeforeInitializer = (element.initializer?.prevSibling as? PsiWhiteSpace)?.text?.reversed()?.takeWhile { it != '\n' }
-            if (spaceBeforeProperty == spaceBeforeInitializer) {
+            val indentBeforeProperty = (element.prevSibling as? PsiWhiteSpace)?.text?.substringAfterLast('\n')
+            val indentBeforeInitializer = (element.initializer?.prevSibling as? PsiWhiteSpace)?.text?.substringAfterLast('\n')
+            if (indentBeforeProperty == indentBeforeInitializer) {
                 return emptyList()
             }
         }
