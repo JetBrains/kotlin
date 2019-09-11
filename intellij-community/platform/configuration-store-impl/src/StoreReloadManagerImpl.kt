@@ -102,7 +102,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
     }
   }
 
-  private fun isReloadBlocked(): Boolean {
+  override fun isReloadBlocked(): Boolean {
     val count = reloadBlockCount.get()
     LOG.debug { "[RELOAD] myReloadBlockCount = $count" }
     return count > 0
