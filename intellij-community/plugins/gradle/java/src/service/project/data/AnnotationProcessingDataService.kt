@@ -22,9 +22,6 @@ import java.io.File
 
 @Order(ExternalSystemConstants.UNORDERED)
 class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationProcessingData, ProcessorConfigProfile>() {
-
-  val configurationProfileCache = mutableMapOf<AnnotationProcessingData, ProcessorConfigProfile>()
-
   override fun getTargetDataKey(): Key<AnnotationProcessingData> {
     return AnnotationProcessingData.KEY
   }
@@ -33,6 +30,7 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
                           projectData: ProjectData?,
                           project: Project,
                           modelsProvider: IdeModifiableModelsProvider) {
+    val importedData = mutableSetOf<AnnotationProcessingData>()
     val config = CompilerConfiguration.getInstance(project) as CompilerConfigurationImpl
     for (node in toImport) {
       val moduleData = node.parent?.data as? ModuleData
@@ -47,7 +45,7 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
         continue
       }
 
-      config.configureAnnotationProcessing(ideModule, node.data)
+      config.configureAnnotationProcessing(ideModule, node.data, importedData)
     }
   }
 
@@ -85,9 +83,15 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
     config.setModuleProcessorProfiles(newProfiles)
   }
 
-  private fun CompilerConfigurationImpl.configureAnnotationProcessing(ideModule: Module, data: AnnotationProcessingData) {
+  private fun CompilerConfigurationImpl.configureAnnotationProcessing(ideModule: Module,
+                                                                      data: AnnotationProcessingData,
+                                                                      importedData: MutableSet<AnnotationProcessingData>) {
     val profile = findOrCreateProcessorConfigProfile(data)
-    with (profile) {
+    if (importedData.add(data)) {
+      profile.clearModuleNames()
+    }
+
+    with(profile) {
       isEnabled = true
       isObtainProcessorsFromClasspath = false
       addModuleName(ideModule.name)
@@ -95,14 +99,10 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
   }
 
   private fun CompilerConfigurationImpl.findOrCreateProcessorConfigProfile(data: AnnotationProcessingData): ProcessorConfigProfile {
-    return configurationProfileCache.computeIfAbsent(data) { newData ->
-      val newProfile = createProcessorConfigProfile(newData)
-
-      return@computeIfAbsent this.moduleProcessorProfiles
-                               .find { existing -> existing.matches(newProfile) }
-                             ?: newProfile.also { addModuleProcessorProfile(it) }
-
-    }
+    val newProfile = createProcessorConfigProfile(data)
+    return this.moduleProcessorProfiles
+             .find { existing -> existing.matches(newProfile) }
+           ?: newProfile.also { addModuleProcessorProfile(it) }
   }
 
   private fun createProcessorConfigProfile(annotationProcessingData: AnnotationProcessingData): ProcessorConfigProfileImpl {

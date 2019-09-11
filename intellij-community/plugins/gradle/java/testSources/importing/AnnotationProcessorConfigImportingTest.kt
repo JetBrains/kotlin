@@ -177,6 +177,71 @@ class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
       }
   }
 
-  // fun `test change modules set in processor profile`() {}
-  // fun `test annotation processor with transitive deps`() {}
+  @Test
+  @TargetVersions("4.6+")
+   fun `test change modules included in processor profile`() {
+       createProjectSubFile("settings.gradle", "include 'project1','project2'")
+       importProject(
+         GradleBuildScriptBuilderEx()
+           .withMavenCentral()
+           .addPostfix(
+             """
+            |  allprojects { apply plugin: 'java' }
+            |  project("project1") {
+            |      dependencies {
+            |        compileOnly 'org.projectlombok:lombok:1.18.8'
+            |        annotationProcessor 'org.projectlombok:lombok:1.18.8'
+            |      }
+            |  }
+    """.trimMargin()).generate());
+
+    then((CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl)
+           .moduleProcessorProfiles)
+      .describedAs("Annotation processor profile includes wrong module")
+      .extracting("moduleNames")
+      .containsExactly(setOf("project.project1.main"))
+
+    importProject(
+      GradleBuildScriptBuilderEx()
+        .withMavenCentral()
+        .addPostfix(
+          """
+            |  allprojects { apply plugin: 'java' }
+            |  project("project2") {
+            |      dependencies {
+            |        compileOnly 'org.projectlombok:lombok:1.18.8'
+            |        annotationProcessor 'org.projectlombok:lombok:1.18.8'
+            |      }
+            |  }
+    """.trimMargin()).generate());
+
+    then((CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl)
+           .moduleProcessorProfiles)
+         .describedAs("Annotation processor profile includes wrong module")
+         .extracting("moduleNames")
+         .containsExactly(setOf("project.project2.main"))
+   }
+
+  @Test
+  @TargetVersions("4.6+")
+  fun `test annotation processor with transitive deps`() {
+    importProject(
+      GradleBuildScriptBuilderEx()
+        .withJavaPlugin()
+        .withMavenCentral()
+        .addPostfix(
+          """
+      apply plugin: 'java'
+      
+      dependencies {
+        annotationProcessor 'junit:junit:4.12' // this is not an annotation processor, but has transitive deps
+      }
+    """.trimIndent()).generate());
+
+    then((CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl)
+           .moduleProcessorProfiles[0]
+           .processorPath)
+      .describedAs("Annotation processor path should include junit and hamcrest")
+      .contains("junit", "hamcrest")
+  }
 }
