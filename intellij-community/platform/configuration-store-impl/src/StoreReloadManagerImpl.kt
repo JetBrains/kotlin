@@ -48,7 +48,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
   private val changedApplicationFiles = LinkedHashSet<StateStorage>()
 
   private val changedFilesAlarm = SingleAlarm(Runnable {
-    if (!isReloadUnblocked() || !tryToReloadApplication()) {
+    if (isReloadBlocked() || !tryToReloadApplication()) {
       return@Runnable
     }
 
@@ -102,10 +102,10 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
     }
   }
 
-  private fun isReloadUnblocked(): Boolean {
+  private fun isReloadBlocked(): Boolean {
     val count = reloadBlockCount.get()
     LOG.debug { "[RELOAD] myReloadBlockCount = $count" }
-    return count == 0
+    return count > 0
   }
 
   override fun saveChangedProjectFile(file: VirtualFile, project: Project) {
@@ -193,7 +193,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       }
     }
 
-    if (isReloadUnblocked()) {
+    if (!isReloadBlocked()) {
       changedFilesAlarm.cancelAndRequest()
     }
   }
@@ -208,7 +208,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       changes.getOrPut(schemeFileTracker) { LinkedHashSet() }.addAll(events)
     }
 
-    if (isReloadUnblocked()) {
+    if (!isReloadBlocked()) {
       changedFilesAlarm.cancelAndRequest()
     }
   }
