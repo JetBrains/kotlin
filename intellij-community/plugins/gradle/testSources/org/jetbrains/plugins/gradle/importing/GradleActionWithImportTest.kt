@@ -7,7 +7,6 @@ import com.intellij.util.ThrowableRunnable
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.tooling.BuildController
 import org.gradle.tooling.GradleConnectionException
-import org.gradle.tooling.model.BuildModel
 import org.gradle.tooling.model.Model
 import org.gradle.tooling.model.gradle.GradleBuild
 import org.jetbrains.plugins.gradle.GradleManager
@@ -142,6 +141,9 @@ class TestProjectResolverExtension : AbstractProjectResolverExtension() {
       return ext.buildFinished.get(timeout.toLong(), unit)
     }
 
-    fun cleanup() { extensions.clear() }
+    fun cleanup() {
+      GradleManager.clearPreloadedExtensions()
+      extensions.clear()
+    }
   }
 }
