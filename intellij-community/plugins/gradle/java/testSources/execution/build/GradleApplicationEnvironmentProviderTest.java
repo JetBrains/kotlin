@@ -101,7 +101,7 @@ public class GradleApplicationEnvironmentProviderTest extends GradleSettingsImpo
   private void assertAppRunOutput(RunnerAndConfigurationSettings configurationSettings, String... checks) {
     String output = runAppAndGetOutput(configurationSettings);
     for (String check : checks) {
-      assertTrue("App output should contain substring: " + check, output.contains(check));
+      assertTrue(String.format("App output should contain substring: %s, but was:\n%s", check, output), output.contains(check));
     }
   }
 
