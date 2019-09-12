@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
@@ -17,8 +18,8 @@ enum class TowerDataKind {
 
 class CallResolver(
     val typeCalculator: ReturnTypeCalculator,
-    val components: InferenceComponents,
-    val resolutionStageRunner: ResolutionStageRunner,
+    val components: BodyResolveComponents,
+    private val resolutionStageRunner: ResolutionStageRunner,
     val topLevelScopes: List<FirScope>,
     val localScopes: List<FirLocalScope>
 ) {

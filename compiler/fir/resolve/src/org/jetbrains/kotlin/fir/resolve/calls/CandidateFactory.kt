@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
@@ -13,14 +14,14 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 class CandidateFactory(
-    val inferenceComponents: InferenceComponents,
-    val callInfo: CallInfo
+    val bodyResolveComponents: BodyResolveComponents,
+    private val callInfo: CallInfo
 ) {
 
-    val baseSystem: ConstraintStorage
+    private val baseSystem: ConstraintStorage
 
     init {
-        val system = inferenceComponents.createConstraintSystem()
+        val system = bodyResolveComponents.inferenceComponents.createConstraintSystem()
         callInfo.explicitReceiver?.let { system.addSubsystemFromExpression(it) }
         callInfo.arguments.forEach {
             system.addSubsystemFromExpression(it)
@@ -36,7 +37,7 @@ class CandidateFactory(
     ): Candidate {
         return Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
-            explicitReceiverKind, inferenceComponents, baseSystem, callInfo
+            explicitReceiverKind, bodyResolveComponents, baseSystem, callInfo
         )
     }
 }

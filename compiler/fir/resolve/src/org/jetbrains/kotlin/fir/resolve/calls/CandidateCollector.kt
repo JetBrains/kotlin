@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 open class CandidateCollector(
-    val components: InferenceComponents,
+    val components: BodyResolveComponents,
     val resolutionStageRunner: ResolutionStageRunner
 ) {
     val groupNumbers = mutableListOf<Int>()
@@ -70,7 +71,7 @@ open class CandidateCollector(
 class InvokeReceiverCandidateCollector(
     val callResolver: CallResolver,
     val invokeCallInfo: CallInfo,
-    components: InferenceComponents,
+    components: BodyResolveComponents,
     val invokeConsumer: AccumulatingTowerDataConsumer,
     resolutionStageRunner: ResolutionStageRunner
 ) : CandidateCollector(components, resolutionStageRunner) {
@@ -104,7 +105,7 @@ class InvokeReceiverCandidateCollector(
             invokeConsumer.addConsumer(
                 createSimpleFunctionConsumer(
                     session, OperatorNameConventions.INVOKE,
-                    boundInvokeCallInfo, components, callResolver.collector
+                    boundInvokeCallInfo, callResolver.components, callResolver.collector
                 )
             )
         }

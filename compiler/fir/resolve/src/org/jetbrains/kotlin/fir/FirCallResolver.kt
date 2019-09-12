@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirBackingFieldReferenceImpl
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
-import org.jetbrains.kotlin.fir.resolve.transformers.resultType
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -60,12 +61,12 @@ class FirCallResolver(
             transformer.container
         ) { it.resultType }
         val resolver = CallResolver(
-            returnTypeCalculator, inferenceComponents, resolutionStageRunner,
+            returnTypeCalculator, this, resolutionStageRunner,
             topLevelScopes = topLevelScopes.asReversed(),
             localScopes = localScopes.asReversed()
         )
 
-        val consumer = createFunctionConsumer(session, name, info, inferenceComponents, resolver.collector, resolver)
+        val consumer = createFunctionConsumer(session, name, info, this, resolver.collector, resolver)
         val result = resolver.runTowerResolver(consumer, implicitReceiverStack.receiversAsReversed())
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
@@ -154,7 +155,7 @@ class FirCallResolver(
             transformer.container
         ) { it.resultType }
         val resolver = CallResolver(
-            returnTypeCalculator, inferenceComponents, resolutionStageRunner,
+            returnTypeCalculator, this, resolutionStageRunner,
             topLevelScopes = topLevelScopes.asReversed(),
             localScopes = localScopes.asReversed()
         )
@@ -162,7 +163,7 @@ class FirCallResolver(
         val consumer = createVariableAndObjectConsumer(
             session,
             callee.name,
-            info, inferenceComponents,
+            info, this,
             resolver.collector
         )
         val result = resolver.runTowerResolver(consumer, implicitReceiverStack.receiversAsReversed())

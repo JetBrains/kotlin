@@ -167,7 +167,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         return when (kind) {
             TowerDataKind.EMPTY ->
-                MemberScopeTowerLevel(session, explicitReceiver, scopeSession = candidateFactory.inferenceComponents.scopeSession)
+                MemberScopeTowerLevel(session, explicitReceiver, scopeSession = candidateFactory.bodyResolveComponents.scopeSession)
                     .processElementsByName(
                         token,
                         name,
@@ -220,7 +220,7 @@ class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
                     val declarationReceiverType = declarationReceiverTypeRef?.type
                     if (declarationReceiverType is ConeClassType) {
                         if (!AbstractTypeChecker.isSubtypeOf(
-                                candidateFactory.inferenceComponents.ctx,
+                                candidateFactory.bodyResolveComponents.inferenceComponents.ctx,
                                 explicitReceiverType,
                                 declarationReceiverType.lookupTag.constructClassType(
                                     declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),

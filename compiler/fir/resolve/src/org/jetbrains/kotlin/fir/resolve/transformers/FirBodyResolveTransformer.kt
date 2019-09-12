@@ -46,7 +46,7 @@ open class FirBodyResolveTransformer(
     final override val session: FirSession,
     phase: FirResolvePhase,
     implicitTypeOnly: Boolean,
-    val scopeSession: ScopeSession = ScopeSession()
+    final override val scopeSession: ScopeSession = ScopeSession()
 ) : FirAbstractPhaseTransformer<Any?>(phase), BodyResolveComponents {
     var implicitTypeOnly: Boolean = implicitTypeOnly
         private set

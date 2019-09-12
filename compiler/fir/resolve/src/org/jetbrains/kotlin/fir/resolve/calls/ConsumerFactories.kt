@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.name.Name
 
 fun createVariableAndObjectConsumer(
     session: FirSession,
     name: Name,
     callInfo: CallInfo,
-    inferenceComponents: InferenceComponents,
+    bodyResolveComponents: BodyResolveComponents,
     resultCollector: CandidateCollector
 ): TowerDataConsumer {
     return PrioritizedTowerDataConsumer(
@@ -23,7 +24,7 @@ fun createVariableAndObjectConsumer(
             name,
             TowerScopeLevel.Token.Properties,
             callInfo,
-            inferenceComponents,
+            bodyResolveComponents,
             resultCollector
         ),
         createSimpleConsumer(
@@ -31,7 +32,7 @@ fun createVariableAndObjectConsumer(
             name,
             TowerScopeLevel.Token.Objects,
             callInfo,
-            inferenceComponents,
+            bodyResolveComponents,
             resultCollector
         )
     )
@@ -41,7 +42,7 @@ fun createSimpleFunctionConsumer(
     session: FirSession,
     name: Name,
     callInfo: CallInfo,
-    inferenceComponents: InferenceComponents,
+    bodyResolveComponents: BodyResolveComponents,
     resultCollector: CandidateCollector
 ): TowerDataConsumer {
     return createSimpleConsumer(
@@ -49,7 +50,7 @@ fun createSimpleFunctionConsumer(
         name,
         TowerScopeLevel.Token.Functions,
         callInfo,
-        inferenceComponents,
+        bodyResolveComponents,
         resultCollector
     )
 }
@@ -58,7 +59,7 @@ fun createFunctionConsumer(
     session: FirSession,
     name: Name,
     callInfo: CallInfo,
-    inferenceComponents: InferenceComponents,
+    bodyResolveComponents: BodyResolveComponents,
     resultCollector: CandidateCollector,
     callResolver: CallResolver
 ): TowerDataConsumer {
@@ -68,7 +69,7 @@ fun createFunctionConsumer(
         emptyList(),
         callInfo.isSafeCall,
         callInfo.typeArguments,
-        inferenceComponents.session,
+        bodyResolveComponents.session,
         callInfo.containingFile,
         callInfo.container,
         callInfo.typeProvider
@@ -80,7 +81,7 @@ fun createFunctionConsumer(
             name,
             TowerScopeLevel.Token.Functions,
             callInfo,
-            inferenceComponents,
+            bodyResolveComponents,
             resultCollector
         ),
         AccumulatingTowerDataConsumer(resultCollector).apply {
@@ -89,11 +90,11 @@ fun createFunctionConsumer(
                 name,
                 TowerScopeLevel.Token.Properties,
                 varCallInfo,
-                inferenceComponents,
+                bodyResolveComponents,
                 InvokeReceiverCandidateCollector(
                     callResolver,
                     invokeCallInfo = callInfo,
-                    components = inferenceComponents,
+                    components = bodyResolveComponents,
                     invokeConsumer = this,
                     resolutionStageRunner = resultCollector.resolutionStageRunner
                 )
@@ -107,10 +108,10 @@ fun createSimpleConsumer(
     name: Name,
     token: TowerScopeLevel.Token<*>,
     callInfo: CallInfo,
-    inferenceComponents: InferenceComponents,
+    bodyResolveComponents: BodyResolveComponents,
     resultCollector: CandidateCollector
 ): TowerDataConsumer {
-    val factory = CandidateFactory(inferenceComponents, callInfo)
+    val factory = CandidateFactory(bodyResolveComponents, callInfo)
     val explicitReceiver = callInfo.explicitReceiver
     return if (explicitReceiver != null) {
         val receiverValue = ExpressionReceiverValue(explicitReceiver, callInfo.typeProvider)

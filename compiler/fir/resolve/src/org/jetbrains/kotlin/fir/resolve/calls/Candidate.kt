@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -49,17 +50,17 @@ class Candidate(
     val dispatchReceiverValue: ClassDispatchReceiverValue?,
     val implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
     val explicitReceiverKind: ExplicitReceiverKind,
-    private val inferenceComponents: InferenceComponents,
+    private val bodyResolveComponents: BodyResolveComponents,
     private val baseSystem: ConstraintStorage,
     val callInfo: CallInfo
 ) {
     val system by lazy {
-        val system = inferenceComponents.createConstraintSystem()
+        val system = bodyResolveComponents.inferenceComponents.createConstraintSystem()
         system.addOtherSystem(baseSystem)
         system
     }
 
-    val samResolver get() = inferenceComponents.samResolver
+    val samResolver get() = bodyResolveComponents.inferenceComponents.samResolver
 
     lateinit var substitutor: ConeSubstitutor
 

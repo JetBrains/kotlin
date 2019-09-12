@@ -87,7 +87,7 @@ class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransform
     }
 
     private fun generateCandidate(callInfo: CallInfo, function: FirMemberFunctionImpl): Candidate =
-        CandidateFactory(inferenceComponents, callInfo).createCandidate(
+        CandidateFactory(transformer, callInfo).createCandidate(
             symbol = function.symbol,
             dispatchReceiverValue = null,
             implicitExtensionReceiverValue = null,
