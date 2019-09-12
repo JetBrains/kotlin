@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -58,8 +57,7 @@ class InferenceComponents(
     val ctx: TypeSystemInferenceExtensionContextDelegate,
     val session: FirSession,
     val returnTypeCalculator: ReturnTypeCalculator,
-    val scopeSession: ScopeSession,
-    val samResolver: FirSamResolver
+    val scopeSession: ScopeSession
 ) {
     private val approximator = object : AbstractTypeApproximator(ctx) {
         override fun createErrorType(message: String): SimpleTypeMarker {

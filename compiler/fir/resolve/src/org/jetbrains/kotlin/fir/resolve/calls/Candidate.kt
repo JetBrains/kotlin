@@ -60,7 +60,7 @@ class Candidate(
         system
     }
 
-    val samResolver get() = bodyResolveComponents.inferenceComponents.samResolver
+    val samResolver get() = bodyResolveComponents.samResolver
 
     lateinit var substitutor: ConeSubstitutor
 

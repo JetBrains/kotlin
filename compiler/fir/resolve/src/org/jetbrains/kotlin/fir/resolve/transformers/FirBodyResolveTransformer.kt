@@ -72,6 +72,7 @@ open class FirBodyResolveTransformer(
     private val topLevelScopes = mutableListOf<FirScope>()
     final override val implicitReceiverStack: ImplicitReceiverStackImpl = ImplicitReceiverStackImpl()
     final override val inferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
+    final override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
 
     private var primaryConstructorParametersScope: FirLocalScope? = null
 
@@ -978,7 +979,7 @@ private fun inferenceComponents(session: FirSession, returnTypeCalculator: Retur
             require(this is ErrorTypeConstructor)
             return ConeClassErrorType(reason)
         }
-    }, session, returnTypeCalculator, scopeSession, FirSamResolverImpl(session, scopeSession))
+    }, session, returnTypeCalculator, scopeSession)
 
 
 class FirDesignatedBodyResolveTransformer(
