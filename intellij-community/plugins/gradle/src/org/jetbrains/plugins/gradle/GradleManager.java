@@ -5,9 +5,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware;
 import com.intellij.openapi.externalSystem.ExternalSystemConfigurableAware;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
@@ -51,7 +48,6 @@ import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PathsList;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.messages.MessageBusConnection;
@@ -76,7 +72,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Predicate;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.findAll;
 import static com.intellij.openapi.util.io.FileUtil.pathsEqual;
@@ -99,34 +94,7 @@ public final class GradleManager
       @NotNull
       @Override
       protected List<GradleProjectResolverExtension> compute() {
-        List<GradleProjectResolverExtension> result = new ArrayList<>();
-
-        // It's possible use case when 'java' subsystem dependent plugins bundled with the non-java IDE using fat plugin distribution.
-        // This approach can lead to unwanted/incompatible extensions to be loaded.
-        // The workaround extensionsFilter should be removed when the IntelliJ java subsystem will become a regular plugin
-        // or those plugins will be fixed using the optional plugin dependency on 'com.intellij.modules.gradle.java'
-        boolean isJavaIde = ExternalSystemApiUtil.isJavaCompatibleIde();
-        if (!isJavaIde) {
-          ExtensionPoint<GradleProjectResolverExtension> point =
-            Extensions.getRootArea().getExtensionPoint(GradleProjectResolverExtension.EP_NAME);
-          if (point instanceof ExtensionPointImpl) {
-            ((ExtensionPointImpl<GradleProjectResolverExtension>)point).removeUnloadableExtensions();
-          }
-        }
-        Set<String> javaIdeDependentExtensions = ContainerUtil.set(
-          "org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension",
-          "org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension",
-          "org.jetbrains.kotlin.allopen.ide.AllOpenProjectResolverExtension",
-          "org.jetbrains.kotlin.noarg.ide.NoArgProjectResolverExtension",
-          "org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverProjectResolverExtension"
-        );
-        Predicate<GradleProjectResolverExtension> extensionsFilter = ext ->
-          isJavaIde || !javaIdeDependentExtensions.contains(ext.getClass().getName());
-
-        Arrays.stream(GradleProjectResolverExtension.EP_NAME.getExtensions())
-          .filter(extensionsFilter)
-          .forEach(result::add);
-
+        List<GradleProjectResolverExtension> result = new ArrayList<>(GradleProjectResolverExtension.EP_NAME.getExtensionList());
         ExternalSystemApiUtil.orderAwareSort(result);
         return result;
       }
