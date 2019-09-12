@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
-import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KarmaConfig.CoverageReporter.Reporter
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
@@ -188,7 +187,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             val reportDir = project.reportsDir.resolve("coverage/${it.name}")
             reportDir.mkdirs()
 
-            config.coverageReporter = KarmaConfig.CoverageReporter(reportDir.canonicalPath).also { coverage ->
+            config.coverageReporter = CoverageReporter(reportDir.canonicalPath).also { coverage ->
                 if (html) coverage.reporters.add(Reporter("html"))
                 if (lcov) coverage.reporters.add(Reporter("lcovonly"))
                 if (cobertura) coverage.reporters.add(Reporter("cobertura"))

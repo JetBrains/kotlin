@@ -17,21 +17,20 @@ data class KarmaConfig(
     val reporters: MutableList<String> = mutableListOf(),
     val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf(),
     var coverageReporter: CoverageReporter? = null
-) {
-    data class CoverageReporter(
-        var dir: String,
-        val reporters: MutableList<Reporter> = mutableListOf()
-    ) {
+)
 
-        data class Reporter(
-            val type: String,
-            val subDir: String? = null,
-            val file: String? = null
-        )
-    }
-
-    class CustomLauncher(var base: String) {
-        val flags = mutableListOf<String>()
-        var debug: Boolean? = null
-    }
+class CustomLauncher(var base: String) {
+    val flags = mutableListOf<String>()
+    var debug: Boolean? = null
 }
+
+data class CoverageReporter(
+    var dir: String,
+    val reporters: MutableList<Reporter> = mutableListOf()
+)
+
+data class Reporter(
+    val type: String,
+    val subDir: String? = null,
+    val file: String? = null
+)
