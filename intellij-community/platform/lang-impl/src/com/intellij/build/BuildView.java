@@ -56,7 +56,6 @@ import java.util.function.Supplier;
 /**
  * @author Vladislav.Soroka
  */
-@ApiStatus.Experimental
 public class BuildView extends CompositeView<ExecutionConsole>
   implements BuildProgressListener, ConsoleView, DataProvider, Filterable<ExecutionNode>, OccurenceNavigator {
   public static final String CONSOLE_VIEW_NAME = "consoleView";
