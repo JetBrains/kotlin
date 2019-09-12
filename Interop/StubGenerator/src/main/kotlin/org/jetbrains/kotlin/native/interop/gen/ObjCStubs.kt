@@ -239,94 +239,11 @@ internal val ObjCContainer.classOrProtocol: ObjCClassOrProtocol
         is ObjCCategory -> this.clazz
     }
 
-/**
- * objc_msgSend*_stret functions must be used when return value is returned through memory
- * pointed by implicit argument, which is passed on the register that would otherwise be used for receiver.
- *
- * The entire implementation is just the real ABI approximation which is enough for practical cases.
- */
-internal fun Type.isStret(target: KonanTarget): Boolean {
-    val unwrappedType = this.unwrapTypedefs()
-    return when (target) {
-        KonanTarget.IOS_ARM64,
-        KonanTarget.TVOS_ARM64 ->
-            false // On aarch64 stret is never the case, since an implicit argument gets passed on x8.
-
-        KonanTarget.IOS_X64,
-        KonanTarget.MACOS_X64,
-        KonanTarget.WATCHOS_X64,
-        KonanTarget.TVOS_X64 -> when (unwrappedType) {
-            is RecordType -> unwrappedType.decl.def!!.size > 16 || this.hasUnalignedMembers()
-            else -> false
-        }
-
-        // See: https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/LowLevelABI/130-IA-32_Function_Calling_Conventions/IA32.html#//apple_ref/doc/uid/TP40002492-SW5
-        // Structures 1 or 2 bytes in size are placed in EAX.
-        // Structures 4 or 8 bytes in size are placed in: EAX and EDX.
-        // Structures of other sizes are placed at the address supplied by the caller.
-        KonanTarget.WATCHOS_X86 -> when (unwrappedType) {
-            is RecordType -> {
-                val size = unwrappedType.decl.def!!.size
-                val canBePassedInRegisters = (size == 1L || size == 2L || size == 4L || size == 8L)
-                return !canBePassedInRegisters
-            }
-            else -> false
-        }
-
-        KonanTarget.IOS_ARM32,
-        KonanTarget.WATCHOS_ARM32 -> when (unwrappedType) {
-                is RecordType -> !this.isIntegerLikeType()
-                else -> false
-            }
-
-        else -> error("Cannot generate ObjC stubs for $target.")
-    }
-}
-
 private fun deprecatedInit(className: String, initParameterNames: List<String>, factory: Boolean): AnnotationStub {
     val replacement = if (factory) "$className.create" else className
     val replacementKind = if (factory) "factory method" else "constructor"
     val replaceWith = "$replacement(${initParameterNames.joinToString { it.asSimpleName() }})"
     return AnnotationStub.Deprecated("Use $replacementKind instead", replaceWith)
-}
-
-private fun Type.isIntegerLikeType(): Boolean = when (this) {
-    is RecordType -> {
-        val def = this.decl.def
-        if (def == null) {
-            false
-        } else {
-            def.size <= 4 &&
-                    def.members.all {
-                        when (it) {
-                            is BitField -> it.type.isIntegerLikeType()
-                            is Field -> it.offset == 0L && it.type.isIntegerLikeType()
-                            is IncompleteField -> false
-                        }
-                    }
-        }
-    }
-    is ObjCPointer, is PointerType, CharType, is BoolType -> true
-    is IntegerType -> this.size <= 4
-    is Typedef -> this.def.aliased.isIntegerLikeType()
-    is EnumType -> this.def.baseType.isIntegerLikeType()
-
-    else -> false
-}
-
-private fun Type.hasUnalignedMembers(): Boolean = when (this) {
-    is Typedef -> this.def.aliased.hasUnalignedMembers()
-    is RecordType -> this.decl.def!!.let { def ->
-        def.fields.any {
-            !it.isAligned ||
-                    // Check members of fields too:
-                    it.type.hasUnalignedMembers()
-        }
-    }
-    is ArrayType -> this.elemType.hasUnalignedMembers()
-    else -> false
-
-// TODO: should the recursive checks be made in indexer when computing `hasUnalignedFields`?
 }
 
 internal val ObjCMethod.kotlinName: String
