@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.android.parcel
 
+import org.jetbrains.kotlin.annotation.plugin.ide.isAnnotated
+import org.jetbrains.kotlin.annotation.plugin.ide.isOrdinaryClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension
