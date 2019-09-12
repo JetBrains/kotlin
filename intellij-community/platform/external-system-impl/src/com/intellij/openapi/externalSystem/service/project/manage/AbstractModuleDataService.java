@@ -160,9 +160,6 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
       ModuleData moduleData = node.getData();
       Module module = modelsProvider.findIdeModule(moduleData);
       if (module == null) {
-        module = findExistedModuleByContentRoot(moduleData, modelsProvider);
-      }
-      if (module == null) {
         UnloadedModuleDescription unloadedModuleDescription = modelsProvider.getUnloadedModuleDescription(moduleData);
         if (unloadedModuleDescription == null) {
           result.add(node);
@@ -173,23 +170,6 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
       }
     }
     return result;
-  }
-
-  private static Module findExistedModuleByContentRoot(ModuleData moduleData,
-                                                       IdeModifiableModelsProvider modelsProvider) {
-    return Arrays.stream(modelsProvider.getModules())
-      .filter(ideModule -> isModulePointsSameRoot(moduleData, ideModule))
-      .findFirst()
-      .orElse(null);
-  }
-
-  private static boolean isModulePointsSameRoot(ModuleData moduleData, Module ideModule) {
-    for (VirtualFile root: ModuleRootManager.getInstance(ideModule).getContentRoots()) {
-      if (FileUtil.pathsEqual(root.getPath(), moduleData.getLinkedExternalProjectPath())) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private static void syncPaths(@NotNull Module module, @NotNull ModifiableRootModel modifiableModel, @NotNull ModuleData data) {
