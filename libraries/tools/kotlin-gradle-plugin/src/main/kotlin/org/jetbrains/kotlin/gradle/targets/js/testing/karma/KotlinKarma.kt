@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KarmaBrowserLogParser.Companion.BROWSER_LOG_SURROUNDER
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
@@ -79,7 +80,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                     baseReporterDecorator(this);
 
                     this.onBrowserLog = (browser, log, type) => {
-                        this.write("##browser[" + "browser='" + browser + "' " + "type='" + type + "' " + "log=" + log + "]##browser\n");
+                        this.write(
+                        "$BROWSER_LOG_SURROUNDER[" + 
+                        "browser='" + browser + "' " +
+                         "type='" + type + "' " + 
+                         "log=" + log +
+                          "]$BROWSER_LOG_SURROUNDER\n"
+                        );
                     }
                 };
 
@@ -338,17 +345,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
 
-                    lateinit var clientId: String
+                    val browserLogParser = KarmaBrowserLogParser()
 
                     override fun printNonTestOutput(text: String) {
                         val value = text.trimEnd()
                         progressLogger.progress(value)
-
-                        if (value.contains(CLIENT_ID_MARKER)) {
-                            clientId = value
-                                .substringBeforeLast("]")
-                                .substringAfterLast("[")
-                        }
 
                         parseConsole(value)
                     }
@@ -386,21 +387,34 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                             return
                         }
 
-                        if (::clientId.isInitialized && text.startsWith(clientId)) {
-                            val logLevel = text
-                                .substringAfter(clientId)
-                                .substringBefore(":")
-                                .trim()
-
-                            when (logLevel) {
-                                "WARN" -> log.warn(text)
-                                "ERROR" -> log.error(text)
-                                "DEBUG" -> log.debug(text)
-                                else -> log.info(text)
-                            }
-                        }
-
                         suppressedOutput.appendln(text)
+
+                        val browserLog = browserLogParser.parseKarmaBrowserLog(text) ?: return
+
+                        val formattedMessage = formatMessage(browserLog)
+
+                        when (browserLog.type) {
+                            BrowserLogType.LOG -> println(formattedMessage)
+                            BrowserLogType.WARN -> log.warn(formattedMessage)
+                            BrowserLogType.ERROR -> log.error(formattedMessage)
+                            BrowserLogType.DEBUG -> log.debug(formattedMessage)
+                            else -> log.info(formattedMessage)
+                        }
+                    }
+
+                    private fun formatMessage(browserLog: BrowserLog): String {
+                        val browser = browserLog.browser
+                        val browserPart = browser?.plus(" ") ?: ""
+
+                        val type = browserLog.type
+                        val typePart = if (browser != null && type != null) {
+                            type
+                                .value
+                                .toUpperCase()
+                                .plus(" ")
+                        } else ""
+
+                        return "$browserPart$typePart${browserLog.log}"
                     }
                 }
         }
