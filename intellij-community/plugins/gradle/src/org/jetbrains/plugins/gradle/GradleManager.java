@@ -439,7 +439,7 @@ public final class GradleManager
             DumbService.getInstance(project).suspendIndexingAndRun(title, () -> {
               for (DataNode<ModuleData> moduleDataNode : findAll(projectStructure, ProjectKeys.MODULE)) {
                 moduleDataNode.getData().useExternalCompilerOutput(delegatedBuild);
-                for (DataNode<GradleSourceSetData> sourceSetDataNode : findAll(projectStructure, GradleSourceSetData.KEY)) {
+                for (DataNode<GradleSourceSetData> sourceSetDataNode : findAll(moduleDataNode, GradleSourceSetData.KEY)) {
                   sourceSetDataNode.getData().useExternalCompilerOutput(delegatedBuild);
                 }
               }

@@ -93,6 +93,13 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
     ((GradleManager)getManager(GradleConstants.SYSTEM_ID)).runActivity(myProject);
     GradleSettings.getInstance(myProject).getPublisher().onBuildDelegationChange(false, getProjectPath());
     assertNotDelegatedMergedBaseJavaProject();
+
+    getCurrentExternalProjectSettings().setResolveModulePerSourceSet(true);
+    importProject();
+    assertNotDelegatedBaseJavaProject();
+    getCurrentExternalProjectSettings().setDelegatedBuild(true);
+    GradleSettings.getInstance(myProject).getPublisher().onBuildDelegationChange(true, getProjectPath());
+    assertDelegatedBaseJavaProject();
   }
 
   private void assertNotDelegatedBaseJavaProject() {
@@ -113,6 +120,33 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
 
     assertModuleOutput("project.main", getProjectPath() + mainClassesOutputPath, "");
     assertModuleOutput("project.test", "", getProjectPath() + testClassesOutputPath);
+  }
+
+  private void assertDelegatedBaseJavaProject() {
+    assertModules("project", "project.main", "project.test");
+    assertContentRoots("project", getProjectPath());
+
+    if (isGradle40orNewer()) {
+      assertModuleOutputs("project.main",
+                          getProjectPath() + "/build/classes/java/main",
+                          getProjectPath() + "/build/resources/main");
+      assertModuleOutput("project.main", getProjectPath() + "/build/classes/java/main", "");
+
+      assertModuleOutputs("project.test",
+                          getProjectPath() + "/build/classes/java/test",
+                          getProjectPath() + "/build/resources/test");
+      assertModuleOutput("project.test", "", getProjectPath() + "/build/classes/java/test");
+    } else {
+      assertModuleOutputs("project.main",
+                          getProjectPath() + "/build/classes/main",
+                          getProjectPath() + "/build/resources/main");
+      assertModuleOutput("project.main", getProjectPath() + "/build/classes/main", "");
+
+      assertModuleOutputs("project.test",
+                          getProjectPath() + "/build/classes/test",
+                          getProjectPath() + "/build/resources/test");
+      assertModuleOutput("project.test", "", getProjectPath() + "/build/classes/test");
+    }
   }
 
   private void assertNotDelegatedMergedBaseJavaProject() {
