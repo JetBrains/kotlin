@@ -30,14 +30,9 @@ public abstract class TailTypeDecorator<T extends LookupElement> extends LookupE
 
   @Override
   public void handleInsert(@NotNull InsertionContext context) {
-    final LookupElement delegate = getDelegate();
-    final TailType tailType = computeTailType(context);
+    TailType tailType = computeTailType(context);
 
-    final LookupItem lookupItem = delegate.as(LookupItem.CLASS_CONDITION_KEY);
-    if (lookupItem != null && tailType != null) {
-      lookupItem.setTailType(TailType.UNKNOWN);
-    }
-    delegate.handleInsert(context);
+    getDelegate().handleInsert(context);
     if (tailType != null && tailType.isApplicable(context)) {
       PostprocessReformattingAspect.getInstance(context.getProject()).doPostponedFormatting();
       int tailOffset = context.getTailOffset();
