@@ -94,13 +94,25 @@ public fun String.toIntOrNull(radix: Int): Int? {
     }
 
 
-    val limitBeforeMul = limit / radix
+    val limitForMaxRadix = (-Int.MAX_VALUE) / 36
+
+    var limitBeforeMul = limitForMaxRadix
     var result = 0
-    for (i in start..(length - 1)) {
+    for (i in start until length) {
         val digit = digitOf(this[i], radix)
 
         if (digit < 0) return null
-        if (result < limitBeforeMul) return null
+        if (result < limitBeforeMul) {
+            if (limitBeforeMul == limitForMaxRadix) {
+                limitBeforeMul = limit / radix
+
+                if (result < limitBeforeMul) {
+                    return null
+                }
+            } else {
+                return null
+            }
+        }
 
         result *= radix
 
@@ -157,13 +169,25 @@ public fun String.toLongOrNull(radix: Int): Long? {
     }
 
 
-    val limitBeforeMul = limit / radix
+    val limitForMaxRadix = (-Long.MAX_VALUE) / 36
+
+    var limitBeforeMul = limitForMaxRadix
     var result = 0L
-    for (i in start..(length - 1)) {
+    for (i in start until length) {
         val digit = digitOf(this[i], radix)
 
         if (digit < 0) return null
-        if (result < limitBeforeMul) return null
+        if (result < limitBeforeMul) {
+            if (limitBeforeMul == limitForMaxRadix) {
+                limitBeforeMul = limit / radix
+
+                if (result < limitBeforeMul) {
+                    return null
+                }
+            } else {
+                return null
+            }
+        }
 
         result *= radix
 
