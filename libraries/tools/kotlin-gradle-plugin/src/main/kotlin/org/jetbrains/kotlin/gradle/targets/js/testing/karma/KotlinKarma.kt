@@ -52,6 +52,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     init {
         requiredDependencies.add(versions.karma)
 
+        useLogReporter()
         useTeamcityReporter()
         useMocha()
         useWebpack()
@@ -64,6 +65,34 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private fun useTeamcityReporter() {
         requiredDependencies.add(versions.karmaTeamcityReporter)
         config.reporters.add("teamcity")
+    }
+
+    private fun useLogReporter() {
+        config.reporters.add("karma-browser-log-reporter")
+
+        confJsWriters.add {
+            //language=ES6
+            it.appendln(
+                """
+                // reporter for browser logs
+                const LogReporter = function (baseReporterDecorator) {
+                    baseReporterDecorator(this);
+
+                    this.onBrowserLog = (browser, log, type) => {
+                        this.write("##browser[" + "browser='" + browser + "' " + "type='" + type + "' " + "log=" + log + "]##browser\n");
+                    }
+                };
+
+                LogReporter.${'$'}inject = ['baseReporterDecorator'];
+                
+                config.plugins = config.plugins || [];
+                config.plugins.push('karma-*'); // default
+                config.plugins.push({
+                'reporter:karma-browser-log-reporter': ['type', LogReporter]
+                });
+            """.trimIndent()
+            )
+        }
     }
 
     internal fun watch() {
