@@ -28,7 +28,6 @@ data class KotlinWebpackConfig(
     var devServer: DevServer? = null,
     val showProgress: Boolean = false,
     val sourceMaps: Boolean = false,
-    val sourceMapsRuntime: Boolean = false,
     val export: Boolean = true,
     val progressReporter: Boolean = false,
     val progressReporterPathFilter: String? = null
@@ -43,7 +42,6 @@ data class KotlinWebpackConfig(
 
         if (sourceMaps) {
             it.add(versions.sourceMapLoader)
-            it.add(versions.sourceMapSupport)
         }
 
         if (devServer != null) {
@@ -106,7 +104,6 @@ data class KotlinWebpackConfig(
 
             appendEntry()
             appendSourceMaps()
-            appendSourceMapsRuntime()
             appendDevServer()
             appendReport()
             appendFromConfigDir()
@@ -178,20 +175,6 @@ data class KotlinWebpackConfig(
         appendln("// dev server")
         appendln("config.devServer = ${json(devServer!!)};")
         appendln()
-    }
-
-    private fun Appendable.appendSourceMapsRuntime() {
-        if (!sourceMapsRuntime) return
-
-        //language=JavaScript 1.8
-        appendln(
-            """
-                // source maps runtime
-                if (!config.entry) config.entry = [];
-                config.entry.push('source-map-support/browser-source-map-support.js');
-                
-            """.trimIndent()
-        )
     }
 
     private fun Appendable.appendSourceMaps() {

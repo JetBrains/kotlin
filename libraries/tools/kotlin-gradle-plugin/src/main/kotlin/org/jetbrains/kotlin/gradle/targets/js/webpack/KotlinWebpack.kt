@@ -117,8 +117,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
             devServer = devServer,
-            sourceMaps = sourceMaps,
-            sourceMapsRuntime = sourceMaps
+            sourceMaps = sourceMaps
         )
     )
 
