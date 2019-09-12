@@ -2,7 +2,7 @@
 package com.intellij.largeFilesEditor.editor;
 
 import com.intellij.largeFilesEditor.encoding.LargeFileEditorAccess;
-import com.intellij.largeFilesEditor.search.SearchManager;
+import com.intellij.largeFilesEditor.search.LfeSearchManager;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.openapi.editor.Editor;
@@ -17,7 +17,7 @@ public interface LargeFileEditor extends FileEditor {
   Key<Object> LARGE_FILE_EDITOR_MARK_KEY = new Key<>("lfe.editorMark");
   Key<LargeFileEditor> LARGE_FILE_EDITOR_KEY = new Key<>("lfe.editor");
 
-  SearchManager getSearchManager();
+  LfeSearchManager getSearchManager();
 
   void showSearchResult(SearchResult searchResult);
 

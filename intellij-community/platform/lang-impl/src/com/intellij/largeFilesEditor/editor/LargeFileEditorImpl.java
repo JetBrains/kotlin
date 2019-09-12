@@ -9,8 +9,8 @@ import com.intellij.largeFilesEditor.encoding.EncodingWidget;
 import com.intellij.largeFilesEditor.file.LargeFileManager;
 import com.intellij.largeFilesEditor.file.LargeFileManagerImpl;
 import com.intellij.largeFilesEditor.file.ReadingPageResultHandler;
-import com.intellij.largeFilesEditor.search.SearchManager;
-import com.intellij.largeFilesEditor.search.SearchManagerImpl;
+import com.intellij.largeFilesEditor.search.LfeSearchManager;
+import com.intellij.largeFilesEditor.search.LfeSearchManagerImpl;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.RangeSearchCreatorImpl;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
@@ -55,7 +55,7 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
   private final EditorModel editorModel;
   private final DocumentEx document;
   private final VirtualFile vFile;
-  private SearchManager searchManager;
+  private LfeSearchManager searchManager;
 
   public LargeFileEditorImpl(Project project, VirtualFile vFile) {
     this.vFile = vFile;
@@ -82,7 +82,7 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
     }
 
 
-    searchManager = new SearchManagerImpl(
+    searchManager = new LfeSearchManagerImpl(
       this, fileManager.getFileDataProviderForSearch(), new RangeSearchCreatorImpl());
 
     createAndAddSpecialWidgetIfNeed(project);
@@ -116,7 +116,7 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
   }
 
   @Override
-  public SearchManager getSearchManager() {
+  public LfeSearchManager getSearchManager() {
     return searchManager;
   }
 

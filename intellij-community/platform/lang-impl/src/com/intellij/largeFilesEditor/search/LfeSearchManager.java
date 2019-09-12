@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface SearchManager {
+public interface LfeSearchManager {
 
-  void updateSearchManageGUIActions();
+  void updateSearchReplaceComponentActions();
 
-  SearchReplaceComponent getSearchManageGUI();
+  SearchReplaceComponent getSearchReplaceComponent();
 
   CloseSearchTask getLastExecutedCloseSearchTask();
 

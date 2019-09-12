@@ -4,7 +4,7 @@ package com.intellij.largeFilesEditor.search.actions;
 import com.intellij.find.SearchReplaceComponent;
 import com.intellij.find.editorHeaderActions.ContextAwareShortcutProvider;
 import com.intellij.find.editorHeaderActions.Utils;
-import com.intellij.largeFilesEditor.search.SearchManager;
+import com.intellij.largeFilesEditor.search.LfeSearchManager;
 import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -20,10 +20,10 @@ import java.util.List;
 
 public class PrevNextOccurrenceAction extends DumbAwareAction implements ContextAwareShortcutProvider {
 
-  private final SearchManager mySearchManager;
+  private final LfeSearchManager mySearchManager;
   private final boolean myDirectionForward;
 
-  public PrevNextOccurrenceAction(SearchManager searchManager, boolean directionForward) {
+  public PrevNextOccurrenceAction(LfeSearchManager searchManager, boolean directionForward) {
     mySearchManager = searchManager;
     myDirectionForward = directionForward;
 
@@ -71,7 +71,7 @@ public class PrevNextOccurrenceAction extends DumbAwareAction implements Context
   }
 
   private boolean isMultiLine() {
-    SearchReplaceComponent searchReplaceComponent = mySearchManager.getSearchManageGUI();
+    SearchReplaceComponent searchReplaceComponent = mySearchManager.getSearchReplaceComponent();
     return searchReplaceComponent != null && searchReplaceComponent.isMultiline();
   }
 }
