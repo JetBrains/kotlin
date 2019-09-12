@@ -93,12 +93,12 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
   }
 
   protected boolean isMarkReadOnly() {
-    final AbstractTreeNode parent = getParent();
+    final AbstractTreeNode<?> parent = getParent();
     if (parent == null) {
       return false;
     }
     if (parent instanceof AbstractPsiBasedNode) {
-      final PsiElement psiElement = ((AbstractPsiBasedNode)parent).extractPsiFromValue();
+      final PsiElement psiElement = ((AbstractPsiBasedNode<?>)parent).extractPsiFromValue();
       return psiElement instanceof PsiDirectory;
     }
 
