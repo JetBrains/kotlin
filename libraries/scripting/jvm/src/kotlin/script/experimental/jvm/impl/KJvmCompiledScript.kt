@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvm.impl
 
 import java.io.*
+import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
@@ -149,12 +150,35 @@ private fun CompiledScript<*>.makeClassLoaderFromDependencies(baseClassLoader: C
         script.compilationConfiguration[ScriptCompilationConfiguration.dependencies]
             ?.asSequence()?.map { script.compilationConfiguration to it } ?: emptySequence()
     }
+
+    val processedClasspathElements = mutableSetOf<URL>()
+    fun recursiveClassPath(res: Sequence<URL>, classLoader: ClassLoader?): Sequence<URL> =
+        when (classLoader) {
+            null -> res
+            is DualClassLoader -> recursiveClassPath(res, classLoader.parent) +
+                    recursiveClassPath(emptySequence(), classLoader.fallbackClassLoader)
+            is URLClassLoader -> recursiveClassPath(res + classLoader.urLs, classLoader.parent)
+            else -> recursiveClassPath(res, classLoader.parent)
+        }
+    recursiveClassPath(emptySequence(), baseClassLoader).forEach { processedClasspathElements.add(it) }
+
+    val processedClassloaders = mutableSetOf<ClassLoader>()
+
     return dependenciesWithConfigurations.fold(baseClassLoader) { parentClassLoader, (compilationConfiguration, scriptDependency) ->
         when (scriptDependency) {
-            is JvmDependency -> URLClassLoader(scriptDependency.classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoader)
-            is JvmDependencyFromClassLoader -> DualClassLoader(scriptDependency.getClassLoader(compilationConfiguration), baseClassLoader)
-            else -> baseClassLoader
-        }
+            is JvmDependency -> {
+                scriptDependency.classpath.mapNotNull {
+                    val url = it.toURI().toURL()
+                    if (processedClasspathElements.add(url)) url else null
+                }.takeUnless { it.isEmpty() }?.let { URLClassLoader(it.toTypedArray(), parentClassLoader) }
+            }
+            is JvmDependencyFromClassLoader -> {
+                val dependenciesClassLoader = scriptDependency.getClassLoader(compilationConfiguration)
+                if (processedClassloaders.add(dependenciesClassLoader)) DualClassLoader(dependenciesClassLoader, parentClassLoader)
+                else null
+            }
+            else -> null
+        } ?: parentClassLoader
     }
 }
 
