@@ -3,7 +3,6 @@ package com.intellij.ide.actions
 
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.CopyReferenceUtil.getElementsToCopy
-import com.intellij.ide.actions.CopyReferenceUtil.setStatusBarText
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.editor.Editor
@@ -43,12 +42,13 @@ abstract class CopyPathProvider : DumbAwareAction() {
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
 
     val elements = getElementsToCopy(editor, dataContext)
-    val copy = project?.let { editor?.let { it1 -> getQualifiedName(it, elements, it1) } }
+    project?.let {
+      val copy = getQualifiedName(project, elements, editor)
+      CopyPasteManager.getInstance().setContents(StringSelection(copy))
+      CopyReferenceUtil.setStatusBarText(project, IdeBundle.message("message.path.to.fqn.has.been.copied", copy))
 
-    CopyPasteManager.getInstance().setContents(StringSelection(copy))
-    setStatusBarText(project, IdeBundle.message("message.path.to.fqn.has.been.copied", copy))
-
-    CopyReferenceUtil.highlight(editor, project, elements)
+      CopyReferenceUtil.highlight(editor, project, elements)
+    }
   }
 
   open fun getQualifiedName(project: Project, elements: List<PsiElement>, editor: Editor?): String? {
