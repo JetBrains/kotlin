@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.completion.ml.common
 
-import com.intellij.codeInsight.lookup.Lookup
+import com.intellij.codeInsight.completion.ml.CompletionEnvironment
 import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.openapi.editor.ex.util.EditorUtil
@@ -10,8 +10,8 @@ import com.intellij.openapi.util.text.StringUtil
 
 class CommonLocationFeatures : ContextFeatureProvider {
   override fun getName(): String = "common"
-
-  override fun calculateFeatures(lookup: Lookup): Map<String, MLFeatureValue> {
+  override fun calculateFeatures(environment: CompletionEnvironment): Map<String, MLFeatureValue> {
+    val lookup = environment.lookup
     val editor = lookup.topLevelEditor
     val caretOffset = lookup.lookupStart
     val logicalPosition = editor.offsetToLogicalPosition(caretOffset)

@@ -4,10 +4,11 @@ package com.intellij.completion.ml
 import com.intellij.codeInsight.completion.ml.ContextFeatures
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiElement
 import java.util.*
 
-class ContextFeaturesStorage(private val featuresSnapshot: Map<String, MLFeatureValue>): ContextFeatures {
+class ContextFeaturesStorage(private val featuresSnapshot: Map<String, MLFeatureValue>) : ContextFeatures, UserDataHolderBase() {
   companion object {
     private val CONTEXT_FEATURES_KEY = Key.create<ContextFeaturesStorage>("com.intellij.completion.ml.context_features")
     private val EMPTY = ContextFeaturesStorage(emptyMap())
@@ -16,9 +17,10 @@ class ContextFeaturesStorage(private val featuresSnapshot: Map<String, MLFeature
       return element.getUserData(CONTEXT_FEATURES_KEY) ?: EMPTY
     }
 
-    fun setContextFeatures(element: PsiElement, features: Map<String, MLFeatureValue>) {
-      element.putUserData(CONTEXT_FEATURES_KEY,
-                          ContextFeaturesStorage(Collections.unmodifiableMap(features)))
+    fun setContextFeatures(element: PsiElement, features: Map<String, MLFeatureValue>, dataHolder: UserDataHolderBase) {
+      val featuresStorage = ContextFeaturesStorage(Collections.unmodifiableMap(features))
+      dataHolder.copyUserDataTo(featuresStorage)
+      element.putUserData(CONTEXT_FEATURES_KEY, featuresStorage)
     }
 
     fun clear(element: PsiElement) {

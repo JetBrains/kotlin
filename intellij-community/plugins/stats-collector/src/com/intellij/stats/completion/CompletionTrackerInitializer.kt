@@ -54,7 +54,6 @@ class CompletionTrackerInitializer : ApplicationInitializedListener {
 
       val lookupStorage = MutableLookupStorage.initLookupStorage(lookup, language, System.currentTimeMillis())
 
-      processContextFactors(lookup, lookupStorage)
       processUserFactors(lookup, lookupStorage)
       processSessionFactors(lookup, lookupStorage)
 
@@ -93,23 +92,6 @@ class CompletionTrackerInitializer : ApplicationInitializedListener {
     }
 
     return Random.nextDouble() < logSessionChance
-  }
-
-  private fun processContextFactors(lookup: LookupImpl, lookupStorage: MutableLookupStorage) {
-    val file = lookup.psiFile
-    if (file != null) {
-      val result = mutableMapOf<String, MLFeatureValue>()
-      for (provider in ContextFeatureProvider.forLanguage(lookupStorage.language)) {
-        val providerName = provider.name
-        for ((featureName, value) in provider.calculateFeatures(lookup)) {
-          result["ml_ctx_${providerName}_$featureName"] = value
-        }
-      }
-
-      ContextFeaturesStorage.setContextFeatures(file, result)
-      Disposer.register(lookup, Disposable { ContextFeaturesStorage.clear(file) })
-      lookupStorage.contextFactors = result.mapValues { it.value.toString() }
-    }
   }
 
   private fun processUserFactors(lookup: LookupImpl, lookupStorage: MutableLookupStorage) {

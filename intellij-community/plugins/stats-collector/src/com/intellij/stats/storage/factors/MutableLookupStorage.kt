@@ -16,7 +16,9 @@ class MutableLookupStorage(
   override val model: RankingModelWrapper)
   : LookupStorage {
   override var userFactors: Map<String, String?> = emptyMap()
-  override var contextFactors: Map<String, String> = emptyMap()
+
+  @Volatile
+  override var contextFactors: Map<String, String>? = null
 
   companion object {
     private val LOOKUP_STORAGE = Key.create<MutableLookupStorage>("completion.ml.lookup.storage")
