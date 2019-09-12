@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputParserProvider;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class GradleOutputParserProvider implements ExternalSystemOutputParserPro
   }
 
   @Override
-  public List<BuildOutputParser> getBuildOutputParsers(ExternalSystemTaskId taskId) {
+  public List<BuildOutputParser> getBuildOutputParsers(@NotNull ExternalSystemTaskId taskId) {
     List<BuildOutputParser> parsers = new SmartList<>();
     if (taskId.getType().equals(ExternalSystemTaskType.RESOLVE_PROJECT)) {
       parsers.add(new GradleSyncOutputParser());
