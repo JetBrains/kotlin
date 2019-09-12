@@ -15,16 +15,18 @@ import com.intellij.psi.impl.source.tree.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.CharTable;
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
 
 public class FormatterUtil {
 
   public static final String REFORMAT_BEFORE_COMMIT_COMMAND_NAME = CodeInsightBundle.message("process.reformat.code.before.commit");
-  public static final Collection<String> FORMATTER_ACTION_NAMES = Collections.unmodifiableCollection(ContainerUtilRt.newHashSet(
+  public static final Collection<String> FORMATTER_ACTION_NAMES = Collections.unmodifiableCollection(ContainerUtil.newHashSet(
     ReformatCodeProcessor.COMMAND_NAME, REFORMAT_BEFORE_COMMIT_COMMAND_NAME
   ));
 

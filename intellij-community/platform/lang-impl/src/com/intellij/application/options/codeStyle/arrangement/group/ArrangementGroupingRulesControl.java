@@ -11,7 +11,6 @@ import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsMan
 import com.intellij.psi.codeStyle.arrangement.std.CompositeArrangementSettingsToken;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.table.JBTable;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +79,8 @@ public class ArrangementGroupingRulesControl extends JBTable {
       model.removeRow(model.getRowCount() - 1);
     }
 
-    final Set<ArrangementSettingsToken> groupingTokens = ContainerUtilRt.newHashSet(myComponents.keySet());
+    final Set<ArrangementSettingsToken> groupingTokens =
+      new HashSet<>(myComponents.keySet());
     for (ArrangementGroupingRule rule : rules) {
       final ArrangementSettingsToken groupingType = rule.getGroupingType();
       ArrangementGroupingComponent component = myComponents.get(groupingType);
@@ -90,7 +90,8 @@ public class ArrangementGroupingRulesControl extends JBTable {
       groupingTokens.remove(groupingType);
     }
 
-    List<ArrangementSettingsToken> types = ContainerUtilRt.newArrayList(groupingTokens);
+    List<ArrangementSettingsToken> types =
+      new ArrayList<>(groupingTokens);
     types = mySettingsManager.sort(types);
     for (ArrangementSettingsToken type : types) {
       model.addRow(new Object[]{myComponents.get(type)});

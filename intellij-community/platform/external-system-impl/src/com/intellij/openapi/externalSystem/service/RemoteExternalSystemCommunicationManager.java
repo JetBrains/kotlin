@@ -46,7 +46,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import kotlin.Unit;
 import kotlin.reflect.full.NoSuchPropertyException;
 import org.jetbrains.annotations.NotNull;
@@ -137,7 +136,7 @@ public final class RemoteExternalSystemCommunicationManager implements ExternalS
         ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ExternalSystemException.class));
         ExternalSystemApiUtil.addBundle(params.getClassPath(), "messages.CommonBundle", CommonBundle.class);
         // com.intellij.openapi.externalSystem.model.FSTSerializer dependencies
-        ContainerUtilRt.addIfNotNull(classPath, PathUtil.getJarPathForClass(ObjectSerializer.class));
+        ContainerUtil.addIfNotNull(classPath, PathUtil.getJarPathForClass(ObjectSerializer.class));
 
         params.getClassPath().addAll(classPath);
 

@@ -17,7 +17,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.keyFMap.KeyFMap;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +40,7 @@ public class ExternalSystemExecuteTaskTask extends AbstractExternalSystemTask {
                                        @NotNull ExternalSystemTaskExecutionSettings settings,
                                        @Nullable String jvmParametersSetup) throws IllegalArgumentException {
     super(settings.getExternalSystemId(), ExternalSystemTaskType.EXECUTE_TASK, project, settings.getExternalProjectPath());
-    myTasksToExecute = ContainerUtilRt.newArrayList(settings.getTaskNames());
+    myTasksToExecute = new ArrayList<>(settings.getTaskNames());
     myVmOptions = settings.getVmOptions();
     myArguments = settings.getScriptParameters();
     myPassParentEnvs = settings.isPassParentEnvs();

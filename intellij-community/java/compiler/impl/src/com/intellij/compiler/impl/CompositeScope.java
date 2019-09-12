@@ -96,7 +96,7 @@ public class CompositeScope extends ExportableUserDataHolderBase implements Comp
   public Collection<String> getAffectedUnloadedModules() {
     Set<String> unloadedModules = new LinkedHashSet<>();
     for (final CompileScope compileScope : myScopes) {
-      ContainerUtil.addAll(unloadedModules, compileScope.getAffectedUnloadedModules());
+      unloadedModules.addAll(compileScope.getAffectedUnloadedModules());
     }
     return unloadedModules;
   }

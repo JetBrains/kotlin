@@ -19,7 +19,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +28,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -83,7 +83,7 @@ public final class ExternalSystemFacadeManager {
                                           @NotNull String oldName,
                                           @NotNull String newName)
   {
-    Set<IntegrationKey> keys = ContainerUtilRt.newHashSet(data.keySet());
+    Set<IntegrationKey> keys = new HashSet<>(data.keySet());
     for (IntegrationKey key : keys) {
       if (!key.getIdeProjectName().equals(oldName)) {
         continue;

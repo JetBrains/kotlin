@@ -11,22 +11,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Vladislav.Soroka
  */
 public class BuildScriptDataBuilder {
   @NotNull private final VirtualFile myBuildScriptFile;
-  protected final Set<String> imports = ContainerUtil.newTreeSet();
-  protected final Set<String> plugins = ContainerUtil.newTreeSet();
-  protected final Set<String> pluginsInGroup = ContainerUtil.newTreeSet();
-  protected final Set<String> repositories = ContainerUtil.newTreeSet();
-  protected final Set<String> dependencies = ContainerUtil.newTreeSet();
-  protected final Set<String> properties = ContainerUtil.newTreeSet();
-  protected final Set<String> buildScriptProperties = ContainerUtil.newTreeSet();
-  protected final Set<String> buildScriptRepositories = ContainerUtil.newTreeSet();
-  protected final Set<String> buildScriptDependencies = ContainerUtil.newTreeSet();
-  protected final Set<String> other = ContainerUtil.newTreeSet();
+  protected final Set<String> imports = new TreeSet<>();
+  protected final Set<String> plugins = new TreeSet<>();
+  protected final Set<String> pluginsInGroup = new TreeSet<>();
+  protected final Set<String> repositories = new TreeSet<>();
+  protected final Set<String> dependencies = new TreeSet<>();
+  protected final Set<String> properties = new TreeSet<>();
+  protected final Set<String> buildScriptProperties = new TreeSet<>();
+  protected final Set<String> buildScriptRepositories = new TreeSet<>();
+  protected final Set<String> buildScriptDependencies = new TreeSet<>();
+  protected final Set<String> other = new TreeSet<>();
   protected final GradleVersion myGradleVersion;
 
   public BuildScriptDataBuilder(@NotNull VirtualFile buildScriptFile) {

@@ -48,6 +48,7 @@ import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PathsList;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.messages.MessageBusConnection;
@@ -246,9 +247,9 @@ public final class GradleManager
   public void enhanceRemoteProcessing(@NotNull SimpleJavaParameters parameters) throws ExecutionException {
     final Set<String> additionalEntries = new HashSet<>();
     for (GradleProjectResolverExtension extension : RESOLVER_EXTENSIONS.getValue()) {
-      ContainerUtilRt.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(extension.getClass()));
+      ContainerUtil.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(extension.getClass()));
       for (Class aClass : extension.getExtraProjectModelClasses()) {
-        ContainerUtilRt.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(aClass));
+        ContainerUtil.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(aClass));
       }
       extension.enhanceRemoteProcessing(parameters);
     }

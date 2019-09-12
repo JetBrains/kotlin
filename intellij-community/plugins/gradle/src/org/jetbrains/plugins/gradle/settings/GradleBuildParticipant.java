@@ -4,7 +4,7 @@ package org.jetbrains.plugins.gradle.settings;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
@@ -23,7 +23,7 @@ public class GradleBuildParticipant implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private final String myProjectPath;
-  private final Map<File, ModuleData> moduleArtifactMap = ContainerUtil.newTroveMap(new TObjectHashingStrategy<File>() {
+  private final Map<File, ModuleData> moduleArtifactMap = new THashMap<>(new TObjectHashingStrategy<File>() {
     @Override
     public int computeHashCode(File file) {
       return ExternalSystemUtil.fileHashCode(file);

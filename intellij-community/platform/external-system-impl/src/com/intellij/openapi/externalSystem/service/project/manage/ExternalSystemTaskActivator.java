@@ -164,7 +164,7 @@ public class ExternalSystemTaskActivator {
       for (Phase phase : phases) {
         List<String> activationTasks = activation.state.getTasks(phase);
         if (hashPath || (phase.isSyncPhase() && !activationTasks.isEmpty() &&  isShareSameRootPath(modules, activation))) {
-          ContainerUtil.addAll(tasks, activationTasks);
+          tasks.addAll(activationTasks);
         }
       }
 

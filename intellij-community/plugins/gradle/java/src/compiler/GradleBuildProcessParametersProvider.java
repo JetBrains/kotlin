@@ -6,7 +6,6 @@ import com.intellij.compiler.server.BuildProcessParametersProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import groovy.lang.GroovyObject;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.gradle.internal.impldep.com.google.common.base.Optional;
@@ -56,7 +55,7 @@ public class GradleBuildProcessParametersProvider extends BuildProcessParameters
         myGradleClasspath.add(gradleToolingApiImplDepJarPath);
       }
     }
-    ContainerUtil.addAll(classpath, myGradleClasspath);
+    classpath.addAll(myGradleClasspath);
   }
 
   private static void addOtherClassPath(@NotNull final List<String> classpath) {

@@ -15,7 +15,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.util.ResourceUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
@@ -25,6 +24,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * @author stathik
@@ -41,7 +41,7 @@ public class DumpInspectionDescriptionsAction extends AnAction implements DumbAw
     final InspectionProfile profile = InspectionProfileManager.getInstance().getCurrentProfile();
     final InspectionToolWrapper[] tools = profile.getInspectionTools(null);
 
-    final Collection<String> classes = ContainerUtil.newTreeSet();
+    final Collection<String> classes = new TreeSet<>();
     final Map<String, Collection<String>> groups = new TreeMap<>();
 
     final String tempDirectory = FileUtil.getTempDirectory();
@@ -56,7 +56,7 @@ public class DumpInspectionDescriptionsAction extends AnAction implements DumbAw
 
       final String group = getGroupName(toolWrapper);
       Collection<String> names = groups.get(group);
-      if (names == null) groups.put(group, (names = ContainerUtil.newTreeSet()));
+      if (names == null) groups.put(group, (names = new TreeSet<>()));
       names.add(toolWrapper.getShortName());
 
       final InputStream stream = getDescriptionStream(toolWrapper);

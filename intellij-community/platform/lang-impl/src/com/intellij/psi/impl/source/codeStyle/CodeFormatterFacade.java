@@ -39,7 +39,6 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -306,7 +305,7 @@ public class CodeFormatterFacade {
     }
 
     if (!injectedFileRangesSet.isEmpty()) {
-      List<TextRange> ranges = ContainerUtilRt.newArrayList(injectedFileRangesSet);
+      List<TextRange> ranges = new ArrayList<>(injectedFileRangesSet);
       Collections.reverse(ranges);
       for (TextRange injectedFileRange : ranges) {
         int startHostOffset = injectedFileRange.getStartOffset();

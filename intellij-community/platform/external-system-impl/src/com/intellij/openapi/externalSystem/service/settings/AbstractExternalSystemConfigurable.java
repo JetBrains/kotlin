@@ -19,7 +19,6 @@ import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
@@ -100,7 +99,7 @@ public abstract class AbstractExternalSystemConfigurable<
 
   @SuppressWarnings("unchecked")
   private void prepareProjectSettings(@NotNull SystemSettings s) {
-    List<ProjectSettings> settings = ContainerUtilRt.newArrayList(s.getLinkedProjectsSettings());
+    List<ProjectSettings> settings = new ArrayList<>(s.getLinkedProjectsSettings());
     if (settings.isEmpty()) {
       ExternalSystemUiUtil.fillBottom(myComponent);
       return;

@@ -259,7 +259,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
   }
 
   private void collectModuleWatchRoots(@NotNull Set<? super String> recursivePaths, @NotNull Set<? super String> flatPaths) {
-    Set<String> urls = ContainerUtil.newTroveSet(FileUtil.PATH_HASHING_STRATEGY);
+    Set<String> urls = new THashSet<>(FileUtil.PATH_HASHING_STRATEGY);
 
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
       ModuleRootManager rootManager = ModuleRootManager.getInstance(module);

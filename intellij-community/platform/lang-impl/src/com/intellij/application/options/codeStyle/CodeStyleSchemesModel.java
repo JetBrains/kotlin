@@ -105,7 +105,7 @@ public class CodeStyleSchemesModel implements SchemesModel<CodeStyleScheme> {
 
   public void reset() {
     mySchemes.clear();
-    ContainerUtil.addAll(mySchemes, CodeStyleSchemesImpl.getSchemeManager().getAllSchemes());
+    mySchemes.addAll(CodeStyleSchemesImpl.getSchemeManager().getAllSchemes());
     mySchemes.add(myProjectScheme);
     updateClonedSettings();
 

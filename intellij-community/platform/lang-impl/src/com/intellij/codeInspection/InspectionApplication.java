@@ -33,7 +33,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NonNls;
@@ -230,7 +230,7 @@ public class InspectionApplication {
     // convert report
     if (reportConverter != null) {
       try {
-        reportConverter.convert(resultsDataPath.toString(), myOutPath, context.getTools(), ContainerUtilRt.map2List(inspectionsResults, path -> path.toFile()));
+        reportConverter.convert(resultsDataPath.toString(), myOutPath, context.getTools(), ContainerUtil.map2List(inspectionsResults, path -> path.toFile()));
       }
       catch (InspectionsReportConverter.ConversionException e) {
         logError("\n" + e.getMessage());

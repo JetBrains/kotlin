@@ -15,10 +15,13 @@
  */
 package org.jetbrains.jps.model;
 
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.jps.model.java.JpsJavaLibraryType;
 import org.jetbrains.jps.model.java.JpsJavaSdkType;
-import org.jetbrains.jps.model.library.*;
+import org.jetbrains.jps.model.library.JpsLibrary;
+import org.jetbrains.jps.model.library.JpsLibraryCollection;
+import org.jetbrains.jps.model.library.JpsLibraryReference;
+import org.jetbrains.jps.model.library.JpsOrderRootType;
 
 /**
  * @author nik
@@ -28,8 +31,8 @@ public class JpsLibraryTest extends JpsModelTestCase {
     JpsLibrary a = myProject.addLibrary("a", JpsJavaLibraryType.INSTANCE);
     JpsLibraryCollection collection = myProject.getLibraryCollection();
     assertSameElements(collection.getLibraries(), a);
-    assertSameElements(ContainerUtilRt.newArrayList(collection.getLibraries(JpsJavaLibraryType.INSTANCE)), a);
-    assertEmpty(ContainerUtilRt.newArrayList(collection.getLibraries(JpsJavaSdkType.INSTANCE)));
+    assertSameElements(ContainerUtil.newArrayList(collection.getLibraries(JpsJavaLibraryType.INSTANCE)), a);
+    assertEmpty(ContainerUtil.newArrayList(collection.getLibraries(JpsJavaSdkType.INSTANCE)));
   }
 
   public void testAddRoot() {

@@ -6,8 +6,8 @@ import com.intellij.openapi.externalSystem.model.project.ProjectId;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -21,27 +21,26 @@ import java.util.*;
 @ApiStatus.Experimental
 public class ModifiableWorkspace {
 
-  private final Map<ProjectCoordinate, String> myModuleMappingById = ContainerUtil.newTroveMap(
-    new TObjectHashingStrategy<ProjectCoordinate>() {
-      @Override
-      public int computeHashCode(ProjectCoordinate object) {
-        String groupId = object.getGroupId();
-        String artifactId = object.getArtifactId();
-        String version = object.getVersion();
-        int result = (groupId != null ? groupId.hashCode() : 0);
-        result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        return result;
-      }
+  private final Map<ProjectCoordinate, String> myModuleMappingById = new THashMap<>(new TObjectHashingStrategy<ProjectCoordinate>() {
+    @Override
+    public int computeHashCode(ProjectCoordinate object) {
+      String groupId = object.getGroupId();
+      String artifactId = object.getArtifactId();
+      String version = object.getVersion();
+      int result1 = (groupId != null ? groupId.hashCode() : 0);
+      result1 = 31 * result1 + (artifactId != null ? artifactId.hashCode() : 0);
+      result1 = 31 * result1 + (version != null ? version.hashCode() : 0);
+      return result1;
+    }
 
-      @Override
-      public boolean equals(ProjectCoordinate o1, ProjectCoordinate o2) {
-        if (o1.getGroupId() != null ? !o1.getGroupId().equals(o2.getGroupId()) : o2.getGroupId() != null) return false;
-        if (o1.getArtifactId() != null ? !o1.getArtifactId().equals(o2.getArtifactId()) : o2.getArtifactId() != null) return false;
-        if (o1.getVersion() != null ? !o1.getVersion().equals(o2.getVersion()) : o2.getVersion() != null) return false;
-        return true;
-      }
-    });
+    @Override
+    public boolean equals(ProjectCoordinate o1, ProjectCoordinate o2) {
+      if (o1.getGroupId() != null ? !o1.getGroupId().equals(o2.getGroupId()) : o2.getGroupId() != null) return false;
+      if (o1.getArtifactId() != null ? !o1.getArtifactId().equals(o2.getArtifactId()) : o2.getArtifactId() != null) return false;
+      if (o1.getVersion() != null ? !o1.getVersion().equals(o2.getVersion()) : o2.getVersion() != null) return false;
+      return true;
+    }
+  });
   private final AbstractIdeModifiableModelsProvider myModelsProvider;
   private final ExternalProjectsWorkspaceImpl.State myState;
   private final MultiMap<String/* module owner */, String /* substitution modules */> mySubstitutions = MultiMap.createSet();

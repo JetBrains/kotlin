@@ -54,7 +54,6 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -467,7 +466,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     final ExternalProjectSettings projectSettings = getCurrentExternalProjectSettings();
     projectSettings.setExternalProjectPath(getProjectPath());
     //noinspection unchecked
-    Set<ExternalProjectSettings> projects = ContainerUtilRt.newHashSet(systemSettings.getLinkedProjectsSettings());
+    Set<ExternalProjectSettings> projects = new HashSet<>(systemSettings.getLinkedProjectsSettings());
     projects.remove(projectSettings);
     projects.add(projectSettings);
     //noinspection unchecked

@@ -35,12 +35,12 @@ import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.SystemProperties;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.text.CharArrayUtil;
 import gnu.trove.THash;
+import gnu.trove.THashSet;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
 import org.gradle.internal.impldep.com.google.common.collect.Multimap;
 import org.gradle.tooling.model.DomainObjectSet;
@@ -175,7 +175,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
         sourceSetData.setTargetCompatibility(sourceSet.getTargetCompatibility());
         sourceSetData.setSdkName(jdkName);
 
-        final Set<File> artifacts = ContainerUtil.newTroveSet(FileUtil.FILE_HASHING_STRATEGY);
+        final Set<File> artifacts = new THashSet<>(FileUtil.FILE_HASHING_STRATEGY);
         if ("main".equals(sourceSet.getName())) {
           final Set<File> defaultArtifacts = externalProject.getArtifactsByConfiguration().get("default");
           if (defaultArtifacts != null) {
@@ -412,7 +412,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       .flatMap(ss -> ss.getSources().entrySet().stream()
         .filter(e -> !e.getKey().isResource())
         .flatMap(e -> e.getValue().getSrcDirs().stream()))
-      .collect(Collectors.toCollection(() -> ContainerUtil.newTroveSet(FileUtil.FILE_HASHING_STRATEGY)));
+      .collect(Collectors.toCollection(() -> new THashSet<>(FileUtil.FILE_HASHING_STRATEGY)));
   }
 
   private static void removeAll(List<? extends IdeaSourceDirectory> list, List<? extends IdeaSourceDirectory> toRemove) {

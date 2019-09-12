@@ -18,7 +18,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,7 +85,7 @@ public class ModuleDataService extends AbstractModuleDataService<ModuleData> {
     Map<ExternalProjectPojo, Collection<ExternalProjectPojo>> data = new HashMap<>();
     for (Map.Entry<DataNode<ProjectData>, Collection<DataNode<ModuleData>>> entry : grouped.entrySet()) {
       data.put(ExternalProjectPojo.from(entry.getKey().getData()),
-               ContainerUtilRt.map2List(entry.getValue(), node -> ExternalProjectPojo.from(node.getData())));
+               ContainerUtil.map2List(entry.getValue(), node -> ExternalProjectPojo.from(node.getData())));
     }
 
     AbstractExternalSystemLocalSettings settings = manager.getLocalSettingsProvider().fun(project);

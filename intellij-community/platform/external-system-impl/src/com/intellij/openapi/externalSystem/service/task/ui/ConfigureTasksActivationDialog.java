@@ -232,7 +232,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
   private List<TaskActivationEntry> findSelectedTasks() {
     List<TaskActivationEntry> tasks = ContainerUtil.newSmartList();
     for (DefaultMutableTreeNode node : myTree.getSelectedNodes(DefaultMutableTreeNode.class, null)) {
-      ContainerUtil.addAll(tasks, findTasksUnder(ContainerUtil.ar((MyNode)node.getUserObject())));
+      tasks.addAll(findTasksUnder(ContainerUtil.ar((MyNode)node.getUserObject())));
     }
     return tasks;
   }
@@ -248,7 +248,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
         tasks.add(new TaskActivationEntry(myProjectSystemId, phaseNode.myPhase, phaseNode.myProjectPath, taskName));
       }
       else {
-        ContainerUtil.addAll(tasks, findTasksUnder(node.getChildren()));
+        tasks.addAll(findTasksUnder(node.getChildren()));
       }
     }
     return tasks;

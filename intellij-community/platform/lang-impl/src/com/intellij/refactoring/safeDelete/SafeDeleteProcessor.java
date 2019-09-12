@@ -36,7 +36,6 @@ import com.intellij.usages.*;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -190,7 +189,7 @@ public class SafeDeleteProcessor extends BaseRefactoringProcessor {
       if (preprocessedUsages == null) return false;
     }
 
-    HashSet<UsageInfo> diff = ContainerUtilRt.newHashSet(preprocessedUsages);
+    HashSet<UsageInfo> diff = ContainerUtil.newHashSet(preprocessedUsages);
     diff.removeAll(Arrays.asList(usages));
 
     if (checkConflicts(diff.toArray(UsageInfo.EMPTY_ARRAY), new ArrayList<>())) return false;

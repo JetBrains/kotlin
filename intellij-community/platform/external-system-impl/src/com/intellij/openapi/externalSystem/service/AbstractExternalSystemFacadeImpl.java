@@ -7,7 +7,6 @@ import com.intellij.openapi.externalSystem.service.project.ExternalSystemProject
 import com.intellij.openapi.externalSystem.service.remote.*;
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -186,7 +185,8 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
   @Override
   public void applySettings(@NotNull S settings) throws RemoteException {
     mySettings.set(settings);
-    List<RemoteExternalSystemService<S>> services = ContainerUtilRt.newArrayList(myRemotes.values());
+    List<RemoteExternalSystemService<S>> services =
+      new ArrayList<>(myRemotes.values());
     for (RemoteExternalSystemService<S> service : services) {
       service.setSettings(settings);
     }

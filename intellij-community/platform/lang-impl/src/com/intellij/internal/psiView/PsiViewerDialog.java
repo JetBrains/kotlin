@@ -58,7 +58,6 @@ import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -117,7 +116,7 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
   private RangeHighlighter myHighlighter;
 
 
-  private final Set<PsiViewerSourceWrapper> mySourceWrappers = ContainerUtil.newTreeSet();
+  private final Set<PsiViewerSourceWrapper> mySourceWrappers = new TreeSet<>();
   private final EditorEx myEditor;
   private final EditorListener myEditorListener = new EditorListener();
   private String myLastParsedText = null;

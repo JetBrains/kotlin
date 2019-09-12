@@ -15,7 +15,7 @@
  */
 package org.jetbrains.jps.service.impl;
 
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.plugin.JpsPluginManager;
 import org.jetbrains.jps.service.JpsServiceManager;
@@ -106,7 +106,7 @@ public class JpsServiceManagerImpl extends JpsServiceManager {
     @Override
     public <T> Collection<T> loadExtensions(@NotNull Class<T> extensionClass) {
       ServiceLoader<T> loader = ServiceLoader.load(extensionClass, extensionClass.getClassLoader());
-      return ContainerUtilRt.newArrayList(loader);
+      return ContainerUtil.newArrayList(loader);
     }
   }
 }
