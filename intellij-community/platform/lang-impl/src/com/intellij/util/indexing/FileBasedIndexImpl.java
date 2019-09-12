@@ -2016,7 +2016,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     @Override
     @NotNull
     public AsyncFileListener.ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
-      boolean shouldCleanup = ContainerUtil.exists(events, this::memoryStorageCleaningNeeded);
+      boolean shouldCleanup = ContainerUtil.exists(events, ChangedFilesCollector::memoryStorageCleaningNeeded);
       ChangeApplier superApplier = super.prepareChange(events);
 
       return new AsyncFileListener.ChangeApplier() {
@@ -2036,7 +2036,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       };
     }
 
-    private boolean memoryStorageCleaningNeeded(VFileEvent event) {
+    private static boolean memoryStorageCleaningNeeded(@NotNull VFileEvent event) {
       Object requestor = event.getRequestor();
       return requestor instanceof FileDocumentManager ||
           requestor instanceof PsiManager ||
@@ -2064,7 +2064,14 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
     void ensureUpToDateAsync() {
       if (getEventMerger().getApproximateChangesCount() >= 20 && myScheduledVfsEventsWorkers.compareAndSet(0,1)) {
-        myVfsEventsExecutor.execute(this::scheduledEventProcessingInReadActionWithYieldingToWriteAction);
+        myVfsEventsExecutor.execute(() -> {
+          try {
+            processFilesInReadActionWithYieldingToWriteAction();
+          }
+          finally {
+            myScheduledVfsEventsWorkers.decrementAndGet();
+          }
+        });
 
         if (Registry.is("try.starting.dumb.mode.where.many.files.changed")) {
           Runnable startDumbMode = () -> {
@@ -2139,15 +2146,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         if (!ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(this::processFilesInReadAction)) {
           ProgressIndicatorUtils.yieldToPendingWriteActions();
         }
-      }
-    }
-
-    private void scheduledEventProcessingInReadActionWithYieldingToWriteAction() {
-      try {
-        processFilesInReadActionWithYieldingToWriteAction();
-      }
-      finally {
-        myScheduledVfsEventsWorkers.decrementAndGet();
       }
     }
   }

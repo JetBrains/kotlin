@@ -40,7 +40,7 @@ abstract class IndexedFilesListener implements AsyncFileListener {
     }
   }
 
-  private boolean invalidateIndicesForFile(@NotNull VirtualFile file, boolean contentChange, @NotNull VfsEventsMerger eventMerger) {
+  private static boolean invalidateIndicesForFile(@NotNull VirtualFile file, boolean contentChange, @NotNull VfsEventsMerger eventMerger) {
     if (isUnderConfigOrSystem(file)) {
       return false;
     }
@@ -84,7 +84,8 @@ abstract class IndexedFilesListener implements AsyncFileListener {
           // name change may lead to filetype change so the file might become not indexable
           // in general case have to 'unindex' the file and index it again if needed after the name has been changed
           invalidateIndicesRecursively(pce.getFile(), false, tempMerger);
-        } else if (propertyName.equals(VirtualFile.PROP_ENCODING)) {
+        }
+        else if (propertyName.equals(VirtualFile.PROP_ENCODING)) {
           invalidateIndicesRecursively(pce.getFile(), true, tempMerger);
         }
       }

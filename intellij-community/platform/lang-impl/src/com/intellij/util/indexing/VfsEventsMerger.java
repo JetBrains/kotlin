@@ -57,7 +57,7 @@ class VfsEventsMerger {
     while (true) {
       ChangeInfo existingChangeInfo = myChangeInfos.get(fileId);
       ChangeInfo newChangeInfo = new ChangeInfo(file, mask, existingChangeInfo);
-      if(myChangeInfos.replace(fileId, existingChangeInfo, newChangeInfo)) {
+      if(myChangeInfos.put(fileId, newChangeInfo) == existingChangeInfo) {
         myPublishedEventIndex.incrementAndGet();
         break;
       }
