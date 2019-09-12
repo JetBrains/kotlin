@@ -53,7 +53,7 @@ import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
-import javax.tools.StandardLocation
+import javax.tools.StandardLocation.*
 import com.sun.tools.javac.util.List as JavacList
 
 class JavacWrapper(
@@ -112,12 +112,12 @@ class JavacWrapper(
         // use rt.jar instead of lib/ct.sym
         fileManager.setSymbolFileEnabled(false)
         bootClasspath?.let {
-            val cp = fileManager.getLocation(StandardLocation.PLATFORM_CLASS_PATH) + jvmClasspathRoots
-            fileManager.setLocation(StandardLocation.PLATFORM_CLASS_PATH, it)
-            fileManager.setLocation(StandardLocation.CLASS_PATH, cp)
-        } ?: fileManager.setLocation(StandardLocation.CLASS_PATH, jvmClasspathRoots)
+            val cp = fileManager.getLocation(PLATFORM_CLASS_PATH) + jvmClasspathRoots
+            fileManager.setLocation(PLATFORM_CLASS_PATH, it)
+            fileManager.setLocation(CLASS_PATH, cp)
+        } ?: fileManager.setLocation(CLASS_PATH, jvmClasspathRoots)
         sourcePath?.let {
-            fileManager.setLocation(StandardLocation.SOURCE_PATH, sourcePath)
+            fileManager.setLocation(SOURCE_PATH, sourcePath)
         }
     }
 
@@ -166,10 +166,12 @@ class JavacWrapper(
         val javaFilesNumber = fileObjects.length()
         if (javaFilesNumber == 0) return true
 
-        fileManager.setClassPathForCompilation(outDir)
+        setClassPathForCompilation(outDir)
+        makeOutputDirectoryClassesVisible()
+
         context.get(Log.outKey)?.println(
             "Compiling $javaFilesNumber Java source files" +
-                    " to [${fileManager.getLocation(StandardLocation.CLASS_OUTPUT)?.firstOrNull()?.path}]"
+                    " to [${fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path}]"
         )
         compile(fileObjects)
         errorCount() == 0
@@ -336,17 +338,15 @@ class JavacWrapper(
         return findSimplePackageInSymbols(fqName)
     }
 
-    private fun JavacFileManager.setClassPathForCompilation(outDir: File?) = apply {
-        (outDir ?: outputDirectory)?.let { outputDir ->
-            outputDir.mkdirs()
-            fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(outputDir))
-        }
-
+    private fun makeOutputDirectoryClassesVisible() {
+        // TODO: below we have a hacky part with a purpose
+        // to make already analyzed classes visible by Javac without reading them again.
+        // However, it does not work as it should (but some tests depend on this code fragment)
         val reader = ClassReader.instance(context)
         val names = Names.instance(context)
-        val outDirName = getLocation(StandardLocation.CLASS_OUTPUT)?.firstOrNull()?.path ?: ""
+        val outDirName = fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path ?: ""
 
-        list(StandardLocation.CLASS_OUTPUT, "", setOf(JavaFileObject.Kind.CLASS), true)
+        fileManager.list(CLASS_OUTPUT, "", setOf(JavaFileObject.Kind.CLASS), true)
             .forEach { fileObject ->
                 val fqName = fileObject.name
                     .substringAfter(outDirName)
@@ -364,7 +364,16 @@ class JavacWrapper(
                     packageSymbol.flags_field = packageSymbol.flags_field or Flags.EXISTS.toLong()
                 }
             }
+    }
 
+    private fun setClassPathForCompilation(outDir: File?) = apply {
+        (outDir ?: outputDirectory)?.let { outputDir ->
+            if (outputDir.exists()) {
+                fileManager.setLocation(CLASS_PATH, fileManager.getLocation(CLASS_PATH) + outputDir)
+            }
+            outputDir.mkdirs()
+            fileManager.setLocation(CLASS_OUTPUT, listOf(outputDir))
+        }
     }
 
     private fun Symbol.PackageSymbol.findClass(classId: ClassId): SymbolBasedClass? {
