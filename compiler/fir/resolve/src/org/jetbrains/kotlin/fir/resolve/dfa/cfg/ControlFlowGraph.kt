@@ -12,10 +12,14 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 
-class ControlFlowGraph(val name: String) {
+class ControlFlowGraph(val name: String, val kind: Kind) {
     val nodes = mutableListOf<CFGNode<*>>()
     lateinit var enterNode: CFGNode<*>
     lateinit var exitNode: CFGNode<*>
+
+    enum class Kind {
+        Function, ClassInitializer, PropertyInitializer, TopLevel
+    }
 }
 
 sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int) {

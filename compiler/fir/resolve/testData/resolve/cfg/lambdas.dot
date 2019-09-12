@@ -112,7 +112,7 @@ digraph lambdas_kt {
       color=blue
       33 [label="Enter block"];
       34 [label="Access variable R|<local>/x|"];
-      35 [label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+      35 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
       36 [label="Exit block"];
     }
     37 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
@@ -156,7 +156,7 @@ digraph lambdas_kt {
         subgraph cluster_19 {
           color=blue
           52 [label="Enter block"];
-          53 [label="Variable declaration: lval lambda: R|kotlin/Function0<class error: Ambiguity: inc, [kotlin/inc, kotlin/inc]>|"];
+          53 [label="Variable declaration: lval lambda: R|kotlin/Function0<kotlin/Int>|"];
           54 [label="Exit block"];
         }
         55 [label="Exit when branch result"];

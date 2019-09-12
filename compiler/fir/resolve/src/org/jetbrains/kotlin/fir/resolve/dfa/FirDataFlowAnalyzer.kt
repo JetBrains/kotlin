@@ -64,7 +64,13 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     // ----------------------------------- Named function -----------------------------------
 
     fun enterFunction(function: FirFunction<*>) {
-        graphBuilder.enterFunction(function).mergeIncomingFlow()
+        val (functionEnterNode, previousNode) = graphBuilder.enterFunction(function)
+        if (previousNode == null) {
+            functionEnterNode.mergeIncomingFlow()
+        } else {
+            assert(functionEnterNode.previousNodes.isEmpty())
+            functionEnterNode.flow = logicSystem.forkFlow(previousNode.flow)
+        }
     }
 
     fun exitFunction(function: FirFunction<*>): ControlFlowGraph? {
