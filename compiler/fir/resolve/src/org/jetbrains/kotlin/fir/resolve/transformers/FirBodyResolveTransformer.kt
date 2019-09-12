@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
@@ -25,10 +27,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -526,6 +524,12 @@ open class FirBodyResolveTransformer(
                 localScopes += FirLocalScope()
             }
             whenExpression.transformSubject(this, noExpectedType)
+            if (whenExpression.isOneBranch()) {
+                whenExpression.transformBranches(this, noExpectedType)
+                whenExpression.resultType = builtinTypes.unitType
+                dataFlowAnalyzer.exitWhenExpression(whenExpression)
+                return@with whenExpression.compose()
+            }
             whenExpression.transformBranches(this, null)
 
             @Suppress("NAME_SHADOWING")
@@ -540,6 +544,13 @@ open class FirBodyResolveTransformer(
             dataFlowAnalyzer.exitWhenExpression(result)
             result.compose()
         }
+    }
+
+    private fun FirWhenExpression.isOneBranch(): Boolean {
+        if (branches.size == 1) return true
+        if (branches.size > 2) return false
+        val lastBranch = branches.last()
+        return lastBranch.condition is FirElseIfTrueCondition && lastBranch.result is FirEmptyExpressionBlock
     }
 
     override fun transformWhenBranch(whenBranch: FirWhenBranch, data: Any?): CompositeTransformResult<FirWhenBranch> {
