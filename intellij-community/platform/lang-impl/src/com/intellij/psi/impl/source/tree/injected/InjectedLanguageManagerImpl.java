@@ -75,7 +75,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
       public void extensionRemoved(@NotNull LanguageInjector extension, @NotNull PluginDescriptor pluginDescriptor) {
         clearInjectorCache();
       }
-    }, false, this);
+    }, this);
   }
 
   PsiDocumentManager getDocManager() {
