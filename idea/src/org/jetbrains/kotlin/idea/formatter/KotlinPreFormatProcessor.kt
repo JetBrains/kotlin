@@ -54,10 +54,11 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
                 prevEntry.add(comma)
                 delta += comma.textLength
             }
-        }
-        else {
+        } else {
             val lastEntry = klass.declarations.lastIsInstanceOrNull<KtEnumEntry>()
-            if (lastEntry != null && lastEntry.containsToken(KtTokens.SEMICOLON)) return
+            if (lastEntry != null &&
+                (lastEntry.containsToken(KtTokens.SEMICOLON) || lastEntry.nextSibling?.node?.elementType == KtTokens.SEMICOLON)
+            ) return
             if (lastEntry == null && classBody.containsToken(KtTokens.SEMICOLON)) return
 
             val semicolon = KtPsiFactory(klass).createSemicolon()
