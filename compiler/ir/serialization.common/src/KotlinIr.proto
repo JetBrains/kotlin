@@ -9,20 +9,8 @@ message DescriptorReference {
   repeated int32 package_fq_name = 1;
   repeated int32 class_fq_name = 2;
   required int32 name = 3;
-  optional UniqId uniq_id = 4;
-  optional bool is_getter = 5 [default = false];
-  optional bool is_setter = 6 [default = false];
-  optional bool is_backing_field = 7 [default = false];
-  optional bool is_fake_override = 8 [default = false];
-  optional bool is_default_constructor = 9 [default = false];
-  optional bool is_enum_entry = 10 [default = false];
-  optional bool is_enum_special = 11 [default = false];
-  optional bool is_type_parameter = 12 [default = false];
-}
-
-message UniqId {
-  required uint64 index = 1;
-  required bool isLocal = 2;
+  required int32 flags = 4;
+  optional int64 uniq_id_index = 5;
 }
 
 message Coordinates {

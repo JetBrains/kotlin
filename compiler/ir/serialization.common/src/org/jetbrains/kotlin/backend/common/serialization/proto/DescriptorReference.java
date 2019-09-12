@@ -100,57 +100,14 @@ public final class DescriptorReference extends
             name_ = input.readInt32();
             break;
           }
-          case 34: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = uniqId_.toBuilder();
-            }
-            uniqId_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(uniqId_);
-              uniqId_ = subBuilder.buildPartial();
-            }
+          case 32: {
             bitField0_ |= 0x00000002;
+            flags_ = input.readInt32();
             break;
           }
           case 40: {
             bitField0_ |= 0x00000004;
-            isGetter_ = input.readBool();
-            break;
-          }
-          case 48: {
-            bitField0_ |= 0x00000008;
-            isSetter_ = input.readBool();
-            break;
-          }
-          case 56: {
-            bitField0_ |= 0x00000010;
-            isBackingField_ = input.readBool();
-            break;
-          }
-          case 64: {
-            bitField0_ |= 0x00000020;
-            isFakeOverride_ = input.readBool();
-            break;
-          }
-          case 72: {
-            bitField0_ |= 0x00000040;
-            isDefaultConstructor_ = input.readBool();
-            break;
-          }
-          case 80: {
-            bitField0_ |= 0x00000080;
-            isEnumEntry_ = input.readBool();
-            break;
-          }
-          case 88: {
-            bitField0_ |= 0x00000100;
-            isEnumSpecial_ = input.readBool();
-            break;
-          }
-          case 96: {
-            bitField0_ |= 0x00000200;
-            isTypeParameter_ = input.readBool();
+            uniqIdIndex_ = input.readInt64();
             break;
           }
         }
@@ -241,175 +198,53 @@ public final class DescriptorReference extends
   private int name_;
   /**
    * <code>required int32 name = 3;</code>
-   *
-   * <pre>
-   *  required FqName package_fq_name = 1;
-   *  required FqName class_fq_name = 2;
-   * </pre>
    */
   public boolean hasName() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
    * <code>required int32 name = 3;</code>
-   *
-   * <pre>
-   *  required FqName package_fq_name = 1;
-   *  required FqName class_fq_name = 2;
-   * </pre>
    */
   public int getName() {
     return name_;
   }
 
-  public static final int UNIQ_ID_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniqId_;
+  public static final int FLAGS_FIELD_NUMBER = 4;
+  private int flags_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
+   * <code>required int32 flags = 4;</code>
    */
-  public boolean hasUniqId() {
+  public boolean hasFlags() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
+   * <code>required int32 flags = 4;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getUniqId() {
-    return uniqId_;
+  public int getFlags() {
+    return flags_;
   }
 
-  public static final int IS_GETTER_FIELD_NUMBER = 5;
-  private boolean isGetter_;
+  public static final int UNIQ_ID_INDEX_FIELD_NUMBER = 5;
+  private long uniqIdIndex_;
   /**
-   * <code>optional bool is_getter = 5 [default = false];</code>
+   * <code>optional int64 uniq_id_index = 5;</code>
    */
-  public boolean hasIsGetter() {
+  public boolean hasUniqIdIndex() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>optional bool is_getter = 5 [default = false];</code>
+   * <code>optional int64 uniq_id_index = 5;</code>
    */
-  public boolean getIsGetter() {
-    return isGetter_;
-  }
-
-  public static final int IS_SETTER_FIELD_NUMBER = 6;
-  private boolean isSetter_;
-  /**
-   * <code>optional bool is_setter = 6 [default = false];</code>
-   */
-  public boolean hasIsSetter() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
-  }
-  /**
-   * <code>optional bool is_setter = 6 [default = false];</code>
-   */
-  public boolean getIsSetter() {
-    return isSetter_;
-  }
-
-  public static final int IS_BACKING_FIELD_FIELD_NUMBER = 7;
-  private boolean isBackingField_;
-  /**
-   * <code>optional bool is_backing_field = 7 [default = false];</code>
-   */
-  public boolean hasIsBackingField() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
-  }
-  /**
-   * <code>optional bool is_backing_field = 7 [default = false];</code>
-   */
-  public boolean getIsBackingField() {
-    return isBackingField_;
-  }
-
-  public static final int IS_FAKE_OVERRIDE_FIELD_NUMBER = 8;
-  private boolean isFakeOverride_;
-  /**
-   * <code>optional bool is_fake_override = 8 [default = false];</code>
-   */
-  public boolean hasIsFakeOverride() {
-    return ((bitField0_ & 0x00000020) == 0x00000020);
-  }
-  /**
-   * <code>optional bool is_fake_override = 8 [default = false];</code>
-   */
-  public boolean getIsFakeOverride() {
-    return isFakeOverride_;
-  }
-
-  public static final int IS_DEFAULT_CONSTRUCTOR_FIELD_NUMBER = 9;
-  private boolean isDefaultConstructor_;
-  /**
-   * <code>optional bool is_default_constructor = 9 [default = false];</code>
-   */
-  public boolean hasIsDefaultConstructor() {
-    return ((bitField0_ & 0x00000040) == 0x00000040);
-  }
-  /**
-   * <code>optional bool is_default_constructor = 9 [default = false];</code>
-   */
-  public boolean getIsDefaultConstructor() {
-    return isDefaultConstructor_;
-  }
-
-  public static final int IS_ENUM_ENTRY_FIELD_NUMBER = 10;
-  private boolean isEnumEntry_;
-  /**
-   * <code>optional bool is_enum_entry = 10 [default = false];</code>
-   */
-  public boolean hasIsEnumEntry() {
-    return ((bitField0_ & 0x00000080) == 0x00000080);
-  }
-  /**
-   * <code>optional bool is_enum_entry = 10 [default = false];</code>
-   */
-  public boolean getIsEnumEntry() {
-    return isEnumEntry_;
-  }
-
-  public static final int IS_ENUM_SPECIAL_FIELD_NUMBER = 11;
-  private boolean isEnumSpecial_;
-  /**
-   * <code>optional bool is_enum_special = 11 [default = false];</code>
-   */
-  public boolean hasIsEnumSpecial() {
-    return ((bitField0_ & 0x00000100) == 0x00000100);
-  }
-  /**
-   * <code>optional bool is_enum_special = 11 [default = false];</code>
-   */
-  public boolean getIsEnumSpecial() {
-    return isEnumSpecial_;
-  }
-
-  public static final int IS_TYPE_PARAMETER_FIELD_NUMBER = 12;
-  private boolean isTypeParameter_;
-  /**
-   * <code>optional bool is_type_parameter = 12 [default = false];</code>
-   */
-  public boolean hasIsTypeParameter() {
-    return ((bitField0_ & 0x00000200) == 0x00000200);
-  }
-  /**
-   * <code>optional bool is_type_parameter = 12 [default = false];</code>
-   */
-  public boolean getIsTypeParameter() {
-    return isTypeParameter_;
+  public long getUniqIdIndex() {
+    return uniqIdIndex_;
   }
 
   private void initFields() {
     packageFqName_ = java.util.Collections.emptyList();
     classFqName_ = java.util.Collections.emptyList();
     name_ = 0;
-    uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
-    isGetter_ = false;
-    isSetter_ = false;
-    isBackingField_ = false;
-    isFakeOverride_ = false;
-    isDefaultConstructor_ = false;
-    isEnumEntry_ = false;
-    isEnumSpecial_ = false;
-    isTypeParameter_ = false;
+    flags_ = 0;
+    uniqIdIndex_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -421,11 +256,9 @@ public final class DescriptorReference extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (hasUniqId()) {
-      if (!getUniqId().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
+    if (!hasFlags()) {
+      memoizedIsInitialized = 0;
+      return false;
     }
     memoizedIsInitialized = 1;
     return true;
@@ -444,31 +277,10 @@ public final class DescriptorReference extends
       output.writeInt32(3, name_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(4, uniqId_);
+      output.writeInt32(4, flags_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeBool(5, isGetter_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeBool(6, isSetter_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeBool(7, isBackingField_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeBool(8, isFakeOverride_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      output.writeBool(9, isDefaultConstructor_);
-    }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
-      output.writeBool(10, isEnumEntry_);
-    }
-    if (((bitField0_ & 0x00000100) == 0x00000100)) {
-      output.writeBool(11, isEnumSpecial_);
-    }
-    if (((bitField0_ & 0x00000200) == 0x00000200)) {
-      output.writeBool(12, isTypeParameter_);
+      output.writeInt64(5, uniqIdIndex_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -503,39 +315,11 @@ public final class DescriptorReference extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(4, uniqId_);
+        .computeInt32Size(4, flags_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(5, isGetter_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(6, isSetter_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(7, isBackingField_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(8, isFakeOverride_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(9, isDefaultConstructor_);
-    }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(10, isEnumEntry_);
-    }
-    if (((bitField0_ & 0x00000100) == 0x00000100)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(11, isEnumSpecial_);
-    }
-    if (((bitField0_ & 0x00000200) == 0x00000200)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(12, isTypeParameter_);
+        .computeInt64Size(5, uniqIdIndex_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -637,24 +421,10 @@ public final class DescriptorReference extends
       bitField0_ = (bitField0_ & ~0x00000002);
       name_ = 0;
       bitField0_ = (bitField0_ & ~0x00000004);
-      uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
+      flags_ = 0;
       bitField0_ = (bitField0_ & ~0x00000008);
-      isGetter_ = false;
+      uniqIdIndex_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000010);
-      isSetter_ = false;
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isBackingField_ = false;
-      bitField0_ = (bitField0_ & ~0x00000040);
-      isFakeOverride_ = false;
-      bitField0_ = (bitField0_ & ~0x00000080);
-      isDefaultConstructor_ = false;
-      bitField0_ = (bitField0_ & ~0x00000100);
-      isEnumEntry_ = false;
-      bitField0_ = (bitField0_ & ~0x00000200);
-      isEnumSpecial_ = false;
-      bitField0_ = (bitField0_ & ~0x00000400);
-      isTypeParameter_ = false;
-      bitField0_ = (bitField0_ & ~0x00000800);
       return this;
     }
 
@@ -695,39 +465,11 @@ public final class DescriptorReference extends
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.uniqId_ = uniqId_;
+      result.flags_ = flags_;
       if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
         to_bitField0_ |= 0x00000004;
       }
-      result.isGetter_ = isGetter_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000008;
-      }
-      result.isSetter_ = isSetter_;
-      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-        to_bitField0_ |= 0x00000010;
-      }
-      result.isBackingField_ = isBackingField_;
-      if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-        to_bitField0_ |= 0x00000020;
-      }
-      result.isFakeOverride_ = isFakeOverride_;
-      if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
-        to_bitField0_ |= 0x00000040;
-      }
-      result.isDefaultConstructor_ = isDefaultConstructor_;
-      if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
-        to_bitField0_ |= 0x00000080;
-      }
-      result.isEnumEntry_ = isEnumEntry_;
-      if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
-        to_bitField0_ |= 0x00000100;
-      }
-      result.isEnumSpecial_ = isEnumSpecial_;
-      if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
-        to_bitField0_ |= 0x00000200;
-      }
-      result.isTypeParameter_ = isTypeParameter_;
+      result.uniqIdIndex_ = uniqIdIndex_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -757,32 +499,11 @@ public final class DescriptorReference extends
       if (other.hasName()) {
         setName(other.getName());
       }
-      if (other.hasUniqId()) {
-        mergeUniqId(other.getUniqId());
+      if (other.hasFlags()) {
+        setFlags(other.getFlags());
       }
-      if (other.hasIsGetter()) {
-        setIsGetter(other.getIsGetter());
-      }
-      if (other.hasIsSetter()) {
-        setIsSetter(other.getIsSetter());
-      }
-      if (other.hasIsBackingField()) {
-        setIsBackingField(other.getIsBackingField());
-      }
-      if (other.hasIsFakeOverride()) {
-        setIsFakeOverride(other.getIsFakeOverride());
-      }
-      if (other.hasIsDefaultConstructor()) {
-        setIsDefaultConstructor(other.getIsDefaultConstructor());
-      }
-      if (other.hasIsEnumEntry()) {
-        setIsEnumEntry(other.getIsEnumEntry());
-      }
-      if (other.hasIsEnumSpecial()) {
-        setIsEnumSpecial(other.getIsEnumSpecial());
-      }
-      if (other.hasIsTypeParameter()) {
-        setIsTypeParameter(other.getIsTypeParameter());
+      if (other.hasUniqIdIndex()) {
+        setUniqIdIndex(other.getUniqIdIndex());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -794,11 +515,9 @@ public final class DescriptorReference extends
         
         return false;
       }
-      if (hasUniqId()) {
-        if (!getUniqId().isInitialized()) {
-          
-          return false;
-        }
+      if (!hasFlags()) {
+        
+        return false;
       }
       return true;
     }
@@ -957,33 +676,18 @@ public final class DescriptorReference extends
     private int name_ ;
     /**
      * <code>required int32 name = 3;</code>
-     *
-     * <pre>
-     *  required FqName package_fq_name = 1;
-     *  required FqName class_fq_name = 2;
-     * </pre>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
      * <code>required int32 name = 3;</code>
-     *
-     * <pre>
-     *  required FqName package_fq_name = 1;
-     *  required FqName class_fq_name = 2;
-     * </pre>
      */
     public int getName() {
       return name_;
     }
     /**
      * <code>required int32 name = 3;</code>
-     *
-     * <pre>
-     *  required FqName package_fq_name = 1;
-     *  required FqName class_fq_name = 2;
-     * </pre>
      */
     public Builder setName(int value) {
       bitField0_ |= 0x00000004;
@@ -993,11 +697,6 @@ public final class DescriptorReference extends
     }
     /**
      * <code>required int32 name = 3;</code>
-     *
-     * <pre>
-     *  required FqName package_fq_name = 1;
-     *  required FqName class_fq_name = 2;
-     * </pre>
      */
     public Builder clearName() {
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -1006,318 +705,66 @@ public final class DescriptorReference extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
+    private int flags_ ;
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
+     * <code>required int32 flags = 4;</code>
      */
-    public boolean hasUniqId() {
+    public boolean hasFlags() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
+     * <code>required int32 flags = 4;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getUniqId() {
-      return uniqId_;
+    public int getFlags() {
+      return flags_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
+     * <code>required int32 flags = 4;</code>
      */
-    public Builder setUniqId(org.jetbrains.kotlin.backend.common.serialization.proto.UniqId value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      uniqId_ = value;
-
+    public Builder setFlags(int value) {
       bitField0_ |= 0x00000008;
+      flags_ = value;
+      
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
+     * <code>required int32 flags = 4;</code>
      */
-    public Builder setUniqId(
-        org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.Builder builderForValue) {
-      uniqId_ = builderForValue.build();
-
-      bitField0_ |= 0x00000008;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
-     */
-    public Builder mergeUniqId(org.jetbrains.kotlin.backend.common.serialization.proto.UniqId value) {
-      if (((bitField0_ & 0x00000008) == 0x00000008) &&
-          uniqId_ != org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance()) {
-        uniqId_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.newBuilder(uniqId_).mergeFrom(value).buildPartial();
-      } else {
-        uniqId_ = value;
-      }
-
-      bitField0_ |= 0x00000008;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
-     */
-    public Builder clearUniqId() {
-      uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
-
+    public Builder clearFlags() {
       bitField0_ = (bitField0_ & ~0x00000008);
+      flags_ = 0;
+      
       return this;
     }
 
-    private boolean isGetter_ ;
+    private long uniqIdIndex_ ;
     /**
-     * <code>optional bool is_getter = 5 [default = false];</code>
+     * <code>optional int64 uniq_id_index = 5;</code>
      */
-    public boolean hasIsGetter() {
+    public boolean hasUniqIdIndex() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>optional bool is_getter = 5 [default = false];</code>
+     * <code>optional int64 uniq_id_index = 5;</code>
      */
-    public boolean getIsGetter() {
-      return isGetter_;
+    public long getUniqIdIndex() {
+      return uniqIdIndex_;
     }
     /**
-     * <code>optional bool is_getter = 5 [default = false];</code>
+     * <code>optional int64 uniq_id_index = 5;</code>
      */
-    public Builder setIsGetter(boolean value) {
+    public Builder setUniqIdIndex(long value) {
       bitField0_ |= 0x00000010;
-      isGetter_ = value;
+      uniqIdIndex_ = value;
       
       return this;
     }
     /**
-     * <code>optional bool is_getter = 5 [default = false];</code>
+     * <code>optional int64 uniq_id_index = 5;</code>
      */
-    public Builder clearIsGetter() {
+    public Builder clearUniqIdIndex() {
       bitField0_ = (bitField0_ & ~0x00000010);
-      isGetter_ = false;
-      
-      return this;
-    }
-
-    private boolean isSetter_ ;
-    /**
-     * <code>optional bool is_setter = 6 [default = false];</code>
-     */
-    public boolean hasIsSetter() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>optional bool is_setter = 6 [default = false];</code>
-     */
-    public boolean getIsSetter() {
-      return isSetter_;
-    }
-    /**
-     * <code>optional bool is_setter = 6 [default = false];</code>
-     */
-    public Builder setIsSetter(boolean value) {
-      bitField0_ |= 0x00000020;
-      isSetter_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional bool is_setter = 6 [default = false];</code>
-     */
-    public Builder clearIsSetter() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isSetter_ = false;
-      
-      return this;
-    }
-
-    private boolean isBackingField_ ;
-    /**
-     * <code>optional bool is_backing_field = 7 [default = false];</code>
-     */
-    public boolean hasIsBackingField() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
-    }
-    /**
-     * <code>optional bool is_backing_field = 7 [default = false];</code>
-     */
-    public boolean getIsBackingField() {
-      return isBackingField_;
-    }
-    /**
-     * <code>optional bool is_backing_field = 7 [default = false];</code>
-     */
-    public Builder setIsBackingField(boolean value) {
-      bitField0_ |= 0x00000040;
-      isBackingField_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional bool is_backing_field = 7 [default = false];</code>
-     */
-    public Builder clearIsBackingField() {
-      bitField0_ = (bitField0_ & ~0x00000040);
-      isBackingField_ = false;
-      
-      return this;
-    }
-
-    private boolean isFakeOverride_ ;
-    /**
-     * <code>optional bool is_fake_override = 8 [default = false];</code>
-     */
-    public boolean hasIsFakeOverride() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
-    }
-    /**
-     * <code>optional bool is_fake_override = 8 [default = false];</code>
-     */
-    public boolean getIsFakeOverride() {
-      return isFakeOverride_;
-    }
-    /**
-     * <code>optional bool is_fake_override = 8 [default = false];</code>
-     */
-    public Builder setIsFakeOverride(boolean value) {
-      bitField0_ |= 0x00000080;
-      isFakeOverride_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional bool is_fake_override = 8 [default = false];</code>
-     */
-    public Builder clearIsFakeOverride() {
-      bitField0_ = (bitField0_ & ~0x00000080);
-      isFakeOverride_ = false;
-      
-      return this;
-    }
-
-    private boolean isDefaultConstructor_ ;
-    /**
-     * <code>optional bool is_default_constructor = 9 [default = false];</code>
-     */
-    public boolean hasIsDefaultConstructor() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
-    }
-    /**
-     * <code>optional bool is_default_constructor = 9 [default = false];</code>
-     */
-    public boolean getIsDefaultConstructor() {
-      return isDefaultConstructor_;
-    }
-    /**
-     * <code>optional bool is_default_constructor = 9 [default = false];</code>
-     */
-    public Builder setIsDefaultConstructor(boolean value) {
-      bitField0_ |= 0x00000100;
-      isDefaultConstructor_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional bool is_default_constructor = 9 [default = false];</code>
-     */
-    public Builder clearIsDefaultConstructor() {
-      bitField0_ = (bitField0_ & ~0x00000100);
-      isDefaultConstructor_ = false;
-      
-      return this;
-    }
-
-    private boolean isEnumEntry_ ;
-    /**
-     * <code>optional bool is_enum_entry = 10 [default = false];</code>
-     */
-    public boolean hasIsEnumEntry() {
-      return ((bitField0_ & 0x00000200) == 0x00000200);
-    }
-    /**
-     * <code>optional bool is_enum_entry = 10 [default = false];</code>
-     */
-    public boolean getIsEnumEntry() {
-      return isEnumEntry_;
-    }
-    /**
-     * <code>optional bool is_enum_entry = 10 [default = false];</code>
-     */
-    public Builder setIsEnumEntry(boolean value) {
-      bitField0_ |= 0x00000200;
-      isEnumEntry_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional bool is_enum_entry = 10 [default = false];</code>
-     */
-    public Builder clearIsEnumEntry() {
-      bitField0_ = (bitField0_ & ~0x00000200);
-      isEnumEntry_ = false;
-      
-      return this;
-    }
-
-    private boolean isEnumSpecial_ ;
-    /**
-     * <code>optional bool is_enum_special = 11 [default = false];</code>
-     */
-    public boolean hasIsEnumSpecial() {
-      return ((bitField0_ & 0x00000400) == 0x00000400);
-    }
-    /**
-     * <code>optional bool is_enum_special = 11 [default = false];</code>
-     */
-    public boolean getIsEnumSpecial() {
-      return isEnumSpecial_;
-    }
-    /**
-     * <code>optional bool is_enum_special = 11 [default = false];</code>
-     */
-    public Builder setIsEnumSpecial(boolean value) {
-      bitField0_ |= 0x00000400;
-      isEnumSpecial_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional bool is_enum_special = 11 [default = false];</code>
-     */
-    public Builder clearIsEnumSpecial() {
-      bitField0_ = (bitField0_ & ~0x00000400);
-      isEnumSpecial_ = false;
-      
-      return this;
-    }
-
-    private boolean isTypeParameter_ ;
-    /**
-     * <code>optional bool is_type_parameter = 12 [default = false];</code>
-     */
-    public boolean hasIsTypeParameter() {
-      return ((bitField0_ & 0x00000800) == 0x00000800);
-    }
-    /**
-     * <code>optional bool is_type_parameter = 12 [default = false];</code>
-     */
-    public boolean getIsTypeParameter() {
-      return isTypeParameter_;
-    }
-    /**
-     * <code>optional bool is_type_parameter = 12 [default = false];</code>
-     */
-    public Builder setIsTypeParameter(boolean value) {
-      bitField0_ |= 0x00000800;
-      isTypeParameter_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional bool is_type_parameter = 12 [default = false];</code>
-     */
-    public Builder clearIsTypeParameter() {
-      bitField0_ = (bitField0_ & ~0x00000800);
-      isTypeParameter_ = false;
+      uniqIdIndex_ = 0L;
       
       return this;
     }

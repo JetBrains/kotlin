@@ -115,32 +115,18 @@ open class DescriptorReferenceSerializer(
             .addAllClassFqName(serializeFqName(classFqName))
             .setName(serializeString(nameString))
 
-        if (uniqId != null) proto.setUniqId(protoUniqId(uniqId))
+        val flags = DescriptorReferenceFlags.IS_FAKE_OVERRIDE.encode(isFakeOverride) or
+                DescriptorReferenceFlags.IS_BACKING_FIELD.encode(isBackingField) or
+                DescriptorReferenceFlags.IS_GETTER.encode(declaration.isGetter) or
+                DescriptorReferenceFlags.IS_SETTER.encode(declaration.isSetter) or
+                DescriptorReferenceFlags.IS_DEFAULT_CONSTRUCTOR.encode(isDefaultConstructor) or
+                DescriptorReferenceFlags.IS_ENUM_ENTRY.encode(isEnumEntry) or
+                DescriptorReferenceFlags.IS_ENUM_SPECIAL.encode(isEnumSpecial) or
+                DescriptorReferenceFlags.IS_TYPE_PARAMETER.encode(isTypeParameter)
 
-        if (isFakeOverride) {
-            proto.setIsFakeOverride(true)
-        }
+        proto.flags = flags
 
-        if (isBackingField) {
-            proto.setIsBackingField(true)
-        }
-
-        if (isAccessor) {
-            if (declaration.isGetter)
-                proto.setIsGetter(true)
-            else if (declaration.isSetter)
-                proto.setIsSetter(true)
-            else
-                error("A property accessor which is neither a getter, nor a setter: $descriptor")
-        } else if (isDefaultConstructor) {
-            proto.setIsDefaultConstructor(true)
-        } else if (isEnumEntry) {
-            proto.setIsEnumEntry(true)
-        } else if (isEnumSpecial) {
-            proto.setIsEnumSpecial(true)
-        } else if (isTypeParameter) {
-            proto.setIsTypeParameter(true)
-        }
+        if (uniqId != null) proto.uniqIdIndex = uniqId.index
 
         return proto.build()
     }

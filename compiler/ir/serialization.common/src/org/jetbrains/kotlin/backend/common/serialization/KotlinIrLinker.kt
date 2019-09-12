@@ -332,14 +332,8 @@ abstract class KotlinIrLinker(
                     deserializeFqName(proto.packageFqNameList),
                     deserializeFqName(proto.classFqNameList),
                     deserializeString(proto.name),
-                    if (proto.hasUniqId()) proto.uniqId.index else null,
-                    isEnumEntry = proto.isEnumEntry,
-                    isEnumSpecial = proto.isEnumSpecial,
-                    isDefaultConstructor = proto.isDefaultConstructor,
-                    isFakeOverride = proto.isFakeOverride,
-                    isGetter = proto.isGetter,
-                    isSetter = proto.isSetter,
-                    isTypeParameter = proto.isTypeParameter
+                    proto.flags,
+                    if (proto.hasUniqIdIndex()) proto.uniqIdIndex else null
                 )
 
             override fun deserializeIrSymbol(index: Int): IrSymbol {
