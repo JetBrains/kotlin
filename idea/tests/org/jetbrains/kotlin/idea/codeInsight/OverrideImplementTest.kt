@@ -313,4 +313,20 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testImplementFromClassName6() {
         doMultiImplementFileTest()
     }
+
+    fun testEnumClass() {
+        doOverrideFileTest("toString")
+    }
+
+    fun testEnumClass2() {
+        doOverrideFileTest("toString")
+    }
+
+    fun testEnumClass3() {
+        doOverrideFileTest("toString")
+    }
+
+    fun testEnumClass4() {
+        doOverrideFileTest("toString")
+    }
 }
