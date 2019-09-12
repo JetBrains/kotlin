@@ -210,27 +210,27 @@ object KotlinToJVMBytecodeCompiler {
                 val mainClassProvider = if (outputs.size == 1) MainClassProvider(state, environment) else null
                 writeOutput(state.configuration, state.factory, mainClassProvider)
             }
-
-            if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
-                val singleModule = chunk.singleOrNull()
-                if (singleModule != null) {
-                    return JavacWrapper.getInstance(environment.project).use {
-                        it.compile(File(singleModule.getOutputDirectory()))
-                    }
-                } else {
-                    projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
-                        WARNING,
-                        "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
-                                "-Xuse-javac option couldn't be used to compile java files"
-                    )
-                    JavacWrapper.getInstance(environment.project).close()
-                }
-            }
-
-            return true
         } finally {
             outputs.values.forEach(GenerationState::destroy)
         }
+
+        if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
+            val singleModule = chunk.singleOrNull()
+            if (singleModule != null) {
+                return JavacWrapper.getInstance(environment.project).use {
+                    it.compile(File(singleModule.getOutputDirectory()))
+                }
+            } else {
+                projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    WARNING,
+                    "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
+                            "-Xuse-javac option couldn't be used to compile java files"
+                )
+                JavacWrapper.getInstance(environment.project).close()
+            }
+        }
+
+        return true
     }
 
     internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File? = null) {
