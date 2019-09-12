@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.replaceThisByStaticReference
@@ -18,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -192,6 +191,14 @@ private class MakeCallsStatic(
 ) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
         if (expression.symbol.owner.isJvmStaticInSingleton() && expression.dispatchReceiver != null) {
+            // Imported functions do not have their receiver parameter nulled by SingletonObjectJvmStaticLowering,
+            // so we have to do it here.
+            // TODO: would be better handled by lowering imported declarations.
+            val callee = expression.symbol.owner as IrSimpleFunction
+            val newCallee = if (!callee.isInCurrentModule()) {
+                callee.copyRemovingDispatchReceiver()       // TODO: cache these
+            } else callee
+
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                 // OldReceiver has to be evaluated for its side effects.
                 val oldReceiver = super.visitExpression(expression.dispatchReceiver!!)
@@ -205,11 +212,29 @@ private class MakeCallsStatic(
                 )
 
                 +super.visitExpression(oldReceiverVoid)
-                expression.dispatchReceiver = null
-                +super.visitCall(expression)
+                +super.visitCall(
+                    irCall(expression, newFunction = newCallee).apply { dispatchReceiver = null }
+                )
             }
         }
         return super.visitCall(expression)
+    }
+
+    private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction {
+        val newDescriptor = WrappedSimpleFunctionDescriptor(descriptor)
+        return IrFunctionImpl(
+            startOffset, endOffset, origin,
+            IrSimpleFunctionSymbolImpl(newDescriptor),
+            name,
+            visibility, modality, returnType, isInline, isExternal, isTailrec, isSuspend
+        ).also {
+            newDescriptor.bind(it)
+            it.parent = parent
+            it.correspondingPropertySymbol = correspondingPropertySymbol
+            it.annotations.addAll(annotations)
+            it.copyParameterDeclarationsFrom(this)
+            it.dispatchReceiverParameter = null
+        }
     }
 }
 
@@ -217,3 +242,4 @@ private fun isJvmStaticFunction(declaration: IrDeclaration): Boolean =
     declaration is IrSimpleFunction &&
             (declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
                     declaration.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true)
+

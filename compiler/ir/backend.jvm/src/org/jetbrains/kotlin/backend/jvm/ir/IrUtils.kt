@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isSuspendFunctionTypeOrSubtype
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 
 /**
@@ -120,3 +117,7 @@ fun JvmBackendContext.createJvmIrBuilder(
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
 ) = JvmIrBuilder(this, symbol, startOffset, endOffset)
+
+
+fun IrDeclaration.isInCurrentModule(): Boolean =
+    getPackageFragment() is IrFile
