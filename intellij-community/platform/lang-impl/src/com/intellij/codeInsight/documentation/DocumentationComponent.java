@@ -4,7 +4,6 @@ package com.intellij.codeInsight.documentation;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.hint.HintManagerImpl;
-import com.intellij.ui.WidthBasedLayout;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.icons.AllIcons;
@@ -126,7 +125,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private final ExternalDocAction myExternalDocAction;
 
   private DocumentationManager myManager;
-  private SmartPsiElementPointer myElement;
+  private SmartPsiElementPointer<PsiElement> myElement;
   private long myModificationCount;
 
   public static final String QUICK_DOC_FONT_SIZE_PROPERTY = "quick.doc.font.size";
@@ -294,7 +293,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
               Object src = attrs.getAttribute(HTML.Attribute.SRC);
               Icon icon = src != null ? IconLoader.findIcon((String)src, false) : null;
               if (icon == null) {
-                ModuleType id = ModuleTypeManager.getInstance().findByID((String)src);
+                ModuleType<?> id = ModuleTypeManager.getInstance().findByID((String)src);
                 if (id != null) icon = id.getIcon();
               }
               if (icon != null) {
@@ -721,7 +720,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     return myElement != null ? myElement.getElement() : null;
   }
 
-  private void setElement(SmartPsiElementPointer element) {
+  private void setElement(SmartPsiElementPointer<PsiElement> element) {
     myElement = element;
     myModificationCount = getCurrentModificationCount();
   }
@@ -765,14 +764,14 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     myExternalUrl = effectiveExternalUrl;
     myProvider = provider;
 
-    SmartPsiElementPointer pointer = null;
+    SmartPsiElementPointer<PsiElement> pointer = null;
     if (element != null && element.isValid()) {
       pointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
     }
     setDataInternal(pointer, text, new Rectangle(0, 0), ref);
   }
 
-  private void setDataInternal(@Nullable SmartPsiElementPointer element,
+  private void setDataInternal(@Nullable SmartPsiElementPointer<PsiElement> element,
                                @NotNull String text,
                                @NotNull Rectangle viewRect,
                                @Nullable String ref) {
@@ -1339,7 +1338,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     @Nullable
     @Override
     protected Navigatable[] getNavigatables(DataContext dataContext) {
-      SmartPsiElementPointer element = myElement;
+      SmartPsiElementPointer<PsiElement> element = myElement;
       if (element != null) {
         PsiElement psiElement = element.getElement();
         return psiElement instanceof Navigatable ? new Navigatable[]{(Navigatable)psiElement} : null;
@@ -1565,14 +1564,14 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   }
 
   private static class Context {
-    final SmartPsiElementPointer element;
+    final SmartPsiElementPointer<PsiElement> element;
     final String text;
     final String externalUrl;
     final DocumentationProvider provider;
     final Rectangle viewRect;
     final int highlightedLink;
 
-    Context(SmartPsiElementPointer element,
+    Context(SmartPsiElementPointer<PsiElement> element,
             String text,
             String externalUrl,
             DocumentationProvider provider,
@@ -1788,8 +1787,14 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-      e.getPresentation().setIcon(ToolWindowManagerEx.getInstanceEx(myManager.myProject).getLocationIcon(ToolWindowId.DOCUMENTATION, EmptyIcon.ICON_16));
-      e.getPresentation().setEnabledAndVisible(myToolwindowCallback != null);
+      Presentation presentation = e.getPresentation();
+      if (myManager == null) {
+        presentation.setEnabledAndVisible(false);
+      } else {
+        presentation
+          .setIcon(ToolWindowManagerEx.getInstanceEx(myManager.myProject).getLocationIcon(ToolWindowId.DOCUMENTATION, EmptyIcon.ICON_16));
+        presentation.setEnabledAndVisible(myToolwindowCallback != null);
+      }
     }
 
     @Override
@@ -1847,7 +1852,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       Graphics2D graphics = image.createGraphics();
       super.paint(graphics, new Rectangle(image.getWidth(), image.getHeight()));
-      UIUtil.drawImage(g, ImageUtil.ensureHiDPI(image, ScaleContext.create(myEditorPane)), bounds.x, bounds.y, null);
+      StartupUiUtil.drawImage(g, ImageUtil.ensureHiDPI(image, ScaleContext.create(myEditorPane)), bounds.x, bounds.y, null);
     }
   }
 
