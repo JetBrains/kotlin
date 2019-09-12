@@ -83,8 +83,8 @@ public class ProjectViewTree extends DnDAwareTree {
         super.customizeCellRenderer(tree, value, selected, expanded, leaf, row, hasFocus);
         Object object = TreeUtil.getUserObject(value);
         if (object instanceof ProjectViewNode && UISettings.getInstance().getShowInplaceComments()) {
-          ProjectViewNode node = (ProjectViewNode)object;
-          AbstractTreeNode parentNode = node.getParent();
+          ProjectViewNode<?> node = (ProjectViewNode<?>)object;
+          AbstractTreeNode<?> parentNode = node.getParent();
           Object content = node.getValue();
           VirtualFile file =
             content instanceof PsiFileSystemItem ||
@@ -131,7 +131,7 @@ public class ProjectViewTree extends DnDAwareTree {
     int count = super.getToggleClickCount();
     TreePath path = getSelectionPath();
     if (path != null) {
-      NodeDescriptor descriptor = TreeUtil.getLastUserObject(NodeDescriptor.class, path);
+      NodeDescriptor<?> descriptor = TreeUtil.getLastUserObject(NodeDescriptor.class, path);
       if (descriptor != null && !descriptor.expandOnDoubleClick()) {
         LOG.debug("getToggleClickCount: -1 for ", descriptor.getClass().getName());
         return -1;
@@ -171,14 +171,14 @@ public class ProjectViewTree extends DnDAwareTree {
       object = node.getUserObject();
     }
     if (object instanceof AbstractTreeNode) {
-      AbstractTreeNode node = (AbstractTreeNode)object;
+      AbstractTreeNode<?> node = (AbstractTreeNode<?>)object;
       Object value = node.getValue();
       if (value instanceof PsiElement) {
         return getColorForElement((PsiElement)value);
       }
     }
     if (object instanceof ProjectViewNode) {
-      ProjectViewNode node = (ProjectViewNode)object;
+      ProjectViewNode<?> node = (ProjectViewNode<?>)object;
       VirtualFile file = node.getVirtualFile();
       if (file != null) {
         Project project = node.getProject();
