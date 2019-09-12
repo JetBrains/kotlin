@@ -385,6 +385,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
     }
 
+    // TODO: Generate two copies of inline suspend functions
     private fun markSuspendFunctions(irFile: IrFile, suspendLambdas: Set<IrFunction>): Set<IrFunction> {
         val result = hashSetOf<IrFunction>()
 
@@ -395,7 +396,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
             override fun visitFunction(declaration: IrFunction) {
                 super.visitFunction(declaration)
-                if (declaration.isSuspend && declaration !in suspendLambdas) {
+                if (declaration.isSuspend && declaration !in suspendLambdas && !declaration.isInline) {
                     result.add(declaration)
                 }
             }

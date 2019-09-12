@@ -56,7 +56,7 @@ open class FunctionCodegen(
 
         if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             AnnotationCodegen(classCodegen, context, methodVisitor::visitAnnotation).genAnnotations(
-                irFunction,
+                functionView,
                 signature.asmMethod.returnType
             )
         }
@@ -70,7 +70,7 @@ open class FunctionCodegen(
             //TODO: investigate this case: annotation here is generated twice in lowered function and in interface method overload
             irFunction.origin == JvmLoweredDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
         ) {
-            generateParameterAnnotations(irFunction, methodVisitor, signature, classCodegen, context)
+            generateParameterAnnotations(functionView, methodVisitor, signature, classCodegen, context)
         }
 
         if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
@@ -82,8 +82,11 @@ open class FunctionCodegen(
                 ?: context.suspendLambdaToOriginalFunctionMap[irFunction.parent]?.symbol?.descriptor?.psiElement) as? KtElement
             val continuationClassBuilder = context.continuationClassBuilders[irClass]
             methodVisitor = when {
-                // We do not generate continuation and state-machine for synthetic accessors, in a sence, they are tail-call
-                irFunction.isSuspend && irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ->
+                irFunction.isSuspend &&
+                        // We do not generate continuation and state-machine for synthetic accessors, in a sense, they are tail-call
+                        !irFunction.isDefault() &&
+                        // TODO: We should generate two versions of inline suspend function: one with state-machine and one without
+                        !irFunction.isInline ->
                     generateStateMachineForNamedFunction(
                         irFunction, classCodegen, methodVisitor, flags, signature, continuationClassBuilder, element!!
                     )
@@ -100,6 +103,9 @@ open class FunctionCodegen(
 
         return signature
     }
+
+    private fun IrFunction.isDefault(): Boolean =
+        origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {
         if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {

@@ -54,6 +54,9 @@ internal fun generateStateMachineForNamedFunction(
     element: KtElement
 ): MethodVisitor {
     assert(irFunction.isSuspend)
+    assert(continuationClassBuilder != null) {
+        "Class builder for continuation is null"
+    }
     val state = classCodegen.state
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
