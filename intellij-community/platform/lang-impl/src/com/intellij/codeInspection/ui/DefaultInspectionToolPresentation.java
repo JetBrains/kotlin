@@ -50,6 +50,14 @@ import java.util.stream.Collectors;
 public class DefaultInspectionToolPresentation implements InspectionToolPresentation {
   protected static final Logger LOG = Logger.getInstance(DefaultInspectionToolPresentation.class);
 
+  public static final String INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT = "problem_class";
+  public static final String INSPECTION_RESULTS_SEVERITY_ATTRIBUTE = "severity";
+  public static final String INSPECTION_RESULTS_ATTRIBUTE_KEY_ATTRIBUTE = "attribute_key";
+  public static final String INSPECTION_RESULTS_DESCRIPTION_ELEMENT = "description";
+  public static final String INSPECTION_RESULTS_HINTS_ELEMENT = "hints";
+  public static final String INSPECTION_RESULTS_HINT_ELEMENT = "hint";
+  public static final String INSPECTION_RESULTS_VALUE_ATTRIBUTE = "value";
+
   @NotNull private final InspectionToolWrapper myToolWrapper;
   @NotNull protected final GlobalInspectionContextImpl myContext;
 
@@ -352,7 +360,7 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
     try {
       final PsiElement psiElement = descriptor instanceof ProblemDescriptor ? ((ProblemDescriptor)descriptor).getPsiElement() : null;
 
-      @NonNls Element problemClassElement = new Element(InspectionsBundle.message("inspection.export.results.problem.element.tag"));
+      @NonNls Element problemClassElement = new Element(INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT);
       problemClassElement.addContent(myToolWrapper.getDisplayName());
 
       final HighlightSeverity severity = InspectionToolPresentation.getSeverity(refEntity, psiElement, this);
@@ -363,20 +371,20 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
                                  .highlightTypeFromDescriptor((ProblemDescriptor)descriptor, severity, severityRegistrar)
                                : ProblemDescriptorUtil
                                  .getHighlightInfoType(ProblemHighlightType.GENERIC_ERROR_OR_WARNING, severity, severityRegistrar);
-      problemClassElement.setAttribute("severity", type.getSeverity(psiElement).getName());
-      problemClassElement.setAttribute("attribute_key", type.getAttributesKey().getExternalName());
+      problemClassElement.setAttribute(INSPECTION_RESULTS_SEVERITY_ATTRIBUTE, type.getSeverity(psiElement).getName());
+      problemClassElement.setAttribute(INSPECTION_RESULTS_ATTRIBUTE_KEY_ATTRIBUTE, type.getAttributesKey().getExternalName());
 
       element.addContent(problemClassElement);
       if (myToolWrapper instanceof GlobalInspectionToolWrapper) {
         final GlobalInspectionTool globalInspectionTool = ((GlobalInspectionToolWrapper)myToolWrapper).getTool();
         final QuickFix[] fixes = descriptor.getFixes();
         if (fixes != null) {
-          @NonNls Element hintsElement = new Element("hints");
+          @NonNls Element hintsElement = new Element(INSPECTION_RESULTS_HINTS_ELEMENT);
           for (QuickFix fix : fixes) {
             final String hint = globalInspectionTool.getHint(fix);
             if (hint != null) {
-              @NonNls Element hintElement = new Element("hint");
-              hintElement.setAttribute("value", hint);
+              @NonNls Element hintElement = new Element(INSPECTION_RESULTS_HINT_ELEMENT);
+              hintElement.setAttribute(INSPECTION_RESULTS_VALUE_ATTRIBUTE, hint);
               hintsElement.addContent(hintElement);
             }
           }
@@ -386,11 +394,11 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
       @NonNls final String template = descriptor.getDescriptionTemplate();
       String highlightedText = ProblemDescriptorUtil.extractHighlightedText(descriptor, psiElement);
       @NonNls String problemText = StringUtil.replace(StringUtil.replace(template, "#ref", psiElement != null ? highlightedText : ""), " #loc ", " ");
-      Element descriptionElement = new Element(InspectionsBundle.message("inspection.export.results.description.tag"));
+      Element descriptionElement = new Element(INSPECTION_RESULTS_DESCRIPTION_ELEMENT);
       descriptionElement.addContent(problemText);
       element.addContent(descriptionElement);
 
-      Element highLightedElement = new Element(InspectionsBundle.message("inspection.export.results.highlighted.element"));
+      Element highLightedElement = new Element("highlighted_element");
       highLightedElement.addContent(highlightedText);
       element.addContent(highLightedElement);
 
