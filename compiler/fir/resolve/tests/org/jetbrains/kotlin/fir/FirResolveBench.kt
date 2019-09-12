@@ -319,19 +319,20 @@ fun <T> Collection<T>.progress(step: Double = 0.1, computeLabel: (T) -> String):
     }
 }
 
-fun FirResolveBench.TotalStatistics.report(stream: PrintStream, header: String, errorTypeReports: Boolean = true) {
-    with(stream) {
-        if (errorTypeReports)
-            errorTypesReports.values.sortedByDescending { it.count }.forEach {
-                print("${it.count}:")
-                println(it.report)
-            }
+fun FirResolveBench.TotalStatistics.reportErrors(stream: PrintStream) {
+    errorTypesReports.values.sortedByDescending { it.count }.forEach {
+        stream.print("${it.count}:")
+        stream.println(it.report)
+    }
+}
 
+fun FirResolveBench.TotalStatistics.report(stream: PrintStream, header: String) {
+    with(stream) {
         infix fun Int.percentOf(other: Int): String {
             return String.format("%.1f%%", this * 100.0 / other)
         }
         println()
-        println("---------- $header ----------")
+        println("========== $header ==========")
         println("Unresolved (untouched) implicit types: $unresolvedTypes (${unresolvedTypes percentOf totalTypes})")
         println("Resolved types: $resolvedTypes (${resolvedTypes percentOf totalTypes})")
         println("Correctly resolved types: $goodTypes (${goodTypes percentOf resolvedTypes} of resolved)")

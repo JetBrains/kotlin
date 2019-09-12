@@ -129,7 +129,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     override fun afterPass(pass: Int) {
         val statistics = bench.getTotalStatistics()
-        statistics.report(System.out, "Pass $pass", errorTypeReports = false)
+        statistics.report(System.out, "Pass $pass")
 
         saveReport(pass, statistics)
         if (statistics.totalTime < (bestStatistics?.totalTime ?: Long.MAX_VALUE)) {
@@ -143,7 +143,8 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     override fun afterAllPasses() {
         val bestStatistics = bestStatistics ?: return
-        printStatistics(bestStatistics, "Best pass: $bestPass", false)
+        printStatistics(bestStatistics, "Best pass: $bestPass")
+        printErrors(bestStatistics)
     }
 
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -169,15 +170,17 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         printStatistics(statistics, "PASS $pass")
     }
 
-    private fun printStatistics(statistics: FirResolveBench.TotalStatistics, header: String, errorTypeReports: Boolean = true) {
+    private fun printErrors(statistics: FirResolveBench.TotalStatistics) {
+        PrintStream(FileOutputStream(reportDir().resolve("errors-$reportDateStr.log"), true)).use(statistics::reportErrors)
+    }
+
+    private fun printStatistics(statistics: FirResolveBench.TotalStatistics, header: String) {
         PrintStream(
             FileOutputStream(
                 reportDir().resolve("report-$reportDateStr.log"),
                 true
             )
         ).use { stream ->
-            val sep = "=".repeat(10)
-            stream.println("$sep $header $sep")
             statistics.report(stream, header)
             stream.println()
             stream.println()
