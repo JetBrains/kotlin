@@ -4,11 +4,11 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 <T> (): T of <root>.test1? [inline] declared in <root>'
-        WHEN type=kotlin.Any? origin=IF
+        WHEN type=T of <root>.test1? origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.test1
               GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
-            then: GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+            then: GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=T of <root>.test1 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Null type=kotlin.Nothing? value=null

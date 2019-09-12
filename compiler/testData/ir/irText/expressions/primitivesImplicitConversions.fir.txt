@@ -59,11 +59,11 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:test1 type:kotlin.Int? [val]
-        CONST Int type=kotlin.Int? value=42
+        CONST Int type=kotlin.Int value=42
       VAR name:test2 type:kotlin.Long [val]
         CONST Int type=kotlin.Long value=42
       VAR name:test3 type:kotlin.Long? [val]
-        CONST Int type=kotlin.Long? value=42
+        CONST Int type=kotlin.Long value=42
       VAR name:test4 type:kotlin.Long? [val]
         CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=1

@@ -22,7 +22,7 @@ FILE: lambda.kt
             Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(f = foo@fun <implicit>.<anonymous>(): <implicit> {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(f = foo@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Unit
         }
         , <L> = foo@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
@@ -41,7 +41,7 @@ FILE: lambda.kt
             Unit
         }
         )
-        R|/bar|(x = Int(1), f = bar@fun <anonymous>(): R|kotlin/Unit| {
+        R|/bar|(x = Int(1), f = bar@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
@@ -53,7 +53,7 @@ FILE: lambda.kt
             Unit
         }
         )
-        R|/baz|(other = Boolean(false), f = baz@fun <anonymous>(): R|kotlin/Unit| {
+        R|/baz|(other = Boolean(false), f = baz@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         )

@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-castGenericMemberExtVal> (): TV of <uninitialized parent> declared in <root>.Host'
             TYPE_OP type=TV of <uninitialized parent> origin=CAST typeOperand=TV of <uninitialized parent>
-              GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host<T of <root>.Host> origin=null
+              GET_VAR '<this>: <root>.Host declared in <root>.Host' type=T of <root>.Host origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

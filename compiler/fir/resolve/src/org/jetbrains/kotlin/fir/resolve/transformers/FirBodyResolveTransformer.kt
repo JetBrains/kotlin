@@ -526,7 +526,7 @@ open class FirBodyResolveTransformer(
             whenExpression.transformSubject(this, noExpectedType)
             if (whenExpression.isOneBranch()) {
                 whenExpression.transformBranches(this, noExpectedType)
-                whenExpression.resultType = builtinTypes.unitType
+                whenExpression.resultType = whenExpression.branches.first().result.resultType
                 dataFlowAnalyzer.exitWhenExpression(whenExpression)
                 return@with whenExpression.compose()
             }
