@@ -289,8 +289,8 @@ abstract class KotlinIrLinker(
             }
 
             private fun deserializeIrSymbolData(proto: ProtoSymbolData): IrSymbol {
-                val key = proto.uniqId.uniqId()
-                val topLevelKey = proto.topLevelUniqId.uniqId()
+                val key = UniqId(proto.uniqIdIndex)
+                val topLevelKey = UniqId(proto.topLevelUniqIdIndex)
 
                 val topLevelDeserializationState = getStateForID(topLevelKey)
 
@@ -409,22 +409,23 @@ abstract class KotlinIrLinker(
             fileToDeserializerMap[file] = fileDeserializer
 
             fileProto.declarationIdList.forEach {
-                val uniqId = it.uniqId()
-                assert(uniqId.isPublic)
+                val uniqId = UniqId(it)
                 moduleReversedFileIndex.getOrPut(uniqId) { fileDeserializer }
             }
 
             val forceLoadedIds = deserializationStrategy.run {
                 when {
-                    theWholeWorld -> fileProto.declarationIdList
+                    theWholeWorld -> fileProto.declarationIdList.map { UniqId(it) }
                     explicitlyExported -> fileProto.explicitlyExportedToCompilerList.map {
-                        fileDeserializer.loadSymbolData(it).topLevelUniqId
+                        fileDeserializer.loadSymbolData(it).run {
+                            UniqId(topLevelUniqIdIndex)
+                        }
                     }
                     else -> emptyList()
                 }
             }
 
-            forceLoadedIds.forEach { moduleDeserializationState.addUniqID(it.uniqId().also { i -> assert(i.isPublic) }) }
+            forceLoadedIds.forEach { moduleDeserializationState.addUniqID(it.also { i -> assert(i.isPublic) }) }
 
             return file
         }
@@ -464,9 +465,10 @@ abstract class KotlinIrLinker(
 
     private fun loadKnownBuiltinSymbols(): Long {
         var currentIndex = firstKnownBuiltinsIndex
+        val mask = 1L shl 63
         val globalDeserializedSymbols = globalDeserializationState.deserializedSymbols
         builtIns.knownBuiltins.forEach {
-            globalDeserializedSymbols[UniqId(currentIndex, isLocal = false)] = it
+            globalDeserializedSymbols[UniqId(currentIndex or mask)] = it
             assert(symbolTable.referenceSimpleFunction(it.descriptor) == it)
             currentIndex++
         }
@@ -519,7 +521,7 @@ abstract class KotlinIrLinker(
 
         val descriptorUniqId = topLevelDescriptor.getUniqId()
             ?: error("Could not get descriptor uniq id for $topLevelDescriptor")
-        val topLevelKey = UniqId(descriptorUniqId, isLocal = false)
+        val topLevelKey = UniqId(descriptorUniqId)
 
         val moduleOfOrigin = topLevelDescriptor.module
 

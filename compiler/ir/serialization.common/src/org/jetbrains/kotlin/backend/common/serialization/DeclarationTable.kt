@@ -37,8 +37,10 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler, privat
 
     protected open fun loadKnownBuiltins(builtIns: IrBuiltIns, startIndex: Long): Long {
         var index = startIndex
+        val mask = 1L shl 63
         builtIns.knownBuiltins.forEach {
-            table[it.owner] = UniqId(index++, false).also { id -> clashTracker.commit(it.owner, id) }
+            table[it.owner] = UniqId(index or mask).also { id -> clashTracker.commit(it.owner, id) }
+            index++
         }
         return index
     }
@@ -46,7 +48,7 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler, privat
     open fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {
         return table.getOrPut(declaration) {
             with(mangler) {
-                UniqId(declaration.hashedMangle, false).also { clashTracker.commit(declaration, it) }
+                UniqId(declaration.hashedMangle).also { clashTracker.commit(declaration, it) }
             }
         }
     }
@@ -71,7 +73,7 @@ class DeclarationTable(
 
     private fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {
         return if (declaration.isLocalDeclaration()) {
-            table.getOrPut(declaration) { UniqId(localIndex++, true) }
+            table.getOrPut(declaration) { UniqId(localIndex++) }
         } else globalDeclarationTable.computeUniqIdByDeclaration(declaration)
     }
 

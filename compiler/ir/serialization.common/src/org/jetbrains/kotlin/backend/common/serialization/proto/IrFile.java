@@ -184,37 +184,36 @@ public final class IrFile extends
 
   private int bitField0_;
   public static final int DECLARATION_ID_FIELD_NUMBER = 1;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.UniqId> declarationId_;
+  private java.util.List<java.lang.Long> declarationId_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+   * <code>repeated int64 declaration_id = 1;</code>
+   *
+   * <pre>
+   *  repeated UniqId declaration_id = 1;
+   * </pre>
    */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.UniqId> getDeclarationIdList() {
+  public java.util.List<java.lang.Long>
+      getDeclarationIdList() {
     return declarationId_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-   */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.UniqIdOrBuilder> 
-      getDeclarationIdOrBuilderList() {
-    return declarationId_;
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+   * <code>repeated int64 declaration_id = 1;</code>
+   *
+   * <pre>
+   *  repeated UniqId declaration_id = 1;
+   * </pre>
    */
   public int getDeclarationIdCount() {
     return declarationId_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+   * <code>repeated int64 declaration_id = 1;</code>
+   *
+   * <pre>
+   *  repeated UniqId declaration_id = 1;
+   * </pre>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getDeclarationId(int index) {
-    return declarationId_.get(index);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.UniqIdOrBuilder getDeclarationIdOrBuilder(
-      int index) {
+  public long getDeclarationId(int index) {
     return declarationId_.get(index);
   }
 
@@ -647,128 +646,97 @@ public final class IrFile extends
     }
     private int bitField0_;
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.UniqId> declarationId_ =
-      java.util.Collections.emptyList();
+    private java.util.List<java.lang.Long> declarationId_ = java.util.Collections.emptyList();
     private void ensureDeclarationIdIsMutable() {
       if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-        declarationId_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.UniqId>(declarationId_);
+        declarationId_ = new java.util.ArrayList<java.lang.Long>(declarationId_);
         bitField0_ |= 0x00000001;
        }
     }
-
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+     * <code>repeated int64 declaration_id = 1;</code>
+     *
+     * <pre>
+     *  repeated UniqId declaration_id = 1;
+     * </pre>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.UniqId> getDeclarationIdList() {
+    public java.util.List<java.lang.Long>
+        getDeclarationIdList() {
       return java.util.Collections.unmodifiableList(declarationId_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+     * <code>repeated int64 declaration_id = 1;</code>
+     *
+     * <pre>
+     *  repeated UniqId declaration_id = 1;
+     * </pre>
      */
     public int getDeclarationIdCount() {
       return declarationId_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+     * <code>repeated int64 declaration_id = 1;</code>
+     *
+     * <pre>
+     *  repeated UniqId declaration_id = 1;
+     * </pre>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getDeclarationId(int index) {
+    public long getDeclarationId(int index) {
       return declarationId_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+     * <code>repeated int64 declaration_id = 1;</code>
+     *
+     * <pre>
+     *  repeated UniqId declaration_id = 1;
+     * </pre>
      */
     public Builder setDeclarationId(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.UniqId value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+        int index, long value) {
       ensureDeclarationIdIsMutable();
       declarationId_.set(index, value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+     * <code>repeated int64 declaration_id = 1;</code>
+     *
+     * <pre>
+     *  repeated UniqId declaration_id = 1;
+     * </pre>
      */
-    public Builder setDeclarationId(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.Builder builderForValue) {
-      ensureDeclarationIdIsMutable();
-      declarationId_.set(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-     */
-    public Builder addDeclarationId(org.jetbrains.kotlin.backend.common.serialization.proto.UniqId value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder addDeclarationId(long value) {
       ensureDeclarationIdIsMutable();
       declarationId_.add(value);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-     */
-    public Builder addDeclarationId(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.UniqId value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureDeclarationIdIsMutable();
-      declarationId_.add(index, value);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-     */
-    public Builder addDeclarationId(
-        org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.Builder builderForValue) {
-      ensureDeclarationIdIsMutable();
-      declarationId_.add(builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-     */
-    public Builder addDeclarationId(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.Builder builderForValue) {
-      ensureDeclarationIdIsMutable();
-      declarationId_.add(index, builderForValue.build());
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+     * <code>repeated int64 declaration_id = 1;</code>
+     *
+     * <pre>
+     *  repeated UniqId declaration_id = 1;
+     * </pre>
      */
     public Builder addAllDeclarationId(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.UniqId> values) {
+        java.lang.Iterable<? extends java.lang.Long> values) {
       ensureDeclarationIdIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, declarationId_);
-
+      
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+     * <code>repeated int64 declaration_id = 1;</code>
+     *
+     * <pre>
+     *  repeated UniqId declaration_id = 1;
+     * </pre>
      */
     public Builder clearDeclarationId() {
       declarationId_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
-
-      return this;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-     */
-    public Builder removeDeclarationId(int index) {
-      ensureDeclarationIdIsMutable();
-      declarationId_.remove(index);
-
+      
       return this;
     }
 

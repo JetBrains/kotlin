@@ -17,50 +17,50 @@ public interface IrSymbolDataOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolKind getKind();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 2;</code>
+   * <code>required int64 uniq_id_index = 4;</code>
    */
-  boolean hasUniqId();
+  boolean hasUniqIdIndex();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 2;</code>
+   * <code>required int64 uniq_id_index = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getUniqId();
+  long getUniqIdIndex();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId top_level_uniq_id = 3;</code>
+   * <code>required int64 top_level_uniq_id_index = 5;</code>
+   *
+   * <pre>
+   *  required bool uniq_id_locality = 5;
+   * </pre>
    */
-  boolean hasTopLevelUniqId();
+  boolean hasTopLevelUniqIdIndex();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId top_level_uniq_id = 3;</code>
+   * <code>required int64 top_level_uniq_id_index = 5;</code>
+   *
+   * <pre>
+   *  required bool uniq_id_locality = 5;
+   * </pre>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getTopLevelUniqId();
+  long getTopLevelUniqIdIndex();
 
   /**
-   * <code>repeated int32 fq_name = 4;</code>
+   * <code>repeated int32 fq_name = 6;</code>
    */
   java.util.List<java.lang.Integer> getFqNameList();
   /**
-   * <code>repeated int32 fq_name = 4;</code>
+   * <code>repeated int32 fq_name = 6;</code>
    */
   int getFqNameCount();
   /**
-   * <code>repeated int32 fq_name = 4;</code>
+   * <code>repeated int32 fq_name = 6;</code>
    */
   int getFqName(int index);
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
-   *
-   * <pre>
-   *  optional FqName fqname = 4;
-   * </pre>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 7;</code>
    */
   boolean hasDescriptorReference();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 5;</code>
-   *
-   * <pre>
-   *  optional FqName fqname = 4;
-   * </pre>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference descriptor_reference = 7;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference getDescriptorReference();
 }

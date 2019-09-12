@@ -6,29 +6,18 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.UniqId as ProtoUniqId
 
 // This is an abstract uniqIdIndex any serialized IR declarations gets.
 // It is either isLocal and then just gets and ordinary number within its module.
 // Or is visible across modules and then gets a hash of mangled name as its index.
-data class UniqId(
-    val index: Long,
-    val isLocal: Boolean
-) {
-    val isPublic: Boolean get() = !isLocal
+
+inline class UniqId(val index: Long) {
+    val isPublic: Boolean get() = (index and (1L shl 63)) != 0L
+    val isLocal: Boolean get() = (index and (1L shl 63)) == 0L
 }
-
-fun protoUniqId(uniqId: UniqId): ProtoUniqId =
-    ProtoUniqId.newBuilder()
-        .setIndex(uniqId.index)
-        .setIsLocal(uniqId.isLocal)
-        .build()
-
-fun ProtoUniqId.uniqId(): UniqId = UniqId(this.index, this.isLocal)
 
 fun <T, M : GeneratedMessageLite.ExtendableMessage<M>> M.tryGetExtension(extension: GeneratedMessageLite.GeneratedExtension<M, T>) =
     if (this.hasExtension(extension)) this.getExtension<T>(extension) else null

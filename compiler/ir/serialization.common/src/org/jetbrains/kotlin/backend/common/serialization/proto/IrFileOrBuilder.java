@@ -8,18 +8,29 @@ public interface IrFileOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+   * <code>repeated int64 declaration_id = 1;</code>
+   *
+   * <pre>
+   *  repeated UniqId declaration_id = 1;
+   * </pre>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.UniqId> 
-      getDeclarationIdList();
+  java.util.List<java.lang.Long> getDeclarationIdList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getDeclarationId(int index);
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+   * <code>repeated int64 declaration_id = 1;</code>
+   *
+   * <pre>
+   *  repeated UniqId declaration_id = 1;
+   * </pre>
    */
   int getDeclarationIdCount();
+  /**
+   * <code>repeated int64 declaration_id = 1;</code>
+   *
+   * <pre>
+   *  repeated UniqId declaration_id = 1;
+   * </pre>
+   */
+  long getDeclarationId(int index);
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>

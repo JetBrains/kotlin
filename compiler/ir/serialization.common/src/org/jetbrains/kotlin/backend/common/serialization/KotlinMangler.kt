@@ -28,8 +28,11 @@ interface KotlinMangler {
     }
 }
 
+private const val PUBLIC_MANGLE_FLAG = 1L shl 63
+
 abstract class KotlinManglerImpl : KotlinMangler {
-    override val String.hashMangle get() = this.cityHash64()
+
+    override val String.hashMangle get() = (this.cityHash64() % PUBLIC_MANGLE_FLAG) or PUBLIC_MANGLE_FLAG
 
     private fun hashedMangleImpl(declaration: IrDeclaration): Long {
         return declaration.uniqSymbolName().hashMangle

@@ -76,7 +76,7 @@ message FileEntry {
 }
 
 message IrFile {
-  repeated UniqId declaration_id = 1;
+  repeated int64 declaration_id = 1;
   required FileEntry file_entry = 2;
   repeated int32 fq_name = 3;
   repeated IrConstructorCall annotation = 4;
@@ -105,14 +105,12 @@ enum IrSymbolKind {
 
 message IrSymbolData {
   required IrSymbolKind kind = 1;
-  required UniqId uniq_id = 2;
-  required UniqId top_level_uniq_id = 3;
-  repeated int32 fq_name = 4;
-  optional DescriptorReference descriptor_reference = 5;
-}
 
-message IrSymbolTable {
-  repeated IrSymbolData symbols = 1;
+  required int64 uniq_id_index = 4;
+  required int64 top_level_uniq_id_index = 5;
+
+  repeated int32 fq_name = 6;
+  optional DescriptorReference descriptor_reference = 7;
 }
 
 /* ------ IrTypes --------------------------------------------- */

@@ -256,11 +256,12 @@ open class IrFileSerializer(
 
         val uniqId =
             declarationTable.uniqIdByDeclaration(declaration)
-        proto.setUniqId(protoUniqId(uniqId))
+        proto.uniqIdIndex = uniqId.index
 
         val topLevelUniqId =
             declarationTable.uniqIdByDeclaration((declaration).findTopLevelDeclaration())
-        proto.setTopLevelUniqId(protoUniqId(topLevelUniqId))
+
+        proto.topLevelUniqIdIndex = topLevelUniqId.index
 
         descriptorReferenceSerializer.serializeDescriptorReference(declaration)?.let {
             proto.setDescriptorReference(it)
