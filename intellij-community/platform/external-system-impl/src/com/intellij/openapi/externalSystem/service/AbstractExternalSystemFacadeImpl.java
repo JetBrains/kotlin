@@ -218,10 +218,6 @@ public abstract class AbstractExternalSystemFacadeImpl<S extends ExternalSystemE
     }
 
     @Override
-    public void onQueued(@NotNull ExternalSystemTaskId id, String workingDir) {
-    }
-
-    @Override
     public void onStart(@NotNull ExternalSystemTaskId id, String workingDir) {
     }
 
