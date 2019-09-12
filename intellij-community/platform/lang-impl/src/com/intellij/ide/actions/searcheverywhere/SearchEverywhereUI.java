@@ -183,6 +183,11 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     return mySelectedTab.everywhereAction.isEverywhere();
   }
 
+  private boolean canToggleEverywhere() {
+    if (mySelectedTab.everywhereAction == null) return false;
+    return mySelectedTab.everywhereAction.canToggleEverywhere();
+  }
+
   public void switchToContributor(@NotNull String contributorID) {
     SETab selectedTab = myTabs.stream()
       .filter(tab -> tab.getID().equals(contributorID))
@@ -208,7 +213,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     mySelectedTab = tab;
     boolean nextTabIsAll = isAllTabSelected();
 
-    if (myEverywhereAutoSet && isEverywhere()) {
+    if (myEverywhereAutoSet && isEverywhere() && canToggleEverywhere()) {
       setEverywhereAuto(false);
     }
 
@@ -672,7 +677,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
         String newSearchString = getSearchPattern();
         if (myNotFoundString != null) {
           boolean newPatternContainsPrevious = myNotFoundString.length() > 1 && newSearchString.contains(myNotFoundString);
-          if (myEverywhereAutoSet && isEverywhere() && !newPatternContainsPrevious) {
+          if (myEverywhereAutoSet && isEverywhere() && canToggleEverywhere() && !newPatternContainsPrevious) {
             myNotFoundString = null;
             setEverywhereAuto(false);
             return;
@@ -1567,7 +1572,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     @Override
     public void searchFinished(@NotNull Map<SearchEverywhereContributor<?>, Boolean> hasMoreContributors) {
       if (myResultsList.isEmpty() || myListModel.isResultsExpired()) {
-        if (myEverywhereAutoSet && !isEverywhere() && !getSearchPattern().isEmpty()) {
+        if (myEverywhereAutoSet && !isEverywhere() && canToggleEverywhere() && !getSearchPattern().isEmpty()) {
           setEverywhereAuto(true);
           myNotFoundString = getSearchPattern();
           return;
