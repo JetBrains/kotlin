@@ -68,8 +68,15 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
             if (lastEntry == null && classBody.containsToken(KtTokens.SEMICOLON)) return
 
             val semicolon = psiFactory.createSemicolon()
-            classBody.addAfter(semicolon, lastEntry)
-            delta += semicolon.textLength
+            delta += if (lastEntry != null) {
+                classBody.addAfter(semicolon, lastEntry)
+                semicolon.textLength
+            } else {
+                val newLine = psiFactory.createNewLine()
+                classBody.addAfter(semicolon, classBody.lBrace)
+                classBody.addAfter(psiFactory.createNewLine(), classBody.lBrace)
+                semicolon.textLength + newLine.textLength
+            }
         }
 
         range = TextRange(range.startOffset, range.endOffset + delta)

@@ -1,0 +1,2 @@
+enum <caret>class Foo {
+}
