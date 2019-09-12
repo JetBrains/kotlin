@@ -20,6 +20,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ConcurrentIntObjectMap;
 import com.intellij.util.containers.ContainerUtil;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +53,7 @@ class VfsEventsMerger {
   }
   
   // NB: this code is executed not only during vfs events dispatch (in write action) but also during requestReindex (in read action)
-  private void updateChange(int fileId, @NotNull VirtualFile file, short mask) {
+  private void updateChange(int fileId, @NotNull VirtualFile file, @EventMask short mask) {
     while (true) {
       ChangeInfo existingChangeInfo = myChangeInfos.get(fileId);
       ChangeInfo newChangeInfo = new ChangeInfo(file, mask, existingChangeInfo);
@@ -121,16 +122,22 @@ class VfsEventsMerger {
   private static final short BEFORE_FILE_CONTENT_CHANGED = 8;
   private static final short FILE_TRANSIENT_STATE_CHANGED = 16;
 
+  @MagicConstant(flags = {FILE_ADDED, FILE_REMOVED, FILE_CONTENT_CHANGED, BEFORE_FILE_CONTENT_CHANGED, FILE_TRANSIENT_STATE_CHANGED})
+  @interface EventMask { }
+
   static class ChangeInfo {
     private final VirtualFile file;
+
+    @EventMask
     private final short eventMask;
 
-    ChangeInfo(@NotNull VirtualFile file, short eventMask, @Nullable ChangeInfo previous) {
+    ChangeInfo(@NotNull VirtualFile file, @EventMask short eventMask, @Nullable ChangeInfo previous) {
       this.file = file;
       this.eventMask = mergeEventMask(previous == null ? 0 : previous.eventMask, eventMask);
     }
 
-    private static short mergeEventMask(short existingOperation, short newOperation) {
+    @EventMask
+    private static short mergeEventMask(@EventMask short existingOperation, @EventMask short newOperation) {
       if (newOperation == FILE_REMOVED) {
         return FILE_REMOVED;
       }
