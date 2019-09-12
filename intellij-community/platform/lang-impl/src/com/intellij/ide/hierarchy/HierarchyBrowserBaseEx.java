@@ -65,19 +65,16 @@ public abstract class HierarchyBrowserBaseEx extends HierarchyBrowserBase implem
 
   public static final String HELP_ID = "reference.toolWindows.hierarchy";
 
-  /** @deprecated (to be removed in IDEA 2018) */
-  @ApiStatus.ScheduledForRemoval(inVersion = "2018")
-  @Deprecated protected final Hashtable<String, HierarchyTreeBuilder> myBuilders = new Hashtable<>();
-
-  /** @deprecated use {@link #getCurrentViewType()} (to be removed in IDEA 2018) */
-  @ApiStatus.ScheduledForRemoval(inVersion = "2018")
+  /** @deprecated use {@link #getCurrentViewType()} */
   @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.1")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   protected String myCurrentViewType;
 
   private static class Sheet implements Disposable {
     private AsyncTreeModel myAsyncTreeModel;
     private StructureTreeModel myStructureTreeModel;
-    @NotNull private final String myType;
+    private final @NotNull String myType;
     private final JTree myTree;
     private String myScope;
     private final OccurenceNavigator myOccurenceNavigator;
