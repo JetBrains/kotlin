@@ -23,7 +23,7 @@ import com.intellij.psi.impl.light.AbstractLightClass
 import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache.processDeclarationsInEnum
+import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache.Companion.processDeclarationsInEnum
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.idea.KotlinLanguage

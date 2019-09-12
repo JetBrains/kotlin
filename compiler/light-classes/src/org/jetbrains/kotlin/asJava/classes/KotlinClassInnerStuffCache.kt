@@ -3,237 +3,219 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava.classes;
+package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.SimpleModificationTracker;
-import com.intellij.psi.*;
-import com.intellij.psi.augment.PsiAugmentProvider;
-import com.intellij.psi.impl.PsiClassImplUtil;
-import com.intellij.psi.impl.PsiImplUtil;
-import com.intellij.psi.impl.light.LightMethod;
-import com.intellij.psi.impl.source.PsiExtensibleClass;
-import com.intellij.psi.scope.ElementClassHint;
-import com.intellij.psi.scope.NameHint;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.SimpleModificationTracker
+import com.intellij.psi.*
+import com.intellij.psi.augment.PsiAugmentProvider
+import com.intellij.psi.impl.PsiClassImplUtil
+import com.intellij.psi.impl.PsiImplUtil
+import com.intellij.psi.impl.light.LightMethod
+import com.intellij.psi.impl.source.PsiExtensibleClass
+import com.intellij.psi.scope.ElementClassHint
+import com.intellij.psi.scope.NameHint
+import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.ArrayUtil
+import com.intellij.util.containers.ContainerUtil
+import gnu.trove.THashMap
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static com.intellij.util.ObjectUtils.notNull;
-
-// Copy of ClassInnerStuffCache with custom list of caching dependencies
-@SuppressWarnings({"WeakerAccess", "Java8MapApi"})
-public class KotlinClassInnerStuffCache {
-    private final PsiExtensibleClass myClass;
-    private final SimpleModificationTracker myTracker = new SimpleModificationTracker();
-    private final List<Object> dependencies;
-
-    public KotlinClassInnerStuffCache(@NotNull PsiExtensibleClass aClass, @NotNull List<Object> externalDependencies) {
-        myClass = aClass;
-
-        dependencies = new SmartList<>();
-        dependencies.addAll(externalDependencies);
-        dependencies.add(myTracker);
-    }
-
-    @NotNull
-    public PsiMethod[] getConstructors() {
-        return copy(CachedValuesManager.getCachedValue(myClass, () -> makeResult(PsiImplUtil.getConstructors(myClass))));
-    }
-
-    @NotNull
-    public PsiField[] getFields() {
-        return copy(CachedValuesManager.getCachedValue(myClass, () -> makeResult(getAllFields())));
-    }
-
-    @NotNull
-    public PsiMethod[] getMethods() {
-        return copy(CachedValuesManager.getCachedValue(myClass, () -> makeResult(getAllMethods())));
-    }
-
-    @NotNull
-    public PsiClass[] getInnerClasses() {
-        return copy(CachedValuesManager.getCachedValue(myClass, () -> makeResult(getAllInnerClasses())));
-    }
-
-    @Nullable
-    public PsiField findFieldByName(String name, boolean checkBases) {
-        if (checkBases) {
-            return PsiClassImplUtil.findFieldByName(myClass, name, true);
-        }
-        else {
-            return CachedValuesManager.getCachedValue(myClass, () -> makeResult(getFieldsMap())).get(name);
-        }
-    }
-
-    @NotNull
-    public PsiMethod[] findMethodsByName(String name, boolean checkBases) {
-        if (checkBases) {
-            return PsiClassImplUtil.findMethodsByName(myClass, name, true);
-        }
-        else {
-            return copy(notNull(CachedValuesManager.getCachedValue(myClass, () -> makeResult(getMethodsMap())).get(name), PsiMethod.EMPTY_ARRAY));
-        }
-    }
-
-    @Nullable
-    public PsiClass findInnerClassByName(String name, boolean checkBases) {
-        if (checkBases) {
-            return PsiClassImplUtil.findInnerByName(myClass, name, true);
-        }
-        else {
-            return CachedValuesManager.getCachedValue(myClass, () -> makeResult(getInnerClassesMap())).get(name);
-        }
-    }
-
-    @Nullable
-    public PsiMethod getValuesMethod() {
-        return myClass.isEnum() && myClass.getName() != null ? CachedValuesManager.getCachedValue(myClass, () -> makeResult(makeValuesMethod())) : null;
-    }
-
-    @Nullable
-    public PsiMethod getValueOfMethod() {
-        return myClass.isEnum() && myClass.getName() != null ? CachedValuesManager.getCachedValue(myClass, () -> makeResult(makeValueOfMethod())) : null;
-    }
-
-    private static <T> T[] copy(T[] value) {
-        return value.length == 0 ? value : value.clone();
-    }
+class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDependencies: List<Any>) {
+    private val myTracker = SimpleModificationTracker()
+    private val dependencies: List<Any> = externalDependencies + myTracker
 
     // This method is modified
-    private <T> CachedValueProvider.Result<T> makeResult(T value) {
-        return CachedValueProvider.Result.create(value, dependencies);
+    private fun <T> makeProvider(value: () -> T): CachedValueProvider.Result<T> {
+        return CachedValueProvider.Result.create(value(), dependencies)
     }
 
-    @NotNull
-    private PsiField[] getAllFields() {
-        List<PsiField> own = myClass.getOwnFields();
-        List<PsiField> ext = PsiAugmentProvider.collectAugments(myClass, PsiField.class);
-        return ArrayUtil.mergeCollections(own, ext, PsiField.ARRAY_FACTORY);
+    private fun <T : Any> get(myClass: PsiExtensibleClass, provider: CachedValueProvider<T>) = lazyPub {
+        CachedValuesManager.getCachedValue(myClass, provider)
     }
 
-    @NotNull
-    private PsiMethod[] getAllMethods() {
-        List<PsiMethod> own = myClass.getOwnMethods();
-        List<PsiMethod> ext = PsiAugmentProvider.collectAugments(myClass, PsiMethod.class);
-        return ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY);
+    private val _getConstructors: Array<PsiMethod> by get(
+        myClass,
+        CachedValueProvider { makeProvider { PsiImplUtil.getConstructors(myClass) } })
+
+    val constructors: Array<PsiMethod>
+        get() = _getConstructors
+
+    private val _getFields: Array<PsiField> by get(myClass, CachedValueProvider { makeProvider { this.getAllFields() } })
+
+    val fields: Array<PsiField>
+        get() = _getFields
+
+    private val _getMethods: Array<PsiMethod> by get(myClass, CachedValueProvider { makeProvider { this.getAllMethods() } })
+
+    val methods: Array<PsiMethod>
+        get() = _getMethods
+
+    private val _getAllInnerClasses: Array<PsiClass> by get(myClass, CachedValueProvider { makeProvider { this.getAllInnerClasses() } })
+
+    val innerClasses: Array<out PsiClass>
+        get() = _getAllInnerClasses
+
+    private val _getFieldsMap: Map<String, PsiField> by get(myClass, CachedValueProvider { makeProvider { this.getFieldsMap() } })
+
+    fun findFieldByName(name: String, checkBases: Boolean): PsiField? {
+        return if (checkBases) {
+            PsiClassImplUtil.findFieldByName(myClass, name, true)
+        } else {
+            _getFieldsMap[name]
+        }
     }
 
-    @NotNull
-    private PsiClass[] getAllInnerClasses() {
-        List<PsiClass> own = myClass.getOwnInnerClasses();
-        List<PsiClass> ext = PsiAugmentProvider.collectAugments(myClass, PsiClass.class);
-        return ArrayUtil.mergeCollections(own, ext, PsiClass.ARRAY_FACTORY);
+    private val _getMethodsMap: Map<String, Array<PsiMethod>> by get(myClass, CachedValueProvider { makeProvider { this.getMethodsMap() } })
+
+    fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> {
+        return if (checkBases) {
+            PsiClassImplUtil.findMethodsByName(myClass, name, true)
+        } else {
+            copy(_getMethodsMap[name] ?: PsiMethod.EMPTY_ARRAY)
+        }
     }
 
-    @NotNull
-    private Map<String, PsiField> getFieldsMap() {
-        PsiField[] fields = getFields();
-        if (fields.length == 0) return Collections.emptyMap();
+    private val _getInnerClassesMap: Map<String, PsiClass> by get(myClass,
+                                                                  CachedValueProvider { makeProvider { this.getInnerClassesMap() } })
 
-        Map<String, PsiField> cachedFields = new THashMap<>();
-        for (PsiField field : fields) {
-            String name = field.getName();
+    fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? {
+        return if (checkBases) {
+            PsiClassImplUtil.findInnerByName(myClass, name, true)
+        } else {
+            _getInnerClassesMap[name]
+        }
+    }
+
+    private val _makeValuesMethod: PsiMethod by get(myClass, CachedValueProvider { makeProvider { this.makeValuesMethod() } })
+
+    fun getValuesMethod(): PsiMethod? = if (myClass.isEnum && myClass.name != null) _makeValuesMethod else null
+
+    private val _makeValueOfMethod: PsiMethod by get(myClass, CachedValueProvider { makeProvider { this.makeValueOfMethod() } })
+
+    fun getValueOfMethod(): PsiMethod? = if (myClass.isEnum && myClass.name != null) _makeValueOfMethod else null
+
+    private fun <T> copy(value: Array<T>): Array<T> {
+        return if (value.isEmpty()) value else value.clone()
+    }
+
+    private fun getAllFields(): Array<PsiField> {
+        val own = myClass.ownFields
+        val ext = PsiAugmentProvider.collectAugments(myClass, PsiField::class.java)
+        return ArrayUtil.mergeCollections(own, ext, PsiField.ARRAY_FACTORY)
+    }
+
+    private fun getAllMethods(): Array<PsiMethod> {
+        val own = myClass.ownMethods
+        val ext = PsiAugmentProvider.collectAugments(myClass, PsiMethod::class.java)
+        return ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY)
+    }
+
+    private fun getAllInnerClasses(): Array<PsiClass> {
+        val own = myClass.ownInnerClasses
+        val ext = PsiAugmentProvider.collectAugments(myClass, PsiClass::class.java)
+        return ArrayUtil.mergeCollections(own, ext, PsiClass.ARRAY_FACTORY)
+    }
+
+    private fun getFieldsMap(): Map<String, PsiField> {
+        val fields = this.fields
+        if (fields.isEmpty()) return emptyMap()
+
+        val cachedFields = THashMap<String, PsiField>()
+        for (field in fields) {
+            val name = field.name
             if (!cachedFields.containsKey(name)) {
-                cachedFields.put(name, field);
+                cachedFields[name] = field
             }
         }
-        return cachedFields;
+        return cachedFields
     }
 
-    @NotNull
-    private Map<String, PsiMethod[]> getMethodsMap() {
-        PsiMethod[] methods = getMethods();
-        if (methods.length == 0) return Collections.emptyMap();
+    private fun getMethodsMap(): Map<String, Array<PsiMethod>> {
+        val methods = this.methods
+        if (methods.isEmpty()) return emptyMap()
 
-        Map<String, List<PsiMethod>> collectedMethods = ContainerUtil.newHashMap();
-        for (PsiMethod method : methods) {
-            List<PsiMethod> list = collectedMethods.get(method.getName());
+        val collectedMethods = ContainerUtil.newHashMap<String, MutableList<PsiMethod>>()
+        for (method in methods) {
+            var list: MutableList<PsiMethod>? = collectedMethods[method.name]
             if (list == null) {
-                collectedMethods.put(method.getName(), list = ContainerUtil.newSmartList());
+                list = ContainerUtil.newSmartList()
+                collectedMethods[method.name] = list
             }
-            list.add(method);
+            list.add(method)
         }
 
-        Map<String, PsiMethod[]> cachedMethods = ContainerUtil.newTroveMap();
-        for (Map.Entry<String, List<PsiMethod>> entry : collectedMethods.entrySet()) {
-            List<PsiMethod> list = entry.getValue();
-            cachedMethods.put(entry.getKey(), list.toArray(PsiMethod.EMPTY_ARRAY));
+        val cachedMethods = ContainerUtil.newTroveMap<String, Array<PsiMethod>>()
+        for ((key, list) in collectedMethods) {
+            cachedMethods[key] = list.toTypedArray()
         }
-        return cachedMethods;
+        return cachedMethods
     }
 
-    @NotNull
-    private Map<String, PsiClass> getInnerClassesMap() {
-        PsiClass[] classes = getInnerClasses();
-        if (classes.length == 0) return Collections.emptyMap();
+    private fun getInnerClassesMap(): Map<String, PsiClass> {
+        val classes = this.innerClasses
+        if (classes.isEmpty()) return emptyMap()
 
-        Map<String, PsiClass> cachedInners = new THashMap<>();
-        for (PsiClass psiClass : classes) {
-            String name = psiClass.getName();
+        val cachedInners = THashMap<String, PsiClass>()
+        for (psiClass in classes) {
+            val name = psiClass.name
             if (name == null) {
-                Logger.getInstance(KotlinClassInnerStuffCache.class).error(psiClass);
-            }
-            else if (!(psiClass instanceof ExternallyDefinedPsiElement) || !cachedInners.containsKey(name)) {
-                cachedInners.put(name, psiClass);
-            }
-        }
-        return cachedInners;
-    }
-
-    private PsiMethod makeValuesMethod() {
-        return getSyntheticMethod("public static " + myClass.getName() + "[] values() { }");
-    }
-
-    private PsiMethod makeValueOfMethod() {
-        return getSyntheticMethod("public static " + myClass.getName() + " valueOf(java.lang.String name) throws java.lang.IllegalArgumentException { }");
-    }
-
-    private PsiMethod getSyntheticMethod(String text) {
-        PsiElementFactory factory = JavaPsiFacade.getElementFactory(myClass.getProject());
-        PsiMethod method = factory.createMethodFromText(text, myClass);
-        return new LightMethod(myClass.getManager(), method, myClass) {
-            @Override
-            public int getTextOffset() {
-                return myClass.getTextOffset();
-            }
-        };
-    }
-
-    public void dropCaches() {
-        myTracker.incModificationCount();
-    }
-
-    private static final String VALUES_METHOD = "values";
-    private static final String VALUE_OF_METHOD = "valueOf";
-
-    // Copy of PsiClassImplUtil.processDeclarationsInEnum for own cache class
-    public static boolean processDeclarationsInEnum(@NotNull PsiScopeProcessor processor,
-            @NotNull ResolveState state,
-            @NotNull KotlinClassInnerStuffCache innerStuffCache) {
-        ElementClassHint classHint = processor.getHint(ElementClassHint.KEY);
-        if (classHint == null || classHint.shouldProcess(ElementClassHint.DeclarationKind.METHOD)) {
-            NameHint nameHint = processor.getHint(NameHint.KEY);
-            if (nameHint == null || VALUES_METHOD.equals(nameHint.getName(state))) {
-                PsiMethod method = innerStuffCache.getValuesMethod();
-                if (method != null && !processor.execute(method, ResolveState.initial())) return false;
-            }
-            if (nameHint == null || VALUE_OF_METHOD.equals(nameHint.getName(state))) {
-                PsiMethod method = innerStuffCache.getValueOfMethod();
-                if (method != null && !processor.execute(method, ResolveState.initial())) return false;
+                Logger.getInstance(KotlinClassInnerStuffCache::class.java).error(psiClass)
+            } else if (psiClass !is ExternallyDefinedPsiElement || !cachedInners.containsKey(name)) {
+                cachedInners[name] = psiClass
             }
         }
+        return cachedInners
+    }
 
-        return true;
+    private fun makeValuesMethod(): PsiMethod {
+        return getSyntheticMethod("public static " + myClass.name + "[] values() { }")
+    }
+
+    private fun makeValueOfMethod(): PsiMethod {
+        return getSyntheticMethod("public static " + myClass.name + " valueOf(java.lang.String name) throws java.lang.IllegalArgumentException { }")
+    }
+
+    private fun getSyntheticMethod(text: String): PsiMethod {
+        val factory = JavaPsiFacade.getElementFactory(myClass.project)
+        val method = factory.createMethodFromText(text, myClass)
+        return object : LightMethod(myClass.manager, method, myClass) {
+            override fun getTextOffset(): Int {
+                return myClass.textOffset
+            }
+        }
+    }
+
+    fun dropCaches() {
+        myTracker.incModificationCount()
+    }
+
+    companion object {
+        private const val VALUES_METHOD = "values"
+        private const val VALUE_OF_METHOD = "valueOf"
+
+        // Copy of PsiClassImplUtil.processDeclarationsInEnum for own cache class
+        @JvmStatic
+        fun processDeclarationsInEnum(
+            processor: PsiScopeProcessor,
+            state: ResolveState,
+            innerStuffCache: KotlinClassInnerStuffCache
+        ): Boolean {
+            val classHint = processor.getHint(ElementClassHint.KEY)
+            if (classHint == null || classHint.shouldProcess(ElementClassHint.DeclarationKind.METHOD)) {
+                val nameHint = processor.getHint(NameHint.KEY)
+                if (nameHint == null || VALUES_METHOD == nameHint.getName(state)) {
+                    val method = innerStuffCache.getValuesMethod()
+                    if (method != null && !processor.execute(method, ResolveState.initial())) return false
+                }
+                if (nameHint == null || VALUE_OF_METHOD == nameHint.getName(state)) {
+                    val method = innerStuffCache.getValueOfMethod()
+                    if (method != null && !processor.execute(method, ResolveState.initial())) return false
+                }
+            }
+
+            return true
+        }
     }
 }
