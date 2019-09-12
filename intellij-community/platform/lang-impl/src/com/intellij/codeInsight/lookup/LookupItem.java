@@ -1,9 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.lookup;
 
-import com.intellij.codeInsight.CharTailType;
-import com.intellij.codeInsight.TailType;
+import com.intellij.codeInsight.*;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.impl.ElementLookupRenderer;
@@ -193,9 +192,9 @@ public class LookupItem<T> extends MutableLookupElement<T> implements Comparable
   public static TailType getDefaultTailType(final char completionChar) {
     switch(completionChar){
       case '.': return new CharTailType('.', false);
-      case ',': return TailType.COMMA;
+      case ',': return CommaTailType.INSTANCE;
       case ';': return TailType.SEMICOLON;
-      case '=': return TailType.EQ;
+      case '=': return EqTailType.INSTANCE;
       case ' ': return TailType.SPACE;
       case ':': return TailType.CASE_COLON; //?
     }

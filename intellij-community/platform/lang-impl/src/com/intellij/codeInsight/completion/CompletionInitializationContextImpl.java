@@ -4,6 +4,7 @@ package com.intellij.codeInsight.completion;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,7 +17,7 @@ class CompletionInitializationContextImpl extends CompletionInitializationContex
                                              @NotNull Caret caret,
                                              PsiFile file,
                                              CompletionType completionType, int invocationCount) {
-    super(editor, caret, file, completionType, invocationCount);
+    super(editor, caret, PsiUtilBase.getLanguageInEditor(editor, file.getProject()), file, completionType, invocationCount);
     myHostOffsets = new OffsetsInFile(file, getOffsetMap()).toTopLevelFile();
   }
 

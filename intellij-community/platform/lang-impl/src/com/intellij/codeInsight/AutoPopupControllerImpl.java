@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.codeInsight;
 
 import com.intellij.codeInsight.completion.CompletionPhase;
@@ -10,7 +9,6 @@ import com.intellij.codeInsight.editorActions.CompletionAutoPopupHandler;
 import com.intellij.codeInsight.hint.ShowParameterInfoHandler;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.PowerSaveMode;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -22,7 +20,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -38,35 +35,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
 
-public class AutoPopupController implements Disposable {
-  /**
-   * Settings this user data key to the editor with a completion provider
-   * makes the autopopup scheduling ignore the state of the corresponding setting.
-   * <p/>
-   * This doesn't affect other conditions when autopopup is not possible (e.g. power save mode).
-   */
-  public static final Key<Boolean> ALWAYS_AUTO_POPUP = Key.create("Always Show Completion Auto-Popup");
-  /**
-   * If editor has Boolean.TRUE by this key completion popup would be shown without advertising text at the bottom.
-   */
-  public static final Key<Boolean> NO_ADS = Key.create("Show Completion Auto-Popup without Ads");
-
-  /**
-   * If editor has Boolean.TRUE by this key completion popup would be shown every time when editor gets focus.
-   * For example this key can be used for TextFieldWithAutoCompletion.
-   * (TextFieldWithAutoCompletion looks like standard JTextField and completion shortcut is not obvious to be active)
-   */
-  public static final Key<Boolean> AUTO_POPUP_ON_FOCUS_GAINED = Key.create("Show Completion Auto-Popup On Focus Gained");
-
-
+public class AutoPopupControllerImpl extends AutoPopupController {
   private final Project myProject;
   private final Alarm myAlarm = new Alarm(this);
 
-  public static AutoPopupController getInstance(@NotNull Project project) {
-    return project.getService(AutoPopupController.class);
-  }
-
-  public AutoPopupController(Project project) {
+  public AutoPopupControllerImpl(Project project) {
     myProject = project;
     setupListeners();
   }
@@ -87,14 +60,17 @@ public class AutoPopupController implements Disposable {
     IdeEventQueue.getInstance().addActivityListener(this::cancelAllRequests, this);
   }
 
+  @Override
   public void autoPopupMemberLookup(final Editor editor, @Nullable final Condition<? super PsiFile> condition){
     autoPopupMemberLookup(editor, CompletionType.BASIC, condition);
   }
 
+  @Override
   public void autoPopupMemberLookup(final Editor editor, CompletionType completionType, @Nullable final Condition<? super PsiFile> condition){
     scheduleAutoPopup(editor, completionType, condition);
   }
 
+  @Override
   public void scheduleAutoPopup(@NotNull Editor editor, @NotNull CompletionType completionType, @Nullable final Condition<? super PsiFile> condition) {
     if (ApplicationManager.getApplication().isUnitTestMode() && !TestModeFlags.is(CompletionAutoPopupHandler.ourTestingAutopopup)) {
       return;
@@ -120,6 +96,7 @@ public class AutoPopupController implements Disposable {
     CompletionPhase.CommittingDocuments.scheduleAsyncCompletion(editor, completionType, condition, myProject, null);
   }
 
+  @Override
   public void scheduleAutoPopup(final Editor editor) {
     scheduleAutoPopup(editor, CompletionType.BASIC, null);
   }
@@ -135,10 +112,12 @@ public class AutoPopupController implements Disposable {
     }
   }
 
+  @Override
   public void cancelAllRequests() {
     myAlarm.cancelAllRequests();
   }
 
+  @Override
   public void autoPopupParameterInfo(@NotNull final Editor editor, @Nullable final PsiElement highlightedMethod){
     if (DumbService.isDumb(myProject)) return;
     if (PowerSaveMode.isEnabled()) return;
@@ -178,14 +157,7 @@ public class AutoPopupController implements Disposable {
   public void dispose() {
   }
 
-  /**
-   * @deprecated can be emulated with {@link AppUIExecutor}
-   */
-  @Deprecated
-  public static void runTransactionWithEverythingCommitted(@NotNull final Project project, @NotNull final Runnable runnable) {
-    AppUIExecutor.onUiThread().later().withDocumentsCommitted(project).inTransaction(project).execute(runnable);
-  }
-
+  @Override
   @TestOnly
   public void waitForDelayedActions(long timeout, @NotNull TimeUnit unit) throws TimeoutException {
     long deadline = System.currentTimeMillis() + unit.toMillis(timeout);
@@ -195,5 +167,13 @@ public class AutoPopupController implements Disposable {
       UIUtil.dispatchAllInvocationEvents();
     }
     throw new TimeoutException();
+  }
+
+  /**
+   * @deprecated can be emulated with {@link AppUIExecutor}
+   */
+  @Deprecated
+  public static void runTransactionWithEverythingCommitted(@NotNull final Project project, @NotNull final Runnable runnable) {
+    AppUIExecutor.onUiThread().later().withDocumentsCommitted(project).inTransaction(project).execute(runnable);
   }
 }

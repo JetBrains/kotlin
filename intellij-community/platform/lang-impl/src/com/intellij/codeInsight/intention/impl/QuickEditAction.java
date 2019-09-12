@@ -52,9 +52,8 @@ import java.util.List;
  * @author Gregory Shrago
  * @author Konstantin Bulenkov
  */
-public class QuickEditAction implements IntentionAction, LowPriorityAction {
+public class QuickEditAction extends QuickEditActionKeys implements IntentionAction, LowPriorityAction {
   public static final Key<QuickEditHandler> QUICK_EDIT_HANDLER = Key.create("QUICK_EDIT_HANDLER");
-  public static final Key<Boolean> EDIT_ACTION_AVAILABLE = Key.create("EDIT_ACTION_AVAILABLE");
   private String myLastLanguageName;
 
   @Override

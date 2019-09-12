@@ -200,41 +200,6 @@ public class CompletionUtil {
     return element == null ? psi : element;
   }
 
-  /**
-   * Filters _names for strings that match given matcher and sorts them.
-   * "Start matching" items go first, then others.
-   * Within both groups names are sorted lexicographically in a case-insensitive way.
-   */
-  public static LinkedHashSet<String> sortMatching(final PrefixMatcher matcher, Collection<String> _names) {
-    ProgressManager.checkCanceled();
-    if (matcher.getPrefix().isEmpty()) {
-      return new LinkedHashSet<>(_names);
-    }
-
-    List<String> sorted = new ArrayList<>();
-    for (String name : _names) {
-      if (matcher.prefixMatches(name)) {
-        sorted.add(name);
-      }
-    }
-
-    ProgressManager.checkCanceled();
-    Collections.sort(sorted, String.CASE_INSENSITIVE_ORDER);
-    ProgressManager.checkCanceled();
-
-    LinkedHashSet<String> result = new LinkedHashSet<>();
-    for (String name : sorted) {
-      if (matcher.isStartMatch(name)) {
-        result.add(name);
-      }
-    }
-
-    ProgressManager.checkCanceled();
-
-    result.addAll(sorted);
-    return result;
-  }
-
   public static Iterable<String> iterateLookupStrings(@NotNull final LookupElement element) {
     return new Iterable<String>() {
       @NotNull

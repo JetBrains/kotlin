@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.editorActions;
 
 import com.intellij.codeInsight.AutoPopupController;
+import com.intellij.codeInsight.AutoPopupControllerImpl;
 import com.intellij.codeInsight.completion.impl.CompletionServiceImpl;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
@@ -53,6 +54,6 @@ public class CompletionAutoPopupHandler extends TypedHandlerDelegate {
    */
   @Deprecated
   public static void runLaterWithCommitted(@NotNull final Project project, final Document document, @NotNull final Runnable runnable) {
-    AutoPopupController.runTransactionWithEverythingCommitted(project, runnable);
+    AutoPopupControllerImpl.runTransactionWithEverythingCommitted(project, runnable);
   }
 }

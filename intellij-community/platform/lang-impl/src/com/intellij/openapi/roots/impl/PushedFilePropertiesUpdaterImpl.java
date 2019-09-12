@@ -106,6 +106,11 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   }
 
   @Override
+  public void runConcurrentlyIfPossible(List<Runnable> tasks) {
+      invokeConcurrentlyIfPossible(tasks);
+  }
+
+  @Override
   public void initializeProperties() {
     for (FilePropertyPusher<?> pusher : FilePropertyPusher.EP_NAME.getExtensionList()) {
       pusher.initExtra(myProject, myProject.getMessageBus(), new FilePropertyPusher.Engine() {
