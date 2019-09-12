@@ -6,7 +6,7 @@ fun some(a: Int, b: Int) {
             if (b > 100) {
                 101 + j
             } else {
-                <info descr="null">~102</info> * j
+                ~102 * j
             }
         } else {
             return@run false
