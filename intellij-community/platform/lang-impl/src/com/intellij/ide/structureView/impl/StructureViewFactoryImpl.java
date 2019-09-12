@@ -1,5 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.structureView.impl;
 
 import com.intellij.ide.impl.StructureViewWrapperImpl;
@@ -24,10 +23,6 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.Collection;
 import java.util.Collections;
-
-/**
- * @author Eugene Belyaev
- */
 
 @State(name = "StructureViewFactory", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public final class StructureViewFactoryImpl extends StructureViewFactoryEx implements PersistentStateComponent<StructureViewFactoryImpl.State> {
