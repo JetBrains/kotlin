@@ -79,7 +79,7 @@ message IrFile {
   repeated UniqId declaration_id = 1;
   required FileEntry file_entry = 2;
   repeated int32 fq_name = 3;
-  required Annotations annotations = 4;
+  repeated IrConstructorCall annotation = 4;
   repeated int32 explicitly_exported_to_compiler = 5;
 }
 
@@ -123,10 +123,6 @@ enum IrTypeVariance { // Should we import metadata variance, or better stay sepa
                       INV = 2;
 }
 
-message Annotations {
-  repeated IrConstructorCall annotation = 1;
-}
-
 message TypeArguments {
   repeated int32 type_argument = 1;
 }
@@ -148,7 +144,7 @@ message IrTypeArgument {
 }
 
 message IrSimpleType {
-  required Annotations annotations = 1;
+  repeated IrConstructorCall annotation = 1;
   required int32 classifier = 2;
   required bool has_question_mark = 3;
   repeated IrTypeArgument argument = 4;
@@ -156,18 +152,18 @@ message IrSimpleType {
 }
 
 message IrTypeAbbreviation {
-  required Annotations annotations = 1;
+  repeated IrConstructorCall annotation = 1;
   required int32 type_alias = 2;
   required bool has_question_mark = 3;
   repeated IrTypeArgument argument = 4;
 }
 
 message IrDynamicType {
-  required Annotations annotations = 1;
+  repeated IrConstructorCall annotation = 1;
 }
 
 message IrErrorType {
-  required Annotations annotations = 1;
+  repeated IrConstructorCall annotation = 1;
 }
 
 message IrType {
@@ -508,7 +504,7 @@ message IrDeclarationBase {
   required int32 symbol = 1;
   required IrDeclarationOrigin origin = 2;
   required Coordinates coordinates = 3;
-  required Annotations annotations = 4;
+  repeated IrConstructorCall annotation = 4;
 }
 
 message IrFunctionBase {

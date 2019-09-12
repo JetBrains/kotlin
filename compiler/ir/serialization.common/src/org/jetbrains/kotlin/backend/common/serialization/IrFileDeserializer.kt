@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.backend.common.serialization.proto.Annotations as ProtoAnnotations
 import org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind as ProtoClassKind
 import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
@@ -180,8 +179,8 @@ abstract class IrFileDeserializer(
 
     }
 
-    fun deserializeAnnotations(annotations: ProtoAnnotations): List<IrConstructorCall> {
-        return annotations.annotationList.map {
+    fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrConstructorCall> {
+        return annotations.map {
             deserializeConstructorCall(it, 0, 0, builtIns.unitType) // TODO: need a proper deserialization here
         }
     }
@@ -192,7 +191,7 @@ abstract class IrFileDeserializer(
         logger.log { "deserializeSimpleType: symbol=$symbol" }
 
         val arguments = proto.argumentList.map { deserializeIrTypeArgument(it) }
-        val annotations = deserializeAnnotations(proto.annotations)
+        val annotations = deserializeAnnotations(proto.annotationList)
 
         val result: IrSimpleType = IrSimpleTypeImpl(
             null,
@@ -215,16 +214,16 @@ abstract class IrFileDeserializer(
             },
             proto.hasQuestionMark,
             proto.argumentList.map { deserializeIrTypeArgument(it) },
-            deserializeAnnotations(proto.annotations)
+            deserializeAnnotations(proto.annotationList)
         )
 
     private fun deserializeDynamicType(proto: ProtoDynamicType): IrDynamicType {
-        val annotations = deserializeAnnotations(proto.annotations)
+        val annotations = deserializeAnnotations(proto.annotationList)
         return IrDynamicTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
     private fun deserializeErrorType(proto: ProtoErrorType): IrErrorType {
-        val annotations = deserializeAnnotations(proto.annotations)
+        val annotations = deserializeAnnotations(proto.annotationList)
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
@@ -912,7 +911,7 @@ abstract class IrFileDeserializer(
             proto.coordinates.startOffset, proto.coordinates.endOffset,
             deserializeIrDeclarationOrigin(proto.origin)
         )
-        result.annotations.addAll(deserializeAnnotations(proto.annotations))
+        result.annotations.addAll(deserializeAnnotations(proto.annotationList))
         result.parent = parentsStack.peek()!!
         return result
     }

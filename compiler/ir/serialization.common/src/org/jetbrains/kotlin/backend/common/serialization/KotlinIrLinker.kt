@@ -132,7 +132,7 @@ abstract class KotlinIrLinker(
         // This is a heavy initializer
         val module = deserializeIrModuleHeader()
 
-        inner class IrDeserializerForFile(private var annotationsProto: ProtoAnnotations?, private val fileIndex: Int, onlyHeaders: Boolean) :
+        inner class IrDeserializerForFile(private var annotations: List<ProtoConstructorCall>?, private val fileIndex: Int, onlyHeaders: Boolean) :
             IrFileDeserializer(logger, builtIns, symbolTable) {
 
             private var fileLoops = mutableMapOf<Int, IrLoopBase>()
@@ -373,9 +373,9 @@ abstract class KotlinIrLinker(
             }
 
             fun deserializeFileAnnotationsIfFirstUse() {
-                annotationsProto?.let {
+                annotations?.let {
                     file.annotations.addAll(deserializeAnnotations(it))
-                    annotationsProto = null
+                    annotations = null
                 }
             }
 
@@ -396,7 +396,7 @@ abstract class KotlinIrLinker(
 
             val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
 
-            val fileDeserializer = IrDeserializerForFile(fileProto.annotations, fileIndex, !deserializationStrategy.needBodies)
+            val fileDeserializer = IrDeserializerForFile(fileProto.annotationList, fileIndex, !deserializationStrategy.needBodies)
 
             val fqName = fileDeserializer.deserializeFqName(fileProto.fqNameList)
 

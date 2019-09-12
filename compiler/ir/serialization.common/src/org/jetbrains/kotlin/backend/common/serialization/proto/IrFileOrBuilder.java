@@ -44,21 +44,18 @@ public interface IrFileOrBuilder extends
   int getFqName(int index);
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
-   *
-   * <pre>
-   *  required FqName fq_name = 3;
-   * </pre>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
    */
-  boolean hasAnnotations();
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
-   *
-   * <pre>
-   *  required FqName fq_name = 3;
-   * </pre>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
 
   /**
    * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>

@@ -54,25 +54,20 @@ public final class IrTypeAbbreviation extends
             break;
           }
           case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = annotations_.toBuilder();
+            if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+              annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall>();
+              mutable_bitField0_ |= 0x00000001;
             }
-            annotations_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(annotations_);
-              annotations_ = subBuilder.buildPartial();
-            }
-            bitField0_ |= 0x00000001;
+            annotation_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.PARSER, extensionRegistry));
             break;
           }
           case 16: {
-            bitField0_ |= 0x00000002;
+            bitField0_ |= 0x00000001;
             typeAlias_ = input.readInt32();
             break;
           }
           case 24: {
-            bitField0_ |= 0x00000004;
+            bitField0_ |= 0x00000002;
             hasQuestionMark_ = input.readBool();
             break;
           }
@@ -92,6 +87,9 @@ public final class IrTypeAbbreviation extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+        annotation_ = java.util.Collections.unmodifiableList(annotation_);
+      }
       if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
         argument_ = java.util.Collections.unmodifiableList(argument_);
       }
@@ -121,19 +119,39 @@ public final class IrTypeAbbreviation extends
   }
 
   private int bitField0_;
-  public static final int ANNOTATIONS_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations_;
+  public static final int ANNOTATION_FIELD_NUMBER = 1;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> annotation_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
    */
-  public boolean hasAnnotations() {
-    return ((bitField0_ & 0x00000001) == 0x00000001);
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> getAnnotationList() {
+    return annotation_;
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations() {
-    return annotations_;
+  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder> 
+      getAnnotationOrBuilderList() {
+    return annotation_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   */
+  public int getAnnotationCount() {
+    return annotation_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index) {
+    return annotation_.get(index);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder getAnnotationOrBuilder(
+      int index) {
+    return annotation_.get(index);
   }
 
   public static final int TYPE_ALIAS_FIELD_NUMBER = 2;
@@ -142,7 +160,7 @@ public final class IrTypeAbbreviation extends
    * <code>required int32 type_alias = 2;</code>
    */
   public boolean hasTypeAlias() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
+    return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
    * <code>required int32 type_alias = 2;</code>
@@ -157,7 +175,7 @@ public final class IrTypeAbbreviation extends
    * <code>required bool has_question_mark = 3;</code>
    */
   public boolean hasHasQuestionMark() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
+    return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
    * <code>required bool has_question_mark = 3;</code>
@@ -202,7 +220,7 @@ public final class IrTypeAbbreviation extends
   }
 
   private void initFields() {
-    annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
+    annotation_ = java.util.Collections.emptyList();
     typeAlias_ = 0;
     hasQuestionMark_ = false;
     argument_ = java.util.Collections.emptyList();
@@ -213,10 +231,6 @@ public final class IrTypeAbbreviation extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasAnnotations()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!hasTypeAlias()) {
       memoizedIsInitialized = 0;
       return false;
@@ -225,9 +239,11 @@ public final class IrTypeAbbreviation extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getAnnotations().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
+    for (int i = 0; i < getAnnotationCount(); i++) {
+      if (!getAnnotation(i).isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
     }
     for (int i = 0; i < getArgumentCount(); i++) {
       if (!getArgument(i).isInitialized()) {
@@ -242,13 +258,13 @@ public final class IrTypeAbbreviation extends
   public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     getSerializedSize();
-    if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeMessage(1, annotations_);
+    for (int i = 0; i < annotation_.size(); i++) {
+      output.writeMessage(1, annotation_.get(i));
     }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+    if (((bitField0_ & 0x00000001) == 0x00000001)) {
       output.writeInt32(2, typeAlias_);
     }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeBool(3, hasQuestionMark_);
     }
     for (int i = 0; i < argument_.size(); i++) {
@@ -263,15 +279,15 @@ public final class IrTypeAbbreviation extends
     if (size != -1) return size;
 
     size = 0;
-    if (((bitField0_ & 0x00000001) == 0x00000001)) {
+    for (int i = 0; i < annotation_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, annotations_);
+        .computeMessageSize(1, annotation_.get(i));
     }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+    if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(2, typeAlias_);
     }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(3, hasQuestionMark_);
     }
@@ -373,7 +389,7 @@ public final class IrTypeAbbreviation extends
 
     public Builder clear() {
       super.clear();
-      annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
+      annotation_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
       typeAlias_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -404,16 +420,17 @@ public final class IrTypeAbbreviation extends
       org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-        to_bitField0_ |= 0x00000001;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        annotation_ = java.util.Collections.unmodifiableList(annotation_);
+        bitField0_ = (bitField0_ & ~0x00000001);
       }
-      result.annotations_ = annotations_;
+      result.annotation_ = annotation_;
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-        to_bitField0_ |= 0x00000002;
+        to_bitField0_ |= 0x00000001;
       }
       result.typeAlias_ = typeAlias_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-        to_bitField0_ |= 0x00000004;
+        to_bitField0_ |= 0x00000002;
       }
       result.hasQuestionMark_ = hasQuestionMark_;
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
@@ -427,8 +444,15 @@ public final class IrTypeAbbreviation extends
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance()) return this;
-      if (other.hasAnnotations()) {
-        mergeAnnotations(other.getAnnotations());
+      if (!other.annotation_.isEmpty()) {
+        if (annotation_.isEmpty()) {
+          annotation_ = other.annotation_;
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          ensureAnnotationIsMutable();
+          annotation_.addAll(other.annotation_);
+        }
+        
       }
       if (other.hasTypeAlias()) {
         setTypeAlias(other.getTypeAlias());
@@ -452,10 +476,6 @@ public final class IrTypeAbbreviation extends
     }
 
     public final boolean isInitialized() {
-      if (!hasAnnotations()) {
-        
-        return false;
-      }
       if (!hasTypeAlias()) {
         
         return false;
@@ -464,9 +484,11 @@ public final class IrTypeAbbreviation extends
         
         return false;
       }
-      if (!getAnnotations().isInitialized()) {
-        
-        return false;
+      for (int i = 0; i < getAnnotationCount(); i++) {
+        if (!getAnnotation(i).isInitialized()) {
+          
+          return false;
+        }
       }
       for (int i = 0; i < getArgumentCount(); i++) {
         if (!getArgument(i).isInitialized()) {
@@ -496,63 +518,128 @@ public final class IrTypeAbbreviation extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> annotation_ =
+      java.util.Collections.emptyList();
+    private void ensureAnnotationIsMutable() {
+      if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+        annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall>(annotation_);
+        bitField0_ |= 0x00000001;
+       }
+    }
+
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
      */
-    public boolean hasAnnotations() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> getAnnotationList() {
+      return java.util.Collections.unmodifiableList(annotation_);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations() {
-      return annotations_;
+    public int getAnnotationCount() {
+      return annotation_.size();
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
      */
-    public Builder setAnnotations(org.jetbrains.kotlin.backend.common.serialization.proto.Annotations value) {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index) {
+      return annotation_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     */
+    public Builder setAnnotation(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
       if (value == null) {
         throw new NullPointerException();
       }
-      annotations_ = value;
+      ensureAnnotationIsMutable();
+      annotation_.set(index, value);
 
-      bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
      */
-    public Builder setAnnotations(
-        org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.Builder builderForValue) {
-      annotations_ = builderForValue.build();
+    public Builder setAnnotation(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+      ensureAnnotationIsMutable();
+      annotation_.set(index, builderForValue.build());
 
-      bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
      */
-    public Builder mergeAnnotations(org.jetbrains.kotlin.backend.common.serialization.proto.Annotations value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          annotations_ != org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance()) {
-        annotations_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.newBuilder(annotations_).mergeFrom(value).buildPartial();
-      } else {
-        annotations_ = value;
+    public Builder addAnnotation(org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
+      if (value == null) {
+        throw new NullPointerException();
       }
+      ensureAnnotationIsMutable();
+      annotation_.add(value);
 
-      bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
      */
-    public Builder clearAnnotations() {
-      annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
+    public Builder addAnnotation(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureAnnotationIsMutable();
+      annotation_.add(index, value);
 
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     */
+    public Builder addAnnotation(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+      ensureAnnotationIsMutable();
+      annotation_.add(builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     */
+    public Builder addAnnotation(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+      ensureAnnotationIsMutable();
+      annotation_.add(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     */
+    public Builder addAllAnnotation(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> values) {
+      ensureAnnotationIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, annotation_);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     */
+    public Builder clearAnnotation() {
+      annotation_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 1;</code>
+     */
+    public Builder removeAnnotation(int index) {
+      ensureAnnotationIsMutable();
+      annotation_.remove(index);
+
       return this;
     }
 
