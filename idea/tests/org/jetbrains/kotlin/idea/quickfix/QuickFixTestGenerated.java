@@ -3792,6 +3792,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funOnClassObject.kt");
                 }
 
+                @TestMetadata("funOnEnumClass.kt")
+                public void testFunOnEnumClass() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funOnEnumClass.kt");
+                }
+
+                @TestMetadata("funOnEnumClass2.kt")
+                public void testFunOnEnumClass2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funOnEnumClass2.kt");
+                }
+
                 @TestMetadata("funOnLibObject.kt")
                 public void testFunOnLibObject() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funOnLibObject.kt");
