@@ -26,8 +26,7 @@ object NewCommonSuperTypeCalculator {
 
     // TODO: Bridge for old calls
     fun commonSuperType(types: List<UnwrappedType>): UnwrappedType {
-        val ctx = object : ClassicTypeSystemContext {}
-        return ctx.commonSuperType(types) as UnwrappedType
+        return SimpleClassicTypeSystemContext.commonSuperType(types) as UnwrappedType
     }
 
     fun TypeSystemCommonSuperTypesContext.commonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker {
