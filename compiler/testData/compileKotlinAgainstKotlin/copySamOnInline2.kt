@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: A.kt
 // FULL_JDK
 
