@@ -102,7 +102,7 @@ public class TemplateState implements Disposable {
     myEditorDocumentListener = new DocumentListener() {
       @Override
       public void beforeDocumentChange(@NotNull DocumentEvent e) {
-        if (CommandProcessor.getInstance().getCurrentCommand() != null) {
+        if (CommandProcessor.getInstance().getCurrentCommand() != null && !UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
           myDocumentChanged = true;
         }
       }
@@ -138,13 +138,15 @@ public class TemplateState implements Disposable {
 
       @Override
       public void commandStarted(@NotNull CommandEvent event) {
-        myDocumentChangesTerminateTemplate = isCaretOutsideCurrentSegment(event.getCommandName());
-        started = true;
+        if (!UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
+          myDocumentChangesTerminateTemplate = isCaretOutsideCurrentSegment(event.getCommandName());
+          started = true;
+        }
       }
 
       @Override
       public void beforeCommandFinished(@NotNull CommandEvent event) {
-        if (started && !isDisposed()) {
+        if (started && !isDisposed() && !UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
           Runnable runnable = () -> afterChangedUpdate();
           final LookupImpl lookup = myEditor != null ? (LookupImpl)LookupManager.getActiveLookup(myEditor) : null;
           if (lookup != null) {
