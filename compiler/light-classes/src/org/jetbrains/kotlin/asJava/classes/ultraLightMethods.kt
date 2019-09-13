@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
@@ -92,6 +93,15 @@ internal abstract class KtUltraLightMethod(
     override fun getThrowsList(): PsiReferenceList = _throwsList
 
     abstract fun computeDescriptor(): FunctionDescriptor?
+
+    private val lazyTypeErasure = lazyPub {
+        computeDescriptor()
+            ?.getSpecialSignatureInfo()
+            ?.isObjectReplacedWithTypeParameter
+            ?: false
+    }
+
+    val checkNeedToErasureParametersTypes: Boolean by lazyTypeErasure
 
     override fun equals(other: Any?): Boolean = this === other
 

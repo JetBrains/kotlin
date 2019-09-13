@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -114,9 +115,13 @@ internal abstract class KtUltraLightParameter(
             kotlinType.asPsiType(support, TypeMappingMode.DEFAULT, this)
         } else {
             val containingDescriptor = computeContainingDescriptor() ?: return@lazyPub PsiType.NULL
-            support.mapType(this) { typeMapper, sw ->
+            val mappedType = support.mapType(this) { typeMapper, sw ->
                 typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
             }
+
+            if (method is KtUltraLightMethod && method.checkNeedToErasureParametersTypes)
+                TypeConversionUtil.erasure(mappedType)
+            else mappedType
         }
     }
 

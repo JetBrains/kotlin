@@ -100,30 +100,72 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun getModifierList(): PsiModifierList? = _modifierList
 
     private fun allSuperTypes() =
-        getDescriptor()?.typeConstructor?.supertypes.orEmpty().asSequence()
+        getDescriptor()?.typeConstructor?.supertypes.orEmpty()
 
-    private fun mapSupertype(supertype: KotlinType) =
-        supertype.asPsiType(support, TypeMappingMode.SUPER_TYPE, this) as? PsiClassType
+    private fun mapSupertype(supertype: KotlinType, kotlinCollectionAsIs: Boolean = false) =
+        supertype.asPsiType(
+            support,
+            if (kotlinCollectionAsIs) TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else TypeMappingMode.SUPER_TYPE,
+            this
+        ) as? PsiClassType
 
-    override fun createExtendsList(): PsiReferenceList? {
-        if (isAnnotationType) return KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.EXTENDS_LIST)
+    override fun createExtendsList(): PsiReferenceList? = createInheritanceList(forExtendsList = true)
 
-        if (tooComplex) return super.createExtendsList()
+    override fun createImplementsList(): PsiReferenceList? = createInheritanceList(forExtendsList = false)
 
-        return KotlinSuperTypeListBuilder(
-            kotlinOrigin.getSuperTypeList(),
-            manager,
-            language,
-            PsiReferenceList.Role.EXTENDS_LIST
-        ).also { list ->
-            allSuperTypes()
-                .filter(this::isTypeForExtendsList)
-                .map(this::mapSupertype)
-                .forEach(list::addReference)
+    private fun createInheritanceList(forExtendsList: Boolean): PsiReferenceList? {
+
+        val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
+
+        if (isAnnotationType) return KotlinLightReferenceListBuilder(manager, language, role)
+
+        if (tooComplex) return if (forExtendsList) super.createExtendsList() else super.createImplementsList()
+
+        val superTypes = allSuperTypes().filter {
+            isTypeForInheritanceList(it, forExtendsList)
+        }
+
+        val listBuilder = KotlinSuperTypeListBuilder(
+            kotlinOrigin = kotlinOrigin.getSuperTypeList(),
+            manager = manager,
+            language = language,
+            role = role
+        )
+
+        for (superType in superTypes) {
+            addTypeToTypeList(
+                listBuilder = listBuilder,
+                superType = superType
+            )
+        }
+
+        return listBuilder
+    }
+
+    private fun addTypeToTypeList(listBuilder: KotlinSuperTypeListBuilder, superType: KotlinType) {
+
+        val mappedType = mapSupertype(superType, kotlinCollectionAsIs = true) ?: return
+
+        listBuilder.addReference(mappedType)
+
+        if (mappedType.canonicalText.startsWith("kotlin.collections.")) {
+
+            val mappedToNoCollectionAsIs = mapSupertype(superType, kotlinCollectionAsIs = false)
+
+            if (mappedToNoCollectionAsIs !== null &&
+                mappedType.canonicalText != mappedToNoCollectionAsIs.canonicalText
+            ) {
+                //Add java supertype
+                listBuilder.addReference(mappedToNoCollectionAsIs)
+                //Add marker interface
+                superType.tryResolveMarkerInterfaceFQName()?.let { marker ->
+                    listBuilder.addReference(marker)
+                }
+            }
         }
     }
 
-    private fun isTypeForExtendsList(supertype: KotlinType): Boolean {
+    private fun isTypeForInheritanceList(supertype: KotlinType, forExtendsList: Boolean): Boolean {
         // Do not add redundant "extends java.lang.Object" anywhere
         if (supertype.isAnyOrNullableAny()) return false
 
@@ -131,30 +173,9 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         if (isEnum && KotlinBuiltIns.isEnum(supertype)) return false
 
         // Interfaces have only extends lists
-        if (isInterface) return true
+        if (isInterface) return forExtendsList
 
-        return !JvmCodegenUtil.isJvmInterface(supertype)
-    }
-
-    override fun createImplementsList(): PsiReferenceList? {
-
-        if (isAnnotationType) return KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.IMPLEMENTS_LIST)
-
-        if (tooComplex) return super.createImplementsList()
-
-        return KotlinSuperTypeListBuilder(
-            kotlinOrigin.getSuperTypeList(),
-            manager,
-            language,
-            PsiReferenceList.Role.IMPLEMENTS_LIST
-        ).also { list ->
-            if (!isInterface) {
-                allSuperTypes()
-                    .filter { JvmCodegenUtil.isJvmInterface(it) }
-                    .map(this::mapSupertype)
-                    .forEach(list::addReference)
-            }
-        }
+        return forExtendsList == !JvmCodegenUtil.isJvmInterface(supertype)
     }
 
     override fun buildTypeParameterList(): PsiTypeParameterList =
@@ -278,7 +299,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             for (declaration in companion.declarations.filterNot { isHiddenByDeprecation(it) }) {
                 when (declaration) {
                     is KtNamedFunction ->
-                        if (isJvmStatic(declaration)) result.addAll(membersBuilder.createMethods(declaration,forceStatic = true))
+                        if (isJvmStatic(declaration)) result.addAll(membersBuilder.createMethods(declaration, forceStatic = true))
                     is KtProperty -> result.addAll(
                         membersBuilder.propertyAccessors(
                             declaration,
