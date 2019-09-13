@@ -1110,7 +1110,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
             projectDir.resolve("src/commonMain/kotlin/PackageMain.kt").modify {
                 // Remove usages of the ":exported" dependency to be able to compile the sources.
-                it.replace("import com.example.exported", "").replace("val exp = exported()", "val exp = 42")
+                it.checkedReplace("import com.example.exported", "").checkedReplace("val exp = exported()", "val exp = 42")
             }
             build("linkReleaseFrameworkIos") {
                 assertFailed()

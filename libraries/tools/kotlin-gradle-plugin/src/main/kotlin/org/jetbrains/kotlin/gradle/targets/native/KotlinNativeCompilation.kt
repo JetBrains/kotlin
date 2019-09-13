@@ -71,11 +71,11 @@ class KotlinNativeCompilation(
             extraOptsNoWarn = value
         }
 
-    @Deprecated("Use kotlinOptions.freeCompilerArgs instead", ReplaceWith("kotlinOptions.freeCompilerArgs"))
+    @Deprecated("Use kotlinOptions.freeCompilerArgs instead", ReplaceWith("kotlinOptions.freeCompilerArgs += values as Array<String>"))
     @Suppress("Deprecation")
     fun extraOpts(vararg values: Any) = extraOpts(values.toList())
 
-    @Deprecated("Use kotlinOptions.freeCompilerArgs instead", ReplaceWith("kotlinOptions.freeCompilerArgs"))
+    @Deprecated("Use kotlinOptions.freeCompilerArgs instead", ReplaceWith("kotlinOptions.freeCompilerArgs += values as List<String>"))
     @Suppress("Deprecation")
     fun extraOpts(values: List<Any>) {
         extraOpts.addAll(values.map { it.toString() })

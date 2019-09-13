@@ -131,12 +131,12 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
     abstract val additionalCompilerOptions: Collection<String>
 
     @get:Internal
-    val languageSettings: LanguageSettingsBuilder?
-        get() = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
+    val languageSettings: LanguageSettingsBuilder
+        get() = compilation.defaultSourceSet.languageSettings
 
     @get:Input
     val progressiveMode: Boolean
-        get() = languageSettings?.progressiveMode ?: false
+        get() = languageSettings.progressiveMode
     // endregion.
 
     val kotlinNativeVersion: String
@@ -275,27 +275,27 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
 
     // region Language settings imported from a SourceSet.
     val languageVersion: String?
-        @Optional @Input get() = languageSettings?.languageVersion
+        @Optional @Input get() = languageSettings.languageVersion
 
     val apiVersion: String?
-        @Optional @Input get() = languageSettings?.apiVersion
+        @Optional @Input get() = languageSettings.apiVersion
 
     val enabledLanguageFeatures: Set<String>
-        @Input get() = languageSettings?.enabledLanguageFeatures ?: emptySet()
+        @Input get() = languageSettings.enabledLanguageFeatures
 
     val experimentalAnnotationsInUse: Set<String>
-        @Input get() = languageSettings?.experimentalAnnotationsInUse.orEmpty()
+        @Input get() = languageSettings.experimentalAnnotationsInUse
     // endregion.
 
     // region Kotlin options.
     private inner class NativeCompileOptions : KotlinCommonOptions {
         override var apiVersion: String?
-            get() = languageSettings?.apiVersion
-            set(value) { languageSettings!!.apiVersion = value }
+            get() = languageSettings.apiVersion
+            set(value) { languageSettings.apiVersion = value }
 
         override var languageVersion: String?
             get() = this@KotlinNativeCompile.languageVersion
-            set(value) { languageSettings!!.languageVersion = value }
+            set(value) { languageSettings.languageVersion = value }
 
         override var allWarningsAsErrors: Boolean = false
         override var suppressWarnings: Boolean = false
@@ -437,22 +437,22 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     @get:Optional
     @get:Input
     val languageVersion: String?
-        get() = languageSettings?.languageVersion?.takeIf { linkFromSources }
+        get() = languageSettings.languageVersion.takeIf { linkFromSources }
 
     @get:Optional
     @get:Input
     val apiVersion: String?
-        get() = languageSettings?.apiVersion?.takeIf { linkFromSources }
+        get() = languageSettings.apiVersion.takeIf { linkFromSources }
 
     @get:Optional
     @get:Input
     val enabledLanguageFeatures: Set<String>?
-        get() = languageSettings?.enabledLanguageFeatures?.takeIf { linkFromSources }
+        get() = languageSettings.enabledLanguageFeatures.takeIf { linkFromSources }
 
     @get:Optional
     @get:Input
     val experimentalAnnotationsInUse: Set<String>?
-        get() = languageSettings?.experimentalAnnotationsInUse?.takeIf { linkFromSources }
+        get() = languageSettings.experimentalAnnotationsInUse.takeIf { linkFromSources }
     // endregion.
 
     // Binary-specific options.
@@ -515,7 +515,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
         // Allow a user to force the old behaviour of a link task.
         // TODO: Remove in 1.3.70.
         if (!linkFromSources) {
-            languageSettings?.let {
+            languageSettings.let {
                 addArgIfNotNull("-language-version", it.languageVersion)
                 addArgIfNotNull("-api-version", it.apiVersion)
                 it.enabledLanguageFeatures.forEach { featureName ->
