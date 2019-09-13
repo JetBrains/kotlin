@@ -11,7 +11,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.io.FileUtil
 import javax.swing.Icon
 
-abstract class RunAnythingContext(val label: String, var description: String = "", val icon: Icon? = null) {
+sealed class RunAnythingContext(val label: String, var description: String = "", val icon: Icon? = null) {
   data class ProjectContext(val project: Project) :
     RunAnythingContext(IdeBundle.message("run.anything.context.project"), project.basePath.orEmpty())
 
