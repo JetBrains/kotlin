@@ -7,15 +7,15 @@
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.lightClassApplicabilityCheckExtension"
-                        interface="org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension"
-                        area="IDEA_PROJECT"/>
-
         <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
                         interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
                         interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.lightClassApplicabilityCheckExtension"
+                        interface="org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension"
+                        area="IDEA_PROJECT"/>
 
         <extensionPoint name="scratchFileLanguageProvider" beanClass="com.intellij.lang.LanguageExtensionPoint">
             <with attribute="implementationClass" implements="org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider"/>

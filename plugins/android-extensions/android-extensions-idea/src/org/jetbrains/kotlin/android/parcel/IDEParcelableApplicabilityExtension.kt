@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.android.parcel
 
+import org.jetbrains.kotlin.util.isAnnotated
+import org.jetbrains.kotlin.util.isOrdinaryClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension
@@ -12,16 +14,6 @@ import org.jetbrains.kotlin.extensions.LightClassApplicabilityType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityType.LightClass
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityType.UltraLightClass
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-
-private val KtDeclaration.isOrdinaryClass
-    get() = this is KtClass &&
-            !this.hasModifier(KtTokens.INLINE_KEYWORD) &&
-            !this.isAnnotation() &&
-            !this.isInterface()
-
-private val KtDeclaration.isAnnotated get() = this.annotationEntries.isNotEmpty()
 
 class IDEParcelableApplicabilityExtension : LightClassApplicabilityCheckExtension {
 

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlinx.serialization.idea
 
-import org.jetbrains.kotlin.annotation.plugin.ide.isAnnotated
-import org.jetbrains.kotlin.annotation.plugin.ide.isOrdinaryClass
+import org.jetbrains.kotlin.util.isAnnotated
+import org.jetbrains.kotlin.util.isOrdinaryClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension

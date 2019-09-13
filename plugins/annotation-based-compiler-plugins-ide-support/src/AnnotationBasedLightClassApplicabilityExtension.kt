@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.annotation.plugin.ide
 
+import org.jetbrains.kotlin.util.isAnnotated
+import org.jetbrains.kotlin.util.isOrdinaryClass
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor

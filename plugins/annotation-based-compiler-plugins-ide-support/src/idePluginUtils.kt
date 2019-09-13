@@ -71,11 +71,3 @@ internal fun modifyCompilerArgumentsForPlugin(
 
     facetSettings.compilerArguments = commonArguments
 }
-
-val KtDeclaration.isOrdinaryClass
-    get() = this is KtClass &&
-            !this.hasModifier(KtTokens.INLINE_KEYWORD) &&
-            !this.isAnnotation() &&
-            !this.isInterface()
-
-val KtDeclaration.isAnnotated get() = this.annotationEntries.isNotEmpty()

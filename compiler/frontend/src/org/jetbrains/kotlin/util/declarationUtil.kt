@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -17,3 +19,11 @@ fun KtElement.containingNonLocalDeclaration(): KtDeclaration? {
     }
     return container
 }
+
+val KtDeclaration.isOrdinaryClass
+    get() = this is KtClass &&
+            !this.hasModifier(KtTokens.INLINE_KEYWORD) &&
+            !this.isAnnotation() &&
+            !this.isInterface()
+
+val KtDeclaration.isAnnotated get() = this.annotationEntries.isNotEmpty()
