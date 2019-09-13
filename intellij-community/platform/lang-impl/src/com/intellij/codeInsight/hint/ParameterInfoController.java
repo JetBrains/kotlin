@@ -146,8 +146,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Visib
     myEditorCaretListener = new CaretListener(){
       @Override
       public void caretPositionChanged(@NotNull CaretEvent e) {
-        UndoManager undoManager = UndoManager.getInstance(myProject);
-        if (!undoManager.isUndoInProgress() && !undoManager.isRedoInProgress()) {
+        if (!UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
           syncUpdateOnCaretMove();
           rescheduleUpdate();
         }

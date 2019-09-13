@@ -216,9 +216,7 @@ public class QuickEditHandler implements Disposable, DocumentListener {
 
   @Override
   public void documentChanged(@NotNull DocumentEvent e) {
-    UndoManager undoManager = UndoManager.getInstance(myProject);
-    boolean undoOrRedo = undoManager.isUndoInProgress() || undoManager.isRedoInProgress();
-    if (undoOrRedo) {
+    if (UndoManager.getInstance(myProject).isUndoOrRedoInProgress()) {
       // allow undo/redo up until 'creation stamp' back in time
       // and check it after action is completed
       if (e.getDocument() == myOrigDocument) {
