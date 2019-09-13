@@ -315,9 +315,8 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
 
     FileStatusMap fileStatusMap = getFileStatusMap();
 
-    Map<FileEditor, HighlightingPass[]> map = new HashMap<>();
-
     NonBlockingReadActionImpl.waitForAsyncTaskCompletion(); // wait for async editor loading
+    Map<FileEditor, HighlightingPass[]> map = new HashMap<>();
     for (TextEditor textEditor : textEditors) {
       TextEditorBackgroundHighlighter highlighter = (TextEditorBackgroundHighlighter)textEditor.getBackgroundHighlighter();
       if (highlighter == null) {
@@ -678,9 +677,9 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
   }
 
   @NotNull
-  public static List<LineMarkerInfo> getLineMarkers(@NotNull Document document, @NotNull Project project) {
+  public static List<LineMarkerInfo<?>> getLineMarkers(@NotNull Document document, @NotNull Project project) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    List<LineMarkerInfo> result = new ArrayList<>();
+    List<LineMarkerInfo<?>> result = new ArrayList<>();
     LineMarkersUtil.processLineMarkers(project, document, new TextRange(0, document.getTextLength()), -1,
                                        new CommonProcessors.CollectProcessor<>(result));
     return result;
@@ -906,7 +905,7 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
   }
 
   @TestOnly
-  private static void wrap(@NotNull ThrowableRunnable runnable) {
+  private static void wrap(@NotNull ThrowableRunnable<?> runnable) {
     try {
       runnable.run();
     }
