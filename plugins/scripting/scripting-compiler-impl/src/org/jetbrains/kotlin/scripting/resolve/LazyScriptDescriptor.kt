@@ -94,12 +94,6 @@ class LazyScriptDescriptor(
         // TODO: implement robust REPL/script selection
         val replSnippetId =
             scriptInfo.script.getUserData(ScriptPriorities.PRIORITY_KEY)?.toString()
-                ?: run {
-                    val scriptName = name.asString()
-                    if (scriptName.startsWith("Line_"))
-                        scriptName.split("_")[1]
-                    else null
-                }
         return if (replSnippetId != null) {
             // assuming repl
             scriptCompilationConfiguration()[ScriptCompilationConfiguration.repl.resultFieldPrefix]?.takeIf { it.isNotBlank() }?.let {
