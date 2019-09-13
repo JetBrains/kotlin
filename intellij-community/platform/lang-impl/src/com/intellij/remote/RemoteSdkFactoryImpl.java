@@ -19,21 +19,21 @@ public abstract class RemoteSdkFactoryImpl<T extends RemoteSdkAdditionalData> im
   @Override
   public Sdk createRemoteSdk(@Nullable Project project, @NotNull T data, @Nullable String sdkName, Collection<Sdk> existingSdks)
     throws RemoteSdkException {
-    final String interpreterVersion = getInterpreterVersion(project, data);
+    final String sdkVersion = getSdkVersion(project, data);
 
     final String name;
     if (StringUtil.isNotEmpty(sdkName)) {
       name = sdkName;
     }
     else {
-      name = getInterpreterName(data, interpreterVersion);
+      name = getSdkName(data, sdkVersion);
     }
 
     final SdkType sdkType = getSdkType(data);
 
     final ProjectJdkImpl sdk = SdkConfigurationUtil.createSdk(existingSdks, generateSdkHomePath(data), sdkType, data, name);
 
-    sdk.setVersionString(interpreterVersion);
+    sdk.setVersionString(sdkVersion);
 
     data.setValid(true);
 
@@ -49,10 +49,10 @@ public abstract class RemoteSdkFactoryImpl<T extends RemoteSdkAdditionalData> im
   protected abstract SdkType getSdkType(@NotNull T data);
 
   @NotNull
-  protected abstract String getInterpreterName(@NotNull T data, @Nullable String version) throws RemoteSdkException;
+  protected abstract String getSdkName(@NotNull T data, @Nullable String version) throws RemoteSdkException;
 
   @Nullable
-  protected abstract String getInterpreterVersion(Project project, @NotNull T data) throws RemoteSdkException;
+  protected abstract String getSdkVersion(Project project, @NotNull T data) throws RemoteSdkException;
 
   @Override
   @NotNull
@@ -68,14 +68,33 @@ public abstract class RemoteSdkFactoryImpl<T extends RemoteSdkAdditionalData> im
     return sdk;
   }
 
+  /**
+   * Returns default name for "unfinished" SDK.
+   * <p>
+   * "Unfinished" SDK is an SDK that has not yet been introspected or IDE
+   * failed to introspect it.
+   *
+   * @return default name for "unfinished" SDK
+   */
   @Override
-  public String getDefaultUnfinishedName() {
-    return "Remote " + sdkName() + " interpreter";
-  }
+  public abstract String getDefaultUnfinishedName();
 
 
   @Override
   public boolean canSaveUnfinished() {
     return false;
+  }
+
+  /**
+   * Returns a name for "unfinished" SDK that is related to dynamically
+   * interpreted language.
+   *
+   * @param sdkName
+   * @return
+   * @see {@link #getDefaultUnfinishedName()}
+   */
+  @NotNull
+  public static String getDefaultUnfinishedInterpreterName(@NotNull String sdkName) {
+    return "Remote " + sdkName + " interpreter";
   }
 }
