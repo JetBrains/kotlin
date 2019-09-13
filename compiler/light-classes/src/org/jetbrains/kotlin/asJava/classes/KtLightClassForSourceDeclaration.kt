@@ -105,7 +105,8 @@ abstract class KtLightClassForSourceDeclaration(
     override val lightClassData: LightClassData
         get() = findLightClassData()
 
-    protected open fun findLightClassData() = getLightClassDataHolder().findDataForClassOrObject(classOrObject)
+    protected open fun findLightClassData() = getLightClassDataHolder().
+        findDataForClassOrObject(classOrObject)
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 
@@ -312,6 +313,10 @@ abstract class KtLightClassForSourceDeclaration(
 
     companion object {
         private val JAVA_API_STUB = Key.create<CachedValue<LightClassDataHolder.ForClass>>("JAVA_API_STUB")
+        private val JAVA_API_STUB_LOCK = Key.create<Any>("JAVA_API_STUB_LOCK")
+
+        @JvmStatic
+        private val javaApiStubInitIsRunning: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
         private val jetTokenToPsiModifier = listOf(
             PUBLIC_KEYWORD to PsiModifier.PUBLIC,
@@ -371,14 +376,47 @@ abstract class KtLightClassForSourceDeclaration(
         }
 
         private fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder.ForClass> {
-            var value =
-                getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB) // stub computed for outer class can be used for inner/nested
-                    ?: classOrObject.getUserData(JAVA_API_STUB)
-            if (value == null) {
-                value = CachedValuesManager.getManager(classOrObject.project).createCachedValue(
+            val outerClassValue = getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB)
+            outerClassValue?.let {
+                // stub computed for outer class can be used for inner/nested
+                return it
+            }
+            // the idea behind this locking approach:
+            // Thread T1 starts to calculate value for A it acquires lock for A
+            //
+            // Assumption 1: Lets say A calculation requires another value e.g. B to be calculated
+            // Assumption 2: Thread T2 wants to calculate value for B
+
+            // to avoid dead-lock case we mark thread as doing calculation and acquire lock only once per thread
+            // as a trade-off to prevent dependent value could be calculated several time
+            // due to CAS (within putUserDataIfAbsent etc) the same instance of calculated value will be used
+            val value: CachedValue<LightClassDataHolder.ForClass> = if (!javaApiStubInitIsRunning.get()) {
+                classOrObject.getUserData(JAVA_API_STUB) ?: run {
+                    val lock = classOrObject.putUserDataIfAbsent(JAVA_API_STUB_LOCK, Object())
+                    synchronized(lock) {
+                        try {
+                            javaApiStubInitIsRunning.set(true)
+                            computeLightClassCachedValue(classOrObject)
+                        } finally {
+                            javaApiStubInitIsRunning.set(false)
+                        }
+                    }
+                }
+            } else {
+                computeLightClassCachedValue(classOrObject)
+            }
+            return value
+        }
+
+        private fun computeLightClassCachedValue(
+            classOrObject: KtClassOrObject
+        ): CachedValue<LightClassDataHolder.ForClass> {
+            val value = classOrObject.getUserData(JAVA_API_STUB) ?: run {
+                val manager = CachedValuesManager.getManager(classOrObject.project)
+                val cachedValue = manager.createCachedValue(
                     LightClassDataProviderForClassOrObject(classOrObject), false
                 )
-                value = classOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)
+                classOrObject.putUserDataIfAbsent(JAVA_API_STUB, cachedValue)
             }
             return value
         }

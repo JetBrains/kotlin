@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.psi.*
 import com.intellij.psi.augment.PsiAugmentProvider
+import com.intellij.psi.impl.PsiCachedValueImpl
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.light.LightMethod
@@ -17,7 +18,6 @@ import com.intellij.psi.scope.ElementClassHint
 import com.intellij.psi.scope.NameHint
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashMap
@@ -26,38 +26,72 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
     private val myTracker = SimpleModificationTracker()
     private val dependencies: List<Any> = externalDependencies + myTracker
 
-    // This method is modified
-    private fun <T> makeProvider(value: () -> T): CachedValueProvider.Result<T> {
-        return CachedValueProvider.Result.create(value(), dependencies)
+    fun <T : Any> get(initializer: () -> T) = object : Lazy<T> {
+        // Note: holder is used as initialization monitor as well
+        private val holder = lazyPub {
+            PsiCachedValueImpl(PsiManager.getInstance(myClass.project),
+                               CachedValueProvider<T> {
+                                   val v = initializer()
+                                   CachedValueProvider.Result.create(v, dependencies)
+                               })
+        }
+
+        private fun computeValue(): T = holder.value.value ?: error("holder has not null in initializer")
+
+        override val value: T
+            get() {
+                return if (holder.value.hasUpToDateValue()) {
+                    computeValue()
+                } else {
+                    // the idea behind this locking approach:
+                    // Thread T1 starts to calculate value for A it acquires lock for A
+                    //
+                    // Assumption 1: Lets say A calculation requires another value e.g. B to be calculated
+                    // Assumption 2: Thread T2 wants to calculate value for B
+
+                    // to avoid dead-lock case we mark thread as doing calculation and acquire lock only once per thread
+                    // as a trade-off to prevent dependent value could be calculated several time
+                    // due to CAS (within putUserDataIfAbsent etc) the same instance of calculated value will be used
+
+                    if (!initIsRunning.get()) {
+                        synchronized(holder) {
+                            initIsRunning.set(true)
+                            try {
+                                computeValue()
+                            } finally {
+                                initIsRunning.set(false)
+                            }
+                        }
+                    } else {
+                        computeValue()
+                    }
+                }
+            }
+
+        override fun isInitialized() = holder.isInitialized()
     }
 
-    private fun <T : Any> get(myClass: PsiExtensibleClass, provider: CachedValueProvider<T>) = lazyPub {
-        CachedValuesManager.getCachedValue(myClass, provider)
-    }
-
-    private val _getConstructors: Array<PsiMethod> by get(
-        myClass,
-        CachedValueProvider { makeProvider { PsiImplUtil.getConstructors(myClass) } })
+    private val _getConstructors: Array<PsiMethod> by get { PsiImplUtil.getConstructors(myClass) }
 
     val constructors: Array<PsiMethod>
         get() = _getConstructors
 
-    private val _getFields: Array<PsiField> by get(myClass, CachedValueProvider { makeProvider { this.getAllFields() } })
+    private val _getFields: Array<PsiField> by get { this.getAllFields() }
 
     val fields: Array<PsiField>
         get() = _getFields
 
-    private val _getMethods: Array<PsiMethod> by get(myClass, CachedValueProvider { makeProvider { this.getAllMethods() } })
+    private val _getMethods: Array<PsiMethod> by get { this.getAllMethods() }
 
     val methods: Array<PsiMethod>
         get() = _getMethods
 
-    private val _getAllInnerClasses: Array<PsiClass> by get(myClass, CachedValueProvider { makeProvider { this.getAllInnerClasses() } })
+    private val _getAllInnerClasses: Array<PsiClass> by get { this.getAllInnerClasses() }
 
     val innerClasses: Array<out PsiClass>
         get() = _getAllInnerClasses
 
-    private val _getFieldsMap: Map<String, PsiField> by get(myClass, CachedValueProvider { makeProvider { this.getFieldsMap() } })
+    private val _getFieldsMap: Map<String, PsiField> by get { this.getFieldsMap() }
 
     fun findFieldByName(name: String, checkBases: Boolean): PsiField? {
         return if (checkBases) {
@@ -67,7 +101,7 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
         }
     }
 
-    private val _getMethodsMap: Map<String, Array<PsiMethod>> by get(myClass, CachedValueProvider { makeProvider { this.getMethodsMap() } })
+    private val _getMethodsMap: Map<String, Array<PsiMethod>> by get { this.getMethodsMap() }
 
     fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> {
         return if (checkBases) {
@@ -77,8 +111,7 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
         }
     }
 
-    private val _getInnerClassesMap: Map<String, PsiClass> by get(myClass,
-                                                                  CachedValueProvider { makeProvider { this.getInnerClassesMap() } })
+    private val _getInnerClassesMap: Map<String, PsiClass> by get { this.getInnerClassesMap() }
 
     fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? {
         return if (checkBases) {
@@ -88,11 +121,11 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
         }
     }
 
-    private val _makeValuesMethod: PsiMethod by get(myClass, CachedValueProvider { makeProvider { this.makeValuesMethod() } })
+    private val _makeValuesMethod: PsiMethod by get { this.makeValuesMethod() }
 
     fun getValuesMethod(): PsiMethod? = if (myClass.isEnum && myClass.name != null) _makeValuesMethod else null
 
-    private val _makeValueOfMethod: PsiMethod by get(myClass, CachedValueProvider { makeProvider { this.makeValueOfMethod() } })
+    private val _makeValueOfMethod: PsiMethod by get { this.makeValueOfMethod() }
 
     fun getValueOfMethod(): PsiMethod? = if (myClass.isEnum && myClass.name != null) _makeValueOfMethod else null
 
@@ -194,6 +227,9 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
     companion object {
         private const val VALUES_METHOD = "values"
         private const val VALUE_OF_METHOD = "valueOf"
+
+        @JvmStatic
+        private val initIsRunning: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
         // Copy of PsiClassImplUtil.processDeclarationsInEnum for own cache class
         @JvmStatic

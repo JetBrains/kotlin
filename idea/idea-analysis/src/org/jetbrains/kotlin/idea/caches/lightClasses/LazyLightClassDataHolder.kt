@@ -43,7 +43,9 @@ sealed class LazyLightClassDataHolder(
             cache.computeIfAbsent(lazyLightClassDataHolder, diagnostics)
     }
 
-    private val exactResultLazyValue = lazyPub { builder(exactContextProvider()).stub }
+    private val _builderExactContextProvider: LightClassBuilderResult by lazyPub { builder(exactContextProvider()) }
+
+    private val exactResultLazyValue = lazyPub { _builderExactContextProvider.stub }
 
     private val lazyInexactStub by lazyPub {
         dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
@@ -56,10 +58,9 @@ sealed class LazyLightClassDataHolder(
 
     override val extraDiagnostics: Diagnostics
         get() = diagnosticsHolderProvider().getOrCompute(this) {
-            builder(exactContextProvider()).diagnostics
-                // Force lazy diagnostics computation because otherwise a lot of memory is retained by computation.
-                // NB: Laziness here is not crucial anyway since somebody already has requested diagnostics and we hope one will use them
-                .takeUnless { it.isEmpty() } ?: Diagnostics.EMPTY
+            // Force lazy diagnostics computation because otherwise a lot of memory is retained by computation.
+            // NB: Laziness here is not crucial anyway since somebody already has requested diagnostics and we hope one will use them
+            _builderExactContextProvider.diagnostics.takeUnless { it.isEmpty() } ?: Diagnostics.EMPTY
         }
 
     // for facade or defaultImpls
