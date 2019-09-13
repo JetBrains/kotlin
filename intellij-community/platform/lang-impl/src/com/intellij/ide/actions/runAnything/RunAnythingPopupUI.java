@@ -123,6 +123,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
   }
 
   private void initSearchField() {
+    updateContextCombobox();
     mySearchField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
