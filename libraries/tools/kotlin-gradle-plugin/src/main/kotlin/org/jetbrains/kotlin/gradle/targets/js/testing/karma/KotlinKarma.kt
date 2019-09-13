@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
-import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KarmaBrowserLogParser.Companion.BROWSER_LOG_SURROUNDER
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
@@ -54,7 +53,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         requiredDependencies.add(versions.karma)
 
         useLogReporter()
-        useTeamcityReporter()
         useMocha()
         useWebpack()
         useSourceMapSupport()
@@ -63,12 +61,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         config.autoWatch = false
     }
 
-    private fun useTeamcityReporter() {
-        requiredDependencies.add(versions.karmaTeamcityReporter)
-        config.reporters.add("teamcity")
-    }
-
     private fun useLogReporter() {
+        requiredDependencies.add(versions.karmaTeamcityReporter)
         config.reporters.add("karma-browser-log-reporter")
 
         confJsWriters.add {
@@ -76,27 +70,86 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             it.appendln(
                 """
                 // reporter for browser logs
-                const LogReporter = function (baseReporterDecorator) {
-                    baseReporterDecorator(this);
+                (function () {
+                    const util = require('util');
 
-                    this.onBrowserLog = (browser, log, type) => {
-                        this.write(
-                        "$BROWSER_LOG_SURROUNDER[" + 
-                        "browser='" + browser + "' " +
-                         "type='" + type + "' " + 
-                         "log=" + log +
-                          "]$BROWSER_LOG_SURROUNDER\n"
-                        );
-                    }
-                };
+                    const escapeMessage = function (message) {
+                        if (message === null || message === undefined) {
+                            return ''
+                        }
 
-                LogReporter.${'$'}inject = ['baseReporterDecorator'];
-                
-                config.plugins = config.plugins || [];
-                config.plugins.push('karma-*'); // default
-                config.plugins.push({
-                'reporter:karma-browser-log-reporter': ['type', LogReporter]
-                });
+                        return message.toString()
+                            .replace(/\|/g, '||')
+                            .replace(/'/g, "|'")
+                            .replace(/\n/g, '|n')
+                            .replace(/\r/g, '|r')
+                            .replace(/\u0085/g, '|x')
+                            .replace(/\u2028/g, '|l')
+                            .replace(/\u2029/g, '|p')
+                            .replace(/\[/g, '|[')
+                            .replace(/\]/g, '|]')
+                    };
+            
+                    var formatMessage = function () {
+                        var args = Array.prototype.slice.call(arguments);
+            
+                        for (var i = args.length - 1; i > 0; i--) {
+                            args[i] = escapeMessage(args[i])
+                        }
+            
+                        return util.format.apply(null, args) + '\n'
+                    };
+            
+                    const LogReporter = function (baseReporterDecorator) {
+                        const teamcityReporter = require("karma-teamcity-reporter")["reporter:teamcity"][1];
+                        teamcityReporter.call(this, baseReporterDecorator);
+            
+                        this.logBuffer = [];
+            
+                        this.TEST_STD_OUT = "##teamcity[testStdOut name='%name%' out='%s' flowId='']";
+            
+                        this.onBrowserLog = (browser, log, type) => {
+                            this.logBuffer.push(formatMessage(this.TEST_STD_OUT, `[${"$"}{type}] ${"$"}{log}\n`))
+                        };
+            
+                        this.specSuccess = (browser, result) => {
+                            const log = this.getLog(browser, result);
+                            const testName = result.description;
+            
+                            log.push(formatMessage(this.TEST_START, testName));
+                            this.logBuffer.forEach(item => {
+                                log.push(
+                                    item.replace('%name%', result.description)
+                                )
+                            });
+                            log.push(formatMessage(this.TEST_END, testName, result.time))
+                        };
+            
+                        this.specFailure = function (browser, result) {
+                            const log = this.getLog(browser, result);
+                            const testName = result.description;
+            
+                            log.push(formatMessage(this.TEST_START, testName));
+                            this.logBuffer.forEach(item => {
+                                log.push(
+                                    item.replace('%name%', result.description)
+                                )
+                            });
+                            log.push(formatMessage(this.TEST_FAILED, testName, result.log.join('\n\n')));
+                            log.push(formatMessage(this.TEST_END, testName, result.time));
+                            
+                            this.logBuffer = [];
+                        }
+                    };
+                    
+                    LogReporter.${"$"}inject = ['baseReporterDecorator'];
+            
+                    config.plugins = config.plugins || [];
+                    config.plugins.push('karma-*'); // default
+                    config.plugins.push({
+                        'reporter:karma-browser-log-reporter': ['type', LogReporter]
+                    });
+                })();
             """.trimIndent()
             )
         }
@@ -345,8 +398,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
 
-                    val browserLogParser = KarmaBrowserLogParser()
-
                     override fun printNonTestOutput(text: String) {
                         val value = text.trimEnd()
                         progressLogger.progress(value)
@@ -388,33 +439,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                         }
 
                         suppressedOutput.appendln(text)
-
-                        val browserLog = browserLogParser.parseKarmaBrowserLog(text) ?: return
-
-                        val formattedMessage = formatMessage(browserLog)
-
-                        when (browserLog.type) {
-                            BrowserLogType.LOG -> println(formattedMessage)
-                            BrowserLogType.WARN -> log.warn(formattedMessage)
-                            BrowserLogType.ERROR -> log.error(formattedMessage)
-                            BrowserLogType.DEBUG -> log.debug(formattedMessage)
-                            else -> log.info(formattedMessage)
-                        }
-                    }
-
-                    private fun formatMessage(browserLog: BrowserLog): String {
-                        val browser = browserLog.browser
-                        val browserPart = browser?.plus(" ") ?: ""
-
-                        val type = browserLog.type
-                        val typePart = if (browser != null && type != null) {
-                            type
-                                .value
-                                .toUpperCase()
-                                .plus(" ")
-                        } else ""
-
-                        return "$browserPart$typePart${browserLog.log}"
                     }
                 }
         }
