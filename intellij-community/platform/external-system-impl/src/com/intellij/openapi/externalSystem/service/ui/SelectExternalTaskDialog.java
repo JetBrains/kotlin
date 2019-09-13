@@ -66,7 +66,7 @@ public class SelectExternalTaskDialog extends SelectExternalSystemNodeDialog {
   protected Object customizeProjectsTreeRoot(Object rootElement) {
     if (!(rootElement instanceof ProjectNode)) return rootElement;
 
-    ModuleNode effectiveRoot = ((ProjectNode)rootElement).getEffectiveRoot();
+    ExternalSystemNode<?> effectiveRoot = ((ProjectNode)rootElement).getEffectiveRoot();
     return effectiveRoot != null ? effectiveRoot : rootElement;
   }
 }

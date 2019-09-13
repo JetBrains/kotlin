@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class ProjectNode extends ExternalSystemNode<ProjectData> {
   private String myTooltipCache;
-  private ModuleNode effectiveRoot = null;
+  private ExternalSystemNode<?> effectiveRoot = null;
 
   public ProjectNode(ExternalProjectsView externalProjectsView, DataNode<ProjectData> projectDataNode) {
     super(externalProjectsView, null, projectDataNode);
@@ -44,12 +44,13 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
     final List<? extends ExternalSystemNode<?>> children = super.doBuildChildren();
     final List<ExternalSystemNode<?>> visibleChildren = ContainerUtil.filter(children, node -> node.isVisible());
     if (getExternalProjectsView().getGroupModules()) {
-      ModuleNode root = (ModuleNode) ContainerUtil.find(visibleChildren, node -> node instanceof ModuleNode && ((ModuleNode)node).isRoot());
-
-      if (root != null) {
-        effectiveRoot = root;
-        return root.doBuildChildren();
+      final List<ExternalSystemNode<?>> topLevelChildren =
+        ContainerUtil.filter(visibleChildren, node -> !(node instanceof ModuleNode) || ((ModuleNode)node).getIdeParentGrouping() == null);
+      if (topLevelChildren.size() == 1) {
+        effectiveRoot = topLevelChildren.get(0);
+        return effectiveRoot.doBuildChildren();
       }
+      return topLevelChildren;
     }
 
     effectiveRoot = null;
@@ -109,7 +110,7 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
     return "ExternalSystemView.ProjectMenu";
   }
 
-  public ModuleNode getEffectiveRoot() {
+  public ExternalSystemNode<?> getEffectiveRoot() {
     return effectiveRoot;
   }
 }
