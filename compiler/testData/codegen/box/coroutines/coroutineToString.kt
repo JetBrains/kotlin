@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WITH_COROUTINES
@@ -31,5 +29,5 @@ fun box(): String {
         result = A<String>().bar()
     }
 
-    return if (result == "Continuation at test.A.bar(coroutineToString.kt:16)") "OK" else "Fail: $result"
+    return if (result == "Continuation at test.A.bar(coroutineToString.kt:14)") "OK" else "Fail: $result"
 }

@@ -84,7 +84,7 @@ open class FunctionCodegen(
             methodVisitor = when {
                 irFunction.isSuspend &&
                         // We do not generate continuation and state-machine for synthetic accessors, in a sense, they are tail-call
-                        !irFunction.isDefault() &&
+                        !irFunction.isKnownToBeTailCall() &&
                         // TODO: We should generate two versions of inline suspend function: one with state-machine and one without
                         !irFunction.isInline ->
                     generateStateMachineForNamedFunction(
@@ -104,7 +104,7 @@ open class FunctionCodegen(
         return signature
     }
 
-    private fun IrFunction.isDefault(): Boolean =
+    private fun IrFunction.isKnownToBeTailCall(): Boolean =
         origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {

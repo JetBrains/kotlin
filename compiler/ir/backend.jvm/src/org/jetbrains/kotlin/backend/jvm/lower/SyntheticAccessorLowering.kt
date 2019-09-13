@@ -155,7 +155,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName()
             visibility = Visibilities.PUBLIC
-            isSuspend = this@makeSimpleFunctionAccessor.isSuspend // synthetic accessors of suspend functions are handled in codegen
+            isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
         }.also { accessor ->
             // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
             // we also need to put its accessor into A. However, due to the way that calls are implemented in the
