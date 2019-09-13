@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 
 
-class JsKlibMetadataFileRegistry {
-    private val fileIdsImpl = mutableMapOf<JsKlibFileMetadata, Int>()
+class KlibMetadataFileRegistry {
+    private val fileIdsImpl = mutableMapOf<KlibFileMetadata, Int>()
 
-    fun lookup(file: JsKlibFileMetadata) = fileIdsImpl.getOrPut(file) { fileIdsImpl.size }
+    fun lookup(file: KlibFileMetadata) = fileIdsImpl.getOrPut(file) { fileIdsImpl.size }
 
-    val fileIds: Map<JsKlibFileMetadata, Int>
+    val fileIds: Map<KlibFileMetadata, Int>
         get() = fileIdsImpl
 
     fun getFileId(descriptor: DeclarationDescriptor): Int? {

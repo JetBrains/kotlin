@@ -398,16 +398,15 @@ fun serializeModuleIntoKlib(
     }
 
     incrementalResultsConsumer?.run {
-        processHeader(KlibMetadataIncrementalSerializer.serializeHeader(moduleDescriptor, null, languageVersionSettings).toByteArray())
+        processHeader(metadataSerializer.serializeHeader(moduleDescriptor).toByteArray())
     }
 
     val compiledKotlinFiles = cleanFiles + additionalFiles
 
     val serializedMetadata =
-        KlibMetadataIncrementalSerializer.serializedMetadata(
+        metadataSerializer.serializedMetadata(
             moduleDescriptor,
-            languageVersionSettings,
-            dependencies.map { it.moduleName },
+            // dependencies.map { it.moduleName },
             compiledKotlinFiles.groupBy { it.irData.fqName }.map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap()
         )
 
