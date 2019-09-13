@@ -40,14 +40,14 @@ public class IntentionActionWithTextCaching implements Comparable<IntentionActio
   private final Icon myIcon;
 
   IntentionActionWithTextCaching(@NotNull IntentionAction action){
-    this(action, action.getText(), null, null);
+    this(action, action.getText(), null, (__1, __2) -> {});
   }
 
-  IntentionActionWithTextCaching(@NotNull HighlightInfo.IntentionActionDescriptor descriptor, @Nullable BiConsumer<? super IntentionActionWithTextCaching,? super IntentionAction> markInvoked){
+  IntentionActionWithTextCaching(@NotNull HighlightInfo.IntentionActionDescriptor descriptor, @NotNull BiConsumer<? super IntentionActionWithTextCaching,? super IntentionAction> markInvoked) {
     this(descriptor.getAction(), descriptor.getDisplayName(), descriptor.getIcon(), markInvoked);
   }
 
-  private IntentionActionWithTextCaching(@NotNull IntentionAction action, String displayName, @Nullable Icon icon, @Nullable BiConsumer<? super IntentionActionWithTextCaching, ? super IntentionAction> markInvoked) {
+  private IntentionActionWithTextCaching(@NotNull IntentionAction action, String displayName, @Nullable Icon icon, @NotNull BiConsumer<? super IntentionActionWithTextCaching, ? super IntentionAction> markInvoked) {
     myIcon = icon;
     myText = action.getText();
     // needed for checking errors in user written actions
@@ -101,6 +101,7 @@ public class IntentionActionWithTextCaching implements Comparable<IntentionActio
     return myDisplayName;
   }
 
+  @Override
   @NotNull
   public String toString() {
     return getText();
@@ -143,9 +144,10 @@ public class IntentionActionWithTextCaching implements Comparable<IntentionActio
   // IntentionAction which wraps the original action and then marks it as executed to hide it from the popup to avoid invoking it twice accidentally
   private class MyIntentionAction implements IntentionAction, IntentionActionDelegate, Comparable<MyIntentionAction>, ShortcutProvider {
     private final IntentionAction myAction;
+    @NotNull
     private final BiConsumer<? super IntentionActionWithTextCaching, ? super IntentionAction> myMarkInvoked;
 
-    MyIntentionAction(IntentionAction action, BiConsumer<? super IntentionActionWithTextCaching, ? super IntentionAction> markInvoked) {
+    MyIntentionAction(@NotNull IntentionAction action, @NotNull BiConsumer<? super IntentionActionWithTextCaching, ? super IntentionAction> markInvoked) {
       myAction = action;
       myMarkInvoked = markInvoked;
     }
@@ -177,9 +179,7 @@ public class IntentionActionWithTextCaching implements Comparable<IntentionActio
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
       myAction.invoke(project, editor, file);
-      if (myMarkInvoked != null) {
-        myMarkInvoked.accept(IntentionActionWithTextCaching.this, myAction);
-      }
+      myMarkInvoked.accept(IntentionActionWithTextCaching.this, myAction);
     }
 
     @Override

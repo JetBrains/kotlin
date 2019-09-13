@@ -57,7 +57,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
       return;
     }
 
-    final HighlightUsagesHandlerBase handler = createCustomHandler(editor, file);
+    final HighlightUsagesHandlerBase<?> handler = createCustomHandler(editor, file);
     if (handler != null) {
       final String featureId = handler.getFeatureId();
 
@@ -149,9 +149,8 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
   public static <T extends PsiElement> HighlightUsagesHandlerBase<T> createCustomHandler(@NotNull Editor editor, @NotNull PsiFile file,
                                                                                          @NotNull ProperTextRange visibleRange) {
     for (HighlightUsagesHandlerFactory factory : HighlightUsagesHandlerFactory.EP_NAME.getExtensionList()) {
-      final HighlightUsagesHandlerBase handler = factory.createHighlightUsagesHandler(editor, file, visibleRange);
+      HighlightUsagesHandlerBase<T> handler = factory.createHighlightUsagesHandler(editor, file, visibleRange);
       if (handler != null) {
-        //noinspection unchecked
         return handler;
       }
     }
