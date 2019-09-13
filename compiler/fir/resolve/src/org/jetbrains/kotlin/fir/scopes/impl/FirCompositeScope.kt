@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -23,7 +23,7 @@ class FirCompositeScope(
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (ConeClassifierSymbol) -> Boolean
+        processor: (FirClassifierSymbol<*>) -> Boolean
     ): Boolean {
         val scopes = if (reversedPriority) scopes.asReversed() else scopes
         for (scope in scopes) {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 open class CandidateCollector(
@@ -85,7 +85,7 @@ class InvokeReceiverCandidateCollector(
                 FirQualifiedAccessExpressionImpl(null, false).apply {
                     calleeReference = FirNamedReferenceWithCandidate(
                         null,
-                        (candidate.symbol as ConeCallableSymbol).callableId.callableName,
+                        (candidate.symbol as FirCallableSymbol<*>).callableId.callableName,
                         candidate
                     )
                     dispatchReceiver = candidate.dispatchReceiverExpression()

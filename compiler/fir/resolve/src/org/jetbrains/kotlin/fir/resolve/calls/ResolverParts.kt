@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -167,10 +166,10 @@ internal object DiscriminateSynthetics : CheckerStage() {
 }
 
 internal object CheckVisibility : CheckerStage() {
-    private fun ConeSymbol.packageFqName(): FqName {
+    private fun AbstractFirBasedSymbol<*>.packageFqName(): FqName {
         return when (this) {
-            is ConeClassLikeSymbol -> classId.packageFqName
-            is ConeCallableSymbol -> callableId.packageName
+            is FirClassLikeSymbol<*> -> classId.packageFqName
+            is FirCallableSymbol<*> -> callableId.packageName
             else -> error("No package fq name for ${this}")
         }
     }
@@ -186,8 +185,8 @@ internal object CheckVisibility : CheckerStage() {
                     if (declaration.session == callInfo.session) {
                         val provider = callInfo.session.service<FirProvider>()
                         val candidateFile = when (symbol) {
-                            is ConeCallableSymbol -> provider.getFirCallableContainerFile(symbol)
-                            is ConeClassLikeSymbol -> provider.getFirClassifierContainerFile(symbol.classId)
+                            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
+                            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(symbol.classId)
                             else -> null
                         }
                         candidateFile == callInfo.containingFile

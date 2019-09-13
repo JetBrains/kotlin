@@ -86,9 +86,11 @@ val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullabil
 
 typealias ConeKotlinErrorType = ConeClassErrorType
 
+class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
+
 class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
-        get() = ConeClassLikeLookupTagImpl(ClassId.fromString("<error>"))
+        get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = EMPTY_ARRAY
@@ -101,7 +103,7 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     }
 }
 
-sealed class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
+abstract class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
     abstract val lookupTag: ConeClassifierLookupTag
 }
 
@@ -113,10 +115,6 @@ abstract class ConeClassType : ConeClassLikeType()
 
 abstract class ConeAbbreviatedType : ConeClassLikeType() {
     abstract val abbreviationLookupTag: ConeClassLikeLookupTag
-}
-
-abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
-    abstract override val lookupTag: ConeTypeParameterLookupTag
 }
 
 data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),

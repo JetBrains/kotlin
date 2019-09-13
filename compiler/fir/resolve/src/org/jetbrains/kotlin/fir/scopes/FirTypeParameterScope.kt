@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirTypeParameterScope : FirScope() {
@@ -15,7 +15,7 @@ abstract class FirTypeParameterScope : FirScope() {
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (ConeClassifierSymbol) -> Boolean
+        processor: (FirClassifierSymbol<*>) -> Boolean
     ): Boolean {
         val matchedTypeParameters = typeParameters[name] ?: return true
 

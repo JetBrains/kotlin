@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -752,12 +754,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print("*")
     }
 
-    private fun ConeSymbol.render(): String {
-        if (this is ConeCallableSymbol)
-            return callableId.toString()
-        else if (this is ConeClassLikeSymbol)
-            return classId.toString()
-        return "?"
+    private fun AbstractFirBasedSymbol<*>.render(): String {
+        return when (this) {
+            is FirCallableSymbol<*> -> callableId.toString()
+            is FirClassLikeSymbol<*> -> classId.toString()
+            else -> "?"
+        }
     }
 
     override fun visitNamedReference(namedReference: FirNamedReference) {
@@ -773,24 +775,24 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {
         print("F|")
-        print(backingFieldReference.coneSymbol.callableId)
+        print(backingFieldReference.resolvedSymbol.callableId)
         print("|")
     }
 
     override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {
         print("D|")
-        print(delegateFieldReference.coneSymbol.callableId)
+        print(delegateFieldReference.resolvedSymbol.callableId)
         print("|")
     }
 
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
         print("R|")
-        val isFakeOverride = (resolvedCallableReference.coneSymbol as? FirNamedFunctionSymbol)?.isFakeOverride == true
+        val isFakeOverride = (resolvedCallableReference.resolvedSymbol as? FirNamedFunctionSymbol)?.isFakeOverride == true
 
         if (isFakeOverride) {
             print("FakeOverride<")
         }
-        val symbol = resolvedCallableReference.coneSymbol
+        val symbol = resolvedCallableReference.resolvedSymbol
         print(symbol.render())
         if (isFakeOverride) {
             when (symbol) {

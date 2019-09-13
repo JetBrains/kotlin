@@ -163,7 +163,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
                     sessionForSupertype
                         .getService(FirSymbolProvider::class)
                         .getClassLikeSymbolByFqName(superTypeClassId)
-                        ?.toFirClassLike()
+                        ?.fir
 
                 // TODO: this if is a temporary hack for built-in types (because we can't load file for them)
                 if (firClassForSupertype == null ||

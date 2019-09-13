@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
-interface FirBasedSymbol<E> : ConeSymbol where E : FirElement, E : FirSymbolOwner<E> {
+interface FirBasedSymbol<E> : TypeConstructorMarker where E : FirDeclaration, E : FirSymbolOwner<E> {
     val fir: E
 
     fun bind(e: E)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.Name
 interface FirNamedReference : FirReference {
     val name: Name
 
-    val candidateSymbol: ConeSymbol? get() = null
+    val candidateSymbol: AbstractFirBasedSymbol<*>? get() = null
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitNamedReference(this, data)

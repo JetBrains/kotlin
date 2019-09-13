@@ -23,12 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -185,11 +181,11 @@ class FirCallResolver(
         }
 
         val referencedSymbol = when (nameReference) {
-            is FirResolvedCallableReference -> nameReference.coneSymbol
+            is FirResolvedCallableReference -> nameReference.resolvedSymbol
             is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
             else -> null
         }
-        if (referencedSymbol is ConeClassLikeSymbol) {
+        if (referencedSymbol is FirClassLikeSymbol<*>) {
             return FirResolvedQualifierImpl(nameReference.psi, referencedSymbol.classId).apply {
                 resultType = typeForQualifier(this)
             }
@@ -249,10 +245,10 @@ class FirCallResolver(
     }
 
 
-    private fun describeSymbol(symbol: ConeSymbol): String {
+    private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
         return when (symbol) {
-            is ConeClassLikeSymbol -> symbol.classId.asString()
-            is ConeCallableSymbol -> symbol.callableId.toString()
+            is FirClassLikeSymbol<*> -> symbol.classId.asString()
+            is FirCallableSymbol<*> -> symbol.callableId.toString()
             else -> "$symbol"
         }
     }

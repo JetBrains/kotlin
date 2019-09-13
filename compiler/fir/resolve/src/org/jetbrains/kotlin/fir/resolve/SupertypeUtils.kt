@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 fun lookupSuperTypes(
@@ -32,8 +32,8 @@ fun lookupSuperTypes(
 }
 
 class ScopeSession {
-    private val scopes = mutableMapOf<ConeClassifierSymbol, MutableMap<ScopeSessionKey<*>, FirScope>>()
-    fun <T : FirScope> getOrBuild(symbol: ConeClassifierSymbol, key: ScopeSessionKey<T>, build: () -> T): T {
+    private val scopes = mutableMapOf<FirClassifierSymbol<*>, MutableMap<ScopeSessionKey<*>, FirScope>>()
+    fun <T : FirScope> getOrBuild(symbol: FirClassifierSymbol<*>, key: ScopeSessionKey<T>, build: () -> T): T {
         return scopes.getOrPut(symbol) {
             mutableMapOf()
         }.getOrPut(key) {
@@ -95,7 +95,7 @@ private fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
         @Suppress("UNCHECKED_CAST")
         val substitution = declaration.typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
             typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
-        }.filter { (_, type) -> type != null }.toMap() as Map<ConeTypeParameterSymbol, ConeKotlinType>
+        }.filter { (_, type) -> type != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
 
         FirClassSubstitutionScope(session, useSiteScope, builder, substitution)
     }
@@ -108,9 +108,9 @@ private tailrec fun ConeClassLikeType.computePartialExpansion(useSiteSession: Fi
     }
 }
 
-private fun ConeClassifierSymbol.collectSuperTypes(
+private fun FirClassifierSymbol<*>.collectSuperTypes(
     list: MutableList<ConeClassLikeType>,
-    visitedSymbols: MutableSet<ConeClassifierSymbol>,
+    visitedSymbols: MutableSet<FirClassifierSymbol<*>>,
     deep: Boolean,
     lookupInterfaces: Boolean,
     useSiteSession: FirSession

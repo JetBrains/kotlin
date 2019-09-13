@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processConstructors
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -35,7 +33,7 @@ abstract class FirAbstractImportingScope(
         val symbol = provider.getClassLikeSymbolByFqName(classId) ?: error("No scope/symbol for $classId")
         if (symbol is FirTypeAliasSymbol) {
             val expansionSymbol = symbol.fir.expandedConeType?.lookupTag?.toSymbol(session)
-            if (expansionSymbol is ConeClassLikeSymbol) {
+            if (expansionSymbol is FirClassLikeSymbol<*>) {
                 return getStaticsScope(expansionSymbol.classId)
             }
         }
@@ -113,7 +111,7 @@ abstract class FirAbstractImportingScope(
         return processCallables(
             name,
             TowerScopeLevel.Token.Properties
-        ) { if (it is ConeVariableSymbol) processor(it) else ProcessorAction.NEXT }
+        ) { if (it is FirVariableSymbol<*>) processor(it) else ProcessorAction.NEXT }
     }
 
 }

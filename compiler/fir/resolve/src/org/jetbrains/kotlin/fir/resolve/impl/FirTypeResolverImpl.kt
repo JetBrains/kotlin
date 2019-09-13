@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
@@ -44,24 +43,24 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
         typeRef: FirTypeRef,
         scope: FirScope,
         position: FirPosition
-    ): ConeClassifierSymbol? {
+    ): FirClassifierSymbol<*>? {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag?.let(symbolProvider::getSymbolByLookupTag)
             is FirUserTypeRef -> {
 
                 val qualifierResolver = FirQualifierResolver.getInstance(session)
 
-                var resolvedSymbol: ConeClassifierSymbol? = null
+                var resolvedSymbol: FirClassifierSymbol<*>? = null
                 scope.processClassifiersByName(typeRef.qualifier.first().name, position) { symbol ->
                     resolvedSymbol = when (symbol) {
-                        is ConeClassLikeSymbol -> {
+                        is FirClassLikeSymbol<*> -> {
                             if (typeRef.qualifier.size == 1) {
                                 symbol
                             } else {
                                 qualifierResolver.resolveSymbolWithPrefix(typeRef.qualifier, symbol.classId)
                             }
                         }
-                        is ConeTypeParameterSymbol -> {
+                        is FirTypeParameterSymbol -> {
                             assert(typeRef.qualifier.size == 1)
                             symbol
                         }
@@ -80,7 +79,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
         }
     }
 
-    override fun resolveUserType(typeRef: FirUserTypeRef, symbol: ConeClassifierSymbol?, scope: FirScope): ConeKotlinType {
+    override fun resolveUserType(typeRef: FirUserTypeRef, symbol: FirClassifierSymbol<*>?, scope: FirScope): ConeKotlinType {
         symbol ?: return ConeKotlinErrorType("Symbol not found, for `${typeRef.render()}`")
         return symbol.constructType(typeRef.qualifier, typeRef.isMarkedNullable)
     }

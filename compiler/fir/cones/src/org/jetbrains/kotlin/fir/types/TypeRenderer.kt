@@ -27,7 +27,7 @@ fun ConeKotlinType.render(): String {
                 }
             }
         }
-        is ConeTypeParameterType -> {
+        is ConeLookupTagBasedType -> {
             lookupTag.name.asString()
         }
         is ConeFlexibleType -> {

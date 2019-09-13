@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.CallableId
 
-abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : ConeCallableSymbol, AbstractFirBasedSymbol<D>()
+abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : AbstractFirBasedSymbol<D>() {
+    abstract val callableId: CallableId
+}

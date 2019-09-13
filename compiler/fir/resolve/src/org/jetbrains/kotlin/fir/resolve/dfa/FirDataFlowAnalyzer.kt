@@ -466,10 +466,10 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
         }
 
     private val FirResolvable.resolvedSymbol: FirBasedSymbol<*>?
-        get() = (calleeReference as? FirResolvedCallableReference)?.coneSymbol as? FirBasedSymbol<*>
+        get() = (calleeReference as? FirResolvedCallableReference)?.resolvedSymbol
 
     private fun FirFunctionCall.isBooleanNot(): Boolean {
-        val symbol = calleeReference.safeAs<FirResolvedCallableReference>()?.coneSymbol as? FirNamedFunctionSymbol ?: return false
+        val symbol = calleeReference.safeAs<FirResolvedCallableReference>()?.resolvedSymbol as? FirNamedFunctionSymbol ?: return false
         return symbol.callableId == KOTLIN_BOOLEAN_NOT
     }
 
@@ -700,7 +700,7 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
                         require(explicitReceiver != null)
                         collect(explicitReceiver)
                     }
-                    ((call.calleeReference as? FirResolvedCallableReference)?.coneSymbol)?.let { symbol ->
+                    ((call.calleeReference as? FirResolvedCallableReference)?.resolvedSymbol)?.let { symbol ->
                         if (symbol is FirVariableSymbol<*> || symbol is FirPropertySymbol) {
                             result += getOrCreateRealVariable(symbol as FirBasedSymbol<*>)
                         }

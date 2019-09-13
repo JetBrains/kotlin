@@ -12,5 +12,5 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 
 class FirBackingFieldReferenceImpl(
     psi: PsiElement?,
-    override val coneSymbol: FirBackingFieldSymbol
+    override val resolvedSymbol: FirBackingFieldSymbol
 ) : FirAbstractElement(psi), FirBackingFieldReference

@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.types.Variance
@@ -40,7 +38,7 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
 val FirSession.firSymbolProvider: FirSymbolProvider by componentArrayAccessor()
 val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by componentArrayAccessor()
 
-fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? {
+fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>? {
     val firSymbolProvider = useSiteSession.firSymbolProvider
     return firSymbolProvider.getSymbolByLookupTag(this)
 }
@@ -81,7 +79,7 @@ private fun mapTypeAliasArguments(typeAlias: FirTypeAlias, abbreviatedType: Cone
     return substitutor.substituteOrSelf(resultingType)
 }
 
-fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
+fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>? =
     when (this) {
         is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
         is ConeTypeParameterLookupTag -> this.symbol
@@ -102,12 +100,12 @@ fun ConeClassifierLookupTag.constructType(typeArguments: Array<ConeKotlinTypePro
     }
 }
 
-fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
+fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
-        is ConeTypeParameterSymbol -> {
+        is FirTypeParameterSymbol -> {
             ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable)
         }
-        is ConeClassSymbol -> {
+        is FirClassSymbol -> {
             ConeClassTypeImpl(this.toLookupTag(), typeArguments, isNullable)
         }
         is FirTypeAliasSymbol -> {
@@ -121,7 +119,7 @@ fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjec
     }
 }
 
-fun ConeClassifierSymbol.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
+fun FirClassifierSymbol<*>.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
     constructType(parts.toTypeProjections(), isNullable)
 
 fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjection =
@@ -276,7 +274,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             typeFromSymbol(newCallee.candidateSymbol, makeNullable)
         }
         is FirResolvedCallableReference -> {
-            typeFromSymbol(newCallee.coneSymbol, makeNullable)
+            typeFromSymbol(newCallee.resolvedSymbol, makeNullable)
         }
         is FirThisReference -> {
             val labelName = newCallee.labelName
@@ -287,7 +285,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
     }
 }
 
-private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullable: Boolean): FirResolvedTypeRef {
+private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<*>, makeNullable: Boolean): FirResolvedTypeRef {
     return when (symbol) {
         is FirCallableSymbol<*> -> {
             val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.phasedFir)
@@ -299,7 +297,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullabl
                 returnType
             }
         }
-        is ConeClassifierSymbol -> {
+        is FirClassifierSymbol<*> -> {
             val fir = (symbol as? AbstractFirBasedSymbol<*>)?.phasedFir
             // TODO: unhack
             if (fir is FirEnumEntry) {

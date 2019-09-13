@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.name.Name
 
-class FirTypeParameterSymbol : AbstractFirBasedSymbol<FirTypeParameter>(), ConeTypeParameterSymbol {
+class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
 
-    override val name: Name
+    val name: Name
         get() = fir.name
 
     private val lookupTag = ConeTypeParameterLookupTag(this)
@@ -26,3 +26,4 @@ class FirTypeParameterSymbol : AbstractFirBasedSymbol<FirTypeParameter>(), ConeT
         return fir.hashCode()
     }
 }
+

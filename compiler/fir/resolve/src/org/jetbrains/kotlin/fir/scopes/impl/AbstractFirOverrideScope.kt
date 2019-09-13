@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
     //base symbol as key
-    val overrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol?>()
+    val overrides = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>?>()
 
     val context: ConeTypeContext = session.typeContext
 
@@ -58,7 +58,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
         }
     }
 
-    protected fun ConeCallableSymbol.isOverridden(seen: Set<ConeCallableSymbol>): ConeCallableSymbol? {
+    protected fun FirCallableSymbol<*>.isOverridden(seen: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {
         if (overrides.containsKey(this)) return overrides[this]
 
         fun similarFunctionsOrBothProperties(declaration: FirCallableDeclaration<*>, self: FirCallableDeclaration<*>): Boolean {

@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> :
@@ -33,9 +30,3 @@ interface FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> :
     var supertypesComputationStatus: SupertypesComputationStatus
 }
 
-fun ConeClassifierSymbol.toFirClassLike(): FirClassLikeDeclaration<*>? =
-    when (this) {
-        is FirClassSymbol -> this.fir
-        is FirTypeAliasSymbol -> this.fir
-        else -> null
-    }

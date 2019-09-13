@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -107,7 +106,7 @@ class JavaClassEnhancementScope(
                 ) as FirAccessorSymbol
             }
             else -> {
-                if (original is ConePropertySymbol) return original
+                if (original is FirPropertySymbol) return original
                 error("Can't make enhancement for $original: `${firElement.render()}`")
             }
         }

@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -84,7 +83,7 @@ fun ConeKotlinTypeProjection.toIrTypeArgument(session: FirSession, declarationSt
     }
 }
 
-fun ConeClassifierSymbol.toIrSymbol(session: FirSession, declarationStorage: Fir2IrDeclarationStorage): IrClassifierSymbol {
+fun FirClassifierSymbol<*>.toIrSymbol(session: FirSession, declarationStorage: Fir2IrDeclarationStorage): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {
             toTypeParameterSymbol(declarationStorage)
@@ -103,7 +102,7 @@ fun ConeClassifierSymbol.toIrSymbol(session: FirSession, declarationStorage: Fir
 
 fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? {
     return when (this) {
-        is FirResolvedCallableReference -> coneSymbol.toSymbol(declarationStorage)
+        is FirResolvedCallableReference -> resolvedSymbol.toSymbol(declarationStorage)
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol?.toSymbol(declarationStorage)) {
                 is IrClassSymbol -> boundSymbol.owner.thisReceiver?.symbol
@@ -115,7 +114,7 @@ fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbo
     }
 }
 
-private fun ConeSymbol.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when (this) {
+private fun AbstractFirBasedSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when (this) {
     is FirClassSymbol -> toClassSymbol(declarationStorage)
     is FirFunctionSymbol<*> -> toFunctionSymbol(declarationStorage)
     is FirPropertySymbol -> toPropertyOrFieldSymbol(declarationStorage)

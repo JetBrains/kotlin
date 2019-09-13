@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -27,7 +27,7 @@ abstract class FirAbstractStarImportingScope(
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (ConeClassifierSymbol) -> Boolean
+        processor: (FirClassifierSymbol<*>) -> Boolean
     ): Boolean {
         for (import in starImports) {
             val relativeClassName = import.relativeClassName

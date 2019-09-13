@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
@@ -19,8 +18,8 @@ class FirSuperTypeScope(
 ) : AbstractFirOverrideScope(session) {
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        val accepted = HashSet<ConeFunctionSymbol>()
-        val pending = mutableListOf<ConeFunctionSymbol>()
+        val accepted = HashSet<FirFunctionSymbol<*>>()
+        val pending = mutableListOf<FirFunctionSymbol<*>>()
         for (scope in scopes) {
             if (scope.processFunctionsByName(name) {
 

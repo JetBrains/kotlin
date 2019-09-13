@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -33,14 +32,4 @@ data class CallableId(val packageName: FqName, val className: FqName?, val calla
     }
 }
 
-interface ConeCallableSymbol : ConeSymbol {
-    val callableId: CallableId
-}
 
-interface ConePropertySymbol : ConeVariableSymbol
-
-interface ConeVariableSymbol : ConeCallableSymbol
-
-interface ConeFunctionSymbol : ConeCallableSymbol {
-    val parameters: List<ConeKotlinType>
-}

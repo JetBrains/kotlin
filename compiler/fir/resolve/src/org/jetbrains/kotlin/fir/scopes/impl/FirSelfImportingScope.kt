@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -18,12 +18,12 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
 
     private val symbolProvider = FirSymbolProvider.getInstance(session)
 
-    private val cache = mutableMapOf<Name, ConeClassifierSymbol?>()
+    private val cache = mutableMapOf<Name, FirClassifierSymbol<*>?>()
 
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (ConeClassifierSymbol) -> Boolean
+        processor: (FirClassifierSymbol<*>) -> Boolean
     ): Boolean {
         if (name.asString().isEmpty()) return true
 

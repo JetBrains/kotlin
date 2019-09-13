@@ -12,19 +12,21 @@ import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.name.ClassId
 
 sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration<D>>(
-    override val classId: ClassId
-) : ConeClassLikeSymbol, AbstractFirBasedSymbol<D>() {
+    val classId: ClassId
+) : FirClassifierSymbol<D>() {
+    abstract override fun toLookupTag(): ConeClassLikeLookupTag
+
     override fun equals(other: Any?): Boolean =
         other is FirClassLikeSymbol<*> && fir == other.fir
 
     override fun hashCode(): Int = fir.hashCode()
 }
 
-class FirClassSymbol(classId: ClassId) : FirClassLikeSymbol<FirRegularClass>(classId), ConeClassSymbol {
+class FirClassSymbol(classId: ClassId) : FirClassLikeSymbol<FirRegularClass>(classId) {
     override fun toLookupTag(): ConeClassLikeLookupTag = ConeClassLikeLookupTagImpl(classId)
 }
 
-class FirTypeAliasSymbol(override val classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId), ConeTypeAliasSymbol {
+class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId) {
     override fun toLookupTag(): TypeAliasLookupTagImpl = TypeAliasLookupTagImpl(classId)
 }
 

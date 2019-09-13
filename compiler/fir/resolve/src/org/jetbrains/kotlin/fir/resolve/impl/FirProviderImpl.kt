@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirProviderImpl(val session: FirSession) : FirProvider() {
-    override fun getFirCallableContainerFile(symbol: ConeCallableSymbol): FirFile? {
+    override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
         return state.callableContainerMap[symbol]
     }
 
@@ -114,7 +113,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
         val classesInPackage = mutableMapOf<FqName, MutableSet<Name>>()
         val callableMap = mutableMapOf<CallableId, List<FirCallableSymbol<*>>>()
-        val callableContainerMap = mutableMapOf<ConeCallableSymbol, FirFile>()
+        val callableContainerMap = mutableMapOf<FirCallableSymbol<*>, FirFile>()
 
         fun setFrom(other: State) {
             fileMap.clear()

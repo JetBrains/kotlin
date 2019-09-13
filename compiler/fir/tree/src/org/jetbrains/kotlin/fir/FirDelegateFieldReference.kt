@@ -14,7 +14,7 @@ interface FirDelegateFieldReference : FirResolvedCallableReference {
     override val name: Name
         get() = NAME
 
-    override val coneSymbol: FirDelegateFieldSymbol<*>
+    override val resolvedSymbol: FirDelegateFieldSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitDelegateFieldReference(this, data)
