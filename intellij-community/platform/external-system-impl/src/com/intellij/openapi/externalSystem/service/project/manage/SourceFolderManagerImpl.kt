@@ -18,6 +18,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
@@ -94,51 +96,6 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
     }
   }
 
-  private inner class PostponedSourceFolderCreator : VirtualFileListener {
-    override fun fileCreated(event: VirtualFileEvent) {
-      val sourceFoldersToChange = ArrayList<SourceFolderModel>()
-      val virtualFileManager = VirtualFileManager.getInstance()
-      synchronized(mutex) {
-        for (sourceFolder in sourceFolders.getAllDescendants(event.file.url)) {
-          val sourceFolderFile = ExternalSystemApiUtil.doWriteAction(Computable<VirtualFile> {
-            virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
-          })
-          if (sourceFolderFile != null && sourceFolderFile.isValid) {
-            sourceFoldersToChange.add(sourceFolder)
-            unsafeRemoveSourceFolder(sourceFolder.url)
-          }
-        }
-      }
-      ExternalSystemApiUtil.executeProjectChangeAction(false, object : DisposeAwareProjectChange(project) {
-        override fun execute() {
-          for ((module, url, type, packagePrefix, generated) in sourceFoldersToChange) {
-            val moduleManager = ModuleRootManager.getInstance(module)
-            val modifiableModuleModel = moduleManager.modifiableModel
-            try {
-              val contentEntry = MarkRootActionBase.findContentEntry(modifiableModuleModel, event.file)
-              if (contentEntry != null) {
-                val sourceFolder = contentEntry.addSourceFolder(url, type)
-                if (packagePrefix != null && packagePrefix.isNotEmpty()) {
-                  sourceFolder.packagePrefix = packagePrefix
-                }
-                setForGeneratedSources(sourceFolder, generated)
-              }
-            }
-            finally {
-              modifiableModuleModel.commit()
-            }
-          }
-        }
-      })
-    }
-
-    private fun setForGeneratedSources(folder: SourceFolder, generated: Boolean) {
-      val jpsElement = folder.jpsElement
-      val properties = jpsElement.getProperties(JavaModuleSourceRootTypes.SOURCES)
-      if (properties != null) properties.isForGeneratedSources = generated
-    }
-  }
-
   private data class SourceFolderModel(
     val module: Module,
     val url: String,
@@ -153,7 +110,50 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
   )
 
   init {
-    val virtualFileManager = VirtualFileManager.getInstance()
-    virtualFileManager.addVirtualFileListener(PostponedSourceFolderCreator(), this)
+    project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener {
+      override fun after(events: List<VFileEvent>) {
+        val sourceFoldersToChange = ArrayList<SourceFolderModel>()
+        val virtualFileManager = VirtualFileManager.getInstance()
+        for (event in events) {
+          synchronized(mutex) {
+            for (sourceFolder in sourceFolders.getAllDescendants(com.intellij.openapi.vfs.VfsUtilCore.pathToUrl(event.path))) {
+              val sourceFolderFile = ExternalSystemApiUtil.doWriteAction(Computable<VirtualFile> {
+                virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
+              })
+              if (sourceFolderFile != null && sourceFolderFile.isValid) {
+                sourceFoldersToChange.add(sourceFolder)
+                unsafeRemoveSourceFolder(sourceFolder.url)
+              }
+            }
+            ExternalSystemApiUtil.executeProjectChangeAction(false, object : DisposeAwareProjectChange(project) {
+              override fun execute() {
+                for ((module, url, type, packagePrefix, generated) in sourceFoldersToChange) {
+                  val moduleManager = ModuleRootManager.getInstance(module)
+                  val modifiableModuleModel = moduleManager.modifiableModel
+                  try {
+                    val contentEntry = MarkRootActionBase.findContentEntry(modifiableModuleModel, event.file!!)
+                    if (contentEntry != null) {
+                      val sourceFolder = contentEntry.addSourceFolder(url, type)
+                      if (packagePrefix != null && packagePrefix.isNotEmpty()) {
+                        sourceFolder.packagePrefix = packagePrefix
+                      }
+                      setForGeneratedSources(sourceFolder, generated)
+                    }
+                  }
+                  finally {
+                    modifiableModuleModel.commit()
+                  }
+                }
+              }
+            })
+          }
+        }
+      }
+    })
+  }
+  private fun setForGeneratedSources(folder: SourceFolder, generated: Boolean) {
+    val jpsElement = folder.jpsElement
+    val properties = jpsElement.getProperties(JavaModuleSourceRootTypes.SOURCES)
+    if (properties != null) properties.isForGeneratedSources = generated
   }
 }

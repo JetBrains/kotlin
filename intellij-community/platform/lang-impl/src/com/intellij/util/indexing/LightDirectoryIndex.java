@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ConcurrentBitSet;
@@ -62,14 +63,21 @@ public final class LightDirectoryIndex<T> {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
         for (VFileEvent event : events) {
-          VirtualFile file = event.getFile();
-          if (file == null || file.isDirectory()) {
+          if (shouldReset(event)) {
             resetIndex();
             break;
           }
         }
       }
     });
+  }
+
+  private static boolean shouldReset(VFileEvent event) {
+    if (event instanceof VFileCreateEvent) {
+      return ((VFileCreateEvent)event).isDirectory();
+    }
+    VirtualFile file = event.getFile();
+    return file == null || file.isDirectory();
   }
 
   public void resetIndex() {

@@ -226,17 +226,27 @@ public class DirtyScopeHolder extends UserDataHolderBase implements AsyncFileLis
 
   private void after(@NotNull List<? extends VFileEvent> events) {
     for (VFileEvent event : events) {
-      if (event instanceof VFileCreateEvent || event instanceof VFileCopyEvent || event instanceof VFileMoveEvent) {
+      if (event instanceof VFileCreateEvent) {
+        VirtualFile parent = ((VFileCreateEvent)event).getParent();
+        String fileName = ((VFileCreateEvent)event).getChildName();
+        Module module = getModuleForSourceContentFile(parent, fileName);
+        if (module != null) {
+          addToDirtyModules(module);
+        }
+      }
+      else if (event instanceof VFileCopyEvent || event instanceof VFileMoveEvent) {
         VirtualFile file = event.getFile();
         if (file != null) {
           fileChanged(file);
         }
       }
-      else if (event instanceof VFilePropertyChangeEvent) {
-        VFilePropertyChangeEvent pce = (VFilePropertyChangeEvent)event;
-        String propertyName = pce.getPropertyName();
-        if (VirtualFile.PROP_NAME.equals(propertyName) || VirtualFile.PROP_SYMLINK_TARGET.equals(propertyName)) {
-          fileChanged(pce.getFile());
+      else {
+        if (event instanceof VFilePropertyChangeEvent) {
+          VFilePropertyChangeEvent pce = (VFilePropertyChangeEvent)event;
+          String propertyName = pce.getPropertyName();
+          if (VirtualFile.PROP_NAME.equals(propertyName) || VirtualFile.PROP_SYMLINK_TARGET.equals(propertyName)) {
+            fileChanged(pce.getFile());
+          }
         }
       }
     }
@@ -296,9 +306,12 @@ public class DirtyScopeHolder extends UserDataHolderBase implements AsyncFileLis
   }
 
   private Module getModuleForSourceContentFile(@NotNull VirtualFile file) {
-    FileType fileType = myFileTypeRegistry.getFileTypeByFileName(file.getNameSequence());
-    if (myService.getFileTypes().contains(fileType) && myService.getFileIndex().isInSourceContent(file)) {
-      return myService.getFileIndex().getModuleForFile(file);
+    return getModuleForSourceContentFile(file, file.getNameSequence());
+  }
+  private Module getModuleForSourceContentFile(@NotNull VirtualFile parent, @NotNull CharSequence fileName) {
+    FileType fileType = myFileTypeRegistry.getFileTypeByFileName(fileName);
+    if (myService.getFileTypes().contains(fileType) && myService.getFileIndex().isInSourceContent(parent)) {
+      return myService.getFileIndex().getModuleForFile(parent);
     }
     return null;
   }
