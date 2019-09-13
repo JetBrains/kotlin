@@ -164,7 +164,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
   }
 
   static ServiceViewModel createModel(@NotNull List<ServiceViewItem> items,
-                                      @Nullable ServiceViewContributor contributor,
+                                      @Nullable ServiceViewContributor<?> contributor,
                                       @NotNull ServiceModel model,
                                       @NotNull ServiceModelFilter modelFilter,
                                       @Nullable ServiceViewFilter parentFilter) {
@@ -203,47 +203,45 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
                                     @NotNull ServiceModel model,
                                     @NotNull ServiceModelFilter modelFilter,
                                     @Nullable ServiceViewFilter parentFilter,
-                                    @NotNull Map<String, ServiceViewContributor> contributors) {
-    if (viewState.viewType.equals(ContributorModel.TYPE)) {
-      ServiceState serviceState = ContainerUtil.getOnlyItem(viewState.roots);
-      ServiceViewContributor contributor = serviceState == null ? null : contributors.get(serviceState.contributor);
-      return contributor == null ? null : new ContributorModel(model, modelFilter, contributor, parentFilter);
-    }
-    else if (viewState.viewType.equals(GroupModel.TYPE)) {
-      ServiceState serviceState = ContainerUtil.getOnlyItem(viewState.roots);
-      ServiceViewContributor contributor = serviceState == null ? null : contributors.get(serviceState.contributor);
-      if (contributor == null) return null;
+                                    @NotNull Map<String, ServiceViewContributor<?>> contributors) {
+    switch (viewState.viewType) {
+      case ContributorModel.TYPE: {
+        ServiceState serviceState = ContainerUtil.getOnlyItem(viewState.roots);
+        ServiceViewContributor<?> contributor = serviceState == null ? null : contributors.get(serviceState.contributor);
+        return contributor == null ? null : new ContributorModel(model, modelFilter, contributor, parentFilter);
+      }
+      case GroupModel.TYPE: {
+        ServiceState serviceState = ContainerUtil.getOnlyItem(viewState.roots);
+        ServiceViewContributor<?> contributor = serviceState == null ? null : contributors.get(serviceState.contributor);
+        if (contributor == null) return null;
 
-      ServiceViewItem groupItem = model.findItemById(serviceState.path, contributor);
-      if (groupItem instanceof ServiceGroupNode) {
+        ServiceViewItem groupItem = model.findItemById(serviceState.path, contributor);
+        if (!(groupItem instanceof ServiceGroupNode)) return null;
         AtomicReference<ServiceGroupNode> ref = new AtomicReference<>((ServiceGroupNode)groupItem);
         return new GroupModel(model, modelFilter, ref, parentFilter);
       }
-    }
-    else if (viewState.viewType.equals(SingeServiceModel.TYPE)) {
-      ServiceState serviceState = ContainerUtil.getOnlyItem(viewState.roots);
-      ServiceViewContributor contributor = serviceState == null ? null : contributors.get(serviceState.contributor);
-      if (contributor == null) return null;
+      case SingeServiceModel.TYPE: {
+        ServiceState serviceState = ContainerUtil.getOnlyItem(viewState.roots);
+        ServiceViewContributor<?> contributor = serviceState == null ? null : contributors.get(serviceState.contributor);
+        if (contributor == null) return null;
 
-      ServiceViewItem serviceItem = model.findItemById(serviceState.path, contributor);
-      if (serviceItem != null) {
+        ServiceViewItem serviceItem = model.findItemById(serviceState.path, contributor);
+        if (serviceItem == null) return null;
         AtomicReference<ServiceViewItem> ref = new AtomicReference<>(serviceItem);
         return new SingeServiceModel(model, modelFilter, ref, parentFilter);
       }
-    }
-    else if (viewState.viewType.equals(ServiceListModel.TYPE)) {
-      List<ServiceViewItem> items = new ArrayList<>();
-      for (ServiceState serviceState : viewState.roots) {
-        ServiceViewContributor contributor = contributors.get(serviceState.contributor);
-        if (contributor != null) {
-          ContainerUtil.addIfNotNull(items, model.findItemById(serviceState.path, contributor));
+      case ServiceListModel.TYPE:
+        List<ServiceViewItem> items = new ArrayList<>();
+        for (ServiceState serviceState : viewState.roots) {
+          ServiceViewContributor<?> contributor = contributors.get(serviceState.contributor);
+          if (contributor != null) {
+            ContainerUtil.addIfNotNull(items, model.findItemById(serviceState.path, contributor));
+          }
         }
-      }
-      if (!items.isEmpty()) {
-        return new ServiceListModel(model, modelFilter, items, parentFilter);
-      }
+        return items.isEmpty() ? null : new ServiceListModel(model, modelFilter, items, parentFilter);
+      default:
+        return null;
     }
-    return null;
   }
 
   @Nullable
@@ -311,7 +309,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
 
   static class AllServicesModel extends ServiceViewModel {
     AllServicesModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter,
-                     @NotNull Collection<ServiceViewContributor> contributors) {
+                     @NotNull Collection<ServiceViewContributor<?>> contributors) {
       super(model, modelFilter, new ServiceViewFilter(null) {
         @Override
         public boolean value(ServiceViewItem item) {
@@ -335,9 +333,9 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
   static class ContributorModel extends ServiceViewModel {
     private static final String TYPE = "contributor";
 
-    private final ServiceViewContributor myContributor;
+    private final ServiceViewContributor<?> myContributor;
 
-    ContributorModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter, @NotNull ServiceViewContributor contributor,
+    ContributorModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter, @NotNull ServiceViewContributor<?> contributor,
                      @Nullable ServiceViewFilter parentFilter) {
       super(model, modelFilter, new ServiceViewFilter(parentFilter) {
         @Override
@@ -370,7 +368,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
       viewState.roots = ContainerUtil.newSmartList(serviceState);
     }
 
-    ServiceViewContributor getContributor() {
+    ServiceViewContributor<?> getContributor() {
       return myContributor;
     }
   }

@@ -372,7 +372,7 @@ public final class FileTemplateManagerImpl extends FileTemplateManager implement
     myTestDate = testDate;
   }
 
-  @Nullable
+  @NotNull
   @Override
   public State getState() {
     myState.SCHEME = myScheme.getName();
