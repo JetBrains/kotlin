@@ -27,7 +27,6 @@ import com.intellij.openapi.fileTypes.impl.FileTypeManagerImpl;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.CollectingContentIterator;
@@ -785,19 +784,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   private static void handleDumbMode(@Nullable Project project) {
     ProgressManager.checkCanceled(); // DumbModeAction.CANCEL
-
-    if (project != null) {
-      final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
-      if (progressIndicator instanceof BackgroundableProcessIndicator) {
-        final BackgroundableProcessIndicator indicator = (BackgroundableProcessIndicator)progressIndicator;
-        if (indicator.getDumbModeAction() == DumbModeAction.WAIT) {
-          assert !ApplicationManager.getApplication().isDispatchThread();
-          DumbService.getInstance(project).waitForSmartMode();
-          return;
-        }
-      }
-    }
-
     throw IndexNotReadyException.create(project == null ? null : DumbServiceImpl.getInstance(project).getDumbModeStartTrace());
   }
 
