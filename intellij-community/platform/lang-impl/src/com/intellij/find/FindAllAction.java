@@ -2,25 +2,23 @@
 package com.intellij.find;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.scale.JBUIScale;
-import com.intellij.util.IconUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-
 public class FindAllAction extends AnAction implements ShortcutProvider, DumbAware {
   public FindAllAction() {
-    getTemplatePresentation().setDescription("Export matches to Find tool window");
-    getTemplatePresentation().setText("Find All");
+    super(IdeBundle.message("show.in.find.window.button.name"),
+          IdeBundle.message("show.in.find.window.button.description"), null);
   }
 
   @Override
@@ -29,8 +27,8 @@ public class FindAllAction extends AnAction implements ShortcutProvider, DumbAwa
     Editor editor = e.getData(CommonDataKeys.EDITOR_EVEN_IF_INACTIVE);
     EditorSearchSession search = e.getData(EditorSearchSession.SESSION_KEY);
 
-    updateTemplateIcon(search);
-    e.getPresentation().setIcon(getTemplatePresentation().getIcon());
+    e.getPresentation().setIcon(project == null ? AllIcons.General.Pin_tab :
+      ToolWindowManagerEx.getInstanceEx(project).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab));
     e.getPresentation().setEnabled(editor != null && project != null && search != null &&
                                    !project.isDisposed() && search.hasMatches() &&
                                    PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) != null);
@@ -59,17 +57,5 @@ public class FindAllAction extends AnAction implements ShortcutProvider, DumbAwa
   public ShortcutSet getShortcut() {
     AnAction findUsages = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
     return findUsages != null ? findUsages.getShortcutSet() : null;
-  }
-
-  private void updateTemplateIcon(@Nullable EditorSearchSession session) {
-    if (session == null || getTemplatePresentation().getIcon() != null) return;
-
-    Icon base = AllIcons.Actions.Find;
-    Icon text = IconUtil.textToIcon("ALL", session.getComponent(), JBUIScale.scale(6F));
-
-    LayeredIcon icon = new LayeredIcon(2);
-    icon.setIcon(base, 0);
-    icon.setIcon(text, 1, 0, base.getIconHeight() - text.getIconHeight());
-    getTemplatePresentation().setIcon(icon);
   }
 }

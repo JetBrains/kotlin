@@ -13,6 +13,7 @@ import com.intellij.find.findUsages.FindUsagesHandlerFactory.OperationMode;
 import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.gotoByName.ModelDiff;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.openapi.actionSystem.*;
@@ -566,7 +567,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
                                           @NotNull DefaultActionGroup pinGroup) {
     Icon icon = ToolWindowManagerEx.getInstanceEx(handler.getProject()).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
     final AnAction pinAction =
-      new AnAction("Open in Find Tool Window", "Show all usages in a separate tool window", icon) {
+      new AnAction(IdeBundle.message("show.in.find.window.button.name"), "Show all usages in a separate tool window", icon) {
         {
           AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
           setShortcutSet(action.getShortcutSet());

@@ -361,7 +361,10 @@ public class FindInProjectUtil {
   }
 
   public static void setupViewPresentation(UsageViewPresentation presentation, boolean toOpenInNewTab, @NotNull FindModel findModel) {
-    final String scope = getTitleForScope(findModel);
+    String scope = getTitleForScope(findModel);
+    if (!scope.isEmpty()) {
+      scope = Character.toLowerCase(scope.charAt(0)) + scope.substring(1);
+    }
     final String stringToFind = findModel.getStringToFind();
     presentation.setScopeText(scope);
     if (stringToFind.isEmpty()) {

@@ -311,6 +311,9 @@ public class FindUtil {
   }
 
   static void findAllAndShow(@NotNull Project project, @NotNull PsiFile psiFile, @NotNull FindModel findModel) {
+    findModel.setCustomScope(true);
+    findModel.setProjectScope(false);
+    findModel.setCustomScopeName("File " + psiFile.getName());
     List<Usage> usages = findAll(project, psiFile, findModel);
     if (usages == null) return;
     final UsageTarget[] usageTargets = {new FindInProjectUtil.StringUsageTarget(project, findModel)};
