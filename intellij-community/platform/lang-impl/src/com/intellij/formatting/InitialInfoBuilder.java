@@ -164,7 +164,7 @@ public class InitialInfoBuilder {
 
   private void collectAlignments(Block rootBlock) {
     if (myCollectAlignmentsInsideFormattingRange && rootBlock.getAlignment() != null
-        && isAffectedByFormatting(rootBlock) && !myAffectedRanges.isInDisabledRange(rootBlock.getTextRange()))
+        && isAffectedByFormatting(rootBlock) && !isDisabled(rootBlock.getTextRange()))
     {
       myAlignmentsInsideRangeToModify.add(rootBlock.getAlignment());
     }
@@ -295,7 +295,7 @@ public class InitialInfoBuilder {
 
     info.setSpaceProperty(myCurrentSpaceProperty);
     myCurrentWhiteSpace = new WhiteSpace(textRange.getEndOffset(), false);
-    if (myAffectedRanges.isInDisabledRange(myCurrentWhiteSpace.getTextRange()))
+    if (isDisabled(myCurrentWhiteSpace.getTextRange()))
       myCurrentWhiteSpace.setReadOnly(true);
     myPreviousBlock = info;
 
@@ -337,6 +337,10 @@ public class InitialInfoBuilder {
     }
 
     return false;
+  }
+
+  private boolean isDisabled(@NotNull TextRange range) {
+    return myAffectedRanges != null && myAffectedRanges.isInDisabledRange(range);
   }
 
   private boolean isInsideFormattingRanges(TextRange range) {
