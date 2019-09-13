@@ -90,7 +90,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     }
 
     val K2NativeCompilerArguments.isUsefulWithoutFreeArgs: Boolean
-        get() = listTargets || listPhases || checkDependencies || !includes.isNullOrEmpty()
+        get() = listTargets || listPhases || checkDependencies || !includes.isNullOrEmpty() ||
+                !librariesToCache.isNullOrEmpty()
 
     fun Array<String>?.toNonNullList(): List<String> {
         return this?.asList<String>() ?: listOf<String>()
@@ -211,6 +212,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(LIBRARIES_TO_COVER, arguments.coveredLibraries.toNonNullList())
                 arguments.coverageFile?.let { put(PROFRAW_PATH, it) }
                 put(OBJC_GENERICS, arguments.objcGenerics)
+
+                put(LIBRARIES_TO_CACHE, parseLibrariesToCache(arguments, configuration, outputKind))
+                put(CACHE_DIRECTORIES, arguments.cacheDirectories.toNonNullList())
+                put(CACHED_LIBRARIES, parseCachedLibraries(arguments, configuration))
             }
         }
     }
@@ -298,6 +303,37 @@ private fun selectIncludes(
         emptyList()
     } else {
         includes
+    }
+}
+
+private fun parseCachedLibraries(
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration
+): Map<String, String> = arguments.cachedLibraries?.asList().orEmpty().mapNotNull {
+    val libraryAndCache = it.split(",")
+    if (libraryAndCache.size != 2) {
+        configuration.report(
+                ERROR,
+                "incorrect $CACHED_LIBRARY format: expected '<library>,<cache>', got '$it'"
+        )
+        null
+    } else {
+        libraryAndCache[0] to libraryAndCache[1]
+    }
+}.toMap()
+
+private fun parseLibrariesToCache(
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration,
+        outputKind: CompilerOutputKind
+): List<String> {
+    val input = arguments.librariesToCache?.asList().orEmpty()
+
+    return if (input.isNotEmpty() && !outputKind.isCache) {
+        configuration.report(ERROR, "$MAKE_CACHE can't be used when not producing cache")
+        emptyList()
+    } else {
+        input
     }
 }
 

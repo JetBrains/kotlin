@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.util.Logger
 import kotlin.system.exitProcess
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 
@@ -42,6 +43,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val infoArgsOnly = configuration.kotlinSourceRoots.isEmpty()
             && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
+            && configuration[KonanConfigKeys.LIBRARIES_TO_CACHE].isNullOrEmpty()
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)
@@ -91,6 +93,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val includedLibraryFiles
         get() = configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { File(it) }
 
+    private val librariesToCacheFiles
+        get() = configuration.getList(KonanConfigKeys.LIBRARIES_TO_CACHE).map { File(it) }
+
     private val unresolvedLibraries = libraryNames.toUnresolvedLibraries
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
@@ -124,8 +129,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     // But currently the resolver is in the middle of a complex refactoring so it was decided to avoid changes in its logic.
     // TODO: Handle included libraries in KonanLibraryResolver when it's refactored and moved into the big Kotlin repo.
     internal val resolvedLibraries by lazy {
+        val additionalLibraryFiles = includedLibraryFiles + librariesToCacheFiles
         resolver.resolveWithDependencies(
-                unresolvedLibraries + includedLibraryFiles.map { UnresolvedLibrary(it.absolutePath, null) },
+                unresolvedLibraries + additionalLibraryFiles.map { UnresolvedLibrary(it.absolutePath, null) },
                 noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
                 noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
                 noEndorsedLibs = configuration.getBoolean(KonanConfigKeys.NOENDORSEDLIBS)
@@ -143,6 +149,16 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val includedLibraries by lazy {
         getIncludedLibraries(includedLibraryFiles, configuration, resolvedLibraries)
     }
+
+    internal val cacheSupport: CacheSupport by lazy {
+        CacheSupport(configuration, resolvedLibraries, target, produce)
+    }
+
+    internal val cachedLibraries: CachedLibraries
+        get() = cacheSupport.cachedLibraries
+
+    internal val librariesToCache: Set<KotlinLibrary>
+        get() = cacheSupport.librariesToCache
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")

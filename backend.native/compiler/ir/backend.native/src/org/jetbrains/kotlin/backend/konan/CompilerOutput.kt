@@ -40,6 +40,9 @@ val CompilerOutputKind.involvesLinkStage: Boolean
         CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
     }
 
+val CompilerOutputKind.isCache: Boolean
+    get() = (this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE)
+
 internal fun produceCStubs(context: Context) {
     val llvmModule = context.llvmModule!!
     context.cStubsManager.compile(context.config.clang, context.messageCollector, context.inVerbosePhase)?.let {
@@ -96,6 +99,8 @@ internal fun produceOutput(context: Context) {
         CompilerOutputKind.STATIC,
         CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.FRAMEWORK,
+        CompilerOutputKind.DYNAMIC_CACHE,
+        CompilerOutputKind.STATIC_CACHE,
         CompilerOutputKind.PROGRAM -> {
             val output = tempFiles.nativeBinaryFileName
             context.bitcodeFileName = output

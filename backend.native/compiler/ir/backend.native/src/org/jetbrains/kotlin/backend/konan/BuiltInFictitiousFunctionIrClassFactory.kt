@@ -48,6 +48,16 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
     class FunctionalInterface(val irClass: IrClass, val arity: Int)
 
+    fun buildAllClasses() {
+        val maxArity = 255 // See [BuiltInFictitiousFunctionClassFactory].
+        (0 .. maxArity).forEach { arity ->
+            function(arity)
+            kFunction(arity)
+            suspendFunction(arity)
+            kSuspendFunction(arity)
+        }
+    }
+
     fun function(n: Int) = buildClass(irBuiltIns.builtIns.getFunction(n) as FunctionClassDescriptor)
     fun kFunction(n: Int) = buildClass(reflectionTypes.getKFunction(n) as FunctionClassDescriptor)
     fun suspendFunction(n: Int) = buildClass(irBuiltIns.builtIns.getSuspendFunction(n) as FunctionClassDescriptor)

@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 
 /**
  * Defines what LLVM module should consist of.
  */
 interface LlvmModuleSpecification {
+    val isFinal: Boolean
     fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean
-    fun containsLibrary(library: KonanLibrary): Boolean
+    fun containsLibrary(library: KotlinLibrary): Boolean
     fun containsModule(module: ModuleDescriptor): Boolean
     fun containsModule(module: IrModuleFragment): Boolean
     fun containsDeclaration(declaration: IrDeclaration): Boolean

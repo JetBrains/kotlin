@@ -102,6 +102,22 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     // Make sure to prepend them with -X.
     // Keep the list lexically sorted.
 
+    @Argument(
+            value = "-Xcache-directory",
+            valueDescription = "<path>",
+            description = "Path to the directory containing caches",
+            delimiter = ""
+    )
+    var cacheDirectories: Array<String>? = null
+
+    @Argument(
+            value = CACHED_LIBRARY,
+            valueDescription = "<library path>,<cache path>",
+            description = "Comma-separated paths of a library and its cache",
+            delimiter = ""
+    )
+    var cachedLibraries: Array<String>? = null
+
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones")
     var checkDependencies: Boolean = false
 
@@ -138,6 +154,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xg0", description = "Add light debug information")
     var lightDebug: Boolean = false
+
+    @Argument(
+            value = MAKE_CACHE,
+            valueDescription = "<path>",
+            description = "Path of the library to be compiled to cache",
+            delimiter = ""
+    )
+    var librariesToCache: Array<String>? = null
 
     @Argument(value = "-Xprint-bitcode", deprecatedName = "--print_bitcode", description = "Print llvm bitcode")
     var printBitCode: Boolean = false
@@ -220,3 +244,5 @@ const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"
 const val EMBED_BITCODE_MARKER_FLAG = "-Xembed-bitcode-marker"
 const val STATIC_FRAMEWORK_FLAG = "-Xstatic-framework"
 const val INCLUDE_ARG = "-Xinclude"
+const val CACHED_LIBRARY = "-Xcached-library"
+const val MAKE_CACHE = "-Xmake-cache"

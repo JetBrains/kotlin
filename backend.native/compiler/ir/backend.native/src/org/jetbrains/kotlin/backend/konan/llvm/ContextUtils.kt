@@ -400,9 +400,20 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val bitcodeToLink: List<KonanLibrary> by lazy {
         (context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder) as List<KonanLibrary>)
-                .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
-                // TODO: the filter above is incorrect when compiling to multiple LLVM modules.
-                .filter { context.llvmModuleSpecification.containsLibrary(it) }
+                .filter { shouldContainBitcode(it) }
+    }
+
+    private fun shouldContainBitcode(library: KonanLibrary): Boolean {
+        if (!context.llvmModuleSpecification.containsLibrary(library)) {
+            return false
+        }
+
+        if (!context.llvmModuleSpecification.isFinal) {
+            return true
+        }
+
+        // Apply some DCE:
+        return (!library.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(library)
     }
 
     val additionalProducedBitcodeFiles = mutableListOf<String>()

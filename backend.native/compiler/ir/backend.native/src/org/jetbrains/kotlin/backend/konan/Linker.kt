@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 
 internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
@@ -13,7 +12,9 @@ internal fun determineLinkerOutput(context: Context): LinkerOutputKind =
                 val staticFramework = context.config.produceStaticFramework
                 if (staticFramework) LinkerOutputKind.STATIC_LIBRARY else LinkerOutputKind.DYNAMIC_LIBRARY
             }
+            CompilerOutputKind.DYNAMIC_CACHE,
             CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
+            CompilerOutputKind.STATIC_CACHE,
             CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
             CompilerOutputKind.PROGRAM -> LinkerOutputKind.EXECUTABLE
             else -> TODO("${context.config.produce} should not reach native linker stage")
@@ -81,12 +82,16 @@ internal class Linker(val context: Context) {
 
         val needsProfileLibrary = context.coverage.enabled
 
+        val caches = determineCachesToLink(context)
+
         try {
             File(executable).delete()
             linker.linkCommands(objectFiles = objectFiles, executable = executable,
-                    libraries = linker.linkStaticLibraries(includedBinaries) + context.config.defaultSystemLibraries,
+                    libraries = linker.linkStaticLibraries(includedBinaries) + context.config.defaultSystemLibraries +
+                            caches.static.takeIf { context.config.produce != CompilerOutputKind.STATIC_CACHE }.orEmpty(),
                     linkerArgs = asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                             BitcodeEmbedding.getLinkerOptions(context.config) +
+                            caches.dynamic +
                             libraryProvidedLinkerFlags + frameworkLinkerArgs,
                     optimize = optimize, debug = debug, kind = linkerOutput,
                     outputDsymBundle = context.config.outputFile + ".dSYM",
@@ -100,4 +105,36 @@ internal class Linker(val context: Context) {
         return executable
     }
 
+}
+
+private class CachesToLink(val static: List<String>, val dynamic: List<String>)
+
+private fun determineCachesToLink(context: Context): CachesToLink {
+    val staticCaches = mutableListOf<String>()
+    val dynamicCaches = mutableListOf<String>()
+
+    // TODO: suboptimal, see e.g. [LlvmImports].
+    context.librariesWithDependencies.forEach { library ->
+        val currentBinaryContainsLibrary = context.llvmModuleSpecification.containsLibrary(library)
+        val cache = context.config.cachedLibraries.getLibraryCache(library)
+        val libraryIsCached = cache != null
+
+        // Consistency check. Generally guaranteed by implementation.
+        if (currentBinaryContainsLibrary && libraryIsCached) {
+            error("Library ${library.libraryName} is found in both cache and current binary")
+        } else if (!currentBinaryContainsLibrary && !libraryIsCached) {
+            error("Library ${library.libraryName} is not found neither in cache nor in current binary")
+        }
+
+        if (cache != null) {
+            val list = when (cache.kind) {
+                CachedLibraries.Cache.Kind.DYNAMIC -> dynamicCaches
+                CachedLibraries.Cache.Kind.STATIC -> staticCaches
+            }
+
+            list += cache.path
+        }
+    }
+
+    return CachesToLink(static = staticCaches.distinct(), dynamic = dynamicCaches.distinct())
 }

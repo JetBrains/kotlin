@@ -141,13 +141,20 @@ internal val psiToIrPhase = konanUnitPhase(
 
             val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
+            val modulesWithoutDCE = moduleDescriptor.allDependencyModules
+                    .filter { !llvmModuleSpecification.isFinal && llvmModuleSpecification.containsModule(it) }
+
+            // Note: using [llvmModuleSpecification] since this phase produces IR for generating single LLVM module.
+
+            val exportedDependencies = (getExportedDependencies() + modulesWithoutDCE).distinct()
+
             val deserializer = KonanIrLinker(
                     moduleDescriptor,
                     this as LoggingContext,
                     generatorContext.irBuiltIns,
                     symbolTable,
                     forwardDeclarationsModuleDescriptor,
-                    getExportedDependencies()
+                    exportedDependencies
             )
 
             var dependenciesCount = 0
@@ -176,12 +183,16 @@ internal val psiToIrPhase = konanUnitPhase(
             val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(),
                     deserializer, listOf(functionIrClassFactory))
 
+            if (this.stdlibModule in modulesWithoutDCE) {
+                functionIrClassFactory.buildAllClasses()
+            }
+
             irModule = module
-            irModules = deserializer.modules
+            irModules = deserializer.modules.filterValues { llvmModuleSpecification.containsModule(it) }
             ir.symbols = symbols
 
             functionIrClassFactory.module =
-                    (listOf(irModule!!) + irModules.values)
+                    (listOf(irModule!!) + deserializer.modules.values)
                             .single { it.descriptor.isKonanStdlib() }
         },
         name = "Psi2Ir",
