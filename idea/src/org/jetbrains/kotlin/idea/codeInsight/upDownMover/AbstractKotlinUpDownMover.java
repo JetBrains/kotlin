@@ -119,7 +119,7 @@ public abstract class AbstractKotlinUpDownMover extends LineMover {
         return sourceRange;
     }
 
-    protected static int getElementLine(PsiElement element, Editor editor, boolean first) {
+    protected static int getElementLine(@Nullable PsiElement element, @NotNull Editor editor, boolean first) {
         if (element == null) return -1;
 
         Document doc = editor.getDocument();

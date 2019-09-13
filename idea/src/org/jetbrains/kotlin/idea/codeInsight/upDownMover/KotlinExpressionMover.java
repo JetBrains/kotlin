@@ -229,9 +229,8 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
 
     @Nullable
     private static LineRange getExpressionTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
-
-        PsiElement start = sibling;
-        PsiElement end = sibling;
+        @Nullable PsiElement start = sibling;
+        @Nullable PsiElement end = sibling;
 
         if (!down) {
             if (sibling instanceof KtIfExpression) {
@@ -350,29 +349,57 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
             }
         }
 
-        if (start == sibling && end == sibling) {
-            PsiElement comment = sibling;
-            while (true) {
-                int nextLine = getElementLine(comment, editor, !down) + (down ? 1 : -1);
-                comment = firstNonWhiteSibling(comment, down);
-                if (comment instanceof PsiComment && getElementLine(comment, editor, down) == nextLine) {
-                    if (down) {
-                        end = comment;
-                    } else {
-                        start = comment;
-                    }
-                }
-                else break;
-            }
-            if (down && end instanceof PsiComment) {
-                PsiElement next = firstNonWhiteSibling(end, true);
-                if (getElementLine(next, editor, true) == getElementLine(end, editor, false) + 1) {
-                    end = next;
-                }
-            }
+        Pair<PsiElement, PsiElement> extended = extendForSiblingComments(start, end, sibling, editor, down);
+        if (extended != null) {
+            start = extended.first;
+            end = extended.second;
         }
 
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
+    }
+
+    private static @Nullable Pair<PsiElement, PsiElement> extendForSiblingComments(
+            @Nullable PsiElement start, @Nullable PsiElement end, @NotNull PsiElement sibling,
+            @NotNull Editor editor, boolean down
+    ) {
+        if (!(start == end && start == sibling)) {
+            return null;
+        }
+
+        boolean hasUpdate = false;
+
+        PsiElement current = sibling;
+        while (true) {
+            int nextLine = getElementLine(current, editor, !down) + (down ? 1 : -1);
+
+            current = firstNonWhiteSibling(current, down);
+            if (!(current instanceof PsiComment)) {
+                break;
+            }
+
+            if (getElementLine(current, editor, down) != nextLine) {
+                // An empty line is between current element and next sibling
+                break;
+            }
+
+            hasUpdate = true;
+            if (down) {
+                end = current;
+            }
+            else {
+                start = current;
+            }
+        }
+
+        if (down && end instanceof PsiComment) {
+            PsiElement next = firstNonWhiteSibling(end, true);
+            if (getElementLine(next, editor, true) == getElementLine(end, editor, false) + 1) {
+                hasUpdate = true;
+                end = next;
+            }
+        }
+
+        return hasUpdate ? Pair.create(start, end) : null;
     }
 
     @Nullable
