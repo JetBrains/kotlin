@@ -12800,6 +12800,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inlineClasses/resultInlining.kt");
         }
 
+        @TestMetadata("resultRunCatchingOrElse.kt")
+        public void testResultRunCatchingOrElse() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/resultRunCatchingOrElse.kt");
+        }
+
         @TestMetadata("secondaryConstructorWithVararg.kt")
         public void testSecondaryConstructorWithVararg() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVararg.kt");
