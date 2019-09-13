@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.konan.ir.isOverridable
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
@@ -220,12 +221,12 @@ private class ExportedElement(val kind: ElementKind,
                 val llvmFunction = owner.codegen.llvmFunction(irFunction)
                 // If function is virtual, we need to resolve receiver properly.
                 val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) && !function.isExtension &&
-                        function.isOverridable) {
+                        irFunction.isOverridable) {
                     // We need LLVMGetElementType() as otherwise type is function pointer.
                     generateFunction(owner.codegen, LLVMGetElementType(llvmFunction.type)!!, cname) {
                         val receiver = param(0)
                         val numParams = LLVMCountParams(llvmFunction)
-                        val args = (0..numParams - 1).map { index -> param(index) }
+                        val args = (0 .. numParams - 1).map { index -> param(index) }
                         val callee = lookupVirtualImpl(receiver, irFunction)
                         val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                         ret(result)

@@ -3558,6 +3558,7 @@ dynamicTest("produce_dynamic") {
                 "RO property is 42\n" +
                 "RW property is 239\n" +
                 "enum100 = 100\n" +
+                "enum42 = 42\n" +
                 "object = 42\n" +
                 "singleton = I am single\n" +
                 "mutable = foo\n" +
