@@ -4,7 +4,7 @@ package com.intellij.util.indexing;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.AppTopics;
 import com.intellij.diagnostic.Activity;
-import com.intellij.diagnostic.ParallelActivity;
+import com.intellij.diagnostic.StartUpMeasurer;
 import com.intellij.history.LocalHistory;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.startup.ServiceNotReadyException;
@@ -2417,7 +2417,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     private boolean currentVersionCorrupted;
 
     private void initAssociatedDataForExtensions() {
-      Activity activity = ParallelActivity.APP_INIT.start("file index extensions iteration");
+      Activity activity = StartUpMeasurer.startActivity("file index extensions iteration");
       Iterator<FileBasedIndexExtension> extensions =
         IndexInfrastructure.hasIndices() ?
         ((ExtensionPointImpl<FileBasedIndexExtension>)FileBasedIndexExtension.EXTENSION_POINT_NAME.getPoint(null)).iterator() :

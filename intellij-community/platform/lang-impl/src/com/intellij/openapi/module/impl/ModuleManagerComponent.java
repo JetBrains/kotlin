@@ -54,7 +54,7 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
       public void projectComponentsInitialized(@NotNull final Project project) {
         if (project != myProject) return;
 
-        Activity activity = StartUpMeasurer.start(StartUpMeasurer.Phases.LOAD_MODULES);
+        Activity activity = StartUpMeasurer.startMainActivity("module loading");
         loadModules(myModuleModel);
         activity.end("module count: " + myModuleModel.getModules().length);
       }
