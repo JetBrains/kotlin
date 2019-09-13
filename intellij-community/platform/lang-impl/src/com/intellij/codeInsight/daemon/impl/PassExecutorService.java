@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.daemon.impl;
 
@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
 /**
  * @author cdr
  */
-class PassExecutorService implements Disposable {
+final class PassExecutorService implements Disposable {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.daemon.impl.PassExecutorService");
   private static final boolean CHECK_CONSISTENCY = ApplicationManager.getApplication().isUnitTestMode();
 
@@ -485,7 +485,7 @@ class PassExecutorService implements Disposable {
                                               @NotNull final AtomicInteger threadsToStartCountdown,
                                               @NotNull Runnable callbackOnApplied) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      if (isDisposed() || myProject.isDisposed() || !fileEditor.isValid()) {
+      if (isDisposed() || !fileEditor.isValid()) {
         updateProgress.cancel();
       }
       if (updateProgress.isCanceled()) {
@@ -533,8 +533,8 @@ class PassExecutorService implements Disposable {
     }
   }
 
-  protected boolean isDisposed() {
-    return isDisposed;
+  private boolean isDisposed() {
+    return isDisposed || myProject.isDisposedOrDisposeInProgress();
   }
 
   @NotNull
