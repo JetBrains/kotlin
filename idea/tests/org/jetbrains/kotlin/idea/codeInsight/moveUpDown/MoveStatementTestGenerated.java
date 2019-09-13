@@ -849,6 +849,11 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/closureWthoutSpaces2.kt");
         }
 
+        @TestMetadata("comments.kt")
+        public void testComments() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/comments.kt");
+        }
+
         @TestMetadata("declaration1.kt")
         public void testDeclaration1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/declaration1.kt");

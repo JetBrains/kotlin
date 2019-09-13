@@ -228,7 +228,12 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
     }
 
     @Nullable
-    private static LineRange getExpressionTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
+    private static LineRange getExpressionTargetRange(
+            @NotNull Editor editor,
+            @NotNull PsiElement elementToCheck,
+            @NotNull PsiElement sibling,
+            boolean down
+    ) {
         @Nullable PsiElement start = sibling;
         @Nullable PsiElement end = sibling;
 
@@ -349,10 +354,12 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
             }
         }
 
-        Pair<PsiElement, PsiElement> extended = extendForSiblingComments(start, end, sibling, editor, down);
-        if (extended != null) {
-            start = extended.first;
-            end = extended.second;
+        if (!(elementToCheck instanceof PsiComment)) {
+            Pair<PsiElement, PsiElement> extended = extendForSiblingComments(start, end, sibling, editor, down);
+            if (extended != null) {
+                start = extended.first;
+                end = extended.second;
+            }
         }
 
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
@@ -448,7 +455,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         }
 
         if (elementToCheck instanceof KtExpression || elementToCheck instanceof PsiComment) {
-            return getExpressionTargetRange(editor, sibling, down);
+            return getExpressionTargetRange(editor, elementToCheck, sibling, down);
         }
 
         if (elementToCheck instanceof KtWhenEntry) {
