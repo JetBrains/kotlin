@@ -34,6 +34,11 @@ public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTe
         runTest("idea/testData/copyPaste/plainTextLiteral/BrokenEntries.txt");
     }
 
+    @TestMetadata("CustomTrimIndent.txt")
+    public void testCustomTrimIndent() throws Exception {
+        runTest("idea/testData/copyPaste/plainTextLiteral/CustomTrimIndent.txt");
+    }
+
     @TestMetadata("MultiLine.txt")
     public void testMultiLine() throws Exception {
         runTest("idea/testData/copyPaste/plainTextLiteral/MultiLine.txt");

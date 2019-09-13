@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
@@ -151,13 +150,15 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
                 res.toString()
             }
         } else {
-            val indent = if (beginTp.firstChild?.text == "\"\"\"" &&
-                beginTp.getQualifiedExpressionForReceiver()?.callExpression?.isCalling(FqName("kotlin.text.trimIndent")) == true
-            ) {
-                begin.parent?.prevSibling?.takeIf { it.text != "\n" }?.text ?: ""
-            } else {
-                ""
-            }            
+            val indent =
+                if (beginTp.firstChild?.text == "\"\"\"" &&
+                    beginTp.getQualifiedExpressionForReceiver()?.callExpression?.calleeExpression?.text == "trimIndent"
+                ) {
+                    begin.parent?.prevSibling?.takeIf { it.text != "\n" }?.text
+                } else {
+                    null
+                } ?: ""
+
             val tripleQuoteRe = Regex("[\"]{3,}")
             TemplateTokenSequence(text).mapIndexed { index, chunk ->
                 when (chunk) {
