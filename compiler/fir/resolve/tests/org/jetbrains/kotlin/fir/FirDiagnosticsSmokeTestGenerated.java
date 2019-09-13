@@ -9062,6 +9062,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/imports/CheckJavaVisibility.kt");
         }
 
+        @TestMetadata("CheckJavaVisibility2.kt")
+        public void testCheckJavaVisibility2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/imports/CheckJavaVisibility2.kt");
+        }
+
         @TestMetadata("CheckVisibility.kt")
         public void testCheckVisibility() throws Exception {
             runTest("compiler/testData/diagnostics/tests/imports/CheckVisibility.kt");

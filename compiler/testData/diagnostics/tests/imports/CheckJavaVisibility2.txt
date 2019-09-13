@@ -1,0 +1,64 @@
+package
+
+package j {
+
+    public final class C {
+        public constructor C()
+        public final val p1: kotlin.Int
+        public final val p2: kotlin.Int
+        public final val p3: kotlin.Int = 4
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class JavaPackageLocal {
+        public constructor JavaPackageLocal()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public/*package*/ final var javaPPackage: kotlin.Int
+        public/*package*/ open fun javaMPackage(): kotlin.Unit
+    }
+
+    public open class JavaProtected {
+        public constructor JavaProtected()
+        protected/*protected and package*/ final val javaPProtectedPackage: kotlin.Int = 4
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        protected/*protected static*/ final var javaPProtectedStatic: kotlin.Int
+        protected/*protected static*/ open fun javaMProtectedStatic(): kotlin.Unit
+    }
+}
+
+package k {
+
+    public final class A {
+        public constructor A()
+        public final val p1: kotlin.Int
+        public final val p2: kotlin.Int
+        public final val p3: kotlin.Int = 4
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class B : j.JavaProtected {
+        public constructor B()
+        protected/*protected and package*/ final override /*1*/ /*fake_override*/ val javaPProtectedPackage: kotlin.Int
+        public final val p1: kotlin.Int
+        public final val p2: kotlin.Int
+        public final val p3: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -481,7 +481,7 @@ internal class DescriptorRendererImpl(
             visibility = visibility.normalize()
         }
         if (!renderDefaultVisibility && visibility == Visibilities.DEFAULT_VISIBILITY) return false
-        builder.append(renderKeyword(visibility.displayName)).append(" ")
+        builder.append(renderKeyword(visibility.internalDisplayName)).append(" ")
         return true
     }
 

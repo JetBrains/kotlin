@@ -47,8 +47,14 @@ public class JavaVisibilities {
 
         @NotNull
         @Override
-        public String getDisplayName() {
+        public String getInternalDisplayName() {
             return "public/*package*/";
+        }
+
+        @NotNull
+        @Override
+        public String getExternalDisplayName() {
+            return "package-private";
         }
 
         @NotNull
@@ -78,8 +84,14 @@ public class JavaVisibilities {
 
         @NotNull
         @Override
-        public String getDisplayName() {
+        public String getInternalDisplayName() {
             return "protected/*protected static*/";
+        }
+
+        @NotNull
+        @Override
+        public String getExternalDisplayName() {
+            return "protected";
         }
 
         @NotNull
@@ -111,8 +123,14 @@ public class JavaVisibilities {
 
         @NotNull
         @Override
-        public String getDisplayName() {
+        public String getInternalDisplayName() {
             return "protected/*protected and package*/";
+        }
+
+        @NotNull
+        @Override
+        public String getExternalDisplayName() {
+            return "protected";
         }
 
         @NotNull
