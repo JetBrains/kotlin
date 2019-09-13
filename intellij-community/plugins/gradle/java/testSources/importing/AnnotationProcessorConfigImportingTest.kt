@@ -289,4 +289,44 @@ class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
       then(moduleNames).containsExactly("project.main")
     }
   }
+
+
+  @Test
+  @TargetVersions("3.4+")
+  fun `test custom annotation processor configurations are imported`() {
+    importProject(
+      GradleBuildScriptBuilderEx()
+        .withJavaPlugin()
+        .withMavenCentral()
+        .addPostfix("""
+      apply plugin: 'java'
+      
+      configurations {
+       apt
+      }
+      
+      dependencies {
+        compileOnly("org.immutables:value-annotations:2.7.1")
+        apt("org.immutables:value:2.7.1")
+      }
+      
+      compileJava {
+        options.annotationProcessorPath = configurations.apt
+      }
+    """.trimIndent()).generate());
+
+    val config = CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl
+    val moduleProcessorProfiles = config.moduleProcessorProfiles
+
+    then(moduleProcessorProfiles)
+      .describedAs("An annotation processor profile should be created for Gradle module")
+      .hasSize(1)
+
+    with (moduleProcessorProfiles[0]) {
+      then(isEnabled).isTrue()
+      then(isObtainProcessorsFromClasspath).isFalse()
+      then(processorPath).contains("immutables")
+      then(moduleNames).containsExactly("project.main")
+    }
+  }
 }

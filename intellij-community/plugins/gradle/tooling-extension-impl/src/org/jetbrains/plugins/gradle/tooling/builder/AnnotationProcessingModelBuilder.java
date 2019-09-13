@@ -8,6 +8,7 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.model.AnnotationProcessingConfig;
 import org.jetbrains.plugins.gradle.model.AnnotationProcessingModel;
@@ -22,11 +23,20 @@ import java.io.File;
 import java.util.*;
 
 public class AnnotationProcessingModelBuilder extends AbstractModelBuilderService {
+
+  private static final boolean isAtLeastGradle3_4 = GradleVersion.current().compareTo(GradleVersion.version("3.4")) >= 0;
+  private static final boolean isAtLeastGradle4_5 = isAtLeastGradle3_4 && GradleVersion.current().compareTo(GradleVersion.version("4.5")) >= 0;
+
   @Override
   public Object buildAll(@NotNull String modelName, @NotNull Project project, @NotNull ModelBuilderContext context) {
     if (!canBuild(modelName)) {
       return null;
     }
+
+    if (!isAtLeastGradle3_4) {
+      return null;
+    }
+
     final SourceSetContainer container = JavaPluginUtil.getSourceSetContainer(project);
     if (container == null) {
       return null;
@@ -44,7 +54,8 @@ public class AnnotationProcessingModelBuilder extends AbstractModelBuilderServic
           final Set<File> files = path.getFiles();
           if (!files.isEmpty()) {
             List<String> annotationProcessorArgs = new ArrayList<String>();
-            for (String arg : options.getAllCompilerArgs()) {
+            List<String> args = isAtLeastGradle4_5 ? options.getAllCompilerArgs() : options.getCompilerArgs();
+            for (String arg : args) {
               if (arg.startsWith("-A")) {
                 annotationProcessorArgs.add(arg);
               }
