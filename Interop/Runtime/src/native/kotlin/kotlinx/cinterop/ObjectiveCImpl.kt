@@ -22,6 +22,7 @@ import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.FilterExceptions
 
 interface ObjCObject
 interface ObjCClass : ObjCObject
@@ -207,6 +208,7 @@ external fun objc_autoreleasePoolPush(): NativePtr
 external fun objc_autoreleasePoolPop(ptr: NativePtr)
 
 @SymbolName("Kotlin_objc_allocWithZone")
+@FilterExceptions
 private external fun objc_allocWithZone(clazz: NativePtr): NativePtr
 
 @SymbolName("Kotlin_objc_retain")
