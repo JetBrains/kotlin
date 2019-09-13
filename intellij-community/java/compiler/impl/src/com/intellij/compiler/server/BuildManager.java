@@ -227,7 +227,7 @@ public final class BuildManager implements Disposable {
       myFallbackJdkParams.add("-D" + GlobalOptions.FALLBACK_JDK_VERSION + "=" + SystemInfo.JAVA_VERSION);
     }
 
-    MessageBusConnection connection = application.getMessageBus().connect();
+    MessageBusConnection connection = application.getMessageBus().connect(this);
     connection.subscribe(ProjectManager.TOPIC, new ProjectWatcher());
     connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
@@ -237,9 +237,9 @@ public final class BuildManager implements Disposable {
             myUnprocessedEvents.addAll(events);
           }
           myAutomakeTrigger.execute(() -> {
-            if (!application.isDisposed()) {
+            if (!application.isDisposedOrDisposeInProgress()) {
               ReadAction.run(()-> {
-                if (application.isDisposed()) return;
+                if (application.isDisposedOrDisposeInProgress()) return;
                 final List<VFileEvent> snapshot;
                 synchronized (myUnprocessedEvents) {
                   if (myUnprocessedEvents.isEmpty()) {
