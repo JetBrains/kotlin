@@ -1308,6 +1308,19 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun kt33750() {
+        // Check that build fails if a test executable crashes.
+        with(Project("new-mpp-native-tests", gradleVersion)) {
+            setupWorkingDir()
+            projectDir.resolve("src/commonTest/kotlin/test.kt").appendText("\nval fail: Int = error(\"\")\n")
+            build("check") {
+                assertFailed()
+                output.contains("exited with errors \\(exit code: \\d+\\)".toRegex())
+            }
+        }
+    }
+
+    @Test
     fun testCinterop() {
         val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
         libProject.build("publish") {
