@@ -639,7 +639,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         if ((declaration as? IrSimpleFunction)?.modality == Modality.ABSTRACT
                 || declaration.isExternal
-                || body == null)
+                || body == null
+                || declaration.isReifiedInline)
             return
 
         generateFunction(codegen, declaration,
@@ -1811,21 +1812,22 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun IrFunction.scope(): DIScopeOpaqueRef? = if (startOffset != UNDEFINED_OFFSET)
         this.scope(startLine()) else null
 
+    private val IrFunction.isReifiedInline:Boolean
+        get() = isInline && typeParameters.any { it.isReified }
+
     @Suppress("UNCHECKED_CAST")
     private fun IrFunction.scope(startLine:Int): DIScopeOpaqueRef? {
         if (!context.shouldContainLocationDebugInfo())
             return null
         val functionLlvmValue = codegen.llvmFunctionOrNull(this)
-        return if (functionLlvmValue != null) {
+        return if (!isReifiedInline && functionLlvmValue != null) {
             context.debugInfo.subprograms.getOrPut(functionLlvmValue) {
                 memScoped {
                     val subroutineType = subroutineType(context, codegen.llvmTargetData)
                     val functionLlvmValue = codegen.llvmFunction(this@scope)
                     diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType).also {
-                        if (!codegen.isExternal(this@scope)) {
+                        if (!this@scope.isInline)
                             DIFunctionAddSubprogram(functionLlvmValue, it)
-                            // TODO: don't add [functionLlvmValue] itself in this case.
-                        }
                     }
                 }
             } as DIScopeOpaqueRef
