@@ -20,7 +20,7 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf
     Refactoring("ide.action.refactoring", refactoringEvents),
     NewFileTemplate("ide.newFileTempl", newFileTemplateEvents),
     NPWizards("ide.npwizards", NPWizardsEvents),
-    DebugEval("ide.debugger.eval", debugEvalEvents),
+    Debug("ide.debugger", debugEvalEvents),
     J2K("ide.j2k"),
     Editor("ide.editor");
 
