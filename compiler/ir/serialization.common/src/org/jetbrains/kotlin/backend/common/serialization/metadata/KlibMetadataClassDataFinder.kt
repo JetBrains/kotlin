@@ -14,20 +14,19 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class KlibMetadataClassDataFinder(
-    private val fragment: KlibMetadataProtoBuf.LinkDataPackageFragment,
+    private val fragment: org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver
 ) : ClassDataFinder {
 
     override fun findClassData(classId: ClassId): ClassData? {
-        val proto = fragment.classes
-        val nameList = proto.classNameList
+        val nameList = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()
 
         val index = nameList.indexOfFirst { nameResolver.getClassId(it) == classId }
         if (index == -1) {
             return null
         }
 
-        val foundClass = proto.getClasses(index) ?: error("Could not find data for serialized class $classId")
+        val foundClass = fragment.getClass_(index) ?: error("Could not find data for serialized class $classId")
 
         /* TODO: binary version supposed to be read from protobuf. */
         return ClassData(nameResolver, foundClass, KlibMetadataVersion.INSTANCE, SourceElement.NO_SOURCE)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataPackageFragment
 import org.jetbrains.kotlin.psi.KtFile
 
 sealed class JsKlibFileMetadata
@@ -12,6 +13,6 @@ sealed class JsKlibFileMetadata
 data class KotlinPsiFileMetadata(val ktFile: KtFile) : JsKlibFileMetadata()
 
 data class KotlinDeserializedFileMetadata(
-    val packageFragment: JsKlibMetadataPackageFragment,
+    val packageFragment: KlibMetadataPackageFragment,
     val fileId: Int
 ) : JsKlibFileMetadata()

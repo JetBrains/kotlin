@@ -11,8 +11,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.JsKlibMetadataParts
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializationUtil
-import org.jetbrains.kotlin.backend.common.serialization.metadata.createJsKlibMetadataPackageFragmentProvider
+import org.jetbrains.kotlin.backend.common.serialization.newDescriptorUniqId
 import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsMangler
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.newJsDescriptorUniqId
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -42,7 +40,6 @@ import org.jetbrains.kotlin.konan.KonanVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -210,7 +207,7 @@ private fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deseria
 private fun loadKlibMetadataParts(
     moduleId: KotlinLibrary
 ): JsKlibMetadataParts {
-    return JsKlibMetadataSerializationUtil.readModuleAsProto(moduleId.moduleHeaderData)
+    return KlibMetadataIncrementalSerializer.readModuleAsProto(moduleId.moduleHeaderData, moduleId.unresolvedDependencies)
 }
 
 val ModuleDescriptor.kotlinLibrary get() = this.getCapability(JS_KLIBRARY_CAPABILITY)!!
@@ -268,7 +265,6 @@ private class ModulesStructure(
 
     val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> =
         deserializedModuleParts.mapValues { (klib, _) ->
-            //parts.importedModules.map(::findModuleByName)
             klib.unresolvedDependencies.map { findModuleByName(it.path) }
         }
 
@@ -352,21 +348,23 @@ fun serializeModuleIntoKlib(
 
     val descriptorSelector = { declarationDescriptor: DeclarationDescriptor ->
         val index = descriptorTable.get(declarationDescriptor) ?: error("No descriptor ID found for $declarationDescriptor")
-        newJsDescriptorUniqId(index)
+        newDescriptorUniqId(index)
     }
 
     val metadataVersion = configuration.metadataVersion
     val languageVersionSettings = configuration.languageVersionSettings
 
+    val metadataSerializer = KlibMetadataIncrementalSerializer(
+        languageVersionSettings,
+        metadataVersion,
+        descriptorTable)
+
     fun serializeScope(fqName: FqName, memberScope: Collection<DeclarationDescriptor>): ByteArray {
-        return JsKlibMetadataSerializationUtil.serializeDescriptors(
+        return metadataSerializer.serializeDescriptors(
             bindingContext,
             moduleDescriptor,
             memberScope,
-            fqName,
-            languageVersionSettings,
-            metadataVersion,
-            descriptorSelector
+            fqName
         ).toByteArray()
     }
 
@@ -400,13 +398,13 @@ fun serializeModuleIntoKlib(
     }
 
     incrementalResultsConsumer?.run {
-        processHeader(JsKlibMetadataSerializationUtil.serializeHeader(moduleDescriptor, null, languageVersionSettings).toByteArray())
+        processHeader(KlibMetadataIncrementalSerializer.serializeHeader(moduleDescriptor, null, languageVersionSettings).toByteArray())
     }
 
     val compiledKotlinFiles = cleanFiles + additionalFiles
 
     val serializedMetadata =
-        JsKlibMetadataSerializationUtil.serializedMetadata(
+        KlibMetadataIncrementalSerializer.serializedMetadata(
             moduleDescriptor,
             languageVersionSettings,
             dependencies.map { it.moduleName },

@@ -107,23 +107,26 @@ extend org.jetbrains.kotlin.metadata.TypeParameter {
 
 extend org.jetbrains.kotlin.metadata.PackageFragment {
   optional Files package_fragment_files = 170;
+  // id in StringTable
+  repeated int32 class_name = 1 [packed = true];
+  optional bool is_empty = 172;
+  required string fq_name = 173;
 }
 
 extend org.jetbrains.kotlin.metadata.TypeAlias {
   // TODO repeated org.jetbrains.kotlin.metadata.Annotation type_alias_annotation = 130;
   optional DescriptorUniqId type_alias_uniq_id = 131;
 }
-
+/*
 message Classes {
   // id in StringTable
   repeated int32 class_name = 1 [packed = true];
 }
-
+*/
 message Library {
   repeated org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;
-
 }
-
+/*
 message LinkDataPackageFragment {
   // Make if an index?
   required string fq_name = 1;
@@ -141,6 +144,7 @@ message LinkDataClasses {
   repeated int32 class_name = 1;
   repeated org.jetbrains.kotlin.metadata.Class classes = 2;
 }
+*/
 
 message LinkDataLibrary {
   required string module_name = 1;

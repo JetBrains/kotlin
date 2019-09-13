@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataPackageFragment
 import org.jetbrains.kotlin.backend.common.serialization.metadata.extractFileId
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
@@ -26,7 +27,7 @@ class JsKlibMetadataFileRegistry {
 
         val fileId = descriptor.extractFileId()
         if (fileId != null) {
-            (descriptor.containingDeclaration as? JsKlibMetadataPackageFragment)?.let { packageFragment ->
+            (descriptor.containingDeclaration as? KlibMetadataPackageFragment)?.let { packageFragment ->
                 return this.lookup(KotlinDeserializedFileMetadata(packageFragment, fileId))
             }
         }

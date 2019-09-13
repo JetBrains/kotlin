@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.PackageAccessedHandler
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -36,15 +37,15 @@ class KlibMetadataPackageFragment(
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
-    private val protoForNames: KlibMetadataProtoBuf.LinkDataPackageFragment by lazy {
+    private val protoForNames: ProtoBuf.PackageFragment by lazy {
         parsePackageFragment(library.packageMetadata(fqName.asString(), partName))
     }
 
-    val proto: KlibMetadataProtoBuf.LinkDataPackageFragment
+    val proto: ProtoBuf.PackageFragment
         get() = protoForNames.also { packageAccessedHandler?.markPackageAccessed(fqName.asString()) }
 
     private val nameResolver by lazy {
-        NameResolverImpl(protoForNames.stringTable, protoForNames.nameTable)
+        NameResolverImpl(protoForNames.strings, protoForNames.qualifiedNames)
     }
 
     override val classDataFinder by lazy {

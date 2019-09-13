@@ -45,7 +45,7 @@ object DeserializedDescriptorUniqIdAware : DescriptorUniqIdAware {
         is DeserializedPropertyDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.propertyUniqId)
         is DeserializedClassConstructorDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.constructorUniqId)
         is DeserializedTypeParameterDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.typeParamUniqId)
-        is DeserializedTypeAliasDescriptor -> this.proto.tryGetExtension(JsKlibMetadataProtoBuf.typeAliasUniqId)
+        is DeserializedTypeAliasDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.typeAliasUniqId)
         else -> null
     }?.index
 }
