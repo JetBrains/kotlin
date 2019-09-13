@@ -92,7 +92,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
                     val instance = irCall(implementation.constructors.single()).apply {
                         putValueArgument(0, irGet(invokableVariable))
                     }
-                    irIfNull(superType, irGet(invokableVariable), irNull(), instance)
+                    +irIfNull(superType, irGet(invokableVariable), irNull(), instance)
                 }
             } else {
                 irCall(implementation.constructors.single()).apply { putValueArgument(0, invokable) }
