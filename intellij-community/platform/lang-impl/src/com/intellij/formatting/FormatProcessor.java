@@ -65,7 +65,7 @@ public class FormatProcessor {
     myDocument = model.getDocument();
     myReformatContext = options.isReformatWithContext();
     
-    final InitialInfoBuilder builder = prepareToBuildBlocksSequentially(block, model, options, settings, defaultIndentOption, myProgressCallback);
+    final InitialInfoBuilder builder = prepareToBuildBlocksSequentially(block, model, options, defaultIndentOption, myProgressCallback);
     myWrapState = new WrapBlocksState(builder, blockIndentOptions);
     
     FormatTextRanges ranges = options.myAffectedRanges;

@@ -20,17 +20,20 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.TextRangeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public class FormatTextRanges implements FormattingRangesInfo {
-  private final List<TextRange> myInsertedRanges;
-  private final List<FormatTextRange> myRanges = new ArrayList<>();
-  private final List<TextRange> myExtendedRanges = new ArrayList<>();
+  private final List<TextRange>       myInsertedRanges;
+  private final List<FormatTextRange> myRanges         = new ArrayList<>();
+  private final List<TextRange>       myExtendedRanges = new ArrayList<>();
+  private final List<TextRange>       myDisabledRanges = new ArrayList<>();
 
   private boolean myExtendToContext;
 
@@ -134,5 +137,14 @@ public class FormatTextRanges implements FormattingRangesInfo {
 
   public void setExtendToContext(boolean extendToContext) {
     myExtendToContext = extendToContext;
+  }
+
+  public void setDisabledRanges(@NotNull Collection<TextRange> disabledRanges) {
+    myDisabledRanges.clear();
+    myDisabledRanges.addAll(ContainerUtil.sorted(disabledRanges, Segment.BY_START_OFFSET_THEN_END_OFFSET));
+  }
+
+  public boolean isInDisabledRange(@NotNull TextRange textRange) {
+    return TextRangeUtil.intersectsOneOf(textRange, myDisabledRanges);
   }
 }

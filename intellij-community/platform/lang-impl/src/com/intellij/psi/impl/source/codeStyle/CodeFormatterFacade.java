@@ -40,6 +40,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.text.CharArrayUtil;
+import com.intellij.util.text.TextRangeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -201,6 +202,9 @@ public class CodeFormatterFacade {
           CommonCodeStyleSettings.IndentOptions indentOptions =
             mySettings.getIndentOptionsByFile(file, textRanges.size() == 1 ? textRanges.get(0).getTextRange() : null);
 
+          ranges.setDisabledRanges(
+            TextRangeUtil.excludeRanges(
+              file.getTextRange(), myTagHandler.getEnabledRanges(file.getNode(), file.getTextRange())));
           formatter.format(model, mySettings, indentOptions, ranges);
           for (FormatTextRange range : textRanges) {
             TextRange textRange = range.getTextRange();

@@ -19,14 +19,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiRecursiveElementVisitor;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.formatter.common.InjectedLanguageBlockWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -40,26 +39,6 @@ public class FormatterTagHandler {
 
   public FormatterTagHandler(CodeStyleSettings settings) {
     mySettings = settings;
-  }
-
-  public FormatterTag getFormatterTag(Block block) {
-    if (mySettings.FORMATTER_TAGS_ENABLED &&
-        !StringUtil.isEmpty(mySettings.FORMATTER_ON_TAG) &&
-        !StringUtil.isEmpty(mySettings.FORMATTER_OFF_TAG)) {
-      if (block instanceof ASTBlock) {
-        ASTNode node = ((ASTBlock)block).getNode();
-        if (node != null) {
-          PsiElement element = node.getPsi();
-          if (element instanceof PsiComment) {
-            return getFormatterTag((PsiComment)element);
-          }
-        }
-      }
-      else if (block instanceof InjectedLanguageBlockWrapper) {
-        return getFormatterTag(((InjectedLanguageBlockWrapper)block).getOriginal());
-      }
-    }
-    return FormatterTag.NONE;
   }
 
   protected FormatterTag getFormatterTag(@NotNull PsiComment comment) {
@@ -112,14 +91,14 @@ public class FormatterTagHandler {
           myTagInfoList.add(new FormatterTagInfo(comment.getTextRange().getEndOffset(), FormatterTag.OFF));
           break;
         case ON:
-          myTagInfoList.add(new FormatterTagInfo(comment.getTextRange().getEndOffset(), FormatterTag.ON));
+          myTagInfoList.add(new FormatterTagInfo(comment.getTextRange().getStartOffset(), FormatterTag.ON));
           break;
       }
     }
 
     private List<TextRange> getRanges() {
       List<TextRange> enabledRanges = new ArrayList<>();
-      Collections.sort(myTagInfoList, (tagInfo1, tagInfo2) -> tagInfo1.offset - tagInfo2.offset);
+      Collections.sort(myTagInfoList, Comparator.comparingInt(info -> info.offset));
 
       int start = myInitialRange.getStartOffset();
       boolean formatterEnabled = true;
