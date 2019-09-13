@@ -436,8 +436,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         const val CHROME_BIN = "CHROME_BIN"
         const val CHROME_CANARY_BIN = "CHROME_CANARY_BIN"
 
-        const val CLIENT_ID_MARKER = "Connected on socket"
-
         val KARMA_PROBLEM = "(?m)^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN) \\[.*]: (.*)\$".toRegex()
     }
 }
