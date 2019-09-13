@@ -5,16 +5,15 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.IconProvider;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.ui.IconManager;
-import com.intellij.ui.icons.RowIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * This class is intended to combine all providers for batch usages.
@@ -30,21 +29,11 @@ public final class CompoundIconProvider extends IconProvider {
   public Icon getIcon(@NotNull PsiElement element, int flags) {
     if (element.isValid()) {
       for (IconProvider provider : EXTENSION_POINT_NAME.getExtensions()) {
+        ProgressManager.checkCanceled();
         try {
           Icon icon = provider.getIcon(element, flags);
           if (icon != null) {
             LOG.debug("icon found in ", provider);
-            if (icon instanceof RowIcon) {
-              RowIcon rowIcon = (RowIcon)icon;
-              if (AllIcons.Nodes.Package.equals(rowIcon.getIcon(0)) && !isValidPackage(element)) {
-                LOG.debug("fix row icon for invalid package: ", element);
-                rowIcon.setIcon(AllIcons.Nodes.Folder, 0);
-              }
-            }
-            else if (AllIcons.Nodes.Package.equals(icon) && !isValidPackage(element)) {
-              LOG.debug("fix icon for invalid package: ", element);
-              return AllIcons.Nodes.Folder;
-            }
             return icon;
           }
         }
@@ -69,15 +58,5 @@ public final class CompoundIconProvider extends IconProvider {
   @Nullable
   public static Icon findIcon(@Nullable PsiElement element, int flags) {
     return element == null ? null : INSTANCE.getIcon(element, flags);
-  }
-
-  private static boolean isValidPackage(@Nullable PsiElement element) {
-    if (element instanceof PsiDirectory && element.isValid()) {
-      PsiDirectoryFactory factory = PsiDirectoryFactory.getInstance(element.getProject());
-      if (factory != null && factory.isPackage((PsiDirectory)element)) {
-        return factory.isValidPackageName(factory.getQualifiedName((PsiDirectory)element, false));
-      }
-    }
-    return false;
   }
 }
