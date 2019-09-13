@@ -79,6 +79,58 @@ private def uploadBenchmarkResultToBintray(String fileName) {
     }
 }
 
+// Register external benchmarks reports (e.g. results of libraries benchmarks)
+task registerExternalBenchmarks {
+    doLast {
+        def reports = externalReports.split(';')
+        def jsonReports = []
+        reports.each {
+            def reportFile = new File(buildDir, it)
+            if (!reportFile.exists())
+                return
+
+            def lines = reportFile.readLines()
+            if (lines.size < 3) {
+                println("Couldn't use report to register benchmarks. Wrong format.")
+                return
+            }
+            def name = lines[0]
+            def status = lines[1]
+            def compileTime = lines[2]
+            def codeSize = null
+            if (lines.size > 3) {
+                codeSize = lines[3]
+            }
+            // Create benchmarks report.
+            def compileBenchmark = MPPTools.toCompileBenchmark(compileTime, status, name)
+            def properties = [
+                    "cpu": System.getProperty("os.arch"),
+                    "os": System.getProperty("os.name"),
+                    "jdkVersion": System.getProperty("java.version"),
+                    "jdkVendor": System.getProperty("java.vendor"),
+                    "kotlinVersion": kotlinVersion,
+                    "type": "native",
+                    "compilerVersion": konanVersion,
+                    "flags": ["-g"],
+                    "benchmarks": "[]",
+                    "compileTime": [compileBenchmark]]
+            if (codeSize != null) {
+                properties += ["codeSize": MPPTools.toCodeSizeBenchmark(codeSize, status, name)]
+            }
+            def output = MPPTools.createJsonReport(properties)
+            def jsonFile = new File(buildDir, it.replace(".txt", ".json"))
+            jsonFile.write(output)
+            jsonReports.add(jsonFile)
+        }
+        def merged = MPPTools.mergeReports(jsonReports)
+        if (!merged.isEmpty()) {
+            mkdir buildDir.absolutePath
+            new File(buildDir, externalBenchmarksReport).write(merged)
+            uploadBenchmarkResultToBintray(externalBenchmarksReport)
+        }
+    }
+}
+
 task registerBuild(type: BuildRegister) {
     def analyzerBinary = MPPTools.findFile("${analyzerTool}${MPPTools.getNativeProgramExtension()}",
             "${rootBuildDirectory}/${analyzerToolDirectory}")
