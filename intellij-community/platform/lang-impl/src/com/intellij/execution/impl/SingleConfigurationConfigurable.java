@@ -27,6 +27,7 @@ import com.intellij.openapi.ui.ComponentValidator;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.changes.VcsIgnoreManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -446,7 +447,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
                                                          JBUI.emptyInsets(), 0, 0));
       myRunOnComboBox.addActionListener(e -> {
         String chosenTarget = getSelectedTargetName();
-        if (!myDefaultTargetName.equals(chosenTarget)) {
+        if (!StringUtil.equals(myDefaultTargetName, chosenTarget)) {
           setModified(true);
           myDefaultTargetName = chosenTarget;
         }
@@ -602,7 +603,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
 
     @Nullable
     private String getSelectedTargetName() {
-      return ObjectUtils.doIfCast(myRunOnComboBox.getSelectedItem(), RemoteTargetConfiguration.class, с -> с.getDisplayName());
+      return ObjectUtils.doIfCast(myRunOnComboBox.getSelectedItem(), RemoteTargetConfiguration.class, c -> c.getDisplayName());
     }
   }
 }
