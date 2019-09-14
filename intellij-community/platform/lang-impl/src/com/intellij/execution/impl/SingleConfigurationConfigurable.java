@@ -41,6 +41,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UI;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -348,6 +349,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     private ActionLink myManageTargetsActionLink;
     private JPanel myRunOnPanel;
     private JBLabel myRunOnLabel;
+    private JPanel myRunOnPanelInner;
 
     private final ComponentValidator myCbStoreProjectConfigurationValidator;
 
@@ -404,7 +406,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myJBScrollPane.setBorder(JBUI.Borders.empty());
       myJBScrollPane.setViewportBorder(JBUI.Borders.empty());
 
-      ComponentPanelBuilder componentPanelBuilder = new ComponentPanelBuilder(myCbStoreProjectConfiguration);
+      ComponentPanelBuilder componentPanelBuilder = UI.PanelFactory.panel(myCbStoreProjectConfiguration);
       @SystemIndependent VirtualFile projectFile = project.getProjectFile();
       if (projectFile != null) {
         componentPanelBuilder.withTooltip(
@@ -424,6 +426,12 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myNameLabel.setPreferredSize(new Dimension((int)width, (int)nameSize.getHeight()));
       myRunOnLabel.setPreferredSize(new Dimension((int)width, (int)runOnSize.getHeight()));
 
+      myRunOnPanel.setBorder(JBUI.Borders.emptyLeft(5));
+      UI.PanelFactory.panel(myRunOnPanelInner)
+        .withComment(ExecutionBundle.message("edit.run.configuration.run.configuration.run.on.comment"))
+        .addToPanel(myRunOnPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
+                                                         GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
+                                                         JBUI.emptyInsets(), 0, 0));
       myRunOnComboBox.setRenderer(SimpleListCellRenderer.create((l, v, i) -> {
         if (v == null) {
           l.setText("Local machine");
