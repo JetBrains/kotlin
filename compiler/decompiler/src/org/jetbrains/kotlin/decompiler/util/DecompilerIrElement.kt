@@ -326,6 +326,14 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String = TODO()
 
+    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
+        declaration.runTrimEnd {
+            when (visibility) {
+                Visibilities.PUBLIC -> ""
+                else -> visibility.name.toLowerCase() + " "
+            } + "constructor" + renderValueParameterTypes()
+        }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
             renderSimpleFunctionFlags() +
@@ -363,8 +371,6 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
         ArrayList<String>().apply {
             valueParameters.mapTo(this) { "${it.name}: ${it.type.toKotlinType()}" }
         }.joinToString(separator = ", ", prefix = "(", postfix = ")")
-
-    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String = TODO()
 
     private fun IrConstructor.renderConstructorFlags() =
         renderFlagsList(
@@ -494,18 +500,66 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
         StringBuilder().apply {
-            if (expression.dispatchReceiver != null) {
-                append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
-            }
-            append(expression.symbol.owner.name.asString())
-            append(
-                ArrayList<String?>().apply {
-                    (0 until expression.valueArgumentsCount).mapTo(this) {
-                        expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
+            when (expression.origin) {
+                IrStatementOrigin.UPLUS -> {
+                    append("+")
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.UMINUS -> {
+                    append("-")
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.PLUS -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" + ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.MINUS -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" - ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.MUL -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" * ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.DIV -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" / ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.PERC -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" % ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.ANDAND -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" && ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.OROR -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" || ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+
+                else -> {
+                    if (expression.dispatchReceiver != null) {
+                        append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
                     }
-                }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
-            )
-            append("\n")
+                    append(expression.symbol.owner.name.asString())
+                    append(
+                        ArrayList<String?>().apply {
+                            (0 until expression.valueArgumentsCount).mapTo(this) {
+                                expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
+                            }
+                        }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
+                    )
+                    append("\n")
+                }
+            }
         }.toString()
 
     private fun IrCall.renderSuperQualifier(): String =

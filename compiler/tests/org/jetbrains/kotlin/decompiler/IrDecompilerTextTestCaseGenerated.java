@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/decompiler")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class IrDecompilerTestCaseGenerated extends AbstractIrDecompilerTestCase {
+public class IrDecompilerTextTestCaseGenerated extends AbstractIrDecompilerTextTestCase {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
@@ -37,7 +37,7 @@ public class IrDecompilerTestCaseGenerated extends AbstractIrDecompilerTestCase 
     @TestMetadata("compiler/testData/decompiler/classes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Classes extends AbstractIrDecompilerTestCase {
+    public static class Classes extends AbstractIrDecompilerTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
@@ -54,6 +54,16 @@ public class IrDecompilerTestCaseGenerated extends AbstractIrDecompilerTestCase 
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
             runTest("compiler/testData/decompiler/classes/primaryConstructor.kt");
+        }
+
+        @TestMetadata("secondaryConstructorWithInitializersFromClassBody.kt")
+        public void testSecondaryConstructorWithInitializersFromClassBody() throws Exception {
+            runTest("compiler/testData/decompiler/classes/secondaryConstructorWithInitializersFromClassBody.kt");
+        }
+
+        @TestMetadata("secondaryConstructors.kt")
+        public void testSecondaryConstructors() throws Exception {
+            runTest("compiler/testData/decompiler/classes/secondaryConstructors.kt");
         }
     }
 }
