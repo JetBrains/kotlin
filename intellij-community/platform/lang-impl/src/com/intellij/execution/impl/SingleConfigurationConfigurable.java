@@ -445,8 +445,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
                                                          GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                                                          JBUI.emptyInsets(), 0, 0));
       myRunOnComboBox.addActionListener(e -> {
-        setModified(true);
-        myDefaultTargetName = getSelectedTargetName();
+        String chosenTarget = getSelectedTargetName();
+        if (!myDefaultTargetName.equals(chosenTarget)) {
+          setModified(true);
+          myDefaultTargetName = chosenTarget;
+        }
       });
       myRunOnComboBox.setRenderer(SimpleListCellRenderer.create((l, v, i) -> {
         if (v == null) {
