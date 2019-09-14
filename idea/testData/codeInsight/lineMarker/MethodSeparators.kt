@@ -39,4 +39,8 @@ class Foo {
     <lineMarker descr="null">fun</lineMarker> f1() = 1
 
     <lineMarker descr="null">fun</lineMarker> f2() = 2
+
+    <lineMarker descr="null">companion</lineMarker> object {
+        const val C = 1
+    }
 }
