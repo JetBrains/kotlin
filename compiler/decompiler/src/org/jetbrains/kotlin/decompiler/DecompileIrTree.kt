@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -44,6 +46,10 @@ class DecompileIrTreeVisitor(
         }
     }
 
+    override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
+        declaration.files.decompileElements()
+    }
+
     override fun visitFile(declaration: IrFile, data: String) {
         declaration.declarations.decompileElements()
     }
@@ -63,8 +69,18 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitClass(declaration: IrClass, data: String) {
-        printer.println(declaration.accept(elementDecompiler, null) + "\n")
+        printer.print(declaration.accept(elementDecompiler, null))
+        withBraces {
+            declaration.primaryConstructor?.accept(this, "")
+            declaration.constructors.forEach { it.accept(this, "") }
+        }
     }
+
+    override fun visitConstructor(declaration: IrConstructor, data: String) {
+        printer.println(declaration.accept(elementDecompiler, null))
+        declaration.body?.accept(this, "")
+    }
+
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: String) = TODO()
 
@@ -80,8 +96,6 @@ class DecompileIrTreeVisitor(
     private fun decompileAnnotations(element: IrAnnotationContainer) {
         //TODO правильно рендерить аннотации
     }
-
-    override fun visitConstructor(declaration: IrConstructor, data: String) = TODO()
 
     override fun visitProperty(declaration: IrProperty, data: String) = TODO()
 

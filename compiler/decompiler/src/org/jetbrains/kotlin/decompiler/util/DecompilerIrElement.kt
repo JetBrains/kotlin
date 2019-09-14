@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.decompiler.util
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.decompiler.getValueParameterNamesForDebug
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
 
 fun IrElement.render() =
@@ -326,6 +323,14 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String = TODO()
 
+    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
+        declaration.runTrimEnd {
+            when (visibility) {
+                Visibilities.PUBLIC -> ""
+                else -> visibility.name.toLowerCase() + " "
+            } + "constructor" + renderValueParameterTypes()
+        }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
             renderSimpleFunctionFlags() +
@@ -363,8 +368,6 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
         ArrayList<String>().apply {
             valueParameters.mapTo(this) { "${it.name}: ${it.type.toKotlinType()}" }
         }.joinToString(separator = ", ", prefix = "(", postfix = ")")
-
-    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String = TODO()
 
     private fun IrConstructor.renderConstructorFlags() =
         renderFlagsList(
@@ -449,20 +452,13 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String = TODO()
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
-        declaration.run {
-            "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}" +
-                    "name:$name visibility:$visibility expandedType:${expandedType.render()}" +
-                    renderTypeAliasFlags()
-        }
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String = TODO()
 
     private fun IrTypeAlias.renderTypeAliasFlags(): String =
         renderFlagsList(
             "actual".takeIf { isActual }
         )
 
-    private fun IrLocalDelegatedProperty.renderLocalDelegatedPropertyFlags() =
-        if (isVar) "var" else "val"
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String = TODO()
 
@@ -472,9 +468,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitExpression(expression: IrExpression, data: Nothing?): String = TODO()
 
-    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
-        "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
-
+    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String = TODO()
     private fun Any.escapeIfRequired() =
         when (this) {
             is String -> "\"${StringUtil.escapeStringCharacters(this)}\""
@@ -494,158 +488,138 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
         StringBuilder().apply {
-            if (expression.dispatchReceiver != null) {
-                append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
-            }
-            append(expression.symbol.owner.name.asString())
-            append(
-                ArrayList<String?>().apply {
-                    (0 until expression.valueArgumentsCount).mapTo(this) {
-                        expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
+            when (expression.origin) {
+                IrStatementOrigin.UPLUS -> {
+                    append("+")
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.UMINUS -> {
+                    append("-")
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.PLUS -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" + ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.MINUS -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" - ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.MUL -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" * ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.DIV -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" / ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.PERC -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" % ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.ANDAND -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" && ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.OROR -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" || ")
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+
+                else -> {
+                    if (expression.dispatchReceiver != null) {
+                        append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
                     }
-                }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
-            )
-            append("\n")
+                    append(expression.symbol.owner.name.asString())
+                    append(
+                        ArrayList<String?>().apply {
+                            (0 until expression.valueArgumentsCount).mapTo(this) {
+                                expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
+                            }
+                        }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
+                    )
+                    append("\n")
+                }
+            }
         }.toString()
 
-    private fun IrCall.renderSuperQualifier(): String =
-        superQualifierSymbol?.let { "superQualifier='${it.renderReference()}' " } ?: ""
 
-    override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =
-        "CONSTRUCTOR_CALL '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String = TODO()
 
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
-        "DELEGATING_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String = TODO()
 
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String =
-        "ENUM_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String = TODO()
 
-    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
-        "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classSymbol.renderReference()}'"
+    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String = TODO()
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String = "${expression.symbol.owner.name}"
 
-    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
-        "SET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String = TODO()
 
-    override fun visitGetField(expression: IrGetField, data: Nothing?): String =
-        "GET_FIELD '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitGetField(expression: IrGetField, data: Nothing?): String = TODO()
 
-    override fun visitSetField(expression: IrSetField, data: Nothing?): String =
-        "SET_FIELD '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitSetField(expression: IrSetField, data: Nothing?): String = TODO()
 
-    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
-        "GET_OBJECT '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String = TODO()
 
-    override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
-        "GET_ENUM '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+    override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String = TODO()
 
-    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
-        "STRING_CONCATENATION type=${expression.type.render()}"
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String = TODO()
 
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String =
-        "TYPE_OP type=${expression.type.render()} origin=${expression.operator} typeOperand=${expression.typeOperand.render()}"
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String = TODO()
+    override fun visitWhen(expression: IrWhen, data: Nothing?): String = TODO()
 
-    override fun visitWhen(expression: IrWhen, data: Nothing?): String =
-        "WHEN type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitBranch(branch: IrBranch, data: Nothing?): String = TODO()
 
-    override fun visitBranch(branch: IrBranch, data: Nothing?): String =
-        "BRANCH"
+    override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): String = TODO()
 
-    override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): String =
-        "WHILE label=${loop.label} origin=${loop.origin}"
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): String = TODO()
 
-    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): String =
-        "DO_WHILE label=${loop.label} origin=${loop.origin}"
+    override fun visitBreak(jump: IrBreak, data: Nothing?): String = TODO()
 
-    override fun visitBreak(jump: IrBreak, data: Nothing?): String =
-        "BREAK label=${jump.label} loop.label=${jump.loop.label}"
+    override fun visitContinue(jump: IrContinue, data: Nothing?): String = TODO()
 
-    override fun visitContinue(jump: IrContinue, data: Nothing?): String =
-        "CONTINUE label=${jump.label} loop.label=${jump.loop.label}"
+    override fun visitThrow(expression: IrThrow, data: Nothing?): String = TODO()
 
-    override fun visitThrow(expression: IrThrow, data: Nothing?): String =
-        "THROW type=${expression.type.render()}"
+    override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): String = TODO()
 
-    override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): String =
-        "FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String = TODO()
 
-    override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String =
-        buildTrimEnd {
-            append("PROPERTY_REFERENCE ")
-            append("'${expression.symbol.renderReference()}' ")
-            appendNullableAttribute("field=", expression.field) { "'${it.renderReference()}'" }
-            appendNullableAttribute("getter=", expression.getter) { "'${it.renderReference()}'" }
-            appendNullableAttribute("setter=", expression.setter) { "'${it.renderReference()}'" }
-            append("type=${expression.type.render()} ")
-            append("origin=${expression.origin}")
-        }
 
-    private inline fun <T : Any> StringBuilder.appendNullableAttribute(prefix: String, value: T?, toString: (T) -> String) {
-        append(prefix)
-        if (value != null) {
-            append(toString(value))
-        } else {
-            append("null")
-        }
-        append(" ")
-    }
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String = TODO()
 
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String =
-        buildTrimEnd {
-            append("LOCAL_DELEGATED_PROPERTY_REFERENCE ")
-            append("'${expression.symbol.renderReference()}' ")
-            append("delegate='${expression.delegate.renderReference()}' ")
-            append("getter='${expression.getter.renderReference()}' ")
-            appendNullableAttribute("setter=", expression.setter) { "'${it.renderReference()}'" }
-            append("type=${expression.type.render()} ")
-            append("origin=${expression.origin}")
-        }
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): String = TODO()
 
-    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): String =
-        buildTrimEnd {
-            append("FUN_EXPR type=${expression.type.render()} origin=${expression.origin}")
-        }
+    override fun visitClassReference(expression: IrClassReference, data: Nothing?): String = TODO()
 
-    override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
-        "CLASS_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+    override fun visitGetClass(expression: IrGetClass, data: Nothing?): String = TODO()
 
-    override fun visitGetClass(expression: IrGetClass, data: Nothing?): String =
-        "GET_CLASS type=${expression.type.render()}"
+    override fun visitTry(aTry: IrTry, data: Nothing?): String = TODO()
 
-    override fun visitTry(aTry: IrTry, data: Nothing?): String =
-        "TRY type=${aTry.type.render()}"
+    override fun visitCatch(aCatch: IrCatch, data: Nothing?): String = TODO()
 
-    override fun visitCatch(aCatch: IrCatch, data: Nothing?): String =
-        "CATCH parameter=${aCatch.catchParameter.symbol.renderReference()}"
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: Nothing?): String = TODO()
 
-    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: Nothing?): String =
-        "DYN_OP operator=${expression.operator} type=${expression.type.render()}"
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?): String = TODO()
 
-    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?): String =
-        "DYN_MEMBER memberName='${expression.memberName}' type=${expression.type.render()}"
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String = TODO()
 
-    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
-        "ERROR_DECL ${declaration.descriptor::class.java.simpleName} " +
-                descriptorRendererForErrorDeclarations.renderDescriptor(declaration.descriptor.original)
+    override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?): String = TODO()
 
-    override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?): String =
-        "ERROR_EXPR '${expression.description}' type=${expression.type.render()}"
+    override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String = TODO()
 
-    override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String =
-        "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
-
-    private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }
 
 internal fun IrDeclaration.name(): String =
     descriptor.name.toString()
 
-internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
-    if (descriptor is ReceiverParameterDescriptor)
-        "this@${descriptor.containingDeclaration.name}: ${descriptor.type}"
-    else
-        render(descriptor)
 
 internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
     if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""
