@@ -69,7 +69,10 @@ class KotlinLineMarkerProvider : LineMarkerProviderDescriptor() {
     }
 
     private fun PsiElement?.canHaveSeparator() =
-        this is KtFunction || this is KtClassInitializer || (this is KtProperty && !isLocal)
+        this is KtFunction
+                || this is KtClassInitializer
+                || (this is KtProperty && !isLocal)
+                || ((this is KtObjectDeclaration && this.isCompanion()))
 
     private fun PsiElement.wantsSeparator() = this is KtFunction || StringUtil.getLineBreakCount(text) > 0
 
