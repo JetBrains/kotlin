@@ -70,6 +70,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
   private final boolean myBrokenConfiguration;
   private boolean myStoreProjectConfiguration;
   private boolean myIsAllowRunningInParallel = false;
+  private String myDefaultTargetName;
   private String myFolderName;
   private boolean myChangingNameFromCode;
 
@@ -118,7 +119,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
   void applySnapshotToComparison(RunnerAndConfigurationSettings original, RunnerAndConfigurationSettings snapshot) {
     snapshot.setTemporary(original.isTemporary());
     snapshot.setName(getNameText());
-    snapshot.getConfiguration().setAllowRunningInParallel(myIsAllowRunningInParallel);
+    RunConfiguration runConfiguration = snapshot.getConfiguration();
+    runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
+    if (runConfiguration instanceof RemoteTargetAwareRunProfile) {
+      ((RemoteTargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    }
     snapshot.setFolderName(myFolderName);
   }
 
@@ -134,6 +139,9 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     RunConfiguration runConfiguration = settings.getConfiguration();
     settings.setName(getNameText());
     runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
+    if (runConfiguration instanceof RemoteTargetAwareRunProfile) {
+      ((RemoteTargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    }
     settings.setFolderName(myFolderName);
     settings.setShared(myStoreProjectConfiguration);
     super.apply();
@@ -307,9 +315,13 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
   @NotNull
   public RunnerAndConfigurationSettings createSnapshot(boolean cloneBeforeRunTasks) throws ConfigurationException {
     RunnerAndConfigurationSettings snapshot = getEditor().getSnapshot();
-    snapshot.getConfiguration().setAllowRunningInParallel(myIsAllowRunningInParallel);
+    RunConfiguration runConfiguration = snapshot.getConfiguration();
+    runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
+    if (runConfiguration instanceof RemoteTargetAwareRunProfile) {
+      ((RemoteTargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    }
     if (cloneBeforeRunTasks) {
-      RunManagerImplKt.cloneBeforeRunTasks(snapshot.getConfiguration());
+      RunManagerImplKt.cloneBeforeRunTasks(runConfiguration);
     }
     return snapshot;
   }
@@ -432,6 +444,10 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
         .addToPanel(myRunOnPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
                                                          GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                                                          JBUI.emptyInsets(), 0, 0));
+      myRunOnComboBox.addActionListener(e -> {
+        setModified(true);
+        myDefaultTargetName = getSelectedTargetName();
+      });
       myRunOnComboBox.setRenderer(SimpleListCellRenderer.create((l, v, i) -> {
         if (v == null) {
           l.setText("Local machine");
@@ -478,7 +494,9 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myRunOnPanel.setVisible(targetAware);
       myRunOnComboBox.removeAllItems();
       if (targetAware) {
-        resetRunOnComboBox(((RemoteTargetAwareRunProfile)configuration).getDefaultTargetName());
+        String defaultTargetName = ((RemoteTargetAwareRunProfile)configuration).getDefaultTargetName();
+        resetRunOnComboBox(defaultTargetName);
+        myDefaultTargetName = defaultTargetName;
       }
 
       myIsAllowRunningInParallel = configuration.isAllowRunningInParallel();
@@ -555,8 +573,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
           if (new SingleConfigurableEditor(myWholePanel, configurable, ShowSettingsUtilImpl.createDimensionKey(configurable), false)
             .showAndGet()) {
             myRunOnComboBox.removeAllItems();
-            RemoteTargetConfiguration selectedItem = ObjectUtils.tryCast(myRunOnComboBox.getSelectedItem(), RemoteTargetConfiguration.class);
-            resetRunOnComboBox(selectedItem != null ? selectedItem.getDisplayName() : null);
+            resetRunOnComboBox(getSelectedTargetName());
           }
         }
       });
@@ -578,6 +595,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
           return d;
         }
       };
+    }
+
+    @Nullable
+    private String getSelectedTargetName() {
+      return ObjectUtils.doIfCast(myRunOnComboBox.getSelectedItem(), RemoteTargetConfiguration.class, с -> с.getDisplayName());
     }
   }
 }
