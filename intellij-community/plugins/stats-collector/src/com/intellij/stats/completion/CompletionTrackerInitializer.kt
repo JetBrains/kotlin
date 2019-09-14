@@ -75,7 +75,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
     return CompletionActionsTracker(lookup, logger, experimentHelper)
   }
 
-  private fun shouldInitialize() = (ApplicationManager.getApplication().isEAP && StatisticsUploadAssistant.isSendAllowed())
+  private fun shouldInitialize() = (ApplicationManager.getApplication().isEAP && StatisticsUploadAssistant.isSendAllowed() && !CompletionTrackerDisabler.isDisabled())
                                    || isUnitTestMode()
 
   private fun shouldTrackSession() = CompletionMLRankingSettings.getInstance().isCompletionLogsSendAllowed || isUnitTestMode()

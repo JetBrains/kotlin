@@ -19,6 +19,10 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.platform</depends>
 
+  <extensionPoints>
+    <extensionPoint name="tracker.disabler" interface="com.intellij.stats.completion.CompletionTrackerDisabler" />
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.intellij.completion.settings.CompletionMLRankingSettings"/>
 
