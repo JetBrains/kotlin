@@ -2,6 +2,7 @@
 
 package com.intellij.ide.structureView.newStructureView;
 
+import com.intellij.concurrency.SensitiveProgressWrapper;
 import com.intellij.ide.CopyPasteDelegator;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.PsiCopyPasteManager;
@@ -22,13 +23,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.keymap.impl.IdeMouseEventDispatcher;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.util.ProgressIndicatorBase;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.ModificationTracker;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -71,6 +72,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class StructureViewComponent extends SimpleToolWindowPanel implements TreeActionsOwner, DataProvider, StructureView.Scrollable {
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.structureView.newStructureView.StructureViewComponent");
@@ -95,13 +97,18 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
   private volatile AsyncPromise<TreePath> myCurrentFocusPromise;
 
   private boolean myAutoscrollFeedback;
-  private boolean myDisposed;
+  private volatile boolean myDisposed;
 
   private final Alarm myAutoscrollAlarm = new Alarm(this);
 
   private final CopyPasteDelegator myCopyPasteDelegator;
   private final MyAutoScrollToSourceHandler myAutoScrollToSourceHandler;
   private final AutoScrollFromSourceHandler myAutoScrollFromSourceHandler;
+
+  // read from different threads
+  // written from EDT only
+  @Nullable
+  private volatile ProgressIndicatorBase myLastAutoscrollIndicator;
 
 
   public StructureViewComponent(@Nullable FileEditor editor,
@@ -453,26 +460,72 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
       return;
     }
 
+    cancelScrollToSelectedElement();
     myAutoscrollAlarm.cancelAllRequests();
-    myAutoscrollAlarm.addRequest(
-      () -> {
-        if (isDisposed()) return;
-        if (UIUtil.isFocusAncestor(this)) return;
-        scrollToSelectedElementInner();
-      }, 1000);
+    myAutoscrollAlarm.addRequest(this::scrollToSelectedElementLater, 1000);
   }
 
-  private void scrollToSelectedElementInner() {
-    PsiDocumentManager.getInstance(myProject).performWhenAllCommitted(() -> {
-      try {
-        final Object currentEditorElement = myTreeModel.getCurrentEditorElement();
-        if (currentEditorElement != null) {
-          select(currentEditorElement, false);
+  private void cancelScrollToSelectedElement() {
+    final ProgressIndicatorBase currentIndicator = myLastAutoscrollIndicator;
+    if (currentIndicator != null && !currentIndicator.isCanceled()) {
+      currentIndicator.cancel();
+    }
+  }
+
+  private void scrollToSelectedElementLater() {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+
+    cancelScrollToSelectedElement();
+
+    final ProgressIndicatorBase newIndicator = new ProgressIndicatorBase();
+    myLastAutoscrollIndicator = newIndicator;
+
+    PsiDocumentManager.getInstance(myProject).performWhenAllCommitted(
+      () -> scrollToSelectedElementLaterImpl(this::doFindSelectedElement, this::doScrollToSelectedElement, newIndicator)
+    );
+  }
+
+  // elementFinder is run off EDT
+  // elementSelector is run on EDT
+  private void scrollToSelectedElementLaterImpl(@NotNull Supplier<Object> elementFinder,
+                                                @NotNull Consumer<Object> elementSelector,
+                                                @NotNull ProgressIndicator indicator) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+
+    if (isDisposed() || indicator.isCanceled()) return;
+
+    ApplicationManager.getApplication().executeOnPooledThread(
+      ConcurrencyUtil.underThreadNameRunnable("StructureView: find selected element", () -> {
+        Ref<Object> selectedElement = Ref.create();
+        while (!ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(() -> selectedElement.set(elementFinder.get()),
+                                                                              new SensitiveProgressWrapper(indicator))) {
+          if (isDisposed() || indicator.isCanceled()) return;
+          ProgressIndicatorUtils.yieldToPendingWriteActions();
+          if (isDisposed() || indicator.isCanceled()) return;
         }
-      }
-      catch (IndexNotReadyException ignore) {
-      }
-    });
+        if (!selectedElement.isNull()) {
+          ApplicationManager.getApplication().invokeLater(() -> {
+            if (isDisposed() || indicator.isCanceled()) return;
+            elementSelector.consume(selectedElement.get());
+          });
+        }
+      }));
+  }
+
+  @Nullable
+  private Object doFindSelectedElement() {
+    try {
+      return myTreeModel.getCurrentEditorElement();
+    }
+    catch (IndexNotReadyException ignore) {
+    }
+    return null;
+  }
+
+  private void doScrollToSelectedElement(@NotNull Object currentEditorElement) {
+    if (isDisposed()) return;
+    if (UIUtil.isFocusAncestor(this)) return;
+    select(currentEditorElement, false);
   }
 
   @Override
@@ -612,7 +665,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
       getSettings().AUTOSCROLL_FROM_SOURCE = state;
       final FileEditor[] selectedEditors = FileEditorManager.getInstance(myProject).getSelectedEditors();
       if (selectedEditors.length > 0 && state) {
-        scrollToSelectedElementInner();
+        scrollToSelectedElementLater();
       }
     }
   }
