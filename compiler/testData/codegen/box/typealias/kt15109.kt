@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 open class A(private val s: String = "") {
     fun foo() = s
 }

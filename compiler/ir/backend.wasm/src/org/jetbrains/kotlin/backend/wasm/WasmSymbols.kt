@@ -35,8 +35,9 @@ class WasmSymbols(
     override val ThrowTypeCastException = unreachable
     override val ThrowUninitializedPropertyAccessException = throwWithMessageStub
 
-    override val defaultConstructorMarker
-        get() = TODO()
+    override val defaultConstructorMarker =
+        getIrClass(FqName("kotlin.wasm.internal.DefaultConstructorMarker"))
+
     override val stringBuilder
         get() = TODO()
     override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>

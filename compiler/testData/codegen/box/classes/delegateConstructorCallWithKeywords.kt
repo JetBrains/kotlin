@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 open class A(val x: String) {
     constructor(`in`: String, y: String) : this(`in` + y)
 

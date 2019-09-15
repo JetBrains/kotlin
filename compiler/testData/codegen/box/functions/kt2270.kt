@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 class A(
         val i : Int,
         val j : Int = i

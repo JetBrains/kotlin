@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 interface Creator<T> {
     fun create() : T
 }

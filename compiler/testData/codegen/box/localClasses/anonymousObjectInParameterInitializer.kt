@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 class A(
         val a: String = object {
             override fun toString(): String = "OK"

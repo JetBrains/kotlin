@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 fun box(): String {
     val s = "captured";
 
