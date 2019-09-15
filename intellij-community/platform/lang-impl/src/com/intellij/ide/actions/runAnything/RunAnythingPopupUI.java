@@ -103,7 +103,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private Module myModule;
 
   private RunAnythingContext myExecutingContext;
-  private RunAnythingContext myPreferableContext = RunAnythingContext.ProjectContext.INSTANCE;
   private Class<RunAnythingContext>[] myAvailableContexts = ContainerUtil.ar();
   private RunAnythingChooseContextAction myChooseContextAction;
 
@@ -395,7 +394,9 @@ public class RunAnythingPopupUI extends BigPopupUI {
     RunAnythingProvider provider = RunAnythingProvider.findMatchedProvider(dataContext, text);
     if (provider != null) {
       myChooseContextAction.setAvailableContexts(provider.getAvailableExecutionContexts());
-      myChooseContextAction.setPreferableContext(provider.getPreferableContext(myDataContext));
+      if (myChooseContextAction.getExecutionContext() == null) {
+        myChooseContextAction.setExecutionContext(provider.getPreferableContext(myDataContext));
+      }
     }
 
     AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
@@ -945,17 +946,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
       @Override
       public Class<RunAnythingContext>[] getAvailableContexts() {
         return myAvailableContexts;
-      }
-
-      @Override
-      public void setPreferableContext(@Nullable RunAnythingContext preferableContext) {
-        myPreferableContext = preferableContext;
-      }
-
-      @Nullable
-      @Override
-      public RunAnythingContext getPreferableContext() {
-        return myPreferableContext;
       }
 
       @Override

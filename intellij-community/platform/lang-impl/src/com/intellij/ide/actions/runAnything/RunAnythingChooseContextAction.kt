@@ -42,7 +42,6 @@ abstract class RunAnythingChooseContextAction(private val containingPanel: JPane
   override fun getChildren(e: AnActionEvent?): Array<AnAction> = EMPTY_ARRAY
 
   abstract var executionContext: RunAnythingContext?
-  abstract var preferableContext: RunAnythingContext?
   abstract var availableContexts: Array<out Class<RunAnythingContext>>
 
   override fun createCustomComponent(presentation: Presentation, place: String): JComponent {
@@ -50,24 +49,14 @@ abstract class RunAnythingChooseContextAction(private val containingPanel: JPane
   }
 
   override fun update(e: AnActionEvent) {
-    when {
-      executionContext != null -> updateByContext(e, executionContext!!)
-      preferableContext != null -> updateByContext(e, preferableContext!!)
-      else -> e.presentation.isEnabledAndVisible = false
+    if (executionContext == null || !availableContexts.contains(executionContext!!::class.java)) {
+      e.presentation.isEnabledAndVisible = false
+      return
     }
-  }
 
-  private fun updateByContext(e: AnActionEvent, context: RunAnythingContext) {
-    when {
-      availableContexts.contains(context::class.java) -> {
-        updatePresentation(e, context)
-      }
-      availableContexts.isNotEmpty() -> {
-        executionContext = RunAnythingContext.ProjectContext
-        updatePresentation(e, executionContext!!)
-      }
-      else -> e.presentation.isEnabledAndVisible = false
-    }
+    e.presentation.isEnabledAndVisible = true
+    e.presentation.text = executionContext!!.presentation.label
+    e.presentation.icon = executionContext!!.presentation.icon
 
     containingPanel.revalidate()
   }
@@ -246,12 +235,6 @@ abstract class RunAnythingChooseContextAction(private val containingPanel: JPane
 
     fun noneContext(): Array<Class<out RunAnythingContext>> {
       return arrayOf()
-    }
-
-    private fun updatePresentation(e: AnActionEvent, context: RunAnythingContext) {
-      e.presentation.isEnabledAndVisible = true
-      e.presentation.text = context.presentation.label
-      e.presentation.icon = context.presentation.icon
     }
   }
 }
