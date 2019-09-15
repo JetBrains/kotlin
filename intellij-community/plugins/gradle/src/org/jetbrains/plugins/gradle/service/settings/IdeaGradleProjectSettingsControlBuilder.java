@@ -537,12 +537,16 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     settings.setCompositeBuild(myInitialSettings.getCompositeBuild());
     if (myGradleHomePathField != null) {
       String gradleHomePath = FileUtil.toCanonicalPath(myGradleHomePathField.getText());
-      if (StringUtil.isEmpty(gradleHomePath)) {
+      File gradleHomeFile = new File(gradleHomePath);
+      String finalGradleHomePath = myInstallationManager.isGradleSdkHome(gradleHomeFile)
+                                   ? myInstallationManager.suggestBetterGradleHomePath(gradleHomePath)
+                                   : gradleHomePath;
+      if (StringUtil.isEmpty(finalGradleHomePath)) {
         settings.setGradleHome(null);
       }
       else {
-        settings.setGradleHome(gradleHomePath);
-        GradleUtil.storeLastUsedGradleHome(gradleHomePath);
+        settings.setGradleHome(finalGradleHomePath);
+        GradleUtil.storeLastUsedGradleHome(finalGradleHomePath);
       }
     }
 
@@ -651,9 +655,14 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
       deduceGradleHomeIfPossible();
     }
     else {
-      myGradleHomeSettingType = myInstallationManager.isGradleSdkHome(new File(gradleHome)) ?
-                                LocationSettingType.EXPLICIT_CORRECT :
-                                LocationSettingType.EXPLICIT_INCORRECT;
+      File gradleHomeFile = new File(gradleHome);
+      if (myInstallationManager.isGradleSdkHome(gradleHomeFile)) {
+        myGradleHomeSettingType = LocationSettingType.EXPLICIT_CORRECT;
+      } else {
+        myGradleHomeSettingType = myInstallationManager.suggestBetterGradleHomePath(gradleHome) != null
+                                  ? LocationSettingType.EXPLICIT_CORRECT
+                                  : LocationSettingType.EXPLICIT_INCORRECT;
+      }
       myAlarm.cancelAllRequests();
       if (myGradleHomeSettingType == LocationSettingType.EXPLICIT_INCORRECT &&
           settings.getDistributionType() == DistributionType.LOCAL) {

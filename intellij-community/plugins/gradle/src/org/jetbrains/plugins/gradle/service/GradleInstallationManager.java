@@ -66,6 +66,8 @@ public class GradleInstallationManager {
 
   private static final String[] GRADLE_START_FILE_NAMES;
   @NonNls private static final String GRADLE_ENV_PROPERTY_NAME;
+  private static final Path BREW_GRADLE_LOCATION = Paths.get("/usr/local/Cellar/gradle/");
+  private static final String LIBEXEC = "libexec";
 
   static {
     // Init static data with ability to redefine it locally.
@@ -245,9 +247,8 @@ public class GradleInstallationManager {
 
   @Nullable
   private File getGradleHomeFromBrew() {
-    Path basePath = Paths.get("/usr/local/Cellar/gradle/");
     try {
-      try (DirectoryStream<Path> ds = Files.newDirectoryStream(basePath)) {
+      try (DirectoryStream<Path> ds = Files.newDirectoryStream(BREW_GRADLE_LOCATION)) {
         Path bestPath = null;
         Version highestVersion = null;
         for (Path path : ds) {
@@ -263,7 +264,7 @@ public class GradleInstallationManager {
           }
         }
         if (bestPath != null) {
-          Path libexecPath = bestPath.resolve("libexec");
+          Path libexecPath = bestPath.resolve(LIBEXEC);
           if (Files.exists(libexecPath)) {
             return libexecPath.toFile();
           }
@@ -271,6 +272,23 @@ public class GradleInstallationManager {
       }
     }
     catch (Exception ignored) {
+    }
+    return null;
+  }
+
+  /**
+   * Tries to suggest better path to gradle home
+   * @param homePath expected path to gradle home
+   * @return proper in terms of {@link #isGradleSdkHome(File)} path or {@code null} if it is impossible to fix path
+   */
+    public String suggestBetterGradleHomePath(@NotNull String homePath) {
+    Path path = Paths.get(homePath);
+    if (path.startsWith(BREW_GRADLE_LOCATION)) {
+      Path libexecPath = path.resolve(LIBEXEC);
+      File libexecFile = libexecPath.toFile();
+      if (isGradleSdkHome(libexecFile)) {
+        return libexecPath.toString();
+      }
     }
     return null;
   }
