@@ -613,5 +613,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NO_VALUE_FOR_PARAMETER.registerFactory(AddConstructorParameterFromSuperTypeCallFix)
 
         UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.registerFactory(AddSemicolonBeforeLambdaExpressionFix.Factory)
+
+        CONSTRUCTOR_IN_OBJECT.registerFactory(ChangeObjectToClassFix)
     }
 }
