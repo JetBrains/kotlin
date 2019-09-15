@@ -121,7 +121,7 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
 
   private fun forceRefreshUI() {
     resetOptionsPanel()
-    createComponent()
+    createComponent()?.revalidate()
   }
 
   private abstract inner class ChangeRuntimeActionBase(protected val runtime: LanguageRuntimeConfiguration, text: String) : AnAction(text)
