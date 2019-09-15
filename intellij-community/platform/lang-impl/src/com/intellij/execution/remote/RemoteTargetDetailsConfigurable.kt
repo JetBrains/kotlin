@@ -51,7 +51,7 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
 
   override fun createOptionsPanel(): JComponent {
     val result = JPanel(VerticalLayout(JBUIScale.scale(UIUtil.DEFAULT_VGAP)))
-    result.border = JBUI.Borders.empty(4, 10, 6, 10)
+    result.border = JBUI.Borders.empty(0, 10, 0, 10)
 
     result.add(targetConfigurable.createComponent() ?: throw IllegalStateException())
 
@@ -66,7 +66,7 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
     return panel {
       row {
         val separator = TitledSeparator(runtime.getRuntimeType().configurableDescription)
-        separator(CCFlags.growX, CCFlags.pushX)
+        separator(CCFlags.growX)
         gearButton(DuplicateRuntimeAction(runtime), RemoveRuntimeAction(runtime))
       }
       row {
@@ -75,7 +75,7 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
           .let {
             it.createComponent() ?: throw IllegalStateException("for runtime: $runtime")
           }
-        languageUI(CCFlags.growX, CCFlags.pushX)
+        languageUI(CCFlags.growX)
       }
     }
   }
