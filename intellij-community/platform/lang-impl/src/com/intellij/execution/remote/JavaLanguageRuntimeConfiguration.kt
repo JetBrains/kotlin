@@ -4,9 +4,8 @@ package com.intellij.execution.remote
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.PersistentStateComponent
 
-class SampleLanguageRuntimeConfiguration : LanguageRuntimeConfiguration(
-  SampleLanguageRuntimeType.TYPE_ID),
-                                           PersistentStateComponent<SampleLanguageRuntimeConfiguration.MyState> {
+class JavaLanguageRuntimeConfiguration : LanguageRuntimeConfiguration(JavaLanguageRuntimeType.TYPE_ID),
+                                         PersistentStateComponent<JavaLanguageRuntimeConfiguration.MyState> {
   var homePath: String = ""
   var applicationFolder: String = ""
 

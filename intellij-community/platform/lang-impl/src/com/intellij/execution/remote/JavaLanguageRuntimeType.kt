@@ -10,8 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.layout.*
 
-class SampleLanguageRuntimeType : LanguageRuntimeType<SampleLanguageRuntimeConfiguration>(
-  TYPE_ID) {
+class JavaLanguageRuntimeType : LanguageRuntimeType<JavaLanguageRuntimeConfiguration>(TYPE_ID) {
   override val icon = AllIcons.FileTypes.Java
 
   override val displayName = "Java"
@@ -20,19 +19,19 @@ class SampleLanguageRuntimeType : LanguageRuntimeType<SampleLanguageRuntimeConfi
 
   override fun isApplicableTo(runConfig: RunnerAndConfigurationSettings) = true
 
-  override fun createDefaultConfig() = SampleLanguageRuntimeConfiguration()
+  override fun createDefaultConfig() = JavaLanguageRuntimeConfiguration()
 
-  override fun createSerializer(config: SampleLanguageRuntimeConfiguration): PersistentStateComponent<*> = config
+  override fun createSerializer(config: JavaLanguageRuntimeConfiguration): PersistentStateComponent<*> = config
 
-  override fun createConfigurable(project: Project, config: SampleLanguageRuntimeConfiguration): Configurable = //
-    SampleLanguageRuntimeUI(config)
+  override fun createConfigurable(project: Project, config: JavaLanguageRuntimeConfiguration): Configurable =
+    JavaLanguageRuntimeUI(config)
 
   companion object {
     @JvmStatic
-    val TYPE_ID = "languageRuntime:sample"
+    val TYPE_ID = "JavaLanguageRuntime"
   }
 
-  private class SampleLanguageRuntimeUI(val config: SampleLanguageRuntimeConfiguration)
+  private class JavaLanguageRuntimeUI(val config: JavaLanguageRuntimeConfiguration)
     : BoundConfigurable(config.displayName, config.getRuntimeType().helpTopic) {
 
     override fun createPanel(): DialogPanel {
