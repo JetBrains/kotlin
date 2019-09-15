@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.remote
 
-import com.intellij.execution.remote.BaseExtendableConfiguration.Companion.getTypeImpl
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.Configurable
@@ -26,12 +25,12 @@ import javax.swing.JPanel
 internal class RemoteTargetDetailsConfigurable(private val project: Project, private val config: RemoteTargetConfiguration)
   : NamedConfigurable<RemoteTargetConfiguration>(true, null) {
 
-  private val targetConfigurable: Configurable = doCreateConfigurable(config)
+  private val targetConfigurable: Configurable = config.getTargetType().createConfigurable(project, config)
   private val runtimeConfigurables = mutableListOf<Configurable>()
 
   override fun getBannerSlogan(): String = config.displayName
 
-  override fun getIcon(expanded: Boolean): Icon? = config.getTypeImpl().icon
+  override fun getIcon(expanded: Boolean): Icon? = config.getTargetType().icon
 
   override fun isModified(): Boolean = allConfigurables().any { it.isModified }
 
@@ -71,7 +70,7 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
         gearButton(DuplicateRuntimeAction(runtime), RemoveRuntimeAction(runtime))
       }
       row {
-        val languageUI = doCreateConfigurable(runtime)
+        val languageUI = runtime.getRuntimeType().createConfigurable(project, runtime)
           .also { runtimeConfigurables.add(it) }
           .let {
             it.createComponent() ?: throw IllegalStateException("for runtime: $runtime")
@@ -115,9 +114,6 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
     runtimeConfigurables.clear()
     super.resetOptionsPanel()
   }
-
-  private fun doCreateConfigurable(config: BaseExtendableConfiguration) =
-    config.getTypeImpl().createConfigurable(project, config)
 
   private fun forceRefreshUI() {
     resetOptionsPanel()
