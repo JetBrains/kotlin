@@ -195,14 +195,16 @@ public class CachedIntentions {
       injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(myEditor, injectedFile);
     }
 
-    for (Iterator<IntentionActionWithTextCaching> iterator = cachedActions.iterator(); iterator.hasNext(); ) {
-      IntentionActionWithTextCaching cachedAction = iterator.next();
-      IntentionAction action = cachedAction.getAction();
-      Pair<PsiFile, Editor> applicableIn = ShowIntentionActionsHandler
-        .chooseBetweenHostAndInjected(myFile, myEditor, injectedFile, (f, e) -> ShowIntentionActionsHandler.availableFor(f, e, action));
-      if (applicableIn  == null) {
-        iterator.remove();
-        changed = true;
+    if (shouldCallIsAvailable) {
+      for (Iterator<IntentionActionWithTextCaching> iterator = cachedActions.iterator(); iterator.hasNext(); ) {
+        IntentionActionWithTextCaching cachedAction = iterator.next();
+        IntentionAction action = cachedAction.getAction();
+        Pair<PsiFile, Editor> applicableIn = ShowIntentionActionsHandler
+          .chooseBetweenHostAndInjected(myFile, myEditor, injectedFile, (f, e) -> ShowIntentionActionsHandler.availableFor(f, e, action));
+        if (applicableIn  == null) {
+          iterator.remove();
+          changed = true;
+        }
       }
     }
 

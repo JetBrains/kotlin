@@ -45,12 +45,19 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
   private final PsiFile myFile;
   private final int myPassIdToShowIntentionsFor;
   private final IntentionsInfo myIntentionsInfo = new IntentionsInfo();
+  private final boolean myQueryIntentionActions;
   private volatile CachedIntentions myCachedIntentions;
   private volatile boolean myActionsChanged;
 
-  ShowIntentionsPass(@NotNull Project project, @NotNull Editor editor, int passId) {
+  /**
+   *
+   * @param queryIntentionActions true if {@link IntentionManager} must be asked for all registered {@link IntentionAction} and {@link IntentionAction#isAvailable(Project, Editor, PsiFile)} must be called on each
+   *                              Usually, this expensive process should be executed only once per highlighting session
+   */
+  ShowIntentionsPass(@NotNull Project project, @NotNull Editor editor, boolean queryIntentionActions) {
     super(project, editor.getDocument(), false);
-    myPassIdToShowIntentionsFor = passId;
+    myQueryIntentionActions = queryIntentionActions;
+    myPassIdToShowIntentionsFor = -1;
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     myEditor = editor;
@@ -59,13 +66,6 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
 
     myFile = documentManager.getPsiFile(myEditor.getDocument());
     assert myFile != null : FileDocumentManager.getInstance().getFile(myEditor.getDocument());
-  }
-
-  @NotNull
-  public static List<HighlightInfo.IntentionActionDescriptor> getAvailableFixes(@NotNull final Editor editor,
-                                                                                @NotNull final PsiFile file,
-                                                                                final int passId) {
-    return getAvailableFixes(editor, file, passId, ((EditorEx)editor).getExpectedCaretOffset());
   }
 
   @NotNull
@@ -217,9 +217,9 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
     if (!ApplicationManager.getApplication().isHeadlessEnvironment() && !myEditor.getContentComponent().hasFocus()) return;
     TemplateState state = TemplateManagerImpl.getTemplateState(myEditor);
     if (state != null && !state.isFinished()) return;
-    getActionsToShow(myEditor, myFile, myIntentionsInfo, myPassIdToShowIntentionsFor);
+    getActionsToShow(myEditor, myFile, myIntentionsInfo, myPassIdToShowIntentionsFor, myQueryIntentionActions);
     myCachedIntentions = IntentionsUI.getInstance(myProject).getCachedIntentions(myEditor, myFile);
-    myActionsChanged = myCachedIntentions.wrapAndUpdateActions(myIntentionsInfo, true);
+    myActionsChanged = myCachedIntentions.wrapAndUpdateActions(myIntentionsInfo, false);
   }
 
   @Override
@@ -257,10 +257,10 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
   /**
    * Collects intention actions from providers intended to be invoked in EDT.
    */
-  public static void getActionsToShowSync(@NotNull final Editor hostEditor,
-                                          @NotNull final PsiFile hostFile,
-                                          @NotNull final IntentionsInfo intentions,
-                                          int passIdToShowIntentionsFor) {
+  private static void getActionsToShowSync(@NotNull final Editor hostEditor,
+                                           @NotNull final PsiFile hostFile,
+                                           @NotNull final IntentionsInfo intentions,
+                                           int passIdToShowIntentionsFor) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     new EditorNotificationActions().collectActions(hostEditor, hostFile, intentions, passIdToShowIntentionsFor,
                                                    hostEditor.getCaretModel().getOffset());
@@ -274,6 +274,13 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
                                       @NotNull final PsiFile hostFile,
                                       @NotNull final IntentionsInfo intentions,
                                       int passIdToShowIntentionsFor) {
+    getActionsToShow(hostEditor, hostFile, intentions, passIdToShowIntentionsFor, true);
+  }
+  private static void getActionsToShow(@NotNull final Editor hostEditor,
+                                       @NotNull final PsiFile hostFile,
+                                       @NotNull final IntentionsInfo intentions,
+                                       int passIdToShowIntentionsFor,
+                                       boolean queryIntentionActions) {
     int offset = hostEditor.getCaretModel().getOffset();
     final PsiElement psiElement = hostFile.findElementAt(offset);
     if (psiElement != null) PsiUtilCore.ensureValid(psiElement);
@@ -292,27 +299,28 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
       fillIntentionsInfoForHighlightInfo(infoAtCursor, intentions, fixes);
     }
 
-    PsiFile injectedFile = InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, offset);
-    for (final IntentionAction action : IntentionManager.getInstance().getAvailableIntentionActions()) {
-      Pair<PsiFile, Editor> place =
-        ShowIntentionActionsHandler.chooseBetweenHostAndInjected(hostFile, hostEditor, injectedFile,
-                                                                 (psiFile, editor) -> ShowIntentionActionsHandler
-                                                                   .availableFor(psiFile, editor, action));
+    if (queryIntentionActions) {
+      PsiFile injectedFile = InjectedLanguageUtil.findInjectedPsiNoCommit(hostFile, offset);
+      for (final IntentionAction action : IntentionManager.getInstance().getAvailableIntentionActions()) {
+        Pair<PsiFile, Editor> place =
+          ShowIntentionActionsHandler.chooseBetweenHostAndInjected(hostFile, hostEditor, injectedFile,
+                     (psiFile, editor) -> ShowIntentionActionsHandler.availableFor(psiFile, editor, action));
 
-      if (place != null) {
-        List<IntentionAction> enableDisableIntentionAction = new ArrayList<>();
-        enableDisableIntentionAction.add(new EnableDisableIntentionAction(action));
-        enableDisableIntentionAction.add(new EditIntentionSettingsAction(action));
-        HighlightInfo.IntentionActionDescriptor descriptor =
-          new HighlightInfo.IntentionActionDescriptor(action, enableDisableIntentionAction, null);
-        if (!fixes.contains(descriptor)) {
-          intentions.intentionsToShow.add(descriptor);
+        if (place != null) {
+          List<IntentionAction> enableDisableIntentionAction = new ArrayList<>();
+          enableDisableIntentionAction.add(new EnableDisableIntentionAction(action));
+          enableDisableIntentionAction.add(new EditIntentionSettingsAction(action));
+          HighlightInfo.IntentionActionDescriptor descriptor =
+            new HighlightInfo.IntentionActionDescriptor(action, enableDisableIntentionAction, null);
+          if (!fixes.contains(descriptor)) {
+            intentions.intentionsToShow.add(descriptor);
+          }
         }
       }
-    }
 
-    for (IntentionMenuContributor extension : IntentionMenuContributor.EP_NAME.getExtensionList()) {
-      extension.collectActions(hostEditor, hostFile, intentions, passIdToShowIntentionsFor, offset);
+      for (IntentionMenuContributor extension : IntentionMenuContributor.EP_NAME.getExtensionList()) {
+        extension.collectActions(hostEditor, hostFile, intentions, passIdToShowIntentionsFor, offset);
+      }
     }
 
     intentions.filterActions(hostFile);

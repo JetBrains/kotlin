@@ -321,7 +321,7 @@ final class PassExecutorService implements Disposable {
 
     if (pass.isRunIntentionPassAfter() && fileEditor instanceof TextEditor) {
       Editor editor = ((TextEditor)fileEditor).getEditor();
-      ShowIntentionsPass ip = new ShowIntentionsPass(myProject, editor, -1);
+      ShowIntentionsPass ip = new ShowIntentionsPass(myProject, editor, false);
       ip.setId(nextPassId.incrementAndGet());
       ip.setCompletionPredecessorIds(new int[]{scheduledPass.myPass.getId()});
 

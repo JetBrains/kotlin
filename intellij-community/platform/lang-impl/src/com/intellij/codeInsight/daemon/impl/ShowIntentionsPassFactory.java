@@ -16,6 +16,6 @@ final class ShowIntentionsPassFactory implements TextEditorHighlightingPassFacto
   @NotNull
   @Override
   public TextEditorHighlightingPass createHighlightingPass(@NotNull PsiFile file, @NotNull final Editor editor) {
-    return new ShowIntentionsPass(file.getProject(), editor, -1);
+    return new ShowIntentionsPass(file.getProject(), editor, true);
   }
 }
