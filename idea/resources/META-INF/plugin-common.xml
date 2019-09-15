@@ -3390,7 +3390,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NotNullAssertionOnReallyNullableVarInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnsafeNotNullAssertionOnReallyNullableInspection"
                      displayName="Unsafe using of '!!' operator"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
