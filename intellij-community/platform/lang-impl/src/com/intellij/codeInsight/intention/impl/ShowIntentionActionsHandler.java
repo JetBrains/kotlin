@@ -153,15 +153,16 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     Editor editorToApply = null;
     PsiFile fileToApply = null;
 
+    Editor injectedEditor = null;
     if (injectedFile != null) {
-      Editor injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(hostEditor, injectedFile);
+      injectedEditor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(hostEditor, injectedFile);
       if (predicate.process(injectedFile, injectedEditor)) {
         editorToApply = injectedEditor;
         fileToApply = injectedFile;
       }
     }
 
-    if (editorToApply == null && predicate.process(hostFile, hostEditor)) {
+    if (editorToApply == null && hostEditor != injectedEditor && predicate.process(hostFile, hostEditor)) {
       editorToApply = hostEditor;
       fileToApply = hostFile;
     }
