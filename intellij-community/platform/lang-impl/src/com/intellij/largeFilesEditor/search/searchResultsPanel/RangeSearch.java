@@ -28,6 +28,7 @@ import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.content.Content;
 import com.intellij.util.concurrency.EdtExecutorService;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -79,7 +80,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
   private RangeSearchTask lastExecutedRangeSearchTask;
 
-  private final List<EdtRangeSearchEventsListener> myEdtRangeSearchEventsListeners = new ArrayList<>();
+  private final List<EdtRangeSearchEventsListener> myEdtRangeSearchEventsListeners = ContainerUtil.createLockFreeCopyOnWriteList();
 
   public boolean isButtonFindFurtherEnabled(boolean directionForward) {
     if (directionForward) {

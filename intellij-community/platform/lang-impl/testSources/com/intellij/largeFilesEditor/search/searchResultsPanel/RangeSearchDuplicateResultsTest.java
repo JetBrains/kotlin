@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.search.searchResultsPanel;
 
+import com.intellij.diagnostic.ThreadDumper;
 import com.intellij.largeFilesEditor.editor.Page;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.actions.FindFurtherAction;
@@ -12,6 +13,7 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightPlatformTestCase;
+import com.intellij.util.ui.UIUtil;
 import org.junit.Assert;
 
 import java.util.Iterator;
@@ -28,8 +30,8 @@ public class RangeSearchDuplicateResultsTest extends LightPlatformTestCase {
   private RangeSearch myRangeSearch;
   private StopRangeSearchAction myStopRangeSearchAction;
   private FindFurtherAction myFindFurtherAction;
-  volatile boolean myNeedToAbortSearch;
-  volatile boolean isAllDoneAsExpected;
+  private volatile boolean myNeedToAbortSearch;
+  private volatile boolean isAllDoneAsExpected;
 
   public void test() {
     myFileDataProviderForSearch = new MyFileDataProviderForSearch();
@@ -56,6 +58,7 @@ public class RangeSearchDuplicateResultsTest extends LightPlatformTestCase {
 
     isAllDoneAsExpected = false;
     myRangeSearch.runNewSearch(options, myFileDataProviderForSearch);
+    UIUtil.dispatchAllInvocationEvents();
 
     /* This line shouldn't be executed before onFinished() will be done.
      * See com.intellij.openapi.progress.impl.CoreProgressManager#run,
@@ -63,7 +66,7 @@ public class RangeSearchDuplicateResultsTest extends LightPlatformTestCase {
      * This causes "strange" order of execution of EDT-tasks.
      */
     if (!isAllDoneAsExpected) {
-      Assert.fail("wrong order of tasks execution");
+      Assert.fail("wrong order of tasks execution\n" + ThreadDumper.dumpThreadsToString());
     }
   }
 
@@ -99,7 +102,7 @@ public class RangeSearchDuplicateResultsTest extends LightPlatformTestCase {
         message.append(String.format("Order check is failed at ([%s] , [%s])", previous.toString(), current.toString()));
         message.append("\nAll search results:");
         for (SearchResult result : results) {
-          message.append("\n  ").append(result.toString());
+          message.append("\n  ").append(result);
         }
         Assert.fail(message.toString());
         return;
