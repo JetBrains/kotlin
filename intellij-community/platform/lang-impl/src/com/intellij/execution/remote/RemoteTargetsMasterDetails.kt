@@ -1,0 +1,129 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.execution.remote
+
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonShortcuts
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MasterDetailsComponent
+import com.intellij.util.IconUtil
+import com.intellij.util.PlatformIcons
+import com.intellij.util.containers.toArray
+import com.intellij.util.text.UniqueNameGenerator
+
+class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: Project, private val initialSelectedName: String? = null)
+  : MasterDetailsComponent() {
+
+  init {
+    // note that `MasterDetailsComponent` does not work without `initTree()`
+    initTree()
+  }
+
+  override fun getDisplayName(): String = "Remote Targets"
+
+  override fun getEmptySelectionString(): String? {
+    return "To add new target, click +"
+  }
+
+  override fun reset() {
+    myRoot.removeAllChildren()
+
+    allTargets().forEach { nextTarget -> addTargetNode(nextTarget) }
+
+    super.reset()
+
+    initialSelectedName?.let { selectNodeInTree(initialSelectedName) }
+  }
+
+  override fun createActions(fromPopup: Boolean): List<AnAction> = mutableListOf(
+    CreateNewTargetGroup(),
+    MyDeleteAction(),
+    DuplicateAction()
+  )
+
+  override fun processRemovedItems() {
+    val deletedTargets = allTargets().toSet() - getConfiguredTargets()
+    deletedTargets.forEach { RemoteTargetsManager.instance.targets.removeConfig(it) }
+    super.processRemovedItems()
+  }
+
+  override fun apply() {
+    super.apply()
+
+    val addedConfigs = getConfiguredTargets() - RemoteTargetsManager.instance.targets.resolvedConfigs()
+    addedConfigs.forEach { RemoteTargetsManager.instance.targets.addConfig(it) }
+  }
+
+  private fun allTargets() = RemoteTargetsManager.instance.targets.resolvedConfigs()
+
+  private fun addTargetNode(config: RemoteTargetConfiguration): MyNode {
+    val configurable = RemoteTargetDetailsConfigurable(project, config)
+    val node = MyNode(configurable)
+    addNode(node, myRoot)
+    selectNodeInTree(node)
+    return myRoot
+  }
+
+  private fun getConfiguredTargets(): List<RemoteTargetConfiguration> =
+    myRoot.children().asSequence()
+      .map { node -> (node as MyNode).configurable?.editableObject as? RemoteTargetConfiguration }
+      .filterNotNull()
+      .toList()
+
+  private fun applyUniqueName(config: RemoteTargetConfiguration) {
+    config.displayName = UniqueNameGenerator.generateUniqueName(config.getTargetType().displayName) { curName ->
+      getConfiguredTargets().none { it.displayName == curName }
+    }
+  }
+
+  private inner class CreateNewTargetAction(private val type: RemoteTargetType<*>)
+    : DumbAwareAction(type.displayName, null, type.icon) {
+
+    override fun actionPerformed(e: AnActionEvent) {
+      val newConfig = type.createDefaultConfig()
+      applyUniqueName(newConfig)
+      val newNode = addTargetNode(newConfig)
+      selectNodeInTree(newNode, true, true)
+    }
+  }
+
+  private inner class CreateNewTargetGroup : ActionGroup("Add", "", IconUtil.getAddIcon()),
+                                             ActionGroupWithPreselection, DumbAware {
+    init {
+      registerCustomShortcutSet(CommonShortcuts.INSERT, myTree)
+    }
+
+    override fun getChildren(e: AnActionEvent?): Array<AnAction> {
+      return RemoteTargetType.EXTENSION_NAME.extensionList
+        .map { CreateNewTargetAction(it) }
+        .toArray(AnAction.EMPTY_ARRAY)
+    }
+
+    override fun getActionGroup(): ActionGroup {
+      return this
+    }
+  }
+
+  private inner class DuplicateAction : DumbAwareAction("Duplicate", "Duplicate", PlatformIcons.COPY_ICON) {
+    override fun update(e: AnActionEvent) {
+      templatePresentation.isEnabled = getSelectedTarget() != null
+    }
+
+    override fun actionPerformed(e: AnActionEvent) {
+      duplicateSelected()?.let { copy ->
+        applyUniqueName(copy)
+        RemoteTargetsManager.instance.targets.addConfig(copy)
+        val newNode = addTargetNode(copy)
+        selectNodeInTree(newNode, true, true)
+      }
+    }
+
+    private fun duplicateSelected(): RemoteTargetConfiguration? =
+      getSelectedTarget()?.let { it.getTargetType().duplicateConfig(it) }
+
+    private fun getSelectedTarget() = selectedNode.configurable?.editableObject as? RemoteTargetConfiguration
+  }
+}

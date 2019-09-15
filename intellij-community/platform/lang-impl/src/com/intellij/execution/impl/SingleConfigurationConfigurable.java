@@ -4,6 +4,7 @@ package com.intellij.execution.impl;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configuration.RemoteTargetAwareRunProfile;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.remote.RemoteTargetConfiguration;
 import com.intellij.execution.remote.RemoteTargetConfigurationKt;
