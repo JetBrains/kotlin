@@ -9,14 +9,15 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
+import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -25,8 +26,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.Closeable
 import java.io.File
 import java.lang.Boolean.getBoolean
@@ -43,8 +46,16 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
+    private val runIgnoredWasmTests =
+        getBoolean("kotlin.wasm.run.ignored.tests")
+
     fun doTest(filePath: String) {
         val file = File(filePath)
+
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.WASM, file)
+        if (isIgnored && !runIgnoredWasmTests)
+            TestCase.fail("Wasm test is ignored")
+
         val outputDir = getOutputDir(file)
         val fileContent = KotlinTestUtils.doLoadFile(file)
 
@@ -55,10 +66,13 @@ abstract class BasicWasmBoxTest(
             val outputWatFile = outputFileBase + ".wat"
             val outputJsFile = outputFileBase + ".js"
 
+            val languageVersionSettings = inputFiles.mapNotNull { it.languageVersionSettings }.firstOrNull()
+
             val kotlinFiles = inputFiles.filter { it.fileName.endsWith(".kt") }
             val psiFiles = createPsiFiles(kotlinFiles.map { File(it.fileName).canonicalPath }.sorted())
-            val config = createConfig()
+            val config = createConfig(languageVersionSettings)
             translateFiles(
+                file,
                 psiFiles.map(TranslationUnit::SourceFile),
                 File(outputWatFile),
                 File(outputJsFile),
@@ -81,6 +95,7 @@ abstract class BasicWasmBoxTest(
     }
 
     private fun translateFiles(
+        testFile: File,
         units: List<TranslationUnit>,
         outputWatFile: File,
         outputJsFile: File,
@@ -95,6 +110,9 @@ abstract class BasicWasmBoxTest(
             val allPhasesSet = wasmPhases.toPhaseMap().values.toSet()
             val dumpOutputDir = File(outputWatFile.parent, outputWatFile.nameWithoutExtension + "-irdump")
             println("\n ------ Dumping phases to file://$dumpOutputDir")
+            println("\n ------  KT file://${testFile.absolutePath}")
+            println("\n ------ WAT file://$outputWatFile")
+            println(" ------  JS file://$outputJsFile")
             PhaseConfig(
                 wasmPhases,
                 dumpToDirectory = dumpOutputDir.path,
@@ -145,9 +163,10 @@ abstract class BasicWasmBoxTest(
 
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
-    private fun createConfig(): JsConfig {
+    private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE)
+        configuration.languageVersionSettings = languageVersionSettings ?: LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_4)
         return JsConfig(project, configuration, null, null)
     }
 
@@ -162,11 +181,13 @@ abstract class BasicWasmBoxTest(
                 }
             }
 
+            val languageVersionSettings = parseLanguageVersionSettings(directives)
+
             val temporaryFile = File(tmpDir, "WASM_TEST/$fileName")
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
-            return TestFile(temporaryFile.absolutePath)
+            return TestFile(temporaryFile.absolutePath, languageVersionSettings)
         }
 
         var testPackage: String? = null
@@ -177,7 +198,7 @@ abstract class BasicWasmBoxTest(
         }
     }
 
-    private class TestFile(val fileName: String)
+    private class TestFile(val fileName: String, val languageVersionSettings: LanguageVersionSettings?)
 
     override fun createEnvironment() =
         KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)

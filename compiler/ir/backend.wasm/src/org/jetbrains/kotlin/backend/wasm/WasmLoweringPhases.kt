@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.wasm.lower.BuiltInsLowering
-import org.jetbrains.kotlin.backend.wasm.lower.WasmBlockDecomposerLowering
-import org.jetbrains.kotlin.backend.wasm.lower.excludeDeclarationsFromCodegen
+import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
@@ -80,6 +78,12 @@ private val expectDeclarationsRemovingPhase = makeWasmModulePhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
+)
+
+private val stringConstructorLowering = makeWasmModulePhase(
+    ::SimpleStringConcatenationLowering,
+    name = "StringConcatenation",
+    description = "String concatenation lowering"
 )
 
 private val lateinitLoweringPhase = makeWasmModulePhase(
@@ -235,7 +239,7 @@ private val returnableBlockLoweringPhase = makeWasmModulePhase(
 )
 
 private val bridgesConstructionPhase = makeWasmModulePhase(
-    ::BridgesConstruction,
+    ::WasmBridgesConstruction,
     name = "BridgesConstruction",
     description = "Generate bridges"
 )
@@ -302,6 +306,12 @@ private val staticMembersLoweringPhase = makeWasmModulePhase(
     description = "Move static member declarations to top-level"
 )
 
+private val fieldInitializersLoweringPhase = makeWasmModulePhase(
+    ::FieldInitializersLowering,
+    name = "FieldInitializersLowering",
+    description = "Move field initializers to start function"
+)
+
 private val builtInsLoweringPhase = makeWasmModulePhase(
     ::BuiltInsLowering,
     name = "BuiltInsLowering",
@@ -320,18 +330,30 @@ private val objectUsageLoweringPhase = makeCustomWasmModulePhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
+private val typeOperatorLoweringPhase = makeWasmModulePhase(
+    ::WasmTypeOperatorLowering,
+    name = "TypeOperatorLowering",
+    description = "Lower IrTypeOperator with corresponding logic"
+)
+
+private val virtualDispatchReceiverExtractionPhase = makeWasmModulePhase(
+    ::VirtualDispatchReceiverExtraction,
+    name = "VirtualDispatchReceiverExtraction",
+    description = "Eliminate side-effects in dispatch receivers of virtual function calls"
+)
+
 val wasmPhases = namedIrModulePhase<WasmBackendContext>(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
-            provisionalFunctionExpressionPhase then
 
             // TODO: Need some helpers from stdlib
             // arrayConstructorPhase then
 
             functionInliningPhase then
+            provisionalFunctionExpressionPhase then
             lateinitLoweringPhase then
             tailrecLoweringPhase then
 
@@ -348,7 +370,6 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             initializersLoweringPhase then
             // Common prefix ends
 
-            builtInsLoweringPhase then
 
 //            TODO: Commonize enumEntryToGetInstanceFunction
 //                  Commonize array literal creation
@@ -361,6 +382,7 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
 //            TODO: Requires stdlib
 //            suspendFunctionsLoweringPhase then
 
+            stringConstructorLowering then
             returnableBlockLoweringPhase then
 
 //            TODO: Callable reference lowering is too JS specific.
@@ -408,6 +430,11 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             objectDeclarationLoweringPhase then
             objectUsageLoweringPhase then
             staticMembersLoweringPhase then
+            fieldInitializersLoweringPhase then
+            typeOperatorLoweringPhase then
+            builtInsLoweringPhase then
+
+            virtualDispatchReceiverExtractionPhase then
 
             validateIrAfterLowering
 )

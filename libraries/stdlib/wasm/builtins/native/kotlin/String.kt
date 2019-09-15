@@ -13,14 +13,17 @@
 
 package kotlin
 
+import kotlin.wasm.internal.*
 import kotlin.wasm.internal.ExcludedFromCodegen
+import kotlin.wasm.internal.SkipRTTI
 import kotlin.wasm.internal.WasmImport
 
 /**
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
  * implemented as instances of this class.
  */
-public class String : Comparable<String>, CharSequence {
+@SkipRTTI
+public class String @ExcludedFromCodegen constructor() : Comparable<String>, CharSequence {
     @ExcludedFromCodegen
     companion object {}
     
@@ -28,7 +31,7 @@ public class String : Comparable<String>, CharSequence {
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
     @WasmImport("runtime", "String_plus")
-    public operator fun plus(other: Any?): String
+    public operator fun plus(other: String): String
 
     public override val length: Int
         @WasmImport("runtime", "String_getLength") get
@@ -48,8 +51,8 @@ public class String : Comparable<String>, CharSequence {
     @WasmImport("runtime", "String_compareTo")
     public override fun compareTo(other: String): Int
 
-    @ExcludedFromCodegen
-    public override fun equals(other: Any?): Boolean
+    public override fun equals(other: Any?): Boolean =
+        wasm_unreachable()
 
     public override fun toString(): String = this
 

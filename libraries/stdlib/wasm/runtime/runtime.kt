@@ -6,5 +6,10 @@
 package kotlin.wasm.internal
 
 @WasmImport("runtime", "String_getLiteral")
-public fun stringLiteral(index: Int): String =
+internal fun stringLiteral(index: Int): String =
     implementedAsIntrinsic
+
+
+internal fun throwWithMessageStub(s: String): Nothing {
+    wasm_unreachable()
+}

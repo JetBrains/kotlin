@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractBlockDecomposerLowering
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 class WasmBlockDecomposerLowering(val context: WasmBackendContext) : AbstractBlockDecomposerLowering(context) {
-    override fun unreachableExpression(): IrExpression = TODO()
+    override fun unreachableExpression(): IrExpression =
+        JsIrBuilder.buildCall(context.wasmSymbols.unreachable, context.irBuiltIns.nothingType)
 }

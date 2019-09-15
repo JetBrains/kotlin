@@ -84,7 +84,7 @@ fun fieldSignature(field: IrField): Signature {
     return BackingFieldSignature(field)
 }
 
-fun functionSignature(declaration: IrFunction): Signature {
+fun jsFunctionSignature(declaration: IrFunction): Signature {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
 
@@ -212,7 +212,7 @@ class NameTables(packages: List<IrPackageFragment>) {
     }
 
     private fun generateNameForMemberFunction(declaration: IrSimpleFunction) {
-        when (val signature = functionSignature(declaration)) {
+        when (val signature = jsFunctionSignature(declaration)) {
             is StableNameSignature -> memberNames.declareStableName(signature, signature.name)
             is ParameterTypeBasedSignature -> {
                 // TODO: Fix hack: Coroutines runtime currently relies on stable names
@@ -270,7 +270,7 @@ class NameTables(packages: List<IrPackageFragment>) {
     }
 
     fun getNameForMemberFunction(function: IrSimpleFunction): String {
-        val signature = functionSignature(function)
+        val signature = jsFunctionSignature(function)
         val name = memberNames.names[signature]
 
         // TODO: Fix hack: Coroutines runtime currently relies on stable names
