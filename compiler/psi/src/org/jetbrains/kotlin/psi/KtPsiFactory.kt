@@ -472,6 +472,8 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return file.importDirectives
     }
 
+    fun createClassKeyword(): PsiElement = createClass("class A").getClassKeyword()!!
+
     fun createPrimaryConstructor(text: String = ""): KtPrimaryConstructor {
         return createClass(if (text.isNotEmpty()) "class A $text" else "class A()").primaryConstructor!!
     }
