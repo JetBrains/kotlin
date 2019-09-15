@@ -577,8 +577,9 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
           RemoteTargetsListConfigurable configurable = new RemoteTargetsListConfigurable(myProject);
           if (new SingleConfigurableEditor(myWholePanel, configurable, ShowSettingsUtilImpl.createDimensionKey(configurable), false)
             .showAndGet()) {
+            String selectedName = getSelectedTargetName();
             myRunOnComboBox.removeAllItems();
-            resetRunOnComboBox(getSelectedTargetName());
+            resetRunOnComboBox(selectedName);
           }
         }
       });
