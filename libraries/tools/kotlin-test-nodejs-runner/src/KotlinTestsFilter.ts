@@ -15,7 +15,11 @@ export function runWithFilter(
 
     function pathString() {
         // skip root
-        return path.slice(1).join('.')
+        if (!path[0]) {
+            return path.slice(1).join('.')
+        } else {
+            return path.join('.')
+        }
     }
 
     return {
@@ -102,7 +106,7 @@ export class ExactFilter implements KotlinTestsFilter {
     }
 
     mayContainTestsFromSuite(fqn: string): boolean {
-        return startsWith(fqn, this.fqn);
+        return startsWith(this.fqn, fqn);
     }
 
     containsTest(fqn: string): boolean {
