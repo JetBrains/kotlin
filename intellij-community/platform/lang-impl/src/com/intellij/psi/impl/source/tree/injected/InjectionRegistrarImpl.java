@@ -665,7 +665,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
                                    @NotNull String fileName, @NotNull PsiDocumentManagerBase documentManager) {
     VirtualFileWindowImpl virtualFile = new VirtualFileWindowImpl(fileName, hostVirtualFile, documentWindow, language, decodedChars);
     Language finalLanguage = forcedLanguage == null ? LanguageSubstitutors.getInstance().substituteLanguage(language, virtualFile, project) : forcedLanguage;
-    InjectedFileViewProvider viewProvider = InjectedFileViewProvider.create(PsiManager.getInstance(project), virtualFile, documentWindow, finalLanguage);
+    InjectedFileViewProvider viewProvider = InjectedFileViewProvider.create(PsiManagerEx.getInstanceEx(project), virtualFile, documentWindow, finalLanguage);
     Set<Language> languages = viewProvider.getLanguages();
     ASTNode[] parsedNodes = new ASTNode[languages.size()];
     int i = 0;
