@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.name.Name
 
 internal fun TypeBridge.makeNothing() = when (this) {
@@ -1242,15 +1243,27 @@ internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): St
         }
     }
 
-    val returnTypeEncoding = methodBridge.returnBridge.objCEncoding
+    val targetFamily = context.config.target.family
+    val returnTypeEncoding = methodBridge.returnBridge.getObjCEncoding(targetFamily)
 
     val paramSize = paramOffset
     return "$returnTypeEncoding$paramSize$params"
 }
 
-private val MethodBridge.ReturnValue.objCEncoding: String get() = when (this) {
+// https://developer.apple.com/documentation/objectivec/nsuinteger?language=objc
+// `typedef unsigned long NSUInteger` on iOS, macOS, tvOS.
+// `typedef unsigned int NSInteger` on watchOS.
+private val Family.nsUIntegerEncoding: String get() = when (this) {
+    Family.OSX,
+    Family.IOS,
+    Family.TVOS -> "L"
+    Family.WATCHOS -> "I"
+    else -> error("Unexpected target platform: $this")
+}
+
+private fun MethodBridge.ReturnValue.getObjCEncoding(targetFamily: Family): String = when (this) {
     MethodBridge.ReturnValue.Void -> "v"
-    MethodBridge.ReturnValue.HashCode -> "L" // NSUInteger = unsigned long; // TODO: `unsigned int` on watchOS
+    MethodBridge.ReturnValue.HashCode -> targetFamily.nsUIntegerEncoding
     is MethodBridge.ReturnValue.Mapped -> this.bridge.objCEncoding
     MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.encoding
 
