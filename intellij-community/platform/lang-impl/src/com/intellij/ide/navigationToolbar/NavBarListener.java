@@ -294,8 +294,7 @@ public final class NavBarListener
            || action instanceof CutAction
            || action instanceof ListActions
            || action instanceof NavBarActions
-           || action instanceof ScrollingUtil.ScrollingAction
-           || action instanceof NavBarPopup.CancelPopupAction;
+           || action instanceof ScrollingUtil.ScrollingAction;
   }
 
   @Override
