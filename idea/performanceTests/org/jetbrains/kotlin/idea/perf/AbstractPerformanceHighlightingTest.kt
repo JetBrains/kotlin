@@ -73,7 +73,9 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
     private fun innerPerfTest(name: String, setUpBody: (TestData<Unit, MutableList<HighlightInfo>>) -> Unit) {
         stats.perfTest<Unit, MutableList<HighlightInfo>>(
             testName = name,
-            setUp = { setUpBody(it) },
+            setUp = {
+                setUpBody(it)
+            },
             test = { it.value = perfTestCore() },
             tearDown = {
                 assertNotNull("no reasons to validate output as it is a performance test", it.value)

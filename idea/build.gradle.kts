@@ -189,6 +189,7 @@ dependencies {
     performanceTestCompile(project(":nj2k"))
     performanceTestCompile(intellijPluginDep("gradle"))
     performanceTestRuntime(sourceSets["performanceTest"].output)
+    performanceTestCompile(files("../libraries/lib/async-profiler.jar"))
 }
 
 projectTest(parallel = true) {
