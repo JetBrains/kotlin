@@ -103,42 +103,57 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                     const LogReporter = function (baseReporterDecorator) {
                         const teamcityReporter = require("karma-teamcity-reporter")["reporter:teamcity"][1];
                         teamcityReporter.call(this, baseReporterDecorator);
-            
-                        this.logBuffer = [];
-            
-                        this.TEST_STD_OUT = "##teamcity[testStdOut name='%name%' out='%s' flowId='']";
+
+                        this.TEST_STD_OUT = "##teamcity[testStdOut name='%s' out='%s' flowId='']";
+                        
+                        const tcOnBrowserStart = this.onBrowserStart;
+                        this.onBrowserStart = function (browser) {
+                            tcOnBrowserStart.call(this, browser);
+                            this.browserResults[browser.id].consoleCollector = [];
+                        };
             
                         this.onBrowserLog = (browser, log, type) => {
-                            this.logBuffer.push(formatMessage(this.TEST_STD_OUT, `[${"$"}{type}] ${"$"}{log}\n`))
+                            var browserResult = this.browserResults[browser.id];
+                            if (browserResult) {
+                                browserResult.consoleCollector.push(`[${"$"}{type}] ${"$"}{log}\n`)
+                            }
                         };
             
-                        this.specSuccess = (browser, result) => {
-                            const log = this.getLog(browser, result);
-                            const testName = result.description;
-            
-                            log.push(formatMessage(this.TEST_START, testName));
-                            this.logBuffer.forEach(item => {
-                                log.push(
-                                    item.replace('%name%', result.description)
-                                )
-                            });
-                            log.push(formatMessage(this.TEST_END, testName, result.time))
+                        const tcSpecSuccess = this.specSuccess;
+                        this.specSuccess = function (browser, result) {
+                            tcSpecSuccess.call(this, browser, result);
+
+                            var log = this.getLog(browser, result);
+                            var testName = result.description;
+                        
+                            const endMessage = log.pop();
+                            this.browserResults[browser.id].consoleCollector.forEach(item => {
+                              log.push(
+                              formatMessage(this.TEST_STD_OUT, testName, item)
+                              )
+                           });
+                           log.push(endMessage);
+                        
+                           this.browserResults[browser.id].consoleCollector = []
                         };
             
+                        const tcSpecFailure = this.specFailure;
                         this.specFailure = function (browser, result) {
-                            const log = this.getLog(browser, result);
-                            const testName = result.description;
-            
-                            log.push(formatMessage(this.TEST_START, testName));
-                            this.logBuffer.forEach(item => {
-                                log.push(
-                                    item.replace('%name%', result.description)
-                                )
+                            tcSpecFailure.call(this, browser, result);
+                            var log = this.getLog(browser, result);
+                            var testName = result.description;
+                        
+                            const endMessage = log.pop();
+                            const failedMessage = log.pop();
+                            this.browserResults[browser.id].consoleCollector.forEach(item => {
+                              log.push(
+                                formatMessage(this.TEST_STD_OUT, testName, item)
+                              )
                             });
-                            log.push(formatMessage(this.TEST_FAILED, testName, result.log.join('\n\n')));
-                            log.push(formatMessage(this.TEST_END, testName, result.time));
-                            
-                            this.logBuffer = [];
+                            log.push(failedMessage);
+                            log.push(endMessage);
+                        
+                            this.browserResults[browser.id].consoleCollector = []
                         }
                     };
                     
