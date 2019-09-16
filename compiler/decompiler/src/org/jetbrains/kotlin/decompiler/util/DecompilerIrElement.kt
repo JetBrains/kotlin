@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.decompiler.util
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.decompiler.getValueParameterNamesForDebug
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -147,170 +145,6 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
         else
             annotations.joinToString(prefix = "", postfix = " ", separator = " ") { "@[${renderAsAnnotation(it)}]" }
 
-    private fun IrSymbol.renderReference() =
-        if (isBound)
-            owner.accept(symbolReferenceRenderer, null)
-        else
-            "UNBOUND ${javaClass.simpleName}"
-
-    private val symbolReferenceRenderer = BoundSymbolReferenceRenderer()
-
-    private inner class BoundSymbolReferenceRenderer :
-        IrElementVisitor<String, Nothing?> {
-
-        override fun visitElement(element: IrElement, data: Nothing?) =
-            element.accept(this@DecompilerIrElementVisitor, null)
-
-        override fun visitVariable(declaration: IrVariable, data: Nothing?) =
-            buildTrimEnd {
-                if (declaration.isVar) append("var ") else append("val ")
-
-                append(declaration.name.asString())
-                append(": ")
-                append(declaration.type.render())
-                append(' ')
-
-                append(declaration.renderVariableFlags())
-
-                renderDeclaredIn(declaration)
-            }
-
-        override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) =
-            buildTrimEnd {
-                append(declaration.name.asString())
-                append(": ")
-                append(declaration.type.render())
-                append(' ')
-
-                append(declaration.renderValueParameterFlags())
-
-                renderDeclaredIn(declaration)
-            }
-
-        override fun visitFunction(declaration: IrFunction, data: Nothing?) =
-            buildTrimEnd {
-                append(declaration.visibility)
-                append(' ')
-
-                if (declaration is IrSimpleFunction) {
-                    append(declaration.modality.toString().toLowerCase())
-                    append(' ')
-                }
-
-                when (declaration) {
-                    is IrSimpleFunction -> append("fun ")
-                    is IrConstructor -> append("constructor ")
-                    else -> append("{${declaration.javaClass.simpleName}}")
-                }
-
-                append(declaration.name.asString())
-                append(' ')
-
-                renderTypeParameters(declaration)
-
-                appendListWith(declaration.valueParameters, "(", ")", ", ") { valueParameter ->
-                    val varargElementType = valueParameter.varargElementType
-                    if (varargElementType != null) {
-                        append("vararg ")
-                        append(valueParameter.name.asString())
-                        append(": ")
-                        append(varargElementType.render())
-                    } else {
-                        append(valueParameter.name.asString())
-                        append(": ")
-                        append(valueParameter.type.render())
-                    }
-                }
-
-                if (declaration is IrSimpleFunction) {
-                    append(": ")
-                    append(declaration.returnType.render())
-                }
-                append(' ')
-
-                when (declaration) {
-                    is IrSimpleFunction -> append(declaration.renderSimpleFunctionFlags())
-                    is IrConstructor -> append(declaration.renderConstructorFlags())
-                }
-
-                renderDeclaredIn(declaration)
-            }
-
-        private fun StringBuilder.renderTypeParameters(declaration: IrTypeParametersContainer) {
-            if (declaration.typeParameters.isNotEmpty()) {
-                appendListWith(declaration.typeParameters, "<", ">", ", ") { typeParameter ->
-                    append(typeParameter.name.asString())
-                }
-                append(' ')
-            }
-        }
-
-        override fun visitProperty(declaration: IrProperty, data: Nothing?) =
-            buildTrimEnd {
-                append(declaration.visibility)
-                append(' ')
-                append(declaration.modality.toString().toLowerCase())
-                append(' ')
-
-                append(declaration.name.asString())
-
-                val type = declaration.getter?.returnType ?: declaration.backingField?.type
-                if (type != null) {
-                    append(": ")
-                    append(type.render())
-                }
-
-                append(' ')
-                append(declaration.renderPropertyFlags())
-            }
-
-        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
-            buildTrimEnd {
-                if (declaration.isVar) append("var ") else append("val ")
-                append(declaration.name.asString())
-                append(": ")
-                append(declaration.type.render())
-                append(" by (...)")
-            }
-
-        private fun StringBuilder.renderDeclaredIn(irDeclaration: IrDeclaration) {
-            append("declared in ")
-            renderParentOfReferencedDeclaration(irDeclaration)
-        }
-
-        private fun StringBuilder.renderParentOfReferencedDeclaration(declaration: IrDeclaration) {
-            val parent = try {
-                declaration.parent
-            } catch (e: Exception) {
-                append("<no parent>")
-                return
-            }
-            when (parent) {
-                is IrPackageFragment -> {
-                    val fqn = parent.fqName.asString()
-                    append(if (fqn.isEmpty()) "<root>" else fqn)
-                }
-                is IrDeclaration -> {
-                    renderParentOfReferencedDeclaration(parent)
-                    append('.')
-                    if (parent is IrDeclarationWithName) {
-                        append(parent.name)
-                    } else {
-                        renderElementNameFallback(parent)
-                    }
-                }
-                else ->
-                    renderElementNameFallback(parent)
-            }
-        }
-
-        private fun StringBuilder.renderElementNameFallback(element: Any) {
-            append('{')
-            append(element.javaClass.simpleName)
-            append('}')
-        }
-    }
-
     override fun visitElement(element: IrElement, data: Nothing?): String = TODO()
 
     override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String = TODO()
@@ -324,11 +158,17 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String = TODO()
 
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
-        declaration.runTrimEnd {
-            when (visibility) {
-                Visibilities.PUBLIC -> ""
-                else -> visibility.name.toLowerCase() + " "
-            } + "constructor" + renderValueParameterTypes()
+        if (declaration.isPrimary) {
+            declaration.runTrimEnd {
+                renderValueParameterTypes()
+            }
+        } else {
+            declaration.runTrimEnd {
+                when (visibility) {
+                    Visibilities.PUBLIC -> ""
+                    else -> visibility.name.toLowerCase() + " "
+                } + "constructor" + renderValueParameterTypes()
+            }
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
@@ -362,7 +202,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
         if (typeParameters.isEmpty())
             ""
         else
-            typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") { it.name.toString() }
+            typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") { it.name() }
 
     private fun IrFunction.renderValueParameterTypes(): String =
         ArrayList<String>().apply {
@@ -376,7 +216,10 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "primary".takeIf { isPrimary }
         )
 
-    override fun visitProperty(declaration: IrProperty, data: Nothing?): String = TODO()
+    override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
+        declaration.runTrimEnd {
+            renderPropertyFlags() + declaration
+        }
 
     private fun IrProperty.renderPropertyFlags() =
         renderFlagsList(
@@ -424,8 +267,12 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "inline".takeIf { isInline }
         )
 
-    override fun visitVariable(declaration: IrVariable, data: Nothing?): String = TODO()
-
+    override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
+        declaration.runTrimEnd {
+            val mutability = if (isVar) "var" else "val"
+            return "${mutability} ${name()}: ${type.toKotlinType().toString()} = " +
+                    "${initializer?.accept(this@DecompilerIrElementVisitor, null)}"
+        }
 
     private fun IrVariable.renderVariableFlags(): String =
         renderFlagsList(
@@ -468,12 +315,12 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitExpression(expression: IrExpression, data: Nothing?): String = TODO()
 
-    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String = TODO()
-    private fun Any.escapeIfRequired() =
-        when (this) {
-            is String -> "\"${StringUtil.escapeStringCharacters(this)}\""
-            is Char -> "'${StringUtil.escapeStringCharacters(this.toString())}'"
-            else -> this
+    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
+        when (expression.kind) {
+            IrConstKind.String -> "\"" + expression.value as String + "\""
+            IrConstKind.Char -> "\'" + expression.value as String + "\'"
+            IrConstKind.Null -> "null"
+            else -> expression.value.toString()
         }
 
     override fun visitVararg(expression: IrVararg, data: Nothing?): String = TODO()
@@ -482,7 +329,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitBlock(expression: IrBlock, data: Nothing?): String = TODO()
 
-    override fun visitComposite(expression: IrComposite, data: Nothing?): String = TODO()
+//    override fun visitComposite(expression: IrComposite, data: Nothing?): String = TODO()
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String = "return"
 
@@ -532,6 +379,32 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     append(" || ")
                     append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
                 }
+                IrStatementOrigin.EQEQ -> {
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" == ")
+                    append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.GT -> {
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" > ")
+                    append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.LT -> {
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" < ")
+                    append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.GTEQ -> {
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" >= ")
+                    append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+                IrStatementOrigin.LTEQ -> {
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                    append(" <= ")
+                    append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
+                }
+
 
                 else -> {
                     if (expression.dispatchReceiver != null) {
@@ -545,7 +418,6 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                             }
                         }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
                     )
-                    append("\n")
                 }
             }
         }.toString()
@@ -561,7 +433,10 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String = "${expression.symbol.owner.name}"
 
-    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String = TODO()
+    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
+        expression.runTrimEnd {
+            "${expression.symbol.owner.name()} = ${expression.value.accept(this@DecompilerIrElementVisitor, null)}"
+        }
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String = TODO()
 
@@ -574,13 +449,17 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String = TODO()
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String = TODO()
-    override fun visitWhen(expression: IrWhen, data: Nothing?): String = TODO()
+    override fun visitWhen(expression: IrWhen, data: Nothing?): String =
+        expression.runTrimEnd {
+            "when "
+        }
 
     override fun visitBranch(branch: IrBranch, data: Nothing?): String = TODO()
 
-    override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): String = TODO()
-
-    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): String = TODO()
+    override fun visitLoop(loop: IrLoop, data: Nothing?): String =
+        loop.runTrimEnd {
+            "while (${loop.condition.accept(this@DecompilerIrElementVisitor, null)})"
+        }
 
     override fun visitBreak(jump: IrBreak, data: Nothing?): String = TODO()
 
@@ -619,10 +498,6 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
 internal fun IrDeclaration.name(): String =
     descriptor.name.toString()
-
-
-internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
-    if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""
 
 internal fun IrClassifierSymbol.renderClassifierFqn(): String =
     if (isBound)

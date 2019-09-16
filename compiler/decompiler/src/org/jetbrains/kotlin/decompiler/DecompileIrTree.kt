@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.decompiler
 
 import org.jetbrains.kotlin.decompiler.util.DecompilerIrElementVisitor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -56,28 +57,61 @@ class DecompileIrTreeVisitor(
 
     override fun visitBlockBody(body: IrBlockBody, data: String) {
         withBraces {
-            body.statements.decompileElements()
+            body.statements
+                .filterNot { it is IrDelegatingConstructorCall }
+                .filterNot { it is IrInstanceInitializerCall }
+                .decompileElements()
         }
     }
 
-    override fun visitReturn(returnStatement: IrReturn, data: String) {
-        printer.print(
-            returnStatement.accept(elementDecompiler, null) + " " +
-                    returnStatement.value.accept(elementDecompiler, null)
-        )
+    override fun visitBlock(expression: IrBlock, data: String) {
+        if (expression.origin == IrStatementOrigin.WHEN || expression.origin == IrStatementOrigin.FOR_LOOP_ITERATOR) {
+            expression.statements.decompileElements()
+        } else {
+            withBraces {
+                expression.statements.decompileElements()
+            }
+        }
+    }
 
+
+    override fun visitReturn(expression: IrReturn, data: String) {
+        printer.println("${expression.accept(elementDecompiler, null)} ${expression.value.accept(elementDecompiler, null)}")
+    }
+
+    private fun IrElement.decompile(): String {
+        return accept(elementDecompiler, null)
     }
 
     override fun visitClass(declaration: IrClass, data: String) {
         printer.print(declaration.accept(elementDecompiler, null))
-        withBraces {
-            declaration.primaryConstructor?.accept(this, "")
-            declaration.constructors.forEach { it.accept(this, "") }
+        if (declaration.kind == ClassKind.CLASS) {
+            printer.print(declaration.primaryConstructor?.decompile())
+            withBraces {
+                declaration.declarations
+                    .filterNot { it is IrConstructor && it.isPrimary }
+                    .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                    .decompileElements()
+            }
+        } else {
+            withBraces {
+                declaration.declarations
+                    .filterNot { it is IrConstructor }
+                    .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                    .decompileElements()
+            }
         }
+
     }
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
-        printer.println(declaration.accept(elementDecompiler, null))
+        if (data == "primary") {
+            printer.print(declaration.valueParameters
+                              .map { it.name.asString() + ": " + it.type.toKotlinType().toString() }
+                              .joinToString(", ", "(", ")"))
+        } else {
+            printer.print(declaration.accept(elementDecompiler, null))
+        }
         declaration.body?.accept(this, "")
     }
 
@@ -97,6 +131,10 @@ class DecompileIrTreeVisitor(
         //TODO правильно рендерить аннотации
     }
 
+    override fun visitVariable(declaration: IrVariable, data: String) {
+        printer.println(declaration.decompile())
+    }
+
     override fun visitProperty(declaration: IrProperty, data: String) = TODO()
 
     override fun visitField(declaration: IrField, data: String) = TODO()
@@ -105,6 +143,37 @@ class DecompileIrTreeVisitor(
         forEach { it.accept(this@DecompileIrTreeVisitor, "") }
     }
 
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: String) {
+        printer.println(expression.decompile())
+    }
+
+    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: String) {
+        printer.println(expression.decompile())
+    }
+
+    override fun visitWhen(expression: IrWhen, data: String) {
+        printer.println(expression.decompile())
+        withBraces {
+            expression.branches.decompileElements()
+        }
+    }
+
+    override fun visitBranch(branch: IrBranch, data: String) {
+        printer.print("${branch.condition.decompile()} -> ")
+        branch.result.accept(this, "")
+    }
+
+    override fun visitElseBranch(branch: IrElseBranch, data: String) {
+        printer.print("else -> ")
+        branch.result.accept(this, "")
+
+    }
+
+    override fun visitSetVariable(expression: IrSetVariable, data: String) {
+        printer.println(expression.decompile())
+    }
+
+
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: String) = TODO()
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) = TODO()
     override fun visitGetValue(expression: IrGetValue, data: String) = TODO()
@@ -112,21 +181,32 @@ class DecompileIrTreeVisitor(
     override fun visitConstructorCall(expression: IrConstructorCall, data: String) = TODO()
     override fun visitGetField(expression: IrGetField, data: String) = TODO()
     override fun visitSetField(expression: IrSetField, data: String) = TODO()
-    override fun visitWhen(expression: IrWhen, data: String) = TODO()
-    override fun visitBranch(branch: IrBranch, data: String) = TODO()
-    override fun visitWhileLoop(loop: IrWhileLoop, data: String) = TODO()
-    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: String) = TODO()
+
+
+    override fun visitWhileLoop(loop: IrWhileLoop, data: String) {
+        loop.generatesSourcesForElement {
+            loop.body?.accept(this@DecompileIrTreeVisitor, "")
+        }
+    }
+
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: String) {
+        printer.println("do")
+        withBraces {
+            loop.body?.accept(this@DecompileIrTreeVisitor, "")
+        }
+        printer.println(loop.decompile())
+    }
     override fun visitTry(aTry: IrTry, data: String) = TODO()
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) = TODO()
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: String) = TODO()
 
     private inline fun IrElement.generatesSourcesForElement(body: () -> Unit) {
-        printer.printWithNoIndent(accept(elementDecompiler, null))
+        printer.println(decompile())
         body()
     }
 
     private inline fun withBraces(body: () -> Unit) {
-        printer.printlnWithNoIndent(" {")
+        printer.println("{")
         indented(body)
         printer.println("}")
         printer.printlnWithNoIndent()

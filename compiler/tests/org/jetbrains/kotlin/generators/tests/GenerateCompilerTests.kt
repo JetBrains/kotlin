@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
+import org.jetbrains.kotlin.decompiler.AbstractIrDecompilerBlackBoxTest
 import org.jetbrains.kotlin.decompiler.AbstractIrDecompilerTextTestCase
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
@@ -26,7 +27,10 @@ import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.generators.util.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
+import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
+import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
+import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
@@ -48,8 +52,8 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
-import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
+import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -189,7 +193,12 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIrDecompilerTextTestCase> {
-            model("decompiler")
+            model("decompiler", excludeDirs = listOf("box"))
+        }
+
+        testClass<AbstractIrDecompilerBlackBoxTest> {
+            model("decompiler/box")
+//            model("codegen/box")
         }
 
         testClass<AbstractIrTextTestCase> {

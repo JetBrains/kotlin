@@ -26,7 +26,9 @@ public class IrDecompilerTextTestCaseGenerated extends AbstractIrDecompilerTextT
     }
 
     public void testAllFilesPresentInDecompiler() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils
+                .assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler"), Pattern.compile("^(.+)\\.kt$"),
+                                                 TargetBackend.ANY, true, "box");
     }
 
     @TestMetadata("simpleOperators.kt")
@@ -49,21 +51,6 @@ public class IrDecompilerTextTestCaseGenerated extends AbstractIrDecompilerTextT
         @TestMetadata("classes.kt")
         public void testClasses() throws Exception {
             runTest("compiler/testData/decompiler/classes/classes.kt");
-        }
-
-        @TestMetadata("primaryConstructor.kt")
-        public void testPrimaryConstructor() throws Exception {
-            runTest("compiler/testData/decompiler/classes/primaryConstructor.kt");
-        }
-
-        @TestMetadata("secondaryConstructorWithInitializersFromClassBody.kt")
-        public void testSecondaryConstructorWithInitializersFromClassBody() throws Exception {
-            runTest("compiler/testData/decompiler/classes/secondaryConstructorWithInitializersFromClassBody.kt");
-        }
-
-        @TestMetadata("secondaryConstructors.kt")
-        public void testSecondaryConstructors() throws Exception {
-            runTest("compiler/testData/decompiler/classes/secondaryConstructors.kt");
         }
     }
 }
