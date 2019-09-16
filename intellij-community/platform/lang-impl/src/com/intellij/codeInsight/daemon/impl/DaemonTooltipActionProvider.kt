@@ -113,11 +113,7 @@ fun getFirstAvailableAction(psiFile: PsiFile,
 }
 
 fun wrapIntentionToTooltipAction(intention: IntentionAction, info: HighlightInfo): TooltipAction {
-  val pair = info.quickFixActionRanges?.find { it.first?.action == intention }
-  val offset = pair?.second?.startOffset ?: info.actualStartOffset
-
+  val pair = info.quickFixActionMarkers?.find { it.first?.action == intention }
+  val offset = if (pair?.second?.isValid == true) pair.second.startOffset else info.actualStartOffset
   return DaemonTooltipAction(intention.text, offset)
 }
-
-
-
