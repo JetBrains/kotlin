@@ -151,6 +151,7 @@ class MemberScopeTowerLevel(
 // (if explicit receiver exists, it always *should* be an extension receiver)
 class ScopeTowerLevel(
     session: FirSession,
+    val bodyResolveComponents: BodyResolveComponents,
     val scope: FirScope,
     val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null
 ) : SessionBasedTowerLevel(session) {
@@ -187,7 +188,11 @@ class ScopeTowerLevel(
                     ProcessorAction.NEXT
                 }
             }
-            TowerScopeLevel.Token.Functions -> scope.processFunctionsAndConstructorsByName(name, session, ScopeSession()) { candidate ->
+            TowerScopeLevel.Token.Functions -> scope.processFunctionsAndConstructorsByName(
+                name,
+                session,
+                bodyResolveComponents.scopeSession
+            ) { candidate ->
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue = candidate.dispatchReceiverValue(),
