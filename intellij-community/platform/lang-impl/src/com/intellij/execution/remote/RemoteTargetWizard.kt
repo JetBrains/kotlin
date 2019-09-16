@@ -7,18 +7,4 @@ import com.intellij.openapi.project.Project
 
 class RemoteTargetWizard(project: Project, title: String, val subject: RemoteTargetConfiguration, steps: List<AbstractWizardStepEx>)
   : AbstractWizardEx(title, project, steps) {
-
-  companion object {
-    fun <TC : RemoteTargetConfiguration> createWizard(project: Project,
-                                                      target: RemoteTargetType<TC>,
-                                                      runtime: LanguageRuntimeType<*>?): RemoteTargetWizard? {
-
-      if (!target.providesNewWizard(project, runtime)) return null
-
-      val instanceToConfigure: TC = target.createDefaultConfig()
-
-      return target.createStepsForNewWizard(project, instanceToConfigure, runtime)
-        ?.let { RemoteTargetWizard(project, "New Target", instanceToConfigure, it) }
-    }
-  }
 }

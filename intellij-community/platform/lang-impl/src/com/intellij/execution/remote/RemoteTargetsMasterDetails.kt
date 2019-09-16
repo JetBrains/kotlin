@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.remote
 
-import com.intellij.execution.remote.java.JavaLanguageRuntimeType
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -47,8 +46,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
   override fun createActions(fromPopup: Boolean): List<AnAction> = mutableListOf(
     CreateNewTargetGroup(),
     MyDeleteAction(),
-    DuplicateAction(),
-    NewTargetWithJavaWizardGroup()
+    DuplicateAction()
   )
 
   override fun processRemovedItems() {
@@ -103,20 +101,6 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
     }
   }
 
-  private inner class OpenNewTargetWizardAction(private val target: RemoteTargetType<*>, private val runtime: LanguageRuntimeType<*>?)
-    : DumbAwareAction(target.displayName + "...", null, target.icon) {
-
-    override fun actionPerformed(e: AnActionEvent) {
-      val wizard = RemoteTargetWizard.createWizard(e.project!!, target, runtime)
-      if (wizard?.showAndGet() == true) {
-        val newConfig = target.createDefaultConfig()
-        applyUniqueName(newConfig)
-        val newNode = addTargetNode(newConfig)
-        selectNodeInTree(newNode, true, true)
-      }
-    }
-  }
-
   private inner class CreateNewTargetGroup : ActionGroup("Add", "", IconUtil.getAddIcon()),
                                              ActionGroupWithPreselection, DumbAware {
     init {
@@ -126,27 +110,6 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
     override fun getChildren(e: AnActionEvent?): Array<AnAction> {
       return RemoteTargetType.EXTENSION_NAME.extensionList
         .map { CreateNewTargetAction(it) }
-        .toArray(AnAction.EMPTY_ARRAY)
-    }
-
-    override fun getActionGroup(): ActionGroup {
-      return this
-    }
-  }
-
-  private inner class NewTargetWithJavaWizardGroup : ActionGroup("New Target with Java...", "", PlatformIcons.JAR_ICON),
-                                                     ActionGroupWithPreselection, DumbAware {
-
-    override fun getChildren(e: AnActionEvent?): Array<AnAction> {
-      val project = e?.project
-      if (project == null) return AnAction.EMPTY_ARRAY
-
-      val javaLanguageRuntime = LanguageRuntimeType.EXTENSION_NAME.extensionList
-        .firstOrNull { it is JavaLanguageRuntimeType }
-
-      return RemoteTargetType.EXTENSION_NAME.extensionList
-        .filter { it.providesNewWizard(project, javaLanguageRuntime) }
-        .map { OpenNewTargetWizardAction(it, javaLanguageRuntime) }
         .toArray(AnAction.EMPTY_ARRAY)
     }
 
