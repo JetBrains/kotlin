@@ -41,6 +41,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UI;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -360,7 +361,6 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     private ComboBox myRunOnComboBox;
     private ActionLink myManageTargetsActionLink;
     private JPanel myRunOnPanel;
-    private JBLabel myRunOnLabel;
     private JPanel myRunOnPanelInner;
 
     private final ComponentValidator myCbStoreProjectConfigurationValidator;
@@ -432,18 +432,23 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
                                                               GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                                                               JBUI.emptyInsets(), 0, 0), false);
 
-      Dimension nameSize = myNameLabel.getPreferredSize();
-      Dimension runOnSize = myRunOnLabel.getPreferredSize();
-      double width = Math.max(nameSize.getWidth(), runOnSize.getWidth());
-      myNameLabel.setPreferredSize(new Dimension((int)width, (int)nameSize.getHeight()));
-      myRunOnLabel.setPreferredSize(new Dimension((int)width, (int)runOnSize.getHeight()));
-
       myRunOnPanel.setBorder(JBUI.Borders.emptyLeft(5));
       UI.PanelFactory.panel(myRunOnPanelInner)
+        .withLabel("Run on:")
         .withComment(ExecutionBundle.message("edit.run.configuration.run.configuration.run.on.comment"))
         .addToPanel(myRunOnPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
                                                          GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                                                          JBUI.emptyInsets(), 0, 0));
+      JLabel runOnLabel = UIUtil.findComponentOfType(myRunOnPanel, JLabel.class);
+      if (runOnLabel != null) {
+        runOnLabel.setLabelFor(myRunOnComboBox);
+        Dimension nameSize = myNameLabel.getPreferredSize();
+        Dimension runOnSize = runOnLabel.getPreferredSize();
+        double width = Math.max(nameSize.getWidth(), runOnSize.getWidth());
+        myNameLabel.setPreferredSize(new Dimension((int)width, (int)nameSize.getHeight()));
+        runOnLabel.setPreferredSize(new Dimension((int)width, (int)runOnSize.getHeight()));
+      }
+
       myRunOnComboBox.addActionListener(e -> {
         String chosenTarget = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
         if (!StringUtil.equals(myDefaultTargetName, chosenTarget)) {
