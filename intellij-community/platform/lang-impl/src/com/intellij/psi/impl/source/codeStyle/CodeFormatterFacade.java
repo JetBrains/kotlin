@@ -123,8 +123,10 @@ public class CodeFormatterFacade {
       final FormattingModel model = CoreFormatterUtil.buildModel(builder, elementToFormat, range, mySettings, FormattingMode.REFORMAT);
       if (file.getTextLength() > 0) {
         try {
+          final FormatTextRanges ranges = new FormatTextRanges(range, true);
+          setDisabledRanges(fileToFormat,ranges);
           FormatterEx.getInstanceEx().format(
-            model, mySettings,mySettings.getIndentOptionsByFile(fileToFormat, range), new FormatTextRanges(range, true)
+            model, mySettings, mySettings.getIndentOptionsByFile(fileToFormat, range), ranges
           );
 
           wrapLongLinesIfNecessary(file, document, startOffset, endOffset);
@@ -202,9 +204,7 @@ public class CodeFormatterFacade {
           CommonCodeStyleSettings.IndentOptions indentOptions =
             mySettings.getIndentOptionsByFile(file, textRanges.size() == 1 ? textRanges.get(0).getTextRange() : null);
 
-          ranges.setDisabledRanges(
-            TextRangeUtil.excludeRanges(
-              file.getTextRange(), myTagHandler.getEnabledRanges(file.getNode(), file.getTextRange())));
+          setDisabledRanges(file, ranges);
           formatter.format(model, mySettings, indentOptions, ranges);
           for (FormatTextRange range : textRanges) {
             TextRange textRange = range.getTextRange();
@@ -216,6 +216,12 @@ public class CodeFormatterFacade {
         }
       }
     }
+  }
+
+  private void setDisabledRanges(@NotNull PsiFile file, FormatTextRanges ranges) {
+    ranges.setDisabledRanges(
+      TextRangeUtil.excludeRanges(
+        file.getTextRange(), myTagHandler.getEnabledRanges(file.getNode(), file.getTextRange())));
   }
 
   private static void invokePostponedFormatting(@NotNull PsiFile file,
