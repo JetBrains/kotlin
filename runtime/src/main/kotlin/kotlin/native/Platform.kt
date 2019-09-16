@@ -14,7 +14,9 @@ public enum class OsFamily {
     LINUX,
     WINDOWS,
     ANDROID,
-    WASM
+    WASM,
+    TVOS,
+    WATCHOS
 }
 
 /**

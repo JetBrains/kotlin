@@ -71,7 +71,14 @@ fun run() {
     }
 
     // hashCode (directly):
-    if (foo.hashCode() == foo.hash().let { it.toInt() xor (it shr 32).toInt() }) {
+    // hash() returns value of NSUInteger type.
+    val hash = when (Platform.osFamily) {
+        // `typedef unsigned int NSInteger` on watchOS.
+        OsFamily.WATCHOS -> foo.hash().toInt()
+        // `typedef unsigned long NSUInteger` on iOS, macOS, tvOS.
+        else -> foo.hash().let { it.toInt() xor (it shr 32).toInt() }
+    }
+    if (foo.hashCode() == hash) {
         // toString (virtually):
         if (Platform.memoryModel == MemoryModel.STRICT)
             println(map.keys.map { it.toString() }.min() == foo.description())

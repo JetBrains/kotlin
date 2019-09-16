@@ -220,6 +220,10 @@ KInt Konan_Platform_getOsFamily() {
   return 5;
 #elif KONAN_WASM
   return 6;
+#elif KONAN_TVOS
+  return 7;
+#elif KONAN_WATCHOS
+  return 8;
 #else
 #warning "Unknown platform"
   return 0;

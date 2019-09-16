@@ -248,7 +248,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
             KonanTarget.TVOS_ARM64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
-                        "-DKONAN_IOS=1",
+                        "-DKONAN_TVOS=1",
                         "-DKONAN_ARM64=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
                         "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
@@ -256,14 +256,14 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
             KonanTarget.TVOS_X64 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
-                        "-DKONAN_IOS=1",
+                        "-DKONAN_TVOS=1",
                         "-DKONAN_X64=1",
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.WATCHOS_ARM32 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
-                        "-DKONAN_IOS",
+                        "-DKONAN_WATCHOS",
                         "-DKONAN_ARM32=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
                         "-DKONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG=1",
@@ -274,7 +274,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
             KonanTarget.WATCHOS_X86 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
-                        "-DKONAN_IOS=1",
+                        "-DKONAN_WATCHOS=1",
                         "-DKONAN_X86=1",
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
