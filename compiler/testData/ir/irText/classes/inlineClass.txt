@@ -26,22 +26,18 @@ FILE fqName:<root> fileName:/inlineClass.kt
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value="Test("
             CONST String type=kotlin.String value="x="
-            CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.toString' type=<root>.Test origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.toString' type=<root>.Test origin=null
             CONST String type=kotlin.String value=")"
     FUN GENERATED_INLINE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Test) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
       BLOCK_BODY
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int [var]
-          CONST Int type=kotlin.Int value=0
-        SET_VAR 'var tmp0_result: kotlin.Int [var] declared in <root>.Test.hashCode' type=kotlin.Unit origin=EQ
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.hashCode' type=<root>.Test origin=null
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test'
-          GET_VAR 'var tmp0_result: kotlin.Int [var] declared in <root>.Test.hashCode' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.hashCode' type=<root>.Test origin=null
     FUN GENERATED_INLINE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -61,10 +57,10 @@ FILE fqName:<root> fileName:/inlineClass.kt
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                arg0: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR '<this>: <root>.Test declared in <root>.Test.equals' type=<root>.Test origin=null
-                arg1: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR 'val tmp0_other_with_cast: <root>.Test [val] declared in <root>.Test.equals' type=<root>.Test origin=null
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.equals' type=<root>.Test origin=null
+                arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test [val] declared in <root>.Test.equals' type=<root>.Test origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test'
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test'
