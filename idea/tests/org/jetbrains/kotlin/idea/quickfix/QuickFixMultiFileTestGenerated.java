@@ -763,6 +763,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("idea/testData/quickfix/autoImports/invokeExtension.test");
         }
 
+        @TestMetadata("invokeExtension2.test")
+        public void testInvokeExtension2() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/invokeExtension2.test");
+        }
+
         @TestMetadata("invokeExtensionNoOperator.test")
         public void testInvokeExtensionNoOperator() throws Exception {
             runTest("idea/testData/quickfix/autoImports/invokeExtensionNoOperator.test");
