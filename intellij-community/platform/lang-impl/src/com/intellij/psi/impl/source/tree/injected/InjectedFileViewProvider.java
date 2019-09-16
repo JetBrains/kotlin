@@ -237,10 +237,10 @@ public class InjectedFileViewProvider extends MultiplePsiFilesPerDocumentFileVie
     getManager().getFileManager().setViewProvider(getVirtualFile(), this);
   }
 
-  public static InjectedFileViewProvider create(PsiManager manager,
-                                                VirtualFileWindowImpl file,
-                                                DocumentWindowImpl window,
-                                                Language language) {
+  static InjectedFileViewProvider create(PsiManager manager,
+                                         VirtualFileWindowImpl file,
+                                         DocumentWindowImpl window,
+                                         Language language) {
     return ((PsiManagerEx)manager).getFileManager().createFileViewProvider(file, false) instanceof TemplateLanguageFileViewProvider ?
            new Template(manager, file, window, language) :
            new InjectedFileViewProvider(manager, file, window, language);
