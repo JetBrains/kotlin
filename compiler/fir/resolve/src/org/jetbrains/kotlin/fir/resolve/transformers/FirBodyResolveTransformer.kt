@@ -1037,10 +1037,6 @@ inline fun <reified T : FirElement> FirBasedSymbol<*>.firUnsafe(): T {
     return fir
 }
 
-inline fun <reified T : FirElement> FirBasedSymbol<*>.firSafeNullable(): T? {
-    return fir as? T
-}
-
 internal inline var FirExpression.resultType: FirTypeRef
     get() = typeRef
     set(type) {

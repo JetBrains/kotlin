@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirResolvedCallableReference : FirNamedReference {
+    // Can't write FirCallableSymbol here because of enums
     val resolvedSymbol: AbstractFirBasedSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

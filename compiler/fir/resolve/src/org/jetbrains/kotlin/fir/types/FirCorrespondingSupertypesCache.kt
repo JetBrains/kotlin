@@ -26,7 +26,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
     ): List<ConeClassLikeType>? {
         if (type !is ConeClassLikeType || supertypeConstructor !is FirClassLikeSymbol<*>) return null
 
-        val symbol = type.lookupTag.toSymbol(session) as? FirClassLikeSymbol<*> ?: return null
+        val symbol = type.lookupTag.toSymbol(session) ?: return null
         if (symbol == supertypeConstructor) return listOf(captureType(type))
 
         if (symbol !in cache) {

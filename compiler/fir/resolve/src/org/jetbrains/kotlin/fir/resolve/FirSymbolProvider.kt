@@ -23,17 +23,19 @@ abstract class FirSymbolProvider : FirSessionComponent {
 
     abstract fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
 
+    fun getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
+        (lookupTag as? ConeClassLikeLookupTagImpl)
+            ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second }
+
+        return getClassLikeSymbolByFqName(lookupTag.classId).also {
+            (lookupTag as? ConeClassLikeLookupTagImpl)
+                ?.boundSymbol = Pair(this, it)
+        }
+    }
+
     fun getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): FirClassifierSymbol<*>? {
         return when (lookupTag) {
-            is ConeClassLikeLookupTag -> {
-                (lookupTag as? ConeClassLikeLookupTagImpl)
-                    ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second }
-
-                getClassLikeSymbolByFqName(lookupTag.classId).also {
-                    (lookupTag as? ConeClassLikeLookupTagImpl)
-                        ?.boundSymbol = Pair(this, it)
-                }
-            }
+            is ConeClassLikeLookupTag -> getSymbolByLookupTag(lookupTag)
             is ConeClassifierLookupTagWithFixedSymbol -> lookupTag.symbol
             else -> error("Unknown lookupTag type: ${lookupTag::class}")
         }

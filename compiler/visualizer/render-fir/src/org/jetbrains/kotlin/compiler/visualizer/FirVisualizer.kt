@@ -13,12 +13,10 @@ import org.jetbrains.kotlin.fir.FirNamedReference
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
-import org.jetbrains.kotlin.fir.resolve.transformers.firSafeNullable
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -307,7 +305,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 if (it is FirResolvedQualifier) {
                     val lookupTag = (it.typeRef as FirResolvedTypeRefImpl).coneTypeSafe<ConeClassType>()?.lookupTag
                     val type = lookupTag?.let {
-                        symbolProvider.getSymbolByLookupTag(it)?.firSafeNullable<FirClass>()?.superTypeRefs?.first()?.render()
+                        (symbolProvider.getSymbolByLookupTag(it)?.fir as? FirClass)?.superTypeRefs?.first()?.render()
                     }
                     if (type != null) return@joinTo type
                 }
@@ -382,9 +380,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
                 data.append(coneClassType.lookupTag.classId.getWithoutCurrentPackage())
 
-                val typeParameters = symbolProvider.getSymbolByLookupTag(coneClassType.lookupTag)
-                    ?.firSafeNullable<FirClassImpl>()
-                    ?.typeParameters ?: listOf<FirTypeParameter>()
+                val typeParameters =
+                    (symbolProvider.getSymbolByLookupTag(coneClassType.lookupTag)?.fir as? FirRegularClass)
+                        ?.typeParameters ?: emptyList()
                 renderListInTriangles(typeParameters, data)
                 visitArguments(delegatedConstructorCall.arguments, data)
             } else {
@@ -408,7 +406,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         visitArguments(functionCall.arguments, data)
                     } else {
                         data.append("fun ")
-                        val firFunction = callee.resolvedSymbol.firSafeNullable<FirAbstractMemberDeclaration>()
+                        val firFunction = callee.resolvedSymbol.fir as? FirAbstractMemberDeclaration
                         firFunction?.let { renderListInTriangles(it.typeParameters, data, true) }
 
                         data.append(renderSymbol(callee.resolvedSymbol))
