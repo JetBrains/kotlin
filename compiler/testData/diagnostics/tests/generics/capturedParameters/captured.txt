@@ -1,0 +1,22 @@
+package
+
+public fun testIn(/*0*/ y: X.Y<in kotlin.Any>, /*1*/ t: kotlin.Any): kotlin.Unit
+public fun testOut(/*0*/ y: X.Y<out kotlin.Any>, /*1*/ t: kotlin.Any): kotlin.Unit
+public fun testStar(/*0*/ y: X.Y<*>, /*1*/ t: kotlin.Any): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> testWithCapturedParameter(/*0*/ y: X.Y<out T>, /*1*/ t: kotlin.Any): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> testWithParameter(/*0*/ y: X.Y<T>, /*1*/ t: kotlin.Any): kotlin.Unit
+
+public final class X {
+    public constructor X()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ T : kotlin.Any> foo(/*0*/ y: X.Y<T>, /*1*/ t: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public abstract class Y</*0*/ T : kotlin.Any> {
+        public constructor Y</*0*/ T : kotlin.Any>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

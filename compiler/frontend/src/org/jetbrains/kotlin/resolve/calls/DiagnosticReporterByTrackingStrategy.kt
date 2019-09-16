@@ -257,7 +257,7 @@ class DiagnosticReporterByTrackingStrategy(
                         val index = parameterTypes.indexOf(constraintError.upperKotlinType.unwrap())
                         val lambdaExpression = lambda.psiExpression as? KtLambdaExpression ?: return@lambda
                         val parameter = lambdaExpression.valueParameters.getOrNull(index) ?: return@lambda
-                        trace.report(Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.on(parameter, constraintError.upperKotlinType.unCapture()))
+                        trace.report(Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.on(parameter, constraintError.upperKotlinType))
                         return
                     }
 
@@ -277,8 +277,8 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(
                         Errors.TYPE_MISMATCH.on(
                             deparenthesized,
-                            constraintError.upperKotlinType.unCapture(),
-                            constraintError.lowerKotlinType.unCapture()
+                            constraintError.upperKotlinType,
+                            constraintError.lowerKotlinType
                         )
                     )
                 }
@@ -289,8 +289,8 @@ class DiagnosticReporterByTrackingStrategy(
                         trace.report(
                             Errors.TYPE_MISMATCH.on(
                                 it,
-                                constraintError.upperKotlinType.unCapture(),
-                                constraintError.lowerKotlinType.unCapture()
+                                constraintError.upperKotlinType,
+                                constraintError.lowerKotlinType
                             )
                         )
                     }
