@@ -344,7 +344,7 @@ fun main(args: Array<String>) {
             model("lineNumber")
         }
 
-        testClass<AbstractSteppingTest> {
+        testClass<AbstractSteppingTest>(useJunit4 = true) {
             model("debug/stepping", targetBackend = TargetBackend.JVM)
         }
 
@@ -425,7 +425,7 @@ fun main(args: Array<String>) {
             model("lineNumber", targetBackend = TargetBackend.JVM_IR)
         }
 
-        testClass<AbstractIrSteppingTest> {
+        testClass<AbstractIrSteppingTest>(useJunit4 = true) {
             model("debug/stepping", targetBackend = TargetBackend.JVM_IR)
         }
 
