@@ -50,12 +50,10 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.ReceiverType
-import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.idea.util.receiverTypesWithIndex
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -260,6 +258,12 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
                 indicesHelper.getTopLevelTypeAliases { it == name }.filterTo(result, filterByCallType)
 
                 indicesHelper.getTopLevelCallablesByName(name).filterTo(result, filterByCallType)
+            }
+            if (callTypeAndReceiver.callType == CallType.OPERATOR) {
+                val type = expression.getCallableDescriptor()?.returnType
+                if (type != null) {
+                    result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(type), { it == name }))
+                }
             }
         }
 
