@@ -20,9 +20,12 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.idea.core.canBeInternal
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
@@ -42,7 +45,8 @@ import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
 open class ChangeVisibilityFix(
     element: KtModifierListOwner,
     private val elementName: String,
-    private val visibilityModifier: KtModifierKeywordToken
+    private val visibilityModifier: KtModifierKeywordToken,
+    private val addImplicitVisibilityModifier: Boolean = false
 ) : KotlinQuickFixAction<KtModifierListOwner>(element) {
 
     override fun getText() = "Make '$elementName' $visibilityModifier"
@@ -52,9 +56,9 @@ open class ChangeVisibilityFix(
         val pointer = element?.createSmartPointer()
         val originalElement = pointer?.element
         if (originalElement is KtDeclaration) {
-            originalElement.runOnExpectAndAllActuals(useOnSelf = true) { it.setVisibility(visibilityModifier) }
+            originalElement.runOnExpectAndAllActuals(useOnSelf = true) { it.setVisibility(visibilityModifier, addImplicitVisibilityModifier) }
         } else {
-            originalElement?.setVisibility(visibilityModifier)
+            originalElement?.setVisibility(visibilityModifier, addImplicitVisibilityModifier)
         }
 
         val propertyAccessor = pointer?.element as? KtPropertyAccessor
@@ -110,6 +114,23 @@ open class ChangeVisibilityFix(
                 Visibilities.PUBLIC -> ChangeToPublicFix(declaration, name)
                 else -> null
             }
+        }
+    }
+
+    object SetExplicitVisibilityFactory : KotlinIntentionActionsFactory() {
+        @Suppress("UNCHECKED_CAST")
+        override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
+            val factory = diagnostic.factory as DiagnosticFactory1<*, DeclarationDescriptor>
+            val descriptor = factory.cast(diagnostic).a as? DeclarationDescriptorWithVisibility ?: return emptyList()
+            val element = diagnostic.psiElement as? KtModifierListOwner ?: return emptyList()
+            return listOf(
+                ChangeVisibilityFix(
+                    element,
+                    descriptor.name.asString(),
+                    KtTokens.PUBLIC_KEYWORD,
+                    addImplicitVisibilityModifier = true
+                )
+            )
         }
     }
 }

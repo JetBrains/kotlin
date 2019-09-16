@@ -151,6 +151,8 @@ class QuickFixRegistrar : QuickFixContributor {
         FORBIDDEN_BINARY_MOD.registerFactory(removeModifierFactory)
         FORBIDDEN_BINARY_MOD.registerFactory(RenameModToRemFix.Factory)
 
+        NO_EXPLICIT_VISIBILITY_IN_API_MODE.registerFactory(ChangeVisibilityFix.SetExplicitVisibilityFactory)
+        NO_EXPLICIT_VISIBILITY_IN_API_MODE_MIGRATION.registerFactory(ChangeVisibilityFix.SetExplicitVisibilityFactory)
         NO_EXPLICIT_RETURN_TYPE_IN_API_MODE.registerActions(SpecifyTypeExplicitlyFix())
         NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_MIGRATION.registerActions(SpecifyTypeExplicitlyFix())
 

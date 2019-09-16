@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -35,19 +33,19 @@ class ApiModeDeclarationChecker : DeclarationChecker {
     private fun checkVisibilityModifier(
         state: ApiMode,
         declaration: KtDeclaration,
-        descriptor: DeclarationDescriptor,
+        descriptor: DeclarationDescriptorWithVisibility,
         context: DeclarationCheckerContext
     ) {
         val modifier = declaration.visibilityModifier()?.node?.elementType as? KtModifierKeywordToken
         if (modifier != null) return
 
         if (excludeForDiagnostic(descriptor)) return
-        context.selectDiagnosticAndReport(
-            declaration,
-            state,
-            Errors.NO_EXPLICIT_VISIBILITY_IN_API_MODE,
-            Errors.NO_EXPLICIT_VISIBILITY_IN_API_MODE_MIGRATION
-        )
+        val diagnostic =
+            if (state == ApiMode.ENABLED)
+                Errors.NO_EXPLICIT_VISIBILITY_IN_API_MODE.on(declaration, descriptor)
+            else
+                Errors.NO_EXPLICIT_VISIBILITY_IN_API_MODE_MIGRATION.on(declaration, descriptor)
+        context.trace.reportDiagnosticOnce(diagnostic)
     }
 
     private fun checkExplicitReturnType(
@@ -65,26 +63,15 @@ class ApiModeDeclarationChecker : DeclarationChecker {
             checkForInternal = false,
             checkForPrivate = false
         )
-        if (shouldReport) context.selectDiagnosticAndReport(
-            declaration,
-            state,
-            Errors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE,
-            Errors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_MIGRATION
-        )
-    }
-
-    private fun DeclarationCheckerContext.selectDiagnosticAndReport(
-        on: KtDeclaration,
-        state: ApiMode,
-        ifError: DiagnosticFactory0<PsiElement>,
-        ifWarning: DiagnosticFactory0<PsiElement>
-    ) {
-        val diagnostic =
-            if (state == ApiMode.ENABLED)
-                ifError.on(on)
-            else
-                ifWarning.on(on)
-        trace.reportDiagnosticOnce(diagnostic)
+        if (shouldReport) {
+            val diagnostic =
+                if (state == ApiMode.ENABLED)
+                    Errors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE.on(declaration)
+                else
+                    Errors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_MIGRATION
+                        .on(declaration)
+            context.trace.reportDiagnosticOnce(diagnostic)
+        }
     }
 
     /**

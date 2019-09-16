@@ -288,9 +288,8 @@ fun KtDeclaration.toDescriptor(): DeclarationDescriptor? {
     return descriptor
 }
 
-//TODO: code style option whether to insert redundant 'public' keyword or not
-fun KtModifierListOwner.setVisibility(visibilityModifier: KtModifierKeywordToken) {
-    if (this is KtDeclaration) {
+fun KtModifierListOwner.setVisibility(visibilityModifier: KtModifierKeywordToken, addImplicitVisibilityModifier: Boolean = false) {
+    if (this is KtDeclaration && !addImplicitVisibilityModifier) {
         val defaultVisibilityKeyword = implicitVisibility()
 
         if (visibilityModifier == defaultVisibilityKeyword) {
