@@ -52,6 +52,10 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
     super.processRemovedItems()
   }
 
+  override fun wasObjectStored(editableObject: Any?): Boolean {
+    return RemoteTargetsManager.instance.targets.resolvedConfigs().contains(editableObject)
+  }
+
   override fun apply() {
     super.apply()
 
