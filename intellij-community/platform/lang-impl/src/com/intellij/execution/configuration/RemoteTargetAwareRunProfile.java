@@ -2,12 +2,16 @@
 package com.intellij.execution.configuration;
 
 import com.intellij.execution.configurations.RunProfile;
+import com.intellij.execution.remote.LanguageRuntimeType;
 import com.intellij.execution.remote.RemoteTargetConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface RemoteTargetAwareRunProfile extends RunProfile {
   boolean canRunOn(@NotNull RemoteTargetConfiguration target);
+
+  @Nullable
+  LanguageRuntimeType<?> getDefaultLanguageRuntimeType();
 
   @Nullable
   String getDefaultTargetName();

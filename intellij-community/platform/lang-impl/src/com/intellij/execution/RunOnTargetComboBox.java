@@ -1,11 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
-import com.intellij.execution.remote.RemoteTargetConfiguration;
-import com.intellij.execution.remote.RemoteTargetConfigurationKt;
-import com.intellij.execution.remote.RemoteTargetType;
+import com.intellij.execution.remote.*;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.wizard.AbstractWizardStepEx;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.util.Pair;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SeparatorWithText;
 import com.intellij.util.ObjectUtils;
@@ -14,32 +16,68 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
-  public RunOnTargetComboBox() {
+  public static final Logger LOGGER = Logger.getInstance(RunOnTargetComboBox.class);
+  @NotNull private final Project myProject;
+  @Nullable private LanguageRuntimeType<?> myDefaultRuntimeType;
+
+  public RunOnTargetComboBox(@NotNull Project project) {
     super(new MyModel());
+    myProject = project;
     setRenderer(new MyRenderer());
+
+    addItemListener(e -> {
+      Object item = e.getItem();
+      if (item instanceof Type) {
+        //noinspection unchecked,rawtypes
+        Pair<RemoteTargetConfiguration, List<AbstractWizardStepEx>> wizardData =
+          ((Type)item).createStepsForNewWizard(myProject, myDefaultRuntimeType);
+        if (wizardData != null) {
+          RemoteTargetWizard wizard = new RemoteTargetWizard(myProject, "", wizardData.first, wizardData.second);
+          if (wizard.showAndGet()) {
+            addTarget(wizardData.first, 1);
+            setSelectedIndex(1);
+          }
+        }
+      }
+    });
   }
 
   public void initModel() {
     MyModel model = (MyModel)getModel();
     model.removeAllElements();
     model.addElement(null);
-    model.addElement(new Item("New Targets", null, true, false));
+
+    Collection<Type<?>> types = new ArrayList<>();
     for (RemoteTargetType<?> type : RemoteTargetType.Companion.getEXTENSION_NAME().getExtensionList()) {
-      model.addElement(new Item(type.getDisplayName(), type.getIcon(), false, true));
+      if (type.providesNewWizard(myProject, myDefaultRuntimeType)) {
+        types.add(new Type<>(type));
+      }
     }
+    if (!types.isEmpty()) {
+      model.addElement(new Separator("New Targets"));
+      for (Type<?> type : types) {
+        model.addElement(type);
+      }
+    }
+  }
+
+  public void setDefaultLanguageRuntimeTime(@Nullable LanguageRuntimeType<?> defaultLanguageRuntimeType) {
+    myDefaultRuntimeType = defaultLanguageRuntimeType;
   }
 
   public void addTarget(@NotNull RemoteTargetConfiguration config, int index) {
     Icon icon = RemoteTargetConfigurationKt.getTargetType(config).getIcon();
-    ((MyModel)getModel()).insertElementAt(new Item(config.getDisplayName(), icon, false, false), index);
+    ((MyModel)getModel()).insertElementAt(new Target(config.getDisplayName(), icon), index);
   }
 
   @Nullable
   public String getSelectedTargetName() {
-    return ObjectUtils.doIfCast(getSelectedItem(), Item.class, i -> i.getTargetName());
+    return ObjectUtils.doIfCast(getSelectedItem(), Item.class, i -> i.getDisplayName());
   }
 
   public void addTargets(List<RemoteTargetConfiguration> configs) {
@@ -57,42 +95,70 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
     }
     for (int i = 0; i < getModel().getSize(); i++) {
       Item at = getModel().getElementAt(i);
-      if (at != null && !at.separator && !at.type && configName.equals(at.getTargetName())) {
+      if (at instanceof Target && configName.equals(at.getDisplayName())) {
         setSelectedItem(at);
       }
     }
     //todo[remoteServers]: add invalid value
   }
 
-  public static class Item {
+  public static abstract class Item {
     private final String displayName;
     private final Icon icon;
-    private final boolean separator;
-    private final boolean type;
 
-    private Item(String displayName, Icon icon, boolean separator, boolean type) {
+
+    public Item(String displayName, Icon icon) {
       this.displayName = displayName;
       this.icon = icon;
-      this.separator = separator;
+    }
+
+    public String getDisplayName() {
+      return displayName;
+    }
+
+    public Icon getIcon() {
+      return icon;
+    }
+  }
+
+  private static class Separator extends Item {
+    private Separator(String displayName) {
+      super(displayName, null);
+    }
+  }
+
+  private static class Target extends Item {
+    private Target(String name, Icon icon) {
+      super(name, icon);
+    }
+  }
+
+  private static class Type<T extends RemoteTargetConfiguration> extends Item {
+    @NotNull
+    private final RemoteTargetType<T> type;
+
+    private Type(@NotNull RemoteTargetType<T> type) {
+      super(type.getDisplayName(), type.getIcon());
       this.type = type;
     }
 
-    public String getTargetName() {
-      return separator || type ? null : displayName;
+    @Nullable
+    private Pair<T, List<AbstractWizardStepEx>> createStepsForNewWizard(Project project, LanguageRuntimeType<?> defaultRuntimeType) {
+      T config = type.createDefaultConfig();
+      List<AbstractWizardStepEx> steps = type.createStepsForNewWizard(project, config, defaultRuntimeType);
+      if (steps == null) {
+        LOGGER.error("Cannot instantiate remote target wizard");
+        return null;
+      }
+      return Pair.create(config, steps);
     }
   }
 
   private static class MyModel extends DefaultComboBoxModel<RunOnTargetComboBox.Item> {
     @Override
     public void setSelectedItem(Object anObject) {
-      if (anObject instanceof Item) {
-        if (((Item)anObject).separator) {
-          return;
-        }
-        if (((Item)anObject).type) {
-          //todo[remoteServers]: invoke wizard
-          return;
-        }
+      if (anObject instanceof Separator) {
+        return;
       }
       super.setSelectedItem(anObject);
     }
@@ -101,9 +167,9 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
   private static class MyRenderer extends ColoredListCellRenderer<RunOnTargetComboBox.Item> {
     @Override
     public Component getListCellRendererComponent(JList<? extends Item> list, Item value, int index, boolean selected, boolean hasFocus) {
-      if (value != null && value.separator) {
+      if (value instanceof Separator) {
         SeparatorWithText separator = new SeparatorWithText();
-        separator.setCaption(value.displayName);
+        separator.setCaption(value.getDisplayName());
         separator.setCaptionCentered(false);
         setFont(getFont().deriveFont(Font.PLAIN));
         return separator;
@@ -118,10 +184,8 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
         setIcon(AllIcons.Nodes.HomeFolder);
       }
       else {
-        if (!value.separator) {
-          append(value.displayName);
-          setIcon(value.icon);
-        }
+        append(value.getDisplayName());
+        setIcon(value.getIcon());
       }
     }
   }

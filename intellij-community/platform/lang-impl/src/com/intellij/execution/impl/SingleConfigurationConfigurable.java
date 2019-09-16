@@ -6,6 +6,7 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configuration.RemoteTargetAwareRunProfile;
 import com.intellij.execution.configurations.*;
+import com.intellij.execution.remote.LanguageRuntimeType;
 import com.intellij.execution.remote.RemoteTargetsListConfigurable;
 import com.intellij.execution.remote.RemoteTargetsManager;
 import com.intellij.execution.runners.ProgramRunner;
@@ -486,6 +487,8 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myRunOnPanel.setVisible(targetAware);
       if (targetAware) {
         String defaultTargetName = ((RemoteTargetAwareRunProfile)configuration).getDefaultTargetName();
+        LanguageRuntimeType<?> defaultRuntime = ((RemoteTargetAwareRunProfile)configuration).getDefaultLanguageRuntimeType();
+        ((RunOnTargetComboBox)myRunOnComboBox).setDefaultLanguageRuntimeTime(defaultRuntime);
         resetRunOnComboBox(defaultTargetName);
         myDefaultTargetName = defaultTargetName;
       }
@@ -547,7 +550,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
 
     private void createUIComponents() {
       myComponentPlace = new NonOpaquePanel();
-      myRunOnComboBox = new RunOnTargetComboBox();
+      myRunOnComboBox = new RunOnTargetComboBox(myProject);
       myManageTargetsActionLink =
         new ActionLink(ExecutionBundle.message("edit.run.configuration.run.configuration.manage.targets.label"), new DumbAwareAction() {
           @Override
