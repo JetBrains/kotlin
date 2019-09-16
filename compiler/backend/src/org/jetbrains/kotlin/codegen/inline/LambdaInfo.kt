@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
+import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -190,12 +192,14 @@ abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInli
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
         node = sourceCompiler.generateLambdaBody(this)
     }
+
+    abstract fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor
 }
 
 class PsiExpressionLambda(
     expression: KtExpression,
-    typeMapper: KotlinTypeMapper,
-    languageVersionSettings: LanguageVersionSettings,
+    private val typeMapper: KotlinTypeMapper,
+    private val languageVersionSettings: LanguageVersionSettings,
     isCrossInline: Boolean,
     override val isBoundCallableReference: Boolean
 ) : ExpressionLambda(isCrossInline) {
@@ -292,4 +296,12 @@ class PsiExpressionLambda(
 
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
+
+    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor {
+        return getOrCreateJvmSuspendFunctionView(
+            invokeMethodDescriptor,
+            languageVersionSettings.isReleaseCoroutines(),
+            typeMapper.bindingContext
+        )
+    }
 }

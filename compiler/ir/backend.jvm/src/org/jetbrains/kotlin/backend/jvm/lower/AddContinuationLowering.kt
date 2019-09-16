@@ -7,13 +7,17 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrBlock
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.Modality
@@ -24,13 +28,18 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -76,7 +85,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
                 if (!expression.isSuspend)
                     return expression
-                val constructor = suspendLambdas.single { it.function == expression.symbol.owner }.constructor
+                val constructor = suspendLambdas.singleOrNull { it.function == expression.symbol.owner }?.constructor
+                    ?: return expression
                 val expressionArguments = expression.getArguments().map { it.second }
                 assert(constructor.valueParameters.size == expressionArguments.size) {
                     "Inconsistency between callable reference to suspend lambda and the corresponding continuation"
@@ -407,15 +417,34 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
     private fun markSuspendLambdas(irElement: IrElement): List<SuspendLambdaInfo> {
         val suspendLambdas = arrayListOf<SuspendLambdaInfo>()
+        val inlineLambdas = mutableSetOf<IrFunctionReference>()
         irElement.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
+            override fun visitCall(expression: IrCall) {
+                val owner = expression.symbol.owner
+                if (owner.isInline) {
+                    for (i in 0 until expression.valueArgumentsCount) {
+                        if (owner.valueParameters[i].isNoinline) continue
+
+                        val valueArgument = expression.getValueArgument(i) ?: continue
+                        if (valueArgument is IrBlock && valueArgument.isInlineIrBlock()) {
+                            assert(valueArgument !is IrCallableReference) {
+                                "callable references should be lowered to function references"
+                            }
+                            inlineLambdas += valueArgument.statements.filterIsInstance<IrFunctionReference>().single()
+                        }
+                    }
+                }
+                expression.acceptChildrenVoid(this)
+            }
+
             override fun visitFunctionReference(expression: IrFunctionReference) {
                 expression.acceptChildrenVoid(this)
 
-                if (expression.isSuspend) {
+                if (expression.isSuspend && expression !in inlineLambdas) {
                     suspendLambdas += SuspendLambdaInfo(
                         expression.symbol.owner,
                         (expression.type as IrSimpleType).arguments.size - 1,

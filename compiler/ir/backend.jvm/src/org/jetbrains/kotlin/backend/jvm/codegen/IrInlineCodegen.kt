@@ -126,7 +126,7 @@ class IrInlineCodegen(
     ): LambdaInfo {
         val referencedFunction = irReference.symbol.owner
         return IrExpressionLambdaImpl(
-            irReference, referencedFunction, codegen.typeMapper, codegen.methodSignatureMapper, parameter.isCrossinline,
+            irReference, referencedFunction, codegen.typeMapper, codegen.methodSignatureMapper, codegen.context, parameter.isCrossinline,
             boundReceiver != null, parameter.type.isExtensionFunctionType
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
@@ -141,6 +141,7 @@ class IrExpressionLambdaImpl(
     val function: IrFunction,
     private val typeMapper: IrTypeMapper,
     methodSignatureMapper: MethodSignatureMapper,
+    private val context: JvmBackendContext,
     isCrossInline: Boolean,
     override val isBoundCallableReference: Boolean,
     override val isExtensionLambda: Boolean
@@ -170,7 +171,7 @@ class IrExpressionLambdaImpl(
             }
         }
 
-    private val loweredMethod = methodSignatureMapper.mapAsmMethod(function)
+    private val loweredMethod = methodSignatureMapper.mapAsmMethod(function.getOrCreateSuspendFunctionViewIfNeeded(context))
 
     val capturedParamsInDesc: List<Type> =
         loweredMethod.argumentTypes.drop(if (isExtensionLambda) 1 else 0).take(capturedVars.size)
@@ -179,21 +180,23 @@ class IrExpressionLambdaImpl(
         Method(
             it.name,
             it.returnType,
-            (
-                    (if (isExtensionLambda) it.argumentTypes.take(1) else emptyList()) +
-                            it.argumentTypes.drop((if (isExtensionLambda) 1 else 0) + capturedVars.size)
-                    ).toTypedArray()
+            ((if (isExtensionLambda) it.argumentTypes.take(1) else emptyList()) +
+                    it.argumentTypes.drop((if (isExtensionLambda) 1 else 0) + capturedVars.size)).toTypedArray()
         )
     }
 
     override val invokeMethodDescriptor: FunctionDescriptor = function.descriptor
 
     override val hasDispatchReceiver: Boolean = false
+
+    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor {
+        return function.getOrCreateSuspendFunctionViewIfNeeded(context).descriptor
+    }
 }
 
 fun isInlineIrExpression(argumentExpression: IrExpression) =
     when (argumentExpression) {
-        is IrBlock -> (argumentExpression.origin == IrStatementOrigin.LAMBDA || argumentExpression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
+        is IrBlock -> argumentExpression.isInlineIrBlock()
         is IrCallableReference -> true.also {
             assert((0 until argumentExpression.valueArgumentsCount).count { argumentExpression.getValueArgument(it) != null } == 0) {
                 "Expecting 0 value arguments for bounded callable reference: ${argumentExpression.dump()}"
@@ -201,6 +204,8 @@ fun isInlineIrExpression(argumentExpression: IrExpression) =
         }
         else -> false
     }
+
+fun IrBlock.isInlineIrBlock(): Boolean = origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
     (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline

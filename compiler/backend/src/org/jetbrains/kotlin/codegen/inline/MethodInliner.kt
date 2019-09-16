@@ -236,13 +236,16 @@ class MethodInliner(
                     var coroutineDesc = desc
                     val actualInvokeDescriptor: FunctionDescriptor
                     if (info.invokeMethodDescriptor.isSuspend) {
-                        actualInvokeDescriptor = getOrCreateJvmSuspendFunctionView(info.invokeMethodDescriptor, inliningContext.state)
+                        actualInvokeDescriptor = (info as ExpressionLambda).getInlineSuspendLambdaViewDescriptor()
                         val parametersSize = actualInvokeDescriptor.valueParameters.size +
                                 (if (actualInvokeDescriptor.extensionReceiverParameter != null) 1 else 0)
                         // And here we expect invoke(...Ljava/lang/Object;) be replaced with invoke(...Lkotlin/coroutines/Continuation;)
                         // if this does not happen, insert fake continuation, since we could not have one yet.
                         val argumentTypes = Type.getArgumentTypes(desc)
-                        if (argumentTypes.size != parametersSize) {
+                        if (argumentTypes.size != parametersSize &&
+                            // TODO: Workaround IR-related problem. In IR we already have lowered lambda, while in Old BE we don't.
+                            !(inliningContext.root.state.isIrBackend && desc.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;"))
+                        ) {
                             addFakeContinuationMarker(this)
                             coroutineDesc = Type.getMethodDescriptor(Type.getReturnType(desc), *argumentTypes, AsmTypes.OBJECT_TYPE)
                         }
