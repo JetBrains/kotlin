@@ -919,11 +919,13 @@ public final class FindManagerImpl extends FindManager {
   private static boolean tryToFindNextUsageViaEditorSearchComponent(Editor editor, SearchResults.Direction forwardOrBackward) {
     EditorSearchSession search = EditorSearchSession.get(editor);
     if (search != null && search.hasMatches()) {
-      if (forwardOrBackward == SearchResults.Direction.UP) {
-        search.searchBackward();
-      }
-      else {
-        search.searchForward();
+      if (!search.isSearchInProgress()) {
+        if (forwardOrBackward == SearchResults.Direction.UP) {
+          search.searchBackward();
+        }
+        else {
+          search.searchForward();
+        }
       }
       return true;
     }

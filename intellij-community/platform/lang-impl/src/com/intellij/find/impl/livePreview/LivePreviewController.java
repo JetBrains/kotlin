@@ -114,11 +114,11 @@ public class LivePreviewController implements LivePreview.Delegate, FindUtil.Rep
     myLivePreviewAlarm.cancelAllRequests();
     final FindModel copy = new FindModel();
     copy.copyFrom(findModel);
-
+    mySearchResults.setUpdating(true);
+    if (myComponent != null) {
+      myComponent.getComponent().updateActions();
+    }
     Runnable request = () -> {
-      if (myDisposed) return;
-      Project project = mySearchResults.getProject();
-      if (project != null && project.isDisposed()) return;
       mySearchResults.updateThreadSafe(copy, allowedToChangedEditorSelection, null, stamp)
         .doWhenRejected(() -> updateInBackground(findModel, allowedToChangedEditorSelection));
     };

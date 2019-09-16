@@ -356,7 +356,12 @@ public class EditorSearchSession implements SearchSession,
 
   @Override
   public boolean hasMatches() {
-    return mySearchResults != null && mySearchResults.hasMatches();
+    return mySearchResults.hasMatches();
+  }
+
+  @Override
+  public boolean isSearchInProgress() {
+    return mySearchResults.isUpdating();
   }
 
   @Override
@@ -512,9 +517,7 @@ public class EditorSearchSession implements SearchSession,
 
   private void nothingToSearchFor(boolean allowedToChangedEditorSelection) {
     updateUIWithEmptyResults();
-    if (mySearchResults != null) {
-      mySearchResults.clear();
-    }
+    mySearchResults.clear();
     if (allowedToChangedEditorSelection
         && !UIUtil.isClientPropertyTrue(myComponent.getSearchTextComponent(), SearchTextArea.JUST_CLEARED_KEY)) {
       restoreInitialCaretPositionAndSelection();

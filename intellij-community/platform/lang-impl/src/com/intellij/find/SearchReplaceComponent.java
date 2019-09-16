@@ -330,6 +330,12 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
                                                  }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, SystemInfo.isMac
                                                                                               ? META_DOWN_MASK : CTRL_DOWN_MASK),
                                                  JComponent.WHEN_FOCUSED);
+    // make sure Enter is consumed by search text field, even if 'next occurrence' action is disabled
+    // this is needed to e.g. avoid triggering a default button in containing dialog (see IDEA-128057)
+    mySearchTextComponent.registerKeyboardAction(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {}
+    }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), WHEN_FOCUSED);
 
     new VariantsCompletionAction(mySearchTextComponent); // It registers a shortcut set automatically on construction
   }

@@ -73,6 +73,7 @@ public class SearchResults implements DocumentListener {
 
   private int myLastUpdatedStamp = -1;
   private long myDocumentTimestamp;
+  private boolean myUpdating;
 
   private final Stack<Pair<FindModel, FindResult>> myCursorPositions = new Stack<>();
 
@@ -322,6 +323,7 @@ public class SearchResults implements DocumentListener {
     if (editor != getEditor() || myDisposed || editor.isDisposed()) {
       return;
     }
+    setUpdating(false);
     myOccurrences = occurrences;
     final TextRange oldCursorRange = myCursor;
     Collections.sort(myOccurrences, Comparator.comparingInt(TextRange::getStartOffset));
@@ -637,5 +639,13 @@ public class SearchResults implements DocumentListener {
 
   public boolean isUpToDate() {
     return myDocumentTimestamp == myEditor.getDocument().getModificationStamp();
+  }
+
+  void setUpdating(boolean value) {
+    myUpdating = value;
+  }
+
+  public boolean isUpdating() {
+    return myUpdating;
   }
 }

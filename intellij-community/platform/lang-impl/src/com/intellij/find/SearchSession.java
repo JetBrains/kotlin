@@ -35,4 +35,8 @@ public interface SearchSession {
   void searchBackward();
 
   void close();
+
+  default boolean isSearchInProgress() {
+    return false;
+  }
 }
