@@ -29,8 +29,7 @@ class RemoteTargetsManager : PersistentStateComponent<RemoteTargetsManager.Targe
       RemoteTargetsManager::class.java)
   }
 
-  internal class TargetsList : BaseExtendableList<RemoteTargetConfiguration, RemoteTargetType<*>>(
-    RemoteTargetType.EXTENSION_NAME) {
+  internal class TargetsList : BaseExtendableList<RemoteTargetConfiguration, RemoteTargetType<*>>(RemoteTargetType.EXTENSION_NAME) {
     override fun toBaseState(config: RemoteTargetConfiguration): OneTargetState =
       OneTargetState().also {
         it.loadFromConfiguration(config)

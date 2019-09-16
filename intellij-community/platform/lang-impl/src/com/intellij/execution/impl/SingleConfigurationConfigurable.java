@@ -6,8 +6,6 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configuration.RemoteTargetAwareRunProfile;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.remote.RemoteTargetConfiguration;
-import com.intellij.execution.remote.RemoteTargetConfigurationKt;
 import com.intellij.execution.remote.RemoteTargetsListConfigurable;
 import com.intellij.execution.remote.RemoteTargetsManager;
 import com.intellij.execution.runners.ProgramRunner;
@@ -34,14 +32,12 @@ import com.intellij.openapi.vcs.changes.VcsIgnoreManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.project.ProjectKt;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.labels.ActionLink;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.scale.JBUIScale;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UI;
 import org.jetbrains.annotations.NonNls;
@@ -58,7 +54,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public final class SingleConfigurationConfigurable<Config extends RunConfiguration>
-    extends BaseRCSettingsConfigurable {
+  extends BaseRCSettingsConfigurable {
   private static final Logger LOG = Logger.getInstance(SingleConfigurationConfigurable.class);
 
   private final PlainDocument myNameDocument = new PlainDocument();
@@ -238,7 +234,8 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     return quickFix;
   }
 
-  private static void checkConfiguration(@NotNull ProgramRunner<?> runner, @NotNull RunnerAndConfigurationSettings snapshot) throws RuntimeConfigurationException {
+  private static void checkConfiguration(@NotNull ProgramRunner<?> runner, @NotNull RunnerAndConfigurationSettings snapshot)
+    throws RuntimeConfigurationException {
     RunnerSettings runnerSettings = snapshot.getRunnerSettings(runner);
     ConfigurationPerRunnerSettings configurationSettings = snapshot.getConfigurationSettings(runner);
     try {
@@ -359,7 +356,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     private JBScrollPane myJBScrollPane;
     private JPanel myCbStoreProjectConfigurationPanel;
 
-    private ComboBox<RemoteTargetConfiguration> myRunOnComboBox;
+    private ComboBox myRunOnComboBox;
     private ActionLink myManageTargetsActionLink;
     private JPanel myRunOnPanel;
     private JBLabel myRunOnLabel;
@@ -447,22 +444,12 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
                                                          GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
                                                          JBUI.emptyInsets(), 0, 0));
       myRunOnComboBox.addActionListener(e -> {
-        String chosenTarget = getSelectedTargetName();
+        String chosenTarget = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
         if (!StringUtil.equals(myDefaultTargetName, chosenTarget)) {
           setModified(true);
           myDefaultTargetName = chosenTarget;
         }
       });
-      myRunOnComboBox.setRenderer(SimpleListCellRenderer.create((l, v, i) -> {
-        if (v == null) {
-          l.setText("Local machine");
-          l.setIcon(AllIcons.Nodes.HomeFolder);
-        }
-        else {
-          l.setText(v.getDisplayName());
-          l.setIcon(RemoteTargetConfigurationKt.getTargetType(v).getIcon());
-        }
-      }));
     }
 
     @Nullable
@@ -497,7 +484,6 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
 
       boolean targetAware = configuration instanceof RemoteTargetAwareRunProfile;
       myRunOnPanel.setVisible(targetAware);
-      myRunOnComboBox.removeAllItems();
       if (targetAware) {
         String defaultTargetName = ((RemoteTargetAwareRunProfile)configuration).getDefaultTargetName();
         resetRunOnComboBox(defaultTargetName);
@@ -511,18 +497,9 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     }
 
     private void resetRunOnComboBox(@Nullable String targetNameToChoose) {
-      myRunOnComboBox.addItem(null);
-      RemoteTargetConfiguration targetToChoose = null;
-      for (RemoteTargetConfiguration config : RemoteTargetsManager.getInstance().getTargets().resolvedConfigs()) {
-        myRunOnComboBox.addItem(config);
-        if (config.getDisplayName().equals(targetNameToChoose)) {
-          targetToChoose = config;
-        }
-      }
-      myRunOnComboBox.setSelectedItem(targetToChoose);
-      if (targetNameToChoose != null && targetToChoose == null) {
-        //todo[remoteServer]: add and show invalid value
-      }
+      ((RunOnTargetComboBox)myRunOnComboBox).initModel();
+      ((RunOnTargetComboBox)myRunOnComboBox).addTargets(RemoteTargetsManager.getInstance().getTargets().resolvedConfigs());
+      ((RunOnTargetComboBox)myRunOnComboBox).selectTarget(targetNameToChoose);
     }
 
     public final JComponent getWholePanel() {
@@ -570,19 +547,18 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
 
     private void createUIComponents() {
       myComponentPlace = new NonOpaquePanel();
+      myRunOnComboBox = new RunOnTargetComboBox();
       myManageTargetsActionLink =
         new ActionLink(ExecutionBundle.message("edit.run.configuration.run.configuration.manage.targets.label"), new DumbAwareAction() {
-        @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-          RemoteTargetsListConfigurable configurable = new RemoteTargetsListConfigurable(myProject);
-          if (new SingleConfigurableEditor(myWholePanel, configurable, ShowSettingsUtilImpl.createDimensionKey(configurable), false)
-            .showAndGet()) {
-            String selectedName = getSelectedTargetName();
-            myRunOnComboBox.removeAllItems();
-            resetRunOnComboBox(selectedName);
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            RemoteTargetsListConfigurable configurable = new RemoteTargetsListConfigurable(myProject);
+            if (new SingleConfigurableEditor(myWholePanel, configurable, ShowSettingsUtilImpl.createDimensionKey(configurable), false)
+              .showAndGet()) {
+              resetRunOnComboBox(((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName());
+            }
           }
-        }
-      });
+        });
       myJBScrollPane = new JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
         @Override
         public Dimension getMinimumSize() {
@@ -601,11 +577,6 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
           return d;
         }
       };
-    }
-
-    @Nullable
-    private String getSelectedTargetName() {
-      return ObjectUtils.doIfCast(myRunOnComboBox.getSelectedItem(), RemoteTargetConfiguration.class, c -> c.getDisplayName());
     }
   }
 }

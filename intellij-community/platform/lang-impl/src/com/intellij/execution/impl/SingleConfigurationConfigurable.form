@@ -150,13 +150,12 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="2c77d" class="com.intellij.openapi.ui.ComboBox" binding="myRunOnComboBox">
+              <component id="2c77d" class="com.intellij.openapi.ui.ComboBox" binding="myRunOnComboBox" custom-create="true">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="250" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
               </component>
               <component id="c9623" class="com.intellij.ui.components.labels.ActionLink" binding="myManageTargetsActionLink" custom-create="true" default-binding="true">
                 <constraints>
