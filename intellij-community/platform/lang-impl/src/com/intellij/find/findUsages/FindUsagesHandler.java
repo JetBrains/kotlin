@@ -109,7 +109,7 @@ public abstract class FindUsagesHandler {
 
     if (options.isUsages) {
       boolean success =
-        ReferencesSearch.search(new ReferencesSearch.SearchParameters(element, scope, false, options.fastTrack)).forEach(refProcessor);
+        ReferencesSearch.search(createSearchParameters(element, scope, options)).forEach(refProcessor);
       if (!success) return false;
     }
 
@@ -155,7 +155,35 @@ public abstract class FindUsagesHandler {
 
   @NotNull
   public Collection<PsiReference> findReferencesToHighlight(@NotNull PsiElement target, @NotNull SearchScope searchScope) {
-    return ReferencesSearch.search(target, searchScope, false).findAll();
+    return ReferencesSearch.search(createSearchParameters(target, searchScope, null)).findAll();
+  }
+
+  /**
+   *  Returns the parameters for references search of specified PSI element.
+   *  `findUsagesOptions` parameter is null for a call from highlighting pass
+   *  and not null for a call from `Find Usages` action.
+   *
+   *  The default implementation suggests transferring `findUsagesOptions.fastTrack`
+   *  value to search parameters.
+   *
+   *  Based on return value the language `referencesSearch`-extensions can add references
+   *  from declarations and pre-declarations to reference search result,
+   *  that is forbidden by default.
+   *
+   * @param target the specified PSI element
+   * @param searchScope the scope to search in
+   * @param findUsagesOptions the options to search
+   */
+  @NotNull
+  protected ReferencesSearch.SearchParameters createSearchParameters(@NotNull PsiElement target,
+                                                                     @NotNull SearchScope searchScope,
+                                                                     @Nullable FindUsagesOptions findUsagesOptions) {
+    return new ReferencesSearch.SearchParameters(target,
+                                                 searchScope,
+                                                 false,
+                                                 findUsagesOptions == null
+                                                 ? null
+                                                 : findUsagesOptions.fastTrack);
   }
 
   private static class NullFindUsagesHandler extends FindUsagesHandler {
