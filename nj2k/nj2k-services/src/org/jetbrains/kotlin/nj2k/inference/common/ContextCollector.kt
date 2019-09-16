@@ -136,7 +136,7 @@ abstract class ContextCollector(private val resolutionFacade: ResolutionFacade) 
                     is KtClassOrObject -> {
                         for (entry in expression.superTypeListEntries) {
                             for (argument in entry.typeReference?.typeElement?.typeArgumentsAsTypes ?: continue) {
-                                argument.toBoundType(OtherTarget)
+                                argument?.toBoundType(OtherTarget)
                             }
                         }
                         val descriptor =
