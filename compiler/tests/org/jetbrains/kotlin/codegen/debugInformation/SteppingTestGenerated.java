@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.codegen.debugInformation;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,41 +20,48 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/debug/stepping")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
+@RunWith(BlockJUnit4ClassRunner.class)
 public class SteppingTestGenerated extends AbstractSteppingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
     }
 
+    @Test
     public void testAllFilesPresentInStepping() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
     }
 
+    @Test
     @TestMetadata("conjunction.kt")
     public void testConjunction() throws Exception {
         runTest("compiler/testData/debug/stepping/conjunction.kt");
     }
 
+    @Test
     @TestMetadata("functionInAnotherFile.kt")
     public void testFunctionInAnotherFile() throws Exception {
         runTest("compiler/testData/debug/stepping/functionInAnotherFile.kt");
     }
 
+    @Test
     @TestMetadata("if.kt")
     public void testIf() throws Exception {
         runTest("compiler/testData/debug/stepping/if.kt");
     }
 
+    @Test
     @TestMetadata("IfTrueThenFalse.kt")
     public void testIfTrueThenFalse() throws Exception {
         runTest("compiler/testData/debug/stepping/IfTrueThenFalse.kt");
     }
 
+    @Test
     @TestMetadata("recursion.kt")
     public void testRecursion() throws Exception {
         runTest("compiler/testData/debug/stepping/recursion.kt");
     }
 
+    @Test
     @TestMetadata("throwException.kt")
     public void testThrowException() throws Exception {
         runTest("compiler/testData/debug/stepping/throwException.kt");
