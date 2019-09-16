@@ -384,6 +384,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                     body()
 
                     if (isLaunchFailed) {
+                        showSuppressedOutput()
                         throw IllegalStateException("Launch of some browsers was failed")
                     }
                 }
