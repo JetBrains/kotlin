@@ -535,12 +535,14 @@ public class CompilerConfigurationImpl extends CompilerConfiguration implements 
 
   @NotNull
   public List<ProcessorConfigProfile> getModuleProcessorProfiles() {
-    return myModuleProcessorProfiles;
+    return Collections.unmodifiableList(myModuleProcessorProfiles);
   }
 
   public void setModuleProcessorProfiles(Collection<? extends ProcessorConfigProfile> moduleProfiles) {
     myModuleProcessorProfiles.clear();
-    myModuleProcessorProfiles.addAll(moduleProfiles);
+    for (ProcessorConfigProfile profile : moduleProfiles) {
+      myModuleProcessorProfiles.add(new ProcessorConfigProfileImpl(profile));
+    }
     myProcessorsProfilesMap = null;
   }
 

@@ -49,6 +49,7 @@ public class ProcessorProfilePanel extends JPanel {
 
   private final JRadioButton myRbClasspath;
   private final JRadioButton myRbProcessorsPath;
+  private final JCheckBox myCbProcessorModulePath;
   private final TextFieldWithBrowseButton myProcessorPathField;
   private final JTextField myGeneratedProductionDirField;
   private final JTextField myGeneratedTestsDirField;
@@ -77,6 +78,7 @@ public class ProcessorProfilePanel extends JPanel {
     {
       myRbClasspath = new JRadioButton("Obtain processors from project classpath");
       myRbProcessorsPath = new JRadioButton("Processor path:");
+      myCbProcessorModulePath = new JCheckBox("Use --processor-module-path compiler option (for Java 9 and later)");
       ButtonGroup group = new ButtonGroup();
       group.add(myRbClasspath);
       group.add(myRbProcessorsPath);
@@ -134,7 +136,9 @@ public class ProcessorProfilePanel extends JPanel {
     add(myRbProcessorsPath,
         new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.insetsTop(5), 0, 0));
     add(myProcessorPathField,
-        new GridBagConstraints(1, GridBagConstraints.RELATIVE, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(5, 5, 0, 0), 0, 0));
+        new GridBagConstraints(0, GridBagConstraints.RELATIVE, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(5, 5, 0, 0), 0, 0));
+    add(myCbProcessorModulePath,
+        new GridBagConstraints(0, GridBagConstraints.RELATIVE, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.insets(2, 5, 0, 0), 0, 0));
 
     myStoreGenSourcesLabel = new JLabel("Store generated sources relative to: ");
     add(myStoreGenSourcesLabel,
@@ -179,6 +183,7 @@ public class ProcessorProfilePanel extends JPanel {
     myCbEnableProcessing.setSelected(config.isEnabled());
 
     (config.isObtainProcessorsFromClasspath()? myRbClasspath : myRbProcessorsPath).setSelected(true);
+    myCbProcessorModulePath.setSelected(config.isUseProcessorModulePath());
     myProcessorPathField.setText(FileUtil.toSystemDependentName(config.getProcessorPath()));
 
     final String productionDirName = config.getGeneratedSourcesDirectoryName(false);
@@ -201,6 +206,7 @@ public class ProcessorProfilePanel extends JPanel {
     profile.setEnabled(myCbEnableProcessing.isSelected());
     profile.setObtainProcessorsFromClasspath(myRbClasspath.isSelected());
     profile.setProcessorPath(myProcessorPathField.getText().trim());
+    profile.setUseProcessorModulePath(myCbProcessorModulePath.isSelected());
 
     final String productionDir = myGeneratedProductionDirField.getText().trim();
     profile.setGeneratedSourcesDirectoryName(StringUtil.isEmpty(productionDir)? null : productionDir, false);
@@ -243,6 +249,7 @@ public class ProcessorProfilePanel extends JPanel {
     final boolean useProcessorPath = !myRbClasspath.isSelected();
     myRbClasspath.setEnabled(enabled);
     myRbProcessorsPath.setEnabled(enabled);
+    myCbProcessorModulePath.setEnabled(enabled && useProcessorPath);
     myProcessorPathField.setEnabled(enabled && useProcessorPath);
     updateTable(myProcessorPanel, myProcessorTable, enabled);
     updateTable(myOptionsPanel, myOptionsTable, enabled);
