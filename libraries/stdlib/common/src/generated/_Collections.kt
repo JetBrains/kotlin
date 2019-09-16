@@ -2147,7 +2147,8 @@ public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Bo
     checkWindowSizeStep(size, step)
     if (this is RandomAccess && this is List) {
         val thisSize = this.size
-        val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+        val resultCapacity = thisSize / step + if (thisSize % step == 0) 0 else 1
+        val result = ArrayList<List<T>>(resultCapacity)
         var index = 0
         while (index < thisSize) {
             val windowSize = size.coerceAtMost(thisSize - index)

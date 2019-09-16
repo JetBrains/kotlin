@@ -140,6 +140,11 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
         data.toList().let { expectedSingleChunk ->
             assertEquals(expectedSingleChunk, data.chunked(size).single())
             assertEquals(expectedSingleChunk, data.chunked(size + 3).single())
+            assertEquals(expectedSingleChunk, data.chunked(Int.MAX_VALUE).single())
+        }
+
+        createFrom("a", "b").let { iterable ->
+            assertEquals(iterable.toList(), iterable.chunked(Int.MAX_VALUE).single())
         }
 
         assertTrue(empty.chunked(3).isEmpty())
