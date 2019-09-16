@@ -413,9 +413,18 @@ class MethodInliner(
 
         val capturedParamsSize = parameters.capturedParametersSizeOnStack
         val realParametersSize = parameters.realParametersSizeOnStack
+        val newArgumentList = if (!inliningContext.isInliningIrLambda) {
+            // Add captured parameters at the end to be used instead of the receiver.
+            Type.getArgumentTypes(node.desc) + parameters.capturedTypes
+        } else {
+            // Already have parameters for captured values, but they are actually at the beginning.
+            // The order of arguments in IR inline lambdas is extension?, captured*, real*;
+            // we need to remap it to extension?, real*, captured*.
+            Type.getArgumentTypes(inliningContext.lambdaInfo!!.invokeMethod.descriptor) + parameters.capturedTypes
+        }
         val transformedNode = MethodNode(
             Opcodes.API_VERSION, node.access, node.name,
-            Type.getMethodDescriptor(Type.getReturnType(node.desc), *(Type.getArgumentTypes(node.desc) + parameters.capturedTypes)),
+            Type.getMethodDescriptor(Type.getReturnType(node.desc), *newArgumentList),
             node.signature, node.exceptions?.toTypedArray()
         )
 
