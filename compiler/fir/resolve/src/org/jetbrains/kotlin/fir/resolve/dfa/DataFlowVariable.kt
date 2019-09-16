@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -63,15 +63,15 @@ class DataFlowVariableStorage {
     private val fir2DfiMap: MutableMap<FirElement, DataFlowVariable> = mutableMapOf()
     private var debugIndexCounter: Int = 1
 
-    fun getOrCreateNewRealVariable(symbol: FirBasedSymbol<*>): RealDataFlowVariable {
+    fun getOrCreateNewRealVariable(symbol: AbstractFirBasedSymbol<*>): RealDataFlowVariable {
         return getOrCreateNewRealVariableImpl(symbol, false)
     }
 
-    fun getOrCreateNewThisRealVariable(symbol: FirBasedSymbol<*>): RealDataFlowVariable {
+    fun getOrCreateNewThisRealVariable(symbol: AbstractFirBasedSymbol<*>): RealDataFlowVariable {
         return getOrCreateNewRealVariableImpl(symbol, true)
     }
 
-    private fun getOrCreateNewRealVariableImpl(symbol: FirBasedSymbol<*>, isThisReference: Boolean): RealDataFlowVariable {
+    private fun getOrCreateNewRealVariableImpl(symbol: AbstractFirBasedSymbol<*>, isThisReference: Boolean): RealDataFlowVariable {
         val fir = symbol.fir
         get(fir)?.let { return it as RealDataFlowVariable }
         return RealDataFlowVariable(debugIndexCounter++, fir, isThisReference).also { storeVariable(it, fir) }
@@ -82,7 +82,7 @@ class DataFlowVariableStorage {
         return SyntheticDataFlowVariable(debugIndexCounter++, fir).also { storeVariable(it, fir) }
     }
 
-    fun createAliasVariable(symbol: FirBasedSymbol<*>, variable: RealDataFlowVariable) {
+    fun createAliasVariable(symbol: AbstractFirBasedSymbol<*>, variable: RealDataFlowVariable) {
         createAliasVariable(symbol.fir, variable)
     }
 
@@ -96,7 +96,7 @@ class DataFlowVariableStorage {
         createAliasVariable(fir, newVariable)
     }
 
-    fun removeRealVariable(symbol: FirBasedSymbol<*>) {
+    fun removeRealVariable(symbol: AbstractFirBasedSymbol<*>) {
         removeSyntheticVariable(symbol.fir)
     }
 
@@ -126,7 +126,7 @@ class DataFlowVariableStorage {
         return fir2DfiMap[firElement]
     }
 
-    operator fun get(symbol: FirBasedSymbol<*>): RealDataFlowVariable? {
+    operator fun get(symbol: AbstractFirBasedSymbol<*>): RealDataFlowVariable? {
         return fir2DfiMap[symbol.fir] as RealDataFlowVariable?
     }
 

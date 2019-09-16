@@ -409,8 +409,7 @@ class KotlinDeserializedJvmSymbolsProvider(
 
 
     private fun findRegularClass(classId: ClassId): FirRegularClass? =
-        @Suppress("UNCHECKED_CAST")
-        (getClassLikeSymbolByFqName(classId) as? FirBasedSymbol<FirRegularClass>)?.fir
+        getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
 
     override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> =
         getClassDeclarations(classId)
