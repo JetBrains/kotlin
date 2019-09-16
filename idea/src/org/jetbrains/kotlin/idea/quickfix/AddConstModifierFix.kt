@@ -100,16 +100,13 @@ object ConstFixFactory : KotlinSingleIntentionActionFactory() {
 
 fun replaceReferencesToGetterByReferenceToField(property: KtProperty) {
     val project = property.project
-    val getter = LightClassUtil.getLightClassPropertyMethods(property).getter
+    val getter = LightClassUtil.getLightClassPropertyMethods(property).getter ?: return
 
     val javaScope = GlobalSearchScope.getScopeRestrictedByFileTypes(project.allScope(), JavaFileType.INSTANCE)
-    val getterUsages = if (getter != null)
-        ReferencesSearch.search(getter, javaScope).findAll()
-    else
-        emptyList()
 
     val backingField = LightClassUtil.getLightClassPropertyMethods(property).backingField
     if (backingField != null) {
+        val getterUsages = ReferencesSearch.search(getter, javaScope).findAll()
         val factory = PsiElementFactory.SERVICE.getInstance(project)
         val fieldFQName = backingField.containingClass!!.qualifiedName + "." + backingField.name
 
