@@ -35,6 +35,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * @deprecated Use methods from {@link InjectedLanguageManager} instead
+ */
+@Deprecated
 public class InjectedFileViewProvider extends SingleRootFileViewProvider implements FreeThreadedFileViewProvider {
   private final Object myLock = new Object();
   private final DocumentWindowImpl myDocumentWindow;

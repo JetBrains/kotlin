@@ -32,7 +32,6 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedFileViewProvider;
 import com.intellij.util.FunctionUtil;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
@@ -217,8 +216,8 @@ public class LineMarkersPass extends TextEditorHighlightingPass {
                                                   @NotNull final PsiFile containingFile,
                                                   @NotNull Set<? super PsiFile> visitedInjectedFiles,
                                                   @NotNull final PairConsumer<? super PsiElement, ? super LineMarkerInfo<PsiElement>> consumer) {
-    if (containingFile.getViewProvider() instanceof InjectedFileViewProvider) return;
     final InjectedLanguageManager manager = InjectedLanguageManager.getInstance(containingFile.getProject());
+    if (manager.isInjectedFragment(containingFile)) return;
 
     InjectedLanguageManager.getInstance(containingFile.getProject()).enumerateEx(element, containingFile, false, (injectedPsi, places) -> {
       if (!visitedInjectedFiles.add(injectedPsi)) return; // there may be several concatenated literals making the one injected file
