@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class ProjectNode extends ExternalSystemNode<ProjectData> {
   private String myTooltipCache;
-  private ExternalSystemNode<?> effectiveRoot = null;
+  private ModuleNode effectiveRoot = null;
 
   public ProjectNode(ExternalProjectsView externalProjectsView, DataNode<ProjectData> projectDataNode) {
     super(externalProjectsView, null, projectDataNode);
@@ -47,8 +47,11 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
       final List<ExternalSystemNode<?>> topLevelChildren =
         ContainerUtil.filter(visibleChildren, node -> !(node instanceof ModuleNode) || ((ModuleNode)node).getIdeParentGrouping() == null);
       if (topLevelChildren.size() == 1) {
-        effectiveRoot = topLevelChildren.get(0);
-        return effectiveRoot.doBuildChildren();
+        ExternalSystemNode<?> child = topLevelChildren.get(0);
+        if (child instanceof ModuleNode) {
+          effectiveRoot = (ModuleNode)child;
+          return effectiveRoot.doBuildChildren();
+        }
       }
       return topLevelChildren;
     }
@@ -110,7 +113,7 @@ public class ProjectNode extends ExternalSystemNode<ProjectData> {
     return "ExternalSystemView.ProjectMenu";
   }
 
-  public ExternalSystemNode<?> getEffectiveRoot() {
+  public ModuleNode getEffectiveRoot() {
     return effectiveRoot;
   }
 }
