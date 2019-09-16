@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorImpl
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
@@ -136,6 +137,16 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
         require(this is SimpleType, this::errorMessage)
         return this.constructor
+    }
+
+    override fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker {
+        require(this is NewCapturedType, this::errorMessage)
+        return this.constructor
+    }
+
+    override fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker {
+        require(this is NewCapturedTypeConstructor, this::errorMessage)
+        return this.projection
     }
 
     override fun KotlinTypeMarker.argumentsCount(): Int {

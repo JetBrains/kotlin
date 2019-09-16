@@ -257,17 +257,22 @@ object NewCommonSuperTypeCalculator {
             val parameter = constructor.getParameter(index)
             var thereIsStar = false
             val typeProjections = correspondingSuperTypes.mapNotNull {
-                it.getArgumentOrNull(index)?.let { typeArgument ->
-                    when {
-                        typeArgument.isStarProjection() -> {
-                            thereIsStar = true
-                            null
-                        }
+                val typeArgumentFromSupertype = it.getArgumentOrNull(index) ?: return@mapNotNull null
 
-                        typeArgument.getType().lowerBoundIfFlexible().isStubType() -> null
+                // We have to uncapture types with status FOR_SUBTYPING because such captured types are creating during
+                // `findCorrespondingSupertypes` call. Normally, we shouldn't create intermediate captured types here, it's needed only
+                // to check subtyping. It'll be fixed but for a while we do this uncapturing here
+                val typeArgument = uncaptureFromSubtyping(typeArgumentFromSupertype)
 
-                        else -> typeArgument
+                when {
+                    typeArgument.isStarProjection() -> {
+                        thereIsStar = true
+                        null
                     }
+
+                    typeArgument.getType().lowerBoundIfFlexible().isStubType() -> null
+
+                    else -> typeArgument
                 }
             }
 
@@ -293,6 +298,13 @@ object NewCommonSuperTypeCalculator {
             arguments.add(argument)
         }
         return createSimpleType(constructor, arguments, nullable = false)
+    }
+
+    private fun TypeSystemCommonSuperTypesContext.uncaptureFromSubtyping(typeArgument: TypeArgumentMarker): TypeArgumentMarker {
+        val capturedType = typeArgument.getType().asSimpleType()?.asCapturedType() ?: return typeArgument
+        if (capturedType.captureStatus() != CaptureStatus.FOR_SUBTYPING) return typeArgument
+
+        return capturedType.typeConstructor().projection()
     }
 
     // no star projections in arguments

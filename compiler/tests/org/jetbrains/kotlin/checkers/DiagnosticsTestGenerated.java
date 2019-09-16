@@ -10253,6 +10253,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/nestedLambdas.kt");
                 }
 
+                @TestMetadata("nonFixedVariableFromBothBranches.kt")
+                public void testNonFixedVariableFromBothBranches() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/commonSystem/nonFixedVariableFromBothBranches.kt");
+                }
+
                 @TestMetadata("nonFixedVariableInsideFlexibleType.kt")
                 public void testNonFixedVariableInsideFlexibleType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/commonSystem/nonFixedVariableInsideFlexibleType.kt");

@@ -72,6 +72,15 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.typeConstructor() = (this as IrSimpleType).classifier
 
+    override fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker =
+        error("Captured types should be used for IrTypes")
+
+    override fun CapturedTypeMarker.captureStatus(): CaptureStatus =
+        error("Captured types should be used for IrTypes")
+
+    override fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker =
+        error("Captured types should be used for IrTypes")
+
     override fun KotlinTypeMarker.argumentsCount(): Int =
         when (this) {
             is IrSimpleType -> arguments.size

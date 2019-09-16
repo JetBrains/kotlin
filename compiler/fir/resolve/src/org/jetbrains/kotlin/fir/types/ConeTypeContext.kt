@@ -143,6 +143,21 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return typeConstructor
     }
 
+    override fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker {
+        require(this is ConeCapturedType)
+        return this.constructor
+    }
+
+    override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
+        require(this is ConeCapturedType)
+        return this.captureStatus
+    }
+
+    override fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker {
+        require(this is ConeCapturedTypeConstructor)
+        return this.projection
+    }
+
     override fun KotlinTypeMarker.argumentsCount(): Int {
         require(this is ConeKotlinType)
 

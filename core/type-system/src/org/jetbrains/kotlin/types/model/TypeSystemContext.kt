@@ -26,6 +26,8 @@ interface TypeArgumentListMarker
 interface TypeVariableMarker
 interface TypeVariableTypeConstructorMarker : TypeConstructorMarker
 
+interface CapturedTypeConstructorMarker : TypeConstructorMarker
+
 interface TypeSubstitutorMarker
 
 
@@ -147,7 +149,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun KotlinTypeMarker.mayBeTypeVariable(): Boolean
 
     fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker
-    fun CapturedTypeMarker.captureStatus(): CaptureStatus
 
     fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker
 
@@ -186,6 +187,10 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun SimpleTypeMarker.isMarkedNullable(): Boolean
     fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker
     fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker
+
+    fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker
+    fun CapturedTypeMarker.captureStatus(): CaptureStatus
+    fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker
 
     fun KotlinTypeMarker.argumentsCount(): Int
     fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker
