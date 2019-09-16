@@ -19,21 +19,24 @@ class TestGroup(
 ) {
     inline fun <reified T : TestCase> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
+        useJunit4: Boolean = false,
         noinline init: TestClass.() -> Unit
     ) {
-        testClass(T::class.java.name, suiteTestClassName, init)
+        testClass(T::class.java.name, suiteTestClassName, useJunit4, init)
     }
 
     fun testClass(
         baseTestClassName: String,
         suiteTestClassName: String = getDefaultSuiteTestClassName(baseTestClassName.substringAfterLast('.')),
+        useJunit4: Boolean,
         init: TestClass.() -> Unit
     ) {
         TestGenerator(
             testsRoot,
             suiteTestClassName,
             baseTestClassName,
-            TestClass().apply(init).testModels
+            TestClass().apply(init).testModels,
+            useJunit4
         ).generateAndSave()
     }
 
