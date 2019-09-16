@@ -92,7 +92,18 @@ enum class CompilerOutputKind {
     },
     BITCODE {
         override fun suffix(target: KonanTarget?) = ".bc"
-    };
+    },
+
+    DYNAMIC_CACHE {
+        override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix}"
+        override fun prefix(target: KonanTarget?) = "${target!!.family.dynamicPrefix}"
+    },
+    STATIC_CACHE {
+        override fun suffix(target: KonanTarget?) = ".${target!!.family.staticSuffix}"
+        override fun prefix(target: KonanTarget?) = "${target!!.family.staticPrefix}"
+    },
+
+    ;
 
     abstract fun suffix(target: KonanTarget? = null): String
     open fun prefix(target: KonanTarget? = null): String = ""
