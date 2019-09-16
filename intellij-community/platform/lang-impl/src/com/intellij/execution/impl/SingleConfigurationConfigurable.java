@@ -555,10 +555,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
         new ActionLink(ExecutionBundle.message("edit.run.configuration.run.configuration.manage.targets.label"), new DumbAwareAction() {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
-            RemoteTargetsListConfigurable configurable = new RemoteTargetsListConfigurable(myProject);
+            String selectedName = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
+            RemoteTargetsListConfigurable configurable = new RemoteTargetsListConfigurable(myProject, selectedName);
             if (new SingleConfigurableEditor(myWholePanel, configurable, ShowSettingsUtilImpl.createDimensionKey(configurable), false)
               .showAndGet()) {
-              resetRunOnComboBox(((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName());
+              resetRunOnComboBox(selectedName);
             }
           }
         });

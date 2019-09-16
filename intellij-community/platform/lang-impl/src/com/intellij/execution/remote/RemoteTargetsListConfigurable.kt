@@ -5,8 +5,11 @@ import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
 import javax.swing.JComponent
 
-class RemoteTargetsListConfigurable(project: Project) : SearchableConfigurable {
-  private val editor = RemoteTargetsMasterDetails(project)
+class RemoteTargetsListConfigurable(project: Project, initialSelectedName: String? = null): SearchableConfigurable {
+  @Suppress("unused")
+  constructor(project: Project) : this(project, null)
+
+  private val editor = RemoteTargetsMasterDetails(project, initialSelectedName)
 
   override fun isModified(): Boolean = editor.isModified
 
