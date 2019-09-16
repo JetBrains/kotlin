@@ -179,7 +179,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
 
                 val intentionClassName = unwrappedIntention.javaClass.name
                 if (!quickFixesAllowedToResolveInWriteAction.isWriteActionAllowed(intentionClassName)) {
-                    throw ResolveInWriteActionException()
+                    throw ResolveInWriteActionException("Resolve is not allowed under the write action for `$intentionClassName`!")
                 }
             }
 
