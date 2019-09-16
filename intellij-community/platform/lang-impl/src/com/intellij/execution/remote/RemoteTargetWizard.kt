@@ -18,7 +18,7 @@ class RemoteTargetWizard(project: Project, title: String, val subject: RemoteTar
       val instanceToConfigure: TC = target.createDefaultConfig()
 
       return target.createStepsForNewWizard(project, instanceToConfigure, runtime)
-        ?.let { RemoteTargetWizard(project, "", instanceToConfigure, it) }
+        ?.let { RemoteTargetWizard(project, "New Target", instanceToConfigure, it) }
     }
   }
 }
