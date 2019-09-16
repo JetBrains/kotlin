@@ -129,6 +129,7 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
             if (reference.resolve() != null) return true
             val referenceName = reference.referenceName ?: return false
             if (referenceName in failedToResolveReferenceNames) return false
+            if (reference.qualifier != null) return false
             val classes = shortNameCache.getClassesByName(referenceName, scope)
                 .mapNotNull { psiClass ->
                     val containingFile = psiClass.containingFile
