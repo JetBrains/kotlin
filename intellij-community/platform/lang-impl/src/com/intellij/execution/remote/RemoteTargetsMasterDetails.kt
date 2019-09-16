@@ -39,6 +39,11 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
     initialSelectedName?.let { selectNodeInTree(initialSelectedName) }
   }
 
+  override fun isModified(): Boolean =
+    allTargets().size != getConfiguredTargets().size ||
+    !deletedTargets().isEmpty() ||
+    super.isModified()
+
   override fun createActions(fromPopup: Boolean): List<AnAction> = mutableListOf(
     CreateNewTargetGroup(),
     MyDeleteAction(),
@@ -47,7 +52,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
   )
 
   override fun processRemovedItems() {
-    val deletedTargets = allTargets().toSet() - getConfiguredTargets()
+    val deletedTargets = deletedTargets()
     deletedTargets.forEach { RemoteTargetsManager.instance.targets.removeConfig(it) }
     super.processRemovedItems()
   }
@@ -55,6 +60,8 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
   override fun wasObjectStored(editableObject: Any?): Boolean {
     return RemoteTargetsManager.instance.targets.resolvedConfigs().contains(editableObject)
   }
+
+  private fun deletedTargets(): Set<RemoteTargetConfiguration> = allTargets().toSet() - getConfiguredTargets()
 
   override fun apply() {
     super.apply()
