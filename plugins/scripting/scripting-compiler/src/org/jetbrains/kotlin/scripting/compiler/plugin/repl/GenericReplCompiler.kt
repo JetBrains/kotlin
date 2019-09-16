@@ -109,7 +109,6 @@ open class GenericReplCompiler(
                 CompilationErrorHandler.THROW_EXCEPTION
             )
 
-            val generatedClassname = makeScriptBaseName(codeLine)
             compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
             val classes = generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) }
@@ -117,7 +116,7 @@ open class GenericReplCompiler(
             return ReplCompileResult.CompiledClasses(
                 LineId(codeLine),
                 compilerState.history.map { it.id },
-                generatedClassname,
+                scriptDescriptor.name.identifier,
                 classes,
                 generationState.scriptSpecific.resultFieldName != null,
                 classpathAddendum ?: emptyList(),

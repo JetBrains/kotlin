@@ -74,7 +74,10 @@ internal class SourceCodeFromReplCodeLine(
     compilationConfiguration: ScriptCompilationConfiguration
 ) : SourceCode {
     override val text: String get() = codeLine.code
-    override val name: String = "${makeScriptBaseName(codeLine)}.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}"
+    override val name: String =
+        "${compilationConfiguration[ScriptCompilationConfiguration.repl.makeSnippetIdentifier]!!(
+            compilationConfiguration, ReplSnippetIdImpl(codeLine.no, codeLine.generation, 0)
+        )}.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}"
     override val locationId: String? = null
 }
 

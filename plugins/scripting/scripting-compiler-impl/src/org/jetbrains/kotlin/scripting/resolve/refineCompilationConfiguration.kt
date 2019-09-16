@@ -291,7 +291,7 @@ fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
         val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
         if (vFile != null) return vFile
     }
-    val scriptName = withCorrectExtension(name ?: "script", definition.fileExtension)
+    val scriptName = withCorrectExtension(name ?: definition.defaultClassName, definition.fileExtension)
     val scriptPath = when (this) {
         is FileScriptSource -> file.path
         is ExternalSourceCode -> externalLocation.toString()

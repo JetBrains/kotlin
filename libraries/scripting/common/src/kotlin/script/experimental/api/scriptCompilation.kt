@@ -58,6 +58,11 @@ fun ScriptCompilationConfiguration?.with(body: ScriptCompilationConfiguration.Bu
 val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>()
 
 /**
+ * The default script class name
+ */
+val ScriptCompilationConfigurationKeys.defaultIdentifier by PropertiesCollection.key<String>("Script")
+
+/**
  * The script filename extension
  * Used for the primary script definition selection as well as to assign a kotlin-specific file type to the files with the extension in Intellij IDEA
  * For Intellij IDEA support, it is important to have this extension set to a non-ambiguous name.
