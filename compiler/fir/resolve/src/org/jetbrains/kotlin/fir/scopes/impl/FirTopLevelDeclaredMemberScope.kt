@@ -7,38 +7,22 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
-import org.jetbrains.kotlin.fir.scopes.processConstructors
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class FirTopLevelDeclaredMemberScope(
     file: FirFile,
     session: FirSession,
-    private val scopeSession: ScopeSession,
     lookupInFir: Boolean = true
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
     private val packageFqName = file.packageFqName
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(packageFqName, name))
-
-        if (processConstructors(
-                matchedClass,
-                processor,
-                session,
-                scopeSession,
-                name
-            ).stop()
-        ) {
-            return STOP
-        }
         val symbols = provider.getTopLevelCallableSymbols(packageFqName, name)
         for (symbol in symbols) {
             if (symbol is FirFunctionSymbol<*> && !processor(symbol)) {

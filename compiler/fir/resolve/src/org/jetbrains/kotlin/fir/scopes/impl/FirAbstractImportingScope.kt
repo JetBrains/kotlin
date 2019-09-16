@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.processConstructors
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -69,19 +68,6 @@ abstract class FirAbstractImportingScope(
                 return ProcessorAction.STOP
             }
         } else if (name.isSpecial || name.identifier.isNotEmpty()) {
-            val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(import.packageFqName, name))
-            if (processConstructors(
-                    matchedClass,
-                    processor,
-                    session,
-                    scopeSession,
-                    name
-                ).stop()
-            ) {
-                return ProcessorAction.STOP
-            }
-
-
             val symbols = provider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
 
             for (symbol in symbols) {

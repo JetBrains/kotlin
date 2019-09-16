@@ -52,7 +52,7 @@ class QualifiedReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
         if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         if (kind != TowerDataKind.EMPTY) return ProcessorAction.NEXT
 
-        return QualifiedReceiverTowerLevel(session).processElementsByName(
+        return QualifiedReceiverTowerLevel(session, candidateFactory.bodyResolveComponents).processElementsByName(
             token,
             name,
             explicitReceiver,
