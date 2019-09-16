@@ -55,54 +55,50 @@ class NewJavaToKotlinConverter(
         postProcessor: PostProcessor,
         progress: ProgressIndicator
     ): FilesResult {
+        progress.isIndeterminate = false
         val phasesCount = postProcessor.phasesCount + 1
         val withProgressProcessor = NewJ2kWithProgressProcessor(progress, files, phasesCount)
-        val (results, externalCodeProcessing, context) = withProgressProcessor.process {
-            ApplicationManager.getApplication().runReadAction(Computable {
-                elementsToKotlin(files, withProgressProcessor)
-            })
-        }
-
-        val texts = results.mapIndexed { i, result ->
-            try {
-                val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
-                    KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
+        return withProgressProcessor.process {
+            val (results, externalCodeProcessing, context) =
+                ApplicationManager.getApplication().runReadAction(Computable {
+                    elementsToKotlin(files, withProgressProcessor)
                 })
 
-                runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
-                    withContext(EDT) {
-                        CommandProcessor.getInstance().runUndoTransparentAction {
-                            result!!.importsToAdd.forEach {
-                                postProcessor.insertImport(kotlinFile, it)
+            val texts = results.mapIndexed { i, result ->
+                try {
+                    val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
+                        KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
+                    })
+                    runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
+                        withContext(EDT) {
+                            CommandProcessor.getInstance().runUndoTransparentAction {
+                                result!!.importsToAdd.forEach {
+                                    postProcessor.insertImport(kotlinFile, it)
+                                }
                             }
                         }
                     }
-                }
-                withProgressProcessor.process {
                     AfterConversionPass(project, postProcessor).run(
                         kotlinFile,
                         context,
                         range = null,
                         onPhaseChanged = { phase, description ->
                             withProgressProcessor.updateState(i, phase + 1, description)
-                        })
+                        }
+                    )
+                    kotlinFile.text
+                } catch (e: ProcessCanceledException) {
+                    throw e
+                } catch (t: Throwable) {
+                    LOG.error(t)
+                    result!!.text
                 }
-                kotlinFile.text
-            } catch (e: ProcessCanceledException) {
-                throw e
-            } catch (t: Throwable) {
-                LOG.error(t)
-                result!!.text
             }
+            FilesResult(texts, externalCodeProcessing)
         }
-
-        return FilesResult(texts, externalCodeProcessing)
     }
 
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
-        @Suppress("NAME_SHADOWING")
-        val processor = processor as NewJ2kWithProgressProcessor
-
         val phaseDescription = "Converting Java code to Kotlin code"
         val module = targetModule ?: error("Module should not be null for new J2K")
         val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
@@ -112,11 +108,9 @@ class NewJavaToKotlinConverter(
         symbolProvider.preBuildTree(inputElements)
         val importStorage = ImportStorage()
         val treeBuilder = JavaToJKTreeBuilder(symbolProvider, typeFactory, converterServices, importStorage)
-        val asts = processor.process {
-            inputElements.mapIndexed { i, element ->
-                processor.updateState(i, 1, phaseDescription)
-                element to treeBuilder.buildTree(element)
-            }
+        val asts = inputElements.mapIndexed { i, element ->
+            processor.updateState(i, 1, phaseDescription)
+            element to treeBuilder.buildTree(element)
         }
 
         val context = NewJ2kConverterContext(
@@ -127,28 +121,25 @@ class NewJavaToKotlinConverter(
             importStorage,
             JKElementInfoStorage()
         )
-        processor.process {
-            ConversionsRunner.doApply(asts.withIndex().mapNotNull { (i, ast) ->
-                processor.updateState(i, 1, phaseDescription)
-                ast.second
-            }, context)
-        }
-        val results = processor.process {
-            asts.mapIndexed { i, elementWithAst ->
-                processor.updateState(i, 1, phaseDescription)
-                val (element, ast) = elementWithAst
-                if (ast == null) return@mapIndexed null
-                val code = NewCodeBuilder(context).run { printCodeOut(ast) }
-                val parseContext = when (element) {
-                    is PsiStatement, is PsiExpression -> ParseContext.CODE_BLOCK
-                    else -> ParseContext.TOP_LEVEL
-                }
-                ElementResult(
-                    code,
-                    importsToAdd = importStorage.getImports(),
-                    parseContext = parseContext
-                )
+        ConversionsRunner.doApply(asts.withIndex().mapNotNull { (i, ast) ->
+            processor.updateState(i, 1, phaseDescription)
+            ast.second
+        }, context)
+
+        val results = asts.mapIndexed { i, elementWithAst ->
+            processor.updateState(i, 1, phaseDescription)
+            val (element, ast) = elementWithAst
+            if (ast == null) return@mapIndexed null
+            val code = NewCodeBuilder(context).run { printCodeOut(ast) }
+            val parseContext = when (element) {
+                is PsiStatement, is PsiExpression -> ParseContext.CODE_BLOCK
+                else -> ParseContext.TOP_LEVEL
             }
+            ElementResult(
+                code,
+                importsToAdd = importStorage.getImports(),
+                parseContext = parseContext
+            )
         }
 
         return Result(results, null, context)
@@ -186,9 +177,8 @@ class NewJ2kWithProgressProcessor(
     }
 
     override fun <T> process(action: () -> T): T {
-        // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
         var result: T? = null
-        ProgressManager.getInstance().runProcess({ result = action() }, EmptyProgressIndicator())
+        ProgressManager.getInstance().runProcess({ result = action() }, progress)
         return result!!
     }
 
