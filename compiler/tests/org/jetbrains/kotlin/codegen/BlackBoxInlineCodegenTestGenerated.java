@@ -1873,6 +1873,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/lambdaTransformation/regeneratedLambdaName.kt");
         }
 
+        @TestMetadata("regeneratedLambdaName2.kt")
+        public void testRegeneratedLambdaName2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/lambdaTransformation/regeneratedLambdaName2.kt");
+        }
+
         @TestMetadata("sameCaptured.kt")
         public void testSameCaptured() throws Exception {
             runTest("compiler/testData/codegen/boxInline/lambdaTransformation/sameCaptured.kt");

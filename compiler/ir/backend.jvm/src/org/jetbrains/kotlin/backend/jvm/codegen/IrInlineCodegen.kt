@@ -124,8 +124,9 @@ class IrInlineCodegen(
         boundReceiver: IrVariable?
     ): LambdaInfo {
         val referencedFunction = irReference.symbol.owner
+        val localTypePrefix = "${codegen.classCodegen.type.internalName}\$${codegen.irFunction.name}\$"
         return IrExpressionLambdaImpl(
-            irReference, referencedFunction, codegen.localTypePrefix, codegen.typeMapper, codegen.methodSignatureMapper,
+            irReference, referencedFunction, localTypePrefix, codegen.typeMapper, codegen.methodSignatureMapper,
             codegen.context, parameter.isCrossinline, boundReceiver != null, parameter.type.isExtensionFunctionType
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)

@@ -117,9 +117,7 @@ class ExpressionCodegen(
     override val visitor: InstructionAdapter
         get() = mv
 
-    val localTypePrefix: String = "${classCodegen.type.internalName}\$${irFunction.name}\$"
-
-    override val inlineNameGenerator: NameGenerator = NameGenerator("$localTypePrefix\$inlined") // TODO
+    override val inlineNameGenerator: NameGenerator = classCodegen.getRegeneratedObjectNameGenerator(irFunction.name)
 
     override val typeSystem: TypeSystemCommonBackendContext
         get() = typeMapper.typeSystem
