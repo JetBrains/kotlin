@@ -61,8 +61,8 @@ class TypeMappingConversion(context: NewJ2kConverterContext) : RecursiveApplicab
             is JKIsExpression ->
                 addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
                     .updateNullability(Nullability.NotNull)
-            is JKTypeCastExpression ->
-                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
+            is JKInheritanceInfo ->
+                addTypeParametersToRawProjectionType(typeFactory.types.nullableAny)
             else ->
                 addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
         }
