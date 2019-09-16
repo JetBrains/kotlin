@@ -3,6 +3,7 @@ package com.intellij.execution.dashboard;
 
 import com.google.common.collect.Sets;
 import com.intellij.execution.*;
+import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.tree.RunConfigurationNode;
 import com.intellij.execution.dashboard.tree.RunDashboardGrouper;
@@ -74,6 +75,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
   private State myState = new State();
 
+  private final Set<String> myTypes = new THashSet<>();
   private volatile List<List<RunDashboardServiceImpl>> myServices = Collections.emptyList();
   private final ReentrantReadWriteLock myServiceLock = new ReentrantReadWriteLock();
   private final List<RunDashboardGrouper> myGroupers;
@@ -292,23 +294,23 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
   @Override
   public boolean isShowInDashboard(@NotNull RunConfiguration runConfiguration) {
-    return myState.configurationTypes.contains(runConfiguration.getType().getId());
+    return myTypes.contains(runConfiguration.getType().getId());
   }
 
   @Override
   @NotNull
   public Set<String> getTypes() {
-    return Collections.unmodifiableSet(myState.configurationTypes);
+    return Collections.unmodifiableSet(myTypes);
   }
 
   @Override
   public void setTypes(@NotNull Set<String> types) {
-    Set<String> removed = new HashSet<>(Sets.difference(myState.configurationTypes, types));
-    Set<String> added = new HashSet<>(Sets.difference(types, myState.configurationTypes));
+    Set<String> removed = new HashSet<>(Sets.difference(myTypes, types));
+    Set<String> added = new HashSet<>(Sets.difference(types, myTypes));
 
-    myState.configurationTypes.clear();
-    myState.configurationTypes.addAll(types);
-    if (!myState.configurationTypes.isEmpty()) {
+    myTypes.clear();
+    myTypes.addAll(types);
+    if (!myTypes.isEmpty()) {
       initToolWindowContentListeners();
     }
     syncConfigurations();
@@ -425,7 +427,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
         boolean available = hasContent();
         ToolWindow toolWindow = toolWindowManager.getToolWindow(getToolWindowId());
         if (toolWindow == null) {
-          if (!myState.configurationTypes.isEmpty() || available) {
+          if (!myTypes.isEmpty() || available) {
             toolWindow = createToolWindow(toolWindowManager, available);
           }
           if (available) {
@@ -777,9 +779,30 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     return null;
   }
 
+  private List<String> getEnableByDefaultTypes() {
+    Set<ConfigurationType> types = new THashSet<>();
+    for (ConfigurationType type : ConfigurationType.CONFIGURATION_TYPE_EP.getExtensions()) {
+      for (RunDashboardCustomizer customizer : EP_NAME.getExtensions()) {
+        if (customizer.isEnabledByDefault(myProject, type)) {
+          types.add(type);
+          break;
+        }
+      }
+    }
+    return ContainerUtil.map(types, ConfigurationType::getId);
+  }
+
   @Nullable
   @Override
   public State getState() {
+    List<String> enableByDefaultTypes = getEnableByDefaultTypes();
+    myState.configurationTypes.clear();
+    myState.configurationTypes.addAll(myTypes);
+    myState.configurationTypes.removeAll(enableByDefaultTypes);
+    myState.excludedTypes.clear();
+    myState.excludedTypes.addAll(enableByDefaultTypes);
+    myState.excludedTypes.removeAll(myTypes);
+
     List<RuleState> ruleStates = myState.ruleStates;
     ruleStates.clear();
     for (RunDashboardGrouper grouper : myGroupers) {
@@ -796,7 +819,12 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   @Override
   public void loadState(@NotNull State state) {
     myState = state;
-    if (!myState.configurationTypes.isEmpty()) {
+    myTypes.clear();
+    myTypes.addAll(myState.configurationTypes);
+    List<String> enableByDefaultTypes = getEnableByDefaultTypes();
+    enableByDefaultTypes.removeAll(myState.excludedTypes);
+    myTypes.addAll(enableByDefaultTypes);
+    if (!myTypes.isEmpty()) {
       initToolWindowContentListeners();
     }
     for (RuleState ruleState : state.ruleStates) {
@@ -812,6 +840,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
   static class State {
     public final Set<String> configurationTypes = new THashSet<>();
+    public final Set<String> excludedTypes = new THashSet<>();
     public final List<RuleState> ruleStates = new ArrayList<>();
     public float contentProportion = DEFAULT_CONTENT_PROPORTION;
   }
