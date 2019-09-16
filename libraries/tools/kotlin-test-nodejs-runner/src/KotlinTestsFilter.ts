@@ -118,10 +118,11 @@ export class RegExpKotlinTestsFilter implements KotlinTestsFilter {
     public readonly regexp: RegExp;
 
     constructor(wildcard: string) {
-        this.regexp = RegExp(wildcard
+        this.regexp = RegExp("^" + wildcard
             .split('*')
             .map(it => escapeRegExp(it))
-            .join('.*'));
+            .join('.*') + "$"
+        );
     }
 
     mayContainTestsFromSuite(fqn: string): boolean {
