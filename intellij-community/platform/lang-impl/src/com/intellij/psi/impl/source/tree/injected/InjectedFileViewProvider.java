@@ -33,6 +33,7 @@ import com.intellij.psi.impl.FreeThreadedFileViewProvider;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
 import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NonNls;
@@ -262,10 +263,10 @@ public class InjectedFileViewProvider extends MultiplePsiFilesPerDocumentFileVie
     }
 
     @Override
-    public void setContentElementType(Language language, PsiFile file) {
+    public IElementType getContentElementType(Language language, PsiFile file) {
       FileViewProvider provider = getOriginalProvider(this);
       assert provider instanceof TemplateLanguageFileViewProvider;
-      ((TemplateLanguageFileViewProvider)provider).setContentElementType(language, file);
+      return ((TemplateLanguageFileViewProvider)provider).getContentElementType(language, file);
     }
   }
 }

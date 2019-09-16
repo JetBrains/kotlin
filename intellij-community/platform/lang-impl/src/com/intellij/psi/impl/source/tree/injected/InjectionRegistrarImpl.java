@@ -672,9 +672,12 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     for (Language lang : languages) {
       ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
       assert parserDefinition != null : "Parser definition for language " + finalLanguage + " is null";
-      PsiFile psiFile = parserDefinition.createFile(viewProvider);
+      PsiFileImpl psiFile = (PsiFileImpl)parserDefinition.createFile(viewProvider);
       if (viewProvider instanceof TemplateLanguageFileViewProvider) {
-        ((TemplateLanguageFileViewProvider)viewProvider).setContentElementType(lang, psiFile);
+        IElementType elementType = ((TemplateLanguageFileViewProvider)viewProvider).getContentElementType(lang, psiFile);
+        if (elementType != null) {
+          psiFile.setContentElementType(elementType);
+        }
       }
       final ASTNode parsedNode = keepTreeFromChameleoningBack(psiFile);
 
