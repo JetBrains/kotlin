@@ -26,25 +26,10 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
   @Nullable private LanguageRuntimeType<?> myDefaultRuntimeType;
 
   public RunOnTargetComboBox(@NotNull Project project) {
-    super(new MyModel());
+    super();
+    setModel(new MyModel());
     myProject = project;
     setRenderer(new MyRenderer());
-
-    addItemListener(e -> {
-      Object item = e.getItem();
-      if (item instanceof Type) {
-        //noinspection unchecked,rawtypes
-        Pair<RemoteTargetConfiguration, List<AbstractWizardStepEx>> wizardData =
-          ((Type)item).createStepsForNewWizard(myProject, myDefaultRuntimeType);
-        if (wizardData != null) {
-          RemoteTargetWizard wizard = new RemoteTargetWizard(myProject, "", wizardData.first, wizardData.second);
-          if (wizard.showAndGet()) {
-            addTarget(wizardData.first, 1);
-            setSelectedIndex(1);
-          }
-        }
-      }
-    });
   }
 
   public void initModel() {
@@ -154,10 +139,23 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
     }
   }
 
-  private static class MyModel extends DefaultComboBoxModel<RunOnTargetComboBox.Item> {
+  private class MyModel extends DefaultComboBoxModel<RunOnTargetComboBox.Item> {
     @Override
     public void setSelectedItem(Object anObject) {
       if (anObject instanceof Separator) {
+        return;
+      }
+      if (anObject instanceof Type) {
+        //noinspection unchecked,rawtypes
+        Pair<RemoteTargetConfiguration, List<AbstractWizardStepEx>> wizardData =
+          ((Type)anObject).createStepsForNewWizard(myProject, myDefaultRuntimeType);
+        if (wizardData != null) {
+          RemoteTargetWizard wizard = new RemoteTargetWizard(myProject, "New Target", wizardData.first, wizardData.second);
+          if (wizard.showAndGet()) {
+            addTarget(wizardData.first, 1);
+            setSelectedIndex(1);
+          }
+        }
         return;
       }
       super.setSelectedItem(anObject);
@@ -190,4 +188,3 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
     }
   }
 }
-
