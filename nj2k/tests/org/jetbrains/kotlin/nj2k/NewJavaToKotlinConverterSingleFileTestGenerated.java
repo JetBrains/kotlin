@@ -2388,6 +2388,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/function/mainAndNullabilitySetting.java");
         }
 
+        @TestMetadata("mainVararg.java")
+        public void testMainVararg() throws Exception {
+            runTest("nj2k/testData/newJ2k/function/mainVararg.java");
+        }
+
         @TestMetadata("methodClassType.java")
         public void testMethodClassType() throws Exception {
             runTest("nj2k/testData/newJ2k/function/methodClassType.java");

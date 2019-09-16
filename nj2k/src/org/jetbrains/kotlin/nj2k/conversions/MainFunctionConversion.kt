@@ -7,39 +7,36 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.types.JKClassType
+import org.jetbrains.kotlin.nj2k.jvmAnnotation
+import org.jetbrains.kotlin.nj2k.tree.JKMethod
+import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
+import org.jetbrains.kotlin.nj2k.tree.OtherModifier
+import org.jetbrains.kotlin.nj2k.tree.hasOtherModifier
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
-import org.jetbrains.kotlin.nj2k.types.updateNullability
+import org.jetbrains.kotlin.nj2k.types.arrayInnerType
+import org.jetbrains.kotlin.nj2k.types.isStringType
 
-
-//TODO temporary
 class MainFunctionConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKMethod) return recurse(element)
         if (element.isMainFunctionDeclaration()) {
             element.parameters.single().apply {
-                val oldType = type.type as JKJavaArrayType
-                val oldTypeParameter = oldType.type as JKClassType
-                val newType =
-                    JKJavaArrayType(
-                        oldTypeParameter.updateNullability(Nullability.NotNull),
-                        Nullability.NotNull
-                    )
-                type = JKTypeElement(newType)
+                type.type = JKJavaArrayType(typeFactory.types.string, Nullability.NotNull)
+                isVarArgs = false
             }
-            element.annotationList.annotations +=
-                JKAnnotation(
-                    symbolProvider.provideClassSymbol("kotlin.jvm.JvmStatic"),
-                    emptyList()
-                )
+            element.annotationList.annotations += jvmAnnotation("JvmStatic", symbolProvider)
         }
         return recurse(element)
     }
 
     private fun JKMethod.isMainFunctionDeclaration(): Boolean {
-        val type = parameters.singleOrNull()?.type?.type as? JKJavaArrayType ?: return false
-        val typeArgument = type.type as? JKClassType ?: return false
-        return name.value == "main" && typeArgument.classReference.name == "String"
+        if (name.value != "main") return false
+        if (!hasOtherModifier(OtherModifier.STATIC)) return false
+        val parameter = parameters.singleOrNull() ?: return false
+        return when {
+            parameter.type.type.arrayInnerType()?.isStringType() == true -> true
+            parameter.isVarArgs && parameter.type.type.isStringType() -> true
+            else -> false
+        }
     }
 }
