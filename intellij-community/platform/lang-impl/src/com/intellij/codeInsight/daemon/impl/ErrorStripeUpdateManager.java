@@ -13,7 +13,6 @@ import com.intellij.openapi.editor.markup.ErrorStripeRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.ui.PopupHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +36,7 @@ public class ErrorStripeUpdateManager {
 
     PsiFile file = myPsiDocumentManager.getPsiFile(editor.getDocument());
     final EditorMarkupModel markup = (EditorMarkupModel) editor.getMarkupModel();
-    markup.setErrorPanelPopupHandler(createPopup(file));
+    markup.setErrorPanelPopupHandler(new DaemonEditorPopup(myProject, editor));
     markup.setErrorStripTooltipRendererProvider(createTooltipRenderer(editor));
     markup.setMinMarkHeight(DaemonCodeAnalyzerSettings.getInstance().getErrorStripeMarkMinHeight());
     setOrRefreshErrorStripeRenderer(markup, file);
@@ -61,11 +60,6 @@ public class ErrorStripeUpdateManager {
     if (editor.isDisposed()) return;
 
     editorMarkupModel.setErrorStripeRenderer(createRenderer(editor, file));
-  }
-
-  @NotNull
-  private static PopupHandler createPopup(@Nullable PsiFile psiFile) {
-    return new DaemonEditorPopup(psiFile);
   }
 
   @NotNull

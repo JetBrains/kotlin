@@ -13,28 +13,35 @@ import com.intellij.internal.statistic.service.fus.collectors.UIEventId;
 import com.intellij.internal.statistic.service.fus.collectors.UIEventLogger;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 public class DaemonEditorPopup extends PopupHandler {
-  private final PsiFile myPsiFile;
+  private final Project myProject;
+  private final Editor myEditor;
 
-  DaemonEditorPopup(final PsiFile psiFile) {
-    myPsiFile = psiFile;
+  DaemonEditorPopup(@NotNull final Project project, @NotNull final Editor editor) {
+    myProject = project;
+    myEditor = editor;
   }
 
   @Override
   public void invokePopup(final Component comp, final int x, final int y) {
     if (ApplicationManager.getApplication() == null) return;
+    final PsiFile file = PsiDocumentManager.getInstance(myProject).getPsiFile(myEditor.getDocument());
+    if (file == null) return;
+
     ActionManager actionManager = ActionManager.getInstance();
     DefaultActionGroup actionGroup = new DefaultActionGroup();
     Keymap keymap = KeymapManager.getInstance().getActiveKeymap();
@@ -70,9 +77,7 @@ public class DaemonEditorPopup extends PopupHandler {
     actionGroup.add(new AnAction(EditorBundle.message("customize.highlighting.level.menu.item")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
-        PsiFile psiFile = myPsiFile;
-        if (psiFile == null) return;
-        final HectorComponent component = new HectorComponent(ObjectUtils.assertNotNull(psiFile));
+        final HectorComponent component = new HectorComponent(file);
         final Dimension dimension = component.getPreferredSize();
         Point point = new Point(x, y);
         component.showComponent(new RelativePoint(comp, new Point(point.x - dimension.width, point.y)));
@@ -92,8 +97,7 @@ public class DaemonEditorPopup extends PopupHandler {
       }
     });
     ActionPopupMenu editorPopup = actionManager.createActionPopupMenu(ActionPlaces.RIGHT_EDITOR_GUTTER_POPUP, actionGroup);
-    PsiFile file = myPsiFile;
-    if (file != null && DaemonCodeAnalyzer.getInstance(myPsiFile.getProject()).isHighlightingAvailable(file)) {
+    if (DaemonCodeAnalyzer.getInstance(myProject).isHighlightingAvailable(file)) {
       UIEventLogger.logUIEvent(UIEventId.DaemonEditorPopupInvoked);
       editorPopup.getComponent().show(comp, x, y);
     }
