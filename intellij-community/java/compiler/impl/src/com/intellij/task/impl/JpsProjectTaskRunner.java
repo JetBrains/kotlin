@@ -76,6 +76,11 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
            (projectTask instanceof ProjectModelBuildTask && ((ProjectModelBuildTask)projectTask).getBuildableElement() instanceof Artifact);
   }
 
+  @Override
+  public boolean isFileGeneratedEventsSupported() {
+    return true;
+  }
+
   public static Map<Class<? extends ProjectTask>, List<ProjectTask>> groupBy(@NotNull Collection<? extends ProjectTask> tasks) {
     return tasks.stream().collect(Collectors.groupingBy(o -> {
       if (o instanceof ModuleFilesBuildTask) return ModuleFilesBuildTask.class;
