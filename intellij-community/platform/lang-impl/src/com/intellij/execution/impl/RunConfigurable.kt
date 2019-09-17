@@ -8,6 +8,7 @@ import com.intellij.execution.impl.RunConfigurable.Companion.collectNodesRecursi
 import com.intellij.execution.impl.RunConfigurableNodeKind.*
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
+import com.intellij.ide.dnd.TransferableList
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
@@ -45,6 +46,7 @@ import net.miginfocom.swing.MigLayout
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import java.awt.datatransfer.Transferable
 import java.awt.event.KeyEvent
 import java.util.*
 import java.util.function.ToIntFunction
@@ -151,6 +153,20 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
   protected fun initTree() {
     tree.isRootVisible = false
     tree.showsRootHandles = true
+    tree.transferHandler = object : TransferHandler() {
+      override fun createTransferable(component: JComponent): Transferable? {
+        val tree = component as? JTree ?: return null
+        val selection = tree.selectionPaths ?: return null
+        if (selection.size <= 1) return null
+        return object : TransferableList<TreePath>(*selection) {
+          override fun toString(path: TreePath): String {
+            return path.lastPathComponent.toString()
+          }
+        }
+      }
+
+      override fun getSourceActions(c: JComponent) = COPY_OR_MOVE
+    }
     TreeUtil.installActions(tree)
     TreeSpeedSearch(tree) { o ->
       val node = o.lastPathComponent as DefaultMutableTreeNode
@@ -1381,8 +1397,17 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
         return false
       }
 
-      val oldNode = tree.getPathForRow(oldIndex).lastPathComponent as DefaultMutableTreeNode
+      val oldPaths = tree.selectionPaths ?: return false
       val newNode = tree.getPathForRow(newIndex).lastPathComponent as DefaultMutableTreeNode
+      for (oldPath in oldPaths) {
+        val oldNode = oldPath.lastPathComponent as DefaultMutableTreeNode
+        if (oldNode === newNode || !canDrop(oldNode, newNode, newIndex, position)) return false
+      }
+      return true
+    }
+
+    fun canDrop(oldNode: DefaultMutableTreeNode, newNode: DefaultMutableTreeNode, newIndex: Int,
+                position: RowsDnDSupport.RefinedDropSupport.Position): Boolean {
       val oldParent = oldNode.parent as DefaultMutableTreeNode
       val newParent = newNode.parent as DefaultMutableTreeNode
       val oldKind = getKind(oldNode)
@@ -1446,60 +1471,64 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
     }
 
     override fun drop(oldIndex: Int, newIndex: Int, position: RowsDnDSupport.RefinedDropSupport.Position) {
-      val oldNode = tree.getPathForRow(oldIndex).lastPathComponent as DefaultMutableTreeNode
+      val oldPaths = tree.selectionPaths ?: return
       val newNode = tree.getPathForRow(newIndex).lastPathComponent as DefaultMutableTreeNode
-      var newParent = newNode.parent as DefaultMutableTreeNode
-      val oldKind = getKind(oldNode)
-      val wasExpanded = tree.isExpanded(TreePath(oldNode.path))
-      // drop in folder
-      if (isDropInto(tree, oldIndex, newIndex)) {
-        removeNodeFromParent(oldNode)
-        var index = newNode.childCount
-        if (oldKind.isConfiguration) {
-          var middleIndex = newNode.childCount
-          for (i in 0 until newNode.childCount) {
-            if (getKind(newNode.getChildAt(i) as DefaultMutableTreeNode) == TEMPORARY_CONFIGURATION) {
-              //index of first temporary configuration in target folder
-              middleIndex = i
-              break
+      val newKind = getKind(newNode)
+      for (oldPath in oldPaths) {
+        val oldNode = oldPath.lastPathComponent as DefaultMutableTreeNode
+        var newParent = newNode.parent as DefaultMutableTreeNode
+        val oldKind = getKind(oldNode)
+        val wasExpanded = tree.isExpanded(TreePath(oldNode.path))
+        // drop in folder
+        if (oldKind.isConfiguration && newKind == FOLDER) {
+          removeNodeFromParent(oldNode)
+          var index = newNode.childCount
+          if (oldKind.isConfiguration) {
+            var middleIndex = newNode.childCount
+            for (i in 0 until newNode.childCount) {
+              if (getKind(newNode.getChildAt(i) as DefaultMutableTreeNode) == TEMPORARY_CONFIGURATION) {
+                //index of first temporary configuration in target folder
+                middleIndex = i
+                break
+              }
             }
-          }
-          if (position != INTO) {
-            if (oldIndex < newIndex) {
-              index = if (oldKind == CONFIGURATION) 0 else middleIndex
+            if (position != INTO) {
+              if (oldIndex < newIndex) {
+                index = if (oldKind == CONFIGURATION) 0 else middleIndex
+              }
+              else {
+                index = if (oldKind == CONFIGURATION) middleIndex else newNode.childCount
+              }
             }
             else {
-              index = if (oldKind == CONFIGURATION) middleIndex else newNode.childCount
+              index = if (oldKind == TEMPORARY_CONFIGURATION) newNode.childCount else middleIndex
             }
           }
-          else {
-            index = if (oldKind == TEMPORARY_CONFIGURATION) newNode.childCount else middleIndex
-          }
-        }
-        insertNodeInto(oldNode, newNode, index)
-        tree.expandPath(TreePath(newNode.path))
-      }
-      else {
-        val type = getType(oldNode)!!
-        removeNodeFromParent(oldNode)
-        var index: Int
-        if (type !== getType(newParent)) {
-          newParent = getConfigurationTypeNode(type)!!
-          index = newParent.childCount
+          insertNodeInto(oldNode, newNode, index)
+          tree.expandPath(TreePath(newNode.path))
         }
         else {
-          index = newParent.getIndex(newNode)
-          if (position == BELOW) {
-            index++
+          val type = getType(oldNode)!!
+          removeNodeFromParent(oldNode)
+          var index: Int
+          if (type !== getType(newParent)) {
+            newParent = getConfigurationTypeNode(type)!!
+            index = newParent.childCount
           }
+          else {
+            index = newParent.getIndex(newNode)
+            if (position == BELOW) {
+              index++
+            }
+          }
+          insertNodeInto(oldNode, newParent, index)
         }
-        insertNodeInto(oldNode, newParent, index)
-      }
 
-      val treePath = TreePath(oldNode.path)
-      tree.selectionPath = treePath
-      if (wasExpanded) {
-        tree.expandPath(treePath)
+        val treePath = TreePath(oldNode.path)
+        tree.selectionPath = treePath
+        if (wasExpanded) {
+          tree.expandPath(treePath)
+        }
       }
     }
 
