@@ -6,7 +6,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.externalSystem.util.DisposeAwareProjectChange
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.externalSystem.util.PathPrefixTreeMapImpl
+import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
@@ -14,9 +14,8 @@ import com.intellij.openapi.roots.SourceFolder
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileEvent
-import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
@@ -30,7 +29,7 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
 
   private var isDisposed = false
   private val mutex = Any()
-  private val sourceFolders = PathPrefixTreeMapImpl<SourceFolderModel>()
+  private val sourceFolders = PathPrefixTreeMap<SourceFolderModel>()
   private val sourceFoldersByModule = THashMap<String, ModuleModel>()
 
   override fun addSourceFolder(module: Module, url: String, type: JpsModuleSourceRootType<*>) {
@@ -116,7 +115,7 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
         val virtualFileManager = VirtualFileManager.getInstance()
         for (event in events) {
           synchronized(mutex) {
-            for (sourceFolder in sourceFolders.getAllDescendants(com.intellij.openapi.vfs.VfsUtilCore.pathToUrl(event.path))) {
+            for (sourceFolder in sourceFolders.getAllDescendantValues(VfsUtilCore.pathToUrl(event.path))) {
               val sourceFolderFile = ExternalSystemApiUtil.doWriteAction(Computable<VirtualFile> {
                 virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
               })

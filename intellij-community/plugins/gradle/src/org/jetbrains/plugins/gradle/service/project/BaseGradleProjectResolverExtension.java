@@ -22,7 +22,6 @@ import com.intellij.openapi.externalSystem.service.notification.NotificationSour
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap;
-import com.intellij.openapi.externalSystem.util.PathPrefixTreeMapImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.Pair;
@@ -296,7 +295,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       addExternalProjectContentRoots(gradleModule, ideModule, externalProject);
     }
 
-    PathPrefixTreeMap<ContentRootData> contentRootIndex = new PathPrefixTreeMapImpl<>();
+    PathPrefixTreeMap<ContentRootData> contentRootIndex = new PathPrefixTreeMap<>();
     for (DataNode<ContentRootData> contentRootDataNode : ExternalSystemApiUtil.findAll(ideModule, ProjectKeys.CONTENT_ROOT)) {
       ContentRootData contentRootData = contentRootDataNode.getData();
       contentRootIndex.set(contentRootData.getRootPath(), contentRootData);
