@@ -579,37 +579,42 @@ class PSICallResolver(
         oldReceiver: Receiver?,
         isSafeCall: Boolean,
         isForImplicitInvoke: Boolean
-    ): ReceiverKotlinCallArgument? =
-        when (oldReceiver) {
+    ): ReceiverKotlinCallArgument? {
+        return when (oldReceiver) {
             null -> null
-            is QualifierReceiver -> QualifierReceiverKotlinCallArgument(oldReceiver) // todo report warning if isSafeCall
-            is ReceiverValue -> {
-                val detailedReceiver = context.transformToReceiverWithSmartCastInfo(oldReceiver)
 
-                var subCallArgument: ReceiverKotlinCallArgument? = null
+            is QualifierReceiver -> QualifierReceiverKotlinCallArgument(oldReceiver) // todo report warning if isSafeCall
+
+            is ReceiverValue -> {
                 if (oldReceiver is ExpressionReceiver) {
                     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(oldReceiver.expression, context.statementFilter)
 
                     val bindingContext = context.trace.bindingContext
-                    val call = bindingContext[BindingContext.DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL, ktExpression]
-                        ?: ktExpression?.getCall(bindingContext)
+                    val call =
+                        bindingContext[BindingContext.DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL, ktExpression]
+                            ?: ktExpression?.getCall(bindingContext)
 
-                    val onlyResolvedCall = call?.let {
-                        bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result
-                    }
-                    if (onlyResolvedCall != null) {
-                        subCallArgument = SubKotlinCallArgumentImpl(
+                    val partiallyResolvedCall = call?.let { bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result }
+
+                    if (partiallyResolvedCall != null) {
+                        val receiver = ReceiverValueWithSmartCastInfo(oldReceiver, emptySet(), isStable = true)
+                        return SubKotlinCallArgumentImpl(
                             CallMaker.makeExternalValueArgument(oldReceiver.expression),
-                            context.dataFlowInfo, context.dataFlowInfo, detailedReceiver, onlyResolvedCall
+                            context.dataFlowInfo, context.dataFlowInfo, receiver, partiallyResolvedCall
                         )
-
                     }
                 }
 
-                subCallArgument ?: ReceiverExpressionKotlinCallArgument(detailedReceiver, isSafeCall, isForImplicitInvoke)
+                ReceiverExpressionKotlinCallArgument(
+                    context.transformToReceiverWithSmartCastInfo(oldReceiver),
+                    isSafeCall,
+                    isForImplicitInvoke
+                )
             }
+
             else -> error("Incorrect receiver: $oldReceiver")
         }
+    }
 
     private fun resolveTypeArguments(context: BasicCallResolutionContext, typeArguments: List<KtTypeProjection>): List<TypeArgument> =
         typeArguments.map { projection ->

@@ -294,30 +294,36 @@ internal fun createSimplePSICallArgument(
 ): SimplePSIKotlinCallArgument? {
 
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
-    val onlyResolvedCall = ktExpression.getCall(bindingContext)?.let {
+    val partiallyResolvedCall = ktExpression.getCall(bindingContext)?.let {
         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result
     }
     // todo hack for if expression: sometimes we not write properly type information for branches
-    val baseType = typeInfoForArgument.type?.unwrap() ?: onlyResolvedCall?.resultCallAtom?.freshReturnType ?: return null
+    val baseType = typeInfoForArgument.type?.unwrap() ?: partiallyResolvedCall?.resultCallAtom?.freshReturnType ?: return null
+
+    val expressionReceiver = ExpressionReceiver.create(ktExpression, baseType, bindingContext)
+    // For a sub-call there can't be any smartcast so we use a fast-path here to avoid calling transformToReceiverWithSmartCastInfo function
+    if (partiallyResolvedCall != null) {
+        val capturedReceiver =
+            ReceiverValueWithSmartCastInfo(expressionReceiver, emptySet(), isStable = true)
+                .prepareReceiverRegardingCaptureTypes()
+
+        return SubKotlinCallArgumentImpl(
+            valueArgument,
+            dataFlowInfoBeforeThisArgument,
+            typeInfoForArgument.dataFlowInfo,
+            capturedReceiver,
+            partiallyResolvedCall
+        )
+    }
 
     // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
     val receiverToCast = transformToReceiverWithSmartCastInfo(
         ownerDescriptor, bindingContext,
         typeInfoForArgument.dataFlowInfo, // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
-        ExpressionReceiver.create(ktExpression, baseType, bindingContext),
+        expressionReceiver,
         languageVersionSettings,
         dataFlowValueFactory
     ).prepareReceiverRegardingCaptureTypes()
 
-    return if (onlyResolvedCall == null) {
-        ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)
-    } else {
-        SubKotlinCallArgumentImpl(
-            valueArgument,
-            dataFlowInfoBeforeThisArgument,
-            typeInfoForArgument.dataFlowInfo,
-            receiverToCast,
-            onlyResolvedCall
-        )
-    }
+    return ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)
 }
