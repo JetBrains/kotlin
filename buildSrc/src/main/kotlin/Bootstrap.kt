@@ -47,8 +47,11 @@ sealed class BootstrapOption {
         }
     }
 
-    /** Get bootstrap from kotlin-dev bintray repo, where bootstraps are published */
+    /** Get bootstrap from kotlin-dev bintray repo */
     class BintrayDev(kotlinVersion: String) : Custom(kotlinVersion, "https://dl.bintray.com/kotlin/kotlin-dev")
+
+    /** Get bootstrap from kotlin-bootstrap bintray repo, where bootstraps are published */
+    class BintrayBootstrap(kotlinVersion: String) : Custom(kotlinVersion, "https://dl.bintray.com/kotlin/kotlin-bootstrap")
 
     /** Get bootstrap from teamcity maven artifacts of the specified build configuration
      *
