@@ -81,9 +81,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-open class ComposableAnnotationChecker(
-    val nullableMode: Mode? = null
-) : CallChecker, DeclarationChecker,
+open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
     AdditionalTypeChecker, AdditionalAnnotationChecker, StorageComponentContainerContributor {
 
     enum class Mode {
@@ -98,9 +96,6 @@ open class ComposableAnnotationChecker(
     }
 
     companion object {
-        val DEFAULT_MODE =
-            Mode.FCS
-
         fun get(project: Project): ComposableAnnotationChecker {
             return StorageComponentContainerContributor.getInstances(project).single {
                 it is ComposableAnnotationChecker
@@ -147,11 +142,6 @@ open class ComposableAnnotationChecker(
             return candidateDescriptor.type.hasComposableAnnotation()
         }
         return candidateDescriptor.hasComposableAnnotation()
-    }
-
-    open fun getMode(psi: PsiElement): Mode {
-        if (nullableMode != null) return nullableMode
-        return DEFAULT_MODE
     }
 
     fun analyze(trace: BindingTrace, descriptor: FunctionDescriptor): Composability {
@@ -203,7 +193,6 @@ open class ComposableAnnotationChecker(
         signatureComposability: Composability
     ): Composability {
         var composability = signatureComposability
-        val mode = getMode(element)
         var localKtx = false
         var localFcs = false
         var isInlineLambda = false
@@ -230,20 +219,18 @@ open class ComposableAnnotationChecker(
             }
 
             override fun visitCallExpression(expression: KtCallExpression) {
-                if (mode == Mode.FCS) {
-                    // Can be null in cases where the call isn't resolvable (eg. due to a bug/typo in the user's code)
-                    val isCallComposable = trace.get(FCS_RESOLVEDCALL_COMPOSABLE, expression)
-                    if (isCallComposable == true) {
-                        localFcs = true
-                        if (!isInlineLambda && composability != Composability.MARKED) {
-                            // Report error on composable element to make it obvious which invocation is offensive
-                            val reportElement = expression.calleeExpression ?: expression
-                            trace.reportFromPlugin(
-                                ComposeErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE
-                                    .on(reportElement),
-                                ComposeDefaultErrorMessages
-                            )
-                        }
+                // Can be null in cases where the call isn't resolvable (eg. due to a bug/typo in the user's code)
+                val isCallComposable = trace.get(FCS_RESOLVEDCALL_COMPOSABLE, expression)
+                if (isCallComposable == true) {
+                    localFcs = true
+                    if (!isInlineLambda && composability != Composability.MARKED) {
+                        // Report error on composable element to make it obvious which invocation is offensive
+                        val reportElement = expression.calleeExpression ?: expression
+                        trace.reportFromPlugin(
+                            ComposeErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE
+                                .on(reportElement),
+                            ComposeDefaultErrorMessages
+                        )
                     }
                 }
                 super.visitCallExpression(expression)
@@ -251,8 +238,7 @@ open class ComposableAnnotationChecker(
         }, null)
         if (
             (localKtx || localFcs) &&
-            !isInlineLambda && composability != Composability.MARKED &&
-            (mode == Mode.KTX_STRICT || mode == Mode.KTX_PEDANTIC || mode == Mode.FCS)
+            !isInlineLambda && composability != Composability.MARKED
         ) {
             val reportElement = when (element) {
                 is KtNamedFunction -> element.nameIdentifier ?: element
@@ -438,33 +424,12 @@ open class ComposableAnnotationChecker(
         reportOn: PsiElement,
         context: CallCheckerContext
     ) {
-        val mode = getMode(reportOn)
         val shouldBeTag = shouldInvokeAsTag(context.trace, resolvedCall)
-        if (mode == Mode.FCS) {
-            context.trace.record(
-                FCS_RESOLVEDCALL_COMPOSABLE,
-                resolvedCall.call.callElement,
-                shouldBeTag
-            )
-        }
-        // NOTE: we return early here because the KtxCallResolver does its own composable checking (by delegating to this class) and has
-        // more context to make the right call.
-        if (reportOn.parent is KtxElement) return
-        if (
-            mode != Mode.FCS && context.resolutionContext is CallResolutionContext &&
-            resolvedCall is ResolvedCallImpl &&
-            (context.resolutionContext as CallResolutionContext).call.callElement is
-                    KtCallExpression
-        ) {
-            if (shouldBeTag) {
-                context.trace.reportFromPlugin(
-                    ComposeErrors.SVC_INVOCATION.on(
-                        reportOn as KtElement,
-                        resolvedCall.candidateDescriptor.name.asString()
-                    ), ComposeDefaultErrorMessages
-                )
-            }
-        }
+        context.trace.record(
+            FCS_RESOLVEDCALL_COMPOSABLE,
+            resolvedCall.call.callElement,
+            shouldBeTag
+        )
     }
 
     override fun checkType(
@@ -473,8 +438,6 @@ open class ComposableAnnotationChecker(
         expressionTypeWithSmartCast: KotlinType,
         c: ResolutionContext<*>
     ) {
-        val mode = getMode(expression)
-        if (mode != Mode.KTX_PEDANTIC && mode != Mode.FCS) return
         if (expression is KtLambdaExpression) {
             val expectedType = c.expectedType
             if (expectedType === TypeUtils.NO_EXPECTED_TYPE) return
