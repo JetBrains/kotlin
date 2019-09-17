@@ -69,7 +69,7 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
                 .appendln("${INDENT}node [shape=box penwidth=2]")
                 .appendln("${INDENT}edge [penwidth=2]")
                 .appendln()
-            super.visitFile(file)
+            visitElement(file)
             dotBuilder.appendln("}")
         }
 

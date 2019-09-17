@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirNamedReference
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -35,23 +34,36 @@ internal object MapArguments : FirTransformer<Map<FirElement, FirElement>>() {
     ): CompositeTransformResult<FirStatement> {
         return (wrappedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
     }
-}
 
-internal object StoreType : FirTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
-        return element.compose()
+    override fun transformLambdaArgumentExpression(
+        lambdaArgumentExpression: FirLambdaArgumentExpression,
+        data: Map<FirElement, FirElement>
+    ): CompositeTransformResult<FirStatement> {
+        return transformWrappedArgumentExpression(lambdaArgumentExpression, data)
     }
 
+    override fun transformSpreadArgumentExpression(
+        spreadArgumentExpression: FirSpreadArgumentExpression,
+        data: Map<FirElement, FirElement>
+    ): CompositeTransformResult<FirStatement> {
+        return transformWrappedArgumentExpression(spreadArgumentExpression, data)
+    }
+
+    override fun transformNamedArgumentExpression(
+        namedArgumentExpression: FirNamedArgumentExpression,
+        data: Map<FirElement, FirElement>
+    ): CompositeTransformResult<FirStatement> {
+        return transformWrappedArgumentExpression(namedArgumentExpression, data)
+    }
+}
+
+internal object StoreType : FirTypeTransformer<FirTypeRef>() {
     override fun transformTypeRef(typeRef: FirTypeRef, data: FirTypeRef): CompositeTransformResult<FirTypeRef> {
         return data.compose()
     }
 }
 
-internal object TransformImplicitType : FirTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
-        return element.compose()
-    }
-
+internal object TransformImplicitType : FirTypeTransformer<FirTypeRef>() {
     override fun transformImplicitTypeRef(
         implicitTypeRef: FirImplicitTypeRef,
         data: FirTypeRef
@@ -61,11 +73,7 @@ internal object TransformImplicitType : FirTransformer<FirTypeRef>() {
 }
 
 
-internal object StoreNameReference : FirTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): CompositeTransformResult<E> {
-        return element.compose()
-    }
-
+internal object StoreNameReference : FirTypeTransformer<FirNamedReference>() {
     override fun transformNamedReference(
         namedReference: FirNamedReference,
         data: FirNamedReference

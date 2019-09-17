@@ -90,7 +90,7 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
                 typeParametersWithBounds = listOf("E : $parent") + className.typeParametersWithBounds()
             ) {
                 print("return ")
-                generateCall("transform${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))
+                generateCall("transformElement", listOf(parameterName, "data"))
                 printlnWithNoIndent()
             }
         } else {
@@ -104,7 +104,7 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
                 typeParametersWithBounds = className.typeParametersWithBounds()
             ) {
                 print("return ")
-                generateCall("transform${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))
+                generateCall("transformElement", listOf(parameterName, "data"))
                 printlnWithNoIndent()
             }
         }

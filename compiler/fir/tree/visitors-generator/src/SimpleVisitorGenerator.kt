@@ -46,7 +46,7 @@ class SimpleVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abs
             typeParametersWithBounds = className.typeParametersWithBounds()
         ) {
             print("return ")
-            generateCall("visit${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))
+            generateCall("visitElement", listOf(parameterName, "data"))
             println()
         }
     }

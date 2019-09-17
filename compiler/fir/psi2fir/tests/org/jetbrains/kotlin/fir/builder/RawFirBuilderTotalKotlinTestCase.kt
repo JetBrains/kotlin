@@ -80,7 +80,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         } else {
                             normalReferences++
                         }
-                        super.visitQualifiedAccess(qualifiedAccess)
+                        visitStatement(qualifiedAccess)
                     }
 
                     override fun visitExpression(expression: FirExpression) {

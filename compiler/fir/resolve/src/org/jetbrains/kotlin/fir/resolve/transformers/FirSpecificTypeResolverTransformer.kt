@@ -58,4 +58,34 @@ class FirSpecificTypeResolverTransformer(
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
         return implicitTypeRef.compose()
     }
+
+    override fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+        return transformTypeRef(errorTypeRef, data)
+    }
+
+    override fun transformResolvedFunctionTypeRef(
+        resolvedFunctionTypeRef: FirResolvedFunctionTypeRef,
+        data: Nothing?
+    ): CompositeTransformResult<FirTypeRef> {
+        return transformTypeRef(resolvedFunctionTypeRef, data)
+    }
+
+    override fun transformTypeRefWithNullability(
+        typeRefWithNullability: FirTypeRefWithNullability,
+        data: Nothing?
+    ): CompositeTransformResult<FirTypeRef> {
+        return transformTypeRef(typeRefWithNullability, data)
+    }
+
+    override fun transformUserTypeRef(userTypeRef: FirUserTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+        return transformTypeRef(userTypeRef, data)
+    }
+
+    override fun transformDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+        return transformTypeRef(dynamicTypeRef, data)
+    }
+
+    override fun transformDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+        return transformTypeRef(delegatedTypeRef, data)
+    }
 }

@@ -72,7 +72,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitFile(file: FirFile) {
         println("FILE: ${file.name}")
         pushIndent()
-        super.visitFile(file)
+        visitElement(file)
         popIndent()
     }
 

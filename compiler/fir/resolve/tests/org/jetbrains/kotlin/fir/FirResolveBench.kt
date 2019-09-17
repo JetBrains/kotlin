@@ -8,6 +8,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.resolve.FirProvider
@@ -197,7 +199,11 @@ class FirResolveBench(val withProgress: Boolean) {
                             }
                         }
 
-                        super.visitFunctionCall(functionCall)
+                        visitElement(functionCall)
+                    }
+
+                    override fun visitComponentCall(componentCall: FirComponentCall) {
+                        visitFunctionCall(componentCall)
                     }
 
                     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
@@ -209,7 +215,11 @@ class FirResolveBench(val withProgress: Boolean) {
                             }
                         }
 
-                        super.visitQualifiedAccessExpression(qualifiedAccessExpression)
+                        visitElement(qualifiedAccessExpression)
+                    }
+
+                    override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
+                        visitQualifiedAccessExpression(callableReferenceAccess)
                     }
 
                     override fun visitTypeRef(typeRef: FirTypeRef) {
@@ -220,6 +230,34 @@ class FirResolveBench(val withProgress: Boolean) {
                             val problem = "${typeRef::class.simpleName}: ${typeRef.render()}"
                             reportProblem(problem, psi)
                         }
+                    }
+
+                    override fun visitDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef) {
+                        visitTypeRef(delegatedTypeRef)
+                    }
+
+                    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+                        visitResolvedTypeRef(errorTypeRef)
+                    }
+
+                    override fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef) {
+                        visitResolvedTypeRef(resolvedFunctionTypeRef)
+                    }
+
+                    override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability) {
+                        visitTypeRef(typeRefWithNullability)
+                    }
+
+                    override fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef) {
+                        visitTypeRefWithNullability(dynamicTypeRef)
+                    }
+
+                    override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef) {
+                        visitTypeRefWithNullability(functionTypeRef)
+                    }
+
+                    override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
+                        visitTypeRefWithNullability(userTypeRef)
                     }
 
                     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {

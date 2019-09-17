@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.idea.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirReference
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.*
@@ -172,6 +171,20 @@ fun KtElement.getOrBuildFir(
             }
 
             override fun visitReference(reference: FirReference) {}
+
+            override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {}
+
+            override fun visitNamedReference(namedReference: FirNamedReference) {}
+
+            override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {}
+
+            override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {}
+
+            override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {}
+
+            override fun visitSuperReference(superReference: FirSuperReference) {}
+
+            override fun visitThisReference(thisReference: FirThisReference) {}
 
             override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {}
         })

@@ -323,7 +323,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
 
                 override fun visitRegularClass(regularClass: FirRegularClass) {
                     classes[regularClass.classId] = location
-                    super.visitRegularClass(regularClass)
+                    visitElement(regularClass)
                 }
 
                 fun indexDeclaration(symbolOwner: FirSymbolOwner<*>) {
@@ -333,32 +333,32 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
 
                 override fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>) {
                     indexDeclaration(variable)
-                    super.visitVariable(variable)
+                    visitElement(variable)
                 }
 
                 override fun visitValueParameter(valueParameter: FirValueParameter) {
                     indexDeclaration(valueParameter)
-                    super.visitValueParameter(valueParameter)
+                    visitElement(valueParameter)
                 }
 
                 override fun visitNamedFunction(namedFunction: FirNamedFunction) {
                     indexDeclaration(namedFunction)
-                    super.visitNamedFunction(namedFunction)
+                    visitElement(namedFunction)
                 }
 
                 override fun visitTypeParameter(typeParameter: FirTypeParameter) {
                     indexDeclaration(typeParameter)
-                    super.visitTypeParameter(typeParameter)
+                    visitElement(typeParameter)
                 }
 
                 override fun visitProperty(property: FirProperty) {
                     indexDeclaration(property)
-                    super.visitProperty(property)
+                    visitElement(property)
                 }
 
                 override fun visitConstructor(constructor: FirConstructor) {
                     indexDeclaration(constructor)
-                    super.visitConstructor(constructor)
+                    visitElement(constructor)
                 }
             }
         }

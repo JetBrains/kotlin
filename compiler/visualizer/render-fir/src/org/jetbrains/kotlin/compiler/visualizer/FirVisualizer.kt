@@ -361,7 +361,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 data.append("[ERROR : ${namedReference.errorReason}]")
                 return
             }
-            super.visitNamedReference(namedReference, data)
+            visitElement(namedReference, data)
         }
 
         override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: StringBuilder) {

@@ -102,6 +102,10 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
             override fun visitProperty(property: FirProperty) {
                 visitCallableMemberDeclaration(property)
             }
+
+            override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+                visitRegularClass(enumEntry)
+            }
         })
     }
 

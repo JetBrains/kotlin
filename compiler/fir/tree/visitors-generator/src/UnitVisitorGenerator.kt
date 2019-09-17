@@ -49,7 +49,7 @@ class UnitVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abstr
             typeParametersWithBounds = className.typeParametersWithBounds()
         ) {
             printIndent()
-            generateCall("visit${parent.name.classNameWithoutFir}", listOf(parameterName, "null"))
+            generateCall("visitElement", listOf(parameterName, "null"))
             println()
         }
     }
