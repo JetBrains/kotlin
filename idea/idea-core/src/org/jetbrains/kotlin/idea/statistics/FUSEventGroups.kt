@@ -20,7 +20,7 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf
     Refactoring("ide.action.refactoring", refactoringEvents),
     NewFileTemplate("ide.newFileTempl", newFileTemplateEvents),
     NPWizards("ide.npwizards", NPWizardsEvents),
-    Debug("ide.debugger", debugEvalEvents),
+    Debug("ide.debugger"),
     J2K("ide.j2k"),
     Editor("ide.editor");
 
@@ -114,18 +114,4 @@ val NPWizardsEvents = setOf(
     "KotlinDslGradleKotlinJSFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"
-)
-val debugEvalEvents = setOf(
-    "Success",
-    "NoFrameProxy",
-    "ThreadNotAvailable",
-    "ThreadNotSuspended",
-    "ProcessCancelledException",
-    "InterpretingException",
-    "EvaluateException",
-    "SpecialException",
-    "GenericException",
-    "FrontendException",
-    "BackendException",
-    "ErrorsInCode"
 )
