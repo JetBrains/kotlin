@@ -189,7 +189,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
       if (Registry.is("ide.service.view")) {
         String toolWindowId =
           ((ServiceViewManagerImpl)ServiceViewManager.getInstance(myProject))
-            .getToolWindowId(RunConfigurationsServiceViewContributor.class);
+            .getToolWindowId(RunDashboardServiceViewContributor.class);
         myToolWindowId = toolWindowId != null ? toolWindowId : ToolWindowId.SERVICES;
       }
       else {
@@ -421,7 +421,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   @Override
   public void updateDashboard(boolean withStructure) {
     myProject.getMessageBus().syncPublisher(ServiceEventListener.TOPIC).handle(
-      ServiceEventListener.ServiceEvent.createResetEvent(RunConfigurationsServiceViewContributor.class));
+      ServiceEventListener.ServiceEvent.createResetEvent(RunDashboardServiceViewContributor.class));
 
     if (Registry.is("ide.service.view")) return;
 
@@ -934,7 +934,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
           service.setContent(content);
           RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
           RunConfigurationNode node = new RunConfigurationNode(myProject, service, getCustomizers(settings, descriptor));
-          ServiceViewManager.getInstance(myProject).select(node, RunConfigurationsServiceViewContributor.class, true, false);
+          ServiceViewManager.getInstance(myProject).select(node, RunDashboardServiceViewContributor.class, true, false);
         }
       }
     }

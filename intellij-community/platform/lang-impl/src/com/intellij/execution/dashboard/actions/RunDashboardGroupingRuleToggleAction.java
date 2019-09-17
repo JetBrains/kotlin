@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.dashboard.actions;
 
-import com.intellij.execution.dashboard.RunConfigurationsServiceViewContributor;
+import com.intellij.execution.dashboard.RunDashboardServiceViewContributor;
 import com.intellij.execution.services.ServiceEventListener;
 import com.intellij.execution.services.ServiceViewActionUtils;
 import com.intellij.execution.services.ServiceViewContributor;
@@ -27,7 +27,7 @@ abstract class RunDashboardGroupingRuleToggleAction extends ToggleAction impleme
     Set<ServiceViewContributor> contributors = e.getData(ServiceViewActionUtils.CONTRIBUTORS_KEY);
     if (contributors != null) {
       for (ServiceViewContributor contributor : contributors) {
-        if (contributor instanceof RunConfigurationsServiceViewContributor) {
+        if (contributor instanceof RunDashboardServiceViewContributor) {
           e.getPresentation().setEnabledAndVisible(true);
           return;
         }
@@ -51,7 +51,7 @@ abstract class RunDashboardGroupingRuleToggleAction extends ToggleAction impleme
 
     PropertiesComponent.getInstance(project).setValue(getRuleName(), state, true);
     project.getMessageBus().syncPublisher(ServiceEventListener.TOPIC).handle(
-      ServiceEventListener.ServiceEvent.createResetEvent(RunConfigurationsServiceViewContributor.class));
+      ServiceEventListener.ServiceEvent.createResetEvent(RunDashboardServiceViewContributor.class));
   }
 
   @NotNull

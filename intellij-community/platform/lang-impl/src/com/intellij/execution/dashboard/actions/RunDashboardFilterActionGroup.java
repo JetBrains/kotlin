@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.dashboard.actions;
 
-import com.intellij.execution.dashboard.RunConfigurationsServiceViewContributor;
+import com.intellij.execution.dashboard.RunDashboardServiceViewContributor;
 import com.intellij.execution.dashboard.RunDashboardManager;
 import com.intellij.execution.dashboard.RunDashboardManagerImpl;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationStatus;
@@ -40,7 +40,7 @@ public class RunDashboardFilterActionGroup extends DefaultActionGroup implements
     Set<ServiceViewContributor> contributors = e.getData(ServiceViewActionUtils.CONTRIBUTORS_KEY);
     if (contributors != null) {
       for (ServiceViewContributor contributor : contributors) {
-        if (contributor instanceof RunConfigurationsServiceViewContributor) {
+        if (contributor instanceof RunDashboardServiceViewContributor) {
           e.getPresentation().setEnabledAndVisible(true);
           return;
         }

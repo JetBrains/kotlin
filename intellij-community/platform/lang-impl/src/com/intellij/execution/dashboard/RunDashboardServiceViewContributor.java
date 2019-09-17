@@ -55,18 +55,18 @@ import static com.intellij.execution.dashboard.RunDashboardManagerImpl.findActio
 import static com.intellij.execution.dashboard.RunDashboardManagerImpl.getRunnerLayoutUi;
 import static com.intellij.openapi.actionSystem.ActionPlaces.RUN_DASHBOARD_POPUP;
 
-public class RunConfigurationsServiceViewContributor
-  implements ServiceViewGroupingContributor<RunConfigurationsServiceViewContributor.RunConfigurationContributor, GroupingNode> {
+public class RunDashboardServiceViewContributor
+  implements ServiceViewGroupingContributor<RunDashboardServiceViewContributor.RunConfigurationContributor, GroupingNode> {
   private static final ServiceViewDescriptor CONTRIBUTOR_DESCRIPTOR =
     new SimpleServiceViewDescriptor("Run Dashboard", AllIcons.Actions.Execute) {
       @Override
       public ActionGroup getToolbarActions() {
-        return RunConfigurationsServiceViewContributor.getToolbarActions(null);
+        return RunDashboardServiceViewContributor.getToolbarActions(null);
       }
 
       @Override
       public ActionGroup getPopupActions() {
-        return RunConfigurationsServiceViewContributor.getPopupActions();
+        return RunDashboardServiceViewContributor.getPopupActions();
       }
     };
 
@@ -220,12 +220,12 @@ public class RunConfigurationsServiceViewContributor
 
     @Override
     public ActionGroup getToolbarActions() {
-      return RunConfigurationsServiceViewContributor.getToolbarActions(myNode.getDescriptor());
+      return RunDashboardServiceViewContributor.getToolbarActions(myNode.getDescriptor());
     }
 
     @Override
     public ActionGroup getPopupActions() {
-      return RunConfigurationsServiceViewContributor.getPopupActions();
+      return RunDashboardServiceViewContributor.getPopupActions();
     }
 
     @NotNull
@@ -405,12 +405,12 @@ public class RunConfigurationsServiceViewContributor
 
     @Override
     public ActionGroup getToolbarActions() {
-      return RunConfigurationsServiceViewContributor.getToolbarActions(null);
+      return RunDashboardServiceViewContributor.getToolbarActions(null);
     }
 
     @Override
     public ActionGroup getPopupActions() {
-      return RunConfigurationsServiceViewContributor.getPopupActions();
+      return RunDashboardServiceViewContributor.getPopupActions();
     }
 
     @NotNull
@@ -529,12 +529,12 @@ public class RunConfigurationsServiceViewContributor
       return new ServiceViewDescriptor() {
         @Override
         public ActionGroup getToolbarActions() {
-          return RunConfigurationsServiceViewContributor.getToolbarActions(null);
+          return RunDashboardServiceViewContributor.getToolbarActions(null);
         }
 
         @Override
         public ActionGroup getPopupActions() {
-          return RunConfigurationsServiceViewContributor.getPopupActions();
+          return RunDashboardServiceViewContributor.getPopupActions();
         }
 
         @NotNull

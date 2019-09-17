@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.dashboard.actions;
 
-import com.intellij.execution.dashboard.RunConfigurationsServiceViewContributor;
+import com.intellij.execution.dashboard.RunDashboardServiceViewContributor;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.execution.dashboard.tree.GroupingNode;
 import com.intellij.execution.services.ServiceViewActionUtils;
@@ -67,7 +67,7 @@ class RunDashboardActionUtils {
   private static boolean getLeaves(Project project, AnActionEvent e, List<Object> items, List<Object> valueSubPath,
                                    Set<RunDashboardRunConfigurationNode> result) {
     for (Object item : items) {
-      if (item instanceof RunConfigurationsServiceViewContributor || item instanceof GroupingNode) {
+      if (item instanceof RunDashboardServiceViewContributor || item instanceof GroupingNode) {
         List<Object> itemSubPath = new ArrayList<>(valueSubPath);
         itemSubPath.add(item);
         List<Object> children = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).getChildrenSafe(e, itemSubPath);
