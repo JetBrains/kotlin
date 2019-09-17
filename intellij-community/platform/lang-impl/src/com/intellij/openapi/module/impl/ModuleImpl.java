@@ -90,13 +90,6 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     // not reported, minimal unit for progress is the module itself
   }
 
-  @Nullable
-  @Override
-  protected ProgressIndicator getProgressIndicator() {
-    // module loading progress is not tracked, progress updated by ModuleManagerImpl on module load
-    return null;
-  }
-
   @Override
   public boolean isDisposed() {
     // in case of light project in tests when it's temporarily disposed, the module should be treated as disposed too.
