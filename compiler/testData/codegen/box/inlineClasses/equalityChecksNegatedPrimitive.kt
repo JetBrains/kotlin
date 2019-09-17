@@ -12,6 +12,8 @@ fun isNotEqualAnyRight(s: Any?, t: A) = s != t
 fun isNotEqualSameNullable(s: A?, t: A?) = s != t
 fun isNotEqualAnyNullableLeft(s: A?, t: Any?) = s != t
 fun isNotEqualAnyNullableRight(s: Any?, t: A?) = s != t
+fun isNotEqualNullableUnboxedLeft(s: A, t: A?) = s != t
+fun isNotEqualNullableUnboxedRight(s: A?, t: A) = s != t
 
 fun box(): String {
     if (!isNotNullVacuousLeft(A(0))) return "Fail 1"
@@ -45,5 +47,11 @@ fun box(): String {
     if (!isNotEqualAnyNullableRight(0, null)) return "Fail 29"
     if (!isNotEqualAnyNullableRight(null, A(0))) return "Fail 30"
     if (!isNotEqualAnyNullableRight(A(0), A(1))) return "Fail 31"
+    if (!isNotEqualNullableUnboxedLeft(A(0), A(1))) return "Fail 32"
+    if (isNotEqualNullableUnboxedLeft(A(0), A(0))) return "Fail 33"
+    if (!isNotEqualNullableUnboxedRight(A(0), A(1))) return "Fail 34"
+    if (isNotEqualNullableUnboxedRight(A(1), A(1))) return "Fail 35"
+    if (!isNotEqualNullableUnboxedLeft(A(0), null)) return "Fail 36"
+    if (!isNotEqualNullableUnboxedRight(null, A(1))) return "Fail 37"
     return "OK"
 }
