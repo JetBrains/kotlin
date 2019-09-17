@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.target.Family
 val CompilerOutputKind.isFinalBinary: Boolean get() = when (this) {
     CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
     CompilerOutputKind.STATIC, CompilerOutputKind.FRAMEWORK -> true
+    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
 }
 
@@ -34,6 +35,7 @@ internal val Context.producedLlvmModuleContainsStdlib: Boolean
 val CompilerOutputKind.involvesLinkStage: Boolean
     get() = when (this) {
         CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
+        CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
         CompilerOutputKind.STATIC, CompilerOutputKind.FRAMEWORK -> true
         CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
     }
