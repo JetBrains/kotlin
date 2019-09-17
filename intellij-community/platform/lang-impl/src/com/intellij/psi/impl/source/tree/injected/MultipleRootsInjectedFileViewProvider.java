@@ -141,8 +141,8 @@ public class MultipleRootsInjectedFileViewProvider extends MultiplePsiFilesPerDo
     }
 
     @Override
-    public IElementType getContentElementType(Language language, PsiFile file) {
-      return ((TemplateLanguageFileViewProvider)myOriginalProvider).getContentElementType(language, file);
+    public IElementType getContentElementType(@NotNull Language language) {
+      return ((TemplateLanguageFileViewProvider)myOriginalProvider).getContentElementType(language);
     }
   }
 }
