@@ -521,7 +521,8 @@ class PSICallResolver(
         val lambdasOutsideParenthesis = oldCall.functionLiteralArguments.size
         val extraArgumentsNumber = if (oldCall.callType == Call.CallType.ARRAY_SET_METHOD) 1 else lambdasOutsideParenthesis
 
-        val argumentsInParenthesis = oldCall.valueArguments.dropLast(extraArgumentsNumber)
+        val allValueArguments = oldCall.valueArguments
+        val argumentsInParenthesis = if (extraArgumentsNumber == 0) allValueArguments else allValueArguments.dropLast(extraArgumentsNumber)
 
         val externalLambdaArguments = oldCall.functionLiteralArguments
         val resolvedArgumentsInParenthesis = resolveArgumentsInParenthesis(context, argumentsInParenthesis)
@@ -530,11 +531,14 @@ class PSICallResolver(
             assert(externalLambdaArguments.isEmpty()) {
                 "Unexpected lambda parameters for call $oldCall"
             }
-            oldCall.valueArguments.last()
+            allValueArguments.last()
         } else {
             if (externalLambdaArguments.size > 1) {
-                externalLambdaArguments.drop(1).mapNotNull { it.getLambdaExpression() }.forEach {
-                    context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(it))
+                for (i in externalLambdaArguments.indices) {
+                    if (i == 0) continue
+                    val lambdaExpression = externalLambdaArguments[i].getLambdaExpression() ?: continue
+
+                    context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(lambdaExpression))
                 }
             }
 
@@ -547,17 +551,17 @@ class PSICallResolver(
             else
                 context.dataFlowInfoForArguments.resultInfo
 
-        val astExternalArgument = externalArgument?.let { resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it) }
-        val resultDataFlowInfo = astExternalArgument?.dataFlowInfoAfterThisArgument ?: dataFlowInfoAfterArgumentsInParenthesis
+        val resolvedExternalArgument = externalArgument?.let { resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it) }
+        val resultDataFlowInfo = resolvedExternalArgument?.dataFlowInfoAfterThisArgument ?: dataFlowInfoAfterArgumentsInParenthesis
 
         resolvedArgumentsInParenthesis.forEach { it.setResultDataFlowInfoIfRelevant(resultDataFlowInfo) }
-        astExternalArgument?.setResultDataFlowInfoIfRelevant(resultDataFlowInfo)
+        resolvedExternalArgument?.setResultDataFlowInfoIfRelevant(resultDataFlowInfo)
 
         val isForImplicitInvoke = oldCall is CallTransformer.CallForImplicitInvoke
 
         return PSIKotlinCallImpl(
             kotlinCallKind, oldCall, tracingStrategy, resolvedExplicitReceiver, dispatchReceiverForInvoke, name,
-            resolvedTypeArguments, resolvedArgumentsInParenthesis, astExternalArgument, context.dataFlowInfo, resultDataFlowInfo,
+            resolvedTypeArguments, resolvedArgumentsInParenthesis, resolvedExternalArgument, context.dataFlowInfo, resultDataFlowInfo,
             context.dataFlowInfoForArguments, isForImplicitInvoke
         )
     }
@@ -645,10 +649,11 @@ class PSICallResolver(
         valueArgument: ValueArgument
     ): PSIKotlinCallArgument {
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
-        val parseErrorArgument = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo, builtIns)
-        val argumentExpression = valueArgument.getArgumentExpression() ?: return parseErrorArgument
 
-        val ktExpression = KtPsiUtil.deparenthesize(argumentExpression) ?: parseErrorArgument
+        fun createParseErrorElement() = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo, builtIns)
+
+        val argumentExpression = valueArgument.getArgumentExpression() ?: return createParseErrorElement()
+        val ktExpression = KtPsiUtil.deparenthesize(argumentExpression) ?: createParseErrorElement()
 
         val argumentName = valueArgument.getArgumentName()?.asName
 
@@ -713,7 +718,7 @@ class PSICallResolver(
 
         // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
         val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
-        return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: parseErrorArgument
+        return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: createParseErrorElement()
     }
 
     private fun BasicCallResolutionContext.expandContextForCatchClause(ktExpression: Any): BasicCallResolutionContext {
