@@ -13,6 +13,9 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
+import com.intellij.openapi.fileTypes.FileTypeEvent;
+import com.intellij.openapi.fileTypes.FileTypeListener;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -76,6 +79,13 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
         clearInjectorCache();
       }
     }, this);
+
+    project.getMessageBus().connect(this).subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
+      @Override
+      public void fileTypesChanged(@NotNull FileTypeEvent event) {
+        clearInjectorCache();
+      }
+    });
   }
 
   PsiDocumentManager getDocManager() {
