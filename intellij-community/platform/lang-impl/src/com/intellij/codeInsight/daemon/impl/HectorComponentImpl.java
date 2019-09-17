@@ -45,7 +45,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.*;
 
-public class HectorComponent extends JPanel {
+class HectorComponentImpl extends HectorComponent {
   private static final Logger LOG = Logger.getInstance(HectorComponent.class);
 
   private WeakReference<JBPopup> myHectorRef;
@@ -53,7 +53,7 @@ public class HectorComponent extends JPanel {
   private final Map<Language, JSlider> mySliders;
   private final PsiFile myFile;
 
-  public HectorComponent(@NotNull PsiFile file) {
+  HectorComponentImpl(@NotNull PsiFile file) {
     super(new GridBagLayout());
     setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
     myFile = file;
@@ -182,7 +182,8 @@ public class HectorComponent extends JPanel {
     }
   }
 
-  public void showComponent(RelativePoint point) {
+  @Override
+  public void showComponent(@NotNull RelativePoint point) {
     final JBPopup hector = JBPopupFactory.getInstance().createComponentPopupBuilder(this, this)
       .setRequestFocus(true)
       .setMovable(true)

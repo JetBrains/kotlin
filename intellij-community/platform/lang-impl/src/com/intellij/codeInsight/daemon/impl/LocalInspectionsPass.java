@@ -379,7 +379,8 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                                                     @NotNull String message,
                                                     String toolTip,
                                                     PsiElement psiElement,
-                                                    @NotNull List<IntentionAction> quickFixes) {
+                                                    @NotNull List<IntentionAction> quickFixes,
+                                                    LocalInspectionTool tool) {
     TextRange textRange = ((ProblemDescriptorBase)problemDescriptor).getTextRange();
     if (textRange == null || psiElement == null) return null;
     boolean isFileLevel = psiElement instanceof PsiFile && textRange.equals(psiElement.getTextRange());
@@ -392,7 +393,8 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     HighlightInfo.Builder b = HighlightInfo.newHighlightInfo(highlightInfoType)
                               .range(psiElement, textRange.getStartOffset(), textRange.getEndOffset())
                               .description(message)
-                              .severity(severity);
+                              .severity(severity)
+                              .inspectionGroupKey(tool.getGroupKey());
     if (toolTip != null) b.escapedToolTip(toolTip);
     if (HighlightSeverity.INFORMATION.equals(severity) && attributes == null && toolTip == null && !quickFixes.isEmpty()) {
       // Hack to avoid filtering this info out in HighlightInfoFilterImpl even though its attributes are empty.
@@ -533,7 +535,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
       tooltip = tooltips.intern(XmlStringUtil.wrapInHtml((message.startsWith("<html>") ? XmlStringUtil.stripHtml(message): XmlStringUtil.escapeString(message)) + link));
     }
     List<IntentionAction> fixes = getQuickFixes(toolWrapper, descriptor, emptyActionRegistered);
-    HighlightInfo info = highlightInfoFromDescriptor(descriptor, type, plainMessage, tooltip, element, fixes);
+    HighlightInfo info = highlightInfoFromDescriptor(descriptor, type, plainMessage, tooltip, element, fixes, tool);
     if (info == null) return;
     registerQuickFixes(toolWrapper, info, fixes);
 

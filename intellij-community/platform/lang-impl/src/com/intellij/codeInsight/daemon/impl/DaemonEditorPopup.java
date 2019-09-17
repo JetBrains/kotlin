@@ -14,6 +14,7 @@ import com.intellij.internal.statistic.service.fus.collectors.UIEventLogger;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.EditorBundle;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
@@ -77,7 +78,7 @@ public class DaemonEditorPopup extends PopupHandler {
     actionGroup.add(new AnAction(EditorBundle.message("customize.highlighting.level.menu.item")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
-        final HectorComponent component = new HectorComponent(file);
+        final HectorComponent component = ServiceManager.getService(psiFile.getProject(), HectorComponentFactory.class).create(psiFile);
         final Dimension dimension = component.getPreferredSize();
         Point point = new Point(x, y);
         component.showComponent(new RelativePoint(comp, new Point(point.x - dimension.width, point.y)));

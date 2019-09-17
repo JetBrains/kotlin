@@ -4,10 +4,14 @@ package com.intellij.openapi.wm.impl.status;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.HectorComponent;
+import com.intellij.codeInsight.daemon.impl.HectorComponentFactory;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager;
+import com.intellij.codeInspection.InspectionProfile;
+import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.project.Project;
@@ -15,6 +19,7 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
+import com.intellij.profile.ProfileChangeAdapter;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -72,7 +77,7 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
       final PsiFile file = getCurrentFile();
       if (file != null) {
         if (!DaemonCodeAnalyzer.getInstance(file.getProject()).isHighlightingAvailable(file)) return;
-        final HectorComponent component = new HectorComponent(file);
+        final HectorComponent component = ServiceManager.getService(myProject, HectorComponentFactory.class).create(file);
         final Dimension dimension = component.getPreferredSize();
         point = new Point(point.x - dimension.width, point.y - dimension.height);
         component.showComponent(new RelativePoint(e.getComponent(), point));
@@ -84,6 +89,21 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
   public void install(@NotNull StatusBar statusBar) {
     super.install(statusBar);
     myConnection.subscribe(PowerSaveMode.TOPIC, this::updateStatus);
+    myConnection.subscribe(ProfileChangeAdapter.TOPIC,  new ProfileChangeAdapter() {
+      @Override
+      public void profilesInitialized() {
+        updateStatus();
+      }
+      @Override
+      public void profileActivated(InspectionProfile oldProfile, @Nullable InspectionProfile profile) {
+        updateStatus();
+      }
+
+      @Override
+      public void profileChanged(InspectionProfile profile) {
+        updateStatus();
+      }
+    });
   }
 
   @Override
@@ -116,9 +136,9 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
       }
       else if (HighlightingLevelManager.getInstance(getProject()).shouldInspect(file)) {
         myCurrentIcon = AllIcons.Ide.HectorOn;
-        myToolTipText = "Current inspection profile: " +
-                        InspectionProjectProfileManager.getInstance(file.getProject()).getCurrentProfile().getName() +
-                        ".\n";
+        InspectionProfileImpl profile = InspectionProjectProfileManager.getInstance(file.getProject()).getCurrentProfile();
+        if (profile.wasInitialized())
+          myToolTipText = "Current inspection profile: " +profile .getName() + ".\n";
       }
       else if (HighlightingLevelManager.getInstance(getProject()).shouldHighlight(file)) {
         myCurrentIcon = AllIcons.Ide.HectorSyntax;

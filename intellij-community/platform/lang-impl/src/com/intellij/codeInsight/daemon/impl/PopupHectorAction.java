@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,9 @@ public class PopupHectorAction extends AnAction {
   public void actionPerformed(@NotNull final AnActionEvent e) {
     final DataContext dataContext = e.getDataContext();
     final PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
-    new HectorComponent(file).showComponent(JBPopupFactory.getInstance().guessBestPopupLocation(dataContext));
+
+    HectorComponent hector = ServiceManager.getService(file.getProject(), HectorComponentFactory.class).create(file);
+    hector.showComponent(JBPopupFactory.getInstance().guessBestPopupLocation(dataContext));
   }
 
   @Override
