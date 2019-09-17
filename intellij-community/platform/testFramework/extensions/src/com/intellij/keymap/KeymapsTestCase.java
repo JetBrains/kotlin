@@ -96,7 +96,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift control H",          "ChangesView.ShelveSilently", "MethodHierarchy"},
     { "shift control LEFT",       "EditorPreviousWordWithSelection", "ResizeToolWindowLeft"},
     { "shift control RIGHT",      "EditorNextWordWithSelection", "ResizeToolWindowRight"},
-    { "shift control T",          "GotoTest", "RunDashboard.ShowConfigurations"},
+    { "shift control T",          "GotoTest", "ServiceView.ShowServices"},
     { "shift control UP",         "ResizeToolWindowUp", "MoveStatementUp"},
     { "shift control U",          "ShelveChanges.UnshelveWithDialog", "EditorToggleCase"},
     { "shift control alt D",      "UML.ShowChanges", "Console.TableResult.CloneColumn"},
@@ -361,7 +361,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift ctrl D",             "Console.TableResult.CompareCells", "EditorDuplicate", "Uml.ShowDiff"},
     { "shift ctrl DOWN",          "MoveLineDown", "ResizeToolWindowDown"},
     { "shift ctrl ENTER",         "Console.Jpa.GenerateSql", "EditorStartNewLineBefore"},
-    { "shift ctrl T",             "ReopenClosedTab", "RunDashboard.ShowConfigurations"},
+    { "shift ctrl T",             "ReopenClosedTab", "ServiceView.ShowServices"},
     { "shift ctrl UP",            "MoveLineUp", "ResizeToolWindowUp"}
     });
     put("Sublime Text (Mac OS X)", new String[][] {
@@ -384,7 +384,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift ENTER",              "CollapseExpandableComponent", "Console.TableResult.EditValueMaximized", "EditorSplitLine", "ExpandExpandableComponent", "JupyterRunCellSelectBelowAction", "OpenElementInNewWindow"},
     { "shift meta D",             "Console.TableResult.CompareCells", "EditorDuplicate", "Uml.ShowDiff"},
     { "shift meta ENTER",         "Console.Jpa.GenerateSql", "EditorStartNewLineBefore"},
-    { "shift meta T",             "ReopenClosedTab", "RunDashboard.ShowConfigurations"}
+    { "shift meta T",             "ReopenClosedTab", "ServiceView.ShowServices"}
     });
   }};
   // @formatter:on
