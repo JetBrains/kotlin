@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.util.parents
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.UElement
@@ -64,7 +63,7 @@ class KotlinUIdentifier private constructor(
         if (parentParent is KtCallElement && parentParent.calleeExpression == parent) { // method identifiers in calls
             return parentParent.toUElement()
         }
-        (parent.parents().take(3).find { it is KtTypeReference && it.parent is KtConstructorCalleeExpression })?.let {
+        (generateSequence(parent) { it.parent }.take(3).find { it is KtTypeReference && it.parent is KtConstructorCalleeExpression })?.let {
             return it.parent.parent.toUElement()
         }
         return null
