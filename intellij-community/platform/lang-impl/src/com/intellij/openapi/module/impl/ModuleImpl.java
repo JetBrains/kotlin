@@ -85,6 +85,11 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     createComponents(null);
   }
 
+  @Override
+  protected void setProgressDuringInit(@NotNull ProgressIndicator indicator) {
+    // not reported, minimal unit for progress is the module itself
+  }
+
   @Nullable
   @Override
   protected ProgressIndicator getProgressIndicator() {
