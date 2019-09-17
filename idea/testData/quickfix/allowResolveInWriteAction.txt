@@ -1,19 +1,22 @@
 # Actions that are allowed to resolve in write action. Normally this set shouldn't be extended and eventually should be dropped.
 # Please consider rewriting a quick-fix and remove resolve from it before adding a new entry to this list.
 
+org.jetbrains.kotlin.idea.core.overrideImplement.ImplementAsConstructorParameter
 org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
+org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection$DeleteRedundantExtensionAction
 org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection$HighPriorityIntentionBasedQuickFix
 org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection$OptimizeImportsQuickFix
+org.jetbrains.kotlin.idea.inspections.migration.ObsoleteCoroutineUsageFix
 org.jetbrains.kotlin.idea.inspections.SafeDeleteFix
 org.jetbrains.kotlin.idea.inspections.SuspiciousCollectionReassignmentInspection$ChangeTypeToMutableFix
 org.jetbrains.kotlin.idea.inspections.SuspiciousCollectionReassignmentInspection$JoinWithInitializerFix
 org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection$RemoveReceiverFix
-org.jetbrains.kotlin.idea.inspections.migration.ObsoleteCoroutineUsageFix
 org.jetbrains.kotlin.idea.intentions.AddPropertyAccessorsIntention
 org.jetbrains.kotlin.idea.intentions.AddPropertyGetterIntention
 org.jetbrains.kotlin.idea.intentions.AddPropertySetterIntention
 org.jetbrains.kotlin.idea.intentions.ConvertPropertyInitializerToGetterIntention
 org.jetbrains.kotlin.idea.intentions.CreateKotlinSubClassIntention
+org.jetbrains.kotlin.idea.intentions.MoveMemberToCompanionObjectIntention
 org.jetbrains.kotlin.idea.intentions.MovePropertyToConstructorIntention
 org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 org.jetbrains.kotlin.idea.quickfix.AddAnnotationTargetFix
@@ -26,9 +29,14 @@ org.jetbrains.kotlin.idea.quickfix.AddStartProjectionsForInnerClass
 org.jetbrains.kotlin.idea.quickfix.AddWhenRemainingBranchesFix
 org.jetbrains.kotlin.idea.quickfix.AssignToPropertyFix
 org.jetbrains.kotlin.idea.quickfix.ChangeAccessorTypeFix
+org.jetbrains.kotlin.idea.quickfix.ChangeCallableReturnTypeFix$ForCalled
 org.jetbrains.kotlin.idea.quickfix.ChangeCallableReturnTypeFix$ForEnclosing
+org.jetbrains.kotlin.idea.quickfix.ChangeCallableReturnTypeFix$ForOverridden
+org.jetbrains.kotlin.idea.quickfix.ChangeFunctionLiteralReturnTypeFix
 org.jetbrains.kotlin.idea.quickfix.ChangeParameterTypeFix
 org.jetbrains.kotlin.idea.quickfix.ChangeToMutableCollectionFix
+org.jetbrains.kotlin.idea.quickfix.ChangeVariableTypeFix
+org.jetbrains.kotlin.idea.quickfix.ChangeVariableTypeFix$ForOverridden
 org.jetbrains.kotlin.idea.quickfix.ChangeVisibilityFix$ChangeToInternalFix
 org.jetbrains.kotlin.idea.quickfix.ChangeVisibilityFix$ChangeToPrivateFix
 org.jetbrains.kotlin.idea.quickfix.ChangeVisibilityFix$ChangeToProtectedFix
@@ -36,6 +44,8 @@ org.jetbrains.kotlin.idea.quickfix.ChangeVisibilityFix$ChangeToPublicFix
 org.jetbrains.kotlin.idea.quickfix.ConvertExtensionPropertyInitializerToGetterFix
 org.jetbrains.kotlin.idea.quickfix.ConvertMemberToExtensionFix
 org.jetbrains.kotlin.idea.quickfix.ConvertToAnonymousObjectFix
+org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory$createAction$2
+org.jetbrains.kotlin.idea.quickfix.DeprecatedJavaAnnotationFix
 org.jetbrains.kotlin.idea.quickfix.ImportFix
 org.jetbrains.kotlin.idea.quickfix.InitializePropertyQuickFixFactory$AddInitializerFix
 org.jetbrains.kotlin.idea.quickfix.InitializePropertyQuickFixFactory$InitializeWithConstructorParameter
@@ -45,6 +55,7 @@ org.jetbrains.kotlin.idea.quickfix.InsertDelegationCallQuickfix
 org.jetbrains.kotlin.idea.quickfix.KotlinSuppressIntentionAction
 org.jetbrains.kotlin.idea.quickfix.LetImplementInterfaceFix
 org.jetbrains.kotlin.idea.quickfix.LowPriorityQuickFixWithDelegateFactory
+org.jetbrains.kotlin.idea.quickfix.migration.MigrateExternalExtensionFix
 org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 org.jetbrains.kotlin.idea.quickfix.RemoveNameFromFunctionExpressionFix
 org.jetbrains.kotlin.idea.quickfix.RemovePartsFromPropertyFix
@@ -55,6 +66,8 @@ org.jetbrains.kotlin.idea.quickfix.RenameModToRemFix
 org.jetbrains.kotlin.idea.quickfix.RenameParameterToMatchOverriddenMethodFix
 org.jetbrains.kotlin.idea.quickfix.RenameUnresolvedReferenceFix
 org.jetbrains.kotlin.idea.quickfix.ReplaceInfixOrOperatorCallFix
+org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
+org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageInWholeProjectFix
 org.jetbrains.kotlin.idea.quickfix.RestrictedRetentionForExpressionAnnotationFactory$AddSourceRetentionFix
 org.jetbrains.kotlin.idea.quickfix.SimplifyComparisonFix
 org.jetbrains.kotlin.idea.quickfix.SmartCastImpossibleInIfThenFactory$createQuickFix$1
@@ -62,7 +75,3 @@ org.jetbrains.kotlin.idea.quickfix.SpecifyOverrideExplicitlyFix
 org.jetbrains.kotlin.idea.quickfix.SpecifyTypeExplicitlyFix
 org.jetbrains.kotlin.idea.quickfix.SuperClassNotInitialized$AddParenthesisFix
 org.jetbrains.kotlin.idea.quickfix.WrapWithSafeLetCallFix
-org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory$createAction$2
-org.jetbrains.kotlin.idea.quickfix.migration.MigrateExternalExtensionFix
-org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
-org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageInWholeProjectFix

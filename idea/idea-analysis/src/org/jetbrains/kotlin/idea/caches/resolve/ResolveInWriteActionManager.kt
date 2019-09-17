@@ -21,6 +21,18 @@ fun <T> allowResolveInWriteAction(runnable: () -> T): T {
 }
 
 /**
+ * Temporary allow resolve in write action.
+ *
+ * All resolve should be banned from dispatch thread. This method should be carefully used for the transition
+ * period at the places where developer expects everything is already cached.
+ *
+ * (A better check is needed instead that would assert no resolve result are obtained outside of caches.)
+ */
+fun <T> allowResolveExpectedToBeCached(runnable: () -> T): T {
+    return ResolveInWriteActionManager.runWithResolveAllowedInWriteAction(runnable)
+}
+
+/**
  * Force resolve check in tests.
  */
 @TestOnly
@@ -35,21 +47,23 @@ class ResolveInWriteActionException(message: String? = null) : IllegalThreadStat
 internal object ResolveInWriteActionManager {
     private val LOG = Logger.getInstance(ResolveInWriteActionManager::class.java)
 
-    private val isResolveInWriteActionAllowed: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
-    private val isForceCheckInTests: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
-    private val errorHandler: ThreadLocal<(() -> Unit)?> = ThreadLocal.withInitial { null }
+    // Should be accessed only from dispatch thread
+    private var isResolveAllowed: Boolean = false
+    private var isForceCheckInTests: Boolean = false
+    private var errorHandler: (() -> Unit)? = null
 
     fun assertNoResolveUnderWriteAction() {
-        if (isResolveInWriteActionAllowed.get()) return
-
         val application = ApplicationManager.getApplication() ?: return
+        if (!application.isDispatchThread) {
+            return
+        }
 
-        if (!application.isWriteAccessAllowed) return
+        if (isResolveAllowed) return
 
         if (application.isUnitTestMode) {
-            if (!isForceCheckInTests.get()) return
+            if (!isForceCheckInTests) return
 
-            val handler = errorHandler.get()
+            val handler = errorHandler
             if (handler != null) {
                 handler()
                 return
@@ -66,26 +80,27 @@ internal object ResolveInWriteActionManager {
 
     internal inline fun <T> runWithResolveAllowedInWriteAction(runnable: () -> T): T {
         val wasSet =
-            if (ApplicationManager.getApplication()?.isWriteAccessAllowed == true && isResolveInWriteActionAllowed.get() == false) {
-                isResolveInWriteActionAllowed.set(true)
+            if (ApplicationManager.getApplication()?.isDispatchThread == true && !isResolveAllowed) {
+                isResolveAllowed = true
                 true
             } else {
                 false
             }
-
         try {
             return runnable()
         } finally {
             if (wasSet) {
-                isResolveInWriteActionAllowed.set(false)
+                isResolveAllowed = false
             }
         }
     }
 
     internal fun <T> runWithForceResolveAllowedCheckInTests(errorHandler: (() -> Unit)?, runnable: () -> T): T {
-        val wasSet = if (isForceCheckInTests.get() == false) {
-            isForceCheckInTests.set(true)
-            this.errorHandler.set(errorHandler)
+        ApplicationManager.getApplication()?.assertIsDispatchThread()
+
+        val wasSet = if (!isForceCheckInTests) {
+            isForceCheckInTests = true
+            this.errorHandler = errorHandler
             true
         } else {
             false
@@ -95,8 +110,8 @@ internal object ResolveInWriteActionManager {
             return runnable()
         } finally {
             if (wasSet) {
-                isForceCheckInTests.set(false)
-                this.errorHandler.set(null)
+                isForceCheckInTests = false
+                this.errorHandler = null
             }
         }
     }
