@@ -184,8 +184,10 @@ private val inspectionLikePostProcessingGroup =
         RemoveExplicitOpenInInterfaceProcessing(),
         RemoveRedundantOverrideVisibilityProcessing(),
         inspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection()),
-        ConvertToStringTemplateProcessing(),
-        UsePropertyAccessSyntaxProcessing(),
+        intentionBasedProcessing(ConvertToStringTemplateIntention()) {
+            ConvertToStringTemplateIntention.shouldSuggestToConvert(it)
+        },
+        intentionBasedProcessing(UsePropertyAccessSyntaxIntention()),
         UninitializedVariableReferenceFromInitializerToThisReferenceProcessing(),
         UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing(),
         RemoveRedundantSamAdaptersProcessing(),
@@ -193,7 +195,7 @@ private val inspectionLikePostProcessingGroup =
         inspectionBasedProcessing(ReplacePutWithAssignmentInspection()),
         UseExpressionBodyProcessing(),
         inspectionBasedProcessing(UnnecessaryVariableInspection()),
-        RemoveExplicitPropertyTypeWithInspectionProcessing(),
+        generalInspectionBasedProcessing(RedundantExplicitTypeInspection()),
         JavaObjectEqualsToEqOperatorProcessing(),
         RemoveExplicitPropertyTypeProcessing(),
         RemoveRedundantNullabilityProcessing(),

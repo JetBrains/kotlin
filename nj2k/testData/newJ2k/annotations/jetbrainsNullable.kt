@@ -14,7 +14,7 @@ class Test(str: String?) {
 
     fun test() {
         sout("String")
-        val test: String = "String2"
+        val test = "String2"
         sout(test)
         sout(dummy(test))
         test.Test(test)
