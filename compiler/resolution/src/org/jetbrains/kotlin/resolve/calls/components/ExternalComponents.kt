@@ -56,8 +56,6 @@ interface KotlinResolutionCallbacks {
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 
-    fun createReceiverWithSmartCastInfo(resolvedAtom: ResolvedCallAtom): ReceiverValueWithSmartCastInfo?
-
     fun isCompileTimeConstant(resolvedAtom: ResolvedCallAtom, expectedType: UnwrappedType): Boolean
 
     val inferenceSession: InferenceSession

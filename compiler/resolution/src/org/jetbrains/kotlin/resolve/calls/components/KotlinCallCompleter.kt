@@ -41,7 +41,7 @@ class KotlinCallCompleter(
         }
 
         val candidate = prepareCandidateForCompletion(factory, candidates, resolutionCallbacks)
-        val returnType = candidate.returnTypeWithSmartCastInfo(resolutionCallbacks)
+        val returnType = candidate.substitutedReturnType()
 
         candidate.addExpectedTypeConstraint(returnType, expectedType)
         candidate.addExpectedTypeFromCastConstraint(returnType, resolutionCallbacks)
@@ -65,7 +65,7 @@ class KotlinCallCompleter(
             val diagnosticsHolder = KotlinDiagnosticsHolder.SimpleHolder()
 
             candidate.addExpectedTypeConstraint(
-                candidate.returnTypeWithSmartCastInfo(resolutionCallbacks), expectedType
+                candidate.substitutedReturnType(), expectedType
             )
 
             runCompletion(
@@ -143,10 +143,9 @@ class KotlinCallCompleter(
         return candidate ?: factory.createErrorCandidate().forceResolution()
     }
 
-    private fun KotlinResolutionCandidate.returnTypeWithSmartCastInfo(resolutionCallbacks: KotlinResolutionCallbacks): UnwrappedType? {
+    private fun KotlinResolutionCandidate.substitutedReturnType(): UnwrappedType? {
         val returnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return null
-        val returnTypeWithSmartCastInfo = computeReturnTypeWithSmartCastInfo(returnType, resolutionCallbacks)
-        return resolvedCall.substitutor.safeSubstitute(returnTypeWithSmartCastInfo)
+        return resolvedCall.substitutor.safeSubstitute(returnType)
     }
 
     private fun KotlinResolutionCandidate.addExpectedTypeConstraint(
@@ -249,14 +248,6 @@ class KotlinCallCompleter(
 
     private inline fun <T> Iterable<T>.anyOrAll(requireAll: Boolean, p: (T) -> Boolean): Boolean =
         if (requireAll) all(p) else any(p)
-
-    private fun KotlinResolutionCandidate.computeReturnTypeWithSmartCastInfo(
-        returnType: UnwrappedType,
-        resolutionCallbacks: KotlinResolutionCallbacks
-    ): UnwrappedType {
-        if (resolvedCall.atom.callKind != KotlinCallKind.VARIABLE) return returnType
-        return resolutionCallbacks.createReceiverWithSmartCastInfo(resolvedCall)?.stableType ?: returnType
-    }
 
     fun KotlinResolutionCandidate.asCallResolutionResult(
         type: ConstraintSystemCompletionMode,
