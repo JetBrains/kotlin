@@ -87,7 +87,8 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
 
   @Override
   protected void setProgressDuringInit(@NotNull ProgressIndicator indicator) {
-    // not reported, minimal unit for progress is the module itself
+    // Component loading progress is not reported for module, because at this stage minimal reporting unit it is the module itself.
+    // Stage "Loading modules" — progress reported for each loaded module and module component count doesn't matter.
   }
 
   @Override
