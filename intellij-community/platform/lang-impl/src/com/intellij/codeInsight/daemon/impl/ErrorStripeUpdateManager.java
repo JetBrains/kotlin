@@ -81,6 +81,6 @@ public class ErrorStripeUpdateManager {
         return renderer;
       }
     }
-    return new TrafficLightRenderer(myProject, editor.getDocument(), file);
+    return new TrafficLightRenderer(myProject, editor.getDocument());
   }
 }
