@@ -606,7 +606,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     ASTNode[] parsedNodes = parseFile(language, language, oldDocumentWindow,
                                    hostVirtualFile, hostDocument, hostPsiFile, project, newDocumentText, placeInfos, chars,
                                    fileName, documentManager);
-    List<PsiFile> oldFiles = oldInjectedPsiViewProvider.getCachedPsiFiles();
+    List<PsiFile> oldFiles = ((AbstractFileViewProvider)oldInjectedPsiViewProvider).getCachedPsiFiles();
     synchronized (InjectedLanguageManagerImpl.ourInjectionPsiLock) {
       DiffLog[] diffLogs = new DiffLog[parsedNodes.length];
       for (int i = 0; i < parsedNodes.length; i++) {
