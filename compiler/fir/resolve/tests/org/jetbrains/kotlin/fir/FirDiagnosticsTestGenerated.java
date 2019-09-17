@@ -92,6 +92,49 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/diagnostics/samConstructors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SamConstructors extends AbstractFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSamConstructors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/samConstructors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("genericSam.kt")
+        public void testGenericSam() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/samConstructors/genericSam.kt");
+        }
+
+        @TestMetadata("genericSamInferenceFromExpectType.kt")
+        public void testGenericSamInferenceFromExpectType() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/samConstructors/genericSamInferenceFromExpectType.kt");
+        }
+
+        @TestMetadata("kotlinSam.kt")
+        public void testKotlinSam() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/samConstructors/kotlinSam.kt");
+        }
+
+        @TestMetadata("realConstructorFunction.kt")
+        public void testRealConstructorFunction() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/samConstructors/realConstructorFunction.kt");
+        }
+
+        @TestMetadata("runnable.kt")
+        public void testRunnable() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/samConstructors/runnable.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/samConstructors/simple.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/diagnostics/samConversions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

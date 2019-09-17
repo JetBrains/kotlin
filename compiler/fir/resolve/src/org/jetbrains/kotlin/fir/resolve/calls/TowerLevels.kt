@@ -191,7 +191,7 @@ class ScopeTowerLevel(
             TowerScopeLevel.Token.Functions -> scope.processFunctionsAndConstructorsByName(
                 name,
                 session,
-                bodyResolveComponents.scopeSession
+                bodyResolveComponents
             ) { candidate ->
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
                     processor.consumeCandidate(
@@ -252,7 +252,7 @@ class QualifiedReceiverTowerLevel(
                 processor.consumeCandidate(it as T, null, null)
             }
             TowerScopeLevel.Token.Functions -> {
-                scope.processFunctionsAndConstructorsByName(name, session, bodyResolveComponents.scopeSession, processorForCallables)
+                scope.processFunctionsAndConstructorsByName(name, session, bodyResolveComponents, processorForCallables)
             }
             TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name, processorForCallables)
 
@@ -275,7 +275,7 @@ private fun FirCallableSymbol<*>.hasExtensionReceiver(): Boolean = this.fir.rece
 private fun FirScope.processFunctionsAndConstructorsByName(
     name: Name,
     session: FirSession,
-    scopeSession: ScopeSession,
+    bodyResolveComponents: BodyResolveComponents,
     processor: (FirCallableSymbol<*>) -> ProcessorAction
 ): ProcessorAction {
     val matchedClassSymbol = getFirstClassifierOrNull(name) as? FirClassLikeSymbol<*>
@@ -284,8 +284,17 @@ private fun FirScope.processFunctionsAndConstructorsByName(
             matchedClassSymbol,
             processor,
             session,
-            scopeSession,
+            bodyResolveComponents.scopeSession,
             name
+        ).stop()
+    ) {
+        return ProcessorAction.STOP
+    }
+
+    if (processSyntheticConstructors(
+            matchedClassSymbol,
+            processor,
+            bodyResolveComponents
         ).stop()
     ) {
         return ProcessorAction.STOP
@@ -313,6 +322,21 @@ private fun finalExpansionName(symbol: FirTypeAliasSymbol, session: FirSession):
         else -> expandedType.lookupTag.classId.shortClassName
     }
 
+}
+
+val SAM_PARAMETER_NAME = Name.identifier("block")
+
+private fun processSyntheticConstructors(
+    matchedSymbol: FirClassLikeSymbol<*>?,
+    processor: (FirFunctionSymbol<*>) -> ProcessorAction,
+    bodyResolveComponents: BodyResolveComponents
+): ProcessorAction {
+    if (matchedSymbol == null) return ProcessorAction.NEXT
+    if (matchedSymbol !is FirClassSymbol) return ProcessorAction.NEXT
+
+    val function = bodyResolveComponents.samResolver.getSamConstructor(matchedSymbol.fir) ?: return ProcessorAction.NEXT
+
+    return processor(function.symbol)
 }
 
 private fun processConstructors(

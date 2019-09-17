@@ -23,6 +23,7 @@ sealed class CallKind {
     object Function : CallKind() {
         override val resolutionSequence: List<ResolutionStage> = listOf(
             CheckVisibility,
+            DiscriminateSynthetics,
             MapArguments,
             CheckExplicitReceiverConsistency,
             CreateFreshTypeVariableSubstitutorStage,
