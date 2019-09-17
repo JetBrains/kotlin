@@ -48,6 +48,7 @@ import com.intellij.util.io.exists
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -95,9 +96,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     }
 
     protected fun warmUpProject(stats: Stats) {
-        val project = perfOpenHelloWorld(stats, "warm-up")
+        val project = perfOpenHelloWorld(stats, WARM_UP)
         try {
-            val perfHighlightFile = perfHighlightFile(project, "src/HelloMain.kt", stats, "warm-up")
+            val perfHighlightFile = perfHighlightFile(project, "src/HelloMain.kt", stats, WARM_UP)
             assertTrue("kotlin project has been not imported properly", perfHighlightFile.isNotEmpty())
         } finally {
             closeProject(project)
@@ -254,7 +255,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             Fixture.enableAnnotatorsAndLoadDefinitions(project)
         }
 
-        return lastProject!!
+        return lastProject ?: error("unable to open project $name at $path")
     }
 
     private fun refreshGradleProjectIfNeeded(projectPath: String, project: Project) {
@@ -476,7 +477,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String = ""
     ): List<HighlightInfo> {
         return highlightFile {
-            val isWarmUp = note == "warm-up"
+            val isWarmUp = note == WARM_UP
             var highlightInfos: List<HighlightInfo> = emptyList()
             stats.perfTest<EditorFile, List<HighlightInfo>>(
                 warmUpIterations = if (isWarmUp) 1 else 3,
