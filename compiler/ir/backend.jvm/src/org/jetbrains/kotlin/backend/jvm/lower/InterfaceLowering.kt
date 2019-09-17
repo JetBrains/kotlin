@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyBodyToStatic
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering.Companion.clinitName
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -56,7 +57,10 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
                         removedFunctions[function.symbol] = it.symbol
                 }
                 members.add(element)
-                element.body = function.body?.patchDeclarationParents(element)
+
+                copyBodyToStatic(function, element)
+                element.body = element.body?.patchDeclarationParents(element)
+
                 if (function.hasJvmDefault() &&
                     function.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
                 ) {
