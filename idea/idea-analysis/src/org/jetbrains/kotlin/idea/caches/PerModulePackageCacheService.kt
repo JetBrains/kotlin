@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches
 
 import com.intellij.ProjectTopics
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
@@ -29,6 +30,7 @@ import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.FULL_DROP_THRESHOLD
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
@@ -44,7 +46,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
 
 class KotlinPackageContentModificationListener(private val project: Project) {
     init {
@@ -217,7 +218,7 @@ class ImplicitPackagePrefixCache(private val project: Project) {
     }
 }
 
-class PerModulePackageCacheService(private val project: Project) {
+class PerModulePackageCacheService(private val project: Project) : Disposable {
 
     /*
      * Actually an WeakMap<Module, SoftMap<ModuleSourceInfo, SoftMap<FqName, Boolean>>>
@@ -230,11 +231,17 @@ class PerModulePackageCacheService(private val project: Project) {
 
     private val projectScope = GlobalSearchScope.projectScope(project)
 
-    internal fun onTooComplexChange(): Unit = synchronized(this) {
-        pendingVFileChanges.clear()
-        pendingKtFileChanges.clear()
-        cache.clear()
-        implicitPackagePrefixCache.clear()
+    internal fun onTooComplexChange() {
+        clear()
+    }
+
+    private fun clear() {
+        synchronized(this) {
+            pendingVFileChanges.clear()
+            pendingKtFileChanges.clear()
+            cache.clear()
+            implicitPackagePrefixCache.clear()
+        }
     }
 
     internal fun notifyPackageChange(file: VFileEvent): Unit = synchronized(this) {
@@ -339,6 +346,10 @@ class PerModulePackageCacheService(private val project: Project) {
     fun getImplicitPackagePrefix(sourceRoot: VirtualFile): FqName {
         checkPendingChanges()
         return implicitPackagePrefixCache.getPrefix(sourceRoot)
+    }
+
+    override fun dispose() {
+        clear()
     }
 
     companion object {
