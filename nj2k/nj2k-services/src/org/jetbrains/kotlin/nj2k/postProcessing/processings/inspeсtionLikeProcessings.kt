@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -17,11 +18,13 @@ import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.callName
-import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
-import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
+import org.jetbrains.kotlin.idea.inspections.*
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
+import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -339,5 +342,132 @@ class MoveGetterAndSetterAnnotationsToPropertyProcessing : ApplicabilityBasedIns
             }
             accessor.annotationEntries.forEach { it.delete() }
         }
+    }
+}
+
+class RedundantExplicitTypeInspectionBasedProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty>(KtProperty::class) {
+    override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean =
+        RedundantExplicitTypeInspection.hasRedundantType(element)
+
+    override fun apply(element: KtProperty) {
+        RemoveExplicitTypeIntention.removeExplicitType(element)
+    }
+}
+
+class CanBeValInspectionBasedProcessing : ApplicabilityBasedInspectionLikeProcessing<KtDeclaration>(KtDeclaration::class) {
+    override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?): Boolean =
+        CanBeValInspection.canBeVal(element, ignoreNotUsedVals = false)
+
+    override fun apply(element: KtDeclaration) {
+        if (element !is KtValVarKeywordOwner) return
+        element.valOrVarKeyword?.replace(KtPsiFactory(element).createValKeyword())
+    }
+}
+
+
+class MayBeConstantInspectionBasedProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty>(KtProperty::class) {
+    override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean =
+        with(MayBeConstantInspection) {
+            val status = element.getStatus()
+            status == MayBeConstantInspection.Status.MIGHT_BE_CONST
+                    || status == MayBeConstantInspection.Status.JVM_FIELD_MIGHT_BE_CONST
+        }
+
+    override fun apply(element: KtProperty) {
+        AddConstModifierFix.addConstModifier(element)
+    }
+}
+
+class RemoveExplicitUnitTypeProcessing : ApplicabilityBasedInspectionLikeProcessing<KtNamedFunction>(KtNamedFunction::class) {
+    override fun isApplicableTo(element: KtNamedFunction, settings: ConverterSettings?): Boolean {
+        val typeReference = element.typeReference?.typeElement ?: return false
+        if (!typeReference.textMatches("Unit")) return false
+        return RedundantUnitReturnTypeInspection.hasRedundantUnitReturnType(element)
+    }
+
+    override fun apply(element: KtNamedFunction) {
+        RemoveExplicitTypeIntention.removeExplicitType(element)
+    }
+}
+
+
+class RemoveExplicitGetterInspectionBasedProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<KtPropertyAccessor>(KtPropertyAccessor::class) {
+    override fun isApplicableTo(element: KtPropertyAccessor, settings: ConverterSettings?): Boolean =
+        element.isRedundantGetter()
+
+    override fun apply(element: KtPropertyAccessor) {
+        RemoveRedundantGetterFix.removeRedundantGetter(element)
+    }
+}
+
+class RemoveExplicitSetterInspectionBasedProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<KtPropertyAccessor>(KtPropertyAccessor::class) {
+    override fun isApplicableTo(element: KtPropertyAccessor, settings: ConverterSettings?): Boolean =
+        element.isRedundantSetter()
+
+    override fun apply(element: KtPropertyAccessor) {
+        RemoveRedundantSetterFix.removeRedundantSetter(element)
+    }
+}
+
+
+class RedundantSemicolonInspectionBasedProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<PsiElement>(PsiElement::class) {
+    override fun isApplicableTo(element: PsiElement, settings: ConverterSettings?): Boolean =
+        element.node.elementType == KtTokens.SEMICOLON
+                && RedundantSemicolonInspection.isRedundantSemicolon(element)
+
+    override fun apply(element: PsiElement) {
+        element.delete()
+    }
+}
+
+
+class RedundantCompanionReferenceInspectionBasedProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<KtReferenceExpression>(KtReferenceExpression::class) {
+    override fun isApplicableTo(element: KtReferenceExpression, settings: ConverterSettings?): Boolean =
+        RedundantCompanionReferenceInspection.isRedundantCompanionReference(element)
+
+    override fun apply(element: KtReferenceExpression) {
+        RemoveRedundantCompanionReferenceFix.removeRedundantCompanionReference(element)
+    }
+}
+
+class ExplicitThisInspectionBasedProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<KtExpression>(KtExpression::class) {
+    override fun isApplicableTo(element: KtExpression, settings: ConverterSettings?): Boolean =
+        ExplicitThisInspection.hasExplicitThis(element)
+
+    override fun apply(element: KtExpression) {
+        ExplicitThisExpressionFix.removeExplicitThisExpression(
+            with(ExplicitThisInspection) {
+                element.thisAsReceiverOrNull() ?: return
+            }
+        )
+    }
+}
+
+class LiftReturnInspectionBasedProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<KtExpression>(KtExpression::class) {
+    override fun isApplicableTo(element: KtExpression, settings: ConverterSettings?): Boolean =
+        LiftReturnOrAssignmentInspection.getState(element, false)?.any {
+            it.liftType == LiftReturnOrAssignmentInspection.Companion.LiftType.LIFT_RETURN_OUT
+        } ?: false
+
+    override fun apply(element: KtExpression) {
+        BranchedFoldingUtils.foldToReturn(element)
+    }
+}
+
+class LiftAssignmentInspectionBasedProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<KtExpression>(KtExpression::class) {
+    override fun isApplicableTo(element: KtExpression, settings: ConverterSettings?): Boolean =
+        LiftReturnOrAssignmentInspection.getState(element, false)?.any {
+            it.liftType == LiftReturnOrAssignmentInspection.Companion.LiftType.LIFT_ASSIGNMENT_OUT
+        } ?: false
+
+    override fun apply(element: KtExpression) {
+        BranchedFoldingUtils.foldToAssignment(element)
     }
 }

@@ -152,7 +152,7 @@ private val addOrRemoveModifiersProcessingGroup =
             RemoveRedundantVisibilityModifierProcessing(),
             RemoveRedundantModalityModifierProcessing(),
             inspectionBasedProcessing(AddOperatorModifierInspection()),
-            generalInspectionBasedProcessing(RedundantUnitReturnTypeInspection())
+            RemoveExplicitUnitTypeProcessing()
         )
     )
 
@@ -162,8 +162,8 @@ private val removeRedundantElementsProcessingGroup =
         processings = listOf(
             RemoveExplicitTypeArgumentsProcessing(),
             RemoveJavaStreamsCollectCallTypeArgumentsProcessing(),
-            generalInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
-            generalInspectionBasedProcessing(ExplicitThisInspection()),
+            RedundantCompanionReferenceInspectionBasedProcessing(),
+            ExplicitThisInspectionBasedProcessing(),
             intentionBasedProcessing(RemoveEmptyClassBodyIntention())
         )
     )
@@ -173,7 +173,7 @@ private val removeRedundantSemicolonProcessing =
         runSingleTime = true,
         acceptNonKtElements = true,
         processings = listOf(
-            generalInspectionBasedProcessing(RedundantSemicolonInspection())
+            RedundantSemicolonInspectionBasedProcessing()
         )
     )
 
@@ -195,11 +195,11 @@ private val inspectionLikePostProcessingGroup =
         inspectionBasedProcessing(ReplacePutWithAssignmentInspection()),
         UseExpressionBodyProcessing(),
         inspectionBasedProcessing(UnnecessaryVariableInspection()),
-        generalInspectionBasedProcessing(RedundantExplicitTypeInspection()),
+        RedundantExplicitTypeInspectionBasedProcessing(),
         JavaObjectEqualsToEqOperatorProcessing(),
         RemoveExplicitPropertyTypeProcessing(),
         RemoveRedundantNullabilityProcessing(),
-        generalInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false)),
+        CanBeValInspectionBasedProcessing(),
         inspectionBasedProcessing(FoldInitializerAndIfToElvisInspection()),
         intentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention()),
         inspectionBasedProcessing(JavaMapForEachInspection()),
@@ -219,9 +219,10 @@ private val inspectionLikePostProcessingGroup =
         intentionBasedProcessing(DestructureIntention()),
         inspectionBasedProcessing(SimplifyAssertNotNullInspection()),
         intentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention()),
-        generalInspectionBasedProcessing(LiftReturnOrAssignmentInspection(skipLongExpressions = false)),
+        LiftReturnInspectionBasedProcessing(),
+        LiftAssignmentInspectionBasedProcessing(),
         intentionBasedProcessing(RemoveEmptyPrimaryConstructorIntention()),
-        generalInspectionBasedProcessing(MayBeConstantInspection()),
+        MayBeConstantInspectionBasedProcessing(),
         RemoveForExpressionLoopParameterTypeProcessing(),
         intentionBasedProcessing(ReplaceMapGetOrDefaultIntention()),
         inspectionBasedProcessing(ReplaceGuardClauseWithFunctionCallInspection())
@@ -243,7 +244,7 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
             InspectionLikeProcessingGroup(
                 processings = listOf(
                     VarToValProcessing(),
-                    generalInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false))
+                    CanBeValInspectionBasedProcessing()
                 ),
                 runSingleTime = true
             ),
@@ -267,8 +268,8 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
             ConvertGettersAndSettersToPropertyProcessing(),
             InspectionLikeProcessingGroup(MoveGetterAndSetterAnnotationsToPropertyProcessing()),
             InspectionLikeProcessingGroup(
-                generalInspectionBasedProcessing(RedundantGetterInspection()),
-                generalInspectionBasedProcessing(RedundantSetterInspection())
+                RemoveExplicitGetterInspectionBasedProcessing(),
+                RemoveExplicitSetterInspectionBasedProcessing()
             ),
             ConvertToDataClassProcessing()
         )
