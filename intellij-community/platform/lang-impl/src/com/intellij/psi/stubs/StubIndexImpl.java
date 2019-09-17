@@ -33,10 +33,7 @@ import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.KeyDescriptor;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
-import gnu.trove.TIntArrayList;
-import gnu.trove.TObjectIntHashMap;
+import gnu.trove.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,6 +56,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
 
   private static class AsyncState {
     private final Map<StubIndexKey<?, ?>, UpdatableIndex<?, StubIdList, FileContent>> myIndices = new THashMap<>();
+    private final Map<StubIndexKey<?, ?>, TObjectHashingStrategy<?>> myKeyHashingStrategies = new THashMap<>();
     private final TObjectIntHashMap<ID<?, ?>> myIndexIdToVersionMap = new TObjectIntHashMap<>();
   }
 
@@ -212,8 +210,23 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
           }
         }
 
+        TObjectHashingStrategy<K> keyHashingStrategy = new TObjectHashingStrategy<K>() {
+          private final KeyDescriptor<K> descriptor = extension.getKeyDescriptor();
+
+          @Override
+          public int computeHashCode(K object) {
+            return descriptor.getHashCode(object);
+          }
+
+          @Override
+          public boolean equals(K o1, K o2) {
+            return descriptor.isEqual(o1, o2);
+          }
+        };
+
         synchronized (state) {
           state.myIndices.put(indexKey, index);
+          state.myKeyHashingStrategies.put(indexKey, keyHashingStrategy);
         }
         break;
       }
@@ -228,6 +241,11 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       }
     }
     return needRebuild;
+  }
+
+  @NotNull
+  <K> TObjectHashingStrategy<K> getKeyHashingStrategy(StubIndexKey<K, ?> stubIndexKey) {
+    return (TObjectHashingStrategy<K>)getAsyncState().myKeyHashingStrategies.get(stubIndexKey);
   }
 
   private static <K> void onExceptionInstantiatingIndex(@NotNull StubIndexKey<K, ?> indexKey,
@@ -314,7 +332,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
     int mapSize = DataInputOutputUtil.readINT(in);
 
-    Map<K, StubIdList> result = new THashMap<>(mapSize);
+    Map<K, StubIdList> result = new THashMap<>(mapSize, getKeyHashingStrategy(stubIndexKey));
     for (int i = 0; i < mapSize; ++i) {
       K key = keyDescriptor.read(in);
       StubIdList read = StubIdExternalizer.INSTANCE.read(in);
