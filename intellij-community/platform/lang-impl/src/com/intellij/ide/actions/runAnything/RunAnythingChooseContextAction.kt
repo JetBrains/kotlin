@@ -78,10 +78,11 @@ abstract class RunAnythingChooseContextAction(private val containingPanel: JPane
     }
 
     val dataContext = e.dataContext
-    val actionItems = PopupFactoryImpl.ActionGroupPopup.getActionItems(DefaultActionGroup(createItems(project)), dataContext,
-                                                                       false,
-                                                                       false, true,
-                                                                       true, ActionPlaces.POPUP)
+    val actionItems = ActionPopupStep.createActionItems(
+      DefaultActionGroup(createItems(project)), dataContext,
+      false,
+      false, true,
+      true, ActionPlaces.POPUP, null)
 
     ChooseContextPopup(ChooseContextPopupStep(actionItems, dataContext, updateToolbar), dataContext)
       .also { it.size = Dimension(500, 300) }
@@ -209,7 +210,7 @@ abstract class RunAnythingChooseContextAction(private val containingPanel: JPane
 
   class ChooseContextPopupStep(val actions: List<PopupFactoryImpl.ActionItem>, dataContext: DataContext, val updateToolbar: () -> Unit)
     : ActionPopupStep(actions, IdeBundle.message("run.anything.context.title.working.directory"), Supplier { dataContext }, null, true,
-                      Condition { false }, false, true) {
+                      Condition { false }, false, true, null) {
 
     override fun getSeparatorAbove(value: PopupFactoryImpl.ActionItem?): ListSeparator? {
       val action = value?.action
