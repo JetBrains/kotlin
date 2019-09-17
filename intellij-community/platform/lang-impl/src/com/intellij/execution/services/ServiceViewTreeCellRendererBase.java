@@ -5,7 +5,6 @@ import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,8 +12,7 @@ import java.awt.*;
 
 import static com.intellij.execution.services.RepaintLinkMouseListenerBase.ACTIVE_TAG;
 
-@ApiStatus.Internal
-public abstract class ServiceViewTreeCellRendererBase extends NodeRenderer {
+abstract class ServiceViewTreeCellRendererBase extends NodeRenderer {
   private boolean myAppendingTag;
 
   protected abstract Object getTag(String fragment);

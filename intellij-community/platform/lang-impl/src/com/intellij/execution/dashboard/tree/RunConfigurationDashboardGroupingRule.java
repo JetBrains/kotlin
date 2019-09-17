@@ -20,38 +20,13 @@ import com.intellij.execution.dashboard.RunDashboardGroup;
 import com.intellij.execution.dashboard.RunDashboardGroupingRule;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
 import com.intellij.openapi.util.registry.Registry;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author konstantin.aleev
  */
 public class RunConfigurationDashboardGroupingRule implements RunDashboardGroupingRule {
-  @NotNull
-  @Override
-  public ActionPresentation getPresentation() {
-    return new ActionPresentationData("", "", null);
-  }
-
-  @NotNull
-  @Override
-  public String getName() {
-    return "RunConfigurationDashboardGroupingRule";
-  }
-
-  @Override
-  public boolean isAlwaysEnabled() {
-    return true;
-  }
-
-  @Override
-  public boolean shouldGroupSingleNodes() {
-    return false;
-  }
-
   @Nullable
   @Override
   public RunDashboardGroup getGroup(AbstractTreeNode<?> node) {

@@ -26,6 +26,7 @@ import com.intellij.ide.util.treeView.PresentableNodeDescriptor;
 import com.intellij.ide.util.treeView.WeighedItem;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -39,6 +40,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.TObjectIntHashMap;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,8 +50,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.execution.dashboard.RunDashboardContent.RUN_DASHBOARD_CONTENT_TOOLBAR;
-import static com.intellij.execution.dashboard.RunDashboardContent.RUN_DASHBOARD_TREE_TOOLBAR;
 import static com.intellij.execution.dashboard.RunDashboardCustomizer.NODE_LINKS;
 import static com.intellij.execution.dashboard.RunDashboardManagerImpl.findActionToolbar;
 import static com.intellij.execution.dashboard.RunDashboardManagerImpl.getRunnerLayoutUi;
@@ -57,6 +57,12 @@ import static com.intellij.openapi.actionSystem.ActionPlaces.RUN_DASHBOARD_POPUP
 
 public class RunDashboardServiceViewContributor
   implements ServiceViewGroupingContributor<RunDashboardServiceViewContributor.RunConfigurationContributor, GroupingNode> {
+
+  @NonNls private static final String RUN_DASHBOARD_CONTENT_TOOLBAR = "RunDashboardContentToolbar";
+
+  private static final ExtensionPointName<RunDashboardGroupingRule> EP_NAME =
+    ExtensionPointName.create("com.intellij.runDashboardGroupingRule");
+
   private static final ServiceViewDescriptor CONTRIBUTOR_DESCRIPTOR =
     new SimpleServiceViewDescriptor("Run Dashboard", AllIcons.Actions.Execute) {
       @Override
@@ -79,7 +85,7 @@ public class RunDashboardServiceViewContributor
   @NotNull
   @Override
   public List<RunConfigurationContributor> getServices(@NotNull Project project) {
-    RunDashboardManager runDashboardManager = RunDashboardManager.getInstance(project);
+    RunDashboardManagerImpl runDashboardManager = (RunDashboardManagerImpl)RunDashboardManager.getInstance(project);
     return ContainerUtil.map(runDashboardManager.getRunConfigurations(),
                              value -> new RunConfigurationContributor(
                                new RunConfigurationNode(project, value,
@@ -97,7 +103,7 @@ public class RunDashboardServiceViewContributor
   public List<GroupingNode> getGroups(@NotNull RunConfigurationContributor contributor) {
     List<GroupingNode> result = new ArrayList<>();
     GroupingNode parentGroupNode = null;
-    for (RunDashboardGroupingRule groupingRule : RunDashboardGroupingRule.EP_NAME.getExtensions()) {
+    for (RunDashboardGroupingRule groupingRule : EP_NAME.getExtensions()) {
       RunDashboardGroup group = groupingRule.getGroup(contributor.asService());
       if (group != null) {
         GroupingNode node = new GroupingNode(contributor.asService().getProject(),
@@ -158,7 +164,6 @@ public class RunDashboardServiceViewContributor
     ActionManager actionManager = ActionManager.getInstance();
     actions.add(actionManager.getAction(RUN_DASHBOARD_CONTENT_TOOLBAR));
     actions.addSeparator();
-    actions.add(actionManager.getAction(RUN_DASHBOARD_TREE_TOOLBAR));
     actions.add(actionManager.getAction(RUN_DASHBOARD_POPUP));
     return actions;
   }
@@ -422,8 +427,8 @@ public class RunDashboardServiceViewContributor
     @Override
     public int getWeight() {
       Object value = ((RunDashboardGroupImpl<?>)myGroup).getValue();
-      if (value instanceof RunDashboardRunConfigurationStatus) {
-        return ((RunDashboardRunConfigurationStatus)value).getPriority();
+      if (value instanceof WeighedItem) {
+        return ((WeighedItem)value).getWeight();
       }
       return 0;
     }

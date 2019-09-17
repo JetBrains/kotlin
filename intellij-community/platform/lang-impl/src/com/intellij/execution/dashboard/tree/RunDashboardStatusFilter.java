@@ -12,10 +12,9 @@ import java.util.Set;
 /**
  * @author Konstantin Aleev
  */
-public class RunDashboardStatusFilter implements RunDashboardFilter {
+public class RunDashboardStatusFilter {
   private final Set<RunDashboardRunConfigurationStatus> myFilteredStatuses = new HashSet<>();
 
-  @Override
   public boolean isVisible(AbstractTreeNode<?> node) {
     return !(node instanceof RunDashboardRunConfigurationNode) || isVisible(((RunDashboardRunConfigurationNode)node).getStatus());
   }

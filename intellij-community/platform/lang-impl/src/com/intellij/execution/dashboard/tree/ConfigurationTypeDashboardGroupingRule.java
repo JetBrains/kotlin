@@ -15,7 +15,6 @@
  */
 package com.intellij.execution.dashboard.tree;
 
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.dashboard.RunDashboardGroup;
@@ -23,52 +22,19 @@ import com.intellij.execution.dashboard.RunDashboardGroupingRule;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.registry.Registry;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author konstantin.aleev
  */
 public class ConfigurationTypeDashboardGroupingRule implements RunDashboardGroupingRule {
-  @NonNls public static final String NAME = "ConfigurationTypeDashboardGroupingRule";
-
-  @Override
-  @NotNull
-  public String getName() {
-    return NAME;
-  }
-
-  @NotNull
-  @Override
-  public ActionPresentation getPresentation() {
-    return new ActionPresentationData(ExecutionBundle.message("run.dashboard.group.by.type.action.name"),
-                                      ExecutionBundle.message("run.dashboard.group.by.type.action.name"),
-                                      null);
-  }
-
-  @Override
-  public boolean isAlwaysEnabled() {
-    return false;
-  }
-
-  @Override
-  public boolean shouldGroupSingleNodes() {
-    return true;
-  }
-
   @Nullable
   @Override
   public RunDashboardGroup getGroup(AbstractTreeNode<?> node) {
-    if (Registry.is("ide.service.view")) {
-      Project project = node.getProject();
-      if (project != null && !PropertiesComponent.getInstance(project).getBoolean(getName(), true)) {
-        return null;
-      }
+    Project project = node.getProject();
+    if (project != null && !PropertiesComponent.getInstance(project).getBoolean(getName(), true)) {
+      return null;
     }
     if (node instanceof RunDashboardRunConfigurationNode) {
       RunnerAndConfigurationSettings configurationSettings = ((RunDashboardRunConfigurationNode)node).getConfigurationSettings();

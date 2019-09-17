@@ -8,7 +8,6 @@ import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
-import com.intellij.execution.dashboard.RunDashboardManager;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl;
@@ -26,8 +25,7 @@ public class CopyConfigurationAction extends AnAction {
   public void update(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     RunDashboardRunConfigurationNode node = project == null ? null : RunDashboardActionUtils.getTarget(e);
-    boolean enabled = node != null && RunDashboardManager.getInstance(project).isShowConfigurations() &&
-                      RunManager.getInstance(project).hasSettings(node.getConfigurationSettings());
+    boolean enabled = node != null && RunManager.getInstance(project).hasSettings(node.getConfigurationSettings());
     e.getPresentation().setEnabled(enabled);
     boolean popupPlace = ActionPlaces.isPopupPlace(e.getPlace());
     e.getPresentation().setVisible(enabled || !popupPlace);
