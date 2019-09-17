@@ -2,9 +2,11 @@
 package com.intellij.codeInsight.daemon.impl
 
 import com.intellij.ui.awt.RelativePoint
-import java.awt.LayoutManager
-import javax.swing.JPanel
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.Point
 
-abstract class HectorComponent(layout: LayoutManager) : JPanel(layout) {
-    abstract fun showComponent(point: RelativePoint)
+interface HectorComponent {
+    fun showComponent(point: RelativePoint)
+    fun showComponent(component: Component, offset : (Dimension) -> Point)
 }

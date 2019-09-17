@@ -36,6 +36,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +46,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.*;
 
-class HectorComponentImpl extends HectorComponent {
+class HectorComponentImpl extends JPanel implements HectorComponent {
   private static final Logger LOG = Logger.getInstance(HectorComponent.class);
 
   private WeakReference<JBPopup> myHectorRef;
@@ -180,6 +181,12 @@ class HectorComponentImpl extends HectorComponent {
       panel.add(borderPanel, new GridBagConstraints(GridBagConstraints.RELATIVE, 1, 1, 1, 0, 1, GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
                                                     new Insets(0, 5, 0, 5), 0, 0));
     }
+  }
+
+  @Override
+  public void showComponent(@NotNull Component component,
+                            @NotNull Function1<? super Dimension, ? extends Point> offset) {
+    showComponent(new RelativePoint(component, offset.invoke(getPreferredSize())));
   }
 
   @Override

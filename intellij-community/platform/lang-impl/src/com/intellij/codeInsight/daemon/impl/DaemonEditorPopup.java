@@ -79,9 +79,7 @@ public class DaemonEditorPopup extends PopupHandler {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         final HectorComponent component = ServiceManager.getService(psiFile.getProject(), HectorComponentFactory.class).create(psiFile);
-        final Dimension dimension = component.getPreferredSize();
-        Point point = new Point(x, y);
-        component.showComponent(new RelativePoint(comp, new Point(point.x - dimension.width, point.y)));
+        component.showComponent(comp, d -> new Point(x - d.width, y));
       }
     });
     actionGroup.addSeparator();
