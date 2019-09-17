@@ -7,33 +7,38 @@ package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
+import org.jetbrains.kotlin.idea.caches.resolve.forceResolveInWriteActionCheckInTests
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractLiteralTextToKotlinCopyPasteTest : AbstractCopyPasteTest() {
-    private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/plainTextLiteral"
+    private val _basePath = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/plainTextLiteral"
 
-
-    override fun getTestDataPath() = BASE_PATH
+    override fun getTestDataPath() = _basePath
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-
     fun doTest(path: String) {
-        myFixture.testDataPath = BASE_PATH
+        myFixture.testDataPath = _basePath
         val testName = getTestName(false)
-        myFixture.configureByFiles(testName + ".txt")
+        myFixture.configureByFiles("$testName.txt")
         val fileText = myFixture.editor.document.text
 
         if (!myFixture.editor.selectionModel.hasSelection())
             myFixture.editor.selectionModel.setSelection(0, fileText.length)
-        myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
-        configureTargetFile(testName + ".kt")
+        forceResolveInWriteActionCheckInTests {
+            myFixture.performEditorAction(IdeActions.ACTION_COPY)
+        }
 
-        myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+        configureTargetFile("$testName.kt")
+
+        forceResolveInWriteActionCheckInTests {
+            myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+        }
+
         KotlinTestUtils.assertEqualsToFile(File(path.replace(".txt", ".expected.kt")), myFixture.file.text)
     }
 }
