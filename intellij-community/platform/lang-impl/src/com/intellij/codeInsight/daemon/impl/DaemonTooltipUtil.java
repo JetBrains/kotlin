@@ -39,20 +39,27 @@ public class DaemonTooltipUtil {
   private static final TooltipGroup DAEMON_INFO_GROUP = new TooltipGroup("DAEMON_INFO_GROUP", 0);
 
   public static void showInfoTooltip(HighlightInfo info, Editor editor, int defaultOffset) {
-    showInfoTooltip(info, editor, defaultOffset, -1, false, false, false);
+    showInfoTooltip(info, editor, defaultOffset, -1);
   }
 
   public static void cancelTooltips() {
     TooltipController.getInstance().cancelTooltip(DAEMON_INFO_GROUP, null, true);
   }
 
+  private static void showInfoTooltip(@NotNull final HighlightInfo info,
+                                      @NotNull Editor editor,
+                                      final int defaultOffset,
+                                      final int currentWidth) {
+    showInfoTooltip(info, editor, defaultOffset, currentWidth, false, false);
+  }
+  
+
   static void showInfoTooltip(@NotNull final HighlightInfo info,
                               @NotNull Editor editor,
                               final int defaultOffset,
                               final int currentWidth,
                               final boolean requestFocus,
-                              final boolean showImmediately,
-                              boolean hideOnCaretMove) {
+                              final boolean showImmediately) {
     if (Registry.is("editor.new.mouse.hover.popups")) {
       EditorMouseHoverPopupManager.getInstance().showInfoTooltip(editor, info, defaultOffset, requestFocus, showImmediately);
       return;
@@ -86,8 +93,7 @@ public class DaemonTooltipUtil {
       .setHighlighterType(true)
       .setRequestFocus(requestFocus)
       .setCalloutShift(editor.getLineHeight() / 2 - 1)
-      .setShowImmediately(showImmediately)
-      .setHideOnCaretMove(hideOnCaretMove);
+      .setShowImmediately(showImmediately);
 
     TooltipAction action = TooltipActionProvider.calcTooltipAction(info, editor);
     ErrorStripTooltipRendererProvider provider = ((EditorMarkupModel)editor.getMarkupModel()).getErrorStripTooltipRendererProvider();

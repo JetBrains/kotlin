@@ -46,7 +46,7 @@ public class GotoNextErrorHandler implements CodeInsightActionHandler {
       if (infoToGo != null) {
         navigateToError(project, editor, infoToGo, () -> {
           if (Registry.is("error.navigation.show.tooltip")) {
-            DaemonTooltipUtil.showInfoTooltip(infoToGo, editor, editor.getCaretModel().getOffset(), 0, false, true, true);
+            DaemonTooltipUtil.showInfoTooltip(infoToGo, editor, editor.getCaretModel().getOffset(), 0, false, true);
           }
         });
 
