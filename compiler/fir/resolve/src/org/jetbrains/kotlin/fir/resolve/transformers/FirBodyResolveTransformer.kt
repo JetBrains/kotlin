@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
@@ -101,8 +100,7 @@ open class FirBodyResolveTransformer(
         this.file = file
         return withScopeCleanup(topLevelScopes) {
             topLevelScopes.addImportingScopes(file, session, scopeSession)
-            topLevelScopes += FirTopLevelDeclaredMemberScope(file, session, scopeSession)
-            transformElement(file, data)
+            super.transformFile(file, data)
         }
     }
 

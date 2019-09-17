@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSelfImportingScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -39,7 +39,7 @@ private fun FirFile.findCallableMember(
     packageFqName: FqName, klassFqName: FqName?, declName: Name
 ): FirCallableDeclaration<*> {
     val memberScope =
-        if (klassFqName == null) FirTopLevelDeclaredMemberScope(this, session)
+        if (klassFqName == null) FirSelfImportingScope(this.packageFqName, session)
         else provider.getClassDeclaredMemberScope(ClassId(packageFqName, klassFqName, false))!!
     var result: FirCallableDeclaration<*>? = null
     val processor = { symbol: FirCallableSymbol<*> ->

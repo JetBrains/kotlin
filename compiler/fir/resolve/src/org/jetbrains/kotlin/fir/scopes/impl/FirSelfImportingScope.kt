@@ -9,7 +9,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -38,5 +42,25 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
         } else {
             true
         }
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+        val symbols = symbolProvider.getTopLevelCallableSymbols(fqName, name)
+        for (symbol in symbols) {
+            if (symbol is FirFunctionSymbol<*> && !processor(symbol)) {
+                return ProcessorAction.STOP
+            }
+        }
+        return ProcessorAction.NEXT
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+        val symbols = symbolProvider.getTopLevelCallableSymbols(fqName, name)
+        for (symbol in symbols) {
+            if (symbol is FirPropertySymbol && !processor(symbol)) {
+                return ProcessorAction.STOP
+            }
+        }
+        return ProcessorAction.NEXT
     }
 }
