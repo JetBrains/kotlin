@@ -5,6 +5,7 @@ import com.google.common.hash.HashCode
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.stubs.FileContentHashing
@@ -56,6 +57,9 @@ abstract class PrebuiltIndexProviderBase<Value> : Disposable {
       else {
         LOG.info("Prebuilt $indexName indices are missing for $dirName")
       }
+    }
+    catch (e: ProcessCanceledException) {
+      throw e
     }
     catch (e: Exception) {
       myPrebuiltIndexStorage = null
