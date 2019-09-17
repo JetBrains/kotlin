@@ -36,21 +36,22 @@ internal val Element.isStatic: Boolean
 internal val Element.isFinal: Boolean
     get() = modifiers.contains(Modifier.FINAL)
 
-internal fun Element.getVisibility(): Visibility = modifiers.let { modifiers ->
+internal fun Element.getVisibility(): Visibility = modifiers.getVisibility()
+
+internal fun Set<Modifier>.getVisibility(): Visibility =
     when {
-        Modifier.PUBLIC in modifiers -> Visibilities.PUBLIC
-        Modifier.PRIVATE in modifiers -> Visibilities.PRIVATE
-        Modifier.PROTECTED in modifiers -> {
-            if (Modifier.STATIC in modifiers) {
+        Modifier.PUBLIC in this -> Visibilities.PUBLIC
+        Modifier.PRIVATE in this -> Visibilities.PRIVATE
+        Modifier.PROTECTED in this -> {
+            if (Modifier.STATIC in this) {
                 JavaVisibilities.PROTECTED_STATIC_VISIBILITY
-            }
-            else {
+            } else {
                 JavaVisibilities.PROTECTED_AND_PACKAGE
             }
         }
         else -> JavaVisibilities.PACKAGE_VISIBILITY
     }
-}
+
 
 internal fun TypeElement.computeClassId(): ClassId? {
     val enclosingElement = enclosingElement
@@ -63,20 +64,23 @@ internal fun TypeElement.computeClassId(): ClassId? {
 }
 
 internal fun ExecutableElement.valueParameters(javac: JavacWrapper): List<JavaValueParameter> =
-        parameters.let { parameters ->
-            val isVarArgs = isVarArgs
-            val lastIndex = parameters.lastIndex
-            parameters.mapIndexed { index, parameter ->
-                val simpleName = parameter.simpleName.toString()
-                SymbolBasedValueParameter(parameter,
-                                          if (!simpleName.contentEquals("arg$index")) simpleName else "p$index",
-                                          index == lastIndex && isVarArgs,
-                                          javac)
-            }
+    parameters.let { parameters ->
+        val isVarArgs = isVarArgs
+        val lastIndex = parameters.lastIndex
+        parameters.mapIndexed { index, parameter ->
+            val simpleName = parameter.simpleName.toString()
+            SymbolBasedValueParameter(
+                parameter,
+                if (!simpleName.contentEquals("arg$index")) simpleName else "p$index",
+                index == lastIndex && isVarArgs,
+                javac
+            )
         }
+    }
 
-internal fun AnnotatedConstruct.findAnnotation(fqName: FqName,
-                                               javac: JavacWrapper) =
-        annotationMirrors.find {
-            (it.annotationType.asElement() as TypeElement).qualifiedName.toString() == fqName.asString()
-        }?.let { SymbolBasedAnnotation(it, javac) }
+internal fun AnnotatedConstruct.findAnnotation(
+    fqName: FqName,
+    javac: JavacWrapper
+) = annotationMirrors.find {
+    (it.annotationType.asElement() as TypeElement).qualifiedName.toString() == fqName.asString()
+}?.let { SymbolBasedAnnotation(it, javac) }
