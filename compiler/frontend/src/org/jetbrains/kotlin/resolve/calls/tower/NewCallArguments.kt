@@ -301,29 +301,38 @@ internal fun createSimplePSICallArgument(
     val baseType = typeInfoForArgument.type?.unwrap() ?: partiallyResolvedCall?.resultCallAtom?.freshReturnType ?: return null
 
     val expressionReceiver = ExpressionReceiver.create(ktExpression, baseType, bindingContext)
-    // For a sub-call there can't be any smartcast so we use a fast-path here to avoid calling transformToReceiverWithSmartCastInfo function
-    if (partiallyResolvedCall != null) {
-        val capturedReceiver =
+    val argumentWithSmartCastInfo =
+        if (ktExpression is KtCallExpression || partiallyResolvedCall != null) {
+            // For a sub-call (partially or fully resolved), there can't be any smartcast
+            // so we use a fast-path here to avoid calling transformToReceiverWithSmartCastInfo function
             ReceiverValueWithSmartCastInfo(expressionReceiver, emptySet(), isStable = true)
-                .prepareReceiverRegardingCaptureTypes()
+        } else {
+            transformToReceiverWithSmartCastInfo(
+                ownerDescriptor, bindingContext,
+                // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
+                typeInfoForArgument.dataFlowInfo,
+                expressionReceiver,
+                languageVersionSettings,
+                dataFlowValueFactory
+            )
+        }
 
-        return SubKotlinCallArgumentImpl(
+    val capturedArgument = argumentWithSmartCastInfo.prepareReceiverRegardingCaptureTypes()
+
+    return if (partiallyResolvedCall != null) {
+        SubKotlinCallArgumentImpl(
             valueArgument,
             dataFlowInfoBeforeThisArgument,
             typeInfoForArgument.dataFlowInfo,
-            capturedReceiver,
+            capturedArgument,
             partiallyResolvedCall
         )
+    } else {
+        ExpressionKotlinCallArgumentImpl(
+            valueArgument,
+            dataFlowInfoBeforeThisArgument,
+            typeInfoForArgument.dataFlowInfo,
+            capturedArgument
+        )
     }
-
-    // we should use DFI after this argument, because there can be some useful smartcast. Popular case: if branches.
-    val receiverToCast = transformToReceiverWithSmartCastInfo(
-        ownerDescriptor, bindingContext,
-        typeInfoForArgument.dataFlowInfo, // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
-        expressionReceiver,
-        languageVersionSettings,
-        dataFlowValueFactory
-    ).prepareReceiverRegardingCaptureTypes()
-
-    return ExpressionKotlinCallArgumentImpl(valueArgument, dataFlowInfoBeforeThisArgument, typeInfoForArgument.dataFlowInfo, receiverToCast)
 }
