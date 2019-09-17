@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.namedFunctionVisitor
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
@@ -21,17 +22,23 @@ class RedundantUnitReturnTypeInspection : AbstractKotlinInspection(), CleanupLoc
         return namedFunctionVisitor(fun(function) {
             if (function.containingFile is KtCodeFragment) return
             val typeElement = function.typeReference?.typeElement ?: return
-            val descriptor = function.resolveToDescriptorIfAny() ?: return
-            if (descriptor.returnType?.isUnit() == true) {
-                if (!function.hasBlockBody()) {
-                    return
-                }
-
-                holder.registerProblem(typeElement,
-                                       "Redundant 'Unit' return type",
-                                       ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                       IntentionWrapper(RemoveExplicitTypeIntention(), function.containingKtFile))
+            if (hasRedundantUnitReturnType(function)) {
+                holder.registerProblem(
+                    typeElement,
+                    "Redundant 'Unit' return type",
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    IntentionWrapper(RemoveExplicitTypeIntention(), function.containingKtFile)
+                )
             }
         })
+    }
+
+    companion object {
+        fun hasRedundantUnitReturnType(function: KtNamedFunction): Boolean {
+            if (!function.hasBlockBody()) return false
+            if (function.typeReference?.typeElement == null) return false
+            val descriptor = function.resolveToDescriptorIfAny() ?: return false
+            return descriptor.returnType?.isUnit() == true
+        }
     }
 }

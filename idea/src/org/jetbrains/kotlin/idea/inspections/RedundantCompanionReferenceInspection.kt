@@ -33,53 +33,60 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return referenceExpressionVisitor(fun(expression) {
-            val parent = expression.parent as? KtDotQualifiedExpression ?: return
+            if (isRedundantCompanionReference(expression)) {
+                holder.registerProblem(
+                    expression,
+                    "Redundant Companion reference",
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    RemoveRedundantCompanionReferenceFix()
+                )
+            }
+        })
+    }
+
+    companion object {
+        fun isRedundantCompanionReference(reference: KtReferenceExpression): Boolean {
+            val parent = reference.parent as? KtDotQualifiedExpression ?: return false
             val selectorExpression = parent.selectorExpression
-            if (expression == selectorExpression && parent.parent !is KtDotQualifiedExpression) return
-            if (parent.getStrictParentOfType<KtImportDirective>() != null) return
+            if (reference == selectorExpression && parent.parent !is KtDotQualifiedExpression) return false
+            if (parent.getStrictParentOfType<KtImportDirective>() != null) return false
 
-            val objectDeclaration = expression.mainReference.resolve() as? KtObjectDeclaration ?: return
-            if (!objectDeclaration.isCompanion()) return
-            if (expression.text != objectDeclaration.name) return
+            val objectDeclaration = reference.mainReference.resolve() as? KtObjectDeclaration ?: return false
+            if (!objectDeclaration.isCompanion()) return false
+            if (reference.text != objectDeclaration.name) return false
 
-            val context = expression.analyze()
+            val context = reference.analyze()
 
-            val containingClass = objectDeclaration.containingClass() ?: return
-            if (expression.containingClass() != containingClass && expression == parent.receiverExpression) return
-            val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return
+            val containingClass = objectDeclaration.containingClass() ?: return false
+            if (reference.containingClass() != containingClass && reference == parent.receiverExpression) return false
+            val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return false
             val selectorDescriptor = selectorExpression?.getResolvedCall(context)?.resultingDescriptor
             when (selectorDescriptor) {
                 is PropertyDescriptor -> {
                     val name = selectorDescriptor.name
-                    if (containingClassDescriptor.findMemberVariable(name) != null) return
-                    val variable = expression.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
-                    if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return
+                    if (containingClassDescriptor.findMemberVariable(name) != null) return false
+                    val variable = reference.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
+                    if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return false
                 }
                 is FunctionDescriptor -> {
                     val name = selectorDescriptor.name
-                    if (containingClassDescriptor.findMemberFunction(name) != null) return
-                    val function = expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)
-                    if (function != null && function.isLocalOrExtension(containingClassDescriptor)) return
+                    if (containingClassDescriptor.findMemberFunction(name) != null) return false
+                    val function = reference.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)
+                    if (function != null && function.isLocalOrExtension(containingClassDescriptor)) return false
                 }
             }
 
-            (expression as? KtSimpleNameExpression)?.getReceiverExpression()?.getQualifiedElementSelector()
+            (reference as? KtSimpleNameExpression)?.getReceiverExpression()?.getQualifiedElementSelector()
                 ?.mainReference?.resolveToDescriptors(context)?.firstOrNull()
-                ?.let { if (it != containingClassDescriptor) return }
+                ?.let { if (it != containingClassDescriptor) return false }
 
             val grandParent = parent.parent as? KtQualifiedExpression
             if (grandParent != null) {
-                val grandParentDescriptor = grandParent.getResolvedCall(context)?.resultingDescriptor ?: return
-                if (grandParentDescriptor is ConstructorDescriptor || grandParentDescriptor is FakeCallableDescriptorForObject) return
+                val grandParentDescriptor = grandParent.getResolvedCall(context)?.resultingDescriptor ?: return false
+                if (grandParentDescriptor is ConstructorDescriptor || grandParentDescriptor is FakeCallableDescriptorForObject) return false
             }
-
-            holder.registerProblem(
-                expression,
-                "Redundant Companion reference",
-                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                RemoveRedundantCompanionReferenceFix()
-            )
-        })
+            return true
+        }
     }
 }
 
@@ -111,16 +118,22 @@ private fun CallableDescriptor.isLocalOrExtension(extensionClassDescriptor: Clas
             extensionReceiverParameter?.type?.constructor?.declarationDescriptor == extensionClassDescriptor
 }
 
-private class RemoveRedundantCompanionReferenceFix : LocalQuickFix {
+class RemoveRedundantCompanionReferenceFix : LocalQuickFix {
     override fun getName() = "Remove redundant Companion reference"
 
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val expression = descriptor.psiElement as? KtReferenceExpression ?: return
-        val parent = expression.parent as? KtDotQualifiedExpression ?: return
-        val selector = parent.selectorExpression ?: return
-        val receiver = parent.receiverExpression
-        if (expression == receiver) parent.replace(selector) else parent.replace(receiver)
+        removeRedundantCompanionReference(expression)
+    }
+
+    companion object {
+        fun removeRedundantCompanionReference(expression: KtReferenceExpression) {
+            val parent = expression.parent as? KtDotQualifiedExpression ?: return
+            val selector = parent.selectorExpression ?: return
+            val receiver = parent.receiverExpression
+            if (expression == receiver) parent.replace(selector) else parent.replace(receiver)
+        }
     }
 }

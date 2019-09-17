@@ -38,13 +38,17 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
     }
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
-        val initializer = (element as? KtProperty)?.initializer
-        val typeArgumentList = initializer?.let { getQualifiedTypeArgumentList(it) }
-        element.typeReference = null
-        if (typeArgumentList != null) addTypeArgumentsIfNeeded(initializer, typeArgumentList)
+        removeExplicitType(element)
     }
 
     companion object {
+        fun removeExplicitType(element: KtCallableDeclaration) {
+            val initializer = (element as? KtProperty)?.initializer
+            val typeArgumentList = initializer?.let { getQualifiedTypeArgumentList(it) }
+            element.typeReference = null
+            if (typeArgumentList != null) addTypeArgumentsIfNeeded(initializer, typeArgumentList)
+        }
+
         fun getRange(element: KtCallableDeclaration): TextRange? {
             if (element.containingFile is KtCodeFragment) return null
             val typeReference = element.typeReference ?: return null

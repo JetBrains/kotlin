@@ -30,7 +30,7 @@ class RedundantSetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
     }
 }
 
-private fun KtPropertyAccessor.isRedundantSetter(): Boolean {
+fun KtPropertyAccessor.isRedundantSetter(): Boolean {
     if (!isSetter) return false
     val expression = bodyExpression ?: return canBeCompletelyDeleted()
     if (expression is KtBlockExpression) {
@@ -45,18 +45,23 @@ private fun KtPropertyAccessor.isRedundantSetter(): Boolean {
 }
 
 
-private class RemoveRedundantSetterFix : LocalQuickFix {
+class RemoveRedundantSetterFix : LocalQuickFix {
     override fun getName() = "Remove redundant setter"
 
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val accessor = descriptor.psiElement as? KtPropertyAccessor ?: return
+        removeRedundantSetter(accessor)
+    }
 
-        if (accessor.canBeCompletelyDeleted()) {
-            accessor.delete()
-        } else {
-            accessor.deleteBody()
+    companion object {
+        fun removeRedundantSetter(setter: KtPropertyAccessor) {
+            if (setter.canBeCompletelyDeleted()) {
+                setter.delete()
+            } else {
+                setter.deleteBody()
+            }
         }
     }
 }

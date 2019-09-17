@@ -21,13 +21,11 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType.LIKE_UNUSED_SYMBOL
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.LanguageFeature.CallableReferencesToClassMembersWithEmptyLHS
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.*
@@ -38,30 +36,39 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class ExplicitThisInspection : AbstractKotlinInspection() {
-
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
-        override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression) {
-            if (!expression.languageVersionSettings.supportsFeature(CallableReferencesToClassMembersWithEmptyLHS)) return
+        override fun visitExpression(expression: KtExpression) {
+            val thisExpression = expression.thisAsReceiverOrNull() ?: return
+            if (hasExplicitThis(expression)) {
+                holder.registerProblem(
+                    thisExpression,
+                    "Redundant explicit this",
+                    LIKE_UNUSED_SYMBOL,
+                    ExplicitThisExpressionFix(thisExpression.text)
+                )
+            }
+        }
+    }
 
-            val thisExpression = expression.receiverExpression as? KtThisExpression ?: return
-            val selectorExpression = expression.callableReference
-
-            handle(expression, thisExpression, selectorExpression)
+    companion object {
+        fun KtExpression.thisAsReceiverOrNull() = when (this) {
+            is KtCallableReferenceExpression -> receiverExpression as? KtThisExpression
+            is KtDotQualifiedExpression -> receiverExpression as? KtThisExpression
+            else -> null
         }
 
-        override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-            val thisExpression = expression.receiverExpression as? KtThisExpression ?: return
-            val selectorExpression = expression.selectorExpression as? KtReferenceExpression ?: return
-
-            handle(expression, thisExpression, selectorExpression)
-        }
-
-        private fun handle(expression: KtExpression, thisExpression: KtThisExpression, reference: KtReferenceExpression) {
+        fun hasExplicitThis(expression: KtExpression): Boolean {
+            val thisExpression = expression.thisAsReceiverOrNull() ?: return false
+            val reference = when (expression) {
+                is KtCallableReferenceExpression -> expression.callableReference
+                is KtDotQualifiedExpression -> expression.selectorExpression as? KtReferenceExpression
+                else -> null
+            } ?: return false
             val context = expression.analyze()
-            val scope = expression.getResolutionScope(context) ?: return
+            val scope = expression.getResolutionScope(context) ?: return false
 
-            val referenceExpression = reference as? KtNameReferenceExpression ?: reference.getChildOfType() ?: return
-            val receiverType = context[BindingContext.EXPRESSION_TYPE_INFO, thisExpression]?.type ?: return
+            val referenceExpression = reference as? KtNameReferenceExpression ?: reference.getChildOfType() ?: return false
+            val receiverType = context[BindingContext.EXPRESSION_TYPE_INFO, thisExpression]?.type ?: return false
 
             //we avoid overload-related problems by enforcing that there is only one candidate
             val name = referenceExpression.getReferencedNameAsName()
@@ -74,21 +81,20 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
                 scope.getAllAccessibleVariables(name)
             }
             if (referenceExpression.getCallableDescriptor() is SyntheticJavaPropertyDescriptor) {
-                if (candidates.map { it.containingDeclaration }.distinct().size != 1) return
+                if (candidates.map { it.containingDeclaration }.distinct().size != 1) return false
             } else {
-                val candidate = candidates.singleOrNull() ?: return
+                val candidate = candidates.singleOrNull() ?: return false
                 val extensionType = candidate.extensionReceiverParameter?.type
-                if (extensionType != null && extensionType != receiverType && receiverType.isSubtypeOf(extensionType)) return
+                if (extensionType != null && extensionType != receiverType && receiverType.isSubtypeOf(extensionType)) return false
             }
 
-            val expressionFactory = scope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType) ?: return
+            val expressionFactory = scope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType) ?: return false
 
             val label = thisExpression.getLabelName() ?: ""
-            if (!expressionFactory.matchesLabel(label)) return
-
-            holder.registerProblem(thisExpression, "Redundant explicit this", LIKE_UNUSED_SYMBOL, Fix(thisExpression.text))
+            if (!expressionFactory.matchesLabel(label)) return false
+            return true
         }
-        
+
         private fun VariableDescriptor.canInvoke(): Boolean {
             val declarationDescriptor = this.type.constructor.declarationDescriptor as? LazyClassDescriptor ?: return false
             return declarationDescriptor.declaredCallableMembers.any { (it as? FunctionDescriptor)?.isOperator == true }
@@ -99,12 +105,18 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
             return label == implicitLabel || (label == "" && isImmediate)
         }
     }
+}
 
-    private class Fix(private val text: String) : LocalQuickFix {
-        override fun getFamilyName(): String = "Remove redundant '$text'"
+class ExplicitThisExpressionFix(private val text: String) : LocalQuickFix {
+    override fun getFamilyName(): String = "Remove redundant '$text'"
 
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val thisExpression = descriptor.psiElement as? KtThisExpression ?: return
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        val thisExpression = descriptor.psiElement as? KtThisExpression ?: return
+        removeExplicitThisExpression(thisExpression)
+    }
+
+    companion object {
+        fun removeExplicitThisExpression(thisExpression: KtThisExpression) {
             when (val parent = thisExpression.parent) {
                 is KtDotQualifiedExpression -> parent.replace(parent.selectorExpression ?: return)
                 is KtCallableReferenceExpression -> thisExpression.delete()
@@ -112,3 +124,4 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
         }
     }
 }
+

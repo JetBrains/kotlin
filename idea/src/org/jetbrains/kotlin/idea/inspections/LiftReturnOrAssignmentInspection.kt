@@ -33,25 +33,20 @@ class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val ski
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
         object : KtVisitorVoid() {
-            private fun visitIfOrWhenOrTry(expression: KtExpression, keyword: PsiElement) {
-                if (skipLongExpressions && expression.lineCount() > LINES_LIMIT) return
-                if (expression.isElseIf()) return
-
-                val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
-                if (foldableReturns?.isNotEmpty() == true) {
-                    val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
-                    val isSerious = !hasOtherReturns && foldableReturns.size > 1
-                    registerProblem(expression, keyword, isSerious, LiftReturnOutFix(keyword.text))
-                    foldableReturns.forEach {
-                        registerProblem(expression, keyword, isSerious, LiftReturnOutFix(keyword.text), it, INFORMATION)
-                    }
-                    return
-                }
-
-                val assignmentNumber = BranchedFoldingUtils.getFoldableAssignmentNumber(expression)
-                if (assignmentNumber > 0) {
-                    val isSerious = assignmentNumber > 1
-                    registerProblem(expression, keyword, isSerious, LiftAssignmentOutFix(keyword.text))
+            override fun visitExpression(expression: KtExpression) {
+                val states = getState(expression, skipLongExpressions) ?: return
+                states.forEach { state ->
+                    registerProblem(
+                        expression,
+                        state.keyword,
+                        state.isSerious,
+                        when (state.liftType) {
+                            LiftType.LIFT_RETURN_OUT -> LiftReturnOutFix(state.keyword.text)
+                            LiftType.LIFT_ASSIGNMENT_OUT -> LiftAssignmentOutFix(state.keyword.text)
+                        },
+                        state.highlightElement,
+                        state.highlightType
+                    )
                 }
             }
 
@@ -75,22 +70,6 @@ class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val ski
                 )
             }
 
-            override fun visitIfExpression(expression: KtIfExpression) {
-                super.visitIfExpression(expression)
-                visitIfOrWhenOrTry(expression, expression.ifKeyword)
-            }
-
-            override fun visitWhenExpression(expression: KtWhenExpression) {
-                super.visitWhenExpression(expression)
-                visitIfOrWhenOrTry(expression, expression.whenKeyword)
-            }
-
-            override fun visitTryExpression(expression: KtTryExpression) {
-                super.visitTryExpression(expression)
-                expression.tryKeyword?.let {
-                    visitIfOrWhenOrTry(expression, it)
-                }
-            }
         }
 
     private class LiftReturnOutFix(private val keyword: String) : LocalQuickFix {
@@ -116,5 +95,51 @@ class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val ski
 
     companion object {
         private const val LINES_LIMIT = 15
+
+        fun getState(expression: KtExpression, skipLongExpressions: Boolean) = when (expression) {
+            is KtWhenExpression -> getStateForWhenOrTry(expression, expression.whenKeyword, skipLongExpressions)
+            is KtIfExpression -> getStateForWhenOrTry(expression, expression.ifKeyword, skipLongExpressions)
+            is KtTryExpression -> expression.tryKeyword?.let {
+                getStateForWhenOrTry(expression, it, skipLongExpressions)
+            }
+            else -> null
+        }
+
+        private fun getStateForWhenOrTry(
+            expression: KtExpression,
+            keyword: PsiElement,
+            skipLongExpressions: Boolean
+        ): List<LiftState>? {
+            if (skipLongExpressions && expression.lineCount() > LINES_LIMIT) return null
+            if (expression.isElseIf()) return null
+
+            val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
+            if (foldableReturns?.isNotEmpty() == true) {
+                val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
+                val isSerious = !hasOtherReturns && foldableReturns.size > 1
+                return foldableReturns.map {
+                    LiftState(keyword, isSerious, LiftType.LIFT_RETURN_OUT, it, INFORMATION)
+                } + LiftState(keyword, isSerious, LiftType.LIFT_RETURN_OUT)
+            }
+
+            val assignmentNumber = BranchedFoldingUtils.getFoldableAssignmentNumber(expression)
+            if (assignmentNumber > 0) {
+                val isSerious = assignmentNumber > 1
+                return listOf(LiftState(keyword, isSerious, LiftType.LIFT_ASSIGNMENT_OUT))
+            }
+            return null
+        }
+
+        enum class LiftType {
+            LIFT_RETURN_OUT, LIFT_ASSIGNMENT_OUT
+        }
+
+        data class LiftState(
+            val keyword: PsiElement,
+            val isSerious: Boolean,
+            val liftType: LiftType,
+            val highlightElement: PsiElement = keyword,
+            val highlightType: ProblemHighlightType = if (isSerious) GENERIC_ERROR_OR_WARNING else INFORMATION
+        )
     }
 }
