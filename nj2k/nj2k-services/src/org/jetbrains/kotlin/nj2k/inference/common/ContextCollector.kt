@@ -27,7 +27,7 @@ abstract class ContextCollector(private val resolutionFacade: ResolutionFacade) 
         }
 
     private fun KtTypeReference.classReference(): ClassReference? =
-        analyze()[BindingContext.TYPE, this]?.classReference()
+        analyze(resolutionFacade)[BindingContext.TYPE, this]?.classReference()
 
     private fun KtTypeElement.toData(): TypeElementData? {
         val typeReference = parent as? KtTypeReference ?: return null
