@@ -150,7 +150,7 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
  * If output target is native binary then the cache is created.
  */
 internal fun initializeCachedBoxes(context: Context) {
-    if (context.config.produce.isNativeBinary) {
+    if (context.producedLlvmModuleContainsStdlib) {
         BoxCache.values().forEach { cache ->
             val cacheName = "${cache.name}_CACHE"
             val rangeStart = "${cache.name}_RANGE_FROM"

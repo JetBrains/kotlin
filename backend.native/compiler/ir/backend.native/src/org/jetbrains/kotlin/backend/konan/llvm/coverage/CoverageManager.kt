@@ -50,7 +50,7 @@ internal class CoverageManager(val context: Context) {
     }
 
     private fun checkRestrictions(): Boolean  {
-        val isKindAllowed = with(context.config.produce) { isNativeBinary || this == CompilerOutputKind.BITCODE }
+        val isKindAllowed = context.config.produce.involvesBitcodeGeneration
         val target = context.config.target
         val isTargetAllowed = target == KonanTarget.MACOS_X64 || target == KonanTarget.IOS_X64
         return isKindAllowed && isTargetAllowed

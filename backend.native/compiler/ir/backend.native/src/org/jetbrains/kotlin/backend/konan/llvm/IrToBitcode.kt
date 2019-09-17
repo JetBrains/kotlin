@@ -2246,7 +2246,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun appendDebugSelector() {
-        if (!context.config.produce.isNativeBinary) return
+        if (!context.producedLlvmModuleContainsStdlib) return
         val llvmDebugSelector =
                 context.llvm.staticData.placeGlobal("KonanNeedDebugInfo",
                         Int32(if (context.shouldContainDebugInfo()) 1 else 0))
@@ -2304,7 +2304,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMExternalLinkage)
 
             val initializers = libraryToInitializers.getValue(library)
-            appendStaticInitializers(ctorFunction, initializers)
+
+            if (library == null || context.llvmModuleSpecification.containsLibrary(library)) {
+                appendStaticInitializers(ctorFunction, initializers)
+            } else {
+                check(initializers.isEmpty()) {
+                    "found initializer from ${library.libraryFile}, which is not included into compilation"
+                }
+            }
 
             ctorFunction
         }
@@ -2342,7 +2349,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun appendGlobalCtors(ctorFunctions: List<LLVMValueRef>) {
-        if (context.config.produce.isNativeBinary) {
+        if (context.config.produce.isFinalBinary) {
             // Generate function calling all [ctorFunctions].
             val globalCtorFunction = LLVMAddFunction(context.llvmModule, "_Konan_constructors", kVoidFuncType)!!
             LLVMSetLinkage(globalCtorFunction, LLVMLinkage.LLVMPrivateLinkage)

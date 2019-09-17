@@ -150,7 +150,7 @@ internal interface ContextUtils : RuntimeAware {
      * or just drop all [else] branches of corresponding conditionals.
      */
     fun isExternal(declaration: IrDeclaration): Boolean {
-        return false
+        return !context.llvmModuleSpecification.containsDeclaration(declaration)
     }
 
     /**
@@ -399,6 +399,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         context.config.resolvedLibraries
                 .getFullList(TopologicalLibraryOrder)
                 .filter { (!it.isDefault && !context.config.purgeUserLibs) || imports.bitcodeIsUsed(it) }
+                // TODO: the filter above is incorrect when compiling to multiple LLVM modules.
+                .filter { context.llvmModuleSpecification.containsLibrary(it) }
     }
 
     val additionalProducedBitcodeFiles = mutableListOf<String>()

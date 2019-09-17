@@ -289,13 +289,11 @@ private fun selectIncludes(
     outputKind: CompilerOutputKind
 ): List<String> {
     val includes = arguments.includes?.toList().orEmpty()
-    val produceBinaryOrBitcode = outputKind.let { it.isNativeBinary || it == CompilerOutputKind.BITCODE }
 
-    return if (includes.isNotEmpty() && !produceBinaryOrBitcode) {
+    return if (includes.isNotEmpty() && outputKind == CompilerOutputKind.LIBRARY) {
         configuration.report(
             ERROR,
-            "The $INCLUDE_ARG flag is only supported when producing native binaries or bitcode files, " +
-                    "but the compiler is producing ${outputKind.name.toLowerCase()}"
+            "The $INCLUDE_ARG flag is not supported when producing ${outputKind.name.toLowerCase()}"
         )
         emptyList()
     } else {

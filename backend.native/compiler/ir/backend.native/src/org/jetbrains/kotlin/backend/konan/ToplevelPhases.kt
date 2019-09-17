@@ -419,7 +419,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableIf(dependenciesLowerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
         disableIf(bitcodePhase, config.produce == CompilerOutputKind.LIBRARY)
-        disableUnless(linkPhase, config.produce.isNativeBinary)
+        disableUnless(linkPhase, config.produce.involvesLinkStage)
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)
         disableUnless(buildDFGPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(devirtualizationPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))

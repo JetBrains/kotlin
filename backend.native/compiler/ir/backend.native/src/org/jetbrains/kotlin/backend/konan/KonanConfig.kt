@@ -151,13 +151,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder)
     }
 
-    internal val defaultNativeLibraries: List<String> = mutableListOf<String>().apply {
+    internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         add(if (debug) "debug.bc" else "release.bc")
         add(if (memoryModel == MemoryModel.STRICT) "strict.bc" else "relaxed.bc")
-        if (produce == CompilerOutputKind.PROGRAM) {
-            addAll(distribution.launcherFiles)
-        }
     }.map {
+        File(distribution.defaultNatives(target)).child(it).absolutePath
+    }
+
+    internal val launcherNativeLibraries: List<String> = distribution.launcherFiles.map {
         File(distribution.defaultNatives(target)).child(it).absolutePath
     }
 
