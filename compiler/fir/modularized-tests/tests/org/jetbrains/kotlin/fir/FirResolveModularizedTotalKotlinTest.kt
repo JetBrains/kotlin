@@ -38,6 +38,7 @@ private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 private const val FIR_LOGS_PATH = "tmp/fir-logs"
 
 internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
+internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false") == "true"
 
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
@@ -81,7 +82,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     private fun ModuleData.disambiguatedName(): String {
         val baseName = qualifiedName
         var disambiguatedName = baseName
-        var counter = 0
+        var counter = 1
         while(!dumpedModules.add(disambiguatedName)) {
             disambiguatedName = "$baseName.${counter++}"
         }
@@ -135,6 +136,9 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         if (statistics.totalTime < (bestStatistics?.totalTime ?: Long.MAX_VALUE)) {
             bestStatistics = statistics
             bestPass = pass
+        }
+        if (!SEPARATE_PASS_DUMP) {
+            dumpedModules.clear()
         }
         if (FAIL_FAST) {
             bench.throwFailure()
