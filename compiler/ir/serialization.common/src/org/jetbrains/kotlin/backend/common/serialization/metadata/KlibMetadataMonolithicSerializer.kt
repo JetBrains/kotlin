@@ -37,8 +37,10 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import java.io.ByteArrayOutputStream
 
+internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) -> R): List<R>
+    = size?.let { this.chunked(size, transform) } ?: listOf(transform(this.toList()))
 
-open class KlibMetadataSerializer(
+abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
     val descriptorTable: DescriptorTable
@@ -156,7 +158,7 @@ open class KlibMetadataSerializer(
 
         val result = mutableListOf<ProtoBuf.PackageFragment>()
 
-        result += classifierDescriptors.chunked(TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE) { descriptors ->
+        result += classifierDescriptors.maybeChunked(TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE) { descriptors ->
 
             withNewContext {
 
@@ -180,7 +182,7 @@ open class KlibMetadataSerializer(
             }
         }
 
-        result += topLevelDescriptors.chunked(TOP_LEVEL_DECLARATION_COUNT_PER_FILE) { descriptors ->
+        result += topLevelDescriptors.maybeChunked(TOP_LEVEL_DECLARATION_COUNT_PER_FILE) { descriptors ->
             withNewContext {
                 buildFragment(
                     buildPackageProto(fqName, descriptors),
@@ -229,7 +231,7 @@ open class KlibMetadataSerializer(
                 fileProto.addAnnotation(serializer.serializeAnnotation(annotation))
             }
             val name = when (file) {
-                is KotlinPsiFileMetadata -> file.ktFile.name
+                is KotlinPsiFileMetadata -> file.ktFile.getName()
                 else -> TODO("support other file types")
             }
             fileProto.name = name
@@ -238,7 +240,7 @@ open class KlibMetadataSerializer(
         return filesProto.build()
     }
 
-    private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
+    protected fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
         val result = mutableSetOf<FqName>()
 
         fun getSubPackages(fqName: FqName) {
@@ -251,7 +253,9 @@ open class KlibMetadataSerializer(
     }
 
     fun serializeHeader(
-        moduleDescriptor: ModuleDescriptor
+        moduleDescriptor: ModuleDescriptor,
+        fragmentNames: List<String>,
+        emptyPackages: List<String> = emptyList()
     ): KlibMetadataProtoBuf.Header {
         val header = KlibMetadataProtoBuf.Header.newBuilder()
 
@@ -274,27 +278,20 @@ open class KlibMetadataSerializer(
             header.strings = strings
             header.qualifiedNames = qualifiedNames
         }
-
-        val fragments = mutableListOf<List<ByteArray>>()
-        val fragmentNames = mutableListOf<String>()
-
-        getPackagesFqNames(moduleDescriptor).forEach iteration@{ packageFqName ->
-            val packageProtos =
-                serializePackageFragment(packageFqName, moduleDescriptor, bindingContext)
-            if (packageProtos.isEmpty()) return@iteration
-
-            val packageFqNameStr = packageFqName.asString()
-            header.addPackageFragmentName(packageFqNameStr)
-            if (packageProtos.all { it.getExtension(KlibMetadataProtoBuf.isEmpty)}) {
-                header.addEmptyPackage(packageFqNameStr)
-            }
-            fragments.add(packageProtos.map { it.toByteArray() })
-            fragmentNames.add(packageFqNameStr)
-
+        fragmentNames.forEach {
+            header.addPackageFragmentName(it)
         }
-
+        emptyPackages.forEach {
+            header.addEmptyPackage(it)
+        }
         return header.build()
     }
+
+    // For platform libraries we get HUGE files.
+    // Indexing them in IDEA takes ages.
+    // So we split them into chunks.
+    abstract protected val TOP_LEVEL_DECLARATION_COUNT_PER_FILE: Int?
+    abstract protected val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE: Int?
 }
 
 /*
@@ -340,14 +337,40 @@ class KlibMetadataMonolithicSerializer(
     }
 
     fun serializeModule(moduleDescriptor: ModuleDescriptor): SerializedMetadata {
-        val header = serializeHeader(moduleDescriptor)
+
+        val fragments = mutableListOf<List<ByteArray>>()
+        val fragmentNames = mutableListOf<String>()
+        val emptyPackages = mutableListOf<String>()
+
+        getPackagesFqNames(moduleDescriptor).forEach iteration@{ packageFqName ->
+            val packageProtos =
+                serializePackageFragment(packageFqName, moduleDescriptor, bindingContext)
+            if (packageProtos.isEmpty()) return@iteration
+
+            val packageFqNameStr = packageFqName.asString()
+
+            //header.addPackageFragmentName(packageFqNameStr)
+            if (packageProtos.all { it.getExtension(KlibMetadataProtoBuf.isEmpty)}) {
+                //header.addEmptyPackage(packageFqNameStr)
+                emptyPackages.add(packageFqNameStr)
+            }
+            fragments.add(packageProtos.map { it.toByteArray() })
+            fragmentNames.add(packageFqNameStr)
+
+        }
+        val header = serializeHeader(moduleDescriptor, fragmentNames, emptyPackages)
+
         val libraryAsByteArray = header.toByteArray()
         return SerializedMetadata(libraryAsByteArray, fragments, fragmentNames)
     }
-}
 
-private const val TOP_LEVEL_DECLARATION_COUNT_PER_FILE = 128
-private const val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE = 64
+    // For platform libraries we get HUGE files.
+    // Indexing them in IDEA takes ages.
+    // So we split them into chunks.
+    override val TOP_LEVEL_DECLARATION_COUNT_PER_FILE = 128
+    override val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE = 64
+
+}
 
 
 data class JsKlibMetadataParts(

@@ -397,11 +397,16 @@ fun serializeModuleIntoKlib(
         processCompiledFileData(VfsUtilCore.virtualToIoFile(ktFile.virtualFile), compiledKotlinFile)
     }
 
-    incrementalResultsConsumer?.run {
-        processHeader(metadataSerializer.serializeHeader(moduleDescriptor).toByteArray())
-    }
-
     val compiledKotlinFiles = cleanFiles + additionalFiles
+
+    incrementalResultsConsumer?.run {
+        processHeader(
+            metadataSerializer.serializeHeader(
+                moduleDescriptor,
+                compiledKotlinFiles.map { it.irData.fqName }.distinct()
+            ).toByteArray()
+        )
+    }
 
     val serializedMetadata =
         metadataSerializer.serializedMetadata(

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.library.PackageAccessedHandler
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -79,7 +80,7 @@ class KlibMetadataPackageFragment(
 
     private fun loadClassNames(): Collection<Name> {
 
-        val classNameList = protoForNames.classes.classNameList
+        val classNameList = protoForNames.getExtension(KlibMetadataProtoBuf.className).orEmpty()
 
         val names = classNameList.mapNotNull {
             val classId = nameResolver.getClassId(it)

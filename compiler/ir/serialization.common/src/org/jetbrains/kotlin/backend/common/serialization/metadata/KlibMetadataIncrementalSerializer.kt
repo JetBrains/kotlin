@@ -64,8 +64,13 @@ class KlibMetadataIncrementalSerializer(
                 .filterIsInstance<CallableDescriptor>()
                 .filter { !it.isExpectMember }
         )
-        // TODO: manage fileRegistry
-        return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors, bindingContext)
+
+        // TODO: For now, in the incremental serializer, we assume
+        // there is only a single package fragment per file.
+        // This is no always the case, actually.
+        // But marrying split package fragments with incremental compilation is an endeavour.
+        // See monolithic serializer for details.
+        return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors, bindingContext).single()
     }
 
     fun serializedMetadata(
@@ -82,7 +87,7 @@ class KlibMetadataIncrementalSerializer(
 
         val stream = ByteArrayOutputStream()
 
-        serializeHeader(module).writeDelimitedTo(stream)
+        serializeHeader(module, fragmentNames).writeDelimitedTo(stream)
         asLibrary().writeTo(stream)
         stream.appendPackageFragments(fragments)
 
@@ -123,4 +128,12 @@ class KlibMetadataIncrementalSerializer(
         val content = KlibMetadataProtoBuf.Library.parseFrom(inputStream, KlibMetadataSerializerProtocol.extensionRegistry)
         return JsKlibMetadataParts(header, content.packageFragmentList, importedModuleList)
     }
+
+    // TODO: For now, in the incremental serializer, we assume
+    // there is only a single package fragment per file.
+    // This is no always the case, actually.
+    // But marrying split package fragments with incremental compilation is an endeavour.
+    // See monolithic serializer for details.
+    override val TOP_LEVEL_DECLARATION_COUNT_PER_FILE = null
+    override val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE = null
 }
