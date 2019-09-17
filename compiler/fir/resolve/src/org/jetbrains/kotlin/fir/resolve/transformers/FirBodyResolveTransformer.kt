@@ -162,10 +162,6 @@ open class FirBodyResolveTransformer(
         return result
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): CompositeTransformResult<FirDeclaration> {
-        return transformRegularClass(enumEntry, data)
-    }
-
     override fun transformUncheckedNotNullCast(
         uncheckedNotNullCast: FirUncheckedNotNullCast,
         data: Any?
@@ -270,13 +266,6 @@ open class FirBodyResolveTransformer(
         return FirExpressionWithSmartcastImpl(qualifiedAccessExpression, typesFromSmartCast).also {
             it.resultType = FirResolvedTypeRefImpl(qualifiedAccessExpression.resultType.psi, intersectedType, qualifiedAccessExpression.resultType.annotations)
         }
-    }
-
-    override fun transformCallableReferenceAccess(
-        callableReferenceAccess: FirCallableReferenceAccess,
-        data: Any?
-    ): CompositeTransformResult<FirStatement> {
-        return transformQualifiedAccessExpression(callableReferenceAccess, data)
     }
 
     override fun transformVariableAssignment(
@@ -486,10 +475,6 @@ open class FirBodyResolveTransformer(
 
     }
 
-    override fun transformComponentCall(componentCall: FirComponentCall, data: Any?): CompositeTransformResult<FirStatement> {
-        return transformFunctionCall(componentCall, data)
-    }
-
     //    override fun transformNamedReference(namedReference: FirNamedReference, data: Any?): CompositeTransformResult<FirNamedReference> {
 //        if (namedReference is FirErrorNamedReference || namedReference is FirResolvedCallableReference) return namedReference.compose()
 //        val referents = data as? List<ConeCallableSymbol> ?: return namedReference.compose()
@@ -521,21 +506,6 @@ open class FirBodyResolveTransformer(
         val result = transformExpression(jump, data)
         dataFlowAnalyzer.exitJump(jump)
         return result
-    }
-
-    override fun transformBreakExpression(breakExpression: FirBreakExpression, data: Any?): CompositeTransformResult<FirStatement> {
-        return transformJump(breakExpression, data)
-    }
-
-    override fun transformContinueExpression(
-        continueExpression: FirContinueExpression,
-        data: Any?
-    ): CompositeTransformResult<FirStatement> {
-        return transformJump(continueExpression, data)
-    }
-
-    override fun transformReturnExpression(returnExpression: FirReturnExpression, data: Any?): CompositeTransformResult<FirStatement> {
-        return transformJump(returnExpression, data)
     }
 
     override fun transformThrowExpression(throwExpression: FirThrowExpression, data: Any?): CompositeTransformResult<FirStatement> {

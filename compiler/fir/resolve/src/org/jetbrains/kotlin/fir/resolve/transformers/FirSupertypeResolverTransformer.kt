@@ -129,10 +129,6 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
             return resolveNestedClassesSupertypes(transformedClass, data)
         }
 
-        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-            return transformRegularClass(enumEntry, data)
-        }
-
         private fun FirClassLikeDeclaration<*>.matchesRequestedDeclaration(): Boolean {
             if (knownFirClassLikeDeclaration != null) return knownFirClassLikeDeclaration == this
             return symbol.classId == requestedClassId

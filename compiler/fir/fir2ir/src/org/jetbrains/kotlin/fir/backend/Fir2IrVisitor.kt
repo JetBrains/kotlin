@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -60,7 +61,7 @@ class Fir2IrVisitor(
     private val sourceManager: PsiSourceManager,
     override val irBuiltIns: IrBuiltIns,
     private val fakeOverrideMode: FakeOverrideMode
-) : FirVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
+) : FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
     companion object {
         private val NEGATED_OPERATIONS: Set<FirOperation> = EnumSet.of(FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY)
 
@@ -295,10 +296,6 @@ class Fir2IrVisitor(
             .withParent {
                 setClassContent(regularClass)
             }
-    }
-
-    override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement {
-        return visitRegularClass(enumEntry, data)
     }
 
     private fun IrFunction.addDispatchReceiverParameter(containingClass: IrClass) {
@@ -665,18 +662,6 @@ class Fir2IrVisitor(
         return wrappedArgumentExpression.expression.toIrExpression()
     }
 
-    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Any?): IrElement {
-        return visitWrappedArgumentExpression(namedArgumentExpression, data)
-    }
-
-    override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: Any?): IrElement {
-        return visitWrappedArgumentExpression(lambdaArgumentExpression, data)
-    }
-
-    override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: Any?): IrElement {
-        return visitWrappedArgumentExpression(spreadArgumentExpression, data)
-    }
-
     private fun FirReference.statementOrigin(): IrStatementOrigin? {
         return when (this) {
             is FirPropertyFromParameterCallableReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -807,10 +792,6 @@ class Fir2IrVisitor(
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrElement {
         return functionCall.toIrExpression(functionCall.typeRef).applyCallArguments(functionCall).applyReceivers(functionCall)
-    }
-
-    override fun visitComponentCall(componentCall: FirComponentCall, data: Any?): IrElement {
-        return visitFunctionCall(componentCall, data)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): IrElement {

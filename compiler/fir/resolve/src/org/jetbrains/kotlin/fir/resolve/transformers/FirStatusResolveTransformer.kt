@@ -162,8 +162,4 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer(phase = FirResolv
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return transformDeclaration(valueParameter, data)
     }
-
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return transformRegularClass(enumEntry, data)
-    }
 }

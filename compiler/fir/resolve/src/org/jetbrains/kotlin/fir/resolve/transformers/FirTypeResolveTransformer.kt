@@ -96,44 +96,6 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
         return implicitTypeRef.compose()
     }
 
-    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(resolvedTypeRef, data)
-    }
-
-    override fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(errorTypeRef, data)
-    }
-
-    override fun transformResolvedFunctionTypeRef(
-        resolvedFunctionTypeRef: FirResolvedFunctionTypeRef,
-        data: Nothing?
-    ): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(resolvedFunctionTypeRef, data)
-    }
-
-    override fun transformTypeRefWithNullability(
-        typeRefWithNullability: FirTypeRefWithNullability,
-        data: Nothing?
-    ): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(typeRefWithNullability, data)
-    }
-
-    override fun transformUserTypeRef(userTypeRef: FirUserTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(userTypeRef, data)
-    }
-
-    override fun transformDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(dynamicTypeRef, data)
-    }
-
-    override fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(functionTypeRef, data)
-    }
-
-    override fun transformDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(delegatedTypeRef, data)
-    }
-
     override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
         return FirSpecificTypeResolverTransformer(towerScope, FirPosition.OTHER, session).transformTypeRef(typeRef, data)
     }

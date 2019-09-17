@@ -57,13 +57,6 @@ class FirCallCompletionResultsWriterTransformer(
         ).compose()
     }
 
-    override fun transformCallableReferenceAccess(
-        callableReferenceAccess: FirCallableReferenceAccess,
-        data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
-        return transformQualifiedAccessExpression(callableReferenceAccess, data)
-    }
-
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: Nothing?
@@ -135,10 +128,6 @@ class FirCallCompletionResultsWriterTransformer(
             extensionReceiver = subCandidate.extensionReceiverExpression()
         ).compose()
 
-    }
-
-    override fun transformComponentCall(componentCall: FirComponentCall, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return transformFunctionCall(componentCall, data)
     }
 
     override fun transformAnonymousFunction(

@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
 abstract class FirAbstractPhaseTransformer<D>(
     protected val transformerPhase: FirResolvePhase
-) : FirTransformer<D>() {
+) : FirDefaultTransformer<D>() {
 
     abstract val session: FirSession
 

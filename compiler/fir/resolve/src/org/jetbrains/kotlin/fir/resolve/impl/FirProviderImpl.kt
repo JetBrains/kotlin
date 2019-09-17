@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -59,7 +60,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         val packageName = file.packageFqName
         state.fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
 
-        file.acceptChildren(object : FirVisitorVoid() {
+        file.acceptChildren(object : FirDefaultVisitorVoid() {
             override fun visitElement(element: FirElement) {}
 
 
@@ -101,10 +102,6 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
 
             override fun visitProperty(property: FirProperty) {
                 visitCallableMemberDeclaration(property)
-            }
-
-            override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-                visitRegularClass(enumEntry)
             }
         })
     }
