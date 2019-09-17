@@ -17,7 +17,6 @@ import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.DataInputOutputUtil
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.util.io.PersistentHashMap
-import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.TestOnly
 import java.io.DataInput
 import java.io.DataOutput
@@ -30,7 +29,6 @@ const val EP_NAME = "com.intellij.filetype.prebuiltStubsProvider"
 
 object PrebuiltStubsProviders : FileTypeExtension<PrebuiltStubsProvider>(EP_NAME)
 
-@ApiStatus.Experimental
 interface PrebuiltStubsProvider {
   fun findStub(fileContent: FileContent): SerializedStubTree?
 }
