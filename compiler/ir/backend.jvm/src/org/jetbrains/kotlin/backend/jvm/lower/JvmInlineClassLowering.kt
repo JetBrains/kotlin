@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -253,55 +254,64 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     private fun IrExpression.coerceToUnboxed() =
         coerceInlineClasses(this, this.type, this.type.unboxInlineClass())
 
-    private fun IrClass.getEqualsImpl(): IrFunction {
-        val equals = functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
-        return manager.getReplacementFunction(equals)!!.function
-    }
-
+    // Precondition: left has an inline class type, but may not be unboxed
     private fun IrBuilderWithScope.specializeEqualsCall(left: IrExpression, right: IrExpression): IrExpression? {
         // There's already special handling for null-comparisons in the Equals intrinsic.
-        // We cannot specialize calls for which the first argument is already boxed.
-        if (left.isNullConst() || right.isNullConst() || left.type.unboxInlineClass() == left.type)
+        if (left.isNullConst() || right.isNullConst())
             return null
 
-        // Unsigned types use primitive comparisons.
-        val rightIsUnboxed = right.type.unboxInlineClass() !== right.type
-        if (left.type.isUnsigned() && right.type.isUnsigned() && rightIsUnboxed)
-            return irEquals(left.coerceToUnboxed(), right.coerceToUnboxed())
+        // We don't specialize calls when both arguments are boxed.
+        val leftIsUnboxed = left.type.unboxInlineClass() != left.type
+        val rightIsUnboxed = right.type.unboxInlineClass() != right.type
+        if (!leftIsUnboxed && !rightIsUnboxed)
+            return null
 
-        val equalsMethod = if (rightIsUnboxed)
-            manager.getSpecializedEqualsMethod(left.type.classOrNull!!.owner, context.irBuiltIns)
-        else
-            left.type.classOrNull!!.owner.getEqualsImpl()
+        // Precondition: left is an unboxed inline class type
+        fun equals(left: IrExpression, right: IrExpression): IrExpression {
+            // Unsigned types use primitive comparisons
+            if (left.type.isUnsigned() && right.type.isUnsigned() && rightIsUnboxed)
+                return irEquals(left.coerceToUnboxed(), right.coerceToUnboxed())
+
+            val klass = left.type.classOrNull!!.owner
+            val equalsMethod = if (rightIsUnboxed) {
+                manager.getSpecializedEqualsMethod(klass, context.irBuiltIns)
+            } else {
+                val equals = klass.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
+                manager.getReplacementFunction(equals)!!.function
+            }
+
+            return irCall(equalsMethod).apply {
+                putValueArgument(0, left)
+                putValueArgument(1, right)
+            }
+        }
 
         val leftNullCheck = left.type.isNullable()
         val rightNullCheck = rightIsUnboxed && right.type.isNullable() // equals-impl has a nullable second argument
         return if (leftNullCheck || rightNullCheck) {
-            irLetS(left) { leftVal ->
-                irLetS(right) { rightVal ->
-                    val equalsCall = irCall(equalsMethod).apply {
-                        putValueArgument(0, irGet(leftVal.owner))
-                        putValueArgument(1, irGet(rightVal.owner))
-                    }
+            irBlock {
+                val leftVal = if (left is IrGetValue) left.symbol.owner else irTemporary(left)
+                val rightVal = if (right is IrGetValue) right.symbol.owner else irTemporary(right)
 
-                    val equalsRight = if (rightNullCheck) {
-                        irIfNull(context.irBuiltIns.booleanType, irGet(rightVal.owner), irFalse(), equalsCall)
-                    } else {
-                        equalsCall
-                    }
+                val equalsCall = equals(
+                    if (leftNullCheck) irImplicitCast(irGet(leftVal), left.type.makeNotNull()) else irGet(leftVal),
+                    if (rightNullCheck) irImplicitCast(irGet(rightVal), right.type.makeNotNull()) else irGet(rightVal)
+                )
 
-                    if (leftNullCheck) {
-                        irIfNull(context.irBuiltIns.booleanType, irGet(leftVal.owner), irEqualsNull(irGet(rightVal.owner)), equalsRight)
-                    } else {
-                        equalsRight
-                    }
+                val equalsRight = if (rightNullCheck) {
+                    irIfNull(context.irBuiltIns.booleanType, irGet(rightVal), irFalse(), equalsCall)
+                } else {
+                    equalsCall
+                }
+
+                if (leftNullCheck) {
+                    +irIfNull(context.irBuiltIns.booleanType, irGet(leftVal), irEqualsNull(irGet(rightVal)), equalsRight)
+                } else {
+                    +equalsRight
                 }
             }
         } else {
-            irCall(equalsMethod).apply {
-                putValueArgument(0, left)
-                putValueArgument(1, right)
-            }
+            equals(left, right)
         }
     }
 
