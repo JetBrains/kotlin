@@ -413,7 +413,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
                 context.state.bindingContext, "tmp for composable analysis"
             )
         val composability =
-            ComposableAnnotationChecker(ComposableAnnotationChecker.Mode.KTX_CHECKED)
+            ComposableAnnotationChecker()
                 .analyze(
                 tmpTrace,
                 declaration.descriptor

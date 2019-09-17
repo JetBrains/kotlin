@@ -33,33 +33,19 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.TypeResolutionInterceptorExtension
 import org.jetbrains.kotlin.parsing.KtxParsingExtension
 import org.jetbrains.kotlin.psi2ir.extensions.SyntheticIrExtension
-import androidx.compose.plugins.kotlin.ComposeConfigurationKeys.COMPOSABLE_CHECKER_MODE_KEY
 import androidx.compose.plugins.kotlin.frames.analysis.FrameModelChecker
 import androidx.compose.plugins.kotlin.frames.analysis.FramePackageAnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-
-object ComposeConfigurationKeys {
-    val COMPOSABLE_CHECKER_MODE_KEY = CompilerConfigurationKey<ComposableAnnotationChecker.Mode>(
-        "@composable checker mode"
-    )
-}
 
 class ComposeCommandLineProcessor : CommandLineProcessor {
 
     companion object {
         val PLUGIN_ID = "androidx.compose.plugins.kotlin"
-        val SYNTAX_OPTION = CliOption(
-            "syntax",
-            "<ktx_checked|ktx_strict|ktx_pedantic|fcs>",
-            "@composable syntax checker mode",
-            required = false,
-            allowMultipleOccurrences = false
-        )
     }
 
     override val pluginId =
         PLUGIN_ID
-    override val pluginOptions = listOf(SYNTAX_OPTION)
+    override val pluginOptions = emptyList<CliOption>()
 
     @Suppress("OverridingDeprecatedMember")
     override fun processOption(
@@ -73,13 +59,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         option: AbstractCliOption,
         value: String,
         configuration: CompilerConfiguration
-    ) = when (option) {
-        SYNTAX_OPTION -> configuration.put(
-            COMPOSABLE_CHECKER_MODE_KEY,
-            ComposableAnnotationChecker.Mode.valueOf(value.toUpperCase())
-        )
-        else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
-    }
+    ) = throw CliOptionProcessingException("Unknown option: ${option.optionName}")
 }
 
 class ComposeComponentRegistrar : ComponentRegistrar {
@@ -95,6 +75,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
 
     companion object {
 
+        @Suppress("UNUSED_PARAMETER")
         fun registerProjectExtensions(project: Project, configuration: CompilerConfiguration) {
             StorageComponentContainerContributor.registerExtension(
                 project,
@@ -102,12 +83,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             )
             StorageComponentContainerContributor.registerExtension(
                 project,
-                ComposableAnnotationChecker(
-                    configuration.get(
-                        COMPOSABLE_CHECKER_MODE_KEY,
-                        ComposableAnnotationChecker.DEFAULT_MODE
-                    )
-                )
+                ComposableAnnotationChecker()
             )
             StorageComponentContainerContributor.registerExtension(
                 project,

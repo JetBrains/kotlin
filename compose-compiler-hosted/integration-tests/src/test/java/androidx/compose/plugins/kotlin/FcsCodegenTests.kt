@@ -2361,14 +2361,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
         super.setUp()
     }
 
-    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        environment.configuration.put(
-            ComposeConfigurationKeys.COMPOSABLE_CHECKER_MODE_KEY,
-            ComposableAnnotationChecker.Mode.FCS
-        )
-        super.setupEnvironment(environment)
-    }
-
     private var isSetup = false
     private inline fun <T> ensureSetup(block: () -> T): T {
         if (!isSetup) setUp()

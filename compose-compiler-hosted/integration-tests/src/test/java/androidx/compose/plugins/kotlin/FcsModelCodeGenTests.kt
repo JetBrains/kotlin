@@ -335,14 +335,6 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
             advanceMethod.invoke(instanceOfClass, *arguments)
         }
     }
-
-    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        environment.configuration.put(
-            ComposeConfigurationKeys.COMPOSABLE_CHECKER_MODE_KEY,
-            ComposableAnnotationChecker.Mode.FCS
-        )
-        super.setupEnvironment(environment)
-    }
 }
 
 private val Activity.root get() = findViewById(ROOT_ID) as ViewGroup
