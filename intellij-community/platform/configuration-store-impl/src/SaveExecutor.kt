@@ -7,6 +7,7 @@ import com.intellij.openapi.components.impl.stores.SaveSessionAndFile
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.SmartList
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.ApiStatus
 import java.util.*
 
 internal interface SaveExecutor {
@@ -16,7 +17,8 @@ internal interface SaveExecutor {
   suspend fun save(): SaveResult
 }
 
-internal open class SaveSessionProducerManager : SaveExecutor {
+@ApiStatus.Internal
+open class SaveSessionProducerManager : SaveExecutor {
   private val producers = LinkedHashMap<StateStorage, SaveSessionProducer>()
 
   // actually, all storages for component store shares the same value, but for flexibility and to simplify code, just compute on the fly

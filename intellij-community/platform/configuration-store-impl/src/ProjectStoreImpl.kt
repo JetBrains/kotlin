@@ -109,10 +109,12 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
       launch {
         // save modules before project
         val errors = SmartList<Throwable>()
-        val moduleSaveSessions = saveModules(errors, forceSavingAllSettings)
+        val saveSessionManager = createSaveSessionProducerManager()
+        val moduleSaveSessions = saveModules(errors, forceSavingAllSettings, saveSessionManager)
         result.addErrors(errors)
 
-        (saveSettingsSavingComponentsAndCommitComponents(result, forceSavingAllSettings) as ProjectSaveSessionProducerManager)
+        saveSettingsSavingComponentsAndCommitComponents(result, forceSavingAllSettings, saveSessionManager)
+        saveSessionManager
           .saveWithAdditionalSaveSessions(moduleSaveSessions)
           .appendTo(result)
       }
@@ -131,11 +133,13 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
     }
   }
 
-  protected open suspend fun saveModules(errors: MutableList<Throwable>, isForceSavingAllSettings: Boolean): List<SaveSession> {
+  protected open suspend fun saveModules(errors: MutableList<Throwable>,
+                                         isForceSavingAllSettings: Boolean,
+                                         projectSaveSessionManager: SaveSessionProducerManager): List<SaveSession> {
     return emptyList()
   }
 
-  final override fun createSaveSessionProducerManager() = ProjectSaveSessionProducerManager(project)
+  override fun createSaveSessionProducerManager() = ProjectSaveSessionProducerManager(project)
 
   final override fun commitObsoleteComponents(session: SaveSessionProducerManager, isProjectLevel: Boolean) {
     if (isDirectoryBased) {
@@ -146,7 +150,9 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
 
 @ApiStatus.Internal
 open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(project) {
-  override suspend fun saveModules(errors: MutableList<Throwable>, isForceSavingAllSettings: Boolean): List<SaveSession> {
+  override suspend fun saveModules(errors: MutableList<Throwable>,
+                                   isForceSavingAllSettings: Boolean,
+                                   projectSaveSessionManager: SaveSessionProducerManager): List<SaveSession> {
     val modules = ModuleManager.getInstance(project)?.modules ?: Module.EMPTY_ARRAY
     if (modules.isEmpty()) {
       return emptyList()
@@ -159,10 +165,18 @@ open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(proj
       for (module in modules) {
         val moduleStore = ModuleServiceManager.getService(module, IComponentStore::class.java) as ComponentStoreImpl
         // collectSaveSessions is very cheap, so, do it in EDT
-        moduleStore.doCreateSaveSessionManagerAndCommitComponents(isForceSavingAllSettings, errors).collectSaveSessions(saveSessions)
+        val saveManager = moduleStore.createSaveSessionProducerManager()
+        commitModuleComponents(moduleStore, saveManager, projectSaveSessionManager, isForceSavingAllSettings, errors)
+        saveManager.collectSaveSessions(saveSessions)
       }
       saveSessions
     }
+  }
+
+  open protected fun commitModuleComponents(moduleStore: ComponentStoreImpl, moduleSaveSessionManager: SaveSessionProducerManager,
+                                            projectSaveSessionManager: SaveSessionProducerManager, isForceSavingAllSettings: Boolean,
+                                            errors: MutableList<Throwable>) {
+    moduleStore.commitComponents(isForceSavingAllSettings, moduleSaveSessionManager, errors)
   }
 }
 

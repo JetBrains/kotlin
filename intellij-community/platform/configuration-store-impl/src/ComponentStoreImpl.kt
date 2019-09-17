@@ -151,20 +151,14 @@ abstract class ComponentStoreImpl : IComponentStore {
     return withEdtContext(storageManager.componentManager, task)
   }
 
-  internal suspend fun createSaveSessionManagerAndSaveComponents(saveResult: SaveResult, forceSavingAllSettings: Boolean): SaveSessionProducerManager {
-    return withEdtContext {
+  internal suspend fun commitComponentsOnEdt(saveResult: SaveResult, forceSavingAllSettings: Boolean,
+                                             saveSessionProducerManager: SaveSessionProducerManager) {
+    withEdtContext {
       val errors = SmartList<Throwable>()
-      val manager = doCreateSaveSessionManagerAndCommitComponents(forceSavingAllSettings, errors)
+      commitComponents(forceSavingAllSettings, saveSessionProducerManager, errors)
       saveResult.addErrors(errors)
-      manager
+      saveSessionProducerManager
     }
-  }
-
-  @CalledInAwt
-  internal fun doCreateSaveSessionManagerAndCommitComponents(isForce: Boolean, errors: MutableList<Throwable>): SaveSessionProducerManager {
-    val saveManager = createSaveSessionProducerManager()
-    commitComponents(isForce, saveManager, errors)
-    return saveManager
   }
 
   @CalledInAwt
@@ -260,7 +254,7 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
   }
 
-  internal open fun createSaveSessionProducerManager() = SaveSessionProducerManager()
+  open fun createSaveSessionProducerManager() = SaveSessionProducerManager()
 
   private fun commitComponent(session: SaveSessionProducerManager, info: ComponentInfo, componentName: String?) {
     val component = info.component
@@ -644,9 +638,9 @@ abstract class ChildlessComponentStore : ComponentStoreImpl() {
 }
 
 internal suspend fun ComponentStoreImpl.childlessSaveImplementation(result: SaveResult, forceSavingAllSettings: Boolean) {
-  createSaveSessionManagerAndSaveComponents(result, forceSavingAllSettings)
-    .save()
-    .appendTo(result)
+  val saveSessionManager = createSaveSessionProducerManager()
+  commitComponentsOnEdt(result, forceSavingAllSettings, saveSessionManager)
+  saveSessionManager.save().appendTo(result)
 }
 
 internal suspend inline fun <T> withEdtContext(disposable: ComponentManager?, crossinline task: suspend () -> T): T {

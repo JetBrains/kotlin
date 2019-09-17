@@ -4,8 +4,10 @@ package com.intellij.configurationStore
 import com.intellij.openapi.components.impl.stores.SaveSessionAndFile
 import com.intellij.util.SmartList
 import com.intellij.util.lang.CompoundRuntimeException
+import org.jetbrains.annotations.ApiStatus
 
-internal class SaveResult {
+@ApiStatus.Internal
+class SaveResult {
   companion object {
     val EMPTY = SaveResult()
   }

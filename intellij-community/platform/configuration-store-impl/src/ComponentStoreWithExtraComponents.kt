@@ -49,7 +49,8 @@ abstract class ComponentStoreWithExtraComponents : ComponentStoreImpl() {
     super.initComponent(component, serviceDescriptor)
   }
 
-  internal suspend fun saveSettingsSavingComponentsAndCommitComponents(result: SaveResult, forceSavingAllSettings: Boolean): SaveSessionProducerManager {
+  internal suspend fun saveSettingsSavingComponentsAndCommitComponents(result: SaveResult, forceSavingAllSettings: Boolean,
+                                                                       saveSessionProducerManager: SaveSessionProducerManager) {
     coroutineScope {
       // expects EDT
       launch(storeEdtCoroutineDispatcher) {
@@ -76,7 +77,7 @@ abstract class ComponentStoreWithExtraComponents : ComponentStoreImpl() {
 
     // SchemeManager (old settingsSavingComponent) must be saved before saving components (component state uses scheme manager in an ipr project, so, we must save it before)
     // so, call sequentially it, not inside coroutineScope
-    return createSaveSessionManagerAndSaveComponents(result, forceSavingAllSettings)
+    commitComponentsOnEdt(result, forceSavingAllSettings, saveSessionProducerManager)
   }
 
   override fun commitComponents(isForce: Boolean, session: SaveSessionProducerManager, errors: MutableList<Throwable>) {

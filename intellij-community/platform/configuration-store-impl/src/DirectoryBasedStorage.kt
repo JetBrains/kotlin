@@ -17,6 +17,7 @@ import com.intellij.util.isEmpty
 import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jdom.Element
+import org.jetbrains.annotations.ApiStatus
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.file.Path
@@ -72,6 +73,11 @@ abstract class DirectoryBasedStorageBase(@Suppress("DEPRECATION") protected val 
   override fun hasState(storageData: StateMap, componentName: String): Boolean = storageData.hasStates()
 }
 
+@ApiStatus.Internal
+interface DirectoryBasedSaveSessionProducer : SaveSessionProducer {
+  fun setFileState(fileName: String, componentName: String, element: Element?)
+}
+
 open class DirectoryBasedStorage(private val dir: Path,
                                  @Suppress("DEPRECATION") splitter: com.intellij.openapi.components.StateSplitter,
                                  pathMacroSubstitutor: PathMacroSubstitutor? = null) : DirectoryBasedStorageBase(splitter, pathMacroSubstitutor) {
@@ -97,7 +103,7 @@ open class DirectoryBasedStorage(private val dir: Path,
 
   override fun createSaveSessionProducer(): SaveSessionProducer? = if (checkIsSavingDisabled()) null else MySaveSession(this, getStorageData())
 
-  private class MySaveSession(private val storage: DirectoryBasedStorage, private val originalStates: StateMap) : SaveSessionBase(), SaveSession {
+  private class MySaveSession(private val storage: DirectoryBasedStorage, private val originalStates: StateMap) : SaveSessionBase(), SaveSession, DirectoryBasedSaveSessionProducer {
     private var copiedStorageData: MutableMap<String, Any>? = null
 
     private val dirtyFileNames = SmartHashSet<String>()
@@ -127,13 +133,26 @@ open class DirectoryBasedStorage(private val dir: Path,
         if (existingFiles.contains(key)) {
           continue
         }
-
-        if (copiedStorageData == null) {
-          copiedStorageData = originalStates.toMutableMap()
-        }
-        isSomeFileRemoved = true
-        copiedStorageData!!.remove(key)
+        removeFileData(key)
       }
+    }
+
+    override fun setFileState(fileName: String, componentName: String, element: Element?) {
+      storage.componentName = componentName
+      if (element != null) {
+        doSetState(fileName, element)
+      }
+      else {
+        removeFileData(fileName)
+      }
+    }
+
+    private fun removeFileData(fileName: String) {
+      if (copiedStorageData == null) {
+        copiedStorageData = originalStates.toMutableMap()
+      }
+      isSomeFileRemoved = true
+      copiedStorageData!!.remove(fileName)
     }
 
     private fun doSetState(fileName: String, subState: Element) {
