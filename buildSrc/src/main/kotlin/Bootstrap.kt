@@ -2,6 +2,7 @@
 
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
+import java.net.URI
 
 
 var Project.bootstrapKotlinVersion: String
@@ -52,18 +53,23 @@ sealed class BootstrapOption {
      *
      *  If [repo] is not specified the default buildscript and project repositories are used
      */
-    open class Custom(val kotlinVersion: String, val repo: String?) : BootstrapOption() {
+    open class Custom(val kotlinVersion: String, val repo: String?, val cacheRedirector: Boolean = false) : BootstrapOption() {
         override fun applyToProject(project: Project) {
             project.bootstrapKotlinVersion = kotlinVersion
-            project.bootstrapKotlinRepo = repo
+            project.bootstrapKotlinRepo = if (cacheRedirector)
+                repo?.let { URI(it) }?.let { "https://cache-redirector.jetbrains.com/${it.host}/${it.path}" }
+            else
+                repo
         }
     }
 
     /** Get bootstrap from kotlin-dev bintray repo */
-    class BintrayDev(kotlinVersion: String) : Custom(kotlinVersion, "https://dl.bintray.com/kotlin/kotlin-dev")
+    class BintrayDev(kotlinVersion: String, cacheRedirector: Boolean = false) :
+        Custom(kotlinVersion, "https://dl.bintray.com/kotlin/kotlin-dev", cacheRedirector)
 
     /** Get bootstrap from kotlin-bootstrap bintray repo, where bootstraps are published */
-    class BintrayBootstrap(kotlinVersion: String) : Custom(kotlinVersion, "https://dl.bintray.com/kotlin/kotlin-bootstrap")
+    class BintrayBootstrap(kotlinVersion: String, cacheRedirector: Boolean = false) :
+        Custom(kotlinVersion, "https://dl.bintray.com/kotlin/kotlin-bootstrap", cacheRedirector)
 
     /** Get bootstrap from teamcity maven artifacts of the specified build configuration
      *
