@@ -7,6 +7,7 @@ package sample.csvparser
 
 import kotlinx.cinterop.*
 import platform.posix.*
+import kotlinx.cli.*
 
 fun parseLine(line: String, separator: Char) : List<String> {
     val result = mutableListOf<String>()
@@ -30,13 +31,11 @@ fun parseLine(line: String, separator: Char) : List<String> {
 }
 
 fun main(args: Array<String>) {
-    if (args.size != 3) {
-        println("Usage: csvparser.kexe <file.csv> <column> <count>")
-        return
-    }
-    val fileName = args[0]
-    val column = args[1].toInt()
-    val count = args[2].toInt()
+    val argParser = ArgParser("csvparser")
+    val fileName by argParser.argument(ArgType.String, description = "CSV file")
+    val column by argParser.option(ArgType.Int, description = "Column to parse").required()
+    val count by argParser.option(ArgType.Int, description = "Count of lines to parse").required()
+    argParser.parse(args)
 
     val file = fopen(fileName, "r")
     if (file == null) {

@@ -5,25 +5,17 @@
 
 package sample.tetris
 
+import kotlinx.cli.*
+
 fun main(args: Array<String>) {
-    var startLevel = Config.startLevel
-    var width = Config.width
-    var height = Config.height
-    when (args.size) {
-        1 -> startLevel = args[0].toInt()
-        2 -> {
-            width = args[0].toInt()
-            height = args[1].toInt()
-        }
-        3 -> {
-            width = args[0].toInt()
-            height = args[1].toInt()
-            startLevel = args[2].toInt()
-        }
-    }
+    val argParser = ArgParser("tetris", useDefaultHelpShortName = false)
+    val level by argParser.option(ArgType.Int, shortName = "l", description = "Game level").default(Config.startLevel)
+    val width by argParser.option(ArgType.Int, shortName = "w", description = "Width of the game field").default(Config.width)
+    val height by argParser.option(ArgType.Int, shortName = "h", description = "Height of the game field").default(Config.height)
+    argParser.parse(args)
     val visualizer = SDL_Visualizer(width, height)
     val game = Game(width, height, visualizer, visualizer)
-    game.startNewGame(startLevel)
+    game.startNewGame(level)
 
     return
 }

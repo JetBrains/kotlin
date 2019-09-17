@@ -69,6 +69,8 @@ kotlin {
                 }
             }
         }
+
+        compilations["main"].kotlinOptions.freeCompilerArgs = listOf("-l", "kotlinx-cli")
     }
 }
 

@@ -15,10 +15,11 @@ kotlin {
     }
         
     hostTarget.apply {
+        compilations["main"].kotlinOptions.freeCompilerArgs = listOf("-l", "kotlinx-cli")
         binaries {
             executable {
                 entryPoint = "sample.csvparser.main"
-                runTask?.args("./European_Mammals_Red_List_Nov_2009.csv", 4, 100)
+                runTask?.args("--column", 4, "--count", 100, "./European_Mammals_Red_List_Nov_2009.csv")
             }
         }
     }

@@ -9,6 +9,7 @@ import ffmpeg.*
 import kotlin.system.*
 import kotlinx.cinterop.*
 import platform.posix.*
+import kotlinx.cli.*
 
 enum class State {
     PLAYING,
@@ -156,16 +157,25 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
 }
 
 fun main(args: Array<String>) {
-    if (args.isEmpty()) {
-        println("Usage: videoplayer.kexe <file.ext> [<width> <height> | 'video' | 'audio' | 'both']")
-        exitProcess(1)
-    }
+    val argParser = ArgParser("videoplayer")
+    val mode by argParser.option(
+            ArgType.Choice(listOf("video", "audio", "both")), shortName = "m", description = "Play mode")
+            .default("both")
+    val size by argParser.option(ArgType.Int, shortName = "s", description = "Required size of videoplayer window")
+            .delimiter(",")
+    val fileName by argParser.argument(ArgType.String, description = "File to play")
+    argParser.parse(args)
+
     av_register_all()
-    val mode = if (args.size == 2) PlayMode.valueOf(args[1].toUpperCase()) else PlayMode.BOTH
-    val requestedSize = if (args.size < 3) null else Dimensions(args[1].toInt(), args[2].toInt())
+    val requestedSize = if (size.size != 2) {
+        if (size.isNotEmpty())
+            println("Size value should include width and height separated with ','.")
+        null
+    } else
+        Dimensions(size[0], size[1])
     val player = VideoPlayer(requestedSize)
     try {
-        player.playFile(args[0], mode)
+        player.playFile(fileName, PlayMode.valueOf(mode.toUpperCase()))
     } finally {
         player.dispose()
     }

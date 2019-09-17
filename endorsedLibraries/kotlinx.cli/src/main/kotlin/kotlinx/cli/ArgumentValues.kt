@@ -123,7 +123,8 @@ internal abstract class AbstractArgumentSingleValue<T: Any>(descriptor: Descript
 internal class ArgumentSingleValue<T: Any>(descriptor: Descriptor<T, T>): AbstractArgumentSingleValue<T>(descriptor),
         ArgumentValueDelegate<T> {
     override var value: T
-        get() = parsedValue
+        get() = if (!isEmpty()) parsedValue else error("Value for argument ${descriptor.fullName} isn't set. " +
+                "ArgParser.parse(...) method should be called before.")
         set(value) = setDelegatedValue(value)
 }
 
