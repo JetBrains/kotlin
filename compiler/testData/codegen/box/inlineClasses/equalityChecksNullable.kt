@@ -12,6 +12,8 @@ fun isEqualAnyRight(s: Any?, t: A) = s == t
 fun isEqualSameNullable(s: A?, t: A?) = s == t
 fun isEqualAnyNullableLeft(s: A?, t: Any?) = s == t
 fun isEqualAnyNullableRight(s: Any?, t: A?) = s == t
+fun isEqualNullableUnboxedLeft(s: A, t: A?) = s == t
+fun isEqualNullableUnboxedRight(s: A?, t: A) = s == t
 
 fun box(): String {
     if (isNullVacuousLeft(A(0))) return "Fail 1"
@@ -56,6 +58,16 @@ fun box(): String {
     if (isEqualAnyNullableRight(null, A(null))) return "Fail 39"
     if (isEqualSameNullable(A(null), null)) return "Fail 42"
     if (isEqualSameNullable(null, A(null))) return "Fail 43"
+
+    if (isEqualNullableUnboxedLeft(A(0), A(1))) return "Fail 44"
+    if (!isEqualNullableUnboxedLeft(A(0), A(0))) return "Fail 45"
+    if (isEqualNullableUnboxedRight(A(0), A(1))) return "Fail 46"
+    if (!isEqualNullableUnboxedRight(A(1), A(1))) return "Fail 47"
+    if (isEqualNullableUnboxedLeft(A(0), null)) return "Fail 48"
+    if (isEqualNullableUnboxedRight(null, A(1))) return "Fail 49"
+
+    if (isEqualNullableUnboxedRight(null, A(null))) return "Fail 50"
+    if (isEqualNullableUnboxedLeft(A(null), null)) return "Fail 51"
 
     return "OK"
 }

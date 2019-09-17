@@ -21,6 +21,10 @@ fun isEqualAnyLeftA(s: A, t: Any?) = s == t
 fun isEqualSameNullableA(s: A?, t: A?) = s == t
 fun isEqualAnyNullableLeftA(s: A?, t: Any?) = s == t
 fun isEqualAnyNullableRightA(s: Any?, t: A?) = s == t
+// unbox, equals-impl0
+fun isEqualLeftNullableRightUnboxedA(s: A?, t: A) = s == t
+// equals-impl
+fun isEqualRightNullableLeftUnboxedA(s: A, t: A?) = s == t
 
 // FILE: b.kt
 
@@ -42,6 +46,9 @@ fun isEqualSameNullableB(s: B?, t: B?) = s == t
 fun isEqualAnyNullableLeftB(s: B?, t: Any?) = s == t
 // boxes
 // fun isEqualAnyNullableRightB(s: Any?, t: B?) = s == t
+// equals-impl0
+fun isEqualLeftNullableRightUnboxedB(s: B?, t: B) = s == t
+fun isEqualRightNullableLeftUnboxedB(s: B, t: B?) = s == t
 
 // FILE: c.kt
 
@@ -61,24 +68,28 @@ fun isEqualAnyLeftC(s: C, t: Any?) = s == t
 fun isEqualSameNullableC(s: C?, t: C?) = s == t
 fun isEqualAnyNullableLeftC(s: C?, t: Any?) = s == t
 fun isEqualAnyNullableRightC(s: Any?, t: C?) = s == t
+// unbox, equals-impl0
+fun isEqualLeftNullableRightUnboxedC(s: C?, t: C) = s == t
+// equals-impl
+fun isEqualRightNullableLeftUnboxedC(s: C, t: C?) = s == t
 
 // @AKt.class:
 // 0 INVOKESTATIC A.box-impl
-// 0 INVOKEVIRTUAL A.unbox-impl
-// 1 INVOKESTATIC A.equals-impl \(
-// 1 INVOKESTATIC A.equals-impl0
+// 1 INVOKEVIRTUAL A.unbox-impl
+// 2 INVOKESTATIC A.equals-impl \(
+// 2 INVOKESTATIC A.equals-impl0
 // 3 INVOKESTATIC kotlin/jvm/internal/Intrinsics.areEqual
 
 // @BKt.class:
 // 0 INVOKESTATIC B.box-impl
 // 0 INVOKEVIRTUAL B.unbox-impl
 // 2 INVOKESTATIC B.equals-impl \(
-// 2 INVOKESTATIC B.equals-impl0
+// 4 INVOKESTATIC B.equals-impl0
 // 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.areEqual
 
 // @CKt.class:
 // 0 INVOKESTATIC C.box-impl
-// 0 INVOKEVIRTUAL C.unbox-impl
-// 1 INVOKESTATIC C.equals-impl \(
-// 1 INVOKESTATIC C.equals-impl0
+// 1 INVOKEVIRTUAL C.unbox-impl
+// 2 INVOKESTATIC C.equals-impl \(
+// 2 INVOKESTATIC C.equals-impl0
 // 3 INVOKESTATIC kotlin/jvm/internal/Intrinsics.areEqual
