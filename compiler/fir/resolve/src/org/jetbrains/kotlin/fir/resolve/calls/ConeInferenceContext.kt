@@ -256,7 +256,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     }
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
-        if (map.isEmpty()) return ConeSubstitutor.Empty
+        if (map.isEmpty()) return createEmptySubstitutor()
         return object : AbstractConeSubstitutor(),
             TypeSubstitutorMarker {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
@@ -264,6 +264,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
                 return makeNullableIfNeed(type.isMarkedNullable, new as ConeKotlinType)
             }
         }
+    }
+
+    override fun createEmptySubstitutor(): TypeSubstitutorMarker {
+        return ConeSubstitutor.Empty
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {

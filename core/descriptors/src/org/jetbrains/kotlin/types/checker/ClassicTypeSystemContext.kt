@@ -456,6 +456,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
+    override fun createEmptySubstitutor(): TypeSubstitutorMarker {
+        errorSupportedOnlyInTypeInference()
+    }
+
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
         require(type is UnwrappedType, type::errorMessage)
         require(this is TypeSubstitutor, this::errorMessage)

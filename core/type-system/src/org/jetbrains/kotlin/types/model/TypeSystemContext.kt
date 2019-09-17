@@ -146,6 +146,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker
 
     fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
+    fun createEmptySubstitutor(): TypeSubstitutorMarker
 
     fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker
 

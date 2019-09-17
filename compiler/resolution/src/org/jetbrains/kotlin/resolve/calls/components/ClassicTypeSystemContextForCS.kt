@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
+import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -60,7 +61,12 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
     }
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
+        if (map.isEmpty()) return createEmptySubstitutor()
         return NewTypeSubstitutorByConstructorMap(map.cast())
+    }
+
+    override fun createEmptySubstitutor(): TypeSubstitutorMarker {
+        return EmptySubstitutor
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {

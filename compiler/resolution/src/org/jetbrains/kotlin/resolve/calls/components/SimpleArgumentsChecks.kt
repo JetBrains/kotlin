@@ -51,8 +51,8 @@ private fun checkExpressionArgument(
     diagnosticsHolder: KotlinDiagnosticsHolder,
     isReceiver: Boolean
 ): ResolvedAtom {
-    val resolvedKtExpression = ResolvedExpressionAtom(expressionArgument)
-    if (expectedType == null) return resolvedKtExpression
+    val resolvedExpression = ResolvedExpressionAtom(expressionArgument)
+    if (expectedType == null) return resolvedExpression
 
     // todo run this approximation only once for call
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.receiver.stableType, expectedType)
@@ -77,7 +77,6 @@ private fun checkExpressionArgument(
         return null
     }
 
-    val expectedNullableType = expectedType.makeNullableAsSpecified(true)
     val position = if (isReceiver) ReceiverConstraintPosition(expressionArgument) else ArgumentConstraintPosition(expressionArgument)
 
     // Used only for arguments with @NotNull annotation
@@ -86,12 +85,13 @@ private fun checkExpressionArgument(
     }
 
     if (expressionArgument.isSafeCall) {
+        val expectedNullableType = expectedType.makeNullableAsSpecified(true)
         if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
             diagnosticsHolder.addDiagnosticIfNotNull(
                 unstableSmartCastOrSubtypeError(expressionArgument.receiver.unstableType, expectedNullableType, position)
             )
         }
-        return resolvedKtExpression
+        return resolvedExpression
     }
 
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
@@ -103,10 +103,12 @@ private fun checkExpressionArgument(
                     position
                 )
             )
-            return resolvedKtExpression
+            return resolvedExpression
         }
 
         val unstableType = expressionArgument.receiver.unstableType
+        val expectedNullableType = expectedType.makeNullableAsSpecified(true)
+
         if (unstableType != null && csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
             diagnosticsHolder.addDiagnostic(UnstableSmartCast(expressionArgument, unstableType))
         } else if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
@@ -116,7 +118,7 @@ private fun checkExpressionArgument(
         }
     }
 
-    return resolvedKtExpression
+    return resolvedExpression
 }
 
 /**

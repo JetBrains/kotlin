@@ -159,6 +159,10 @@ interface NewTypeSubstitutor: TypeSubstitutorMarker {
     }
 }
 
+object EmptySubstitutor : NewTypeSubstitutor {
+    override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = null
+}
+
 class NewTypeSubstitutorByConstructorMap(val map: Map<TypeConstructor, UnwrappedType>) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = map[constructor]
 }
