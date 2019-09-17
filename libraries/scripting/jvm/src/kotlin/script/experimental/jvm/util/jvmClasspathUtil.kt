@@ -118,7 +118,7 @@ internal fun ClassLoader.rawClassPathFromKeyResourcePath(keyResourcePath: String
                 keyResourcePathDepth = keyResourcePath.trim('/').count { it == '/' }
             }
             var root = file
-            for (i in 1..keyResourcePathDepth) {
+            for (i in 0..keyResourcePathDepth) {
                 root = root.parentFile
             }
             root

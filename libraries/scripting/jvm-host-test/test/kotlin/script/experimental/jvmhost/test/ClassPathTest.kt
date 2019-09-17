@@ -15,6 +15,7 @@ import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.jvm.util.classPathFromTypicalResourceUrls
+import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
 
@@ -79,6 +80,13 @@ class ClassPathTest : TestCase() {
         } finally {
             tempDir.deleteRecursively()
         }
+    }
+
+    @Test
+    fun testClasspathFromClass() {
+        val cpFromThis = classpathFromClass(this::class)
+        val expectedSuffix = "classes/kotlin/test"
+        assertTrue("Path should end with $expectedSuffix, got: $cpFromThis", cpFromThis!!.first().path.endsWith(expectedSuffix))
     }
 }
 
