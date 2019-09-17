@@ -3409,7 +3409,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (!leftIsUnboxed || !rightIsUnboxed || !leftHasPrimitiveEquality || !rightHasPrimitiveEquality) {
                 return genEqualsForInlineClasses(
                         left, right, opToken, pregeneratedSubject, leftKotlinType, rightKotlinType,
-                        leftType, rightType, leftIsUnboxed, rightIsUnboxed
+                        leftType, rightType, leftIsInlineClass, leftIsUnboxed, rightIsUnboxed
                 );
             }
         }
@@ -3502,6 +3502,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull KotlinType rightKotlinType,
             @NotNull Type leftType,
             @NotNull Type rightType,
+            boolean leftIsInlineClass,
             boolean leftIsUnboxed,
             boolean rightIsUnboxed
     ) {
@@ -3514,7 +3515,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             boolean flipComparison = opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ;
 
             // Don't call equals-impl0 if the class file version is too low to support it.
-            boolean useUnboxedEquals = leftIsUnboxed && JvmCodegenUtil.typeHasSpecializedInlineClassEquality(leftKotlinType, state);
+            boolean useUnboxedEquals =
+                    (leftIsUnboxed || (leftIsInlineClass && rightIsUnboxed)) &&
+                    JvmCodegenUtil.typeHasSpecializedInlineClassEquality(leftKotlinType, state);
 
             leftValue.put(leftType, leftKotlinType, v);
             //noinspection SuspiciousNameCombination
@@ -3571,12 +3574,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         v.goTo(endLabel);
                         v.visitLabel(nonNullLabel);
                     }
-                    String descriptor = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, leftType, leftType);
+                    if (!leftIsUnboxed) {
+                        AsmUtil.swap(v, topType, afterTopType);
+                        KotlinType nonNullableLeftKotlinType = TypeUtils.makeNotNullable(leftKotlinType);
+                        Type nonNullableLeftType = typeMapper.mapType(nonNullableLeftKotlinType);
+                        StackValue.coerce(leftType, leftKotlinType, nonNullableLeftType, nonNullableLeftKotlinType, v);
+                        afterTopType = nonNullableLeftType;
+                        AsmUtil.swap(v, afterTopType, topType);
+                    }
+                    String descriptor = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, afterTopType, afterTopType);
                     v.invokestatic(className, InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME.asString(), descriptor, false);
                 } else {
-                    // equals-impl expects a non-nullable first argument, yet `left` may be unboxed even if
-                    // it is nullable when it is a wrapper around a non-nullable reference type.
-                    String descriptor = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, leftType, OBJECT_TYPE);
+                    String descriptor = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, afterTopType, OBJECT_TYPE);
                     v.invokestatic(className, "equals-impl", descriptor, false);
                 }
             } else {
