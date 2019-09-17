@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.injection
 
 import com.intellij.codeInsight.AnnotationUtil
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.openapi.application.ApplicationManager
@@ -25,7 +26,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
-import org.intellij.plugins.intelliLang.inject.LanguageInjectionSupport
 import org.intellij.plugins.intelliLang.inject.TemporaryPlacesRegistry
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
@@ -94,7 +94,7 @@ class KotlinLanguageInjector(
                 kotlinCachedInjection.baseInjection
             else -> {
                 fun computeAndCache(): BaseInjection {
-                    val computedInjection = computeBaseInjection(ktHost, support, registrar) ?: ABSENT_KOTLIN_INJECTION
+                    val computedInjection = computeBaseInjection(ktHost, support) ?: ABSENT_KOTLIN_INJECTION
                     ktHost.cachedInjectionWithModification = KotlinCachedInjection(modificationCount, computedInjection)
                     return computedInjection
                 }
@@ -127,7 +127,7 @@ class KotlinLanguageInjector(
             InjectorUtils.putInjectedFileUserData(
                 ktHost,
                 language,
-                com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.FRANKENSTEIN_INJECTION,
+                InjectedLanguageManager.FRANKENSTEIN_INJECTION,
                 if (parts.isUnparsable) java.lang.Boolean.TRUE else null
             )
         } else {
@@ -138,14 +138,12 @@ class KotlinLanguageInjector(
     @Suppress("FoldInitializerAndIfToElvis")
     private fun computeBaseInjection(
         ktHost: KtStringTemplateExpression,
-        support: KotlinLanguageInjectionSupport,
-        registrar: MultiHostRegistrar
+        support: KotlinLanguageInjectionSupport
     ): BaseInjection? {
         val containingFile = ktHost.containingFile
 
         val tempInjectedLanguage = TemporaryPlacesRegistry.getInstance(project).getLanguageFor(ktHost, containingFile)
         if (tempInjectedLanguage != null) {
-            InjectorUtils.putInjectedFileUserData(registrar, LanguageInjectionSupport.TEMPORARY_INJECTED_LANGUAGE, tempInjectedLanguage)
             return BaseInjection(support.id).apply {
                 injectedLanguageId = tempInjectedLanguage.id
                 prefix = tempInjectedLanguage.prefix
