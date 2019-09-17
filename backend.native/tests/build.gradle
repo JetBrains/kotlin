@@ -3337,6 +3337,7 @@ Task interopTest(String name, Closure<KonanInteropTest> configureClosure) {
 
 
 standaloneTest("interop_objc_allocException") {
+    dependsOnPlatformLibs(it)
     disabled = !isAppleTarget(project)
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
