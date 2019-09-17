@@ -27,7 +27,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
@@ -222,8 +221,8 @@ public final class DocumentationManager extends DockablePopupManager<Documentati
     myToolWindow.setAutoHide(false);
   }
 
-  public static DocumentationManager getInstance(Project project) {
-    return ServiceManager.getService(project, DocumentationManager.class);
+  public static DocumentationManager getInstance(@NotNull Project project) {
+    return project.getService(DocumentationManager.class);
   }
 
   /**

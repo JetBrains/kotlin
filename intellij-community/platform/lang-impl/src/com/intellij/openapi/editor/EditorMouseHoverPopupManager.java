@@ -170,14 +170,21 @@ public final class EditorMouseHoverPopupManager implements Disposable {
                                   boolean requestFocus) {
     ProgressIndicatorBase progress = new ProgressIndicatorBase();
     myCurrentProgress = progress;
-    myAlarm.addRequest(() -> ProgressManager.getInstance().executeProcessUnderProgress(() -> {
-      Info info = context.calcInfo(editor);
-      ApplicationManager.getApplication().invokeLater(() -> {
-        if (progress != myCurrentProgress) return;
-        myCurrentProgress = null;
-        if (info != null &&
-            editor.getContentComponent().isShowing() &&
-            (forceShowing || !isPopupDisabled(editor))) {
+    myAlarm.addRequest(() -> {
+      ProgressManager.getInstance().executeProcessUnderProgress(() -> {
+        Info info = context.calcInfo(editor);
+        ApplicationManager.getApplication().invokeLater(() -> {
+          if (progress != myCurrentProgress) {
+            return;
+          }
+
+          myCurrentProgress = null;
+          if (info == null ||
+              !editor.getContentComponent().isShowing() ||
+              (!forceShowing && isPopupDisabled(editor))) {
+            return;
+          }
+
           PopupBridge popupBridge = new PopupBridge();
           JComponent component = info.createComponent(editor, popupBridge, requestFocus);
           if (component == null) {
@@ -195,9 +202,9 @@ public final class EditorMouseHoverPopupManager implements Disposable {
             }
             myContext = context;
           }
-        }
-      });
-    }, progress), context.getShowingDelay());
+        });
+      }, progress);
+    }, context.getShowingDelay());
   }
 
   private void onActivity() {
@@ -429,7 +436,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
     }
 
     @Nullable
-    private Info calcInfo(Editor editor) {
+    private Info calcInfo(@NotNull Editor editor) {
       HighlightInfo info = getHighlightInfo();
       if (info != null && (info.getDescription() == null || info.getToolTip() == null)) {
         info = null;
@@ -440,7 +447,12 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       if (elementForQuickDoc != null) {
         PsiElement element = getElementForQuickDoc();
         try {
-          DocumentationManager documentationManager = DocumentationManager.getInstance(editor.getProject());
+          Project project = editor.getProject();
+          if (project == null || project.isDisposedOrDisposeInProgress()) {
+            return null;
+          }
+
+          DocumentationManager documentationManager = DocumentationManager.getInstance(project);
           QuickDocUtil.runInReadActionWithWriteActionPriorityWithRetries(() -> {
             if (element.isValid()) {
               targetElementRef.set(documentationManager.findTargetElement(editor, targetOffset, element.getContainingFile(), element));
