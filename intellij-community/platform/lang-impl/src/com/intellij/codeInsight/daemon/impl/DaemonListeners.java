@@ -40,6 +40,9 @@ import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileTypes.FileTypeEvent;
+import com.intellij.openapi.fileTypes.FileTypeListener;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -284,6 +287,12 @@ public final class DaemonListeners implements Disposable {
                                                        Collections.emptyList(),
                                                        null,
                                                        Pass.UPDATE_ALL);
+      }
+    });
+    connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
+      @Override
+      public void fileTypesChanged(@NotNull FileTypeEvent event) {
+        IntentionsUI.getInstance(project).invalidate();
       }
     });
 
