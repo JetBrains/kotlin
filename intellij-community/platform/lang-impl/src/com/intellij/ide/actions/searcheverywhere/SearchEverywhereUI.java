@@ -1554,14 +1554,28 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   private final SearchListener mySearchListener = new SearchListener();
 
   private class SearchListener implements SESearcher.Listener {
-
     @Override
     public void elementsAdded(@NotNull List<? extends SearchEverywhereFoundElementInfo> list) {
+      boolean wasEmpty = myListModel.listElements.isEmpty();
+
       mySelectionTracker.lock();
       myListModel.addElements(list);
       mySelectionTracker.unlock();
 
       mySelectionTracker.restoreSelection();
+
+      if (wasEmpty && !myListModel.listElements.isEmpty()) {
+        Object prevSelection = ((SearchEverywhereManagerImpl)SearchEverywhereManager.getInstance(myProject))
+          .getPrevSelection(getSelectedContributorID());
+        if (prevSelection instanceof Integer) {
+          for (SearchEverywhereFoundElementInfo info : myListModel.listElements) {
+            if (Objects.hashCode(info.element) == ((Integer)prevSelection).intValue()) {
+              myResultsList.setSelectedValue(info.element, true);
+              break;
+            }
+          }
+        }
+      }
     }
 
     @Override
@@ -1588,17 +1602,6 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       hasMoreContributors.forEach(myListModel::setHasMore);
 
       mySelectionTracker.resetSelectionIfNeeded();
-
-      Object prevSelection = ((SearchEverywhereManagerImpl)SearchEverywhereManager.getInstance(myProject))
-        .getPrevSelection(getSelectedContributorID());
-      if (prevSelection instanceof Integer) {
-        for (SearchEverywhereFoundElementInfo info : myListModel.listElements) {
-          if (Objects.hashCode(info.element) == ((Integer)prevSelection).intValue()) {
-            myResultsList.setSelectedValue(info.element, true);
-            break;
-          }
-        }
-      }
     }
   }
 
