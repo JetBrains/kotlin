@@ -208,7 +208,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
             pair.second.stream()
               .filter(ModuleBuildTask.class::isInstance)
               .map(task -> ((ModuleBuildTask)task).getModule())
-              .forEach(module -> context.dirtyOutputPathsProvider(moduleOutputPathsProvider(module)));
+              .forEach(module -> context.addDirtyOutputPathsProvider(moduleOutputPathsProvider(module)));
           }
           runner.run(myProject, context, notification, pair.second);
         }
