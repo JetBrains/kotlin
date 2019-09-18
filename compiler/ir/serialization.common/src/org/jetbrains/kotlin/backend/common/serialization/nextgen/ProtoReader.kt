@@ -65,7 +65,7 @@ open class ProtoReader(
             if ((b and 0x80) == 0) break
         }
 
-        if (shift >= 32) error("int32 overflow")
+        if (shift > 35) error("int32 overflow $shift")
 
         return result
     }
