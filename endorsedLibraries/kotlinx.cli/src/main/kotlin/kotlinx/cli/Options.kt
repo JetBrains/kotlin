@@ -116,9 +116,6 @@ fun <T : Any> MultipleOption<T, DelimitedOption>.multiple(): MultipleOption<T, R
  */
 fun <T: Any, TResult> AbstractSingleOption<T, TResult>.default(value: T): SingleOption<T> {
     val newOption = with((delegate as ParsingValue<T, T>).descriptor as OptionDescriptor) {
-        if (required) {
-            printWarning("required() is unneeded, because option with default value is defined.")
-        }
         SingleOption(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
                 description, value, required, multiple, delimiter, deprecatedWarning), owner)
     }
@@ -134,8 +131,8 @@ fun <T: Any, TResult> AbstractSingleOption<T, TResult>.default(value: T): Single
 fun <T: Any, OptionType: MultipleOptionType>
         MultipleOption<T, OptionType>.default(value: Collection<T>): MultipleOption<T, OptionType> {
     val newOption = with((delegate as ParsingValue<T, List<T>>).descriptor as OptionDescriptor) {
-        if (required) {
-            printWarning("required() is unneeded, because option with default value is defined.")
+        if (value.isEmpty()) {
+            error("Default value for option can't be empty collection.")
         }
         MultipleOption<T, OptionType>(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName,
                 shortName, description, value.toList(),
@@ -148,11 +145,8 @@ fun <T: Any, OptionType: MultipleOptionType>
 /**
  * Require option to be always provided in command line.
  */
-fun <T: Any, TResult> AbstractSingleOption<T, TResult>.required(): SingleOption<T> {
+fun <T: Any> SingleNullableOption<T>.required(): SingleOption<T> {
     val newOption = with((delegate as ParsingValue<T, T>).descriptor as OptionDescriptor) {
-        defaultValue?.let {
-            printWarning("required() is unneeded, because option with default value is defined.")
-        }
         SingleOption(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName,
                 shortName, description, defaultValue,
                 true, multiple, delimiter, deprecatedWarning), owner)
@@ -167,9 +161,6 @@ fun <T: Any, TResult> AbstractSingleOption<T, TResult>.required(): SingleOption<
 fun <T: Any, OptionType: MultipleOptionType>
         MultipleOption<T, OptionType>.required(): MultipleOption<T, OptionType> {
     val newOption = with((delegate as ParsingValue<T, List<T>>).descriptor as OptionDescriptor) {
-        if (required) {
-            printWarning("required() is unneeded, because option with default value is defined.")
-        }
         MultipleOption<T, OptionType>(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
                 description, defaultValue?.toList() ?: listOf(),
                 true, multiple, delimiter, deprecatedWarning), owner)

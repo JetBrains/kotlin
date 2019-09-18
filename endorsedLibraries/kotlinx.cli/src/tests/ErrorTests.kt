@@ -13,7 +13,7 @@ class ErrorTests {
     @Test
     fun testExtraArguments() {
         val argParser = ArgParser("testParser")
-        val addendums by argParser.argument(ArgType.Int, "addendums", description = "Addendums").number(2)
+        val addendums by argParser.argument(ArgType.Int, "addendums", description = "Addendums").multiple(2)
         val output by argParser.argument(ArgType.String, "output", "Output file")
         val debugMode by argParser.option(ArgType.Boolean, "debug", "d", "Debug mode")
         val exception = assertFailsWith<IllegalStateException> { argParser.parse(

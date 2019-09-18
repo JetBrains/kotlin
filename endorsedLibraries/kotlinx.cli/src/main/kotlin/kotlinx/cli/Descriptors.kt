@@ -127,7 +127,7 @@ internal class ArgDescriptor<T : Any, TResult>(
     init {
         // Check arguments number correctness.
         number?.let {
-            if (it < 0)
+            if (it < 1)
                 error("Number of arguments for argument description $fullName should be greater than zero.")
         }
     }

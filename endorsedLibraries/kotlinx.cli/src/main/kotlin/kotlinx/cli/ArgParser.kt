@@ -180,14 +180,14 @@ open class ArgParser(val programName: String, var useDefaultHelpShortName: Boole
                 // Previous argument has default value.
                 it.descriptor.defaultValue?.let {
                     if (currentArgument.descriptor.defaultValue == null && currentArgument.descriptor.required) {
-                        printWarning("Default value of argument ${previousArgument.descriptor.fullName} will be unused,  " +
+                        printError("Default value of argument ${previousArgument.descriptor.fullName} will be unused,  " +
                                 "because next argument ${currentArgument.descriptor.fullName} is always required and has no default value.")
                     }
                 }
                 // Previous argument is optional.
                 if (!it.descriptor.required) {
                     if (currentArgument.descriptor.defaultValue == null && currentArgument.descriptor.required) {
-                        printWarning("Argument ${previousArgument.descriptor.fullName} will be always required, " +
+                        printError("Argument ${previousArgument.descriptor.fullName} will be always required, " +
                                 "because next argument ${currentArgument.descriptor.fullName} is always required.")
                     }
                 }
@@ -313,7 +313,7 @@ open class ArgParser(val programName: String, var useDefaultHelpShortName: Boole
 
         // Add default list with arguments if there can be extra free arguments.
         if (skipExtraArguments) {
-            argument(ArgType.String, "").number()
+            argument(ArgType.String, "").vararg()
         }
 
         // Map declared options and arguments to maps.

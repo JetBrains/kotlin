@@ -18,7 +18,7 @@ class SubcommandsTests {
         val output by argParser.option(ArgType.String, "output", "o", "Output file")
         class Summary: Subcommand("summary") {
             val invert by option(ArgType.Boolean, "invert", "i", "Invert results")
-            val addendums by argument(ArgType.Int, "addendums", description = "Addendums").number()
+            val addendums by argument(ArgType.Int, "addendums", description = "Addendums").vararg()
             var result: Int = 0
 
             override fun execute() {
@@ -36,7 +36,7 @@ class SubcommandsTests {
     @Test
     fun testCommonOptions() {
         abstract class CommonOptions(name: String): Subcommand(name) {
-            val numbers by argument(ArgType.Int, "numbers", description = "Numbers").number()
+            val numbers by argument(ArgType.Int, "numbers", description = "Numbers").vararg()
         }
         class Summary: CommonOptions("summary") {
             val invert by option(ArgType.Boolean, "invert", "i", "Invert results")
@@ -74,7 +74,7 @@ class SubcommandsTests {
         val argParser = ArgParser("testParser")
 
         class Summary: Subcommand("summary") {
-            val addendums by argument(ArgType.Int, "addendums", description = "Addendums").number()
+            val addendums by argument(ArgType.Int, "addendums", description = "Addendums").vararg()
             var result: Int = 0
 
             override fun execute() {
