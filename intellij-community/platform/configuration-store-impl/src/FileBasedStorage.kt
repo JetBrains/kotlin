@@ -254,32 +254,32 @@ open class FileBasedStorage(file: Path,
   override fun toString() = file.systemIndependentPath
 }
 
-internal fun writeFile(file: Path?,
+internal fun writeFile(cachedFile: Path?,
                        requestor: StorageManagerFileWriteRequestor,
                        virtualFile: VirtualFile?,
                        dataWriter: DataWriter,
                        lineSeparator: LineSeparator,
                        prependXmlProlog: Boolean): VirtualFile {
-  val result = if (file != null && (virtualFile == null || !virtualFile.isValid)) {
-    getOrCreateVirtualFile(file, requestor)
+  val file = if (cachedFile != null && (virtualFile == null || !virtualFile.isValid)) {
+    getOrCreateVirtualFile(cachedFile, requestor)
   }
   else {
     virtualFile!!
   }
 
-  if ((LOG.isDebugEnabled || ApplicationManager.getApplication().isUnitTestMode) && !FileUtilRt.isTooLarge(result.length)) {
+  if ((LOG.isDebugEnabled || ApplicationManager.getApplication().isUnitTestMode) && !FileUtilRt.isTooLarge(file.length)) {
     val content = dataWriter.toBufferExposingByteArray(lineSeparator)
-    if (isEqualContent(result, lineSeparator, content, prependXmlProlog)) {
+    if (isEqualContent(file, lineSeparator, content, prependXmlProlog)) {
       val contentString = content.toByteArray().toString(Charsets.UTF_8)
-      LOG.warn("Content equals, but it must be handled not on this level: file ${result.name}, content:\n$contentString")
+      LOG.warn("Content equals, but it must be handled not on this level: file ${file.name}, content:\n$contentString")
     }
     else if (DEBUG_LOG != null && ApplicationManager.getApplication().isUnitTestMode) {
-      DEBUG_LOG = "${result.path}:\n$content\nOld Content:\n${LoadTextUtil.loadText(result)}"
+      DEBUG_LOG = "${file.path}:\n$content\nOld Content:\n${LoadTextUtil.loadText(file)}"
     }
   }
 
-  doWrite(requestor, result, dataWriter, lineSeparator, prependXmlProlog)
-  return result
+  doWrite(requestor, file, dataWriter, lineSeparator, prependXmlProlog)
+  return file
 }
 
 internal val XML_PROLOG = """<?xml version="1.0" encoding="UTF-8"?>""".toByteArray()
