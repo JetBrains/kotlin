@@ -12,11 +12,16 @@ data class KarmaConfig(
     var basePath: String? = null,
     val files: MutableList<String> = mutableListOf(),
     val frameworks: MutableList<String> = mutableListOf(),
+    val client: KarmaClient = KarmaClient(),
     val browsers: MutableList<String> = mutableListOf(),
     val customLaunchers: MutableMap<String, CustomLauncher> = mutableMapOf(),
     val reporters: MutableList<String> = mutableListOf(),
     val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf(),
     var coverageReporter: CoverageReporter? = null
+)
+
+data class KarmaClient(
+    val args: MutableList<String> = mutableListOf()
 )
 
 class CustomLauncher(var base: String) {

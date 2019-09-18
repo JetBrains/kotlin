@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
 data class KotlinTestRunnerCliArgs(
-    val moduleNames: List<String>,
+    val moduleNames: List<String> = listOf(),
     val include: Collection<String> = listOf(),
     val exclude: Collection<String> = listOf(),
     val ignoredTestSuites: IgnoredTestSuitesReporting = IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored

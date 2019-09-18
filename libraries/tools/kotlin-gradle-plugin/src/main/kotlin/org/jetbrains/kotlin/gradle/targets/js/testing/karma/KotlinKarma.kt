@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
@@ -233,6 +234,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     }
 
     private fun useWebpack() {
+        createAdapterJs()
+        requiredDependencies.add(versions.browserProcessHrtime)
+
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
 
@@ -324,6 +328,25 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         }
     }
 
+    private fun createAdapterJs() {
+        configurators.add {
+            val npmProject = compilation.npmProject
+            val files = it.nodeModulesToLoad.map { npmProject.require(it) }
+
+            val adapterJs = npmProject.dir.resolve("adapter.js")
+            adapterJs.printWriter().use { writer ->
+                val karmaRunner = npmProject.require("kotlin-test-nodejs-runner/kotlin-test-karma-runner.js")
+                writer.println("require('$karmaRunner')")
+
+                files.forEach { file ->
+                    writer.println("require('$file')")
+                }
+            }
+
+            config.files.add(adapterJs.canonicalPath)
+        }
+    }
+
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
@@ -343,14 +366,18 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val npmProject = compilation.npmProject
 
-        val files = task.nodeModulesToLoad.map { npmProject.require(it) }
-        config.files.addAll(files)
-
         config.basePath = npmProject.nodeModulesDir.absolutePath
 
         configurators.forEach {
             it(task)
         }
+
+        val cliArgs = KotlinTestRunnerCliArgs(
+            include = task.includePatterns,
+            exclude = task.excludePatterns
+        )
+
+        config.client.args.addAll(cliArgs.toList())
 
         val karmaConfJs = npmProject.dir.resolve("karma.conf.js")
         karmaConfJs.printWriter().use { confWriter ->
