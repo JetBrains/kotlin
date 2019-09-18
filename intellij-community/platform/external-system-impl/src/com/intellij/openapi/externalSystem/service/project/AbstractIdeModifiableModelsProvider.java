@@ -71,11 +71,12 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
 
   public AbstractIdeModifiableModelsProvider(@NotNull Project project) {
     super(project);
+
     myUserData = new MyUserDataHolderBase();
-    for (ModifiableModelsProviderExtension<ModifiableModel> extension : EP_NAME.getIterable()) {
+    EP_NAME.forEachExtensionSafe(extension -> {
       Pair<Class<ModifiableModel>, ModifiableModel> pair = extension.create(project, this);
       myModifiableModels.put(pair.first, pair.second);
-    }
+    });
   }
 
   @Nullable
@@ -465,9 +466,9 @@ public abstract class AbstractIdeModifiableModelsProvider extends IdeModelsProvi
 
 
     Map<String, String> toSubstitute = new HashMap<>();
+    ProjectDataManager projectDataManager = ProjectDataManager.getInstance();
     for (ExternalSystemManager<?, ?, ?, ?, ?> manager: ExternalSystemManager.EP_NAME.getIterable()) {
-      final Collection<ExternalProjectInfo> projectsData =
-        ProjectDataManager.getInstance().getExternalProjectsData(myProject, manager.getSystemId());
+      Collection<ExternalProjectInfo> projectsData = projectDataManager.getExternalProjectsData(myProject, manager.getSystemId());
       for (ExternalProjectInfo projectInfo: projectsData) {
         if (projectInfo.getExternalProjectStructure() == null) {
           continue;

@@ -854,11 +854,11 @@ public class ExternalSystemProjectsWatcherImpl extends ExternalSystemTaskNotific
   @NotNull
   private List<Pair<ExternalSystemManager, ExternalProjectSettings>> findLinkedProjectsSettings() {
     List<Pair<ExternalSystemManager, ExternalProjectSettings>> list = new ArrayList<>();
-    for (ExternalSystemManager<?, ?, ?, ?, ?> manager : ExternalSystemManager.EP_NAME.getIterable()) {
+    ExternalSystemManager.EP_NAME.forEachExtensionSafe(manager -> {
       for (ExternalProjectSettings settings : manager.getSettingsProvider().fun(myProject).getLinkedProjectsSettings()) {
         list.add(Pair.create(manager, settings));
       }
-    }
+    });
     return list;
   }
 

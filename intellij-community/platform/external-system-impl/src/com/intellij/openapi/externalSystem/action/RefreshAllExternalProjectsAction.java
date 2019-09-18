@@ -86,19 +86,16 @@ public class RefreshAllExternalProjectsAction extends AnAction implements AnActi
     }
   }
 
+  @NotNull
   private static List<ProjectSystemId> getSystemIds(@NotNull AnActionEvent e) {
-    final List<ProjectSystemId> systemIds = new ArrayList<>();
-
-    final ProjectSystemId externalSystemId = e.getData(ExternalSystemDataKeys.EXTERNAL_SYSTEM_ID);
-    if (externalSystemId != null) {
-      systemIds.add(externalSystemId);
+    List<ProjectSystemId> systemIds = new ArrayList<>();
+    ProjectSystemId externalSystemId = e.getData(ExternalSystemDataKeys.EXTERNAL_SYSTEM_ID);
+    if (externalSystemId == null) {
+      ExternalSystemManager.EP_NAME.forEachExtensionSafe(manager -> systemIds.add(manager.getSystemId()));
     }
     else {
-      for (ExternalSystemManager manager : ExternalSystemManager.EP_NAME.getIterable()) {
-        systemIds.add(manager.getSystemId());
-      }
+      systemIds.add(externalSystemId);
     }
-
     return systemIds;
   }
 }

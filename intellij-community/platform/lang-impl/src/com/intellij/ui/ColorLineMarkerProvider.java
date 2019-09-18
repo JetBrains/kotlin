@@ -33,15 +33,16 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
 
   @Override
   public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
-    for (ElementColorProvider colorProvider: ElementColorProvider.EP_NAME.getIterable()) {
-      final Color color = colorProvider.getColorFrom(element);
-      if (color != null) {
-        MyInfo info = new MyInfo(element, color, colorProvider);
-        NavigateAction.setNavigateAction(info, "Choose color", null);
-        return info;
+    return ElementColorProvider.EP_NAME.computeSafeIfAny(provider -> {
+      Color color = provider.getColorFrom(element);
+      if (color == null) {
+        return null;
       }
-    }
-    return null;
+
+      MyInfo info = new MyInfo(element, color, provider);
+      NavigateAction.setNavigateAction(info, "Choose color", null);
+      return info;
+    });
   }
 
   @Override

@@ -19,19 +19,19 @@ final class ExternalSystemStartupActivity implements StartupActivity.Background 
     ExternalProjectsManagerImpl.getInstance(project).init();
 
     ApplicationManager.getApplication().invokeLater(() -> {
-      for (ExternalSystemManager<?, ?, ?, ?, ?> manager: ExternalSystemManager.EP_NAME.getIterable()) {
+      ExternalSystemManager.EP_NAME.forEachExtensionSafe(manager -> {
         if (manager instanceof StartupActivity) {
           ((StartupActivity)manager).runActivity(project);
         }
-      }
+      });
       if (project.getUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT) != Boolean.TRUE) {
-        for (ExternalSystemManager<?, ?, ?, ?, ?> manager: ExternalSystemManager.EP_NAME.getIterable()) {
-          final boolean isNewProject = project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == Boolean.TRUE;
+        ExternalSystemManager.EP_NAME.forEachExtensionSafe(manager -> {
+          boolean isNewProject = project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == Boolean.TRUE;
           if (isNewProject) {
             ExternalSystemUtil.refreshProjects(new ImportSpecBuilder(project, manager.getSystemId())
                                                  .createDirectoriesForEmptyContentRoots());
           }
-        }
+        });
       }
       ExternalToolWindowManager.handle(project);
       ProjectRenameAware.beAware(project);
