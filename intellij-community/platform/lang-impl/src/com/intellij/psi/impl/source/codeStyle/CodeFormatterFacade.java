@@ -219,9 +219,9 @@ public class CodeFormatterFacade {
   }
 
   private void setDisabledRanges(@NotNull PsiFile file, FormatTextRanges ranges) {
-    ranges.setDisabledRanges(
-      TextRangeUtil.excludeRanges(
-        file.getTextRange(), myTagHandler.getEnabledRanges(file.getNode(), file.getTextRange())));
+    final Iterable<TextRange> excludedRangesIterable = TextRangeUtil.excludeRanges(
+      file.getTextRange(), myTagHandler.getEnabledRanges(file.getNode(), file.getTextRange()));
+    ranges.setDisabledRanges((Collection<TextRange>)excludedRangesIterable);
   }
 
   private static void invokePostponedFormatting(@NotNull PsiFile file,
