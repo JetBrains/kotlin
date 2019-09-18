@@ -67,6 +67,12 @@ internal fun ThrowIllegalStateException() : Nothing {
 }
 
 @ExportForCppRuntime
+internal fun ThrowIllegalStateExceptionWithMessage(message:String) : Nothing {
+    throw IllegalStateException(message)
+}
+
+
+@ExportForCppRuntime
 internal fun ThrowNotImplementedError(): Nothing {
     throw NotImplementedError("An operation is not implemented.")
 }

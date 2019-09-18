@@ -229,6 +229,7 @@ internal class KonanSymbols(
 
     val throwInvalidReceiverTypeException = internalFunction("ThrowInvalidReceiverTypeException")
     val throwIllegalStateException = internalFunction("ThrowIllegalStateException")
+    val throwIllegalStateExceptionWithMessage = internalFunction("ThrowIllegalStateExceptionWithMessage")
 
     override val ThrowUninitializedPropertyAccessException = internalFunction("ThrowUninitializedPropertyAccessException")
 

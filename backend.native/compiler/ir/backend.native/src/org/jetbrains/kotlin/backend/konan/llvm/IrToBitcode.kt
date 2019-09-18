@@ -675,8 +675,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         if ((declaration as? IrSimpleFunction)?.modality == Modality.ABSTRACT
                 || declaration.isExternal
-                || body == null
-                || declaration.isReifiedInline)
+                || body == null)
             return
 
         generateFunction(codegen, declaration,
@@ -687,6 +686,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 using(parameterScope) {
                     using(VariableScope()) {
                         recordCoverage(body)
+                        if (declaration.isReifiedInline) {
+                            callDirect(context.ir.symbols.throwIllegalStateExceptionWithMessage.owner,
+                                    listOf(context.llvm.staticData.kotlinStringLiteral(
+                                            "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`").llvm),
+                                    Lifetime.IRRELEVANT)
+                            return@using
+                        }
                         when (body) {
                             is IrBlockBody -> body.statements.forEach { generateStatement(it) }
                             is IrExpressionBody -> generateStatement(body.expression)
