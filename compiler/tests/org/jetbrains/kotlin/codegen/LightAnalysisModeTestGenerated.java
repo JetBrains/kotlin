@@ -20301,6 +20301,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/annotations/findAnnotation.kt");
             }
 
+            @TestMetadata("genericExtensionProperty.kt")
+            public void testGenericExtensionProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/annotations/genericExtensionProperty.kt");
+            }
+
             @TestMetadata("hasAnnotation.kt")
             public void testHasAnnotation() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/annotations/hasAnnotation.kt");
