@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -38,8 +40,10 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
@@ -81,6 +85,15 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
         initializer = IrExpressionBodyImpl(startOffset, endOffset, expression)
     }
     addChild(irField)
+}
+
+fun IrModuleFragment.addFile(fileEntry: SourceManager.FileEntry, packageFqName: FqName): IrFile {
+    val packageFragmentDescriptor = object : PackageFragmentDescriptorImpl(this.descriptor, packageFqName) {
+        override fun getMemberScope(): MemberScope = MemberScope.Empty
+    }
+
+    return IrFileImpl(fileEntry, packageFragmentDescriptor)
+            .also { this.files += it }
 }
 
 inline fun <reified T> stub(name: String): T {

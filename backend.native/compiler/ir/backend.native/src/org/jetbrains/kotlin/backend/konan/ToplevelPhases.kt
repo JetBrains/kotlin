@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -343,7 +344,21 @@ internal val entryPointPhase = SameTypeNamedPhaseWrapper(
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>,
                                 context: Context, input: IrModuleFragment): IrModuleFragment {
                 assert(context.config.produce == CompilerOutputKind.PROGRAM)
-                context.ir.symbols.entryPoint!!.owner.file.addChild(makeEntryPoint(context))
+
+                val originalFile = context.ir.symbols.entryPoint!!.owner.file
+                val originalModule = originalFile.packageFragmentDescriptor.containingDeclaration
+                val file = if (context.llvmModuleSpecification.containsModule(originalModule)) {
+                    originalFile
+                } else {
+                    // `main` function is compiled to other LLVM module.
+                    // For example, test running support uses `main` defined in stdlib.
+                    context.irModule!!.addFile(originalFile.fileEntry, originalFile.fqName)
+                }
+
+                require(context.llvmModuleSpecification.containsModule(
+                        file.packageFragmentDescriptor.containingDeclaration))
+
+                file.addChild(makeEntryPoint(context))
                 return input
             }
         }
