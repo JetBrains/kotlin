@@ -10,6 +10,7 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.compiler.CompilerPaths;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings;
@@ -22,10 +23,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.task.*;
 import com.intellij.task.impl.JpsProjectTaskRunner;
 import com.intellij.util.CommonProcessors;
+import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
@@ -42,8 +45,10 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration.PROGRESS_LISTENER_KEY;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
@@ -60,6 +65,7 @@ import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.resolvePro
  * @author Vladislav.Soroka
  */
 public class GradleProjectTaskRunner extends ProjectTaskRunner {
+  private static final Logger LOG = Logger.getInstance(GradleProjectTaskRunner.class);
 
   @Language("Groovy")
   private static final String FORCE_COMPILE_TASKS_INIT_SCRIPT_TEMPLATE = "projectsEvaluated { \n" +
@@ -67,6 +73,23 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
                                                                          "    outputs.upToDateWhen { false } \n" +
                                                                          "  } \n" +
                                                                          "}\n";
+  @Language("Groovy")
+  private static final String COLLECT_OUTPUT_PATHS_INIT_SCRIPT_TEMPLATE = "def outputFile = new File(\"%s\")\n" +
+                                                                          "def effectiveTasks = []\n" +
+                                                                          "gradle.taskGraph.addTaskExecutionListener(new TaskExecutionAdapter() {\n" +
+                                                                          "    void afterExecute(Task task, TaskState state) {\n" +
+                                                                          "        if (state.didWork && task.outputs.hasOutput) {\n" +
+                                                                          "            effectiveTasks.add(task)\n" +
+                                                                          "        }\n" +
+                                                                          "    }\n" +
+                                                                          "})\n" +
+                                                                          "gradle.addBuildListener(new BuildAdapter() {\n" +
+                                                                          "    void buildFinished(BuildResult result) {\n" +
+                                                                          "        effectiveTasks.each { Task task ->\n" +
+                                                                          "            task.outputs.files.files.each { outputFile.append(it.path + '\\n') }\n" +
+                                                                          "        }\n" +
+                                                                          "    }\n" +
+                                                                          "})\n";
 
   @Override
   public void run(@NotNull Project project,
@@ -90,6 +113,7 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
     AtomicInteger successCounter = new AtomicInteger();
     AtomicInteger errorCounter = new AtomicInteger();
 
+    File outputPathsFile = createTempOutputPathsFileIfNeeded(context);
     TaskCallback taskCallback = callback == null ? null : new TaskCallback() {
       @Override
       public void onSuccess() {
@@ -106,13 +130,22 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
         int errors = success ? errorCounter.get() : errorCounter.incrementAndGet();
         if (successes + errors == rootPaths.size()) {
           if (!project.isDisposed()) {
-            // refresh on output roots is required in order for the order enumerator to see all roots via VFS
-            final List<Module> affectedModules = ContainerUtil.concat(modulesToBuild, modulesOfResourcesToBuild, modulesOfFiles);
-            // have to refresh in case of errors too, because run configuration may be set to ignore errors
-            Collection<String> affectedRoots = ContainerUtil.newHashSet(
-              CompilerPaths.getOutputPaths(affectedModules.toArray(Module.EMPTY_ARRAY)));
-            if (!affectedRoots.isEmpty()) {
-              CompilerUtil.refreshOutputRoots(affectedRoots);
+            try {
+              Set<String> affectedRoots = getAffectedOutputRoots(
+                outputPathsFile, context, modulesToBuild, modulesOfResourcesToBuild, modulesOfFiles);
+              if (!affectedRoots.isEmpty()) {
+                if (context.isCollectionOfGeneratedFilesEnabled()) {
+                  context.addDirtyOutputPathsProvider(() -> affectedRoots);
+                }
+                // refresh on output roots is required in order for the order enumerator to see all roots via VFS
+                // have to refresh in case of errors too, because run configuration may be set to ignore errors
+                CompilerUtil.refreshOutputRoots(affectedRoots);
+              }
+            }
+            finally {
+              if (outputPathsFile != null) {
+                FileUtil.delete(outputPathsFile);
+              }
             }
           }
           callback.finished(context, new ProjectTaskResult(false, errors, 0));
@@ -148,12 +181,53 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
       userData.putUserData(PROGRESS_LISTENER_KEY, BuildViewManager.class);
 
       Collection<String> scripts = initScripts.getModifiable(rootProjectPath);
+      if (outputPathsFile != null && context.isCollectionOfGeneratedFilesEnabled()) {
+        scripts.add(String.format(COLLECT_OUTPUT_PATHS_INIT_SCRIPT_TEMPLATE, PathUtil.getCanonicalPath(outputPathsFile.getAbsolutePath())));
+      }
       userData.putUserData(GradleTaskManager.INIT_SCRIPT_KEY, join(scripts, SystemProperties.getLineSeparator()));
       userData.putUserData(GradleTaskManager.INIT_SCRIPT_PREFIX_KEY, executionName);
 
       ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, project, GradleConstants.SYSTEM_ID,
                                  taskCallback, ProgressExecutionMode.IN_BACKGROUND_ASYNC, false, userData);
     }
+  }
+
+  @Nullable
+  private static File createTempOutputPathsFileIfNeeded(@NotNull ProjectTaskContext context) {
+    File outputFile = null;
+    if (context.isCollectionOfGeneratedFilesEnabled()) {
+      try {
+        outputFile = FileUtil.createTempFile("output", ".paths", true);
+      }
+      catch (IOException e) {
+        LOG.warn("Can not create temp file to collect Gradle tasks output paths", e);
+      }
+    }
+    return outputFile;
+  }
+
+  @NotNull
+  private static Set<String> getAffectedOutputRoots(@Nullable File outputPathsFile,
+                                                    @NotNull ProjectTaskContext context,
+                                                    @NotNull List<Module> modulesToBuild,
+                                                    @NotNull List<Module> modulesOfResourcesToBuild,
+                                                    @NotNull List<Module> modulesOfFiles) {
+    Set<String> affectedRoots = null;
+    if (outputPathsFile != null && context.isCollectionOfGeneratedFilesEnabled()) {
+      try {
+        String content = FileUtil.loadFile(outputPathsFile);
+        affectedRoots = isEmpty(content) ? Collections.emptySet() :
+                        Arrays.stream(splitByLines(content, true)).collect(Collectors.toSet());
+      }
+      catch (IOException e) {
+        LOG.warn("Can not load temp file with collected Gradle tasks output paths", e);
+      }
+    }
+    if (affectedRoots == null) {
+      final List<Module> affectedModules = ContainerUtil.concat(modulesToBuild, modulesOfResourcesToBuild, modulesOfFiles);
+      affectedRoots = ContainerUtil.newHashSet(CompilerPaths.getOutputPaths(affectedModules.toArray(Module.EMPTY_ARRAY)));
+    }
+    return affectedRoots;
   }
 
   @Override
@@ -201,6 +275,11 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
       }
     }
     return null;
+  }
+
+  @Override
+  public boolean isFileGeneratedEventsSupported() {
+    return true;
   }
 
   private static List<Module> addModulesBuildTasks(@Nullable Collection<? extends ProjectTask> projectTasks,

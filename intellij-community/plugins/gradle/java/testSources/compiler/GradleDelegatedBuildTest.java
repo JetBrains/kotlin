@@ -3,13 +3,23 @@ package org.jetbrains.plugins.gradle.compiler;
 
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.task.ProjectTaskContext;
+import com.intellij.task.ProjectTaskListener;
+import com.intellij.task.ProjectTaskResult;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.util.PathsList;
+import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.intellij.util.PathUtil.toSystemDependentName;
+import static com.intellij.util.containers.ContainerUtil.newArrayList;
+import static java.util.Arrays.asList;
 
 public class GradleDelegatedBuildTest extends GradleDelegatedBuildTestCase {
   @Test
@@ -65,5 +75,135 @@ public class GradleDelegatedBuildTest extends GradleDelegatedBuildTestCase {
 
     assertCopied("impl/build/resources/main/dir/file-impl.properties");
     assertNotCopied("impl/build/resources/test/dir/file-impl-test.properties");
+  }
+
+  @Test
+  public void testDirtyOutputPathsCollection() throws Exception {
+    createSettingsFile("include 'api', 'impl' ");
+
+    createProjectSubFile("src/main/java/my/pack/App.java",
+                         "package my.pack;\n" +
+                         "public class App {\n" +
+                         "  public int method() { return 42; }" +
+                         "}");
+    createProjectSubFile("src/test/java/my/pack/AppTest.java",
+                         "package my.pack;\n" +
+                         "public class AppTest {\n" +
+                         "  public void test() { new App().method(); }" +
+                         "}");
+
+    createProjectSubFile("api/src/main/java/my/pack/Api.java",
+                         "package my.pack;\n" +
+                         "public class Api {\n" +
+                         "  public int method() { return 42; }" +
+                         "}");
+    createProjectSubFile("api/src/test/java/my/pack/ApiTest.java",
+                         "package my.pack;\n" +
+                         "public class ApiTest {}");
+
+    createProjectSubFile("impl/src/main/java/my/pack/Impl.java",
+                         "package my.pack;\n" +
+                         "import my.pack.Api;\n" +
+                         "public class Impl extends Api {}");
+    createProjectSubFile("impl/src/test/java/my/pack/ImplTest.java",
+                         "package my.pack;\n" +
+                         "import my.pack.ApiTest;\n" +
+                         "public class ImplTest extends ApiTest {}");
+
+    importProject(
+      "allprojects {\n" +
+      "  apply plugin: 'java'\n" +
+      "}\n" +
+      "\n" +
+      "dependencies {\n" +
+      "  compile project(':impl')\n" +
+      "}\n" +
+      "configure(project(':impl')) {\n" +
+      "  dependencies {\n" +
+      "    compile project(':api')\n" +
+      "  }\n" +
+      "}"
+    );
+    assertModules("project", "project.main", "project.test",
+                  "project.api", "project.api.main", "project.api.test",
+                  "project.impl", "project.impl.main", "project.impl.test");
+
+    List<String> dirtyOutputRoots = new ArrayList<>();
+
+    MessageBusConnection connection = myProject.getMessageBus().connect(getTestRootDisposable());
+    connection.subscribe(ProjectTaskListener.TOPIC, new ProjectTaskListener() {
+      @Override
+      public void started(@NotNull ProjectTaskContext context) {
+        context.enableCollectionOfGeneratedFiles();
+      }
+
+      @Override
+      public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
+        context.getDirtyOutputPaths().ifPresent(stream -> dirtyOutputRoots.addAll(stream.collect(Collectors.toList())));
+      }
+    });
+
+    compileModules("project.main");
+
+    String langPart = isGradleOlderThen_4_0() ? "build/classes" : "build/classes/java";
+    List<String> expected = newArrayList(path(langPart + "/main"),
+                                         path("api/" + langPart + "/main"),
+                                         path("impl/" + langPart + "/main"),
+                                         path("api/build/libs/api.jar"),
+                                         path("impl/build/libs/impl.jar"));
+
+    if (isGradleOlderThen_3_3()) {
+      expected.addAll(asList(path("build/dependency-cache"),
+                             path("api/build/dependency-cache"),
+                             path("impl/build/dependency-cache")));
+    }
+
+    if (!isGradleOlderThen_5_2()) {
+      expected.addAll(asList(path("build/generated/sources/annotationProcessor/java/main"),
+                             path("api/build/generated/sources/annotationProcessor/java/main"),
+                             path("impl/build/generated/sources/annotationProcessor/java/main")));
+    }
+
+    assertSameElements(dirtyOutputRoots, expected);
+
+    assertCopied(langPart + "/main/my/pack/App.class");
+    assertNotCopied(langPart + "/test/my/pack/AppTest.class");
+
+    assertCopied("api/" + langPart + "/main/my/pack/Api.class");
+    assertNotCopied("api/" + langPart + "/test/my/pack/ApiTest.class");
+
+    assertCopied("impl/" + langPart + "/main/my/pack/Impl.class");
+    assertNotCopied("impl/" + langPart + "/test/my/pack/ImplTest.class");
+
+    //----check incremental make and build dependant module----//
+    dirtyOutputRoots.clear();
+    createProjectSubFile("src/main/java/my/pack/App.java",
+                         "package my.pack;\n" +
+                         "public class App {\n" +
+                         "  public int method() { return 42; }" +
+                         "  public int methodX() { return 42; }" +
+                         "}");
+    compileModules("project.test");
+
+    expected = newArrayList(path(langPart + "/main"),
+                            path(langPart + "/test"));
+
+    if (isGradleOlderThen_3_3()) {
+      expected.add(path("build/dependency-cache"));
+    }
+    if (!isGradleOlderThen_5_2()) {
+      expected.addAll(asList(path("build/generated/sources/annotationProcessor/java/main"),
+                             path("build/generated/sources/annotationProcessor/java/test")));
+    }
+    assertUnorderedElementsAreEqual(dirtyOutputRoots, expected);
+
+    assertCopied(langPart + "/main/my/pack/App.class");
+    assertCopied(langPart + "/test/my/pack/AppTest.class");
+
+    assertCopied("api/" + langPart + "/main/my/pack/Api.class");
+    assertNotCopied("api/" + langPart + "/test/my/pack/ApiTest.class");
+
+    assertCopied("impl/" + langPart + "/main/my/pack/Impl.class");
+    assertNotCopied("impl/" + langPart + "/test/my/pack/ImplTest.class");
   }
 }

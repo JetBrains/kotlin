@@ -204,7 +204,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
         }
         else {
           ProjectTaskRunner runner = pair.first;
-          if (!runner.isFileGeneratedEventsSupported()) {
+          if (context.isCollectionOfGeneratedFilesEnabled() && !runner.isFileGeneratedEventsSupported()) {
             pair.second.stream()
               .filter(ModuleBuildTask.class::isInstance)
               .map(task -> ((ModuleBuildTask)task).getModule())
