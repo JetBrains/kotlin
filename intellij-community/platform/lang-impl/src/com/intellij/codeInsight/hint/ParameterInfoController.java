@@ -9,6 +9,7 @@ import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.IdeTooltip;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.parameterInfo.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -29,12 +30,13 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.HintHint;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.Alarm;
-import com.intellij.util.containers.JBIterable;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.JBUI;
@@ -424,7 +426,8 @@ public class ParameterInfoController extends UserDataHolderBase implements Visib
     if (!(myHandler instanceof ParameterInfoHandlerWithTabActionSupport)) return -1;
     ParameterInfoHandlerWithTabActionSupport handler = (ParameterInfoHandlerWithTabActionSupport)myHandler;
 
-    boolean noDelimiter = handler.getActualParameterDelimiterType() == TokenType.WHITE_SPACE;
+    IElementType delimiter = handler.getActualParameterDelimiterType();
+    boolean noDelimiter = delimiter == TokenType.WHITE_SPACE;
     int caretOffset = myEditor.getCaretModel().getOffset();
     CharSequence text = myEditor.getDocument().getImmutableCharSequence();
     int offset = noDelimiter ? caretOffset : CharArrayUtil.shiftBackward(text, caretOffset - 1, WHITESPACE) + 1;
@@ -434,9 +437,7 @@ public class ParameterInfoController extends UserDataHolderBase implements Visib
     if (argList == null) return -1;
 
     @SuppressWarnings("unchecked") PsiElement[] parameters = handler.getActualParameters(argList);
-    int currentParameterIndex =
-      noDelimiter ? JBIterable.of(parameters).indexOf(o -> o.getTextRange().containsOffset(offset)) :
-      ParameterInfoUtils.getCurrentParameterIndex(argList.getNode(), offset, handler.getActualParameterDelimiterType());
+    int currentParameterIndex = getParameterIndex(parameters, delimiter, offset);
     if (CodeInsightSettings.getInstance().SHOW_PARAMETER_NAME_HINTS_ON_COMPLETION) {
       if (currentParameterIndex < 0 || currentParameterIndex >= parameters.length && parameters.length > 0) return -1;
       if (offset >= argList.getTextRange().getEndOffset()) currentParameterIndex = isNext ? -1 : parameters.length;
@@ -454,6 +455,32 @@ public class ParameterInfoController extends UserDataHolderBase implements Visib
                                      !isNext && currentParameterIndex > 0 ? currentParameterIndex - 1 : -1;
       return prevOrNextParameterIndex != -1 ? parameters[prevOrNextParameterIndex].getTextRange().getStartOffset() : -1;
     }
+  }
+
+  private static int getParameterIndex(@NotNull PsiElement[] parameters, @NotNull IElementType delimiter, int offset) {
+    for (int i = 0; i < parameters.length; i++) {
+      PsiElement parameter = parameters[i];
+      TextRange textRange = parameter.getTextRange();
+      int startOffset = textRange.getStartOffset();
+      if (offset < startOffset) {
+        if (i == 0) return 0;
+        PsiElement elementInBetween = parameters[i - 1];
+        int currOffset = elementInBetween.getTextRange().getEndOffset();
+        while ((elementInBetween = PsiTreeUtil.nextLeaf(elementInBetween)) != null) {
+          if (currOffset >= startOffset) break;
+          ASTNode node = elementInBetween.getNode();
+          if (node != null && node.getElementType() == delimiter) {
+            return offset <= currOffset ? i - 1 : i;
+          }
+          currOffset += elementInBetween.getTextLength();
+        }
+        return i;
+      }
+      else if (offset <= textRange.getEndOffset()) {
+        return i;
+      }
+    }
+    return Math.max(0, parameters.length - 1);
   }
 
   private static int getParameterNavigationOffset(@NotNull PsiElement parameter, @NotNull CharSequence text) {
