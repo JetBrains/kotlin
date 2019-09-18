@@ -75,6 +75,9 @@ public class InspectionMain implements ApplicationStarter {
         else if ("-t".equals(arg)) {
           myApplication.myErrorCodeRequired = false;
         }
+        else if ("-changes".equals(arg)) {
+          myApplication.myAnalyzeChanges = true;
+        }
         else {
           System.err.println("unexpected argument: " + arg);
           printHelp();

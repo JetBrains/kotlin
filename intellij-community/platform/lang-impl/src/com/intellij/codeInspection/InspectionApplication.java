@@ -24,12 +24,14 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
@@ -67,6 +69,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   public String myProfilePath;
   public boolean myRunWithEditorSettings;
   public boolean myRunGlobalToolsOnly;
+  public boolean myAnalyzeChanges;
   private int myVerboseLevel;
   public String myOutputFormat;
 
@@ -173,7 +176,14 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     im.setProfile(inspectionProfile.getName());
 
     final AnalysisScope scope;
-    if (mySourceDirectory == null) {
+    if (myAnalyzeChanges) {
+      List<VirtualFile> files = ChangeListManager.getInstance(project).getAffectedFiles();
+      for (VirtualFile file : files) {
+        logMessageLn(0, "modified file" + file.getPath());
+      }
+      scope = new AnalysisScope(GlobalSearchScope.filesScope(project, files), project);
+    }
+    else if (mySourceDirectory == null) {
       final String scopeName = System.getProperty("idea.analyze.scope");
       final NamedScope namedScope = scopeName != null ? NamedScopesHolder.getScope(project, scopeName) : null;
       scope = namedScope != null ? new AnalysisScope(GlobalSearchScopesCore.filterScope(project, namedScope), project)
