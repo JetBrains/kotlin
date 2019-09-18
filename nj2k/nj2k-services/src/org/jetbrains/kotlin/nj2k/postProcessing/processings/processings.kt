@@ -6,58 +6,66 @@
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.core.util.range
-import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asLabel
-import org.jetbrains.kotlin.nj2k.postProcessing.postProcessing
+import org.jetbrains.kotlin.nj2k.postProcessing.GeneralPostProcessing
+import org.jetbrains.kotlin.nj2k.postProcessing.runUndoTransparentActionInEdt
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 
-val formatCodeProcessing =
-    postProcessing { file, rangeMarker, _ ->
-        file.commitAndUnblockDocument()
+
+class FormatCodeProcessing : GeneralPostProcessing {
+    override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
         val codeStyleManager = CodeStyleManager.getInstance(file.project)
-        if (rangeMarker != null) {
-            if (rangeMarker.isValid) {
-                codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
-            }
-        } else {
-            codeStyleManager.reformat(file)
-        }
-    }
-
-val clearUnknownLabelsProcessing =
-    postProcessing { file, _, _ ->
-        file.clearUndefinedLabels()
-    }
-
-private fun KtFile.clearUndefinedLabels() {
-    val comments = mutableListOf<PsiComment>()
-    accept(object : PsiElementVisitor() {
-        override fun visitElement(element: PsiElement) {
-            element.acceptChildren(this)
-        }
-
-        override fun visitComment(comment: PsiComment) {
-            if (comment.text.asLabel() != null) {
-                comments += comment
+        runUndoTransparentActionInEdt(inWriteAction = true) {
+            if (rangeMarker != null) {
+                if (rangeMarker.isValid) {
+                    codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
+                }
+            } else {
+                codeStyleManager.reformat(file)
             }
         }
-    })
-    comments.forEach { it.delete() }
+    }
 }
 
 
-val optimizeImportsProcessing =
-    postProcessing { file, rangeMarker, _ ->
-        val elements = when {
-            rangeMarker != null && rangeMarker.isValid -> file.elementsInRange(rangeMarker.range!!)
-            rangeMarker != null && !rangeMarker.isValid -> emptyList()
-            else -> file.children.asList()
+class ClearUnknownLabelsProcessing : GeneralPostProcessing {
+    override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
+        val comments = mutableListOf<PsiComment>()
+        runUndoTransparentActionInEdt(inWriteAction = true) {
+            file.accept(object : PsiElementVisitor() {
+                override fun visitElement(element: PsiElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun visitComment(comment: PsiComment) {
+                    if (comment.text.asLabel() != null) {
+                        comments += comment
+                    }
+                }
+            })
+            comments.forEach { it.delete() }
+        }
+    }
+}
+
+
+class OptimizeImportsProcessing : GeneralPostProcessing {
+    override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
+        val elements = runReadAction {
+            when {
+                rangeMarker != null && rangeMarker.isValid -> file.elementsInRange(rangeMarker.range!!)
+                rangeMarker != null && !rangeMarker.isValid -> emptyList()
+                else -> file.children.asList()
+            }
         }
         val needFormat = elements.any { element ->
             element is KtElement
@@ -65,7 +73,8 @@ val optimizeImportsProcessing =
                     && element !is KtImportList
                     && element !is KtPackageDirective
         }
-        if (needFormat) {
+        if (needFormat) runUndoTransparentActionInEdt(inWriteAction = false) {
             OptimizeImportsProcessor(file.project, file).run()
         }
     }
+}

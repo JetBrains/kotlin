@@ -5,43 +5,28 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing
 
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiElement
-import kotlinx.coroutines.withContext
-import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.range
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 
 
 interface GeneralPostProcessing {
-    suspend fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext)
+    fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext)
 }
 
-abstract class SimplePostProcessing() : GeneralPostProcessing {
-    final override suspend fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
-        withContext(EDT) {
-            CommandProcessor.getInstance().runUndoTransparentAction {
-                runWriteAction {
-                    applySimpleProcessing(file, rangeMarker, converterContext)
-                }
-            }
-        }
-    }
 
-    abstract fun applySimpleProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext)
-}
-
-abstract class ElementsBasedPostProcessing() : SimplePostProcessing() {
-    final override fun applySimpleProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
-        val elements =
+abstract class ElementsBasedPostProcessing : GeneralPostProcessing {
+    final override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
+        val elements = runReadAction {
             rangeMarker?.let { marker ->
                 val range = marker.range ?: return@let emptyList()
                 file.elementsInRange(range)
             } ?: listOf(file)
+        }
         runProcessing(elements, converterContext)
     }
 
@@ -54,13 +39,3 @@ data class NamedPostProcessingGroup(
     val description: String,
     val processings: List<GeneralPostProcessing>
 )
-
-fun postProcessing(
-    action: (file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) -> Unit
-): GeneralPostProcessing =
-    object : SimplePostProcessing() {
-        override fun applySimpleProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
-            action(file, rangeMarker, converterContext)
-        }
-    }
-

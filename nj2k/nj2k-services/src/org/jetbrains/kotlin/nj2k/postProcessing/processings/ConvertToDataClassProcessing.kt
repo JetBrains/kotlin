@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.escaped
 import org.jetbrains.kotlin.nj2k.postProcessing.*
@@ -122,24 +123,28 @@ class ConvertToDataClassProcessing : ElementsBasedPostProcessing() {
     }
 
     private fun convertClass(klass: KtClass) {
-        for (initialization in collectInitializations(klass)) {
-            val statementCommentSaver = CommentSaver(initialization.statement, saveLineBreaks = true)
-            val restoreStatementCommentsTarget: KtExpression
-            when (initialization) {
-                is ConstructorParameterInitialization -> {
-                    initialization.mergePropertyAndConstructorParameter()
-                    restoreStatementCommentsTarget = initialization.initializer
+        val initialisations = runReadAction { collectInitializations(klass) }
+        if (initialisations.isEmpty()) return
+        runUndoTransparentActionInEdt(inWriteAction = true) {
+            for (initialization in initialisations) {
+                val statementCommentSaver = CommentSaver(initialization.statement, saveLineBreaks = true)
+                val restoreStatementCommentsTarget: KtExpression
+                when (initialization) {
+                    is ConstructorParameterInitialization -> {
+                        initialization.mergePropertyAndConstructorParameter()
+                        restoreStatementCommentsTarget = initialization.initializer
+                    }
+                    is LiteralInitialization -> {
+                        val (property, initializer, _) = initialization
+                        property.initializer = initializer
+                        restoreStatementCommentsTarget = property
+                    }
                 }
-                is LiteralInitialization -> {
-                    val (property, initializer, _) = initialization
-                    property.initializer = initializer
-                    restoreStatementCommentsTarget = property
-                }
+                initialization.statement.delete()
+                statementCommentSaver.restore(restoreStatementCommentsTarget, forceAdjustIndent = false)
             }
-            initialization.statement.delete()
-            statementCommentSaver.restore(restoreStatementCommentsTarget, forceAdjustIndent = false)
+            klass.removeEmptyInitBlocks()
         }
-        klass.removeEmptyInitBlocks()
     }
 }
 

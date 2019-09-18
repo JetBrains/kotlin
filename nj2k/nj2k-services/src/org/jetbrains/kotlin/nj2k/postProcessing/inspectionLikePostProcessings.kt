@@ -5,29 +5,19 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing
 
-import com.intellij.codeInspection.*
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
-import kotlinx.coroutines.withContext
-import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
-import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
-import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.quickfix.QuickFixActionBase
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtVisitorVoid
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
 import kotlin.reflect.KClass
@@ -39,7 +29,6 @@ class InspectionLikeProcessingGroup(
     private val acceptNonKtElements: Boolean = false,
     private val processings: List<InspectionLikeProcessing>
 ) : ProcessingGroup {
-
     constructor(vararg processings: InspectionLikeProcessing) : this(
         runSingleTime = false,
         acceptNonKtElements = false,
@@ -49,33 +38,26 @@ class InspectionLikeProcessingGroup(
     private val processingsToPriorityMap = processings.mapToIndex()
     fun priority(processing: InspectionLikeProcessing): Int = processingsToPriorityMap.getValue(processing)
 
-    override suspend fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
+    override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
         do {
             var modificationStamp: Long? = file.modificationStamp
             val elementToActions = runReadAction {
                 collectAvailableActions(file, converterContext, rangeMarker)
             }
-            withContext(EDT) {
-                CommandProcessor.getInstance().runUndoTransparentAction {
-                    for ((element, action, _, writeActionNeeded) in elementToActions) {
-                        if (element.isValid) {
-                            if (writeActionNeeded) {
-                                runWriteAction {
-                                    action()
-                                }
-                            } else {
-                                action()
-                            }
-                        } else {
-                            modificationStamp = null
-                        }
-                    }
+
+            for ((processing, element, _) in elementToActions) {
+                val needRun = runReadAction {
+                    element.isValid && processing.isApplicableToElement(element, converterContext.converter.settings)
+                }
+                if (needRun) runUndoTransparentActionInEdt(inWriteAction = processing.writeActionNeeded) {
+                    processing.applyToElement(element)
+                } else {
+                    modificationStamp = null
                 }
             }
             if (runSingleTime) break
         } while (modificationStamp != file.modificationStamp && elementToActions.isNotEmpty())
     }
-
 
     private enum class RangeFilterResult {
         SKIP,
@@ -83,15 +65,18 @@ class InspectionLikeProcessingGroup(
         PROCESS
     }
 
-
-    private data class ActionData(val element: PsiElement, val action: () -> Unit, val priority: Int, val writeActionNeeded: Boolean)
+    private data class ProcessingData(
+        val processing: InspectionLikeProcessing,
+        val element: PsiElement,
+        val priority: Int
+    )
 
     private fun collectAvailableActions(
         file: KtFile,
         context: NewJ2kConverterContext,
         rangeMarker: RangeMarker?
-    ): List<ActionData> {
-        val availableActions = ArrayList<ActionData>()
+    ): List<ProcessingData> {
+        val availableActions = ArrayList<ProcessingData>()
 
         file.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
@@ -102,15 +87,10 @@ class InspectionLikeProcessingGroup(
                     super.visitElement(element)
 
                     if (rangeResult == RangeFilterResult.PROCESS) {
-                        processings.forEach { processing ->
-                            val action = processing.createAction(element, context.converter.settings)
-                            if (action != null) {
+                        for (processing in processings) {
+                            if (processing.isApplicableToElement(element, context.converter.settings)) {
                                 availableActions.add(
-                                    ActionData(
-                                        element, action,
-                                        priority(processing),
-                                        processing.writeActionNeeded
-                                    )
+                                    ProcessingData(processing, element, priority(processing))
                                 )
                             }
                         }
@@ -136,71 +116,63 @@ class InspectionLikeProcessingGroup(
     }
 }
 
-interface InspectionLikeProcessing {
-    fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)?
+abstract class InspectionLikeProcessing {
+    abstract fun isApplicableToElement(element: PsiElement, settings: ConverterSettings?): Boolean
+    abstract fun applyToElement(element: PsiElement)
 
-    val writeActionNeeded: Boolean
+    // Some post-processings may need to do some resolving operations when applying
+    // Running it in outer write action may lead to UI freezes
+    // So we let that post-processings to handle write actions by themselves
+    open val writeActionNeeded = true
 }
 
-abstract class ApplicabilityBasedInspectionLikeProcessing<E : PsiElement>(private val classTag: KClass<E>) : InspectionLikeProcessing {
+abstract class InspectionLikeProcessingForElement<E : PsiElement>(private val classTag: KClass<E>) : InspectionLikeProcessing() {
     protected abstract fun isApplicableTo(element: E, settings: ConverterSettings?): Boolean
     protected abstract fun apply(element: E)
 
-    final override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (!element::class.isSubclassOf(classTag)) return null
-        @Suppress("UNCHECKED_CAST")
-        if (!isApplicableTo(element as E, settings)) return null
-        return {
-            if (element.isValid && isApplicableTo(element, settings)) {
-                apply(element)
-            }
-        }
+
+    @Suppress("UNCHECKED_CAST")
+    final override fun isApplicableToElement(element: PsiElement, settings: ConverterSettings?): Boolean {
+        if (!element::class.isSubclassOf(classTag)) return false
+        if (!element.isValid) return false
+        @Suppress("UNCHECKED_CAST") return isApplicableTo(element as E, settings)
     }
 
-    final override val writeActionNeeded: Boolean = true
-}
-
-
-inline fun <reified TElement : PsiElement, TIntention : SelfTargetingRangeIntention<TElement>> intentionBasedProcessing(
-    intention: TIntention,
-    noinline additionalChecker: (TElement) -> Boolean = { true }
-) = object : InspectionLikeProcessing {
-    // Intention can either need or not need write apply
-    override val writeActionNeeded = intention.startInWriteAction()
-
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (!TElement::class.java.isInstance(element)) return null
-        val tElement = element as TElement
-        if (intention.applicabilityRange(tElement) == null) return null
-        if (!additionalChecker(tElement)) return null
-        return {
-            if (intention.applicabilityRange(tElement) != null) { // isApplicableTo availability of the intention again because something could change
-                intention.applyTo(element, null)
-            }
-        }
+    final override fun applyToElement(element: PsiElement) {
+        if (!element::class.isSubclassOf(classTag)) return
+        if (!element.isValid) return
+        @Suppress("UNCHECKED_CAST") apply(element as E)
     }
 }
 
 
-inline fun <reified TElement : PsiElement, TInspection : AbstractApplicabilityBasedInspection<TElement>>
-        inspectionBasedProcessing(inspection: TInspection, acceptInformationLevel: Boolean = false) =
-    object : InspectionLikeProcessing {
-        // Inspection can either need or not need write apply
-        override val writeActionNeeded = inspection.startFixInWriteAction
+inline fun <reified E : PsiElement, I : SelfTargetingRangeIntention<E>> intentionBasedProcessing(
+    intention: I,
+    writeActionNeeded: Boolean = true,
+    noinline additionalChecker: (E) -> Boolean = { true }
+) = object : InspectionLikeProcessingForElement<E>(E::class) {
+    override fun isApplicableTo(element: E, settings: ConverterSettings?): Boolean =
+        intention.applicabilityRange(element) != null
+                && additionalChecker(element)
 
-        fun isApplicable(element: TElement): Boolean {
-            if (!inspection.isApplicable(element)) return false
-            return acceptInformationLevel || inspection.inspectionHighlightType(element) != ProblemHighlightType.INFORMATION
-        }
-
-        override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-            if (!TElement::class.java.isInstance(element)) return null
-            val tElement = element as TElement
-            if (!isApplicable(tElement)) return null
-            return {
-                if (isApplicable(tElement)) { // isApplicableTo availability of the inspection again because something could change
-                    inspection.applyTo(tElement)
-                }
-            }
-        }
+    override fun apply(element: E) {
+        intention.applyTo(element, null)
     }
+
+    override val writeActionNeeded = writeActionNeeded
+}
+
+
+inline fun <reified E : PsiElement, I : AbstractApplicabilityBasedInspection<E>> inspectionBasedProcessing(
+    inspection: I,
+    writeActionNeeded: Boolean = true
+) = object : InspectionLikeProcessingForElement<E>(E::class) {
+    override fun isApplicableTo(element: E, settings: ConverterSettings?): Boolean =
+        inspection.isApplicable(element)
+
+    override fun apply(element: E) {
+        inspection.applyTo(element)
+    }
+
+    override val writeActionNeeded = writeActionNeeded
+}

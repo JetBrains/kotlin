@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
@@ -80,3 +83,15 @@ inline fun <reified T : PsiElement> List<PsiElement>.descendantsOfType(): List<T
 
 fun PsiElement.isInRange(outerRange: TextRange) =
     outerRange.contains(range)
+
+internal fun runUndoTransparentActionInEdt(inWriteAction: Boolean, action: () -> Unit) {
+    ApplicationManager.getApplication().invokeAndWait {
+        CommandProcessor.getInstance().runUndoTransparentAction {
+            if (inWriteAction) {
+                runWriteAction(action)
+            } else {
+                action()
+            }
+        }
+    }
+}

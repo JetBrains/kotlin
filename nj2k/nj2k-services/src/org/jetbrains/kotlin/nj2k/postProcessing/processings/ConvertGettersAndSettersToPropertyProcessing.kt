@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.j2k.getContainingClass
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
@@ -272,15 +272,20 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
 
 
     override fun runProcessing(elements: List<PsiElement>, converterContext: NewJ2kConverterContext) {
-        val classes = elements
-            .descendantsOfType<KtClassOrObject>()
-            .sortedByInheritance()
         val collectingState = CollectingState()
-        val classesWithPropertiesData = classes.map { klass ->
-            klass to klass.collectPropertiesData(collectingState)
+        val classesWithPropertiesData = runReadAction {
+            elements
+                .descendantsOfType<KtClassOrObject>()
+                .sortedByInheritance()
+                .map { klass ->
+                    klass to klass.collectPropertiesData(collectingState)
+                }
         }
-        for ((klass, propertiesData) in classesWithPropertiesData) {
-            convertClass(klass, propertiesData)
+        if (classesWithPropertiesData.isEmpty()) return
+        runUndoTransparentActionInEdt(inWriteAction = true) {
+            for ((klass, propertiesData) in classesWithPropertiesData) {
+                convertClass(klass, propertiesData)
+            }
         }
     }
 

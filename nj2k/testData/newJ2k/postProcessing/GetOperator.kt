@@ -21,6 +21,6 @@ internal class C {
     }
 
     fun foo(javaClass: JavaClass): Int {
-        return javaClass.get(0)
+        return javaClass[0]
     }
 }

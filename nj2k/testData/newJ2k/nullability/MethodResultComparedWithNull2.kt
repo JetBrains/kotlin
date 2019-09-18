@@ -5,8 +5,6 @@ internal interface I {
 internal class C {
     fun foo(i: I) {
         val result = i.string
-        if (result != null) {
-            print(result)
-        }
+        result?.let { print(it) }
     }
 }

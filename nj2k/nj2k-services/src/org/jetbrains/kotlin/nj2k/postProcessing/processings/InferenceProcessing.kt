@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
-import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -29,18 +26,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 
 abstract class InferenceProcessing : GeneralPostProcessing {
-    final override suspend fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
+    final override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
         val elements = if (rangeMarker != null) {
             val range = rangeMarker.range ?: return
             runReadAction { file.elementsInRange(range) }.filterIsInstance<KtElement>()
         } else listOf(file)
         val resolutionFacade = runReadAction { file.getResolutionFacade() }
-
-        withContext(EDT) {
-            CommandProcessor.getInstance().runUndoTransparentAction {
-                createInferenceFacade(resolutionFacade, converterContext).runOn(elements)
-            }
-        }
+        createInferenceFacade(resolutionFacade, converterContext).runOn(elements)
     }
 
     abstract fun createInferenceFacade(
