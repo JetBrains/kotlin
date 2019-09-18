@@ -5,11 +5,26 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
-import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 
 
-class IrProtoReader(source: ByteArray): ProtoReader(source) {
+class IrProtoReader(source: ByteArray) : ProtoReader(source) {
+
+    fun readCoordinates(): Pair<Int, Int> {
+        var start = -1
+        var end = -1
+
+        while (hasData) {
+            readField { fieldNumber, _ ->
+                when (fieldNumber) {
+                    1 -> start = readInt32()
+                    2 -> end = readInt32()
+                }
+            }
+        }
+
+        return Pair(start, end)
+    }
 
     fun readFileEntry(): NaiveSourceBasedFileEntryImpl {
         var name: String? = null
@@ -30,5 +45,4 @@ class IrProtoReader(source: ByteArray): ProtoReader(source) {
 
         return NaiveSourceBasedFileEntryImpl(name!!, offsets.toIntArray())
     }
-
 }
