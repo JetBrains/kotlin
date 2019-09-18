@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -207,20 +208,24 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             processors.forEach { it.analyzeCollectedElements(bindingContext) }
 
             // step 3: shorten elements that can be shortened right now
-            processors.forEach { it.shortenElements(elementSetToUpdate = elementsToUse, options = options) }
+            runWriteAction {
+                processors.forEach { it.shortenElements(elementSetToUpdate = elementsToUse, options = options) }
+            }
 
             // step 4: try to import descriptors needed to shorten other elements
             val descriptorsToImport = processors.flatMap { it.getDescriptorsToImport() }.toSet()
             var anyChange = false
-            for (descriptor in descriptorsToImport) {
-                assert(descriptor !in failedToImportDescriptors)
+            runWriteAction {
+                for (descriptor in descriptorsToImport) {
+                    assert(descriptor !in failedToImportDescriptors)
 
-                val result = helper.importDescriptor(file, descriptor)
-                if (result != ImportDescriptorResult.ALREADY_IMPORTED) {
-                    anyChange = true
-                }
-                if (result == ImportDescriptorResult.FAIL) {
-                    failedToImportDescriptors.add(descriptor)
+                    val result = helper.importDescriptor(file, descriptor)
+                    if (result != ImportDescriptorResult.ALREADY_IMPORTED) {
+                        anyChange = true
+                    }
+                    if (result == ImportDescriptorResult.FAIL) {
+                        failedToImportDescriptors.add(descriptor)
+                    }
                 }
             }
             if (!anyChange) break

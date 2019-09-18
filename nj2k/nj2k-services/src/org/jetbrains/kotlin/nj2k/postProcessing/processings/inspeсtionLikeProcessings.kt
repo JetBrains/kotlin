@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -127,13 +129,29 @@ class RemoveRedundantOverrideVisibilityProcessing :
     }
 }
 
-class UseExpressionBodyProcessing : InspectionLikeProcessingForElement<KtPropertyAccessor>(KtPropertyAccessor::class) {
-    private val inspection = UseExpressionBodyInspection(convertEmptyToUnit = false)
-    override fun isApplicableTo(element: KtPropertyAccessor, settings: ConverterSettings?): Boolean =
-        inspection.isActiveFor(element)
+class ReplaceGetterBodyWithSingleReturnStatementWithExpressionBody :
+    InspectionLikeProcessingForElement<KtPropertyAccessor>(KtPropertyAccessor::class) {
+
+    private fun KtPropertyAccessor.singleBodyStatementExpression() =
+        bodyBlockExpression?.statements
+            ?.singleOrNull()
+            ?.safeAs<KtReturnExpression>()
+            ?.takeIf { it.labeledExpression == null }
+            ?.returnedExpression
+
+    override fun isApplicableTo(element: KtPropertyAccessor, settings: ConverterSettings?): Boolean {
+        if (!element.isGetter) return false
+        return element.singleBodyStatementExpression() != null
+    }
 
     override fun apply(element: KtPropertyAccessor) {
-        inspection.simplify(element, false)
+        val body = element.bodyExpression ?: return
+        val returnedExpression = element.singleBodyStatementExpression() ?: return
+
+        val commentSaver = CommentSaver(body)
+        element.addBefore(KtPsiFactory(element).createEQ(), body)
+        val newBody = body.replaced(returnedExpression)
+        commentSaver.restore(newBody)
     }
 }
 
@@ -156,13 +174,17 @@ class RemoveRedundantCastToNullableProcessing :
 
 class RemoveRedundantSamAdaptersProcessing :
     InspectionLikeProcessingForElement<KtCallExpression>(KtCallExpression::class) {
+    override val writeActionNeeded = false
 
     override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean =
         RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element).isNotEmpty()
 
     override fun apply(element: KtCallExpression) {
-        RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element).forEach { call ->
-            RedundantSamConstructorInspection.replaceSamConstructorCall(call)
+        val callsToBeConverted = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
+        runWriteAction {
+            for (call in callsToBeConverted) {
+                RedundantSamConstructorInspection.replaceSamConstructorCall(call)
+            }
         }
     }
 }
