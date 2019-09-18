@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ColoredItem;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.util.Function;
@@ -366,11 +365,8 @@ class ServiceModel implements Disposable, InvokerSupplier {
   }
 
   @NotNull
-  public static ServiceViewContributor<?>[] getContributors() {
-    ServiceViewContributor<?>[] result = EP_NAME.getExtensions();
-    return Registry.is("ide.service.view") ?
-           result :
-           Arrays.stream(result).filter(c -> c instanceof ServiceViewAlwaysEnabledContributor).toArray(ServiceViewContributor<?>[]::new);
+  static ServiceViewContributor<?>[] getContributors() {
+    return EP_NAME.getExtensions();
   }
 
   private static <T> List<ServiceViewItem> getContributorChildren(Project project,
