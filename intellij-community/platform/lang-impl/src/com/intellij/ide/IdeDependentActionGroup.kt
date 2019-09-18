@@ -19,4 +19,8 @@ class IdeDependentActionGroup : DefaultActionGroup() {
       e.presentation.text = actionText
     }
   }
+
+  override fun isDumbAware(): Boolean {
+    return true
+  }
 }
