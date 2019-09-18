@@ -7,11 +7,62 @@ package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates
+import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex
+import org.jetbrains.kotlin.name.FqName
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class IrTest {
+
+    private val stringTable = listOf("A", "B", "C", "D", "E")
+
+    inner class MockIrProtoReader(bytes: ByteArray) : IrProtoReader(bytes) {
+        override fun readStringById(id: Int) = stringTable[id]
+    }
+
+    /**
+     * message IrDataIndex {
+     *   required int32 index = 1;
+     * }
+     */
+
+    @Test
+    fun dataIndexTest() {
+        val id = 8765643
+        val bytes = IrDataIndex.newBuilder()
+            .setIndex(id)
+            .build().toByteArray()
+
+        val reader = MockIrProtoReader(bytes)
+        val newId = reader.readDataIndex()
+
+        assertEquals(id, newId)
+    }
+
+    /**
+     * message FqName {
+     *   repeated IrDataIndex segment = 1;
+     * }
+     */
+
+    @Test
+    fun fqNameTest() {
+        val fqnName = FqName("A.B.C.D.A")
+        val proto = ProtoFqName.newBuilder()
+
+        fqnName.pathSegments().forEach {
+            val dataIndex = IrDataIndex.newBuilder().setIndex(stringTable.indexOf(it.asString()))
+            proto.addSegment(dataIndex)
+        }
+
+        val bytes = proto.build().toByteArray()
+
+        val reader = MockIrProtoReader(bytes)
+        val newFqName = reader.readFqName()
+
+        assertEquals(fqnName, newFqName)
+    }
 
     /**
      * message Coordinates {
@@ -28,26 +79,12 @@ class IrTest {
             .setEndOffset(end)
             .build().toByteArray()
 
-        val reader = IrProtoReader(bytes)
+        val reader = MockIrProtoReader(bytes)
         val (newStart, newEnd) = reader.readCoordinates()
 
         assertEquals(start, newStart)
         assertEquals(end, newEnd)
 
-    }
-
-    /**
-     * message IrDataIndex {
-     *   required int32 index = 1;
-     * }
-     */
-    @Test
-    fun dataIndexTest() {
-        val bytes = IrDataIndex.newBuilder().setIndex(100).build().toByteArray()
-
-        val reader = IrProtoReader(bytes)
-
-        assertEquals(100, reader.readDataIndex())
     }
 
     /**
@@ -64,7 +101,7 @@ class IrTest {
             .addAllLineStartOffsets(listOf(1, 2, 3))
             .build().toByteArray()
 
-        val reader = IrProtoReader(bytes)
+        val reader = MockIrProtoReader(bytes)
         val fileEntry = reader.readFileEntry()
 
         assertEquals("<entry name>", fileEntry.name)

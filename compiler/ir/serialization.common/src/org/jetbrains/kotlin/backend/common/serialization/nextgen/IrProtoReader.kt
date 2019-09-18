@@ -6,9 +6,43 @@
 package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.name.FqName
+import java.lang.StringBuilder
 
 
-class IrProtoReader(source: ByteArray) : ProtoReader(source) {
+abstract class IrProtoReader(source: ByteArray) : ProtoReader(source) {
+
+    protected abstract fun readStringById(id: Int): String
+
+    fun readDataIndex(): Int {
+        var result = 0
+
+        while (hasData) {
+            readField { fieldNumber, type ->
+                when (fieldNumber) {
+                    1 -> result = readInt32()
+                    else -> skip(type)
+                }
+            }
+        }
+
+        return result
+    }
+
+    fun readFqName(): FqName {
+        val stringBuilder = StringBuilder()
+
+        while (hasData) {
+            readField { fieldNumber, _ ->
+                assert(fieldNumber == 1)
+                if (stringBuilder.isNotEmpty()) stringBuilder.append('.')
+                val stringId = readWithLength { readDataIndex() }
+                stringBuilder.append(readStringById(stringId))
+            }
+        }
+
+        return if (stringBuilder.isEmpty()) FqName.ROOT else FqName(stringBuilder.toString())
+    }
 
     fun readCoordinates(): Pair<Int, Int> {
         var start = -1
@@ -25,21 +59,6 @@ class IrProtoReader(source: ByteArray) : ProtoReader(source) {
         }
 
         return Pair(start, end)
-    }
-
-    fun readDataIndex(): Int {
-        var result = 0
-
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> result = readInt32()
-                    else -> skip(type)
-                }
-            }
-        }
-
-        return result
     }
 
     fun readFileEntry(): NaiveSourceBasedFileEntryImpl {
