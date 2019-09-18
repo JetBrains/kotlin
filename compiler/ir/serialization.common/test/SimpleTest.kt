@@ -2,7 +2,7 @@
  * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 import org.junit.*
 import org.junit.Assert.*;
@@ -84,20 +84,20 @@ class SimpleTest {
      * c = 150
      */
     @Test fun testRepeated() {
-        val bytes = "1a 09 08 96 01 08 96 01 08 96 01".asBytes()
+        val bytes = "1a 03 08 96 01 1a 03 08 96 01 1a 03 08 96 01".asBytes()
         val reader = ProtoReader(bytes)
-        reader.readField { number, type ->
-            assertEquals(3, number)
-            assertEquals(2, type)
+        while (reader.hasData) {
 
-            val test1Length = reader.readInt32()
-            assertEquals(9, test1Length)
+            reader.readField { number, type ->
+                assertEquals(3, number)
+                assertEquals(2, type)
 
-            for (i in 1..3) {
-                reader.readField { number, type ->
-                    assertEquals(1, number)
-                    assertEquals(0, type)
-                    assertEquals(150, reader.readInt32())
+                reader.readWithLength {
+                    reader.readField { number, type ->
+                        assertEquals(1, number)
+                        assertEquals(0, type)
+                        assertEquals(150, reader.readInt32())
+                    }
                 }
             }
         }

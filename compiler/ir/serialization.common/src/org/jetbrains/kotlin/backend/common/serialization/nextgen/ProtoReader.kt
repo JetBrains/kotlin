@@ -3,12 +3,36 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization
+package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
-class ProtoReader(val source: ByteArray,
-                  var offset: Int = 0) {
+open class ProtoReader(
+    val source: ByteArray,
+    offset: Int = 0
+) {
 
-    private inline fun nextByte(): Byte = source[offset++]
+    var offset: Int = offset
+        private set
+
+    var currentEnd = source.size
+
+    val hasData: Boolean
+        get() = offset < currentEnd
+
+    inline fun <T> readWithLength(block: () -> T): T {
+        val length = readInt32()
+        val oldEnd = currentEnd
+        currentEnd = offset + length
+        try {
+            return block()
+        } finally {
+            currentEnd = oldEnd
+        }
+    }
+
+    private fun nextByte(): Byte {
+        if (!hasData) error("Oops")
+        return source[offset++]
+    }
 
     private fun readVarint64(): Long {
         var result = 0L
@@ -81,7 +105,7 @@ class ProtoReader(val source: ByteArray,
         return result
     }
 
-    inline fun <T> readField(block: (Int, Int) -> T): T {
+    inline fun <T> readField(block: (fieldNumber: Int, type: Int) -> T): T {
         val wire = readInt32()
         val fieldNumber = wire ushr 3
         val wireType = wire and 0x7
