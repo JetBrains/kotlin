@@ -90,7 +90,8 @@ fun PromisedValue.coerce(target: Type, irTarget: IrType): PromisedValue {
 
     // Boxing and unboxing kotlin.Result leads to CCE in generated code
     val doNotCoerceKotlinResultInContinuation =
-        codegen.irFunction.isInvokeSuspendOfContinuation(codegen.context) && (irType.isKotlinResult() || irTarget.isKotlinResult())
+        (codegen.irFunction.isInvokeSuspendOfContinuation(codegen.context) || codegen.irFunction.isInvokeOfSuspendLambda(codegen.context))
+                && (irType.isKotlinResult() || irTarget.isKotlinResult())
 
     // Coerce inline classes
     if ((isFromTypeInlineClass || isToTypeInlineClass) && !doNotCoerceKotlinResultInContinuation) {

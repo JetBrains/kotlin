@@ -243,8 +243,8 @@ class MethodInliner(
                         // if this does not happen, insert fake continuation, since we could not have one yet.
                         val argumentTypes = Type.getArgumentTypes(desc)
                         if (argumentTypes.size != parametersSize &&
-                            // TODO: Workaround IR-related problem. In IR we already have lowered lambda, while in Old BE we don't.
-                            !(inliningContext.root.state.isIrBackend && desc.endsWith("Lkotlin/coroutines/Continuation;)Ljava/lang/Object;"))
+                            // But do not add it in IR. In IR we already have lowered lambdas with additional parameter, while in Old BE we don't.
+                            !inliningContext.root.state.isIrBackend
                         ) {
                             addFakeContinuationMarker(this)
                             coroutineDesc = Type.getMethodDescriptor(Type.getReturnType(desc), *argumentTypes, AsmTypes.OBJECT_TYPE)
