@@ -34,8 +34,8 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
   @NonNls private static final String LENGTH = "length";
   @NonNls private static final String MODULE = "module";
   @NonNls private static final String PACKAGE = "package";
-  @NonNls private static final String PROBLEM = "problem";
-  @NonNls private static final String PROBLEMS = "problems";
+  @NonNls protected static final String PROBLEM = "problem";
+  @NonNls protected static final String PROBLEMS = "problems";
   @NonNls private static final String DESCRIPTION = "description";
   @NonNls private static final String PROBLEM_CLASS = "problem_class";
   @NonNls private static final String SEVERITY_ATTR = "severity";
@@ -151,7 +151,7 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
     jsonWriter.endObject();
   }
 
-  private static void convertProblem(@NotNull JsonWriter writer, @NotNull Element problem) throws IOException {
+  protected static void convertProblem(@NotNull JsonWriter writer, @NotNull Element problem) throws IOException {
     writer.beginObject();
     writer.name(FILE).value(problem.getChildText(FILE));
     writeInt(writer, problem, LINE);
@@ -217,8 +217,14 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
   }
 
   private static void convertDescriptions(@NotNull JsonWriter writer, @NotNull Document descriptions) throws IOException {
-    Element inspectionsElement = descriptions.getRootElement();
     writer.beginObject();
+    convertDescriptionsContents(writer, descriptions);
+    writer.endObject();
+  }
+
+  protected static void convertDescriptionsContents(@NotNull JsonWriter writer,
+                                                    @NotNull Document descriptions) throws IOException {
+    Element inspectionsElement = descriptions.getRootElement();
     writer.name(InspectionApplication.PROFILE).value(inspectionsElement.getAttributeValue(InspectionApplication.PROFILE));
     writer.name(GROUPS);
     writer.beginArray();
@@ -226,7 +232,6 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
       convertGroup(writer, group);
     }
     writer.endArray();
-    writer.endObject();
   }
 
   private static void convertGroup(@NotNull JsonWriter writer, @NotNull Element group) throws IOException {
