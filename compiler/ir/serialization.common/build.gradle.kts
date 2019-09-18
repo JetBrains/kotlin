@@ -8,10 +8,11 @@ dependencies {
     compile(project(":compiler:ir.backend.common"))
     compile(project(":compiler:ir.tree"))
     compile(project(":kotlin-util-klib"))
+    testCompile(commonDep("junit:junit"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
 }
 
