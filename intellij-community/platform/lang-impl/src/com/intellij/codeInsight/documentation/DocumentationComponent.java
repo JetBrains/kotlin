@@ -32,7 +32,6 @@ import com.intellij.openapi.editor.colors.EditorColorsUtil;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.keymap.ex.KeymapManagerEx;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -394,7 +393,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     toolbarActions.addAction(new MyShowSettingsAction(true)).setAsSecondary(true);
     toolbarActions.addAction(new ShowToolbarAction()).setAsSecondary(true);
     toolbarActions.addAction(new RestoreDefaultSizeAction()).setAsSecondary(true);
-    myToolBar = new ActionToolbarImpl(ActionPlaces.JAVADOC_TOOLBAR, toolbarActions, true, KeymapManagerEx.getInstanceEx()) {
+    myToolBar = new ActionToolbarImpl(ActionPlaces.JAVADOC_TOOLBAR, toolbarActions, true) {
       Point initialClick;
 
       @Override
