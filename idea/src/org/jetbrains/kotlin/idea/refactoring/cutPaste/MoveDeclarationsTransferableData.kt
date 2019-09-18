@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.idea.refactoring.cutPaste
 
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.datatransfer.DataFlavor
 
 class MoveDeclarationsTransferableData(
-        val sourceFileUrl: String,
-        val sourceObjectFqName: String?,
-        val stubTexts: List<String>,
-        val declarationNames: Set<String>
+    val sourceFileUrl: String,
+    val sourceObjectFqName: String?,
+    val declarations: List<KtNamedDeclaration>,
+    val imports: List<String>
 ) : TextBlockTransferableData {
 
     override fun getFlavor() = DATA_FLAVOR

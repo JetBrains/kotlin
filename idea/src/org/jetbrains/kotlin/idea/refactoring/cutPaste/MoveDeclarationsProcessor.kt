@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsTransferableData.Companion.STUB_RENDERER
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -42,7 +43,8 @@ class MoveDeclarationsProcessor(
         private val sourceContainer: KtDeclarationContainer,
         private val targetPsiFile: KtFile,
         val pastedDeclarations: List<KtNamedDeclaration>,
-        private val stubTexts: List<String>
+        private val imports: List<String>,
+        private val sourceDeclarationsText: List<String>
 ) {
     companion object {
         fun build(editor: Editor, cookie: MoveDeclarationsEditorCookie): MoveDeclarationsProcessor? {
@@ -74,11 +76,17 @@ class MoveDeclarationsProcessor(
             if (sourceContainer == sourcePsiFile && sourcePsiFile.packageFqName == targetPsiFile.packageFqName) return null
 
             // check that declarations were cut (not copied)
-            val filteredDeclarations = sourceContainer.declarations.filter { it.name in data.declarationNames }
-            val stubs = data.stubTexts.toSet()
-            if (filteredDeclarations.any { MoveDeclarationsTransferableData.STUB_RENDERER.render(it.unsafeResolveToDescriptor()) in stubs }) return null
+            val filteredDeclarations = sourceContainer.declarations.filter { it in data.declarations }
+            if (filteredDeclarations.isNotEmpty()) return null
 
-            return MoveDeclarationsProcessor(project, sourceContainer, targetPsiFile, declarations, data.stubTexts)
+            return MoveDeclarationsProcessor(
+                project,
+                sourceContainer,
+                targetPsiFile,
+                declarations,
+                data.imports,
+                data.declarations.map { it.text }
+            )
         }
     }
 
@@ -92,16 +100,47 @@ class MoveDeclarationsProcessor(
         val commandName = "Usage update"
         val commandGroupId = Any() // we need to group both commands for undo
 
-        val insertedRange = project.executeWriteCommand<RangeMarker>(commandName, commandGroupId) {
-            //TODO: can stub declarations interfere with pasted declarations? I could not find such cases
-            insertStubDeclarations()
+        // temporary revert imports to the state before they have been changed
+        val importsSubstitution = if (sourcePsiFile.importDirectives.size != imports.size) {
+            val startOffset = sourcePsiFile.importDirectives.map { it.startOffset }.min() ?: 0
+            val endOffset = sourcePsiFile.importDirectives.map { it.endOffset }.min() ?: 0
+            val importsDeclarationsText = sourceDocument.getText(TextRange(startOffset, endOffset))
+
+            val tempImportsText = imports.joinToString(separator = "\n")
+            project.executeWriteCommand(commandName, commandGroupId) {
+                sourceDocument.deleteString(startOffset, endOffset)
+                sourceDocument.insertString(startOffset, tempImportsText)
+            }
+            psiDocumentManager.commitDocument(sourceDocument)
+
+            ImportsSubstitution(importsDeclarationsText, tempImportsText, startOffset)
+        } else {
+            null
+        }
+
+        val tmpRangeAndDeclarations = insertStubDeclarations(commandName, commandGroupId, sourceDeclarationsText)
+        assert(tmpRangeAndDeclarations.second.size == pastedDeclarations.size)
+
+        val stubTexts = tmpRangeAndDeclarations.second.map { STUB_RENDERER.render(it.unsafeResolveToDescriptor()) }
+
+        project.executeWriteCommand(commandName, commandGroupId) {
+            sourceDocument.deleteString(tmpRangeAndDeclarations.first.startOffset, tmpRangeAndDeclarations.first.endOffset)
         }
         psiDocumentManager.commitDocument(sourceDocument)
 
-        val stubDeclarations = MoveDeclarationsCopyPasteProcessor.rangeToDeclarations(sourcePsiFile, insertedRange.startOffset, insertedRange.endOffset)
-        assert(stubDeclarations.size == pastedDeclarations.size) //TODO: can they ever differ?
+        val stubRangeAndDeclarations = insertStubDeclarations(commandName, commandGroupId, stubTexts)
+        val stubDeclarations = stubRangeAndDeclarations.second
+        assert(stubDeclarations.size == pastedDeclarations.size)
 
-        val mover = object: Mover {
+        importsSubstitution?.let {
+            project.executeWriteCommand(commandName, commandGroupId) {
+                sourceDocument.deleteString(it.startOffset, it.startOffset + it.tempImportsText.length)
+                sourceDocument.insertString(it.startOffset, it.originalImportsText)
+            }
+            psiDocumentManager.commitDocument(sourceDocument)
+        }
+
+        val mover = object : Mover {
             override fun invoke(declaration: KtNamedDeclaration, targetContainer: KtElement): KtNamedDeclaration {
                 val index = stubDeclarations.indexOf(declaration)
                 assert(index >= 0)
@@ -130,20 +169,40 @@ class MoveDeclarationsProcessor(
             project.runRefactoringAndKeepDelayedRequests { declarationProcessor.execute(declarationUsages) }
 
             psiDocumentManager.doPostponedOperationsAndUnblockDocument(sourceDocument)
-            assert(insertedRange.isValid)
-            sourceDocument.deleteString(insertedRange.startOffset, insertedRange.endOffset)
+            val insertedStubRange = stubRangeAndDeclarations.first
+            assert(insertedStubRange.isValid)
+            sourceDocument.deleteString(insertedStubRange.startOffset, insertedStubRange.endOffset)
         }
     }
 
-    private fun insertStubDeclarations(): RangeMarker {
-        val insertionOffset = sourceContainer.declarations.firstOrNull()?.startOffset
-                              ?: when (sourceContainer) {
-                                  is KtFile -> sourceContainer.textLength
-                                  is KtObjectDeclaration -> sourceContainer.getBody()?.rBrace?.startOffset ?: sourceContainer.endOffset
-                                  else -> error("Unknown sourceContainer: $sourceContainer")
-                              }
-        val textToInsert = "\n//start\n\n" + stubTexts.joinToString(separator = "\n") + "\n//end\n"
-        sourceDocument.insertString(insertionOffset, textToInsert)
-        return sourceDocument.createRangeMarker(TextRange(insertionOffset, insertionOffset + textToInsert.length))
+    private data class ImportsSubstitution(val originalImportsText: String, val tempImportsText: String, val startOffset: Int)
+
+    private fun insertStubDeclarations(
+        commandName: String,
+        commandGroupId: Any?,
+        values: List<String>
+    ): Pair<RangeMarker, List<KtNamedDeclaration>> {
+        val insertedRange = project.executeWriteCommand(commandName, commandGroupId) {
+            val insertionOffset = sourceContainer.declarations.firstOrNull()?.startOffset
+                ?: when (sourceContainer) {
+                    is KtFile -> sourceContainer.textLength
+                    is KtObjectDeclaration -> sourceContainer.getBody()?.rBrace?.startOffset ?: sourceContainer.endOffset
+                    else -> error("Unknown sourceContainer: $sourceContainer")
+                }
+            val textToInsert = "\n//start\n\n${values.joinToString(separator = "\n")}\n//end\n"
+            sourceDocument.insertString(insertionOffset, textToInsert)
+            sourceDocument.createRangeMarker(TextRange(insertionOffset, insertionOffset + textToInsert.length))
+        }
+        psiDocumentManager.commitDocument(sourceDocument)
+
+        val declarations =
+            MoveDeclarationsCopyPasteProcessor.rangeToDeclarations(
+                sourcePsiFile,
+                insertedRange.startOffset,
+                insertedRange.endOffset
+            )
+
+        return Pair(insertedRange, declarations)
     }
+
 }
