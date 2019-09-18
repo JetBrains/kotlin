@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.ide.bookmarks;
 
 import com.intellij.ide.IdeBundle;
@@ -15,7 +14,7 @@ import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.DumbAwareRunnable;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
@@ -25,7 +24,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentListener;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -36,12 +34,14 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @State(name = "BookmarkManager", storages = {
   @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE),
@@ -56,6 +56,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
   private final Project myProject;
 
   private boolean mySortedState;
+  private final AtomicReference<List<Bookmark>> myPendingState = new AtomicReference<>();
 
   public static BookmarkManager getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, BookmarkManager.class);
@@ -127,6 +128,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
   @NotNull
   public Bookmark addTextBookmark(@NotNull VirtualFile file, int lineIndex, @NotNull String description) {
     ApplicationManager.getApplication().assertIsDispatchThread();
+
     Bookmark b = new Bookmark(myProject, file, lineIndex, description);
     // increment all other indices and put new bookmark at index 0
     myBookmarks.values().forEach(bookmark -> bookmark.index++);
@@ -140,11 +142,12 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     return myProject.getMessageBus().syncPublisher(BookmarksListener.TOPIC);
   }
 
-  @Nullable
-  public Bookmark addFileBookmark(@NotNull VirtualFile file, @NotNull String description) {
-    if (findFileBookmark(file) != null) return null;
-
-    return addTextBookmark(file, -1, description);
+  @TestOnly
+  public void addFileBookmark(@NotNull VirtualFile file, @NotNull String description) {
+    if (findFileBookmark(file) != null) {
+      return;
+    }
+    addTextBookmark(file, -1, description);
   }
 
   @NotNull
@@ -215,47 +218,90 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     return container;
   }
 
+
   @Override
   public void loadState(@NotNull Element state) {
-    StartupManager.getInstance(myProject).runWhenProjectIsInitialized((DumbAwareRunnable)() -> {
+    myPendingState.set(readExternal(state));
+
+    StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        List<Bookmark> newList = myPendingState.getAndSet(null);
+        if (newList != null) {
+          applyNewState(newList);
+        }
+      }, myProject.getDisposedOrDisposeInProgress());
+    });
+  }
+
+  private void applyNewState(@NotNull List<Bookmark> newList) {
+    if (!myBookmarks.isEmpty()) {
       Bookmark[] bookmarks = myBookmarks.values().toArray(new Bookmark[0]);
       for (Bookmark bookmark : bookmarks) {
         bookmark.release();
       }
       myBookmarks.clear();
+    }
 
-      readExternal(state);
-    });
+    int bookmarkIndex = newList.size() - 1;
+    List<Bookmark> addedBookmarks = new ArrayList<>(newList.size());
+    for (Bookmark bookmark : newList) {
+      OpenFileDescriptor target = bookmark.init(myProject);
+      if (target == null) {
+        continue;
+      }
+
+      if (target.getLine() == -1 && findFileBookmark(target.getFile()) != null) {
+        continue;
+      }
+
+      bookmark.index = bookmarkIndex--;
+      myBookmarks.putValue(target.getFile(), bookmark);
+      addedBookmarks.add(bookmark);
+
+      char mnemonic = bookmark.getMnemonic();
+      if (mnemonic != Character.MIN_VALUE ) {
+        Bookmark old = findBookmarkForMnemonic(mnemonic);
+        if (old != null) {
+          removeBookmark(old);
+        }
+      }
+    }
+
+    for (Bookmark bookmark : addedBookmarks) {
+      getPublisher().bookmarkAdded(bookmark);
+    }
   }
 
-  private void readExternal(Element element) {
+  @NotNull
+  private static List<Bookmark> readExternal(@NotNull Element element) {
+    List<Bookmark> result = new ArrayList<>();
     for (Element bookmarkElement : element.getChildren("bookmark")) {
       String url = bookmarkElement.getAttributeValue("url");
+      if (StringUtil.isEmptyOrSpaces(url)) {
+        continue;
+      }
+
       String line = bookmarkElement.getAttributeValue("line");
       String description = StringUtil.notNullize(bookmarkElement.getAttributeValue("description"));
       String mnemonic = bookmarkElement.getAttributeValue("mnemonic");
 
-      Bookmark b = null;
-      VirtualFile file = url == null ? null : VirtualFileManager.getInstance().findFileByUrl(url);
-      if (file != null) {
-        if (line != null) {
-          try {
-            int lineIndex = Integer.parseInt(line);
-            b = addTextBookmark(file, lineIndex, description);
-          }
-          catch (NumberFormatException e) {
-            // Ignore. Will miss bookmark if line number cannot be parsed
-          }
+      int lineIndex = -1;
+      if (line != null) {
+        try {
+          lineIndex = Integer.parseInt(line);
         }
-        else {
-          b = addFileBookmark(file, description);
+        catch (NumberFormatException ignore) {
+          // Ignore. Will miss bookmark if line number cannot be parsed
+          continue;
         }
       }
-
-      if (b != null && mnemonic != null && mnemonic.length() == 1) {
-        setMnemonic(b, mnemonic.charAt(0));
+      Bookmark bookmark = new Bookmark(url, lineIndex, description);
+      if (mnemonic != null && mnemonic.length() == 1) {
+        bookmark.setMnemonic(mnemonic.charAt(0));
       }
+      result.add(bookmark);
     }
+    return result;
   }
 
   private void writeExternal(Element element) {
