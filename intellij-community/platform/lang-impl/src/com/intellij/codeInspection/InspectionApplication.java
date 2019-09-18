@@ -1,12 +1,16 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection;
 
+import com.google.common.collect.Lists;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInspection.ex.*;
+import com.intellij.codeInspection.ui.ExternalProblemFilter;
 import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import com.intellij.conversion.ConversionListener;
 import com.intellij.conversion.ConversionService;
+import com.intellij.diff.tools.util.text.LineOffsetsUtil;
+import com.intellij.diff.util.Range;
 import com.intellij.ide.impl.PatchProjectUtil;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.Disposable;
@@ -24,8 +28,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.ContentRevision;
+import com.intellij.openapi.vcs.ex.RangesBuilder;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
@@ -37,6 +46,7 @@ import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.util.containers.ContainerUtil;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
+import one.util.streamex.StreamEx;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +81,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   public boolean myRunGlobalToolsOnly;
   public boolean myAnalyzeChanges;
   private int myVerboseLevel;
+  private Map<VirtualFile, List<Range>> diffMap = new HashMap<>();
   public String myOutputFormat;
 
   public boolean myErrorCodeRequired = true;
@@ -236,6 +247,10 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       }
     }
 
+    if (myAnalyzeChanges) {
+      setupAnalyzeChangesHandler(project);
+    }
+
     final List<Path> inspectionsResults = new ArrayList<>();
     runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
     final Path descriptionsFile = resultsDataPath.resolve(DESCRIPTIONS + XML_EXTENSION);
@@ -253,6 +268,24 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         printHelp();
       }
     }
+  }
+
+  private void setupAnalyzeChangesHandler(Project project) {
+    ChangeListManager changeListManager = ChangeListManager.getInstance(project);
+    ExternalProblemFilter.getInstance(project).registerProblemFilter(
+      (element, descriptors) -> {
+        Optional<ProblemDescriptorBase> any = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).findAny();
+        if (any.isPresent()) {
+          ProblemDescriptorBase problemDescriptor = any.get();
+          VirtualFile file = problemDescriptor.getContainingFile();
+          if (file == null) return false;
+          List<Range> ranges = getOrComputeUnchangedRanges(file, changeListManager);
+          int line = problemDescriptor.getLineNumber();
+          return StreamEx.of(ranges).anyMatch((it) -> it.start1 <= line && line < it.end1);
+        }
+        return false;
+      }
+    );
   }
 
   private void runUnderProgress(@NotNull Project project,
@@ -514,6 +547,31 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         xmlWriter.endNode();
       }
       xmlWriter.endNode();
+    }
+  }
+
+  private List<Range> getOrComputeUnchangedRanges(@NotNull VirtualFile virtualFile,
+                                                  @NotNull ChangeListManager changeListManager) {
+    return diffMap.computeIfAbsent(virtualFile, (key) -> computeDiff(key, changeListManager));
+  }
+
+  private static List<Range> computeDiff(@NotNull VirtualFile virtualFile,
+                                         @NotNull ChangeListManager changeListManager) {
+    try {
+      Change change = changeListManager.getChange(virtualFile);
+      if (change == null) return Collections.emptyList();
+      ContentRevision revision = change.getBeforeRevision();
+      if (revision == null) return Collections.emptyList();
+      String oldContent = revision.getContent();
+      if (oldContent == null) return Collections.emptyList();
+      String newContent = VfsUtilCore.loadText(virtualFile);
+      return Lists.newArrayList(
+        RangesBuilder.compareLines(newContent, oldContent, LineOffsetsUtil.create(newContent), LineOffsetsUtil.create(oldContent))
+          .iterateUnchanged());
+    }
+    catch (VcsException | IOException e) {
+      LOG.error("Couldn't load content", e);
+      return Collections.emptyList();
     }
   }
 }
