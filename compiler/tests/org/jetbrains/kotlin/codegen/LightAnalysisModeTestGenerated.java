@@ -6608,6 +6608,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Bridges extends AbstractLightAnalysisModeTest {
+            @TestMetadata("lambdaWithLongReceiver_ir.kt")
+            public void ignoreLambdaWithLongReceiver_ir() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver_ir.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }

@@ -6180,6 +6180,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("lambdaWithLongReceiver_ir.kt")
+            public void testLambdaWithLongReceiver_ir() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver_ir.kt");
+            }
+
             @TestMetadata("lambdaWithMultipleParameters.kt")
             public void testLambdaWithMultipleParameters_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters.kt", "kotlin.coroutines");

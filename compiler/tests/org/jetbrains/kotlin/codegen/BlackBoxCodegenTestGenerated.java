@@ -6630,6 +6630,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("lambdaWithLongReceiver_ir.kt")
+            public void testLambdaWithLongReceiver_ir() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver_ir.kt");
+            }
+
             @TestMetadata("lambdaWithMultipleParameters.kt")
             public void testLambdaWithMultipleParameters_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters.kt", "kotlin.coroutines.experimental");
