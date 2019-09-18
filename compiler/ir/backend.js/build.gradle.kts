@@ -1,25 +1,28 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
+}
+
+val COMPOSE_VERSION = "1.3.50-compose-20190806"
+val KOTLIN_COMPOSE_STDLIB = "org.jetbrains.kotlin:kotlin-stdlib:$COMPOSE_VERSION"
+
+repositories {
+    maven(project.rootProject.projectDir.resolve("../../prebuilts/androidx/external").absolutePath)
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:backend-common"))
-    compile(project(":compiler:ir.tree"))
-    compile(project(":compiler:ir.psi2ir"))
-    compile(project(":compiler:ir.backend.common"))
-    compile(project(":compiler:ir.serialization.common"))
-    compile(project(":compiler:ir.serialization.js"))
-    compile(project(":js:js.ast"))
-    compile(project(":js:js.frontend"))
-
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(KOTLIN_COMPOSE_STDLIB)
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler:$COMPOSE_VERSION")
+    compileOnly("org.jetbrains.kotlin:kotlin-plugin:$COMPOSE_VERSION")
+    compileOnly("org.jetbrains.kotlin:kotlin-intellij-core:$COMPOSE_VERSION")
+    compileOnly("org.jetbrains.kotlin:kotlin-platform-api:$COMPOSE_VERSION")
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" {}
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
+sourceSets.maybeCreate("main").java.srcDirs("src")
