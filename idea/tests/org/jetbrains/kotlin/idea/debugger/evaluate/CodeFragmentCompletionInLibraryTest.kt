@@ -25,12 +25,13 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.runner.RunWith
 import java.io.File
 
-private val LIBRARY_SRC_PATH = KotlinTestUtils.getHomeDirectory() + "/idea/idea-completion/testData/codeFragmentInLibrarySource/customLibrary/"
+private val LIBRARY_SRC_PATH =
+    KotlinTestUtils.getHomeDirectory() + "/idea/idea-completion/testData/codeFragmentInLibrarySource/customLibrary/"
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
 
-    override fun getProjectDescriptor() = object: SdkAndMockLibraryProjectDescriptor(LIBRARY_SRC_PATH, false) {
+    override fun getProjectDescriptor() = object : SdkAndMockLibraryProjectDescriptor(LIBRARY_SRC_PATH, false) {
         override fun configureModule(module: Module, model: ModifiableRootModel) {
             super.configureModule(module, model)
 
@@ -60,7 +61,7 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
 
     private fun testCompletionInLibraryCodeFragment(fragmentText: String, vararg completionDirectives: String) {
         setupFixtureByCodeFragment(fragmentText)
-        val directives = completionDirectives.map { "//$it" }.joinToString(separator = "\n")
+        val directives = completionDirectives.joinToString(separator = "\n") { "//$it" }
         testCompletion(directives,
                        JvmPlatforms.unspecifiedJvmPlatform, { completionType, count -> myFixture.complete(completionType, count) })
     }

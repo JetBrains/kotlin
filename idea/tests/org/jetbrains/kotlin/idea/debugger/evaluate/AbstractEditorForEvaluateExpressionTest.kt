@@ -45,7 +45,7 @@ abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerTest() {
             val file = myFixture.file as KtFile
             InTextDirectivesUtils.findListWithPrefixes(fileText, "// IMPORT: ").forEach {
                 val descriptor = file.resolveImportReference(FqName(it)).singleOrNull()
-                                 ?: error("Could not resolve descriptor to import: $it")
+                    ?: error("Could not resolve descriptor to import: $it")
                 ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
             }
         }
@@ -95,10 +95,10 @@ abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
         myFixture.doHighlighting()
 
         val importFix = myFixture.availableIntentions.singleOrNull { it.familyName == "Import" }
-                        ?: error("No import fix available")
+            ?: error("No import fix available")
         importFix.invoke(project, editor, file)
 
-        myFixture.checkResultByFile(filePath + ".after")
+        myFixture.checkResultByFile("$filePath.after")
 
         val fragment = myFixture.file as KtCodeFragment
         fragment.checkImports(testDataPath + File.separator + filePath)
@@ -114,13 +114,12 @@ abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
 private fun KtCodeFragment.checkImports(testPath: String) {
     val importList = importsAsImportList()
     val importsText = StringUtil.convertLineSeparators(importList?.text ?: "")
-    val fragmentAfterFile = File(testPath + ".after.imports")
+    val fragmentAfterFile = File("$testPath.after.imports")
 
     if (fragmentAfterFile.exists()) {
         KotlinTestUtils.assertEqualsToFile(fragmentAfterFile, importsText)
-    }
-    else {
-        assertTrue(importsText.isEmpty(), "Unexpected imports found: $importsText" )
+    } else {
+        assertTrue(importsText.isEmpty(), "Unexpected imports found: $importsText")
     }
 }
 
@@ -132,19 +131,23 @@ private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String)
 
     val typeStr = InTextDirectivesUtils.findStringWithPrefixes(getFile().text, "// ${ExpectedCompletionUtils.RUNTIME_TYPE} ")
     if (typeStr != null) {
-        file.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, {
-            val codeFragment = KtPsiFactory(project).createBlockCodeFragment("val xxx: $typeStr", PsiTreeUtil.getParentOfType(elementAt, KtElement::class.java))
+        file.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) {
+            val codeFragment = KtPsiFactory(project).createBlockCodeFragment(
+                "val xxx: $typeStr",
+                PsiTreeUtil.getParentOfType(elementAt, KtElement::class.java)
+            )
             val context = codeFragment.analyzeWithContent()
-            val typeReference: KtTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().firstChild, KtTypeReference::class.java)!!
+            val typeReference: KtTypeReference =
+                PsiTreeUtil.getChildOfType(codeFragment.getContentElement().firstChild, KtTypeReference::class.java)!!
             context[BindingContext.TYPE, typeReference]
-        })
+        }
     }
 
     configureFromExistingVirtualFile(file.virtualFile!!)
 }
 
 private fun createCodeFragment(filePath: String, contextElement: PsiElement): KtCodeFragment {
-    val fileForFragment = File(filePath + ".fragment")
+    val fileForFragment = File("$filePath.fragment")
     val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
     val psiFactory = KtPsiFactory(contextElement.project)
     if (fileForFragment.readLines().size == 1) {
