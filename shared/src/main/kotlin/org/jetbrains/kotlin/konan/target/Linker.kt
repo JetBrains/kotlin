@@ -92,8 +92,12 @@ abstract class LinkerFlags(val configurables: Configurables)
 open class AndroidLinker(targetProperties: AndroidConfigurables)
     : LinkerFlags(targetProperties), AndroidConfigurables by targetProperties {
 
-    private val prefix = "$absoluteTargetToolchain/bin/"
-    private val clang = if (HostManager.hostIsMingw) "$prefix/clang.cmd" else "$prefix/clang"
+    private val clangQuad = when (targetProperties.targetArg) {
+        "arm-linux-androideabi" -> "armv7a-linux-androideabi"
+        else -> targetProperties.targetArg
+    }
+    private val prefix = "$absoluteTargetToolchain/bin/${clangQuad}${Android.API}"
+    private val clang = if (HostManager.hostIsMingw) "$prefix-clang.cmd" else "$prefix-clang"
     private val ar = "$absoluteTargetToolchain/${targetProperties.targetArg}/bin/ar"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
