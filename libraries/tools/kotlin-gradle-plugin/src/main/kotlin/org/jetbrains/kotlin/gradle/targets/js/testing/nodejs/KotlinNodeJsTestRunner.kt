@@ -10,12 +10,13 @@ import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
 
 class KotlinNodeJsTestRunner(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
@@ -37,7 +38,7 @@ class KotlinNodeJsTestRunner(override val compilation: KotlinJsCompilation) : Ko
     ): TCServiceMessagesTestExecutionSpec {
         val npmProject = compilation.npmProject
 
-        val cliArgs = KotlinNodeJsTestRunnerCliArgs(
+        val cliArgs = KotlinTestRunnerCliArgs(
             task.nodeModulesToLoad.map { npmProject.require(it) },
             task.includePatterns,
             task.excludePatterns,

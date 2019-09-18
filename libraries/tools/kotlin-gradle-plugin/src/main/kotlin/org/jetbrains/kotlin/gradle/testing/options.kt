@@ -1,12 +1,12 @@
 package org.jetbrains.kotlin.gradle.testing
 
-import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 
 @Suppress("EnumEntryName")
-enum class IgnoredTestSuites(val cli: KotlinNodeJsTestRunnerCliArgs.IgnoredTestSuitesReporting) {
-    hide(KotlinNodeJsTestRunnerCliArgs.IgnoredTestSuitesReporting.skip),
-    showWithContents(KotlinNodeJsTestRunnerCliArgs.IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored),
-    showWithoutContents(KotlinNodeJsTestRunnerCliArgs.IgnoredTestSuitesReporting.reportAsIgnoredTest)
+enum class IgnoredTestSuites(val cli: KotlinTestRunnerCliArgs.IgnoredTestSuitesReporting) {
+    hide(KotlinTestRunnerCliArgs.IgnoredTestSuitesReporting.skip),
+    showWithContents(KotlinTestRunnerCliArgs.IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored),
+    showWithoutContents(KotlinTestRunnerCliArgs.IgnoredTestSuitesReporting.reportAsIgnoredTest)
 }
 
 @Suppress("EnumEntryName")
