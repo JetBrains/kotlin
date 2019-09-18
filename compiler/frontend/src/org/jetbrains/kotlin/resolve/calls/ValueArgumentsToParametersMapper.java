@@ -278,17 +278,26 @@ public class ValueArgumentsToParametersMapper {
             KtExpression possiblyLabeledFunctionLiteral = lambdaArgument.getArgumentExpression();
 
             if (parameters.isEmpty()) {
-                report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidateCall.getCandidateDescriptor()));
+                CallUtilKt.reportTrailingLambdaErrorOr(
+                        candidateCall.getTrace(), possiblyLabeledFunctionLiteral,
+                        expression -> TOO_MANY_ARGUMENTS.on(expression, candidateCall.getCandidateDescriptor())
+                );
                 setStatus(ERROR);
             }
             else {
                 ValueParameterDescriptor lastParameter = CollectionsKt.last(parameters);
                 if (lastParameter.getVarargElementType() != null) {
-                    report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
+                    CallUtilKt.reportTrailingLambdaErrorOr(
+                            candidateCall.getTrace(), possiblyLabeledFunctionLiteral,
+                            expression -> VARARG_OUTSIDE_PARENTHESES.on(expression)
+                    );
                     setStatus(ERROR);
                 }
                 else if (!usedParameters.add(lastParameter)) {
-                    report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidateCall.getCandidateDescriptor()));
+                    CallUtilKt.reportTrailingLambdaErrorOr(
+                            candidateCall.getTrace(), possiblyLabeledFunctionLiteral,
+                            expr -> TOO_MANY_ARGUMENTS.on(expr, candidateCall.getCandidateDescriptor())
+                    );
                     setStatus(WEAK_ERROR);
                 }
                 else {
@@ -298,7 +307,12 @@ public class ValueArgumentsToParametersMapper {
 
             for (int i = 1; i < functionLiteralArguments.size(); i++) {
                 KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
-                report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
+                if (argument instanceof KtLambdaExpression) {
+                    report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
+                    if (CallUtilKt.isTrailingLambdaOnNewLIne((KtLambdaExpression) argument)) {
+                        report(UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE.on((KtLambdaExpression) argument));
+                    }
+                }
                 setStatus(WEAK_ERROR);
             }
         }

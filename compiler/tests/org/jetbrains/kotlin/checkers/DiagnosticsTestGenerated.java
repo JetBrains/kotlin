@@ -17603,6 +17603,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/resolve/localObject.kt");
             }
 
+            @TestMetadata("newLineLambda.kt")
+            public void testNewLineLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/newLineLambda.kt");
+            }
+
             @TestMetadata("objectLiteralAsArgument.kt")
             public void testObjectLiteralAsArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/objectLiteralAsArgument.kt");

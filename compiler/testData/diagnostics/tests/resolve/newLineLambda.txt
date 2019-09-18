@@ -1,0 +1,11 @@
+package
+
+public fun f1(): (() -> kotlin.Unit) -> (() -> kotlin.Unit) -> kotlin.Unit
+public fun noArgs(): kotlin.Unit
+public fun oneLambdaArg(/*0*/ fn: () -> kotlin.Unit): kotlin.Unit
+public fun testLambdaArg(): kotlin.Unit
+public fun testNoArgs(): kotlin.Unit
+public fun testTwoLambdas(): kotlin.Unit
+public fun testVararg(): kotlin.Unit
+public fun twoLambdaArgs(/*0*/ f1: () -> kotlin.Unit, /*1*/ f2: () -> kotlin.Unit): kotlin.Unit
+public fun varargFn(/*0*/ vararg args: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
