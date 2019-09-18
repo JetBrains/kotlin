@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -23,7 +22,6 @@ import static com.intellij.openapi.util.TextRange.EMPTY_RANGE;
  * @see com.intellij.codeInsight.highlighting.BraceMatcher
  * @see com.intellij.codeInsight.editorActions.CodeBlockProvider
  */
-@ApiStatus.Experimental
 public interface CodeBlockSupportHandler {
   LanguageExtension<CodeBlockSupportHandler> EP = new LanguageExtension<>("com.intellij.codeBlockSupportHandler");
 
