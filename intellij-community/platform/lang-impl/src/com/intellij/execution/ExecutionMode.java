@@ -18,9 +18,7 @@ package com.intellij.execution;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +30,6 @@ import java.util.function.BooleanSupplier;
 * @author Roman.Chernyatchik
 */
 public class ExecutionMode {
-  private static final PairConsumer<ExecutionMode, String> NOOP_CONSUMER = (mode, s) -> {
-  };
   private final boolean myCancelable;
   private final String myTitle;
   private final String myTitle2;
@@ -74,16 +70,6 @@ public class ExecutionMode {
                         @NotNull String commandLineString,
                         @NotNull ProcessOutput outputCollected,
                         @Nullable Throwable invocatorStack) {
-  }
-
-  /**
-   * @deprecated override {@link #onTimeout(ProcessHandler, String, ProcessOutput, Throwable)}  instead
-   */
-  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-  @Deprecated
-  @NotNull
-  public PairConsumer<ExecutionMode, String> getTimeoutCallback() {
-    return NOOP_CONSUMER;
   }
 
   @Nullable
