@@ -190,7 +190,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
         AtomicReference<ServiceGroupNode> ref = new AtomicReference<>((ServiceGroupNode)item);
         return new GroupModel(model, modelFilter, ref, parentFilter);
       }
-      else {
+      else if (item.getChildren().isEmpty()) {
         AtomicReference<ServiceViewItem> ref = new AtomicReference<>(item);
         return new SingeServiceModel(model, modelFilter, ref, parentFilter);
       }
@@ -227,8 +227,14 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
 
         ServiceViewItem serviceItem = model.findItemById(serviceState.path, contributor);
         if (serviceItem == null) return null;
-        AtomicReference<ServiceViewItem> ref = new AtomicReference<>(serviceItem);
-        return new SingeServiceModel(model, modelFilter, ref, parentFilter);
+
+        if (serviceItem.getChildren().isEmpty()) {
+          AtomicReference<ServiceViewItem> ref = new AtomicReference<>(serviceItem);
+          return new SingeServiceModel(model, modelFilter, ref, parentFilter);
+        }
+        else {
+          new ServiceListModel(model, modelFilter, ContainerUtil.newSmartList(serviceItem), parentFilter);
+        }
       }
       case ServiceListModel.TYPE:
         List<ServiceViewItem> items = new ArrayList<>();
