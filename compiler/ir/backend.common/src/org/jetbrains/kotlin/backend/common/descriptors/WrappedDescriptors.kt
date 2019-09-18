@@ -798,7 +798,7 @@ open class WrappedPropertyDescriptor(
 
     override fun getAccessors(): List<PropertyAccessorDescriptor> = listOfNotNull(getter, setter)
 
-    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = getter?.typeParameters.orEmpty()
 
     override fun getVisibility() = owner.visibility
 

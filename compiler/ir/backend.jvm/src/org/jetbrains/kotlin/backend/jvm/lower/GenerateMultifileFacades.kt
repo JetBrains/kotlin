@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.deepCopyWithWrappedDescriptors
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -164,6 +165,7 @@ private fun IrFunction.createMultifileDelegateIfNeeded(context: JvmBackendContex
     function.body = context.createIrBuilder(symbol).irBlockBody {
         val functionForCall = computeFunctionForCall()
         +irReturn(irCall(functionForCall).also { call ->
+            call.passTypeArgumentsFrom(function)
             function.extensionReceiverParameter?.let { parameter ->
                 call.extensionReceiver = irGet(parameter)
             }
