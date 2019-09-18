@@ -226,7 +226,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @NotNull
   private static Supplier<List<String>> moduleOutputPathsProvider(@NotNull Module module) {
     return () -> ReadAction.compute(() -> {
-      return JBIterable.of(OrderEnumerator.orderEntries(module).getClassesRoots())
+      return JBIterable.of(OrderEnumerator.orderEntries(module).withoutSdk().withoutLibraries().getClassesRoots())
         .filterMap(file -> file.isDirectory() && !file.getFileSystem().isReadOnly() ? file.getPath() : null).toList();
     });
   }
