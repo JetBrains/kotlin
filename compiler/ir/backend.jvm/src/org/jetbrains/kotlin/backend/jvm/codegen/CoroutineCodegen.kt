@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.createType
@@ -146,13 +147,17 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
 
             override fun visitCall(expression: IrCall): IrExpression {
                 if (!expression.isSuspend) return super.visitCall(expression)
-                return super.visitCall(expression.createSuspendFunctionCallViewIfNeeded(context, it))
+                return super.visitCall(expression.createSuspendFunctionCallViewIfNeeded(context, it, callerIsInlineLambda = false))
             }
         })
     }
 }
 
-internal fun IrCall.createSuspendFunctionCallViewIfNeeded(context: JvmBackendContext, caller: IrFunction): IrCall {
+internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
+    context: JvmBackendContext,
+    caller: IrFunction,
+    callerIsInlineLambda: Boolean
+): IrCall {
     if (!isSuspend) return this
     val view = (symbol.owner as IrSimpleFunction).getOrCreateSuspendFunctionViewIfNeeded(context)
     if (view == symbol.owner) return this
@@ -164,9 +169,19 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(context: JvmBackendCon
             it.putValueArgument(i, getValueArgument(i))
         }
         val continuationParameter =
-            if (caller.isInvokeSuspendOfLambda(context) || caller.isInvokeSuspendOfContinuation(context)) caller.dispatchReceiverParameter!!
-            else caller.valueParameters.last()
-        val continuation = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, continuationParameter.symbol)
-        it.putValueArgument(valueArgumentsCount, continuation)
+            when {
+                caller.isInvokeSuspendOfLambda(context) || caller.isInvokeSuspendOfContinuation(context) ->
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.dispatchReceiverParameter!!.symbol)
+                callerIsInlineLambda -> context.FAKE_CONTINUATION
+                else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters.last().symbol)
+            }
+        it.putValueArgument(valueArgumentsCount, continuationParameter)
     }
 }
+
+internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = IrErrorExpressionImpl(
+    UNDEFINED_OFFSET,
+    UNDEFINED_OFFSET,
+    context.ir.symbols.continuationClass.createType(true, listOf(makeTypeProjection(context.irBuiltIns.anyNType, Variance.INVARIANT))),
+    "FAKE_CONTINUATION"
+)

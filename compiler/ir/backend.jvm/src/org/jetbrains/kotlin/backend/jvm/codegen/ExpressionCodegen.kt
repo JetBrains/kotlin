@@ -158,7 +158,11 @@ class ExpressionCodegen(
 
     // TODO remove
     fun gen(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo): StackValue {
-        expression.accept(this, data).coerce(type, irType).materialize()
+        if (expression === context.FAKE_CONTINUATION) {
+            addFakeContinuationMarker(mv)
+        } else {
+            expression.accept(this, data).coerce(type, irType).materialize()
+        }
         return StackValue.onStack(type, irType.toKotlinType())
     }
 
@@ -299,7 +303,7 @@ class ExpressionCodegen(
         visitStatementContainer(expression, data).coerce(expression.type)
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
-        return visitFunctionAccess(expression.createSuspendFunctionCallViewIfNeeded(context, irFunction), data)
+        return visitFunctionAccess(expression.createSuspendFunctionCallViewIfNeeded(context, irFunction, isInlineLambda), data)
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
@@ -666,10 +670,12 @@ class ExpressionCodegen(
             }
             arity == 2 && expression.arguments[0].type.isStringClassType() -> {
                 // Call the stringPlus intrinsic
-                for (argument in expression.arguments) {
+                for ((index, argument) in expression.arguments.withIndex()) {
                     val result = argument.accept(this, data).boxInlineClasses(argument.type).materialized
                     if (result.type.sort != Type.OBJECT) {
                         result.genToString(mv)
+                    } else if (index == 0) {
+                        result.coerce(context.irBuiltIns.stringType).materialize()
                     }
                 }
                 mv.invokestatic(
