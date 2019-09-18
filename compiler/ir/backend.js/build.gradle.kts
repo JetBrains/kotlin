@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     compileOnly(KOTLIN_COMPOSE_STDLIB)
+    compileOnly(project(":compiler:serialization.js"))
     compileOnly("org.jetbrains.kotlin:kotlin-compiler:$COMPOSE_VERSION")
     compileOnly("org.jetbrains.kotlin:kotlin-plugin:$COMPOSE_VERSION")
     compileOnly("org.jetbrains.kotlin:kotlin-intellij-core:$COMPOSE_VERSION")

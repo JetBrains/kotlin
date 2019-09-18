@@ -25,7 +25,7 @@ private fun sortDependencies(dependencies: Collection<IrModuleFragment>): Collec
     return DFS.topologicalOrder(dependencies) { m ->
         val descriptor = m.descriptor
         descriptor.allDependencyModules.filter { it != descriptor }.map { mapping[it] }
-    }.reversed()
+    }.reversed() as Collection<IrModuleFragment>
 }
 
 fun compile(

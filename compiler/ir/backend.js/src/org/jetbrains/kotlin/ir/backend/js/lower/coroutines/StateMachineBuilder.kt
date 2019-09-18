@@ -520,8 +520,9 @@ class StateMachineBuilder(
 
     override fun visitReturn(expression: IrReturn) {
         expression.acceptChildrenVoid(this)
-        if (expression.returnTargetSymbol is IrReturnableBlockSymbol) {
-            val (exitState, varSymbol) = returnableBlockMap[expression.returnTargetSymbol]!!
+        val rts = expression.returnTargetSymbol
+        if (rts is IrReturnableBlockSymbol) {
+            val (exitState, varSymbol) = returnableBlockMap[rts]!!
             if (varSymbol != null) {
                 transformLastExpression { JsIrBuilder.buildSetVariable(varSymbol, it, it.type) }
             }

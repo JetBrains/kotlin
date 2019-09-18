@@ -173,7 +173,7 @@ private val localDelegatedPropertiesLoweringPhase = makeJsModulePhase(
 )
 
 private val localDeclarationsLoweringPhase = makeJsModulePhase(
-    ::LocalDeclarationsLowering,
+    { context -> LocalDeclarationsLowering(context) },
     name = "LocalDeclarationsLowering",
     description = "Move local declarations into nearest declaration container",
     prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)

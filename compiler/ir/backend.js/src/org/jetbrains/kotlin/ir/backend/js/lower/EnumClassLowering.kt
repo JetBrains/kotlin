@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -336,11 +337,11 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         val entryInstances = createEnumEntryInstanceVariables()
 
         // Create boolean flag that indicates if entry instances were initialized.
-        val entryInstancesInitializedVar = createEntryInstancesInitializedVar()
+        val entryInstancesInitializedVar: IrField = createEntryInstancesInitializedVar()
 
         // Create function that initializes all enum entry instances using `IrEnumEntry.initializationExpression`.
         // It should be called on the first `IrGetEnumValue`, consecutive calls to this function will do nothing.
-        val initEntryInstancesFun = createInitEntryInstancesFun(entryInstancesInitializedVar, entryInstances)
+        val initEntryInstancesFun: IrSimpleFunction = createInitEntryInstancesFun(entryInstancesInitializedVar, entryInstances)
 
         // Create entry instance getters. These are used to lower `IrGetEnumValue`.
         val entryGetInstanceFuns = createGetEntryInstanceFuns(initEntryInstancesFun, entryInstances)
@@ -351,7 +352,13 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         // Remove IrEnumEntry nodes from class declarations. Replace them with corresponding class declarations (if they have them).
         replaceIrEntriesWithCorrespondingClasses()
 
-        return listOf(irClass) + entryInstances + listOf(entryInstancesInitializedVar, initEntryInstancesFun) + entryGetInstanceFuns
+        val x: List<IrClass> = listOf(irClass)
+        val y: List<IrDeclaration> = entryInstances
+        val z: List<IrDeclaration> = listOf(entryInstancesInitializedVar,
+            initEntryInstancesFun)
+        val z1: List<IrSimpleFunction> = entryGetInstanceFuns
+
+        return x + y + z + z1
     }
 
 
