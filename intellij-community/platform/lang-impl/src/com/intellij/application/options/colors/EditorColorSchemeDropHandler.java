@@ -19,6 +19,7 @@ import com.intellij.openapi.editor.colors.impl.EmptyColorScheme;
 import com.intellij.openapi.options.SchemeImportException;
 import com.intellij.openapi.project.DefaultProjectFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -36,6 +37,9 @@ import java.util.List;
  * @author Konstantin Bulenkov
  */
 public class EditorColorSchemeDropHandler extends CustomFileDropHandler {
+
+  public static final String ADDED = "Color scheme added";
+
   @Override
   public boolean canHandle(@NotNull Transferable t, @Nullable Editor editor) {
     return getColorSchemeFile(t) != null;
@@ -81,14 +85,17 @@ public class EditorColorSchemeDropHandler extends CustomFileDropHandler {
           }
 
           colorsManager.setGlobalScheme(imported);
-          Notification notification = new Notification("", "Color scheme added", message, NotificationType.INFORMATION);
+          Notification notification = new Notification("", ADDED, message, NotificationType.INFORMATION);
           QuickChangeColorSchemeAction.changeLafIfNecessary(imported,
                                                             () -> new Alarm().addRequest(
                                                               () -> Notifications.Bus.notify(notification, project), 300));
         }
       }
       catch (SchemeImportException e) {
-        Logger.getInstance(getClass()).error(e);
+        String title = e.isWarning() ? ADDED : "Color scheme import failed";
+        NotificationType type = e.isWarning() ? NotificationType.WARNING : NotificationType.ERROR;
+        Notification notification = new Notification("", title, e.getMessage(), type);
+        notification.notify(project);
       }
       return true;
     }
