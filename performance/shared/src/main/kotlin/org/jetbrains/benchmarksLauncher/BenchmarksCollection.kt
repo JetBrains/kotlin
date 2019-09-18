@@ -20,7 +20,7 @@ interface AbstractBenchmarkEntry
 
 class BenchmarkEntryWithInit(val ctor: ()->Any, val lambda: (Any) -> Any?): AbstractBenchmarkEntry {
     companion object {
-        inline fun <reified T: Any> create(noinline ctor: ()->T, crossinline lambda: T.() -> Any?) = BenchmarkEntryWithInit(ctor) { (it as T).lambda() }
+        inline fun <T: Any> create(noinline ctor: ()->T, crossinline lambda: T.() -> Any?) = BenchmarkEntryWithInit(ctor) { (it as T).lambda() }
     }
 }
 
