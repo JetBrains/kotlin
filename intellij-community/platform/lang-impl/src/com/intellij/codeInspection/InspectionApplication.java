@@ -142,6 +142,10 @@ public class InspectionApplication {
       return;
     }
 
+    for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
+      configurator.configureEnvironment();
+    }
+
     Project project = ProjectUtil.openOrImport(projectPath, null, false);
     if (project == null) {
       logError("Unable to open project");
@@ -245,6 +249,10 @@ public class InspectionApplication {
                                 @NotNull Path resultsDataPath,
                                 @NotNull List<? super Path> inspectionsResults) {
     ProgressManager.getInstance().runProcess(() -> {
+      for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
+        configurator.configureProject(project);
+      }
+
       if (!GlobalInspectionContextUtil.canRunInspections(project, false)) {
         gracefulExit();
         return;
