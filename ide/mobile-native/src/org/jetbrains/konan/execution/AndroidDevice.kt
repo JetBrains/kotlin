@@ -75,9 +75,9 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
                 handler.destroyProcess()
                 if (e is ExecutionException) {
                     val message = e.message ?: e.toString()
+                    val window = if (waitForDebugger) ToolWindowId.DEBUG else ToolWindowId.RUN
                     runInEdt {
-                        ToolWindowManager.getInstance(project)
-                            .notifyByBalloon(ToolWindowId.DEBUG, MessageType.ERROR, message)
+                        ToolWindowManager.getInstance(project).notifyByBalloon(window, MessageType.ERROR, message)
                     }
                     handler.notifyTextAvailable("$message\n", ProcessOutputType.SYSTEM)
                 } else {
