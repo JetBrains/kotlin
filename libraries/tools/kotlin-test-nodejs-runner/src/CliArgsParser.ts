@@ -9,7 +9,7 @@ export type CliDescription = {
     args: {
         [k: string]: CliArgDescription,
     },
-    freeArgsTitle: string
+    freeArgsTitle: string | null
 }
 
 export type CliArgValues = {
@@ -107,7 +107,7 @@ export class CliArgsParser {
             }
         }
 
-        if (result.free.length == 0) {
+        if (description.freeArgsTitle && result.free.length == 0) {
             this.badArgsExit(`At least one ${description.freeArgsTitle} should be provided`)
         }
 
@@ -115,40 +115,40 @@ export class CliArgsParser {
     }
 }
 
-export const defaultCliDescription: CliDescription = {
-    version: VERSION,
-    bin: BIN,
-    description: DESCRIPTION,
-    usage: "[-t --tests] [-e --exclude] <module_name1>, <module_name2>, ..",
-    args: {
-        include: {
-            keys: ['--tests', '--include'],
-            help: "Tests to include. Example: MySuite.test1,MySuite.MySubSuite.*,*unix*,!*windows*",
-            default: "*"
+export function getDefaultCliDescription(): CliDescription {
+    return {
+        version: VERSION,
+        bin: BIN,
+        description: DESCRIPTION,
+        usage: "[-t --tests] [-e --exclude] <module_name1>, <module_name2>, ..",
+        args: {
+            include: {
+                keys: ['--tests', '--include'],
+                help: "Tests to include. Example: MySuite.test1,MySuite.MySubSuite.*,*unix*,!*windows*",
+                default: "*"
 
+            },
+            exclude: {
+                keys: ['--exclude'],
+                help: "Tests to exclude. Example: MySuite.test1,MySuite.MySubSuite.*,*unix*"
+            },
+            ignoredTestSuites: {
+                keys: ['--ignoredTestSuites'],
+                help: "How to deal with ignored test suites",
+                single: true,
+                values: [
+                    IgnoredTestSuitesReporting.skip,
+                    IgnoredTestSuitesReporting.reportAsIgnoredTest,
+                    IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored
+                ],
+                valuesHelp: [
+                    "don't report ignored test suites",
+                    "useful to speedup large ignored test suites",
+                    "will cause visiting all inner tests",
+                ],
+                default: IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored
+            }
         },
-        exclude: {
-            keys: ['--exclude'],
-            help: "Tests to exclude. Example: MySuite.test1,MySuite.MySubSuite.*,*unix*"
-        },
-        ignoredTestSuites: {
-            keys: ['--ignoredTestSuites'],
-            help: "How to deal with ignored test suites",
-            single: true,
-            values: [
-                IgnoredTestSuitesReporting.skip,
-                IgnoredTestSuitesReporting.reportAsIgnoredTest,
-                IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored
-            ],
-            valuesHelp: [
-                "don't report ignored test suites",
-                "useful to speedup large ignored test suites",
-                "will cause visiting all inner tests",
-            ],
-            default: IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored
-        }
-    },
-    freeArgsTitle: "module_name"
-};
-
-export const defaultCliArgsParser: CliArgsParser = new CliArgsParser(defaultCliDescription);
+        freeArgsTitle: "module_name"
+    };
+}

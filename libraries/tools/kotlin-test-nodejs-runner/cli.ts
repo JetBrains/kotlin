@@ -1,10 +1,10 @@
-import {defaultCliArgsParser} from "./src/CliArgsParser";
+import {CliArgsParser, getDefaultCliDescription} from "./src/CliArgsParser";
 import {getAdapter} from "./src/Adapter";
 import {directRunner} from "./src/KotlinTestRunner";
 
 const kotlin_test = require('kotlin-test');
 
-const parser = defaultCliArgsParser;
+const parser = new CliArgsParser(getDefaultCliDescription());
 
 const processArgs = process.argv.slice(2);
 const untypedArgs = parser.parse(processArgs);
