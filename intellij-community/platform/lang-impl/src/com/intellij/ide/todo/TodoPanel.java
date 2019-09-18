@@ -136,6 +136,10 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
       }
   }
 
+  protected Tree getTree() {
+    return myTree;
+  }
+
   private class MyExpandListener extends TreeModelAdapter {
 
     private final TodoTreeBuilder myBuilder;
