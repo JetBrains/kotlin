@@ -313,6 +313,15 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     if (!myTypes.isEmpty()) {
       initToolWindowContentListeners();
     }
+
+    List<String> enableByDefaultTypes = getEnableByDefaultTypes();
+    myState.configurationTypes.clear();
+    myState.configurationTypes.addAll(myTypes);
+    myState.configurationTypes.removeAll(enableByDefaultTypes);
+    myState.excludedTypes.clear();
+    myState.excludedTypes.addAll(enableByDefaultTypes);
+    myState.excludedTypes.removeAll(myTypes);
+
     syncConfigurations();
     moveRemovedTypesContent(removed);
     moveAddedTypesContent(added);
@@ -795,14 +804,6 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   @Nullable
   @Override
   public State getState() {
-    List<String> enableByDefaultTypes = getEnableByDefaultTypes();
-    myState.configurationTypes.clear();
-    myState.configurationTypes.addAll(myTypes);
-    myState.configurationTypes.removeAll(enableByDefaultTypes);
-    myState.excludedTypes.clear();
-    myState.excludedTypes.addAll(enableByDefaultTypes);
-    myState.excludedTypes.removeAll(myTypes);
-
     List<RuleState> ruleStates = myState.ruleStates;
     ruleStates.clear();
     for (RunDashboardGrouper grouper : myGroupers) {
