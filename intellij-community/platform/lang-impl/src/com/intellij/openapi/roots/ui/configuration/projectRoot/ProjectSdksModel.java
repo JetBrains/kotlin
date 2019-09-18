@@ -34,7 +34,7 @@ import java.util.Map;
  * @author anna
  */
 public class ProjectSdksModel implements SdkModel {
-  private static final Logger LOG = Logger.getInstance("com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel");
+  private static final Logger LOG = Logger.getInstance(ProjectSdksModel.class);
 
   private final HashMap<Sdk, Sdk> myProjectSdks = new HashMap<>();
   private final EventDispatcher<Listener> mySdkEventsDispatcher = EventDispatcher.create(Listener.class);

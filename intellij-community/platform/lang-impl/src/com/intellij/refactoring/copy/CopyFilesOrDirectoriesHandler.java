@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CopyFilesOrDirectoriesHandler extends CopyHandlerDelegateBase {
-  private static final Logger LOG = Logger.getInstance("com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler");
+  private static final Logger LOG = Logger.getInstance(CopyFilesOrDirectoriesHandler.class);
 
   @Override
   public boolean canCopy(PsiElement[] elements, boolean fromUpdate) {

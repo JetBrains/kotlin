@@ -81,7 +81,8 @@ import java.util.List;
 import java.util.*;
 
 public class ScopeTreeViewPanel extends JPanel implements Disposable {
-  private static final Logger LOG = Logger.getInstance("com.intellij.ide.scopeView.ScopeTreeViewPanel");
+  private static final Logger LOG = Logger.getInstance(ScopeTreeViewPanel.class);
+
   private final IdeView myIdeView = new MyIdeView();
   private final MyPsiTreeChangeAdapter myPsiTreeChangeAdapter = new MyPsiTreeChangeAdapter();
 

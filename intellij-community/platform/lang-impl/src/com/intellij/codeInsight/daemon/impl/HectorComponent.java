@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.*;
 
 public class HectorComponent extends JPanel {
-  private static final Logger LOG = Logger.getInstance("com.intellij.openapi.editor.impl.HectorComponent");
+  private static final Logger LOG = Logger.getInstance(HectorComponent.class);
 
   private WeakReference<JBPopup> myHectorRef;
   private final ArrayList<HectorComponentPanel> myAdditionalPanels;

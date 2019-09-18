@@ -55,11 +55,12 @@ import javax.swing.tree.TreePath;
 import java.util.*;
 
 public class FileTreeModelBuilder {
+  private static final Logger LOG = Logger.getInstance(FileTreeModelBuilder.class);
+
   public static final Key<Integer> FILE_COUNT = Key.create("FILE_COUNT");
   public static final String SCANNING_PACKAGES_MESSAGE = AnalysisScopeBundle.message("package.dependencies.build.progress.text");
   private final ProjectFileIndex myFileIndex;
   private final Project myProject;
-  private static final Logger LOG = Logger.getInstance("com.intellij.packageDependencies.ui.TreeModelBuilder");
 
   private final boolean myShowModuleGroups;
   private final boolean myShowModules;

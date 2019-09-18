@@ -57,7 +57,7 @@ import java.util.*;
  * @author gregsh
  */
 public class ConsoleHistoryController implements Disposable {
-  private static final Logger LOG = Logger.getInstance("com.intellij.execution.console.ConsoleHistoryController");
+  private static final Logger LOG = Logger.getInstance(ConsoleHistoryController.class);
 
   private final static Map<LanguageConsoleView, ConsoleHistoryController> ourControllers =
     ContainerUtil.createConcurrentWeakMap(ContainerUtil.identityStrategy());

@@ -44,8 +44,7 @@ import static com.intellij.openapi.util.text.StringUtil.*;
  * @author gregsh
  */
 public class GeneratedParserUtilBase {
-
-  private static final Logger LOG = Logger.getInstance("org.intellij.grammar.parser.GeneratedParserUtilBase");
+  private static final Logger LOG = Logger.getInstance(GeneratedParserUtilBase.class);
 
   private static final int MAX_RECURSION_LEVEL = parseInt(System.getProperty("grammar.kit.gpub.max.level"), 1000);
   private static final int MAX_VARIANTS_SIZE = 10000;

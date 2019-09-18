@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class AddToFavoritesAction extends AnAction implements DumbAware {
-  private static final Logger LOG = Logger.getInstance("com.intellij.ide.favoritesTreeView.actions.AddToFavoritesAction");
+  private static final Logger LOG = Logger.getInstance(AddToFavoritesAction.class);
 
   private final String myFavoritesListName;
 
