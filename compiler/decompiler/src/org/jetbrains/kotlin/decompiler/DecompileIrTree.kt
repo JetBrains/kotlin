@@ -65,13 +65,13 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitBlock(expression: IrBlock, data: String) {
-        if (expression.origin == IrStatementOrigin.WHEN || expression.origin == IrStatementOrigin.FOR_LOOP_ITERATOR) {
+//        if (expression.origin == IrStatementOrigin.WHEN || expression.origin == IrStatementOrigin.FOR_LOOP_ITERATOR) {
             expression.statements.decompileElements()
-        } else {
-            withBraces {
-                expression.statements.decompileElements()
-            }
-        }
+//        } else {
+//            withBraces {
+//        expression.statements.decompileElements()
+//            }
+//        }
     }
 
 
@@ -185,7 +185,9 @@ class DecompileIrTreeVisitor(
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: String) {
         loop.generatesSourcesForElement {
-            loop.body?.accept(this@DecompileIrTreeVisitor, "")
+            withBraces {
+                loop.body?.accept(this@DecompileIrTreeVisitor, "")
+            }
         }
     }
 
@@ -196,6 +198,12 @@ class DecompileIrTreeVisitor(
         }
         printer.println(loop.decompile())
     }
+
+    override fun visitComposite(expression: IrComposite, data: String) {
+        expression.statements.decompileElements()
+    }
+
+
     override fun visitTry(aTry: IrTry, data: String) = TODO()
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) = TODO()
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: String) = TODO()
@@ -209,7 +217,6 @@ class DecompileIrTreeVisitor(
         printer.println("{")
         indented(body)
         printer.println("}")
-        printer.printlnWithNoIndent()
     }
 
     private inline fun indented(body: () -> Unit) {
