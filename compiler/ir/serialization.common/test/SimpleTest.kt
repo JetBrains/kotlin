@@ -75,4 +75,32 @@ class SimpleTest {
             }
         }
     }
+
+    /**
+     * message Test3 {
+     *   repeated Test1 c = 3;
+     * }
+     *
+     * c = 150
+     */
+    @Test fun testRepeated() {
+        val bytes = "1a 09 08 96 01 08 96 01 08 96 01".asBytes()
+        val reader = ProtoReader(bytes)
+        reader.readField { number, type ->
+            assertEquals(3, number)
+            assertEquals(2, type)
+
+            val test1Length = reader.readInt32()
+            assertEquals(9, test1Length)
+
+            for (i in 1..3) {
+                reader.readField { number, type ->
+                    assertEquals(1, number)
+                    assertEquals(0, type)
+                    assertEquals(150, reader.readInt32())
+                }
+            }
+        }
+    }
+
 }
