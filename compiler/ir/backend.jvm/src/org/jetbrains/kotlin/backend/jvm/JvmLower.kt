@@ -166,6 +166,7 @@ private val jvmFilePhases =
         propertiesToFieldsPhase then
         propertiesPhase then
         renameFieldsPhase then
+        anonymousObjectSuperConstructorPhase then
         assertionPhase then
         tailrecPhase then
         returnableBlocksPhase then
