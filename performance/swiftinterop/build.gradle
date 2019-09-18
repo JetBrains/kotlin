@@ -55,7 +55,7 @@ kotlin {
     }
 
     macosX64("macos") {
-        compilations.main.extraOpts = (project.hasProperty('compilerArgs') ? compilerArgs.split() : []) + '-opt'
+        compilations.main.kotlinOptions.freeCompilerArgs = ["-l", "kotlinx-cli", "-opt"] + (project.hasProperty('compilerArgs') ? compilerArgs.split() : [])
         binaries {
             framework(frameworkName, [RELEASE])
         }
