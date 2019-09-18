@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -18,7 +19,6 @@ class IrTest {
      *   required int32 end_offset = 2;
      * }
      */
-
     @Test
     fun coordinatesTest() {
         val start = 817_431_284
@@ -34,6 +34,20 @@ class IrTest {
         assertEquals(start, newStart)
         assertEquals(end, newEnd)
 
+    }
+
+    /**
+     * message IrDataIndex {
+     *   required int32 index = 1;
+     * }
+     */
+    @Test
+    fun dataIndexTest() {
+        val bytes = IrDataIndex.newBuilder().setIndex(100).build().toByteArray()
+
+        val reader = IrProtoReader(bytes)
+
+        assertEquals(100, reader.readDataIndex())
     }
 
     /**

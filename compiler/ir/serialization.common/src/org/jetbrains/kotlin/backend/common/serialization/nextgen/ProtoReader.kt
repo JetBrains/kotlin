@@ -111,6 +111,19 @@ open class ProtoReader(
         val wireType = wire and 0x7
         return block(fieldNumber, wireType)
     }
+
+    fun skip(type: Int) {
+        when (type) {
+            0 -> readInt64()
+            1 -> offset += 8
+            2 -> {
+                val len = readInt32()
+                offset += len
+            }
+            3, 4 -> error("groups")
+            5 -> offset += 4
+        }
+    }
 }
 
 enum class MessageType {

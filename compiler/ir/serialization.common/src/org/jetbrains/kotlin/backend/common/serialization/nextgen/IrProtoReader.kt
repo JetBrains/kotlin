@@ -15,15 +15,31 @@ class IrProtoReader(source: ByteArray) : ProtoReader(source) {
         var end = -1
 
         while (hasData) {
-            readField { fieldNumber, _ ->
+            readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> start = readInt32()
                     2 -> end = readInt32()
+                    else -> skip(type)
                 }
             }
         }
 
         return Pair(start, end)
+    }
+
+    fun readDataIndex(): Int {
+        var result = 0
+
+        while (hasData) {
+            readField { fieldNumber, type ->
+                when (fieldNumber) {
+                    1 -> result = readInt32()
+                    else -> skip(type)
+                }
+            }
+        }
+
+        return result
     }
 
     fun readFileEntry(): NaiveSourceBasedFileEntryImpl {
@@ -33,12 +49,9 @@ class IrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> {
-                        name = readString()
-                    }
-                    2 -> {
-                        offsets += readInt32()
-                    }
+                    1 -> name = readString()
+                    2 -> offsets += readInt32()
+                    else -> skip(type)
                 }
             }
         }
