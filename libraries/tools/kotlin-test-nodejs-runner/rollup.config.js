@@ -14,44 +14,7 @@ export default [
             banner: '#!/usr/bin/env node',
             sourcemap: true
         },
-        plugins: [
-            nodeResolve({
-                            jsnext: true,
-                            main: true
-                        }),
-            commonjs(),
-            typescript({
-                           tsconfig: "tsconfig.json"
-                       }),
-            uglify({
-                       sourcemap: true,
-                       compress: {
-                           // hoist_funs: true,
-                           // hoist_vars: true,
-                           toplevel: true,
-                           unsafe: true,
-                           dead_code: true,
-                           global_defs: {
-                               DEBUG: false,
-                               VERSION: pckg.version,
-                               BIN: Object.keys(pckg.bin)[0],
-                               DESCRIPTION: pckg.description
-                           }
-                       },
-                       mangle: {
-                           properties: {
-                               keep_quoted: true,
-                               reserved: [
-                                   "argv", "hrtime",
-                                   "kotlin_test", "kotlin", "setAdapter", "setAssertHook_4duqou$",
-                                   "suite", "test",
-                                   "stack"
-                               ]
-                           },
-                           toplevel: true,
-                       }
-                   })
-        ]
+        plugins: plugins()
     },
     {
         input: './nodejs-source-map-support.js',
@@ -72,5 +35,56 @@ export default [
                        sourcemap: true
                    })
         ]
+    },
+    {
+        input: './karma.ts',
+        output: {
+            file: 'lib/kotlin-test-karma-runner.js',
+            format: 'cjs',
+            sourcemap: true
+        },
+        plugins: plugins()
     }
 ]
+
+function plugins() {
+    return [
+        nodeResolve({
+                        jsnext: true,
+                        main: true
+                    }),
+        commonjs(),
+        typescript({
+                       tsconfig: "tsconfig.json"
+                   }),
+        uglify({
+                   sourcemap: true,
+                   compress: {
+                       // hoist_funs: true,
+                       // hoist_vars: true,
+                       toplevel: true,
+                       unsafe: true,
+                       dead_code: true,
+                       global_defs: {
+                           DEBUG: false,
+                           VERSION: pckg.version,
+                           BIN: Object.keys(pckg.bin)[0],
+                           DESCRIPTION: pckg.description
+                       }
+                   },
+                   mangle: {
+                       properties: {
+                           keep_quoted: true,
+                           reserved: [
+                               "argv", "hrtime",
+                               "kotlin_test", "kotlin", "setAdapter", "setAssertHook_4duqou$", "detectAdapter_8be2vx$",
+                               "__karma__", "config", "args",
+                               "suite", "test",
+                               "stack"
+                           ]
+                       },
+                       toplevel: true,
+                   }
+               })
+    ]
+}

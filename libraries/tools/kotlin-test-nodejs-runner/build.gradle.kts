@@ -45,6 +45,7 @@ tasks {
         inputs.dir("src")
         inputs.files(
             "cli.ts",
+            "karma.ts",
             "nodejs-source-map-support.js",
             "package.json",
             "rollup.config.js",
