@@ -386,6 +386,9 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     it.dispatchReceiver = capturedThisField?.let { irField ->
                         irGetField(irGet(function.dispatchReceiverParameter!!), irField)
                     }
+                    if (irFunction.extensionReceiverParameter != null) {
+                        it.extensionReceiver = irNull()
+                    }
                     for (i in irFunction.valueParameters.indices) {
                         // TODO: also support primitives
                         it.putValueArgument(i, irNull())
