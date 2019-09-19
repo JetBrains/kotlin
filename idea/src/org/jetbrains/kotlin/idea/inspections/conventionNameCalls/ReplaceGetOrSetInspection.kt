@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
@@ -95,7 +96,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
     override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
-        val isSet = element.toResolvedCall(BodyResolveMode.PARTIAL)?.resultingDescriptor?.name == OperatorNameConventions.SET
+        val isSet = element.calleeName == OperatorNameConventions.SET.identifier
         val allArguments = element.callExpression!!.valueArguments
         assert(allArguments.isNotEmpty())
 
