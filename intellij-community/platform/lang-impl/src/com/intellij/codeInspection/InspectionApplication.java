@@ -316,7 +316,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         reportMessage(1, "modified after unshelving: " + file.getPath());
       }
     }
-    return new AnalysisScope(GlobalSearchScope.filesScope(project, files), project);
+    return new AnalysisScope(project, files);
   }
 
   private static void syncProject(Project project, VirtualFile[] changes) {
