@@ -72,7 +72,7 @@ class IrTest {
      */
     @Test
     fun coordinatesTest() {
-        val start = 817_431_284
+        val start = -1
         val end = 736_818_941
         val bytes = Coordinates.newBuilder()
             .setStartOffset(start)
@@ -81,6 +81,12 @@ class IrTest {
 
         val reader = MockIrProtoReader(bytes)
         val (newStart, newEnd) = reader.readCoordinates()
+
+        val simpleReader = SimpleIrProtoReader(bytes)
+        val result = simpleReader.readCoordinates() as Array<Any>
+
+        assertEquals(start, result[0] as Int)
+        assertEquals(end, result[1] as Int)
 
         assertEquals(start, newStart)
         assertEquals(end, newEnd)

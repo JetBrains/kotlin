@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.serialization.nextgen.SimpleIrProtoReader
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoBodyIndex
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -157,27 +158,37 @@ abstract class KotlinIrLinker(
             }
 
             private fun loadTopLevelDeclarationProto(uniqId: UniqId): ProtoDeclaration {
-                val stream = reader(moduleDescriptor, fileIndex, uniqId).codedInputStream
+                val byteArray = reader(moduleDescriptor, fileIndex, uniqId)
+                SimpleIrProtoReader(byteArray).readIrDeclaration()
+                val stream = byteArray.codedInputStream
                 return ProtoDeclaration.parseFrom(stream, newInstance())
             }
 
             private fun loadSymbolProto(index: Int): ProtoSymbolData {
-                val stream = readSymbol(moduleDescriptor, fileIndex, index).codedInputStream
+                val byteArray = readSymbol(moduleDescriptor, fileIndex, index)
+                SimpleIrProtoReader(byteArray).readIrSymbolData()
+                val stream = byteArray.codedInputStream
                 return ProtoSymbolData.parseFrom(stream, newInstance())
             }
 
             private fun loadTypeProto(index: Int): ProtoType {
-                val stream = readType(moduleDescriptor, fileIndex, index).codedInputStream
+                val byteArray = readType(moduleDescriptor, fileIndex, index)
+                SimpleIrProtoReader(byteArray).readIrType()
+                val stream = byteArray.codedInputStream
                 return ProtoType.parseFrom(stream, newInstance())
             }
 
             private fun loadStatementBodyProto(index: Int): ProtoStatement {
-                val stream = readBody(moduleDescriptor, fileIndex, index).codedInputStream
+                val byteArray = readBody(moduleDescriptor, fileIndex, index)
+                SimpleIrProtoReader(byteArray).readIrStatement()
+                val stream = byteArray.codedInputStream
                 return ProtoStatement.parseFrom(stream, newInstance())
             }
 
             private fun loadExpressionBodyProto(index: Int): ProtoExpression {
-                val stream = readBody(moduleDescriptor, fileIndex, index).codedInputStream
+                val byteArray = readBody(moduleDescriptor, fileIndex, index)
+                SimpleIrProtoReader(byteArray).readIrExpression()
+                val stream = byteArray.codedInputStream
                 return ProtoExpression.parseFrom(stream, newInstance())
             }
 

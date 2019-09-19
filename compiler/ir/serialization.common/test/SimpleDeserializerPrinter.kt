@@ -22,20 +22,20 @@ fun List<Proto>.createSimpleDeserializer(): String {
     return sb.toString()
 }
 
-private fun String.toReaderFun(typeMap: Map<String, Proto>): String {
+private fun String.toReaderInvocation(typeMap: Map<String, Proto>): String {
     return typeMap.get(this)?.let {
         when (it) {
-            is Proto.Enum -> "readInt32"
-            is Proto.Message -> "read${it.name}"
+            is Proto.Enum -> "readInt32()"
+            is Proto.Message -> "readWithLength { read${it.name}() }"
         }
     } ?: run {
         when (this) {
-            "int32" -> "readInt32"
-            "int64", "uint64" -> "readInt64"
-            "string" -> "readString"
-            "bool" -> "readBool"
-            "float" -> "readFloat"
-            "double" -> "readDouble"
+            "int32" -> "readInt32()"
+            "int64", "uint64" -> "readInt64()"
+            "string" -> "readString()"
+            "bool" -> "readBool()"
+            "float" -> "readFloat()"
+            "double" -> "readDouble()"
             else -> error("Unknown type: ${this}")
         }
     }
@@ -66,11 +66,11 @@ private fun StringBuilder.addMessage(m: Proto.Message, typeMap: Map<String, Prot
 
     val indent = "                    "
     allFields.forEach { f ->
-        val readExpression = f.type.toReaderFun(typeMap)
+        val readExpression = f.type.toReaderInvocation(typeMap)
         if (f.kind == FieldKind.REPEATED) {
-            appendln("${indent}${f.index} -> ${f.name}__.add($readExpression())")
+            appendln("${indent}${f.index} -> ${f.name}__.add($readExpression)")
         } else {
-            appendln("${indent}${f.index} -> ${f.name}__ = $readExpression()")
+            appendln("${indent}${f.index} -> ${f.name}__ = $readExpression")
         }
     }
 

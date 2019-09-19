@@ -47,7 +47,9 @@ open class ProtoReader(
             if ((b and 0x80) == 0) break
         }
 
-        if (shift >= 64) error("int64 overflow")
+        if (shift > 70) {
+            error("int64 overflow $shift")
+        }
 
         return result
     }
@@ -65,7 +67,9 @@ open class ProtoReader(
             if ((b and 0x80) == 0) break
         }
 
-        if (shift > 35) error("int32 overflow $shift")
+        if (shift > 70) {
+            error("int32 overflow $shift")
+        }
 
         return result
     }

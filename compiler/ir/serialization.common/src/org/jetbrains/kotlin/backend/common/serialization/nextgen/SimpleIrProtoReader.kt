@@ -22,10 +22,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> package_fq_name__ = readFqName()
-                    2 -> class_fq_name__ = readFqName()
-                    3 -> name__ = readIrDataIndex()
-                    4 -> uniq_id__ = readUniqId()
+                    1 -> package_fq_name__ = readWithLength { readFqName() }
+                    2 -> class_fq_name__ = readWithLength { readFqName() }
+                    3 -> name__ = readWithLength { readIrDataIndex() }
+                    4 -> uniq_id__ = readWithLength { readUniqId() }
                     5 -> is_getter__ = readBool()
                     6 -> is_setter__ = readBool()
                     7 -> is_backing_field__ = readBool()
@@ -76,7 +76,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> name__ = readIrDataIndex()
+                    1 -> name__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -89,7 +89,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> name__ = readIrDataIndex()
+                    1 -> name__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -104,7 +104,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> origin__ = readInt32()
-                    2 -> custom__ = readIrDataIndex()
+                    2 -> custom__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -130,7 +130,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> segment__.add(readIrDataIndex())
+                    1 -> segment__.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
@@ -143,7 +143,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> declaration__.add(readIrDeclaration())
+                    1 -> declaration__.add(readWithLength { readIrDeclaration() })
                     else -> skip(type)
                 }
             }
@@ -175,11 +175,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> declaration_id__.add(readUniqId())
-                    2 -> file_entry__ = readFileEntry()
-                    3 -> fq_name__ = readFqName()
-                    4 -> annotations__ = readAnnotations()
-                    5 -> explicitly_exported_to_compiler__.add(readIrDataIndex())
+                    1 -> declaration_id__.add(readWithLength { readUniqId() })
+                    2 -> file_entry__ = readWithLength { readFileEntry() }
+                    3 -> fq_name__ = readWithLength { readFqName() }
+                    4 -> annotations__ = readWithLength { readAnnotations() }
+                    5 -> explicitly_exported_to_compiler__.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
@@ -210,10 +210,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> kind__ = readInt32()
-                    2 -> uniq_id__ = readUniqId()
-                    3 -> top_level_uniq_id__ = readUniqId()
-                    4 -> fqname__ = readFqName()
-                    5 -> descriptor_reference__ = readDescriptorReference()
+                    2 -> uniq_id__ = readWithLength { readUniqId() }
+                    3 -> top_level_uniq_id__ = readWithLength { readUniqId() }
+                    4 -> fqname__ = readWithLength { readFqName() }
+                    5 -> descriptor_reference__ = readWithLength { readDescriptorReference() }
                     else -> skip(type)
                 }
             }
@@ -226,7 +226,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbols__.add(readIrSymbolData())
+                    1 -> symbols__.add(readWithLength { readIrSymbolData() })
                     else -> skip(type)
                 }
             }
@@ -239,7 +239,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotation__.add(readIrConstructorCall())
+                    1 -> annotation__.add(readWithLength { readIrConstructorCall() })
                     else -> skip(type)
                 }
             }
@@ -252,7 +252,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> type_argument__.add(readIrDataIndex())
+                    1 -> type_argument__.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
@@ -280,7 +280,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> variance__ = readInt32()
-                    2 -> type__ = readIrDataIndex()
+                    2 -> type__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -294,8 +294,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> star__ = readIrStarProjection()
-                    2 -> type__ = readIrTypeProjection()
+                    1 -> star__ = readWithLength { readIrStarProjection() }
+                    2 -> type__ = readWithLength { readIrTypeProjection() }
                     else -> skip(type)
                 }
             }
@@ -312,11 +312,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readAnnotations()
-                    2 -> classifier__ = readIrDataIndex()
+                    1 -> annotations__ = readWithLength { readAnnotations() }
+                    2 -> classifier__ = readWithLength { readIrDataIndex() }
                     3 -> has_question_mark__ = readBool()
-                    4 -> argument__.add(readIrTypeArgument())
-                    5 -> abbreviation__ = readIrTypeAbbreviation()
+                    4 -> argument__.add(readWithLength { readIrTypeArgument() })
+                    5 -> abbreviation__ = readWithLength { readIrTypeAbbreviation() }
                     else -> skip(type)
                 }
             }
@@ -332,10 +332,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readAnnotations()
-                    2 -> type_alias__ = readIrDataIndex()
+                    1 -> annotations__ = readWithLength { readAnnotations() }
+                    2 -> type_alias__ = readWithLength { readIrDataIndex() }
                     3 -> has_question_mark__ = readBool()
-                    4 -> argument__.add(readIrTypeArgument())
+                    4 -> argument__.add(readWithLength { readIrTypeArgument() })
                     else -> skip(type)
                 }
             }
@@ -348,7 +348,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readAnnotations()
+                    1 -> annotations__ = readWithLength { readAnnotations() }
                     else -> skip(type)
                 }
             }
@@ -361,7 +361,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readAnnotations()
+                    1 -> annotations__ = readWithLength { readAnnotations() }
                     else -> skip(type)
                 }
             }
@@ -376,9 +376,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> simple__ = readIrSimpleType()
-                    2 -> dynamic__ = readIrDynamicType()
-                    3 -> error__ = readIrErrorType()
+                    1 -> simple__ = readWithLength { readIrSimpleType() }
+                    2 -> dynamic__ = readWithLength { readIrDynamicType() }
+                    3 -> error__ = readWithLength { readIrErrorType() }
                     else -> skip(type)
                 }
             }
@@ -391,7 +391,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> types__.add(readIrType())
+                    1 -> types__.add(readWithLength { readIrType() })
                     else -> skip(type)
                 }
             }
@@ -406,7 +406,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> loop_id__ = readInt32()
-                    2 -> label__ = readIrDataIndex()
+                    2 -> label__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -420,8 +420,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> origin__ = readIrStatementOrigin()
-                    2 -> statement__.add(readIrStatement())
+                    1 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    2 -> statement__.add(readWithLength { readIrStatement() })
                     else -> skip(type)
                 }
             }
@@ -437,10 +437,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> dispatch_receiver__ = readIrExpression()
-                    2 -> extension_receiver__ = readIrExpression()
-                    3 -> value_argument__.add(readNullableIrExpression())
-                    4 -> type_arguments__ = readTypeArguments()
+                    1 -> dispatch_receiver__ = readWithLength { readIrExpression() }
+                    2 -> extension_receiver__ = readWithLength { readIrExpression() }
+                    3 -> value_argument__.add(readWithLength { readNullableIrExpression() })
+                    4 -> type_arguments__ = readWithLength { readTypeArguments() }
                     else -> skip(type)
                 }
             }
@@ -456,10 +456,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
-                    2 -> member_access__ = readMemberAccessCommon()
-                    3 -> super__ = readIrDataIndex()
-                    4 -> origin__ = readIrStatementOrigin()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    3 -> super__ = readWithLength { readIrDataIndex() }
+                    4 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -474,9 +474,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
                     2 -> constructor_type_arguments_count__ = readInt32()
-                    3 -> member_access__ = readMemberAccessCommon()
+                    3 -> member_access__ = readWithLength { readMemberAccessCommon() }
                     else -> skip(type)
                 }
             }
@@ -491,9 +491,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
-                    2 -> origin__ = readIrStatementOrigin()
-                    3 -> member_access__ = readMemberAccessCommon()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    3 -> member_access__ = readWithLength { readMemberAccessCommon() }
                     else -> skip(type)
                 }
             }
@@ -510,11 +510,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> delegate__ = readIrDataIndex()
-                    2 -> getter__ = readIrDataIndex()
-                    3 -> setter__ = readIrDataIndex()
-                    4 -> symbol__ = readIrDataIndex()
-                    5 -> origin__ = readIrStatementOrigin()
+                    1 -> delegate__ = readWithLength { readIrDataIndex() }
+                    2 -> getter__ = readWithLength { readIrDataIndex() }
+                    3 -> setter__ = readWithLength { readIrDataIndex() }
+                    4 -> symbol__ = readWithLength { readIrDataIndex() }
+                    5 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -532,12 +532,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field__ = readIrDataIndex()
-                    2 -> getter__ = readIrDataIndex()
-                    3 -> setter__ = readIrDataIndex()
-                    4 -> origin__ = readIrStatementOrigin()
-                    5 -> member_access__ = readMemberAccessCommon()
-                    6 -> symbol__ = readIrDataIndex()
+                    1 -> field__ = readWithLength { readIrDataIndex() }
+                    2 -> getter__ = readWithLength { readIrDataIndex() }
+                    3 -> setter__ = readWithLength { readIrDataIndex() }
+                    4 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    5 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    6 -> symbol__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -551,8 +551,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> statement__.add(readIrStatement())
-                    2 -> origin__ = readIrStatementOrigin()
+                    1 -> statement__.add(readWithLength { readIrStatement() })
+                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -566,8 +566,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> class_symbol__ = readIrDataIndex()
-                    2 -> class_type__ = readIrDataIndex()
+                    1 -> class_symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> class_type__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -598,7 +598,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                     7 -> long__ = readInt64()
                     8 -> float__ = readFloat()
                     9 -> double__ = readDouble()
-                    10 -> string__ = readIrDataIndex()
+                    10 -> string__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -613,7 +613,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> loop_id__ = readInt32()
-                    2 -> label__ = readIrDataIndex()
+                    2 -> label__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -627,8 +627,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
-                    2 -> member_access__ = readMemberAccessCommon()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
                     else -> skip(type)
                 }
             }
@@ -641,7 +641,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop__ = readLoop()
+                    1 -> loop__ = readWithLength { readLoop() }
                     else -> skip(type)
                 }
             }
@@ -655,8 +655,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
-                    2 -> member_access__ = readMemberAccessCommon()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
                     else -> skip(type)
                 }
             }
@@ -669,7 +669,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> argument__ = readIrExpression()
+                    1 -> argument__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -682,7 +682,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    2 -> symbol__ = readIrDataIndex()
+                    2 -> symbol__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -697,9 +697,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
-                    2 -> super__ = readIrDataIndex()
-                    3 -> receiver__ = readIrExpression()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> super__ = readWithLength { readIrDataIndex() }
+                    3 -> receiver__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -713,8 +713,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field_access__ = readFieldAccessCommon()
-                    2 -> origin__ = readIrStatementOrigin()
+                    1 -> field_access__ = readWithLength { readFieldAccessCommon() }
+                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -728,8 +728,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
-                    2 -> origin__ = readIrStatementOrigin()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -742,7 +742,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -755,7 +755,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -773,10 +773,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> loop_id__ = readInt32()
-                    2 -> condition__ = readIrExpression()
-                    3 -> label__ = readIrDataIndex()
-                    4 -> body__ = readIrExpression()
-                    5 -> origin__ = readIrStatementOrigin()
+                    2 -> condition__ = readWithLength { readIrExpression() }
+                    3 -> label__ = readWithLength { readIrDataIndex() }
+                    4 -> body__ = readWithLength { readIrExpression() }
+                    5 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -790,8 +790,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> return_target__ = readIrDataIndex()
-                    2 -> value__ = readIrExpression()
+                    1 -> return_target__ = readWithLength { readIrDataIndex() }
+                    2 -> value__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -806,9 +806,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field_access__ = readFieldAccessCommon()
-                    2 -> value__ = readIrExpression()
-                    3 -> origin__ = readIrStatementOrigin()
+                    1 -> field_access__ = readWithLength { readFieldAccessCommon() }
+                    2 -> value__ = readWithLength { readIrExpression() }
+                    3 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -823,9 +823,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
-                    2 -> value__ = readIrExpression()
-                    3 -> origin__ = readIrStatementOrigin()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> value__ = readWithLength { readIrExpression() }
+                    3 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -839,8 +839,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readIrExpression()
-                    2 -> coordinates__ = readCoordinates()
+                    1 -> expression__ = readWithLength { readIrExpression() }
+                    2 -> coordinates__ = readWithLength { readCoordinates() }
                     else -> skip(type)
                 }
             }
@@ -853,7 +853,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> argument__.add(readIrExpression())
+                    1 -> argument__.add(readWithLength { readIrExpression() })
                     else -> skip(type)
                 }
             }
@@ -866,7 +866,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> value__ = readIrExpression()
+                    1 -> value__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -881,9 +881,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> result__ = readIrExpression()
-                    2 -> catch__.add(readIrStatement())
-                    3 -> finally__ = readIrExpression()
+                    1 -> result__ = readWithLength { readIrExpression() }
+                    2 -> catch__.add(readWithLength { readIrStatement() })
+                    3 -> finally__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -899,8 +899,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> operator__ = readInt32()
-                    2 -> operand__ = readIrDataIndex()
-                    3 -> argument__ = readIrExpression()
+                    2 -> operand__ = readWithLength { readIrDataIndex() }
+                    3 -> argument__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -914,8 +914,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> element_type__ = readIrDataIndex()
-                    2 -> element__.add(readIrVarargElement())
+                    1 -> element_type__ = readWithLength { readIrDataIndex() }
+                    2 -> element__.add(readWithLength { readIrVarargElement() })
                     else -> skip(type)
                 }
             }
@@ -929,8 +929,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readIrExpression()
-                    2 -> spread_element__ = readIrSpreadElement()
+                    1 -> expression__ = readWithLength { readIrExpression() }
+                    2 -> spread_element__ = readWithLength { readIrSpreadElement() }
                     else -> skip(type)
                 }
             }
@@ -944,8 +944,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> branch__.add(readIrStatement())
-                    2 -> origin__ = readIrStatementOrigin()
+                    1 -> branch__.add(readWithLength { readIrStatement() })
+                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -958,7 +958,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop__ = readLoop()
+                    1 -> loop__ = readWithLength { readLoop() }
                     else -> skip(type)
                 }
             }
@@ -972,8 +972,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> function__ = readIrFunction()
-                    2 -> origin__ = readIrStatementOrigin()
+                    1 -> function__ = readWithLength { readIrFunction() }
+                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
@@ -987,8 +987,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> memberName__ = readIrDataIndex()
-                    2 -> receiver__ = readIrExpression()
+                    1 -> memberName__ = readWithLength { readIrDataIndex() }
+                    2 -> receiver__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -1004,8 +1004,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> operator__ = readInt32()
-                    2 -> receiver__ = readIrExpression()
-                    3 -> argument__.add(readIrExpression())
+                    2 -> receiver__ = readWithLength { readIrExpression() }
+                    3 -> argument__.add(readWithLength { readIrExpression() })
                     else -> skip(type)
                 }
             }
@@ -1050,39 +1050,39 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> block__ = readIrBlock()
-                    2 -> break__ = readIrBreak()
-                    3 -> call__ = readIrCall()
-                    4 -> class_reference__ = readIrClassReference()
-                    5 -> composite__ = readIrComposite()
-                    6 -> const__ = readIrConst()
-                    7 -> continue__ = readIrContinue()
-                    8 -> delegating_constructor_call__ = readIrDelegatingConstructorCall()
-                    9 -> do_while__ = readIrDoWhile()
-                    10 -> enum_constructor_call__ = readIrEnumConstructorCall()
-                    11 -> function_reference__ = readIrFunctionReference()
-                    12 -> get_class__ = readIrGetClass()
-                    13 -> get_enum_value__ = readIrGetEnumValue()
-                    14 -> get_field__ = readIrGetField()
-                    15 -> get_object__ = readIrGetObject()
-                    16 -> get_value__ = readIrGetValue()
-                    17 -> instance_initializer_call__ = readIrInstanceInitializerCall()
-                    18 -> property_reference__ = readIrPropertyReference()
-                    19 -> return__ = readIrReturn()
-                    20 -> set_field__ = readIrSetField()
-                    21 -> set_variable__ = readIrSetVariable()
-                    22 -> string_concat__ = readIrStringConcat()
-                    23 -> throw__ = readIrThrow()
-                    24 -> try__ = readIrTry()
-                    25 -> type_op__ = readIrTypeOp()
-                    26 -> vararg__ = readIrVararg()
-                    27 -> when__ = readIrWhen()
-                    28 -> while__ = readIrWhile()
-                    29 -> dynamic_member__ = readIrDynamicMemberExpression()
-                    30 -> dynamic_operator__ = readIrDynamicOperatorExpression()
-                    31 -> local_delegated_property_reference__ = readIrLocalDelegatedPropertyReference()
-                    32 -> constructor_call__ = readIrConstructorCall()
-                    33 -> function_expression__ = readIrFunctionExpression()
+                    1 -> block__ = readWithLength { readIrBlock() }
+                    2 -> break__ = readWithLength { readIrBreak() }
+                    3 -> call__ = readWithLength { readIrCall() }
+                    4 -> class_reference__ = readWithLength { readIrClassReference() }
+                    5 -> composite__ = readWithLength { readIrComposite() }
+                    6 -> const__ = readWithLength { readIrConst() }
+                    7 -> continue__ = readWithLength { readIrContinue() }
+                    8 -> delegating_constructor_call__ = readWithLength { readIrDelegatingConstructorCall() }
+                    9 -> do_while__ = readWithLength { readIrDoWhile() }
+                    10 -> enum_constructor_call__ = readWithLength { readIrEnumConstructorCall() }
+                    11 -> function_reference__ = readWithLength { readIrFunctionReference() }
+                    12 -> get_class__ = readWithLength { readIrGetClass() }
+                    13 -> get_enum_value__ = readWithLength { readIrGetEnumValue() }
+                    14 -> get_field__ = readWithLength { readIrGetField() }
+                    15 -> get_object__ = readWithLength { readIrGetObject() }
+                    16 -> get_value__ = readWithLength { readIrGetValue() }
+                    17 -> instance_initializer_call__ = readWithLength { readIrInstanceInitializerCall() }
+                    18 -> property_reference__ = readWithLength { readIrPropertyReference() }
+                    19 -> return__ = readWithLength { readIrReturn() }
+                    20 -> set_field__ = readWithLength { readIrSetField() }
+                    21 -> set_variable__ = readWithLength { readIrSetVariable() }
+                    22 -> string_concat__ = readWithLength { readIrStringConcat() }
+                    23 -> throw__ = readWithLength { readIrThrow() }
+                    24 -> try__ = readWithLength { readIrTry() }
+                    25 -> type_op__ = readWithLength { readIrTypeOp() }
+                    26 -> vararg__ = readWithLength { readIrVararg() }
+                    27 -> when__ = readWithLength { readIrWhen() }
+                    28 -> while__ = readWithLength { readIrWhile() }
+                    29 -> dynamic_member__ = readWithLength { readIrDynamicMemberExpression() }
+                    30 -> dynamic_operator__ = readWithLength { readIrDynamicOperatorExpression() }
+                    31 -> local_delegated_property_reference__ = readWithLength { readIrLocalDelegatedPropertyReference() }
+                    32 -> constructor_call__ = readWithLength { readIrConstructorCall() }
+                    33 -> function_expression__ = readWithLength { readIrFunctionExpression() }
                     else -> skip(type)
                 }
             }
@@ -1097,9 +1097,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operation__ = readIrOperation()
-                    2 -> type__ = readIrDataIndex()
-                    3 -> coordinates__ = readCoordinates()
+                    1 -> operation__ = readWithLength { readIrOperation() }
+                    2 -> type__ = readWithLength { readIrDataIndex() }
+                    3 -> coordinates__ = readWithLength { readCoordinates() }
                     else -> skip(type)
                 }
             }
@@ -1112,7 +1112,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readIrExpression()
+                    1 -> expression__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -1128,10 +1128,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readIrDataIndex()
-                    2 -> origin__ = readIrDeclarationOrigin()
-                    3 -> coordinates__ = readCoordinates()
-                    4 -> annotations__ = readAnnotations()
+                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> origin__ = readWithLength { readIrDeclarationOrigin() }
+                    3 -> coordinates__ = readWithLength { readCoordinates() }
+                    4 -> annotations__ = readWithLength { readAnnotations() }
                     else -> skip(type)
                 }
             }
@@ -1154,17 +1154,17 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> name__ = readIrDataIndex()
-                    3 -> visibility__ = readVisibility()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> name__ = readWithLength { readIrDataIndex() }
+                    3 -> visibility__ = readWithLength { readVisibility() }
                     4 -> is_inline__ = readBool()
                     5 -> is_external__ = readBool()
-                    6 -> type_parameters__ = readIrTypeParameterContainer()
-                    7 -> dispatch_receiver__ = readIrValueParameter()
-                    8 -> extension_receiver__ = readIrValueParameter()
-                    9 -> value_parameter__.add(readIrValueParameter())
-                    10 -> body__ = readIrDataIndex()
-                    11 -> return_type__ = readIrDataIndex()
+                    6 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
+                    7 -> dispatch_receiver__ = readWithLength { readIrValueParameter() }
+                    8 -> extension_receiver__ = readWithLength { readIrValueParameter() }
+                    9 -> value_parameter__.add(readWithLength { readIrValueParameter() })
+                    10 -> body__ = readWithLength { readIrDataIndex() }
+                    11 -> return_type__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -1181,11 +1181,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrFunctionBase()
+                    1 -> base__ = readWithLength { readIrFunctionBase() }
                     2 -> modality__ = readInt32()
                     3 -> is_tailrec__ = readBool()
                     4 -> is_suspend__ = readBool()
-                    5 -> overridden__.add(readIrDataIndex())
+                    5 -> overridden__.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
@@ -1199,7 +1199,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrFunctionBase()
+                    1 -> base__ = readWithLength { readIrFunctionBase() }
                     2 -> is_primary__ = readBool()
                     else -> skip(type)
                 }
@@ -1220,14 +1220,14 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> initializer__ = readIrDataIndex()
-                    3 -> name__ = readIrDataIndex()
-                    4 -> visibility__ = readVisibility()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> initializer__ = readWithLength { readIrDataIndex() }
+                    3 -> name__ = readWithLength { readIrDataIndex() }
+                    4 -> visibility__ = readWithLength { readVisibility() }
                     5 -> is_final__ = readBool()
                     6 -> is_external__ = readBool()
                     7 -> is_static__ = readBool()
-                    8 -> type__ = readIrDataIndex()
+                    8 -> type__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -1246,13 +1246,13 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> name__ = readIrDataIndex()
-                    3 -> type__ = readIrDataIndex()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> name__ = readWithLength { readIrDataIndex() }
+                    3 -> type__ = readWithLength { readIrDataIndex() }
                     4 -> is_var__ = readBool()
-                    5 -> delegate__ = readIrVariable()
-                    6 -> getter__ = readIrFunction()
-                    7 -> setter__ = readIrFunction()
+                    5 -> delegate__ = readWithLength { readIrVariable() }
+                    6 -> getter__ = readWithLength { readIrFunction() }
+                    7 -> setter__ = readWithLength { readIrFunction() }
                     else -> skip(type)
                 }
             }
@@ -1276,18 +1276,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> name__ = readIrDataIndex()
-                    3 -> visibility__ = readVisibility()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> name__ = readWithLength { readIrDataIndex() }
+                    3 -> visibility__ = readWithLength { readVisibility() }
                     4 -> modality__ = readInt32()
                     5 -> is_var__ = readBool()
                     6 -> is_const__ = readBool()
                     7 -> is_lateinit__ = readBool()
                     8 -> is_delegated__ = readBool()
                     9 -> is_external__ = readBool()
-                    10 -> backing_field__ = readIrField()
-                    11 -> getter__ = readIrFunction()
-                    12 -> setter__ = readIrFunction()
+                    10 -> backing_field__ = readWithLength { readIrField() }
+                    11 -> getter__ = readWithLength { readIrFunction() }
+                    12 -> setter__ = readWithLength { readIrFunction() }
                     else -> skip(type)
                 }
             }
@@ -1306,13 +1306,13 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> name__ = readIrDataIndex()
-                    3 -> type__ = readIrDataIndex()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> name__ = readWithLength { readIrDataIndex() }
+                    3 -> type__ = readWithLength { readIrDataIndex() }
                     4 -> is_var__ = readBool()
                     5 -> is_const__ = readBool()
                     6 -> is_lateinit__ = readBool()
-                    7 -> initializer__ = readIrExpression()
+                    7 -> initializer__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -1332,14 +1332,14 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> name__ = readIrDataIndex()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> name__ = readWithLength { readIrDataIndex() }
                     3 -> index__ = readInt32()
-                    4 -> type__ = readIrDataIndex()
-                    5 -> vararg_element_type__ = readIrDataIndex()
+                    4 -> type__ = readWithLength { readIrDataIndex() }
+                    5 -> vararg_element_type__ = readWithLength { readIrDataIndex() }
                     6 -> is_crossinline__ = readBool()
                     7 -> is_noinline__ = readBool()
-                    8 -> default_value__ = readIrDataIndex()
+                    8 -> default_value__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -1357,11 +1357,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> name__ = readIrDataIndex()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> name__ = readWithLength { readIrDataIndex() }
                     3 -> index__ = readInt32()
                     4 -> variance__ = readInt32()
-                    5 -> super_type__.add(readIrDataIndex())
+                    5 -> super_type__.add(readWithLength { readIrDataIndex() })
                     6 -> is_reified__ = readBool()
                     else -> skip(type)
                 }
@@ -1375,7 +1375,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> type_parameter__.add(readIrTypeParameter())
+                    1 -> type_parameter__.add(readWithLength { readIrTypeParameter() })
                     else -> skip(type)
                 }
             }
@@ -1401,20 +1401,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> name__ = readIrDataIndex()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> name__ = readWithLength { readIrDataIndex() }
                     3 -> kind__ = readInt32()
-                    4 -> visibility__ = readVisibility()
+                    4 -> visibility__ = readWithLength { readVisibility() }
                     5 -> modality__ = readInt32()
                     6 -> is_companion__ = readBool()
                     7 -> is_inner__ = readBool()
                     8 -> is_data__ = readBool()
                     9 -> is_external__ = readBool()
                     10 -> is_inline__ = readBool()
-                    11 -> this_receiver__ = readIrValueParameter()
-                    12 -> type_parameters__ = readIrTypeParameterContainer()
-                    13 -> declaration_container__ = readIrDeclarationContainer()
-                    14 -> super_type__.add(readIrDataIndex())
+                    11 -> this_receiver__ = readWithLength { readIrValueParameter() }
+                    12 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
+                    13 -> declaration_container__ = readWithLength { readIrDeclarationContainer() }
+                    14 -> super_type__.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
@@ -1432,11 +1432,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> name__ = readIrDataIndex()
-                    3 -> visibility__ = readVisibility()
-                    4 -> type_parameters__ = readIrTypeParameterContainer()
-                    5 -> expanded_type__ = readIrDataIndex()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> name__ = readWithLength { readIrDataIndex() }
+                    3 -> visibility__ = readWithLength { readVisibility() }
+                    4 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
+                    5 -> expanded_type__ = readWithLength { readIrDataIndex() }
                     6 -> is_actual__ = readBool()
                     else -> skip(type)
                 }
@@ -1453,10 +1453,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> initializer__ = readIrDataIndex()
-                    3 -> corresponding_class__ = readIrClass()
-                    4 -> name__ = readIrDataIndex()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> initializer__ = readWithLength { readIrDataIndex() }
+                    3 -> corresponding_class__ = readWithLength { readIrClass() }
+                    4 -> name__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -1470,8 +1470,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readIrDeclarationBase()
-                    2 -> body__ = readIrDataIndex()
+                    1 -> base__ = readWithLength { readIrDeclarationBase() }
+                    2 -> body__ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
@@ -1495,18 +1495,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> ir_anonymous_init__ = readIrAnonymousInit()
-                    2 -> ir_class__ = readIrClass()
-                    3 -> ir_constructor__ = readIrConstructor()
-                    4 -> ir_enum_entry__ = readIrEnumEntry()
-                    5 -> ir_field__ = readIrField()
-                    6 -> ir_function__ = readIrFunction()
-                    7 -> ir_property__ = readIrProperty()
-                    8 -> ir_type_parameter__ = readIrTypeParameter()
-                    9 -> ir_variable__ = readIrVariable()
-                    10 -> ir_value_parameter__ = readIrValueParameter()
-                    11 -> ir_local_delegated_property__ = readIrLocalDelegatedProperty()
-                    12 -> ir_type_alias__ = readIrTypeAlias()
+                    1 -> ir_anonymous_init__ = readWithLength { readIrAnonymousInit() }
+                    2 -> ir_class__ = readWithLength { readIrClass() }
+                    3 -> ir_constructor__ = readWithLength { readIrConstructor() }
+                    4 -> ir_enum_entry__ = readWithLength { readIrEnumEntry() }
+                    5 -> ir_field__ = readWithLength { readIrField() }
+                    6 -> ir_function__ = readWithLength { readIrFunction() }
+                    7 -> ir_property__ = readWithLength { readIrProperty() }
+                    8 -> ir_type_parameter__ = readWithLength { readIrTypeParameter() }
+                    9 -> ir_variable__ = readWithLength { readIrVariable() }
+                    10 -> ir_value_parameter__ = readWithLength { readIrValueParameter() }
+                    11 -> ir_local_delegated_property__ = readWithLength { readIrLocalDelegatedProperty() }
+                    12 -> ir_type_alias__ = readWithLength { readIrTypeAlias() }
                     else -> skip(type)
                 }
             }
@@ -1520,8 +1520,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> condition__ = readIrExpression()
-                    2 -> result__ = readIrExpression()
+                    1 -> condition__ = readWithLength { readIrExpression() }
+                    2 -> result__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -1534,7 +1534,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> statement__.add(readIrStatement())
+                    1 -> statement__.add(readWithLength { readIrStatement() })
                     else -> skip(type)
                 }
             }
@@ -1548,8 +1548,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> catch_parameter__ = readIrVariable()
-                    2 -> result__ = readIrExpression()
+                    1 -> catch_parameter__ = readWithLength { readIrVariable() }
+                    2 -> result__ = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
@@ -1581,13 +1581,13 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> coordinates__ = readCoordinates()
-                    2 -> declaration__ = readIrDeclaration()
-                    3 -> expression__ = readIrExpression()
-                    4 -> block_body__ = readIrBlockBody()
-                    5 -> branch__ = readIrBranch()
-                    6 -> catch__ = readIrCatch()
-                    7 -> synthetic_body__ = readIrSyntheticBody()
+                    1 -> coordinates__ = readWithLength { readCoordinates() }
+                    2 -> declaration__ = readWithLength { readIrDeclaration() }
+                    3 -> expression__ = readWithLength { readIrExpression() }
+                    4 -> block_body__ = readWithLength { readIrBlockBody() }
+                    5 -> branch__ = readWithLength { readIrBranch() }
+                    6 -> catch__ = readWithLength { readIrCatch() }
+                    7 -> synthetic_body__ = readWithLength { readIrSyntheticBody() }
                     else -> skip(type)
                 }
             }
