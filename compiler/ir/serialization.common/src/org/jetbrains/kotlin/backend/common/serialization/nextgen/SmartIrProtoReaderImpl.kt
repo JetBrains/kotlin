@@ -5,24 +5,145 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
+import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.serialization.UniqId
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
 
 class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(byteArray) {
+    override fun createIrOperation_block(block: IrBlock) = block
+
+    override fun createIrOperation_break_(break_: IrBreak) = break_
+
+    override fun createIrOperation_call(call: IrCall) = call
+
+    override fun createIrOperation_classReference(classReference: IrClassReference) = classReference
+
+    override fun createIrOperation_composite(composite: IrComposite) = composite
+
+    override fun createIrOperation_const(const: IrConst<*>) = const
+
+    override fun createIrOperation_continue_(continue_: IrContinue) = continue_
+
+    override fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall) = delegatingConstructorCall
+
+    override fun createIrOperation_doWhile(doWhile: IrDoWhileLoop) = doWhile
+
+    override fun createIrOperation_enumConstructorCall(enumConstructorCall: IrEnumConstructorCall) = enumConstructorCall
+
+    override fun createIrOperation_functionReference(functionReference: IrFunctionReference) = functionReference
+
+    override fun createIrOperation_getClass(getClass: IrGetClass) = getClass
+
+    override fun createIrOperation_getEnumValue(getEnumValue: IrGetEnumValue) = getEnumValue
+
+    override fun createIrOperation_getField(getField: IrGetField) = getField
+
+    override fun createIrOperation_getObject(getObject: IrGetObjectValue) = getObject
+
+    override fun createIrOperation_getValue(getValue: IrGetValue) = getValue
+
+    override fun createIrOperation_instanceInitializerCall(instanceInitializerCall: IrInstanceInitializerCall) = instanceInitializerCall
+
+    override fun createIrOperation_propertyReference(propertyReference: IrPropertyReference) = propertyReference
+
+    override fun createIrOperation_return_(return_: IrReturn) = return_
+
+    override fun createIrOperation_setField(setField: IrSetField) = setField
+
+    override fun createIrOperation_setVariable(setVariable: IrSetVariable) = setVariable
+
+    override fun createIrOperation_stringConcat(stringConcat: IrStringConcatenation) = stringConcat
+
+    override fun createIrOperation_throw_(throw_: IrThrow) = throw_
+
+    override fun createIrOperation_try_(try_: IrTry) = try_
+
+    override fun createIrOperation_typeOp(typeOp: IrTypeOperatorCall) = typeOp
+
+    override fun createIrOperation_vararg(vararg: IrVararg) = vararg
+
+    override fun createIrOperation_when_(when_: IrWhen) = when_
+
+    override fun createIrOperation_while_(while_: IrWhileLoop) = while_
+
+    override fun createIrOperation_dynamicMember(dynamicMember: IrDynamicMemberExpression) = dynamicMember
+
+    override fun createIrOperation_dynamicOperator(dynamicOperator: IrDynamicOperatorExpression) = dynamicOperator
+
+    override fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference: IrLocalDelegatedPropertyReference) = localDelegatedPropertyReference
+
+    override fun createIrOperation_constructorCall(constructorCall: IrConstructorCall) = constructorCall
+
+    override fun createIrOperation_functionExpression(functionExpression: IrFunctionExpression) = functionExpression
+
+    override fun createIrDeclaration_irAnonymousInit(irAnonymousInit: IrAnonymousInitializer) = irAnonymousInit
+
+    override fun createIrDeclaration_irClass(irClass: IrClass) = irClass
+
+    override fun createIrDeclaration_irConstructor(irConstructor: IrConstructor) = irConstructor
+
+    override fun createIrDeclaration_irEnumEntry(irEnumEntry: IrEnumEntry) = irEnumEntry
+
+    override fun createIrDeclaration_irField(irField: IrField) = irField
+
+    override fun createIrDeclaration_irFunction(irFunction: IrSimpleFunction) = irFunction
+
+    override fun createIrDeclaration_irProperty(irProperty: IrProperty) = irProperty
+
+    override fun createIrDeclaration_irTypeParameter(irTypeParameter: IrTypeParameter) = irTypeParameter
+
+    override fun createIrDeclaration_irVariable(irVariable: IrVariable) = irVariable
+
+    override fun createIrDeclaration_irValueParameter(irValueParameter: IrValueParameter) = irValueParameter
+
+    override fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty: IrLocalDelegatedProperty) = irLocalDelegatedProperty
+
+    override fun createIrDeclaration_irTypeAlias(irTypeAlias: IrTypeAlias) = irTypeAlias
+
+    override fun createIrStatement_declaration(coordinates: CoordinatesCarrier, declaration: IrDeclaration): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_expression(coordinates: CoordinatesCarrier, expression: IrExpression): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_blockBody(coordinates: CoordinatesCarrier, blockBody: IrBlockBody): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_branch(coordinates: CoordinatesCarrier, branch: IrBranch): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_catch(coordinates: CoordinatesCarrier, catch: IrCatch): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_syntheticBody(coordinates: CoordinatesCarrier, syntheticBody: IrSyntheticBodyKind): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun createDescriptorReference(
         packageFqName: FqName,
         classFqName: FqName,
@@ -52,6 +173,14 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         TODO("kkl")
     }
 
+    private fun loadStatementBody(id: Int): IrElement {
+        TODO("")
+    }
+
+    private fun loadExpressionBody(id: Int): IrExpression {
+        TODO("kjkjk")
+    }
+
     private fun getLoopById(id: Int): IrLoop {
         TODO("")
     }
@@ -60,7 +189,8 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     private fun delayedEnd(): Int = TODO("end")
     private fun delayedType(): IrType = TODO("type")
 
-    private val moduleDescriptor: ModuleDescriptor get() = TODO("jklkl")
+    private val moduleDescriptor: ModuleDescriptor get() = TODO("moduleDescriptor")
+    private val symbolTable: SymbolTable get() = TODO("SymbolTable")
 
     override fun createUniqId(index: Long, isLocal: Boolean) = UniqId(index, isLocal)
 
@@ -81,7 +211,11 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun createIrDeclarationOrigin(origin: IrDeclarationOrigin?, custom: Int?): IrDeclarationOrigin {
+    override fun createIrDeclarationOrigin_custom(custom: Int): IrDeclarationOrigin {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrDeclarationOrigin_origin(origin: IrDeclarationOrigin): IrDeclarationOrigin {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -144,8 +278,9 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return makeTypeProjection(loadType(type), variance)
     }
 
-    override fun createIrTypeArgument(star: IrStarProjection?, type: IrTypeProjection?) =
-        star ?: type ?: error("Expecting one is non-null")
+    override fun createIrTypeArgument_star(star: IrStarProjection) = star
+
+    override fun createIrTypeArgument_type(type: IrTypeProjection) = type
 
     override fun createIrSimpleType(
         annotations: List<IrConstructorCall>,
@@ -174,9 +309,11 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
-    override fun createIrType(simple: IrSimpleType?, dynamic: IrDynamicType?, error: IrErrorType?): IrType {
-        return simple ?: dynamic ?: error ?: error("One and only one should be non-null")
-    }
+    override fun createIrType_dynamic(dynamic: IrDynamicType) = dynamic
+
+    override fun createIrType_error(error: IrErrorType) = error
+
+    override fun createIrType_simple(simple: IrSimpleType) = simple
 
     override fun createIrTypeTable(types: List<IrType>): Array<IrType> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -324,34 +461,16 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrClassReferenceImpl(delayedStart(), delayedEnd(), delayedType(), symbol, type)
     }
 
-    override fun createIrConst(
-        null_: Boolean?,
-        boolean: Boolean?,
-        char: Int?,
-        byte: Int?,
-        short: Int?,
-        int: Int?,
-        long: Long?,
-        float: Float?,
-        double: Double?,
-        string: Int?
-    ): IrConst<*> {
-        val start = delayedStart()
-        val end = delayedEnd()
-        val type = delayedType()
-        null_?.let { return IrConstImpl.constNull(start, end, type) }
-        boolean?.let { return IrConstImpl.boolean(start, end, type, it) }
-        char?.let { return IrConstImpl.char(start, end, type, it.toChar()) }
-        byte?.let { return IrConstImpl.byte(start, end, type, it.toByte()) }
-        short?.let { return IrConstImpl.short(start, end, type, it.toShort()) }
-        int?.let { return IrConstImpl.int(start, end, type, it) }
-        long?.let { return IrConstImpl.long(start, end, type, it) }
-        float?.let { return IrConstImpl.float(start, end, type, it) }
-        double?.let { return IrConstImpl.double(start, end, type, it) }
-        string?.let { return IrConstImpl.string(start, end, type, loadString(it)) }
-
-        error("One and only one should be non-null")
-    }
+    override fun createIrConst_boolean(boolean: Boolean) = IrConstImpl.boolean(delayedStart(), delayedEnd(), delayedType(), boolean)
+    override fun createIrConst_byte(byte: Int) = IrConstImpl.byte(delayedStart(), delayedEnd(), delayedType(), byte.toByte())
+    override fun createIrConst_char(char: Int) = IrConstImpl.char(delayedStart(), delayedEnd(), delayedType(), char.toChar())
+    override fun createIrConst_double(double: Double) = IrConstImpl.double(delayedStart(), delayedEnd(), delayedType(), double)
+    override fun createIrConst_float(float: Float) = IrConstImpl.float(delayedStart(), delayedEnd(), delayedType(), float)
+    override fun createIrConst_int(int: Int) = IrConstImpl.int(delayedStart(), delayedEnd(), delayedType(), int)
+    override fun createIrConst_long(long: Long) = IrConstImpl.long(delayedStart(), delayedEnd(), delayedType(), long)
+    override fun createIrConst_null_(null_: Boolean) = IrConstImpl.constNull(delayedStart(), delayedEnd(), delayedType())
+    override fun createIrConst_short(short: Int) = IrConstImpl.short(delayedStart(), delayedEnd(), delayedType(), short.toShort())
+    override fun createIrConst_string(string: Int) = IrConstImpl.string(delayedStart(), delayedEnd(), delayedType(), loadString(string))
 
     override fun createIrContinue(loopId: Int, label: Int?): IrContinue {
         return IrContinueImpl(delayedStart(), delayedEnd(), delayedType(), getLoopById(loopId)).also {
@@ -393,23 +512,28 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createFieldAccessCommon(symbol: Int, super_: Int?, receiver: IrExpression?): FieldAccessCarrier {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return FieldAccessCarrier(symbol, super_, receiver)
     }
 
     override fun createIrGetField(fieldAccess: FieldAccessCarrier, origin: IrStatementOrigin?): IrGetField {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val fieldSymbol = loadSymbol(fieldAccess.symbolId) as IrFieldSymbol
+        val superSymbol = fieldAccess.superId?.let { loadSymbol(it) as IrClassSymbol }
+        return IrGetFieldImpl(delayedStart(), delayedEnd(), fieldSymbol, delayedType(), fieldAccess.receiver, origin, superSymbol)
     }
 
     override fun createIrGetValue(symbol: Int, origin: IrStatementOrigin?): IrGetValue {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val valueSymbol = loadSymbol(symbol) as IrValueSymbol
+        return IrGetValueImpl(delayedStart(), delayedEnd(), delayedType(), valueSymbol, origin)
     }
 
     override fun createIrGetObject(symbol: Int): IrGetObjectValue {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val objectSymbol = loadSymbol(symbol) as IrClassSymbol
+        return IrGetObjectValueImpl(delayedStart(), delayedEnd(), delayedType(), objectSymbol)
     }
 
     override fun createIrInstanceInitializerCall(symbol: Int): IrInstanceInitializerCall {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val classSymbol = loadSymbol(symbol) as IrClassSymbol
+        return IrInstanceInitializerCallImpl(delayedStart(), delayedEnd(), classSymbol, delayedType())
     }
 
     override fun createLoop(
@@ -419,51 +543,55 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         body: IrExpression?,
         origin: IrStatementOrigin?
     ): LoopCarrier {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return LoopCarrier(loopId, condition, label, body, origin)
     }
 
     override fun createIrReturn(returnTarget: Int, value: IrExpression): IrReturn {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val returnSymbol = loadSymbol(returnTarget) as IrReturnTargetSymbol
+        return IrReturnImpl(delayedStart(), delayedEnd(), delayedType(), returnSymbol, value)
     }
 
     override fun createIrSetField(fieldAccess: FieldAccessCarrier, value: IrExpression, origin: IrStatementOrigin?): IrSetField {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val fieldSymbol = loadSymbol(fieldAccess.symbolId) as IrFieldSymbol
+        val superSymbol = fieldAccess.superId?.let { loadSymbol(it) as IrClassSymbol }
+        return IrSetFieldImpl(delayedStart(), delayedEnd(), fieldSymbol, fieldAccess.receiver, value, delayedType(), origin, superSymbol)
     }
 
     override fun createIrSetVariable(symbol: Int, value: IrExpression, origin: IrStatementOrigin?): IrSetVariable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val variableSymbol = loadSymbol(symbol) as IrVariableSymbol
+        return IrSetVariableImpl(delayedStart(), delayedEnd(), delayedType(), variableSymbol, value, origin)
     }
 
     override fun createIrSpreadElement(expression: IrExpression, coordinates: CoordinatesCarrier): IrSpreadElement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrSpreadElementImpl(coordinates.start, coordinates.end, expression)
     }
 
     override fun createIrStringConcat(argument: List<IrExpression>): IrStringConcatenation {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrStringConcatenationImpl(delayedStart(), delayedEnd(), delayedType(), argument)
     }
 
     override fun createIrThrow(value: IrExpression): IrThrow {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrThrowImpl(delayedStart(), delayedEnd(), delayedType(), value)
     }
 
     override fun createIrTry(result: IrExpression, catch: List<IrStatement>, finally: IrExpression?): IrTry {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrTryImpl(delayedStart(), delayedEnd(), delayedType(), result, catch as List<IrCatch>, finally)
     }
 
     override fun createIrTypeOp(operator: IrTypeOperator, operand: Int, argument: IrExpression): IrTypeOperatorCall {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrTypeOperatorCallImpl(delayedStart(), delayedEnd(), delayedType(), operator, loadType(operand), argument)
     }
 
     override fun createIrVararg(elementType: Int, element: List<IrVarargElement>): IrVararg {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrVarargImpl(delayedStart(), delayedEnd(), delayedType(), loadType(elementType), element)
     }
 
-    override fun createIrVarargElement(expression: IrExpression?, spreadElement: IrSpreadElement?): IrVarargElement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun createIrVarargElement_expression(expression: IrExpression) = expression
+
+    override fun createIrVarargElement_spreadElement(spreadElement: IrSpreadElement) = spreadElement
 
     override fun createIrWhen(branch: List<IrStatement>, origin: IrStatementOrigin?): IrWhen {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrWhenImpl(delayedStart(), delayedEnd(), delayedType(), origin, branch as List<IrBranch>)
     }
 
     override fun createIrWhile(loop: LoopCarrier): IrWhileLoop {
@@ -471,15 +599,15 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrFunctionExpression(function: IrSimpleFunction, origin: IrStatementOrigin): IrFunctionExpression {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrFunctionExpressionImpl(delayedStart(), delayedEnd(), delayedType(), function, origin)
     }
 
     override fun createIrDynamicMemberExpression(memberName: Int, receiver: IrExpression): IrDynamicMemberExpression {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrDynamicMemberExpressionImpl(delayedStart(), delayedEnd(), delayedType(), loadString(memberName), receiver)
     }
 
     override fun createIrDynamicOperator(index: Int): IrDynamicOperator {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrDynamicOperator.values()[index]
     }
 
     override fun createIrDynamicOperatorExpression(
@@ -487,49 +615,14 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         receiver: IrExpression,
         argument: List<IrExpression>
     ): IrDynamicOperatorExpression {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createIrOperation(
-        block: IrBlock?,
-        break_: IrBreak?,
-        call: IrCall?,
-        classReference: IrClassReference?,
-        composite: IrComposite?,
-        const: IrConst<*>?,
-        continue_: IrContinue?,
-        delegatingConstructorCall: IrDelegatingConstructorCall?,
-        doWhile: IrDoWhileLoop?,
-        enumConstructorCall: IrEnumConstructorCall?,
-        functionReference: IrFunctionReference?,
-        getClass: IrGetClass?,
-        getEnumValue: IrGetEnumValue?,
-        getField: IrGetField?,
-        getObject: IrGetObjectValue?,
-        getValue: IrGetValue?,
-        instanceInitializerCall: IrInstanceInitializerCall?,
-        propertyReference: IrPropertyReference?,
-        return_: IrReturn?,
-        setField: IrSetField?,
-        setVariable: IrSetVariable?,
-        stringConcat: IrStringConcatenation?,
-        throw_: IrThrow?,
-        try_: IrTry?,
-        typeOp: IrTypeOperatorCall?,
-        vararg: IrVararg?,
-        when_: IrWhen?,
-        while_: IrWhileLoop?,
-        dynamicMember: IrDynamicMemberExpression?,
-        dynamicOperator: IrDynamicOperatorExpression?,
-        localDelegatedPropertyReference: IrLocalDelegatedPropertyReference?,
-        constructorCall: IrConstructorCall?,
-        functionExpression: IrFunctionExpression?
-    ): IrExpression {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrDynamicOperatorExpressionImpl(delayedStart(), delayedEnd(), delayedType(), operator).apply {
+            this.receiver = receiver
+            this.arguments += argument
+        }
     }
 
     override fun createIrTypeOperator(index: Int): IrTypeOperator {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrTypeOperator.values()[index]
     }
 
     override fun createIrExpression(operation: IrExpression, type: Int, coordinates: CoordinatesCarrier): IrExpression {
@@ -546,7 +639,7 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         coordinates: CoordinatesCarrier,
         annotations: List<IrConstructorCall>
     ): DeclarationBaseCarrier {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return DeclarationBaseCarrier(symbol, origin, coordinates, annotations)
     }
 
     override fun createIrFunctionBase(
@@ -562,7 +655,19 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         body: Int?,
         returnType: Int
     ): FunctionBaseCarrier {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return FunctionBaseCarrier(
+            base,
+            name,
+            visibility,
+            isInline,
+            isExternal,
+            typeParameters,
+            dispatchReceiver,
+            extensionReceiver,
+            valueParameter,
+            body,
+            returnType
+        )
     }
 
     override fun createIrFunction(
@@ -572,11 +677,51 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         isSuspend: Boolean,
         overridden: List<Int>
     ): IrSimpleFunction {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.declarationBaseCarrier.coordinates.start
+        val end = base.declarationBaseCarrier.coordinates.end
+        val origin = base.declarationBaseCarrier.origin
+        val functionSymbol = loadSymbol(base.declarationBaseCarrier.symbolId) as IrSimpleFunctionSymbol
+        val name = Name.guessByFirstCharacter(loadString(base.nameId))
+        val returnType = loadType(base.returnTypeIndex)
+        val visibility = base.visibility
+        val bodyIndex = base.bodyIndex
+
+        return IrFunctionImpl(start, end, origin, functionSymbol, name, visibility, modality, returnType, base.isInline, base.isExternal, isTailrec, isSuspend).apply {
+            annotations.addAll(base.declarationBaseCarrier.annotations)
+            overridden.mapTo(overriddenSymbols) { loadSymbol(it) as IrSimpleFunctionSymbol }
+
+            dispatchReceiverParameter = base.dispathReceiver
+            extensionReceiverParameter = base.extensionReceiver
+            valueParameters.addAll(base.valueParameters)
+            typeParameters.addAll(base.typeParameters)
+
+            body = bodyIndex?.let { loadStatementBody(it) as IrBody }
+
+//            (descriptor as? WrappedSimpleFunctionDescriptor).bind(this)
+        }
     }
 
     override fun createIrConstructor(base: FunctionBaseCarrier, isPrimary: Boolean): IrConstructor {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.declarationBaseCarrier.coordinates.start
+        val end = base.declarationBaseCarrier.coordinates.end
+        val origin = base.declarationBaseCarrier.origin
+        val constructorSymbol = loadSymbol(base.declarationBaseCarrier.symbolId) as IrConstructorSymbol
+        val name = Name.special(loadString(base.nameId))
+        val returnType = loadType(base.returnTypeIndex)
+        val visibility = base.visibility
+        val bodyIndex = base.bodyIndex
+
+        return IrConstructorImpl(start, end, origin, constructorSymbol, name, visibility, returnType, base.isInline, base.isExternal, isPrimary).apply {
+            annotations.addAll(base.declarationBaseCarrier.annotations)
+            dispatchReceiverParameter = base.dispathReceiver
+            extensionReceiverParameter = base.extensionReceiver
+            valueParameters.addAll(base.valueParameters)
+            typeParameters.addAll(base.typeParameters)
+
+            body = bodyIndex?.let { loadStatementBody(it) as IrBody }
+
+            // (descriptor as? WrappedClassConstructorDescriptor)?.bind(this)
+        }
     }
 
     override fun createIrField(
@@ -589,7 +734,18 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         isStatic: Boolean,
         type: Int
     ): IrField {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val fieldSymbol = loadSymbol(base.symbolId) as IrFieldSymbol
+        val fieldName = Name.guessByFirstCharacter(loadString(name))
+        val fieldType = loadType(type)
+        return IrFieldImpl(start, end, origin, fieldSymbol, fieldName, fieldType, visibility, isFinal, isExternal, isStatic).apply {
+            this.annotations.addAll(base.annotations)
+            this.initializer = initializer?.let { IrExpressionBodyImpl(loadExpressionBody(it)) }
+
+//            (descriptor as? WrappedFieldDescriptor)?.bind(this)
+        }
     }
 
     override fun createIrLocalDelegatedProperty(
@@ -601,7 +757,21 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         getter: IrSimpleFunction?,
         setter: IrSimpleFunction?
     ): IrLocalDelegatedProperty {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val propertySymbol = loadSymbol(base.symbolId) as IrLocalDelegatedPropertySymbol
+        val propertyType = loadType(type)
+        val propertyName = Name.guessByFirstCharacter(loadString(name))
+
+        return IrLocalDelegatedPropertyImpl(start, end, origin, propertySymbol, propertyName, propertyType, isVar).apply {
+            this.annotations.addAll(base.annotations)
+            this.delegate = delegate
+            this.getter = getter ?: error("Should be non-null for some reason")
+            this.setter = setter
+
+//            (descriptor as? WrappedVariableDescriptorWithAccessor)?.bind(this)
+        }
     }
 
     override fun createIrProperty(
@@ -618,7 +788,20 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         getter: IrSimpleFunction?,
         setter: IrSimpleFunction?
     ): IrProperty {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val propertySymbol = loadSymbol(base.symbolId) as IrPropertySymbol
+        val propertyName = Name.guessByFirstCharacter(loadString(name))
+
+        return IrPropertyImpl(start, end, origin, propertySymbol, propertyName, visibility, modality, isVar, isConst, isLateinit, isDelegated, isExternal).apply {
+            this.annotations.addAll(base.annotations)
+            this.backingField = backingField?.also { it.correspondingPropertySymbol = propertySymbol }
+            this.getter = getter?.also { it.correspondingPropertySymbol = propertySymbol }
+            this.setter = setter?.also { it.correspondingPropertySymbol = propertySymbol }
+
+//            (descriptor as? WrappedPropertyDescriptor)?.bind(this)
+        }
     }
 
     override fun createIrVariable(
@@ -630,15 +813,24 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         isLateinit: Boolean,
         initializer: IrExpression?
     ): IrVariable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val variableSymbol = loadSymbol(base.symbolId) as IrVariableSymbol
+        val variableName = Name.guessByFirstCharacter(loadString(name))
+
+        return IrVariableImpl(start, end, origin, variableSymbol, variableName, loadType(type), isVar, isConst, isLateinit).apply {
+            this.annotations.addAll(base.annotations)
+            this.initializer = initializer
+        }
     }
 
     override fun createClassKind(index: Int): ClassKind {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return ClassKind.values()[index]
     }
 
     override fun createModalityKind(index: Int): Modality {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Modality.values()[index]
     }
 
     override fun createIrValueParameter(
@@ -651,7 +843,21 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         isNoinline: Boolean,
         defaultValue: Int?
     ): IrValueParameter {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val valueSymbol = loadSymbol(base.symbolId) as IrValueParameterSymbol
+        val valueName = Name.guessByFirstCharacter(loadString(name))
+        val valueType = loadType(type)
+        val valueVarargType = varargElementType?.let { loadType(it) }
+        return IrValueParameterImpl(start, end, origin, valueSymbol, valueName, index, valueType, valueVarargType, isCrossinline, isNoinline).apply {
+            this.annotations.addAll(base.annotations)
+            this.defaultValue = defaultValue?.let { IrExpressionBodyImpl(loadExpressionBody(it)) }
+
+//            (descriptor as? WrappedValueParameterDescriptor)?.bind(this)
+//            (descriptor as? WrappedReceiverParameterDescriptor)?.bind(this)
+        }
+
     }
 
     override fun createIrTypeParameter(
@@ -662,12 +868,29 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         superType: List<Int>,
         isReified: Boolean
     ): IrTypeParameter {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val typeParameterSymbol = loadSymbol(base.symbolId) as IrTypeParameterSymbol
+        val typeParameterName = Name.guessByFirstCharacter(loadString(name))
+        val typeParameterDescriptor = typeParameterSymbol.descriptor
+
+        return if (typeParameterDescriptor is DeserializedTypeParameterDescriptor && typeParameterDescriptor.containingDeclaration is PropertyDescriptor && typeParameterSymbol.isBound) {
+            // TODO: Get rid of once new properties are implemented
+            IrTypeParameterImpl(start, end, origin, IrTypeParameterSymbolImpl(typeParameterDescriptor), typeParameterName, index, isReified, variance)
+        } else {
+            symbolTable.declareGlobalTypeParameter(start, end, origin, typeParameterDescriptor) {
+                IrTypeParameterImpl(start, end, origin, it, typeParameterName, index, isReified, variance)
+            }
+        }.apply {
+            this.annotations.addAll(base.annotations)
+            superType.mapTo(this.superTypes) { loadType(it) }
+
+            (typeParameterDescriptor as? WrappedTypeParameterDescriptor)?.bind(this)
+        }
     }
 
-    override fun createIrTypeParameterContainer(typeParameter: List<IrTypeParameter>): List<IrTypeParameter> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun createIrTypeParameterContainer(typeParameter: List<IrTypeParameter>) = typeParameter
 
     override fun createIrClass(
         base: DeclarationBaseCarrier,
@@ -685,7 +908,21 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         declarationContainer: List<IrDeclaration>,
         superType: List<Int>
     ): IrClass {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val classSymbol = loadSymbol(base.symbolId) as IrClassSymbol
+        val className = Name.guessByFirstCharacter(loadString(name))
+
+        return IrClassImpl(start, end, origin, classSymbol, className, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline).apply {
+            this.annotations.addAll(base.annotations)
+            superType.mapTo(this.superTypes) { loadType(it) }
+            this.thisReceiver = thisReceiver
+            this.typeParameters.addAll(typeParameters)
+            this.declarations.addAll(declarationContainer)
+
+//            (descriptor as? WrappedClassDescriptor)?.bind(this)
+        }
     }
 
     override fun createIrTypeAlias(
@@ -696,64 +933,66 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         expandedType: Int,
         isActual: Boolean
     ): IrTypeAlias {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val typeAliasSymbol = loadSymbol(base.symbolId) as IrTypeAliasSymbol
+        val typeAliasName = Name.guessByFirstCharacter(loadString(name))
+
+        return IrTypeAliasImpl(start, end, typeAliasSymbol, typeAliasName, visibility, loadType(expandedType), isActual, origin).apply {
+            this.annotations.addAll(base.annotations)
+            this.typeParameters.addAll(typeParameters)
+
+//            (descriptor as? WrappedTypeAliasDescriptor)?.bind(this)
+        }
     }
 
     override fun createIrEnumEntry(base: DeclarationBaseCarrier, initializer: Int?, correspondingClass: IrClass?, name: Int): IrEnumEntry {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val enumEntrySymbol = loadSymbol(base.symbolId) as IrEnumEntrySymbol
+        val enumEntryName = Name.guessByFirstCharacter(loadString(name))
+
+        return IrEnumEntryImpl(start, end, origin, enumEntrySymbol, enumEntryName).apply {
+            this.annotations.addAll(base.annotations)
+            this.correspondingClass = correspondingClass
+            this.initializerExpression = initializer?.let { loadExpressionBody(it) }
+
+//            (descriptor as? WrappedEnumEntryDescriptor)?.bind(this)
+        }
     }
 
     override fun createIrAnonymousInit(base: DeclarationBaseCarrier, body: Int): IrAnonymousInitializer {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        val start = base.coordinates.start
+        val end = base.coordinates.end
+        val origin = base.origin
+        val initSymbol = loadSymbol(base.symbolId) as IrAnonymousInitializerSymbol
 
-    override fun createIrDeclaration(
-        irAnonymousInit: IrAnonymousInitializer?,
-        irClass: IrClass?,
-        irConstructor: IrConstructor?,
-        irEnumEntry: IrEnumEntry?,
-        irField: IrField?,
-        irFunction: IrSimpleFunction?,
-        irProperty: IrProperty?,
-        irTypeParameter: IrTypeParameter?,
-        irVariable: IrVariable?,
-        irValueParameter: IrValueParameter?,
-        irLocalDelegatedProperty: IrLocalDelegatedProperty?,
-        irTypeAlias: IrTypeAlias?
-    ): IrDeclaration {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrAnonymousInitializerImpl(start, end, origin, initSymbol).apply {
+            this.annotations.addAll(base.annotations)
+            this.body = loadStatementBody(body) as IrBlockBody
+        }
     }
 
     override fun createIrBranch(condition: IrExpression, result: IrExpression): IrBranch {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrBranchImpl(delayedStart(), delayedEnd(), condition, result)
     }
 
     override fun createIrBlockBody(statement: List<IrStatement>): IrBlockBody {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrBlockBodyImpl(delayedStart(), delayedEnd(), statement)
     }
 
     override fun createIrCatch(catchParameter: IrVariable, result: IrExpression): IrCatch {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrCatchImpl(delayedStart(), delayedEnd(), catchParameter, result)
     }
 
     override fun createIrSyntheticBodyKind(index: Int): IrSyntheticBodyKind {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return IrSyntheticBodyKind.values()[index]
     }
 
     override fun createIrSyntheticBody(kind: IrSyntheticBodyKind): IrSyntheticBodyKind {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("jkkjk")
+//        return IrSyntheticBodyImpl(delayedStart(), delayedEnd(), kind)
     }
-
-    override fun createIrStatement(
-        coordinates: CoordinatesCarrier,
-        declaration: IrDeclaration?,
-        expression: IrExpression?,
-        blockBody: IrBlockBody?,
-        branch: IrBranch?,
-        catch: IrCatch?,
-        syntheticBody: IrSyntheticBodyKind?
-    ): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
 }

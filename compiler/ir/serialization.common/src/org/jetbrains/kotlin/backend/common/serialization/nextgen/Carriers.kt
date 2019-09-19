@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeArgument
 class DeclarationBaseCarrier(
     val symbolId: Int,
     val origin: IrDeclarationOrigin,
-    val coordinates: Pair<Int, Int>,
+    val coordinates: CoordinatesCarrier,
     val annotations: List<IrConstructorCall>
 )
 
@@ -32,7 +32,7 @@ class FunctionBaseCarrier(
     val dispathReceiver: IrValueParameter?,
     val extensionReceiver: IrValueParameter?,
     val valueParameters: List<IrValueParameter>,
-    val bodyIndex: Int,
+    val bodyIndex: Int?,
     val returnTypeIndex: Int
 )
 
@@ -43,7 +43,7 @@ class MemberAccessCarrier(
     val typeArguments: List<IrType>
 )
 
-class FieldAccessCarrier(val symbolId: Int, val superId: Int, val receiver: IrExpression?)
+class FieldAccessCarrier(val symbolId: Int, val superId: Int?, val receiver: IrExpression?)
 
 class LoopCarrier(val loopId: Int, val condition: IrExpression, val label: Int?, val body: IrExpression?, val origin: IrStatementOrigin?)
 
