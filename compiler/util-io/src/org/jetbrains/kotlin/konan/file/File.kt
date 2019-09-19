@@ -16,6 +16,7 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.attribute.PosixFilePermissions
 
 data class File constructor(internal val javaPath: Path) {
     constructor(parent: Path, child: String): this(parent.resolve(child))
@@ -125,6 +126,12 @@ data class File constructor(internal val javaPath: Path) {
     fun writeLines(lines: Iterable<String>) {
         Files.write(javaPath, lines)
     }
+    fun setPermissions(perms: String) {
+        when {
+            isFile -> Files.setPosixFilePermissions(javaPath, PosixFilePermissions.fromString(perms))!!
+        }
+    }
+    fun recursiveSetPermissions(permissions: String) = postorder { File(it).setPermissions(permissions) }
 
     fun writeText(text: String): Unit = writeLines(listOf(text))
 

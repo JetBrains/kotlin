@@ -61,6 +61,7 @@ open class BaseWriterImpl(
 
     override fun commit() {
         manifestProperties.saveToFile(libraryLayout.manifestFile)
+        libraryLayout.libDir.recursiveSetPermissions("rw-r--r--")
         if (!nopack) {
             libraryLayout.libDir.zipDirAs(klibFile)
             libraryLayout.libDir.deleteRecursively()
