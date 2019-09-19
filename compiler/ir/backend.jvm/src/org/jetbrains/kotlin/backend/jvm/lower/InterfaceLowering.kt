@@ -45,6 +45,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
         if (!irClass.isInterface) return
 
         val defaultImplsIrClass = context.declarationFactory.getDefaultImplsClass(irClass)
+        //TODO: Don't add DefaultImpls if it's empty. Just like the old backend...?
         irClass.declarations.add(defaultImplsIrClass)
         val members = defaultImplsIrClass.declarations
 
@@ -52,8 +53,11 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
             if (function !is IrSimpleFunction) continue
 
             if (function.modality != Modality.ABSTRACT && function.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+
+                if(function.hasJvmDefault() && !context.state.jvmDefaultMode.isCompatibility && !mustMoveToDefaultImpls(function)) continue
+
                 val element = context.declarationFactory.getDefaultImplsFunction(function).also {
-                    if (shouldRemoveFunction(function))
+                    if (mustMoveToDefaultImpls(function))
                         removedFunctions[function.symbol] = it.symbol
                 }
                 members.add(element)
@@ -64,7 +68,6 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
                 if (function.hasJvmDefault() &&
                     function.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
                 ) {
-                    // TODO: don't touch function and only generate element / DefaultImpls when needed.
                     function.body = IrExpressionBodyImpl(callDefaultImpls(element, function))
                 } else {
                     function.body = null
@@ -98,7 +101,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
         }
     }
 
-    private fun shouldRemoveFunction(function: IrFunction): Boolean =
+    private fun mustMoveToDefaultImpls(function: IrFunction): Boolean =
         Visibilities.isPrivate(function.visibility) && function.name != clinitName ||
                 function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
                 function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
