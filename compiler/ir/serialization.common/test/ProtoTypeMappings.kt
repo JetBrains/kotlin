@@ -95,5 +95,5 @@ val typeMappings = mapOf(
     "IrCatch" to "org.jetbrains.kotlin.ir.expressions.IrCatch",
     "IrSyntheticBodyKind" to "org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind",
     "IrSyntheticBody" to "org.jetbrains.kotlin.ir.expressions.IrSyntheticBody",
-    "IrStatement" to "org.jetbrains.kotlin.ir.IrStatement"
+    "IrStatement" to "org.jetbrains.kotlin.ir.IrElement"
 )

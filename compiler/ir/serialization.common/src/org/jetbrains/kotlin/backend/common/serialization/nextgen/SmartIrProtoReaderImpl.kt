@@ -57,47 +57,47 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         coordinatesStartOffset: Int,
         coordinatesEndOffset: Int
     ): IrExpression {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return operation
     }
 
     override fun createIrStatement_declaration(
         coordinatesStartOffset: Int,
         coordinatesEndOffset: Int,
         oneOfDeclaration: IrDeclaration
-    ): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    ): IrElement {
+        return oneOfDeclaration
     }
 
     override fun createIrStatement_expression(
         coordinatesStartOffset: Int,
         coordinatesEndOffset: Int,
         oneOfExpression: IrExpression
-    ): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    ): IrElement {
+        return oneOfExpression
     }
 
     override fun createIrStatement_blockBody(
         coordinatesStartOffset: Int,
         coordinatesEndOffset: Int,
         oneOfBlockBody: IrBlockBody
-    ): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    ): IrElement {
+        return oneOfBlockBody
     }
 
-    override fun createIrStatement_branch(coordinatesStartOffset: Int, coordinatesEndOffset: Int, oneOfBranch: IrBranch): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun createIrStatement_branch(coordinatesStartOffset: Int, coordinatesEndOffset: Int, oneOfBranch: IrBranch): IrElement {
+        return oneOfBranch
     }
 
-    override fun createIrStatement_catch(coordinatesStartOffset: Int, coordinatesEndOffset: Int, oneOfCatch: IrCatch): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun createIrStatement_catch(coordinatesStartOffset: Int, coordinatesEndOffset: Int, oneOfCatch: IrCatch): IrElement {
+        return oneOfCatch
     }
 
     override fun createIrStatement_syntheticBody(
         coordinatesStartOffset: Int,
         coordinatesEndOffset: Int,
         oneOfSyntheticBody: IrSyntheticBody
-    ): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    ): IrElement {
+        return oneOfSyntheticBody
     }
 
     override fun createIrOperation_block(oneOfBlock: IrBlock) = oneOfBlock
@@ -352,8 +352,8 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         }
     }
 
-    override fun createIrBlock(origin: IrStatementOrigin?, statement: List<IrStatement>): IrBlock {
-        return IrBlockImpl(delayedStart(), delayedEnd(), delayedType(), origin, statement)
+    override fun createIrBlock(origin: IrStatementOrigin?, statement: List<IrElement>): IrBlock {
+        return IrBlockImpl(delayedStart(), delayedEnd(), delayedType(), origin, statement as List<IrStatement>)
     }
 
     override fun createIrCall(
@@ -482,8 +482,8 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         }
     }
 
-    override fun createIrComposite(statement: List<IrStatement>, origin: IrStatementOrigin?): IrComposite {
-        return IrCompositeImpl(delayedStart(), delayedEnd(), delayedType(), origin, statement)
+    override fun createIrComposite(statement: List<IrElement>, origin: IrStatementOrigin?): IrComposite {
+        return IrCompositeImpl(delayedStart(), delayedEnd(), delayedType(), origin, statement as List<IrStatement>)
     }
 
     override fun createIrClassReference(classSymbol: Int, classType: Int): IrClassReference {
@@ -622,7 +622,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         return IrThrowImpl(delayedStart(), delayedEnd(), delayedType(), value)
     }
 
-    override fun createIrTry(result: IrExpression, catch: List<IrStatement>, finally: IrExpression?): IrTry {
+    override fun createIrTry(result: IrExpression, catch: List<IrElement>, finally: IrExpression?): IrTry {
         return IrTryImpl(delayedStart(), delayedEnd(), delayedType(), result, catch as List<IrCatch>, finally)
     }
 
@@ -638,7 +638,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
 
     override fun createIrVarargElement_spreadElement(oneOfSpreadElement: IrSpreadElement) = oneOfSpreadElement
 
-    override fun createIrWhen(branch: List<IrStatement>, origin: IrStatementOrigin?): IrWhen {
+    override fun createIrWhen(branch: List<IrElement>, origin: IrStatementOrigin?): IrWhen {
         return IrWhenImpl(delayedStart(), delayedEnd(), delayedType(), origin, branch as List<IrBranch>)
     }
 
@@ -920,11 +920,11 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     }
 
     override fun createClassKind(index: Int): ClassKind {
-        return ClassKind.values()[index]
+        return ClassKind.values()[index - 1]
     }
 
     override fun createModalityKind(index: Int): Modality {
-        return Modality.values()[index]
+        return Modality.values()[index - 1]
     }
 
     override fun createIrValueParameter(
@@ -1123,15 +1123,15 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     }
 
     override fun createIrBranch(condition: IrExpression, result: IrExpression): IrBranch {
-        return IrBranchImpl(delayedStart(), delayedEnd(), condition, result)
+        return IrBranchImpl(fieldIrStatementCoordinatesStartOffset, fieldIrStatementCoordinatesEndOffset, condition, result)
     }
 
-    override fun createIrBlockBody(statement: List<IrStatement>): IrBlockBody {
-        return IrBlockBodyImpl(delayedStart(), delayedEnd(), statement)
+    override fun createIrBlockBody(statement: List<IrElement>): IrBlockBody {
+        return IrBlockBodyImpl(fieldIrStatementCoordinatesStartOffset, fieldIrStatementCoordinatesEndOffset, statement as List<IrStatement>)
     }
 
     override fun createIrCatch(catchParameter: IrVariable, result: IrExpression): IrCatch {
-        return IrCatchImpl(delayedStart(), delayedEnd(), catchParameter, result)
+        return IrCatchImpl(fieldIrStatementCoordinatesStartOffset, fieldIrStatementCoordinatesEndOffset, catchParameter, result)
     }
 
     override fun createIrSyntheticBodyKind(index: Int): IrSyntheticBodyKind {
@@ -1139,6 +1139,6 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     }
 
     override fun createIrSyntheticBody(kind: IrSyntheticBodyKind): IrSyntheticBody {
-        return IrSyntheticBodyImpl(delayedStart(), delayedEnd(), kind)
+        return IrSyntheticBodyImpl(fieldIrStatementCoordinatesStartOffset, fieldIrStatementCoordinatesEndOffset, kind)
     }
 }

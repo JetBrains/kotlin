@@ -88,7 +88,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody as IrBlockBodyMessageType
 import org.jetbrains.kotlin.ir.expressions.IrCatch as IrCatchMessageType
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind as IrSyntheticBodyKindMessageType
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody as IrSyntheticBodyMessageType
-import org.jetbrains.kotlin.ir.IrStatement as IrStatementMessageType
+import org.jetbrains.kotlin.ir.IrElement as IrStatementMessageType
 
 abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(source) {
     abstract fun createDescriptorReference(packageFqName : FqNameMessageType, classFqName : FqNameMessageType, name : Int, uniqId : UniqIdMessageType?, isGetter : Boolean?, isSetter : Boolean?, isBackingField : Boolean?, isFakeOverride : Boolean?, isDefaultConstructor : Boolean?, isEnumEntry : Boolean?, isEnumSpecial : Boolean?, isTypeParameter : Boolean?): DescriptorReferenceMessageType
