@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
 
     val result = ProtoParser(Files.readAllLines(Paths.get(protoFile))).parse()
 
-    println(result.createIrDeserializer(typeMappings))
+    println(result.createIrDeserializer(typeMappings, true))
 
 //    result.forEach {
 //        printProto(it)

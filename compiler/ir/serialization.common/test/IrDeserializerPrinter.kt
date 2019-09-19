@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 import java.lang.StringBuilder
 
-fun List<Proto>.createIrDeserializer(classMap: Map<String, String>): String {
-    return IrDeserializerPrinter(this, classMap).buildDeclaration()
+fun List<Proto>.createIrDeserializer(classMap: Map<String, String>, isSimple: Boolean): String {
+    return IrDeserializerPrinter(this, classMap, isSimple).buildDeclaration()
 }
 
 private class IrDeserializerPrinter(
     val protoList: List<Proto>,
-    val importMap: Map<String, String>
+    importMap_: Map<String, String>,
+    val isSimple: Boolean
 ) {
+
+    val importMap = if (!isSimple) importMap_ else importMap_.keys.associate { it to "kotlin.Any" }
 
     val typeMap: Map<String, Proto> = protoList.associate { it.name to it }
 
@@ -65,7 +68,9 @@ private class IrDeserializerPrinter(
 
         sb.appendln()
 
-        sb.appendln("abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(source) {")
+        val prefix = if (isSimple) "" else "abstract "
+        val name = if (isSimple) "SimpleIr" else "AbstractIr"
+        sb.appendln("${prefix}class ${name}ProtoReader(source: ByteArray) : ProtoReader(source) {")
 
         protoList.forEach { sb.addAbstractFactory(it) }
 
@@ -85,16 +90,31 @@ private class IrDeserializerPrinter(
             }
         }
 
-        return result + (if (result in setOf("super", "this", "null", "break", "continue", "while", "for", "return", "throw", "try", "when")) "_" else "")
+        return result + (if (result in setOf(
+                "super",
+                "this",
+                "null",
+                "break",
+                "continue",
+                "while",
+                "for",
+                "return",
+                "throw",
+                "try",
+                "when"
+            )
+        ) "_" else "")
     }
 
     private fun StringBuilder.addAbstractFactory(p: Proto) {
+        val maybeAbstract = if (isSimple) "" else "abstract "
         when (p) {
             is Proto.Enum -> {
-                appendln("    abstract fun create${p.name}(index: Int): ${p.name.ktType}")
+                val impl = if (isSimple) " = index" else ""
+                appendln("    ${maybeAbstract}fun create${p.name}(index: Int): ${p.name.ktType}${impl}")
             }
             is Proto.Message -> {
-                append("    abstract fun create${p.name}(")
+                append("    ${maybeAbstract}fun create${p.name}(")
                 p.allFields.forEachIndexed { i, f ->
                     if (i != 0) append(", ")
                     val type = when (f.kind) {
@@ -104,7 +124,16 @@ private class IrDeserializerPrinter(
                     }
                     append("${f.name.escape()} : $type")
                 }
-                appendln("): ${p.name.ktType}")
+
+                val impl = if (!isSimple) "" else {
+                    val args = p.allFields.fold("") { acc, c ->
+                        (if (acc == "") "" else acc + ", ") + c.name.escape()
+                    }
+
+                    " = arrayOf<Any?>($args)"
+                }
+
+                appendln("): ${p.name.ktType}$impl")
             }
         }
         appendln()
@@ -197,7 +226,7 @@ private class IrDeserializerPrinter(
 
         appendln("        return create${m.name}(${allFields.fold("") { acc, c ->
             var result = if (acc.isEmpty()) "" else "$acc, "
-            result += c.name + "__" 
+            result += c.name + "__"
             if (c.kind == FieldKind.REQUIRED && c in nullableFields) {
                 result += "!!"
             }
