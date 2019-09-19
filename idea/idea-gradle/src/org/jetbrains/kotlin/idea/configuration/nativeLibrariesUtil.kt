@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.model.project.LibraryData
-import com.intellij.openapi.externalSystem.model.project.LibraryDependencyData
-import com.intellij.openapi.externalSystem.model.project.LibraryLevel
-import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.model.project.*
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.IdeUIModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService

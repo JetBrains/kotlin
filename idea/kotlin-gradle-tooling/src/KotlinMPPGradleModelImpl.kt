@@ -89,7 +89,8 @@ data class KotlinCompilationImpl(
     override val output: KotlinCompilationOutput,
     override val arguments: KotlinCompilationArguments,
     override val dependencyClasspath: Array<String>,
-    override val kotlinTaskProperties: KotlinTaskProperties
+    override val kotlinTaskProperties: KotlinTaskProperties,
+    override val konanTarget: String? = null
 ) : KotlinCompilation {
 
     // create deep copy
@@ -104,7 +105,8 @@ data class KotlinCompilationImpl(
         KotlinCompilationOutputImpl(kotlinCompilation.output),
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
         kotlinCompilation.dependencyClasspath,
-        KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties)
+        KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties),
+        kotlinCompilation.konanTarget
     ) {
         disambiguationClassifier = kotlinCompilation.disambiguationClassifier
         platform = kotlinCompilation.platform

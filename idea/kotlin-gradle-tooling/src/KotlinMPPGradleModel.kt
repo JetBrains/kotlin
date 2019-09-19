@@ -100,6 +100,7 @@ interface KotlinCompilation : KotlinModule {
     val platform: KotlinPlatform
     val kotlinTaskProperties: KotlinTaskProperties
 
+    val konanTarget: String?
 
     companion object {
         const val MAIN_COMPILATION_NAME = "main"

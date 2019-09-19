@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
+import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
@@ -465,6 +466,18 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
         }
 
+        private data class CompilationWithDependencies(
+            val compilation: KotlinCompilation,
+            val substitutedDependencies: List<ExternalDependency>
+        ) {
+            val konanTarget: String?
+                get() = compilation.konanTarget
+
+            val dependencyNames: Map<String, ExternalDependency> by lazy {
+                substitutedDependencies.associateBy { it.name.removeSuffixIfPresent(" [$konanTarget]") }
+            }
+        }
+
         fun populateModuleDependencies(
             gradleModule: IdeaModule,
             ideProject: DataNode<ProjectData>,
@@ -475,6 +488,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             val sourceSetMap = ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS) ?: return
             val artifactsMap = ideProject.getUserData(CONFIGURATION_ARTIFACTS) ?: return
             val substitutor = KotlinNativeLibrariesDependencySubstitutor(mppModel, gradleModule, resolverCtx)
+            val sourceSetToCompilations = mutableMapOf<String, MutableList<CompilationWithDependencies>>()
             val processedModuleIds = HashSet<String>()
             processCompilations(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, compilation ->
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, compilation, resolverCtx))) {
@@ -490,6 +504,11 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     )
                     KotlinNativeLibrariesFixer.applyTo(dataNode, ideProject)
                     for (sourceSet in compilation.sourceSets) {
+                        (sourceSet.dependsOnSourceSets + sourceSet.name).forEach {
+                            sourceSetToCompilations
+                                .getOrPut(it) { mutableListOf() }
+                                .add(CompilationWithDependencies(compilation, substitutedDependencies))
+                        }
                         if (sourceSet.fullName() == compilation.fullName()) continue
                         val targetDataNode = getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx) ?: continue
                         addDependency(dataNode, targetDataNode, sourceSet.isTestModule)
@@ -558,6 +577,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     val mergedDependencies = LinkedHashSet<KotlinDependency>().apply {
                         addAll(sourceSet.dependencies.mapNotNull { mppModel.dependencyMap[it] })
                         dependeeSourceSets.flatMapTo(this) { it.dependencies.mapNotNull { mppModel.dependencyMap[it] } }
+                        if (sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE) {
+                            sourceSetToCompilations[sourceSet.name]
+                                ?.takeIf { it.size > 1 }
+                                ?.let { compilations ->
+                                    addAll(propagatedDependencies(compilations))
+                                }
+                        }
                     }
                     buildDependencies(
                         resolverCtx,
@@ -567,8 +593,63 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         preprocessDependencies(mergedDependencies),
                         ideProject
                     )
+                    @Suppress("UNCHECKED_CAST")
+                    KotlinNativeLibrariesFixer.applyTo(fromDataNode as DataNode<GradleSourceSetData>, ideProject)
                 }
             }
+        }
+
+        // We can't really commonize native platform libraries yet.
+        // But APIs for different targets may be very similar.
+        // E.g. ios_arm64 and ios_x64 have almost identical platform libraries.
+        // We handle these special cases and resolve common sources for such
+        // targets against libraries of one of them. E.g. common sources for
+        // ios_x64 and ios_arm64 will be resolved against ios_arm64 libraries.
+        //
+        // Currently such special casing is available for Apple platforms
+        // (iOS, watchOS and tvOS) and native Android (ARM, X86).
+        // TODO: Do we need to support user's interop libraries too?
+        private fun propagatedDependencies(compilations: List<CompilationWithDependencies>): List<ExternalDependency> {
+            if (compilations.isEmpty()) {
+                return emptyList()
+            }
+
+            val copyFrom = when {
+                compilations.all { it.isAppleCompilation } ->
+                    compilations.selectFirstAvailableTarget(
+                        "watchos_arm64", "watchos_arm32", "watchos_x86",
+                        "ios_arm64", "ios_arm32", "ios_x64",
+                        "tvos_arm64", "tvos_x64"
+                    )
+                compilations.all { it.konanTarget?.startsWith("android") == true } ->
+                    compilations.selectFirstAvailableTarget(
+                        "android_arm64", "android_arm32", "android_x64", "android_x86"
+                    )
+                else -> return emptyList()
+            }
+
+            return copyFrom.dependencyNames.mapNotNull { (name, dependency) ->
+                when {
+                    !name.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX) -> null  // Support only default platform libs for now.
+                    compilations.all { it.dependencyNames.containsKey(name) } -> dependency
+                    else -> null
+                }
+            }
+        }
+
+        private val CompilationWithDependencies.isAppleCompilation: Boolean
+            get() = konanTarget?.let {
+                it.startsWith("ios") || it.startsWith("watchos") || it.startsWith("tvos")
+            } ?: false
+
+        private fun Iterable<CompilationWithDependencies>.selectFirstAvailableTarget(vararg targetsByPriority: String): CompilationWithDependencies {
+            for (target in targetsByPriority) {
+                val result = firstOrNull { it.konanTarget == target }
+                if (result != null) {
+                    return result
+                }
+            }
+            return first()
         }
 
         private fun KotlinModule.toSourceSet(mppModel: KotlinMPPGradleModel) = when (this) {
