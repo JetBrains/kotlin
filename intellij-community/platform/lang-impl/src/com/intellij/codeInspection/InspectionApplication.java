@@ -267,24 +267,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
                            GlobalInspectionContextImpl context,
                            AnalysisScope scope, InspectionsReportConverter reportConverter, Path resultsDataPath) throws IOException {
     if (myAnalyzeChanges) {
-      VirtualFile[] changes = ChangesUtil.getFilesFromChanges(ChangeListManager.getInstance(project).getAllChanges());
-      setupFirstAnalysisHandler(context);
-      final List<Path> inspectionsResults = new ArrayList<>();
-      DumbService dumbService = DumbService.getInstance(project);
-      while (dumbService.isDumb()) {
-        LockSupport.parkNanos(50_000_000);
-      }
-      runAnalysisAfterShelvingSync(
-        project,
-        ChangeListManager.getInstance(project).getAffectedFiles(),
-        createProcessIndicator(),
-        () -> {
-          syncProject(project, changes);
-          runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
-        }
-      );
-      syncProject(project, changes);
-      setupSecondAnalysisHandler(project, context);
+      scope = runFirstStage(project, context, scope, resultsDataPath);
     }
 
     final List<Path> inspectionsResults = new ArrayList<>();
@@ -304,6 +287,36 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         printHelp();
       }
     }
+  }
+
+  @NotNull
+  private AnalysisScope runFirstStage(Project project, GlobalInspectionContextImpl context, AnalysisScope scope, Path resultsDataPath) {
+    VirtualFile[] changes = ChangesUtil.getFilesFromChanges(ChangeListManager.getInstance(project).getAllChanges());
+    setupFirstAnalysisHandler(context);
+    final List<Path> inspectionsResults = new ArrayList<>();
+    DumbService dumbService = DumbService.getInstance(project);
+    while (dumbService.isDumb()) {
+      LockSupport.parkNanos(50_000_000);
+    }
+    runAnalysisAfterShelvingSync(
+      project,
+      ChangeListManager.getInstance(project).getAffectedFiles(),
+      createProcessIndicator(),
+      () -> {
+        syncProject(project, changes);
+        runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
+      }
+    );
+    syncProject(project, changes);
+    setupSecondAnalysisHandler(project, context);
+    // new added files becomes invalid after unshelving, so we need to update our scope
+    List<VirtualFile> files = ChangeListManager.getInstance(project).getAffectedFiles();
+    if (myVerboseLevel == 3) {
+      for (VirtualFile file : files) {
+        reportMessage(1, "modified after unshelving: " + file.getPath());
+      }
+    }
+    return new AnalysisScope(GlobalSearchScope.filesScope(project, files), project);
   }
 
   private static void syncProject(Project project, VirtualFile[] changes) {
@@ -336,7 +349,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     if (myVerboseLevel > 0) {
       reportMessage(1, "Running second analysis stage...");
     }
-    printBeforeSecondStageStatistics();
+    printBeforeSecondStageProblems();
     ChangeListManager changeListManager = ChangeListManager.getInstance(project);
     context.setReportedProblemFilter(
       (element, descriptors) -> {
@@ -350,9 +363,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
           int line = problemDescriptor.getLineNumber();
           Optional<Range> first = StreamEx.of(ranges).findFirst((it) -> it.start1 <= line && line < it.end1);
           if (!first.isPresent()) {
-            reportMessage(3, "Not filtered: ");
-            reportMessage(3,file.getPath() + ":" + (line + 1));
-            reportMessage(3, "\t\t" + text);
+            logNotFiltered(text, file, line, -1);
             return false;
           }
           Range originRange = first.get();
@@ -361,20 +372,20 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
           if (problems.stream().anyMatch(it -> Objects.equals(it, text))) {
             return true;
           }
-          reportMessage(3, "Not filtered: ");
-          reportMessage(3,file.getPath() + ":" + (line + 1) + " Original: " + (position + 1));
-          reportMessage(3, "\t\t" + text);
-
-          return false;
+          logNotFiltered(text, file, line, position);
         }
-        else {
-          return false;
-        }
+        return false;
       }
     );
   }
 
-  private void printBeforeSecondStageStatistics() {
+  private void logNotFiltered(String text, VirtualFile file, int line, int position) {
+    reportMessage(3, "Not filtered: ");
+    reportMessage(3,file.getPath() + ":" + (line + 1) + " Original: " + (position + 1));
+    reportMessage(3, "\t\t" + text);
+  }
+
+  private void printBeforeSecondStageProblems() {
     if (myVerboseLevel == 3) {
       reportMessage(3, "Old warnings:");
       ArrayList<Map.Entry<Pair<String, Integer>, Collection<String>>> entries = new ArrayList<>(originalWarnings.entrySet());
