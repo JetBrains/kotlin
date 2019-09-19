@@ -26,6 +26,7 @@ message UniqId {
 }
 
 message Coordinates {
+  /* @inline */
   required int32 start_offset = 1;
   required int32 end_offset = 2;
 }
@@ -227,6 +228,7 @@ message IrBlock {
 }
 
 message MemberAccessCommon {
+  /* @inline */
   optional IrExpression dispatch_receiver = 1;
   optional IrExpression extension_receiver = 2;
   repeated NullableIrExpression value_argument = 3;
@@ -322,6 +324,7 @@ message IrGetEnumValue {
 }
 
 message FieldAccessCommon {
+  /* @inline */
   required IrDataIndex symbol = 1;
   optional IrDataIndex super = 2;
   optional IrExpression receiver = 3;
@@ -346,6 +349,7 @@ message IrInstanceInitializerCall {
 }
 
 message Loop {
+  /* @inline */
   required int32 loop_id = 1;
   required IrExpression condition = 2;
   optional IrDataIndex label = 3;

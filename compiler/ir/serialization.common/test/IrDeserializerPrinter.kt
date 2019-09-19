@@ -83,10 +83,12 @@ private class IrDeserializerPrinter(
 
     private fun String.escape(): String {
         val result = this.split('_').fold("") { acc, c ->
-            if (acc.isEmpty()) {
-                c[0].toLowerCase() + c.substring(1)
-            } else {
-                acc + c[0].toUpperCase() + c.substring(1)
+            if (c.isEmpty()) acc else {
+                if (acc.isEmpty()) {
+                    c[0].toLowerCase() + c.substring(1)
+                } else {
+                    acc + c[0].toUpperCase() + c.substring(1)
+                }
             }
         }
 
@@ -120,6 +122,9 @@ private class IrDeserializerPrinter(
 
                 if (p.isInline) return
 
+                val names = mutableMapOf<MessageEntry, String>()
+                names += p.fields.buildNames("")
+
                 fun addMessage(suffix: String, fields: List<MessageEntry.Field>) {
                     append("    ${maybeAbstract}fun create${p.name}${suffix}(")
                     fields.forEachIndexed { i, f ->
@@ -129,12 +134,12 @@ private class IrDeserializerPrinter(
                             FieldKind.REQUIRED, FieldKind.ONE_OF -> f.type.ktType
                             else -> "${f.type.ktType}?"
                         }
-                        append("${f.name.escape()} : $type")
+                        append("${names[f]!!} : $type")
                     }
 
                     val impl = if (!isSimple) "" else {
                         val args = fields.fold("") { acc, c ->
-                            (if (acc == "") "" else acc + ", ") + c.name.escape()
+                            (if (acc == "") "" else acc + ", ") + names[c]!!
                         }
 
                         " = arrayOf<Any?>($args)"
@@ -151,7 +156,8 @@ private class IrDeserializerPrinter(
 
                     val (fp, fs) = allFields.splitBy(o)
 
-                    for (of in o.fields) {
+                    for (of in o.fields.inlined()) {
+                        of as MessageEntry.Field
                         addMessage("_${of.name.escape()}", fp + of + fs)
                     }
                 } else {
@@ -234,13 +240,42 @@ private class IrDeserializerPrinter(
             }
         }
 
+    fun List<MessageEntry>.buildNames(prefix: String): MutableMap<MessageEntry.Field, String> {
+        val result = mutableMapOf<MessageEntry.Field, String>()
+
+        forEach { f ->
+            when (f) {
+                is MessageEntry.Field -> {
+                    if (f.isInline) {
+                        val msg = typeMap[f.type] as Proto.Message
+                        result += msg.fields.buildNames((prefix + "_" + f.name).escape())
+                    } else {
+                        result[f] = (prefix + "_" + f.name).escape()
+                    }
+                }
+                is MessageEntry.OneOf -> {
+                    result += f.fields.buildNames(prefix + "OneOf")
+                }
+            }
+        }
+
+        return result
+    }
+
     private fun StringBuilder.addMessage(m: Proto.Message) {
         if (m.isInline) return
 
-        val allFields = m.fields.inlined().oneOfInlined
+        val allFields = m.fields.inlined().oneOfInlined.inlined().oneOfInlined // TODO
+
+        val names = m.fields.buildNames("")
+
+        fun getName(field: MessageEntry.Field): String {
+            return names[field] ?:
+                    error("sd")
+        }
 
         allFields.fold(mutableMapOf<String, Int>()) { acc, c ->
-            val name = c.name.escape()
+            val name = getName(c)
             acc[name] = acc.getOrDefault(name, 0) + 1
             acc
         }.entries.forEach { (name, cnt) ->
@@ -267,7 +302,7 @@ private class IrDeserializerPrinter(
                     "${f.type.ktType}?" to "null"
                 }
             }
-            appendln("        var ${f.name.escape()}: $type = $initExpression")
+            appendln("        var ${getName(f)}: $type = $initExpression")
         }
 
 
@@ -291,14 +326,14 @@ private class IrDeserializerPrinter(
                 } else {
                     val readExpression = f.type.toReaderInvocation()
                     if (f.kind == FieldKind.REPEATED) {
-                        appendln("${indent}${f.index} -> ${f.name.escape()}.add($readExpression)")
+                        appendln("${indent}${f.index} -> ${getName(f)}.add($readExpression)")
                     } else if (f.kind == FieldKind.ONE_OF) {
                         appendln("${indent}${f.index} -> {")
-                        appendln("${indent}    ${f.name.escape()} = $readExpression")
+                        appendln("${indent}    ${getName(f)} = $readExpression")
                         appendln("${indent}    oneOfIndex = ${f.index}")
                         appendln("${indent}}")
                     } else {
-                        appendln("${indent}${f.index} -> ${f.name.escape()} = $readExpression")
+                        appendln("${indent}${f.index} -> ${getName(f)} = $readExpression")
                     }
                 }
             }
@@ -314,7 +349,7 @@ private class IrDeserializerPrinter(
         fun invokeCreate(suffix: String, fields: List<MessageEntry.Field>): String {
             return "return create${m.name}${suffix}(${fields.fold("") { acc, c ->
                 var result = if (acc.isEmpty()) "" else "$acc, "
-                result += c.name.escape()
+                result += getName(c)
                 if ((c.kind == FieldKind.REQUIRED || c.kind == FieldKind.ONE_OF) && c in nullableFields) {
                     result += "!!"
                 }
@@ -325,10 +360,10 @@ private class IrDeserializerPrinter(
         if (of == null) {
             appendln("        ${invokeCreate("", allFields)}")
         } else {
-            val (fp, fs) = m.fields.splitBy(of)
+            val (fp, fs) = m.fields.inlined().splitBy(of)
 
             appendln("        when (oneOfIndex) {")
-            for (f in of.fields) {
+            for (f in of.fields.inlined().oneOfInlined) {
                 appendln("            ${f.index} -> ${invokeCreate("_${f.name.escape()}", fp + f + fs)}")
             }
             appendln("            else -> error(\"Incorrect oneOf index: \" + oneOfIndex)")

@@ -82,11 +82,11 @@ class IrTest {
         val reader = MockIrProtoReader(bytes)
         val (newStart, newEnd) = reader.readCoordinates()
 
-        val simpleReader = SimpleIrProtoReader(bytes)
-        val result = simpleReader.readCoordinates() as Array<Any>
+//        val simpleReader = SimpleIrProtoReader(bytes)
+//        val result = simpleReader.readCoordinates() as Array<Any>
 
-        assertEquals(start, result[0] as Int)
-        assertEquals(end, result[1] as Int)
+//        assertEquals(start, result[0] as Int)
+//        assertEquals(end, result[1] as Int)
 
         assertEquals(start, newStart)
         assertEquals(end, newEnd)

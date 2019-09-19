@@ -10,16 +10,14 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createUniqId(index : Long, isLocal : Boolean): Any = arrayOf<Any?>(index, isLocal)
 
-    fun createCoordinates(startOffset : Int, endOffset : Int): Any = arrayOf<Any?>(startOffset, endOffset)
-
     fun createVisibility(name : Any): Any = arrayOf<Any?>(name)
 
     fun createIrStatementOrigin(name : Any): Any = arrayOf<Any?>(name)
 
     fun createKnownOrigin(index: Int): Any = index
 
-    fun createIrDeclarationOrigin_origin(origin : Any): Any = arrayOf<Any?>(origin)
-    fun createIrDeclarationOrigin_custom(custom : Any): Any = arrayOf<Any?>(custom)
+    fun createIrDeclarationOrigin_origin(oneOfOrigin : Any): Any = arrayOf<Any?>(oneOfOrigin)
+    fun createIrDeclarationOrigin_custom(oneOfCustom : Any): Any = arrayOf<Any?>(oneOfCustom)
 
     fun createIrDataIndex(index : Int): Any = arrayOf<Any?>(index)
 
@@ -49,8 +47,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrTypeProjection(variance : Any, type_ : Any): Any = arrayOf<Any?>(variance, type_)
 
-    fun createIrTypeArgument_star(star : Any): Any = arrayOf<Any?>(star)
-    fun createIrTypeArgument_type_(type_ : Any): Any = arrayOf<Any?>(type_)
+    fun createIrTypeArgument_star(oneOfStar : Any): Any = arrayOf<Any?>(oneOfStar)
+    fun createIrTypeArgument_type_(oneOfType : Any): Any = arrayOf<Any?>(oneOfType)
 
     fun createIrSimpleType(annotations : Any, classifier : Any, hasQuestionMark : Boolean, argument : List<Any>, abbreviation : Any?): Any = arrayOf<Any?>(annotations, classifier, hasQuestionMark, argument, abbreviation)
 
@@ -60,9 +58,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrErrorType(annotations : Any): Any = arrayOf<Any?>(annotations)
 
-    fun createIrType_simple(simple : Any): Any = arrayOf<Any?>(simple)
-    fun createIrType_dynamic(dynamic : Any): Any = arrayOf<Any?>(dynamic)
-    fun createIrType_error(error : Any): Any = arrayOf<Any?>(error)
+    fun createIrType_simple(oneOfSimple : Any): Any = arrayOf<Any?>(oneOfSimple)
+    fun createIrType_dynamic(oneOfDynamic : Any): Any = arrayOf<Any?>(oneOfDynamic)
+    fun createIrType_error(oneOfError : Any): Any = arrayOf<Any?>(oneOfError)
 
     fun createIrTypeTable(types : List<Any>): Any = arrayOf<Any?>(types)
 
@@ -70,48 +68,44 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrBlock(origin : Any?, statement : List<Any>): Any = arrayOf<Any?>(origin, statement)
 
-    fun createMemberAccessCommon(dispatchReceiver : Any?, extensionReceiver : Any?, valueArgument : List<Any>, typeArguments : Any): Any = arrayOf<Any?>(dispatchReceiver, extensionReceiver, valueArgument, typeArguments)
+    fun createIrCall(symbol : Any, memberAccessDispatchReceiver : Any?, memberAccessExtensionReceiver : Any?, memberAccessValueArgument : List<Any>, memberAccessTypeArguments : Any, super_ : Any?, origin : Any?): Any = arrayOf<Any?>(symbol, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments, super_, origin)
 
-    fun createIrCall(symbol : Any, memberAccess : Any, super_ : Any?, origin : Any?): Any = arrayOf<Any?>(symbol, memberAccess, super_, origin)
+    fun createIrConstructorCall(symbol : Any, constructorTypeArgumentsCount : Int, memberAccessDispatchReceiver : Any?, memberAccessExtensionReceiver : Any?, memberAccessValueArgument : List<Any>, memberAccessTypeArguments : Any): Any = arrayOf<Any?>(symbol, constructorTypeArgumentsCount, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments)
 
-    fun createIrConstructorCall(symbol : Any, constructorTypeArgumentsCount : Int, memberAccess : Any): Any = arrayOf<Any?>(symbol, constructorTypeArgumentsCount, memberAccess)
-
-    fun createIrFunctionReference(symbol : Any, origin : Any?, memberAccess : Any): Any = arrayOf<Any?>(symbol, origin, memberAccess)
+    fun createIrFunctionReference(symbol : Any, origin : Any?, memberAccessDispatchReceiver : Any?, memberAccessExtensionReceiver : Any?, memberAccessValueArgument : List<Any>, memberAccessTypeArguments : Any): Any = arrayOf<Any?>(symbol, origin, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments)
 
     fun createIrLocalDelegatedPropertyReference(delegate : Any, getter : Any?, setter : Any?, symbol : Any, origin : Any?): Any = arrayOf<Any?>(delegate, getter, setter, symbol, origin)
 
-    fun createIrPropertyReference(field : Any?, getter : Any?, setter : Any?, origin : Any?, memberAccess : Any, symbol : Any): Any = arrayOf<Any?>(field, getter, setter, origin, memberAccess, symbol)
+    fun createIrPropertyReference(field : Any?, getter : Any?, setter : Any?, origin : Any?, memberAccessDispatchReceiver : Any?, memberAccessExtensionReceiver : Any?, memberAccessValueArgument : List<Any>, memberAccessTypeArguments : Any, symbol : Any): Any = arrayOf<Any?>(field, getter, setter, origin, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments, symbol)
 
     fun createIrComposite(statement : List<Any>, origin : Any?): Any = arrayOf<Any?>(statement, origin)
 
     fun createIrClassReference(classSymbol : Any, classType : Any): Any = arrayOf<Any?>(classSymbol, classType)
 
-    fun createIrConst_null_(null_ : Boolean): Any = arrayOf<Any?>(null_)
-    fun createIrConst_boolean(boolean : Boolean): Any = arrayOf<Any?>(boolean)
-    fun createIrConst_char(char : Int): Any = arrayOf<Any?>(char)
-    fun createIrConst_byte(byte : Int): Any = arrayOf<Any?>(byte)
-    fun createIrConst_short(short : Int): Any = arrayOf<Any?>(short)
-    fun createIrConst_int(int : Int): Any = arrayOf<Any?>(int)
-    fun createIrConst_long(long : Long): Any = arrayOf<Any?>(long)
-    fun createIrConst_float(float : Float): Any = arrayOf<Any?>(float)
-    fun createIrConst_double(double : Double): Any = arrayOf<Any?>(double)
-    fun createIrConst_string(string : Any): Any = arrayOf<Any?>(string)
+    fun createIrConst_null_(oneOfNull : Boolean): Any = arrayOf<Any?>(oneOfNull)
+    fun createIrConst_boolean(oneOfBoolean : Boolean): Any = arrayOf<Any?>(oneOfBoolean)
+    fun createIrConst_char(oneOfChar : Int): Any = arrayOf<Any?>(oneOfChar)
+    fun createIrConst_byte(oneOfByte : Int): Any = arrayOf<Any?>(oneOfByte)
+    fun createIrConst_short(oneOfShort : Int): Any = arrayOf<Any?>(oneOfShort)
+    fun createIrConst_int(oneOfInt : Int): Any = arrayOf<Any?>(oneOfInt)
+    fun createIrConst_long(oneOfLong : Long): Any = arrayOf<Any?>(oneOfLong)
+    fun createIrConst_float(oneOfFloat : Float): Any = arrayOf<Any?>(oneOfFloat)
+    fun createIrConst_double(oneOfDouble : Double): Any = arrayOf<Any?>(oneOfDouble)
+    fun createIrConst_string(oneOfString : Any): Any = arrayOf<Any?>(oneOfString)
 
     fun createIrContinue(loopId : Int, label : Any?): Any = arrayOf<Any?>(loopId, label)
 
-    fun createIrDelegatingConstructorCall(symbol : Any, memberAccess : Any): Any = arrayOf<Any?>(symbol, memberAccess)
+    fun createIrDelegatingConstructorCall(symbol : Any, memberAccessDispatchReceiver : Any?, memberAccessExtensionReceiver : Any?, memberAccessValueArgument : List<Any>, memberAccessTypeArguments : Any): Any = arrayOf<Any?>(symbol, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments)
 
-    fun createIrDoWhile(loop : Any): Any = arrayOf<Any?>(loop)
+    fun createIrDoWhile(loopLoopId : Int, loopCondition : Any, loopLabel : Any?, loopBody : Any?, loopOrigin : Any?): Any = arrayOf<Any?>(loopLoopId, loopCondition, loopLabel, loopBody, loopOrigin)
 
-    fun createIrEnumConstructorCall(symbol : Any, memberAccess : Any): Any = arrayOf<Any?>(symbol, memberAccess)
+    fun createIrEnumConstructorCall(symbol : Any, memberAccessDispatchReceiver : Any?, memberAccessExtensionReceiver : Any?, memberAccessValueArgument : List<Any>, memberAccessTypeArguments : Any): Any = arrayOf<Any?>(symbol, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments)
 
     fun createIrGetClass(argument : Any): Any = arrayOf<Any?>(argument)
 
     fun createIrGetEnumValue(symbol : Any): Any = arrayOf<Any?>(symbol)
 
-    fun createFieldAccessCommon(symbol : Any, super_ : Any?, receiver : Any?): Any = arrayOf<Any?>(symbol, super_, receiver)
-
-    fun createIrGetField(fieldAccess : Any, origin : Any?): Any = arrayOf<Any?>(fieldAccess, origin)
+    fun createIrGetField(fieldAccessSymbol : Any, fieldAccessSuper : Any?, fieldAccessReceiver : Any?, origin : Any?): Any = arrayOf<Any?>(fieldAccessSymbol, fieldAccessSuper, fieldAccessReceiver, origin)
 
     fun createIrGetValue(symbol : Any, origin : Any?): Any = arrayOf<Any?>(symbol, origin)
 
@@ -119,15 +113,13 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrInstanceInitializerCall(symbol : Any): Any = arrayOf<Any?>(symbol)
 
-    fun createLoop(loopId : Int, condition : Any, label : Any?, body : Any?, origin : Any?): Any = arrayOf<Any?>(loopId, condition, label, body, origin)
-
     fun createIrReturn(returnTarget : Any, value : Any): Any = arrayOf<Any?>(returnTarget, value)
 
-    fun createIrSetField(fieldAccess : Any, value : Any, origin : Any?): Any = arrayOf<Any?>(fieldAccess, value, origin)
+    fun createIrSetField(fieldAccessSymbol : Any, fieldAccessSuper : Any?, fieldAccessReceiver : Any?, value : Any, origin : Any?): Any = arrayOf<Any?>(fieldAccessSymbol, fieldAccessSuper, fieldAccessReceiver, value, origin)
 
     fun createIrSetVariable(symbol : Any, value : Any, origin : Any?): Any = arrayOf<Any?>(symbol, value, origin)
 
-    fun createIrSpreadElement(expression : Any, coordinates : Any): Any = arrayOf<Any?>(expression, coordinates)
+    fun createIrSpreadElement(expression : Any, coordinatesStartOffset : Int, coordinatesEndOffset : Int): Any = arrayOf<Any?>(expression, coordinatesStartOffset, coordinatesEndOffset)
 
     fun createIrStringConcat(argument : List<Any>): Any = arrayOf<Any?>(argument)
 
@@ -139,12 +131,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrVararg(elementType : Any, element : List<Any>): Any = arrayOf<Any?>(elementType, element)
 
-    fun createIrVarargElement_expression(expression : Any): Any = arrayOf<Any?>(expression)
-    fun createIrVarargElement_spreadElement(spreadElement : Any): Any = arrayOf<Any?>(spreadElement)
+    fun createIrVarargElement_expression(oneOfExpression : Any): Any = arrayOf<Any?>(oneOfExpression)
+    fun createIrVarargElement_spreadElement(oneOfSpreadElement : Any): Any = arrayOf<Any?>(oneOfSpreadElement)
 
     fun createIrWhen(branch : List<Any>, origin : Any?): Any = arrayOf<Any?>(branch, origin)
 
-    fun createIrWhile(loop : Any): Any = arrayOf<Any?>(loop)
+    fun createIrWhile(loopLoopId : Int, loopCondition : Any, loopLabel : Any?, loopBody : Any?, loopOrigin : Any?): Any = arrayOf<Any?>(loopLoopId, loopCondition, loopLabel, loopBody, loopOrigin)
 
     fun createIrFunctionExpression(function : Any, origin : Any): Any = arrayOf<Any?>(function, origin)
 
@@ -154,88 +146,88 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrDynamicOperatorExpression(operator : Any, receiver : Any, argument : List<Any>): Any = arrayOf<Any?>(operator, receiver, argument)
 
-    fun createIrOperation_block(block : Any): Any = arrayOf<Any?>(block)
-    fun createIrOperation_break_(break_ : Any): Any = arrayOf<Any?>(break_)
-    fun createIrOperation_call(call : Any): Any = arrayOf<Any?>(call)
-    fun createIrOperation_classReference(classReference : Any): Any = arrayOf<Any?>(classReference)
-    fun createIrOperation_composite(composite : Any): Any = arrayOf<Any?>(composite)
-    fun createIrOperation_const(const : Any): Any = arrayOf<Any?>(const)
-    fun createIrOperation_continue_(continue_ : Any): Any = arrayOf<Any?>(continue_)
-    fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall : Any): Any = arrayOf<Any?>(delegatingConstructorCall)
-    fun createIrOperation_doWhile(doWhile : Any): Any = arrayOf<Any?>(doWhile)
-    fun createIrOperation_enumConstructorCall(enumConstructorCall : Any): Any = arrayOf<Any?>(enumConstructorCall)
-    fun createIrOperation_functionReference(functionReference : Any): Any = arrayOf<Any?>(functionReference)
-    fun createIrOperation_getClass(getClass : Any): Any = arrayOf<Any?>(getClass)
-    fun createIrOperation_getEnumValue(getEnumValue : Any): Any = arrayOf<Any?>(getEnumValue)
-    fun createIrOperation_getField(getField : Any): Any = arrayOf<Any?>(getField)
-    fun createIrOperation_getObject(getObject : Any): Any = arrayOf<Any?>(getObject)
-    fun createIrOperation_getValue(getValue : Any): Any = arrayOf<Any?>(getValue)
-    fun createIrOperation_instanceInitializerCall(instanceInitializerCall : Any): Any = arrayOf<Any?>(instanceInitializerCall)
-    fun createIrOperation_propertyReference(propertyReference : Any): Any = arrayOf<Any?>(propertyReference)
-    fun createIrOperation_return_(return_ : Any): Any = arrayOf<Any?>(return_)
-    fun createIrOperation_setField(setField : Any): Any = arrayOf<Any?>(setField)
-    fun createIrOperation_setVariable(setVariable : Any): Any = arrayOf<Any?>(setVariable)
-    fun createIrOperation_stringConcat(stringConcat : Any): Any = arrayOf<Any?>(stringConcat)
-    fun createIrOperation_throw_(throw_ : Any): Any = arrayOf<Any?>(throw_)
-    fun createIrOperation_try_(try_ : Any): Any = arrayOf<Any?>(try_)
-    fun createIrOperation_typeOp(typeOp : Any): Any = arrayOf<Any?>(typeOp)
-    fun createIrOperation_vararg(vararg : Any): Any = arrayOf<Any?>(vararg)
-    fun createIrOperation_when_(when_ : Any): Any = arrayOf<Any?>(when_)
-    fun createIrOperation_while_(while_ : Any): Any = arrayOf<Any?>(while_)
-    fun createIrOperation_dynamicMember(dynamicMember : Any): Any = arrayOf<Any?>(dynamicMember)
-    fun createIrOperation_dynamicOperator(dynamicOperator : Any): Any = arrayOf<Any?>(dynamicOperator)
-    fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference : Any): Any = arrayOf<Any?>(localDelegatedPropertyReference)
-    fun createIrOperation_constructorCall(constructorCall : Any): Any = arrayOf<Any?>(constructorCall)
-    fun createIrOperation_functionExpression(functionExpression : Any): Any = arrayOf<Any?>(functionExpression)
+    fun createIrOperation_block(oneOfBlock : Any): Any = arrayOf<Any?>(oneOfBlock)
+    fun createIrOperation_break_(oneOfBreak : Any): Any = arrayOf<Any?>(oneOfBreak)
+    fun createIrOperation_call(oneOfCall : Any): Any = arrayOf<Any?>(oneOfCall)
+    fun createIrOperation_classReference(oneOfClassReference : Any): Any = arrayOf<Any?>(oneOfClassReference)
+    fun createIrOperation_composite(oneOfComposite : Any): Any = arrayOf<Any?>(oneOfComposite)
+    fun createIrOperation_const(oneOfConst : Any): Any = arrayOf<Any?>(oneOfConst)
+    fun createIrOperation_continue_(oneOfContinue : Any): Any = arrayOf<Any?>(oneOfContinue)
+    fun createIrOperation_delegatingConstructorCall(oneOfDelegatingConstructorCall : Any): Any = arrayOf<Any?>(oneOfDelegatingConstructorCall)
+    fun createIrOperation_doWhile(oneOfDoWhile : Any): Any = arrayOf<Any?>(oneOfDoWhile)
+    fun createIrOperation_enumConstructorCall(oneOfEnumConstructorCall : Any): Any = arrayOf<Any?>(oneOfEnumConstructorCall)
+    fun createIrOperation_functionReference(oneOfFunctionReference : Any): Any = arrayOf<Any?>(oneOfFunctionReference)
+    fun createIrOperation_getClass(oneOfGetClass : Any): Any = arrayOf<Any?>(oneOfGetClass)
+    fun createIrOperation_getEnumValue(oneOfGetEnumValue : Any): Any = arrayOf<Any?>(oneOfGetEnumValue)
+    fun createIrOperation_getField(oneOfGetField : Any): Any = arrayOf<Any?>(oneOfGetField)
+    fun createIrOperation_getObject(oneOfGetObject : Any): Any = arrayOf<Any?>(oneOfGetObject)
+    fun createIrOperation_getValue(oneOfGetValue : Any): Any = arrayOf<Any?>(oneOfGetValue)
+    fun createIrOperation_instanceInitializerCall(oneOfInstanceInitializerCall : Any): Any = arrayOf<Any?>(oneOfInstanceInitializerCall)
+    fun createIrOperation_propertyReference(oneOfPropertyReference : Any): Any = arrayOf<Any?>(oneOfPropertyReference)
+    fun createIrOperation_return_(oneOfReturn : Any): Any = arrayOf<Any?>(oneOfReturn)
+    fun createIrOperation_setField(oneOfSetField : Any): Any = arrayOf<Any?>(oneOfSetField)
+    fun createIrOperation_setVariable(oneOfSetVariable : Any): Any = arrayOf<Any?>(oneOfSetVariable)
+    fun createIrOperation_stringConcat(oneOfStringConcat : Any): Any = arrayOf<Any?>(oneOfStringConcat)
+    fun createIrOperation_throw_(oneOfThrow : Any): Any = arrayOf<Any?>(oneOfThrow)
+    fun createIrOperation_try_(oneOfTry : Any): Any = arrayOf<Any?>(oneOfTry)
+    fun createIrOperation_typeOp(oneOfTypeOp : Any): Any = arrayOf<Any?>(oneOfTypeOp)
+    fun createIrOperation_vararg(oneOfVararg : Any): Any = arrayOf<Any?>(oneOfVararg)
+    fun createIrOperation_when_(oneOfWhen : Any): Any = arrayOf<Any?>(oneOfWhen)
+    fun createIrOperation_while_(oneOfWhile : Any): Any = arrayOf<Any?>(oneOfWhile)
+    fun createIrOperation_dynamicMember(oneOfDynamicMember : Any): Any = arrayOf<Any?>(oneOfDynamicMember)
+    fun createIrOperation_dynamicOperator(oneOfDynamicOperator : Any): Any = arrayOf<Any?>(oneOfDynamicOperator)
+    fun createIrOperation_localDelegatedPropertyReference(oneOfLocalDelegatedPropertyReference : Any): Any = arrayOf<Any?>(oneOfLocalDelegatedPropertyReference)
+    fun createIrOperation_constructorCall(oneOfConstructorCall : Any): Any = arrayOf<Any?>(oneOfConstructorCall)
+    fun createIrOperation_functionExpression(oneOfFunctionExpression : Any): Any = arrayOf<Any?>(oneOfFunctionExpression)
 
     fun createIrTypeOperator(index: Int): Any = index
 
-    fun createIrExpression(operation : Any, type_ : Any, coordinates : Any): Any = arrayOf<Any?>(operation, type_, coordinates)
+    fun createIrExpression(operation : Any, type_ : Any, coordinatesStartOffset : Int, coordinatesEndOffset : Int): Any = arrayOf<Any?>(operation, type_, coordinatesStartOffset, coordinatesEndOffset)
 
     fun createNullableIrExpression(expression : Any?): Any = arrayOf<Any?>(expression)
 
-    fun createIrFunction(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, visibility : Any, isInline : Boolean, isExternal : Boolean, typeParameters : Any, dispatchReceiver : Any?, extensionReceiver : Any?, valueParameter : List<Any>, body : Any?, returnType : Any, modality : Any, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Any>): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, visibility, isInline, isExternal, typeParameters, dispatchReceiver, extensionReceiver, valueParameter, body, returnType, modality, isTailrec, isSuspend, overridden)
+    fun createIrFunction(baseBaseSymbol : Any, baseBaseOrigin : Any, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : Any, baseName : Any, baseVisibility : Any, baseIsInline : Boolean, baseIsExternal : Boolean, baseTypeParameters : Any, baseDispatchReceiver : Any?, baseExtensionReceiver : Any?, baseValueParameter : List<Any>, baseBody : Any?, baseReturnType : Any, modality : Any, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Any>): Any = arrayOf<Any?>(baseBaseSymbol, baseBaseOrigin, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations, baseName, baseVisibility, baseIsInline, baseIsExternal, baseTypeParameters, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType, modality, isTailrec, isSuspend, overridden)
 
-    fun createIrConstructor(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, visibility : Any, isInline : Boolean, isExternal : Boolean, typeParameters : Any, dispatchReceiver : Any?, extensionReceiver : Any?, valueParameter : List<Any>, body : Any?, returnType : Any, isPrimary : Boolean): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, visibility, isInline, isExternal, typeParameters, dispatchReceiver, extensionReceiver, valueParameter, body, returnType, isPrimary)
+    fun createIrConstructor(baseBaseSymbol : Any, baseBaseOrigin : Any, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : Any, baseName : Any, baseVisibility : Any, baseIsInline : Boolean, baseIsExternal : Boolean, baseTypeParameters : Any, baseDispatchReceiver : Any?, baseExtensionReceiver : Any?, baseValueParameter : List<Any>, baseBody : Any?, baseReturnType : Any, isPrimary : Boolean): Any = arrayOf<Any?>(baseBaseSymbol, baseBaseOrigin, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations, baseName, baseVisibility, baseIsInline, baseIsExternal, baseTypeParameters, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType, isPrimary)
 
-    fun createIrField(symbol : Any, origin : Any, coordinates : Any, annotations : Any, initializer : Any?, name : Any, visibility : Any, isFinal : Boolean, isExternal : Boolean, isStatic : Boolean, type_ : Any): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, initializer, name, visibility, isFinal, isExternal, isStatic, type_)
+    fun createIrField(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, initializer : Any?, name : Any, visibility : Any, isFinal : Boolean, isExternal : Boolean, isStatic : Boolean, type_ : Any): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, initializer, name, visibility, isFinal, isExternal, isStatic, type_)
 
-    fun createIrLocalDelegatedProperty(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, type_ : Any, isVar : Boolean, delegate : Any, getter : Any?, setter : Any?): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, type_, isVar, delegate, getter, setter)
+    fun createIrLocalDelegatedProperty(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, type_ : Any, isVar : Boolean, delegate : Any, getter : Any?, setter : Any?): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, type_, isVar, delegate, getter, setter)
 
-    fun createIrProperty(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, visibility : Any, modality : Any, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, isDelegated : Boolean, isExternal : Boolean, backingField : Any?, getter : Any?, setter : Any?): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, visibility, modality, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
+    fun createIrProperty(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, visibility : Any, modality : Any, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, isDelegated : Boolean, isExternal : Boolean, backingField : Any?, getter : Any?, setter : Any?): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, visibility, modality, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
 
-    fun createIrVariable(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, type_ : Any, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, initializer : Any?): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, type_, isVar, isConst, isLateinit, initializer)
+    fun createIrVariable(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, type_ : Any, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, initializer : Any?): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, type_, isVar, isConst, isLateinit, initializer)
 
     fun createClassKind(index: Int): Any = index
 
     fun createModalityKind(index: Int): Any = index
 
-    fun createIrValueParameter(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, index : Int, type_ : Any, varargElementType : Any?, isCrossinline : Boolean, isNoinline : Boolean, defaultValue : Any?): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, index, type_, varargElementType, isCrossinline, isNoinline, defaultValue)
+    fun createIrValueParameter(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, index : Int, type_ : Any, varargElementType : Any?, isCrossinline : Boolean, isNoinline : Boolean, defaultValue : Any?): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, index, type_, varargElementType, isCrossinline, isNoinline, defaultValue)
 
-    fun createIrTypeParameter(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, index : Int, variance : Any, superType : List<Any>, isReified : Boolean): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, index, variance, superType, isReified)
+    fun createIrTypeParameter(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, index : Int, variance : Any, superType : List<Any>, isReified : Boolean): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, index, variance, superType, isReified)
 
     fun createIrTypeParameterContainer(typeParameter : List<Any>): Any = arrayOf<Any?>(typeParameter)
 
-    fun createIrClass(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, kind : Any, visibility : Any, modality : Any, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, thisReceiver : Any?, typeParameters : Any, declarationContainer : Any, superType : List<Any>): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters, declarationContainer, superType)
+    fun createIrClass(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, kind : Any, visibility : Any, modality : Any, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, thisReceiver : Any?, typeParameters : Any, declarationContainer : Any, superType : List<Any>): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters, declarationContainer, superType)
 
-    fun createIrTypeAlias(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, visibility : Any, typeParameters : Any, expandedType : Any, isActual : Boolean): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, visibility, typeParameters, expandedType, isActual)
+    fun createIrTypeAlias(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, visibility : Any, typeParameters : Any, expandedType : Any, isActual : Boolean): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, visibility, typeParameters, expandedType, isActual)
 
-    fun createIrEnumEntry(symbol : Any, origin : Any, coordinates : Any, annotations : Any, initializer : Any?, correspondingClass : Any?, name : Any): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, initializer, correspondingClass, name)
+    fun createIrEnumEntry(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, initializer : Any?, correspondingClass : Any?, name : Any): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, initializer, correspondingClass, name)
 
-    fun createIrAnonymousInit(symbol : Any, origin : Any, coordinates : Any, annotations : Any, body : Any): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, body)
+    fun createIrAnonymousInit(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, body : Any): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, body)
 
-    fun createIrDeclaration_irAnonymousInit(irAnonymousInit : Any): Any = arrayOf<Any?>(irAnonymousInit)
-    fun createIrDeclaration_irClass(irClass : Any): Any = arrayOf<Any?>(irClass)
-    fun createIrDeclaration_irConstructor(irConstructor : Any): Any = arrayOf<Any?>(irConstructor)
-    fun createIrDeclaration_irEnumEntry(irEnumEntry : Any): Any = arrayOf<Any?>(irEnumEntry)
-    fun createIrDeclaration_irField(irField : Any): Any = arrayOf<Any?>(irField)
-    fun createIrDeclaration_irFunction(irFunction : Any): Any = arrayOf<Any?>(irFunction)
-    fun createIrDeclaration_irProperty(irProperty : Any): Any = arrayOf<Any?>(irProperty)
-    fun createIrDeclaration_irTypeParameter(irTypeParameter : Any): Any = arrayOf<Any?>(irTypeParameter)
-    fun createIrDeclaration_irVariable(irVariable : Any): Any = arrayOf<Any?>(irVariable)
-    fun createIrDeclaration_irValueParameter(irValueParameter : Any): Any = arrayOf<Any?>(irValueParameter)
-    fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty : Any): Any = arrayOf<Any?>(irLocalDelegatedProperty)
-    fun createIrDeclaration_irTypeAlias(irTypeAlias : Any): Any = arrayOf<Any?>(irTypeAlias)
+    fun createIrDeclaration_irAnonymousInit(oneOfIrAnonymousInit : Any): Any = arrayOf<Any?>(oneOfIrAnonymousInit)
+    fun createIrDeclaration_irClass(oneOfIrClass : Any): Any = arrayOf<Any?>(oneOfIrClass)
+    fun createIrDeclaration_irConstructor(oneOfIrConstructor : Any): Any = arrayOf<Any?>(oneOfIrConstructor)
+    fun createIrDeclaration_irEnumEntry(oneOfIrEnumEntry : Any): Any = arrayOf<Any?>(oneOfIrEnumEntry)
+    fun createIrDeclaration_irField(oneOfIrField : Any): Any = arrayOf<Any?>(oneOfIrField)
+    fun createIrDeclaration_irFunction(oneOfIrFunction : Any): Any = arrayOf<Any?>(oneOfIrFunction)
+    fun createIrDeclaration_irProperty(oneOfIrProperty : Any): Any = arrayOf<Any?>(oneOfIrProperty)
+    fun createIrDeclaration_irTypeParameter(oneOfIrTypeParameter : Any): Any = arrayOf<Any?>(oneOfIrTypeParameter)
+    fun createIrDeclaration_irVariable(oneOfIrVariable : Any): Any = arrayOf<Any?>(oneOfIrVariable)
+    fun createIrDeclaration_irValueParameter(oneOfIrValueParameter : Any): Any = arrayOf<Any?>(oneOfIrValueParameter)
+    fun createIrDeclaration_irLocalDelegatedProperty(oneOfIrLocalDelegatedProperty : Any): Any = arrayOf<Any?>(oneOfIrLocalDelegatedProperty)
+    fun createIrDeclaration_irTypeAlias(oneOfIrTypeAlias : Any): Any = arrayOf<Any?>(oneOfIrTypeAlias)
 
     fun createIrBranch(condition : Any, result : Any): Any = arrayOf<Any?>(condition, result)
 
@@ -247,12 +239,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrSyntheticBody(kind : Any): Any = arrayOf<Any?>(kind)
 
-    fun createIrStatement_declaration(coordinates : Any, declaration : Any): Any = arrayOf<Any?>(coordinates, declaration)
-    fun createIrStatement_expression(coordinates : Any, expression : Any): Any = arrayOf<Any?>(coordinates, expression)
-    fun createIrStatement_blockBody(coordinates : Any, blockBody : Any): Any = arrayOf<Any?>(coordinates, blockBody)
-    fun createIrStatement_branch(coordinates : Any, branch : Any): Any = arrayOf<Any?>(coordinates, branch)
-    fun createIrStatement_catch(coordinates : Any, catch : Any): Any = arrayOf<Any?>(coordinates, catch)
-    fun createIrStatement_syntheticBody(coordinates : Any, syntheticBody : Any): Any = arrayOf<Any?>(coordinates, syntheticBody)
+    fun createIrStatement_declaration(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfDeclaration : Any): Any = arrayOf<Any?>(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration)
+    fun createIrStatement_expression(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfExpression : Any): Any = arrayOf<Any?>(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression)
+    fun createIrStatement_blockBody(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfBlockBody : Any): Any = arrayOf<Any?>(coordinatesStartOffset, coordinatesEndOffset, oneOfBlockBody)
+    fun createIrStatement_branch(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfBranch : Any): Any = arrayOf<Any?>(coordinatesStartOffset, coordinatesEndOffset, oneOfBranch)
+    fun createIrStatement_catch(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfCatch : Any): Any = arrayOf<Any?>(coordinatesStartOffset, coordinatesEndOffset, oneOfCatch)
+    fun createIrStatement_syntheticBody(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfSyntheticBody : Any): Any = arrayOf<Any?>(coordinatesStartOffset, coordinatesEndOffset, oneOfSyntheticBody)
 
     open fun readDescriptorReference(): Any {
         var packageFqName: Any? = null
@@ -304,21 +296,6 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         return createUniqId(index, isLocal)
     }
 
-    open fun readCoordinates(): Any {
-        var startOffset: Int = 0
-        var endOffset: Int = 0
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> startOffset = readInt32()
-                    2 -> endOffset = readInt32()
-                    else -> skip(type)
-                }
-            }
-        }
-        return createCoordinates(startOffset, endOffset)
-    }
-
     open fun readVisibility(): Any {
         var name: Any? = null
         while (hasData) {
@@ -346,18 +323,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrDeclarationOrigin(): Any {
-        var origin: Any? = null
-        var custom: Any? = null
+        var oneOfOrigin: Any? = null
+        var oneOfCustom: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        origin = createKnownOrigin(readInt32())
+                        oneOfOrigin = createKnownOrigin(readInt32())
                         oneOfIndex = 1
                     }
                     2 -> {
-                        custom = readWithLength { readIrDataIndex() }
+                        oneOfCustom = readWithLength { readIrDataIndex() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -365,8 +342,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrDeclarationOrigin_origin(origin!!)
-            2 -> return createIrDeclarationOrigin_custom(custom!!)
+            1 -> return createIrDeclarationOrigin_origin(oneOfOrigin!!)
+            2 -> return createIrDeclarationOrigin_custom(oneOfCustom!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
@@ -548,18 +525,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrTypeArgument(): Any {
-        var star: Any? = null
-        var type_: Any? = null
+        var oneOfStar: Any? = null
+        var oneOfType: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        star = readWithLength { readIrStarProjection() }
+                        oneOfStar = readWithLength { readIrStarProjection() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        type_ = readWithLength { readIrTypeProjection() }
+                        oneOfType = readWithLength { readIrTypeProjection() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -567,8 +544,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrTypeArgument_star(star!!)
-            2 -> return createIrTypeArgument_type_(type_!!)
+            1 -> return createIrTypeArgument_star(oneOfStar!!)
+            2 -> return createIrTypeArgument_type_(oneOfType!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
@@ -640,23 +617,23 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrType(): Any {
-        var simple: Any? = null
-        var dynamic: Any? = null
-        var error: Any? = null
+        var oneOfSimple: Any? = null
+        var oneOfDynamic: Any? = null
+        var oneOfError: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        simple = readWithLength { readIrSimpleType() }
+                        oneOfSimple = readWithLength { readIrSimpleType() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        dynamic = readWithLength { readIrDynamicType() }
+                        oneOfDynamic = readWithLength { readIrDynamicType() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        error = readWithLength { readIrErrorType() }
+                        oneOfError = readWithLength { readIrErrorType() }
                         oneOfIndex = 3
                     }
                     else -> skip(type)
@@ -664,9 +641,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrType_simple(simple!!)
-            2 -> return createIrType_dynamic(dynamic!!)
-            3 -> return createIrType_error(error!!)
+            1 -> return createIrType_simple(oneOfSimple!!)
+            2 -> return createIrType_dynamic(oneOfDynamic!!)
+            3 -> return createIrType_error(oneOfError!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
@@ -714,76 +691,102 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         return createIrBlock(origin, statement)
     }
 
-    open fun readMemberAccessCommon(): Any {
-        var dispatchReceiver: Any? = null
-        var extensionReceiver: Any? = null
-        var valueArgument: MutableList<Any> = mutableListOf()
-        var typeArguments: Any? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> dispatchReceiver = readWithLength { readIrExpression() }
-                    2 -> extensionReceiver = readWithLength { readIrExpression() }
-                    3 -> valueArgument.add(readWithLength { readNullableIrExpression() })
-                    4 -> typeArguments = readWithLength { readTypeArguments() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createMemberAccessCommon(dispatchReceiver, extensionReceiver, valueArgument, typeArguments!!)
-    }
-
     open fun readIrCall(): Any {
         var symbol: Any? = null
-        var memberAccess: Any? = null
+        var memberAccessDispatchReceiver: Any? = null
+        var memberAccessExtensionReceiver: Any? = null
+        var memberAccessValueArgument: MutableList<Any> = mutableListOf()
+        var memberAccessTypeArguments: Any? = null
         var super_: Any? = null
         var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                    2 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     3 -> super_ = readWithLength { readIrDataIndex() }
                     4 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrCall(symbol!!, memberAccess!!, super_, origin)
+        return createIrCall(symbol!!, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!, super_, origin)
     }
 
     open fun readIrConstructorCall(): Any {
         var symbol: Any? = null
         var constructorTypeArgumentsCount: Int = 0
-        var memberAccess: Any? = null
+        var memberAccessDispatchReceiver: Any? = null
+        var memberAccessExtensionReceiver: Any? = null
+        var memberAccessValueArgument: MutableList<Any> = mutableListOf()
+        var memberAccessTypeArguments: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> symbol = readWithLength { readIrDataIndex() }
                     2 -> constructorTypeArgumentsCount = readInt32()
-                    3 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                    3 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrConstructorCall(symbol!!, constructorTypeArgumentsCount, memberAccess!!)
+        return createIrConstructorCall(symbol!!, constructorTypeArgumentsCount, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!)
     }
 
     open fun readIrFunctionReference(): Any {
         var symbol: Any? = null
         var origin: Any? = null
-        var memberAccess: Any? = null
+        var memberAccessDispatchReceiver: Any? = null
+        var memberAccessExtensionReceiver: Any? = null
+        var memberAccessValueArgument: MutableList<Any> = mutableListOf()
+        var memberAccessTypeArguments: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> symbol = readWithLength { readIrDataIndex() }
                     2 -> origin = readWithLength { readIrStatementOrigin() }
-                    3 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                    3 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrFunctionReference(symbol!!, origin, memberAccess!!)
+        return createIrFunctionReference(symbol!!, origin, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!)
     }
 
     open fun readIrLocalDelegatedPropertyReference(): Any {
@@ -812,7 +815,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var getter: Any? = null
         var setter: Any? = null
         var origin: Any? = null
-        var memberAccess: Any? = null
+        var memberAccessDispatchReceiver: Any? = null
+        var memberAccessExtensionReceiver: Any? = null
+        var memberAccessValueArgument: MutableList<Any> = mutableListOf()
+        var memberAccessTypeArguments: Any? = null
         var symbol: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
@@ -821,13 +827,25 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                     2 -> getter = readWithLength { readIrDataIndex() }
                     3 -> setter = readWithLength { readIrDataIndex() }
                     4 -> origin = readWithLength { readIrStatementOrigin() }
-                    5 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                    5 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     6 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrPropertyReference(field, getter, setter, origin, memberAccess!!, symbol!!)
+        return createIrPropertyReference(field, getter, setter, origin, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!, symbol!!)
     }
 
     open fun readIrComposite(): Any {
@@ -861,58 +879,58 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrConst(): Any {
-        var null_: Boolean? = null
-        var boolean: Boolean? = null
-        var char: Int? = null
-        var byte: Int? = null
-        var short: Int? = null
-        var int: Int? = null
-        var long: Long? = null
-        var float: Float? = null
-        var double: Double? = null
-        var string: Any? = null
+        var oneOfNull: Boolean? = null
+        var oneOfBoolean: Boolean? = null
+        var oneOfChar: Int? = null
+        var oneOfByte: Int? = null
+        var oneOfShort: Int? = null
+        var oneOfInt: Int? = null
+        var oneOfLong: Long? = null
+        var oneOfFloat: Float? = null
+        var oneOfDouble: Double? = null
+        var oneOfString: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        null_ = readBool()
+                        oneOfNull = readBool()
                         oneOfIndex = 1
                     }
                     2 -> {
-                        boolean = readBool()
+                        oneOfBoolean = readBool()
                         oneOfIndex = 2
                     }
                     3 -> {
-                        char = readInt32()
+                        oneOfChar = readInt32()
                         oneOfIndex = 3
                     }
                     4 -> {
-                        byte = readInt32()
+                        oneOfByte = readInt32()
                         oneOfIndex = 4
                     }
                     5 -> {
-                        short = readInt32()
+                        oneOfShort = readInt32()
                         oneOfIndex = 5
                     }
                     6 -> {
-                        int = readInt32()
+                        oneOfInt = readInt32()
                         oneOfIndex = 6
                     }
                     7 -> {
-                        long = readInt64()
+                        oneOfLong = readInt64()
                         oneOfIndex = 7
                     }
                     8 -> {
-                        float = readFloat()
+                        oneOfFloat = readFloat()
                         oneOfIndex = 8
                     }
                     9 -> {
-                        double = readDouble()
+                        oneOfDouble = readDouble()
                         oneOfIndex = 9
                     }
                     10 -> {
-                        string = readWithLength { readIrDataIndex() }
+                        oneOfString = readWithLength { readIrDataIndex() }
                         oneOfIndex = 10
                     }
                     else -> skip(type)
@@ -920,16 +938,16 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrConst_null_(null_!!)
-            2 -> return createIrConst_boolean(boolean!!)
-            3 -> return createIrConst_char(char!!)
-            4 -> return createIrConst_byte(byte!!)
-            5 -> return createIrConst_short(short!!)
-            6 -> return createIrConst_int(int!!)
-            7 -> return createIrConst_long(long!!)
-            8 -> return createIrConst_float(float!!)
-            9 -> return createIrConst_double(double!!)
-            10 -> return createIrConst_string(string!!)
+            1 -> return createIrConst_null_(oneOfNull!!)
+            2 -> return createIrConst_boolean(oneOfBoolean!!)
+            3 -> return createIrConst_char(oneOfChar!!)
+            4 -> return createIrConst_byte(oneOfByte!!)
+            5 -> return createIrConst_short(oneOfShort!!)
+            6 -> return createIrConst_int(oneOfInt!!)
+            7 -> return createIrConst_long(oneOfLong!!)
+            8 -> return createIrConst_float(oneOfFloat!!)
+            9 -> return createIrConst_double(oneOfDouble!!)
+            10 -> return createIrConst_string(oneOfString!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
@@ -951,45 +969,92 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     open fun readIrDelegatingConstructorCall(): Any {
         var symbol: Any? = null
-        var memberAccess: Any? = null
+        var memberAccessDispatchReceiver: Any? = null
+        var memberAccessExtensionReceiver: Any? = null
+        var memberAccessValueArgument: MutableList<Any> = mutableListOf()
+        var memberAccessTypeArguments: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                    2 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDelegatingConstructorCall(symbol!!, memberAccess!!)
+        return createIrDelegatingConstructorCall(symbol!!, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!)
     }
 
     open fun readIrDoWhile(): Any {
-        var loop: Any? = null
+        var loopLoopId: Int = 0
+        var loopCondition: Any? = null
+        var loopLabel: Any? = null
+        var loopBody: Any? = null
+        var loopOrigin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop = readWithLength { readLoop() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> loopLoopId = readInt32()
+                                    2 -> loopCondition = readWithLength { readIrExpression() }
+                                    3 -> loopLabel = readWithLength { readIrDataIndex() }
+                                    4 -> loopBody = readWithLength { readIrExpression() }
+                                    5 -> loopOrigin = readWithLength { readIrStatementOrigin() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDoWhile(loop!!)
+        return createIrDoWhile(loopLoopId, loopCondition!!, loopLabel, loopBody, loopOrigin)
     }
 
     open fun readIrEnumConstructorCall(): Any {
         var symbol: Any? = null
-        var memberAccess: Any? = null
+        var memberAccessDispatchReceiver: Any? = null
+        var memberAccessExtensionReceiver: Any? = null
+        var memberAccessValueArgument: MutableList<Any> = mutableListOf()
+        var memberAccessTypeArguments: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                    2 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrEnumConstructorCall(symbol!!, memberAccess!!)
+        return createIrEnumConstructorCall(symbol!!, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!)
     }
 
     open fun readIrGetClass(): Any {
@@ -1018,36 +1083,32 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         return createIrGetEnumValue(symbol!!)
     }
 
-    open fun readFieldAccessCommon(): Any {
-        var symbol: Any? = null
-        var super_: Any? = null
-        var receiver: Any? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> super_ = readWithLength { readIrDataIndex() }
-                    3 -> receiver = readWithLength { readIrExpression() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createFieldAccessCommon(symbol!!, super_, receiver)
-    }
-
     open fun readIrGetField(): Any {
-        var fieldAccess: Any? = null
+        var fieldAccessSymbol: Any? = null
+        var fieldAccessSuper: Any? = null
+        var fieldAccessReceiver: Any? = null
         var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> fieldAccess = readWithLength { readFieldAccessCommon() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> fieldAccessSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> fieldAccessSuper = readWithLength { readIrDataIndex() }
+                                    3 -> fieldAccessReceiver = readWithLength { readIrExpression() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetField(fieldAccess!!, origin)
+        return createIrGetField(fieldAccessSymbol!!, fieldAccessSuper, fieldAccessReceiver, origin)
     }
 
     open fun readIrGetValue(): Any {
@@ -1091,27 +1152,6 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         return createIrInstanceInitializerCall(symbol!!)
     }
 
-    open fun readLoop(): Any {
-        var loopId: Int = 0
-        var condition: Any? = null
-        var label: Any? = null
-        var body: Any? = null
-        var origin: Any? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> loopId = readInt32()
-                    2 -> condition = readWithLength { readIrExpression() }
-                    3 -> label = readWithLength { readIrDataIndex() }
-                    4 -> body = readWithLength { readIrExpression() }
-                    5 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createLoop(loopId, condition!!, label, body, origin)
-    }
-
     open fun readIrReturn(): Any {
         var returnTarget: Any? = null
         var value: Any? = null
@@ -1128,20 +1168,33 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrSetField(): Any {
-        var fieldAccess: Any? = null
+        var fieldAccessSymbol: Any? = null
+        var fieldAccessSuper: Any? = null
+        var fieldAccessReceiver: Any? = null
         var value: Any? = null
         var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> fieldAccess = readWithLength { readFieldAccessCommon() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> fieldAccessSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> fieldAccessSuper = readWithLength { readIrDataIndex() }
+                                    3 -> fieldAccessReceiver = readWithLength { readIrExpression() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     2 -> value = readWithLength { readIrExpression() }
                     3 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSetField(fieldAccess!!, value!!, origin)
+        return createIrSetField(fieldAccessSymbol!!, fieldAccessSuper, fieldAccessReceiver, value!!, origin)
     }
 
     open fun readIrSetVariable(): Any {
@@ -1163,17 +1216,28 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     open fun readIrSpreadElement(): Any {
         var expression: Any? = null
-        var coordinates: Any? = null
+        var coordinatesStartOffset: Int = 0
+        var coordinatesEndOffset: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> expression = readWithLength { readIrExpression() }
-                    2 -> coordinates = readWithLength { readCoordinates() }
+                    2 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> coordinatesStartOffset = readInt32()
+                                    2 -> coordinatesEndOffset = readInt32()
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSpreadElement(expression!!, coordinates!!)
+        return createIrSpreadElement(expression!!, coordinatesStartOffset, coordinatesEndOffset)
     }
 
     open fun readIrStringConcat(): Any {
@@ -1252,18 +1316,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrVarargElement(): Any {
-        var expression: Any? = null
-        var spreadElement: Any? = null
+        var oneOfExpression: Any? = null
+        var oneOfSpreadElement: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        expression = readWithLength { readIrExpression() }
+                        oneOfExpression = readWithLength { readIrExpression() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        spreadElement = readWithLength { readIrSpreadElement() }
+                        oneOfSpreadElement = readWithLength { readIrSpreadElement() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -1271,8 +1335,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrVarargElement_expression(expression!!)
-            2 -> return createIrVarargElement_spreadElement(spreadElement!!)
+            1 -> return createIrVarargElement_expression(oneOfExpression!!)
+            2 -> return createIrVarargElement_spreadElement(oneOfSpreadElement!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
@@ -1293,16 +1357,33 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrWhile(): Any {
-        var loop: Any? = null
+        var loopLoopId: Int = 0
+        var loopCondition: Any? = null
+        var loopLabel: Any? = null
+        var loopBody: Any? = null
+        var loopOrigin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop = readWithLength { readLoop() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> loopLoopId = readInt32()
+                                    2 -> loopCondition = readWithLength { readIrExpression() }
+                                    3 -> loopLabel = readWithLength { readIrDataIndex() }
+                                    4 -> loopBody = readWithLength { readIrExpression() }
+                                    5 -> loopOrigin = readWithLength { readIrStatementOrigin() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrWhile(loop!!)
+        return createIrWhile(loopLoopId, loopCondition!!, loopLabel, loopBody, loopOrigin)
     }
 
     open fun readIrFunctionExpression(): Any {
@@ -1353,173 +1434,173 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrOperation(): Any {
-        var block: Any? = null
-        var break_: Any? = null
-        var call: Any? = null
-        var classReference: Any? = null
-        var composite: Any? = null
-        var const: Any? = null
-        var continue_: Any? = null
-        var delegatingConstructorCall: Any? = null
-        var doWhile: Any? = null
-        var enumConstructorCall: Any? = null
-        var functionReference: Any? = null
-        var getClass: Any? = null
-        var getEnumValue: Any? = null
-        var getField: Any? = null
-        var getObject: Any? = null
-        var getValue: Any? = null
-        var instanceInitializerCall: Any? = null
-        var propertyReference: Any? = null
-        var return_: Any? = null
-        var setField: Any? = null
-        var setVariable: Any? = null
-        var stringConcat: Any? = null
-        var throw_: Any? = null
-        var try_: Any? = null
-        var typeOp: Any? = null
-        var vararg: Any? = null
-        var when_: Any? = null
-        var while_: Any? = null
-        var dynamicMember: Any? = null
-        var dynamicOperator: Any? = null
-        var localDelegatedPropertyReference: Any? = null
-        var constructorCall: Any? = null
-        var functionExpression: Any? = null
+        var oneOfBlock: Any? = null
+        var oneOfBreak: Any? = null
+        var oneOfCall: Any? = null
+        var oneOfClassReference: Any? = null
+        var oneOfComposite: Any? = null
+        var oneOfConst: Any? = null
+        var oneOfContinue: Any? = null
+        var oneOfDelegatingConstructorCall: Any? = null
+        var oneOfDoWhile: Any? = null
+        var oneOfEnumConstructorCall: Any? = null
+        var oneOfFunctionReference: Any? = null
+        var oneOfGetClass: Any? = null
+        var oneOfGetEnumValue: Any? = null
+        var oneOfGetField: Any? = null
+        var oneOfGetObject: Any? = null
+        var oneOfGetValue: Any? = null
+        var oneOfInstanceInitializerCall: Any? = null
+        var oneOfPropertyReference: Any? = null
+        var oneOfReturn: Any? = null
+        var oneOfSetField: Any? = null
+        var oneOfSetVariable: Any? = null
+        var oneOfStringConcat: Any? = null
+        var oneOfThrow: Any? = null
+        var oneOfTry: Any? = null
+        var oneOfTypeOp: Any? = null
+        var oneOfVararg: Any? = null
+        var oneOfWhen: Any? = null
+        var oneOfWhile: Any? = null
+        var oneOfDynamicMember: Any? = null
+        var oneOfDynamicOperator: Any? = null
+        var oneOfLocalDelegatedPropertyReference: Any? = null
+        var oneOfConstructorCall: Any? = null
+        var oneOfFunctionExpression: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        block = readWithLength { readIrBlock() }
+                        oneOfBlock = readWithLength { readIrBlock() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        break_ = readWithLength { readIrBreak() }
+                        oneOfBreak = readWithLength { readIrBreak() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        call = readWithLength { readIrCall() }
+                        oneOfCall = readWithLength { readIrCall() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        classReference = readWithLength { readIrClassReference() }
+                        oneOfClassReference = readWithLength { readIrClassReference() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        composite = readWithLength { readIrComposite() }
+                        oneOfComposite = readWithLength { readIrComposite() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        const = readWithLength { readIrConst() }
+                        oneOfConst = readWithLength { readIrConst() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        continue_ = readWithLength { readIrContinue() }
+                        oneOfContinue = readWithLength { readIrContinue() }
                         oneOfIndex = 7
                     }
                     8 -> {
-                        delegatingConstructorCall = readWithLength { readIrDelegatingConstructorCall() }
+                        oneOfDelegatingConstructorCall = readWithLength { readIrDelegatingConstructorCall() }
                         oneOfIndex = 8
                     }
                     9 -> {
-                        doWhile = readWithLength { readIrDoWhile() }
+                        oneOfDoWhile = readWithLength { readIrDoWhile() }
                         oneOfIndex = 9
                     }
                     10 -> {
-                        enumConstructorCall = readWithLength { readIrEnumConstructorCall() }
+                        oneOfEnumConstructorCall = readWithLength { readIrEnumConstructorCall() }
                         oneOfIndex = 10
                     }
                     11 -> {
-                        functionReference = readWithLength { readIrFunctionReference() }
+                        oneOfFunctionReference = readWithLength { readIrFunctionReference() }
                         oneOfIndex = 11
                     }
                     12 -> {
-                        getClass = readWithLength { readIrGetClass() }
+                        oneOfGetClass = readWithLength { readIrGetClass() }
                         oneOfIndex = 12
                     }
                     13 -> {
-                        getEnumValue = readWithLength { readIrGetEnumValue() }
+                        oneOfGetEnumValue = readWithLength { readIrGetEnumValue() }
                         oneOfIndex = 13
                     }
                     14 -> {
-                        getField = readWithLength { readIrGetField() }
+                        oneOfGetField = readWithLength { readIrGetField() }
                         oneOfIndex = 14
                     }
                     15 -> {
-                        getObject = readWithLength { readIrGetObject() }
+                        oneOfGetObject = readWithLength { readIrGetObject() }
                         oneOfIndex = 15
                     }
                     16 -> {
-                        getValue = readWithLength { readIrGetValue() }
+                        oneOfGetValue = readWithLength { readIrGetValue() }
                         oneOfIndex = 16
                     }
                     17 -> {
-                        instanceInitializerCall = readWithLength { readIrInstanceInitializerCall() }
+                        oneOfInstanceInitializerCall = readWithLength { readIrInstanceInitializerCall() }
                         oneOfIndex = 17
                     }
                     18 -> {
-                        propertyReference = readWithLength { readIrPropertyReference() }
+                        oneOfPropertyReference = readWithLength { readIrPropertyReference() }
                         oneOfIndex = 18
                     }
                     19 -> {
-                        return_ = readWithLength { readIrReturn() }
+                        oneOfReturn = readWithLength { readIrReturn() }
                         oneOfIndex = 19
                     }
                     20 -> {
-                        setField = readWithLength { readIrSetField() }
+                        oneOfSetField = readWithLength { readIrSetField() }
                         oneOfIndex = 20
                     }
                     21 -> {
-                        setVariable = readWithLength { readIrSetVariable() }
+                        oneOfSetVariable = readWithLength { readIrSetVariable() }
                         oneOfIndex = 21
                     }
                     22 -> {
-                        stringConcat = readWithLength { readIrStringConcat() }
+                        oneOfStringConcat = readWithLength { readIrStringConcat() }
                         oneOfIndex = 22
                     }
                     23 -> {
-                        throw_ = readWithLength { readIrThrow() }
+                        oneOfThrow = readWithLength { readIrThrow() }
                         oneOfIndex = 23
                     }
                     24 -> {
-                        try_ = readWithLength { readIrTry() }
+                        oneOfTry = readWithLength { readIrTry() }
                         oneOfIndex = 24
                     }
                     25 -> {
-                        typeOp = readWithLength { readIrTypeOp() }
+                        oneOfTypeOp = readWithLength { readIrTypeOp() }
                         oneOfIndex = 25
                     }
                     26 -> {
-                        vararg = readWithLength { readIrVararg() }
+                        oneOfVararg = readWithLength { readIrVararg() }
                         oneOfIndex = 26
                     }
                     27 -> {
-                        when_ = readWithLength { readIrWhen() }
+                        oneOfWhen = readWithLength { readIrWhen() }
                         oneOfIndex = 27
                     }
                     28 -> {
-                        while_ = readWithLength { readIrWhile() }
+                        oneOfWhile = readWithLength { readIrWhile() }
                         oneOfIndex = 28
                     }
                     29 -> {
-                        dynamicMember = readWithLength { readIrDynamicMemberExpression() }
+                        oneOfDynamicMember = readWithLength { readIrDynamicMemberExpression() }
                         oneOfIndex = 29
                     }
                     30 -> {
-                        dynamicOperator = readWithLength { readIrDynamicOperatorExpression() }
+                        oneOfDynamicOperator = readWithLength { readIrDynamicOperatorExpression() }
                         oneOfIndex = 30
                     }
                     31 -> {
-                        localDelegatedPropertyReference = readWithLength { readIrLocalDelegatedPropertyReference() }
+                        oneOfLocalDelegatedPropertyReference = readWithLength { readIrLocalDelegatedPropertyReference() }
                         oneOfIndex = 31
                     }
                     32 -> {
-                        constructorCall = readWithLength { readIrConstructorCall() }
+                        oneOfConstructorCall = readWithLength { readIrConstructorCall() }
                         oneOfIndex = 32
                     }
                     33 -> {
-                        functionExpression = readWithLength { readIrFunctionExpression() }
+                        oneOfFunctionExpression = readWithLength { readIrFunctionExpression() }
                         oneOfIndex = 33
                     }
                     else -> skip(type)
@@ -1527,39 +1608,39 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrOperation_block(block!!)
-            2 -> return createIrOperation_break_(break_!!)
-            3 -> return createIrOperation_call(call!!)
-            4 -> return createIrOperation_classReference(classReference!!)
-            5 -> return createIrOperation_composite(composite!!)
-            6 -> return createIrOperation_const(const!!)
-            7 -> return createIrOperation_continue_(continue_!!)
-            8 -> return createIrOperation_delegatingConstructorCall(delegatingConstructorCall!!)
-            9 -> return createIrOperation_doWhile(doWhile!!)
-            10 -> return createIrOperation_enumConstructorCall(enumConstructorCall!!)
-            11 -> return createIrOperation_functionReference(functionReference!!)
-            12 -> return createIrOperation_getClass(getClass!!)
-            13 -> return createIrOperation_getEnumValue(getEnumValue!!)
-            14 -> return createIrOperation_getField(getField!!)
-            15 -> return createIrOperation_getObject(getObject!!)
-            16 -> return createIrOperation_getValue(getValue!!)
-            17 -> return createIrOperation_instanceInitializerCall(instanceInitializerCall!!)
-            18 -> return createIrOperation_propertyReference(propertyReference!!)
-            19 -> return createIrOperation_return_(return_!!)
-            20 -> return createIrOperation_setField(setField!!)
-            21 -> return createIrOperation_setVariable(setVariable!!)
-            22 -> return createIrOperation_stringConcat(stringConcat!!)
-            23 -> return createIrOperation_throw_(throw_!!)
-            24 -> return createIrOperation_try_(try_!!)
-            25 -> return createIrOperation_typeOp(typeOp!!)
-            26 -> return createIrOperation_vararg(vararg!!)
-            27 -> return createIrOperation_when_(when_!!)
-            28 -> return createIrOperation_while_(while_!!)
-            29 -> return createIrOperation_dynamicMember(dynamicMember!!)
-            30 -> return createIrOperation_dynamicOperator(dynamicOperator!!)
-            31 -> return createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference!!)
-            32 -> return createIrOperation_constructorCall(constructorCall!!)
-            33 -> return createIrOperation_functionExpression(functionExpression!!)
+            1 -> return createIrOperation_block(oneOfBlock!!)
+            2 -> return createIrOperation_break_(oneOfBreak!!)
+            3 -> return createIrOperation_call(oneOfCall!!)
+            4 -> return createIrOperation_classReference(oneOfClassReference!!)
+            5 -> return createIrOperation_composite(oneOfComposite!!)
+            6 -> return createIrOperation_const(oneOfConst!!)
+            7 -> return createIrOperation_continue_(oneOfContinue!!)
+            8 -> return createIrOperation_delegatingConstructorCall(oneOfDelegatingConstructorCall!!)
+            9 -> return createIrOperation_doWhile(oneOfDoWhile!!)
+            10 -> return createIrOperation_enumConstructorCall(oneOfEnumConstructorCall!!)
+            11 -> return createIrOperation_functionReference(oneOfFunctionReference!!)
+            12 -> return createIrOperation_getClass(oneOfGetClass!!)
+            13 -> return createIrOperation_getEnumValue(oneOfGetEnumValue!!)
+            14 -> return createIrOperation_getField(oneOfGetField!!)
+            15 -> return createIrOperation_getObject(oneOfGetObject!!)
+            16 -> return createIrOperation_getValue(oneOfGetValue!!)
+            17 -> return createIrOperation_instanceInitializerCall(oneOfInstanceInitializerCall!!)
+            18 -> return createIrOperation_propertyReference(oneOfPropertyReference!!)
+            19 -> return createIrOperation_return_(oneOfReturn!!)
+            20 -> return createIrOperation_setField(oneOfSetField!!)
+            21 -> return createIrOperation_setVariable(oneOfSetVariable!!)
+            22 -> return createIrOperation_stringConcat(oneOfStringConcat!!)
+            23 -> return createIrOperation_throw_(oneOfThrow!!)
+            24 -> return createIrOperation_try_(oneOfTry!!)
+            25 -> return createIrOperation_typeOp(oneOfTypeOp!!)
+            26 -> return createIrOperation_vararg(oneOfVararg!!)
+            27 -> return createIrOperation_when_(oneOfWhen!!)
+            28 -> return createIrOperation_while_(oneOfWhile!!)
+            29 -> return createIrOperation_dynamicMember(oneOfDynamicMember!!)
+            30 -> return createIrOperation_dynamicOperator(oneOfDynamicOperator!!)
+            31 -> return createIrOperation_localDelegatedPropertyReference(oneOfLocalDelegatedPropertyReference!!)
+            32 -> return createIrOperation_constructorCall(oneOfConstructorCall!!)
+            33 -> return createIrOperation_functionExpression(oneOfFunctionExpression!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
@@ -1567,18 +1648,29 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     open fun readIrExpression(): Any {
         var operation: Any? = null
         var type_: Any? = null
-        var coordinates: Any? = null
+        var coordinatesStartOffset: Int = 0
+        var coordinatesEndOffset: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> operation = readWithLength { readIrOperation() }
                     2 -> type_ = readWithLength { readIrDataIndex() }
-                    3 -> coordinates = readWithLength { readCoordinates() }
+                    3 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> coordinatesStartOffset = readInt32()
+                                    2 -> coordinatesEndOffset = readInt32()
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrExpression(operation!!, type_!!, coordinates!!)
+        return createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
     }
 
     open fun readNullableIrExpression(): Any {
@@ -1595,20 +1687,21 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrFunction(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
-        var name: Any? = null
-        var visibility: Any? = null
-        var isInline: Boolean = false
-        var isExternal: Boolean = false
-        var typeParameters: Any? = null
-        var dispatchReceiver: Any? = null
-        var extensionReceiver: Any? = null
-        var valueParameter: MutableList<Any> = mutableListOf()
-        var body: Any? = null
-        var returnType: Any? = null
+        var baseBaseSymbol: Any? = null
+        var baseBaseOrigin: Any? = null
+        var baseBaseCoordinatesStartOffset: Int = 0
+        var baseBaseCoordinatesEndOffset: Int = 0
+        var baseBaseAnnotations: Any? = null
+        var baseName: Any? = null
+        var baseVisibility: Any? = null
+        var baseIsInline: Boolean = false
+        var baseIsExternal: Boolean = false
+        var baseTypeParameters: Any? = null
+        var baseDispatchReceiver: Any? = null
+        var baseExtensionReceiver: Any? = null
+        var baseValueParameter: MutableList<Any> = mutableListOf()
+        var baseBody: Any? = null
+        var baseReturnType: Any? = null
         var modality: Any? = null
         var isTailrec: Boolean = false
         var isSuspend: Boolean = false
@@ -1624,25 +1717,35 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                                         while (hasData) {
                                             readField { fieldNumber, type ->
                                                 when (fieldNumber) {
-                                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                                    4 -> annotations = readWithLength { readAnnotations() }
+                                                    1 -> baseBaseSymbol = readWithLength { readIrDataIndex() }
+                                                    2 -> baseBaseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                                    3 -> readWithLength {
+                                                        while (hasData) {
+                                                            readField { fieldNumber, type ->
+                                                                when (fieldNumber) {
+                                                                    1 -> baseBaseCoordinatesStartOffset = readInt32()
+                                                                    2 -> baseBaseCoordinatesEndOffset = readInt32()
+                                                                    else -> skip(type)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    4 -> baseBaseAnnotations = readWithLength { readAnnotations() }
                                                     else -> skip(type)
                                                 }
                                             }
                                         }
                                     }
-                                    2 -> name = readWithLength { readIrDataIndex() }
-                                    3 -> visibility = readWithLength { readVisibility() }
-                                    4 -> isInline = readBool()
-                                    5 -> isExternal = readBool()
-                                    6 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
-                                    7 -> dispatchReceiver = readWithLength { readIrValueParameter() }
-                                    8 -> extensionReceiver = readWithLength { readIrValueParameter() }
-                                    9 -> valueParameter.add(readWithLength { readIrValueParameter() })
-                                    10 -> body = readWithLength { readIrDataIndex() }
-                                    11 -> returnType = readWithLength { readIrDataIndex() }
+                                    2 -> baseName = readWithLength { readIrDataIndex() }
+                                    3 -> baseVisibility = readWithLength { readVisibility() }
+                                    4 -> baseIsInline = readBool()
+                                    5 -> baseIsExternal = readBool()
+                                    6 -> baseTypeParameters = readWithLength { readIrTypeParameterContainer() }
+                                    7 -> baseDispatchReceiver = readWithLength { readIrValueParameter() }
+                                    8 -> baseExtensionReceiver = readWithLength { readIrValueParameter() }
+                                    9 -> baseValueParameter.add(readWithLength { readIrValueParameter() })
+                                    10 -> baseBody = readWithLength { readIrDataIndex() }
+                                    11 -> baseReturnType = readWithLength { readIrDataIndex() }
                                     else -> skip(type)
                                 }
                             }
@@ -1656,24 +1759,25 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrFunction(symbol!!, origin!!, coordinates!!, annotations!!, name!!, visibility!!, isInline, isExternal, typeParameters!!, dispatchReceiver, extensionReceiver, valueParameter, body, returnType!!, modality!!, isTailrec, isSuspend, overridden)
+        return createIrFunction(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType!!, modality!!, isTailrec, isSuspend, overridden)
     }
 
     open fun readIrConstructor(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
-        var name: Any? = null
-        var visibility: Any? = null
-        var isInline: Boolean = false
-        var isExternal: Boolean = false
-        var typeParameters: Any? = null
-        var dispatchReceiver: Any? = null
-        var extensionReceiver: Any? = null
-        var valueParameter: MutableList<Any> = mutableListOf()
-        var body: Any? = null
-        var returnType: Any? = null
+        var baseBaseSymbol: Any? = null
+        var baseBaseOrigin: Any? = null
+        var baseBaseCoordinatesStartOffset: Int = 0
+        var baseBaseCoordinatesEndOffset: Int = 0
+        var baseBaseAnnotations: Any? = null
+        var baseName: Any? = null
+        var baseVisibility: Any? = null
+        var baseIsInline: Boolean = false
+        var baseIsExternal: Boolean = false
+        var baseTypeParameters: Any? = null
+        var baseDispatchReceiver: Any? = null
+        var baseExtensionReceiver: Any? = null
+        var baseValueParameter: MutableList<Any> = mutableListOf()
+        var baseBody: Any? = null
+        var baseReturnType: Any? = null
         var isPrimary: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
@@ -1686,25 +1790,35 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                                         while (hasData) {
                                             readField { fieldNumber, type ->
                                                 when (fieldNumber) {
-                                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                                    4 -> annotations = readWithLength { readAnnotations() }
+                                                    1 -> baseBaseSymbol = readWithLength { readIrDataIndex() }
+                                                    2 -> baseBaseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                                    3 -> readWithLength {
+                                                        while (hasData) {
+                                                            readField { fieldNumber, type ->
+                                                                when (fieldNumber) {
+                                                                    1 -> baseBaseCoordinatesStartOffset = readInt32()
+                                                                    2 -> baseBaseCoordinatesEndOffset = readInt32()
+                                                                    else -> skip(type)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    4 -> baseBaseAnnotations = readWithLength { readAnnotations() }
                                                     else -> skip(type)
                                                 }
                                             }
                                         }
                                     }
-                                    2 -> name = readWithLength { readIrDataIndex() }
-                                    3 -> visibility = readWithLength { readVisibility() }
-                                    4 -> isInline = readBool()
-                                    5 -> isExternal = readBool()
-                                    6 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
-                                    7 -> dispatchReceiver = readWithLength { readIrValueParameter() }
-                                    8 -> extensionReceiver = readWithLength { readIrValueParameter() }
-                                    9 -> valueParameter.add(readWithLength { readIrValueParameter() })
-                                    10 -> body = readWithLength { readIrDataIndex() }
-                                    11 -> returnType = readWithLength { readIrDataIndex() }
+                                    2 -> baseName = readWithLength { readIrDataIndex() }
+                                    3 -> baseVisibility = readWithLength { readVisibility() }
+                                    4 -> baseIsInline = readBool()
+                                    5 -> baseIsExternal = readBool()
+                                    6 -> baseTypeParameters = readWithLength { readIrTypeParameterContainer() }
+                                    7 -> baseDispatchReceiver = readWithLength { readIrValueParameter() }
+                                    8 -> baseExtensionReceiver = readWithLength { readIrValueParameter() }
+                                    9 -> baseValueParameter.add(readWithLength { readIrValueParameter() })
+                                    10 -> baseBody = readWithLength { readIrDataIndex() }
+                                    11 -> baseReturnType = readWithLength { readIrDataIndex() }
                                     else -> skip(type)
                                 }
                             }
@@ -1715,14 +1829,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrConstructor(symbol!!, origin!!, coordinates!!, annotations!!, name!!, visibility!!, isInline, isExternal, typeParameters!!, dispatchReceiver, extensionReceiver, valueParameter, body, returnType!!, isPrimary)
+        return createIrConstructor(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType!!, isPrimary)
     }
 
     open fun readIrField(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var initializer: Any? = null
         var name: Any? = null
         var visibility: Any? = null
@@ -1737,10 +1852,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -1757,14 +1882,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrField(symbol!!, origin!!, coordinates!!, annotations!!, initializer, name!!, visibility!!, isFinal, isExternal, isStatic, type_!!)
+        return createIrField(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, initializer, name!!, visibility!!, isFinal, isExternal, isStatic, type_!!)
     }
 
     open fun readIrLocalDelegatedProperty(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var name: Any? = null
         var type_: Any? = null
         var isVar: Boolean = false
@@ -1778,10 +1904,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -1797,14 +1933,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrLocalDelegatedProperty(symbol!!, origin!!, coordinates!!, annotations!!, name!!, type_!!, isVar, delegate!!, getter, setter)
+        return createIrLocalDelegatedProperty(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, type_!!, isVar, delegate!!, getter, setter)
     }
 
     open fun readIrProperty(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var name: Any? = null
         var visibility: Any? = null
         var modality: Any? = null
@@ -1823,10 +1960,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -1847,14 +1994,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrProperty(symbol!!, origin!!, coordinates!!, annotations!!, name!!, visibility!!, modality!!, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
+        return createIrProperty(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, visibility!!, modality!!, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
     }
 
     open fun readIrVariable(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var name: Any? = null
         var type_: Any? = null
         var isVar: Boolean = false
@@ -1868,10 +2016,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -1887,14 +2045,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrVariable(symbol!!, origin!!, coordinates!!, annotations!!, name!!, type_!!, isVar, isConst, isLateinit, initializer)
+        return createIrVariable(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, type_!!, isVar, isConst, isLateinit, initializer)
     }
 
     open fun readIrValueParameter(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var name: Any? = null
         var index: Int = 0
         var type_: Any? = null
@@ -1909,10 +2068,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -1929,14 +2098,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrValueParameter(symbol!!, origin!!, coordinates!!, annotations!!, name!!, index, type_!!, varargElementType, isCrossinline, isNoinline, defaultValue)
+        return createIrValueParameter(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, index, type_!!, varargElementType, isCrossinline, isNoinline, defaultValue)
     }
 
     open fun readIrTypeParameter(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var name: Any? = null
         var index: Int = 0
         var variance: Any? = null
@@ -1949,10 +2119,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -1967,7 +2147,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrTypeParameter(symbol!!, origin!!, coordinates!!, annotations!!, name!!, index, variance!!, superType, isReified)
+        return createIrTypeParameter(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, index, variance!!, superType, isReified)
     }
 
     open fun readIrTypeParameterContainer(): Any {
@@ -1984,10 +2164,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrClass(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var name: Any? = null
         var kind: Any? = null
         var visibility: Any? = null
@@ -2008,10 +2189,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -2034,14 +2225,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrClass(symbol!!, origin!!, coordinates!!, annotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters!!, declarationContainer!!, superType)
+        return createIrClass(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters!!, declarationContainer!!, superType)
     }
 
     open fun readIrTypeAlias(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var name: Any? = null
         var visibility: Any? = null
         var typeParameters: Any? = null
@@ -2054,10 +2246,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -2072,14 +2274,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrTypeAlias(symbol!!, origin!!, coordinates!!, annotations!!, name!!, visibility!!, typeParameters!!, expandedType!!, isActual)
+        return createIrTypeAlias(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, visibility!!, typeParameters!!, expandedType!!, isActual)
     }
 
     open fun readIrEnumEntry(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var initializer: Any? = null
         var correspondingClass: Any? = null
         var name: Any? = null
@@ -2090,10 +2293,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -2106,14 +2319,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrEnumEntry(symbol!!, origin!!, coordinates!!, annotations!!, initializer, correspondingClass, name!!)
+        return createIrEnumEntry(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, initializer, correspondingClass, name!!)
     }
 
     open fun readIrAnonymousInit(): Any {
-        var symbol: Any? = null
-        var origin: Any? = null
-        var coordinates: Any? = null
-        var annotations: Any? = null
+        var baseSymbol: Any? = null
+        var baseOrigin: Any? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: Any? = null
         var body: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
@@ -2122,10 +2336,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         while (hasData) {
                             readField { fieldNumber, type ->
                                 when (fieldNumber) {
-                                    1 -> symbol = readWithLength { readIrDataIndex() }
-                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                                    3 -> coordinates = readWithLength { readCoordinates() }
-                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
                                     else -> skip(type)
                                 }
                             }
@@ -2136,72 +2360,72 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrAnonymousInit(symbol!!, origin!!, coordinates!!, annotations!!, body!!)
+        return createIrAnonymousInit(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, body!!)
     }
 
     open fun readIrDeclaration(): Any {
-        var irAnonymousInit: Any? = null
-        var irClass: Any? = null
-        var irConstructor: Any? = null
-        var irEnumEntry: Any? = null
-        var irField: Any? = null
-        var irFunction: Any? = null
-        var irProperty: Any? = null
-        var irTypeParameter: Any? = null
-        var irVariable: Any? = null
-        var irValueParameter: Any? = null
-        var irLocalDelegatedProperty: Any? = null
-        var irTypeAlias: Any? = null
+        var oneOfIrAnonymousInit: Any? = null
+        var oneOfIrClass: Any? = null
+        var oneOfIrConstructor: Any? = null
+        var oneOfIrEnumEntry: Any? = null
+        var oneOfIrField: Any? = null
+        var oneOfIrFunction: Any? = null
+        var oneOfIrProperty: Any? = null
+        var oneOfIrTypeParameter: Any? = null
+        var oneOfIrVariable: Any? = null
+        var oneOfIrValueParameter: Any? = null
+        var oneOfIrLocalDelegatedProperty: Any? = null
+        var oneOfIrTypeAlias: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        irAnonymousInit = readWithLength { readIrAnonymousInit() }
+                        oneOfIrAnonymousInit = readWithLength { readIrAnonymousInit() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        irClass = readWithLength { readIrClass() }
+                        oneOfIrClass = readWithLength { readIrClass() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        irConstructor = readWithLength { readIrConstructor() }
+                        oneOfIrConstructor = readWithLength { readIrConstructor() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        irEnumEntry = readWithLength { readIrEnumEntry() }
+                        oneOfIrEnumEntry = readWithLength { readIrEnumEntry() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        irField = readWithLength { readIrField() }
+                        oneOfIrField = readWithLength { readIrField() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        irFunction = readWithLength { readIrFunction() }
+                        oneOfIrFunction = readWithLength { readIrFunction() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        irProperty = readWithLength { readIrProperty() }
+                        oneOfIrProperty = readWithLength { readIrProperty() }
                         oneOfIndex = 7
                     }
                     8 -> {
-                        irTypeParameter = readWithLength { readIrTypeParameter() }
+                        oneOfIrTypeParameter = readWithLength { readIrTypeParameter() }
                         oneOfIndex = 8
                     }
                     9 -> {
-                        irVariable = readWithLength { readIrVariable() }
+                        oneOfIrVariable = readWithLength { readIrVariable() }
                         oneOfIndex = 9
                     }
                     10 -> {
-                        irValueParameter = readWithLength { readIrValueParameter() }
+                        oneOfIrValueParameter = readWithLength { readIrValueParameter() }
                         oneOfIndex = 10
                     }
                     11 -> {
-                        irLocalDelegatedProperty = readWithLength { readIrLocalDelegatedProperty() }
+                        oneOfIrLocalDelegatedProperty = readWithLength { readIrLocalDelegatedProperty() }
                         oneOfIndex = 11
                     }
                     12 -> {
-                        irTypeAlias = readWithLength { readIrTypeAlias() }
+                        oneOfIrTypeAlias = readWithLength { readIrTypeAlias() }
                         oneOfIndex = 12
                     }
                     else -> skip(type)
@@ -2209,18 +2433,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrDeclaration_irAnonymousInit(irAnonymousInit!!)
-            2 -> return createIrDeclaration_irClass(irClass!!)
-            3 -> return createIrDeclaration_irConstructor(irConstructor!!)
-            4 -> return createIrDeclaration_irEnumEntry(irEnumEntry!!)
-            5 -> return createIrDeclaration_irField(irField!!)
-            6 -> return createIrDeclaration_irFunction(irFunction!!)
-            7 -> return createIrDeclaration_irProperty(irProperty!!)
-            8 -> return createIrDeclaration_irTypeParameter(irTypeParameter!!)
-            9 -> return createIrDeclaration_irVariable(irVariable!!)
-            10 -> return createIrDeclaration_irValueParameter(irValueParameter!!)
-            11 -> return createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty!!)
-            12 -> return createIrDeclaration_irTypeAlias(irTypeAlias!!)
+            1 -> return createIrDeclaration_irAnonymousInit(oneOfIrAnonymousInit!!)
+            2 -> return createIrDeclaration_irClass(oneOfIrClass!!)
+            3 -> return createIrDeclaration_irConstructor(oneOfIrConstructor!!)
+            4 -> return createIrDeclaration_irEnumEntry(oneOfIrEnumEntry!!)
+            5 -> return createIrDeclaration_irField(oneOfIrField!!)
+            6 -> return createIrDeclaration_irFunction(oneOfIrFunction!!)
+            7 -> return createIrDeclaration_irProperty(oneOfIrProperty!!)
+            8 -> return createIrDeclaration_irTypeParameter(oneOfIrTypeParameter!!)
+            9 -> return createIrDeclaration_irVariable(oneOfIrVariable!!)
+            10 -> return createIrDeclaration_irValueParameter(oneOfIrValueParameter!!)
+            11 -> return createIrDeclaration_irLocalDelegatedProperty(oneOfIrLocalDelegatedProperty!!)
+            12 -> return createIrDeclaration_irTypeAlias(oneOfIrTypeAlias!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
@@ -2282,40 +2506,51 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     open fun readIrStatement(): Any {
-        var coordinates: Any? = null
-        var declaration: Any? = null
-        var expression: Any? = null
-        var blockBody: Any? = null
-        var branch: Any? = null
-        var catch: Any? = null
-        var syntheticBody: Any? = null
+        var coordinatesStartOffset: Int = 0
+        var coordinatesEndOffset: Int = 0
+        var oneOfDeclaration: Any? = null
+        var oneOfExpression: Any? = null
+        var oneOfBlockBody: Any? = null
+        var oneOfBranch: Any? = null
+        var oneOfCatch: Any? = null
+        var oneOfSyntheticBody: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> coordinates = readWithLength { readCoordinates() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> coordinatesStartOffset = readInt32()
+                                    2 -> coordinatesEndOffset = readInt32()
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     2 -> {
-                        declaration = readWithLength { readIrDeclaration() }
+                        oneOfDeclaration = readWithLength { readIrDeclaration() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        expression = readWithLength { readIrExpression() }
+                        oneOfExpression = readWithLength { readIrExpression() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        blockBody = readWithLength { readIrBlockBody() }
+                        oneOfBlockBody = readWithLength { readIrBlockBody() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        branch = readWithLength { readIrBranch() }
+                        oneOfBranch = readWithLength { readIrBranch() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        catch = readWithLength { readIrCatch() }
+                        oneOfCatch = readWithLength { readIrCatch() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        syntheticBody = readWithLength { readIrSyntheticBody() }
+                        oneOfSyntheticBody = readWithLength { readIrSyntheticBody() }
                         oneOfIndex = 7
                     }
                     else -> skip(type)
@@ -2323,14 +2558,13 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            2 -> return createIrStatement_declaration(coordinates!!, declaration!!)
-            3 -> return createIrStatement_expression(coordinates!!, expression!!)
-            4 -> return createIrStatement_blockBody(coordinates!!, blockBody!!)
-            5 -> return createIrStatement_branch(coordinates!!, branch!!)
-            6 -> return createIrStatement_catch(coordinates!!, catch!!)
-            7 -> return createIrStatement_syntheticBody(coordinates!!, syntheticBody!!)
+            2 -> return createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
+            3 -> return createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)
+            4 -> return createIrStatement_blockBody(coordinatesStartOffset, coordinatesEndOffset, oneOfBlockBody!!)
+            5 -> return createIrStatement_branch(coordinatesStartOffset, coordinatesEndOffset, oneOfBranch!!)
+            6 -> return createIrStatement_catch(coordinatesStartOffset, coordinatesEndOffset, oneOfCatch!!)
+            7 -> return createIrStatement_syntheticBody(coordinatesStartOffset, coordinatesEndOffset, oneOfSyntheticBody!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
-
 }
