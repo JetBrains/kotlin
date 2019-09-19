@@ -1685,7 +1685,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         fieldIrExpressionType = type_
         fieldIrExpressionCoordinatesStartOffset = coordinatesStartOffset
         fieldIrExpressionCoordinatesEndOffset = coordinatesEndOffset
-        operation = delayed(operationOffset) { readWithLength { readIrOperation() } }
+        if (operationOffset != -1) {
+            operation = delayed(operationOffset) { readWithLength { readIrOperation() } }
+        }
         return createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
     }
 
@@ -1797,13 +1799,21 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         }
         val p0 = createIrFunction(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseReturnType!!, modality!!, isTailrec, isSuspend, overridden)
 
-        baseTypeParameters = delayed(baseTypeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
-        baseDispatchReceiver = delayed(baseDispatchReceiverOffset) { readWithLength { readIrValueParameter() } }
-        baseExtensionReceiver = delayed(baseExtensionReceiverOffset) { readWithLength { readIrValueParameter() } }
+        if (baseTypeParametersOffset != -1) {
+            baseTypeParameters = delayed(baseTypeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        }
+        if (baseDispatchReceiverOffset != -1) {
+            baseDispatchReceiver = delayed(baseDispatchReceiverOffset) { readWithLength { readIrValueParameter() } }
+        }
+        if (baseExtensionReceiverOffset != -1) {
+            baseExtensionReceiver = delayed(baseExtensionReceiverOffset) { readWithLength { readIrValueParameter() } }
+        }
         for (o in baseValueParameterOffsetList) {
             baseValueParameter.add(delayed(o) { readWithLength { readIrValueParameter() } })
         }
-        baseBody = delayed(baseBodyOffset) { readWithLength { readIrDataIndex() } }
+        if (baseBodyOffset != -1) {
+            baseBody = delayed(baseBodyOffset) { readWithLength { readIrDataIndex() } }
+        }
         return createIrFunction1(p0, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody)
     }
 
@@ -1896,13 +1906,21 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         }
         val p0 = createIrConstructor(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseReturnType!!, isPrimary)
 
-        baseTypeParameters = delayed(baseTypeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
-        baseDispatchReceiver = delayed(baseDispatchReceiverOffset) { readWithLength { readIrValueParameter() } }
-        baseExtensionReceiver = delayed(baseExtensionReceiverOffset) { readWithLength { readIrValueParameter() } }
+        if (baseTypeParametersOffset != -1) {
+            baseTypeParameters = delayed(baseTypeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        }
+        if (baseDispatchReceiverOffset != -1) {
+            baseDispatchReceiver = delayed(baseDispatchReceiverOffset) { readWithLength { readIrValueParameter() } }
+        }
+        if (baseExtensionReceiverOffset != -1) {
+            baseExtensionReceiver = delayed(baseExtensionReceiverOffset) { readWithLength { readIrValueParameter() } }
+        }
         for (o in baseValueParameterOffsetList) {
             baseValueParameter.add(delayed(o) { readWithLength { readIrValueParameter() } })
         }
-        baseBody = delayed(baseBodyOffset) { readWithLength { readIrDataIndex() } }
+        if (baseBodyOffset != -1) {
+            baseBody = delayed(baseBodyOffset) { readWithLength { readIrDataIndex() } }
+        }
         return createIrConstructor1(p0, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody)
     }
 
@@ -2313,11 +2331,17 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         }
         val p0 = createIrClass(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, superType)
 
-        thisReceiver = delayed(thisReceiverOffset) { readWithLength { readIrValueParameter() } }
-        typeParameters = delayed(typeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        if (thisReceiverOffset != -1) {
+            thisReceiver = delayed(thisReceiverOffset) { readWithLength { readIrValueParameter() } }
+        }
+        if (typeParametersOffset != -1) {
+            typeParameters = delayed(typeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        }
         val p1 = createIrClass1(p0, thisReceiver, typeParameters!!)
 
-        declarationContainer = delayed(declarationContainerOffset) { readWithLength { readIrDeclarationContainer() } }
+        if (declarationContainerOffset != -1) {
+            declarationContainer = delayed(declarationContainerOffset) { readWithLength { readIrDeclarationContainer() } }
+        }
         return createIrClass2(p1, declarationContainer!!)
     }
 
@@ -2667,12 +2691,24 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         }
         fieldIrStatementCoordinatesStartOffset = coordinatesStartOffset
         fieldIrStatementCoordinatesEndOffset = coordinatesEndOffset
-        oneOfDeclaration = delayed(oneOfDeclarationOffset) { readWithLength { readIrDeclaration() } }
-        oneOfExpression = delayed(oneOfExpressionOffset) { readWithLength { readIrExpression() } }
-        oneOfBlockBody = delayed(oneOfBlockBodyOffset) { readWithLength { readIrBlockBody() } }
-        oneOfBranch = delayed(oneOfBranchOffset) { readWithLength { readIrBranch() } }
-        oneOfCatch = delayed(oneOfCatchOffset) { readWithLength { readIrCatch() } }
-        oneOfSyntheticBody = delayed(oneOfSyntheticBodyOffset) { readWithLength { readIrSyntheticBody() } }
+        if (oneOfDeclarationOffset != -1) {
+            oneOfDeclaration = delayed(oneOfDeclarationOffset) { readWithLength { readIrDeclaration() } }
+        }
+        if (oneOfExpressionOffset != -1) {
+            oneOfExpression = delayed(oneOfExpressionOffset) { readWithLength { readIrExpression() } }
+        }
+        if (oneOfBlockBodyOffset != -1) {
+            oneOfBlockBody = delayed(oneOfBlockBodyOffset) { readWithLength { readIrBlockBody() } }
+        }
+        if (oneOfBranchOffset != -1) {
+            oneOfBranch = delayed(oneOfBranchOffset) { readWithLength { readIrBranch() } }
+        }
+        if (oneOfCatchOffset != -1) {
+            oneOfCatch = delayed(oneOfCatchOffset) { readWithLength { readIrCatch() } }
+        }
+        if (oneOfSyntheticBodyOffset != -1) {
+            oneOfSyntheticBody = delayed(oneOfSyntheticBodyOffset) { readWithLength { readIrSyntheticBody() } }
+        }
         when (oneOfIndex) {
             2 -> return createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
             3 -> return createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)

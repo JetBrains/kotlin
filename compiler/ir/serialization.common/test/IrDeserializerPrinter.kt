@@ -503,10 +503,6 @@ private class IrDeserializerPrinter(
             }
         }
 
-//        if (m.name == "IrExpression") {
-//            println("!!!")
-//        }
-
         val hasExposed = exposedFields.isNotEmpty()
 
         if (!hasExposed) {
@@ -526,7 +522,9 @@ private class IrDeserializerPrinter(
                     appendln("            ${getName(f)}.add(delayed(o) { ${f.type.toReaderInvocation()} })")
                     appendln("        }")
                 } else {
-                    appendln("        ${getName(f)} = delayed(${getName(f)}Offset) { ${f.type.toReaderInvocation()} }")
+                    appendln("        if (${getName(f)}Offset != -1) {")
+                    appendln("            ${getName(f)} = delayed(${getName(f)}Offset) { ${f.type.toReaderInvocation()} }")
+                    appendln("        }")
                 }
             }
 
