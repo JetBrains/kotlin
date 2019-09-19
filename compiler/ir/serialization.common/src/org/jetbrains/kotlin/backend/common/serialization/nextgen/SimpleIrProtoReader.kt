@@ -47,10 +47,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrStarProjection(void : Boolean?): Any = arrayOf<Any?>(void)
 
-    fun createIrTypeProjection(variance : Any, type : Any): Any = arrayOf<Any?>(variance, type)
+    fun createIrTypeProjection(variance : Any, type_ : Any): Any = arrayOf<Any?>(variance, type_)
 
     fun createIrTypeArgument_star(star : Any): Any = arrayOf<Any?>(star)
-    fun createIrTypeArgument_type(type : Any): Any = arrayOf<Any?>(type)
+    fun createIrTypeArgument_type_(type_ : Any): Any = arrayOf<Any?>(type_)
 
     fun createIrSimpleType(annotations : Any, classifier : Any, hasQuestionMark : Boolean, argument : List<Any>, abbreviation : Any?): Any = arrayOf<Any?>(annotations, classifier, hasQuestionMark, argument, abbreviation)
 
@@ -190,43 +190,39 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrTypeOperator(index: Int): Any = index
 
-    fun createIrExpression(operation : Any, type : Any, coordinates : Any): Any = arrayOf<Any?>(operation, type, coordinates)
+    fun createIrExpression(operation : Any, type_ : Any, coordinates : Any): Any = arrayOf<Any?>(operation, type_, coordinates)
 
     fun createNullableIrExpression(expression : Any?): Any = arrayOf<Any?>(expression)
 
-    fun createIrDeclarationBase(symbol : Any, origin : Any, coordinates : Any, annotations : Any): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations)
+    fun createIrFunction(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, visibility : Any, isInline : Boolean, isExternal : Boolean, typeParameters : Any, dispatchReceiver : Any?, extensionReceiver : Any?, valueParameter : List<Any>, body : Any?, returnType : Any, modality : Any, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Any>): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, visibility, isInline, isExternal, typeParameters, dispatchReceiver, extensionReceiver, valueParameter, body, returnType, modality, isTailrec, isSuspend, overridden)
 
-    fun createIrFunctionBase(base : Any, name : Any, visibility : Any, isInline : Boolean, isExternal : Boolean, typeParameters : Any, dispatchReceiver : Any?, extensionReceiver : Any?, valueParameter : List<Any>, body : Any?, returnType : Any): Any = arrayOf<Any?>(base, name, visibility, isInline, isExternal, typeParameters, dispatchReceiver, extensionReceiver, valueParameter, body, returnType)
+    fun createIrConstructor(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, visibility : Any, isInline : Boolean, isExternal : Boolean, typeParameters : Any, dispatchReceiver : Any?, extensionReceiver : Any?, valueParameter : List<Any>, body : Any?, returnType : Any, isPrimary : Boolean): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, visibility, isInline, isExternal, typeParameters, dispatchReceiver, extensionReceiver, valueParameter, body, returnType, isPrimary)
 
-    fun createIrFunction(base : Any, modality : Any, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Any>): Any = arrayOf<Any?>(base, modality, isTailrec, isSuspend, overridden)
+    fun createIrField(symbol : Any, origin : Any, coordinates : Any, annotations : Any, initializer : Any?, name : Any, visibility : Any, isFinal : Boolean, isExternal : Boolean, isStatic : Boolean, type_ : Any): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, initializer, name, visibility, isFinal, isExternal, isStatic, type_)
 
-    fun createIrConstructor(base : Any, isPrimary : Boolean): Any = arrayOf<Any?>(base, isPrimary)
+    fun createIrLocalDelegatedProperty(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, type_ : Any, isVar : Boolean, delegate : Any, getter : Any?, setter : Any?): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, type_, isVar, delegate, getter, setter)
 
-    fun createIrField(base : Any, initializer : Any?, name : Any, visibility : Any, isFinal : Boolean, isExternal : Boolean, isStatic : Boolean, type : Any): Any = arrayOf<Any?>(base, initializer, name, visibility, isFinal, isExternal, isStatic, type)
+    fun createIrProperty(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, visibility : Any, modality : Any, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, isDelegated : Boolean, isExternal : Boolean, backingField : Any?, getter : Any?, setter : Any?): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, visibility, modality, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
 
-    fun createIrLocalDelegatedProperty(base : Any, name : Any, type : Any, isVar : Boolean, delegate : Any, getter : Any?, setter : Any?): Any = arrayOf<Any?>(base, name, type, isVar, delegate, getter, setter)
-
-    fun createIrProperty(base : Any, name : Any, visibility : Any, modality : Any, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, isDelegated : Boolean, isExternal : Boolean, backingField : Any?, getter : Any?, setter : Any?): Any = arrayOf<Any?>(base, name, visibility, modality, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
-
-    fun createIrVariable(base : Any, name : Any, type : Any, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, initializer : Any?): Any = arrayOf<Any?>(base, name, type, isVar, isConst, isLateinit, initializer)
+    fun createIrVariable(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, type_ : Any, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, initializer : Any?): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, type_, isVar, isConst, isLateinit, initializer)
 
     fun createClassKind(index: Int): Any = index
 
     fun createModalityKind(index: Int): Any = index
 
-    fun createIrValueParameter(base : Any, name : Any, index : Int, type : Any, varargElementType : Any?, isCrossinline : Boolean, isNoinline : Boolean, defaultValue : Any?): Any = arrayOf<Any?>(base, name, index, type, varargElementType, isCrossinline, isNoinline, defaultValue)
+    fun createIrValueParameter(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, index : Int, type_ : Any, varargElementType : Any?, isCrossinline : Boolean, isNoinline : Boolean, defaultValue : Any?): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, index, type_, varargElementType, isCrossinline, isNoinline, defaultValue)
 
-    fun createIrTypeParameter(base : Any, name : Any, index : Int, variance : Any, superType : List<Any>, isReified : Boolean): Any = arrayOf<Any?>(base, name, index, variance, superType, isReified)
+    fun createIrTypeParameter(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, index : Int, variance : Any, superType : List<Any>, isReified : Boolean): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, index, variance, superType, isReified)
 
     fun createIrTypeParameterContainer(typeParameter : List<Any>): Any = arrayOf<Any?>(typeParameter)
 
-    fun createIrClass(base : Any, name : Any, kind : Any, visibility : Any, modality : Any, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, thisReceiver : Any?, typeParameters : Any, declarationContainer : Any, superType : List<Any>): Any = arrayOf<Any?>(base, name, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters, declarationContainer, superType)
+    fun createIrClass(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, kind : Any, visibility : Any, modality : Any, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, thisReceiver : Any?, typeParameters : Any, declarationContainer : Any, superType : List<Any>): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters, declarationContainer, superType)
 
-    fun createIrTypeAlias(base : Any, name : Any, visibility : Any, typeParameters : Any, expandedType : Any, isActual : Boolean): Any = arrayOf<Any?>(base, name, visibility, typeParameters, expandedType, isActual)
+    fun createIrTypeAlias(symbol : Any, origin : Any, coordinates : Any, annotations : Any, name : Any, visibility : Any, typeParameters : Any, expandedType : Any, isActual : Boolean): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, name, visibility, typeParameters, expandedType, isActual)
 
-    fun createIrEnumEntry(base : Any, initializer : Any?, correspondingClass : Any?, name : Any): Any = arrayOf<Any?>(base, initializer, correspondingClass, name)
+    fun createIrEnumEntry(symbol : Any, origin : Any, coordinates : Any, annotations : Any, initializer : Any?, correspondingClass : Any?, name : Any): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, initializer, correspondingClass, name)
 
-    fun createIrAnonymousInit(base : Any, body : Any): Any = arrayOf<Any?>(base, body)
+    fun createIrAnonymousInit(symbol : Any, origin : Any, coordinates : Any, annotations : Any, body : Any): Any = arrayOf<Any?>(symbol, origin, coordinates, annotations, body)
 
     fun createIrDeclaration_irAnonymousInit(irAnonymousInit : Any): Any = arrayOf<Any?>(irAnonymousInit)
     fun createIrDeclaration_irClass(irClass : Any): Any = arrayOf<Any?>(irClass)
@@ -259,109 +255,109 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     fun createIrStatement_syntheticBody(coordinates : Any, syntheticBody : Any): Any = arrayOf<Any?>(coordinates, syntheticBody)
 
     open fun readDescriptorReference(): Any {
-        var package_fq_name__: Any? = null
-        var class_fq_name__: Any? = null
-        var name__: Any? = null
-        var uniq_id__: Any? = null
-        var is_getter__: Boolean = false
-        var is_setter__: Boolean = false
-        var is_backing_field__: Boolean = false
-        var is_fake_override__: Boolean = false
-        var is_default_constructor__: Boolean = false
-        var is_enum_entry__: Boolean = false
-        var is_enum_special__: Boolean = false
-        var is_type_parameter__: Boolean = false
+        var packageFqName: Any? = null
+        var classFqName: Any? = null
+        var name: Any? = null
+        var uniqId: Any? = null
+        var isGetter: Boolean = false
+        var isSetter: Boolean = false
+        var isBackingField: Boolean = false
+        var isFakeOverride: Boolean = false
+        var isDefaultConstructor: Boolean = false
+        var isEnumEntry: Boolean = false
+        var isEnumSpecial: Boolean = false
+        var isTypeParameter: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> package_fq_name__ = readWithLength { readFqName() }
-                    2 -> class_fq_name__ = readWithLength { readFqName() }
-                    3 -> name__ = readWithLength { readIrDataIndex() }
-                    4 -> uniq_id__ = readWithLength { readUniqId() }
-                    5 -> is_getter__ = readBool()
-                    6 -> is_setter__ = readBool()
-                    7 -> is_backing_field__ = readBool()
-                    8 -> is_fake_override__ = readBool()
-                    9 -> is_default_constructor__ = readBool()
-                    10 -> is_enum_entry__ = readBool()
-                    11 -> is_enum_special__ = readBool()
-                    12 -> is_type_parameter__ = readBool()
+                    1 -> packageFqName = readWithLength { readFqName() }
+                    2 -> classFqName = readWithLength { readFqName() }
+                    3 -> name = readWithLength { readIrDataIndex() }
+                    4 -> uniqId = readWithLength { readUniqId() }
+                    5 -> isGetter = readBool()
+                    6 -> isSetter = readBool()
+                    7 -> isBackingField = readBool()
+                    8 -> isFakeOverride = readBool()
+                    9 -> isDefaultConstructor = readBool()
+                    10 -> isEnumEntry = readBool()
+                    11 -> isEnumSpecial = readBool()
+                    12 -> isTypeParameter = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createDescriptorReference(package_fq_name__!!, class_fq_name__!!, name__!!, uniq_id__, is_getter__, is_setter__, is_backing_field__, is_fake_override__, is_default_constructor__, is_enum_entry__, is_enum_special__, is_type_parameter__)
+        return createDescriptorReference(packageFqName!!, classFqName!!, name!!, uniqId, isGetter, isSetter, isBackingField, isFakeOverride, isDefaultConstructor, isEnumEntry, isEnumSpecial, isTypeParameter)
     }
 
     open fun readUniqId(): Any {
-        var index__: Long = 0L
-        var isLocal__: Boolean = false
+        var index: Long = 0L
+        var isLocal: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> index__ = readInt64()
-                    2 -> isLocal__ = readBool()
+                    1 -> index = readInt64()
+                    2 -> isLocal = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createUniqId(index__, isLocal__)
+        return createUniqId(index, isLocal)
     }
 
     open fun readCoordinates(): Any {
-        var start_offset__: Int = 0
-        var end_offset__: Int = 0
+        var startOffset: Int = 0
+        var endOffset: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> start_offset__ = readInt32()
-                    2 -> end_offset__ = readInt32()
+                    1 -> startOffset = readInt32()
+                    2 -> endOffset = readInt32()
                     else -> skip(type)
                 }
             }
         }
-        return createCoordinates(start_offset__, end_offset__)
+        return createCoordinates(startOffset, endOffset)
     }
 
     open fun readVisibility(): Any {
-        var name__: Any? = null
+        var name: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> name__ = readWithLength { readIrDataIndex() }
+                    1 -> name = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createVisibility(name__!!)
+        return createVisibility(name!!)
     }
 
     open fun readIrStatementOrigin(): Any {
-        var name__: Any? = null
+        var name: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> name__ = readWithLength { readIrDataIndex() }
+                    1 -> name = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrStatementOrigin(name__!!)
+        return createIrStatementOrigin(name!!)
     }
 
     open fun readIrDeclarationOrigin(): Any {
-        var origin__: Any? = null
-        var custom__: Any? = null
+        var origin: Any? = null
+        var custom: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        origin__ = createKnownOrigin(readInt32())
+                        origin = createKnownOrigin(readInt32())
                         oneOfIndex = 1
                     }
                     2 -> {
-                        custom__ = readWithLength { readIrDataIndex() }
+                        custom = readWithLength { readIrDataIndex() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -369,201 +365,201 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrDeclarationOrigin_origin(origin__!!)
-            2 -> return createIrDeclarationOrigin_custom(custom__!!)
+            1 -> return createIrDeclarationOrigin_origin(origin!!)
+            2 -> return createIrDeclarationOrigin_custom(custom!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrDataIndex(): Any {
-        var index__: Int = 0
+        var index: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> index__ = readInt32()
+                    1 -> index = readInt32()
                     else -> skip(type)
                 }
             }
         }
-        return createIrDataIndex(index__)
+        return createIrDataIndex(index)
     }
 
     open fun readFqName(): Any {
-        var segment__: MutableList<Any> = mutableListOf()
+        var segment: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> segment__.add(readWithLength { readIrDataIndex() })
+                    1 -> segment.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createFqName(segment__)
+        return createFqName(segment)
     }
 
     open fun readIrDeclarationContainer(): Any {
-        var declaration__: MutableList<Any> = mutableListOf()
+        var declaration: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> declaration__.add(readWithLength { readIrDeclaration() })
+                    1 -> declaration.add(readWithLength { readIrDeclaration() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrDeclarationContainer(declaration__)
+        return createIrDeclarationContainer(declaration)
     }
 
     open fun readFileEntry(): Any {
-        var name__: String = ""
-        var line_start_offsets__: MutableList<Int> = mutableListOf()
+        var name: String = ""
+        var lineStartOffsets: MutableList<Int> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> name__ = readString()
-                    2 -> line_start_offsets__.add(readInt32())
+                    1 -> name = readString()
+                    2 -> lineStartOffsets.add(readInt32())
                     else -> skip(type)
                 }
             }
         }
-        return createFileEntry(name__, line_start_offsets__)
+        return createFileEntry(name, lineStartOffsets)
     }
 
     open fun readIrFile(): Any {
-        var declaration_id__: MutableList<Any> = mutableListOf()
-        var file_entry__: Any? = null
-        var fq_name__: Any? = null
-        var annotations__: Any? = null
-        var explicitly_exported_to_compiler__: MutableList<Any> = mutableListOf()
+        var declarationId: MutableList<Any> = mutableListOf()
+        var fileEntry: Any? = null
+        var fqName: Any? = null
+        var annotations: Any? = null
+        var explicitlyExportedToCompiler: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> declaration_id__.add(readWithLength { readUniqId() })
-                    2 -> file_entry__ = readWithLength { readFileEntry() }
-                    3 -> fq_name__ = readWithLength { readFqName() }
-                    4 -> annotations__ = readWithLength { readAnnotations() }
-                    5 -> explicitly_exported_to_compiler__.add(readWithLength { readIrDataIndex() })
+                    1 -> declarationId.add(readWithLength { readUniqId() })
+                    2 -> fileEntry = readWithLength { readFileEntry() }
+                    3 -> fqName = readWithLength { readFqName() }
+                    4 -> annotations = readWithLength { readAnnotations() }
+                    5 -> explicitlyExportedToCompiler.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrFile(declaration_id__, file_entry__!!, fq_name__!!, annotations__!!, explicitly_exported_to_compiler__)
+        return createIrFile(declarationId, fileEntry!!, fqName!!, annotations!!, explicitlyExportedToCompiler)
     }
 
     open fun readStringTable(): Any {
-        var strings__: MutableList<String> = mutableListOf()
+        var strings: MutableList<String> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> strings__.add(readString())
+                    1 -> strings.add(readString())
                     else -> skip(type)
                 }
             }
         }
-        return createStringTable(strings__)
+        return createStringTable(strings)
     }
 
     open fun readIrSymbolData(): Any {
-        var kind__: Any? = null
-        var uniq_id__: Any? = null
-        var top_level_uniq_id__: Any? = null
-        var fqname__: Any? = null
-        var descriptor_reference__: Any? = null
+        var kind: Any? = null
+        var uniqId: Any? = null
+        var topLevelUniqId: Any? = null
+        var fqname: Any? = null
+        var descriptorReference: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> kind__ = createIrSymbolKind(readInt32())
-                    2 -> uniq_id__ = readWithLength { readUniqId() }
-                    3 -> top_level_uniq_id__ = readWithLength { readUniqId() }
-                    4 -> fqname__ = readWithLength { readFqName() }
-                    5 -> descriptor_reference__ = readWithLength { readDescriptorReference() }
+                    1 -> kind = createIrSymbolKind(readInt32())
+                    2 -> uniqId = readWithLength { readUniqId() }
+                    3 -> topLevelUniqId = readWithLength { readUniqId() }
+                    4 -> fqname = readWithLength { readFqName() }
+                    5 -> descriptorReference = readWithLength { readDescriptorReference() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSymbolData(kind__!!, uniq_id__!!, top_level_uniq_id__!!, fqname__, descriptor_reference__)
+        return createIrSymbolData(kind!!, uniqId!!, topLevelUniqId!!, fqname, descriptorReference)
     }
 
     open fun readIrSymbolTable(): Any {
-        var symbols__: MutableList<Any> = mutableListOf()
+        var symbols: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbols__.add(readWithLength { readIrSymbolData() })
+                    1 -> symbols.add(readWithLength { readIrSymbolData() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrSymbolTable(symbols__)
+        return createIrSymbolTable(symbols)
     }
 
     open fun readAnnotations(): Any {
-        var annotation__: MutableList<Any> = mutableListOf()
+        var annotation: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotation__.add(readWithLength { readIrConstructorCall() })
+                    1 -> annotation.add(readWithLength { readIrConstructorCall() })
                     else -> skip(type)
                 }
             }
         }
-        return createAnnotations(annotation__)
+        return createAnnotations(annotation)
     }
 
     open fun readTypeArguments(): Any {
-        var type_argument__: MutableList<Any> = mutableListOf()
+        var typeArgument: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> type_argument__.add(readWithLength { readIrDataIndex() })
+                    1 -> typeArgument.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createTypeArguments(type_argument__)
+        return createTypeArguments(typeArgument)
     }
 
     open fun readIrStarProjection(): Any {
-        var void__: Boolean? = null
+        var void: Boolean? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> void__ = readBool()
+                    1 -> void = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createIrStarProjection(void__)
+        return createIrStarProjection(void)
     }
 
     open fun readIrTypeProjection(): Any {
-        var variance__: Any? = null
-        var type__: Any? = null
+        var variance: Any? = null
+        var type_: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> variance__ = createIrTypeVariance(readInt32())
-                    2 -> type__ = readWithLength { readIrDataIndex() }
+                    1 -> variance = createIrTypeVariance(readInt32())
+                    2 -> type_ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeProjection(variance__!!, type__!!)
+        return createIrTypeProjection(variance!!, type_!!)
     }
 
     open fun readIrTypeArgument(): Any {
-        var star__: Any? = null
-        var type__: Any? = null
+        var star: Any? = null
+        var type_: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        star__ = readWithLength { readIrStarProjection() }
+                        star = readWithLength { readIrStarProjection() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        type__ = readWithLength { readIrTypeProjection() }
+                        type_ = readWithLength { readIrTypeProjection() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -571,96 +567,96 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrTypeArgument_star(star__!!)
-            2 -> return createIrTypeArgument_type(type__!!)
+            1 -> return createIrTypeArgument_star(star!!)
+            2 -> return createIrTypeArgument_type_(type_!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrSimpleType(): Any {
-        var annotations__: Any? = null
-        var classifier__: Any? = null
-        var has_question_mark__: Boolean = false
-        var argument__: MutableList<Any> = mutableListOf()
-        var abbreviation__: Any? = null
+        var annotations: Any? = null
+        var classifier: Any? = null
+        var hasQuestionMark: Boolean = false
+        var argument: MutableList<Any> = mutableListOf()
+        var abbreviation: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readWithLength { readAnnotations() }
-                    2 -> classifier__ = readWithLength { readIrDataIndex() }
-                    3 -> has_question_mark__ = readBool()
-                    4 -> argument__.add(readWithLength { readIrTypeArgument() })
-                    5 -> abbreviation__ = readWithLength { readIrTypeAbbreviation() }
+                    1 -> annotations = readWithLength { readAnnotations() }
+                    2 -> classifier = readWithLength { readIrDataIndex() }
+                    3 -> hasQuestionMark = readBool()
+                    4 -> argument.add(readWithLength { readIrTypeArgument() })
+                    5 -> abbreviation = readWithLength { readIrTypeAbbreviation() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSimpleType(annotations__!!, classifier__!!, has_question_mark__, argument__, abbreviation__)
+        return createIrSimpleType(annotations!!, classifier!!, hasQuestionMark, argument, abbreviation)
     }
 
     open fun readIrTypeAbbreviation(): Any {
-        var annotations__: Any? = null
-        var type_alias__: Any? = null
-        var has_question_mark__: Boolean = false
-        var argument__: MutableList<Any> = mutableListOf()
+        var annotations: Any? = null
+        var typeAlias: Any? = null
+        var hasQuestionMark: Boolean = false
+        var argument: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readWithLength { readAnnotations() }
-                    2 -> type_alias__ = readWithLength { readIrDataIndex() }
-                    3 -> has_question_mark__ = readBool()
-                    4 -> argument__.add(readWithLength { readIrTypeArgument() })
+                    1 -> annotations = readWithLength { readAnnotations() }
+                    2 -> typeAlias = readWithLength { readIrDataIndex() }
+                    3 -> hasQuestionMark = readBool()
+                    4 -> argument.add(readWithLength { readIrTypeArgument() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeAbbreviation(annotations__!!, type_alias__!!, has_question_mark__, argument__)
+        return createIrTypeAbbreviation(annotations!!, typeAlias!!, hasQuestionMark, argument)
     }
 
     open fun readIrDynamicType(): Any {
-        var annotations__: Any? = null
+        var annotations: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readWithLength { readAnnotations() }
+                    1 -> annotations = readWithLength { readAnnotations() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDynamicType(annotations__!!)
+        return createIrDynamicType(annotations!!)
     }
 
     open fun readIrErrorType(): Any {
-        var annotations__: Any? = null
+        var annotations: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readWithLength { readAnnotations() }
+                    1 -> annotations = readWithLength { readAnnotations() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrErrorType(annotations__!!)
+        return createIrErrorType(annotations!!)
     }
 
     open fun readIrType(): Any {
-        var simple__: Any? = null
-        var dynamic__: Any? = null
-        var error__: Any? = null
+        var simple: Any? = null
+        var dynamic: Any? = null
+        var error: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        simple__ = readWithLength { readIrSimpleType() }
+                        simple = readWithLength { readIrSimpleType() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        dynamic__ = readWithLength { readIrDynamicType() }
+                        dynamic = readWithLength { readIrDynamicType() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        error__ = readWithLength { readIrErrorType() }
+                        error = readWithLength { readIrErrorType() }
                         oneOfIndex = 3
                     }
                     else -> skip(type)
@@ -668,255 +664,255 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrType_simple(simple__!!)
-            2 -> return createIrType_dynamic(dynamic__!!)
-            3 -> return createIrType_error(error__!!)
+            1 -> return createIrType_simple(simple!!)
+            2 -> return createIrType_dynamic(dynamic!!)
+            3 -> return createIrType_error(error!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrTypeTable(): Any {
-        var types__: MutableList<Any> = mutableListOf()
+        var types: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> types__.add(readWithLength { readIrType() })
+                    1 -> types.add(readWithLength { readIrType() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeTable(types__)
+        return createIrTypeTable(types)
     }
 
     open fun readIrBreak(): Any {
-        var loop_id__: Int = 0
-        var label__: Any? = null
+        var loopId: Int = 0
+        var label: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop_id__ = readInt32()
-                    2 -> label__ = readWithLength { readIrDataIndex() }
+                    1 -> loopId = readInt32()
+                    2 -> label = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrBreak(loop_id__, label__)
+        return createIrBreak(loopId, label)
     }
 
     open fun readIrBlock(): Any {
-        var origin__: Any? = null
-        var statement__: MutableList<Any> = mutableListOf()
+        var origin: Any? = null
+        var statement: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> origin__ = readWithLength { readIrStatementOrigin() }
-                    2 -> statement__.add(readWithLength { readIrStatement() })
+                    1 -> origin = readWithLength { readIrStatementOrigin() }
+                    2 -> statement.add(readWithLength { readIrStatement() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrBlock(origin__, statement__)
+        return createIrBlock(origin, statement)
     }
 
     open fun readMemberAccessCommon(): Any {
-        var dispatch_receiver__: Any? = null
-        var extension_receiver__: Any? = null
-        var value_argument__: MutableList<Any> = mutableListOf()
-        var type_arguments__: Any? = null
+        var dispatchReceiver: Any? = null
+        var extensionReceiver: Any? = null
+        var valueArgument: MutableList<Any> = mutableListOf()
+        var typeArguments: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> dispatch_receiver__ = readWithLength { readIrExpression() }
-                    2 -> extension_receiver__ = readWithLength { readIrExpression() }
-                    3 -> value_argument__.add(readWithLength { readNullableIrExpression() })
-                    4 -> type_arguments__ = readWithLength { readTypeArguments() }
+                    1 -> dispatchReceiver = readWithLength { readIrExpression() }
+                    2 -> extensionReceiver = readWithLength { readIrExpression() }
+                    3 -> valueArgument.add(readWithLength { readNullableIrExpression() })
+                    4 -> typeArguments = readWithLength { readTypeArguments() }
                     else -> skip(type)
                 }
             }
         }
-        return createMemberAccessCommon(dispatch_receiver__, extension_receiver__, value_argument__, type_arguments__!!)
+        return createMemberAccessCommon(dispatchReceiver, extensionReceiver, valueArgument, typeArguments!!)
     }
 
     open fun readIrCall(): Any {
-        var symbol__: Any? = null
-        var member_access__: Any? = null
-        var super__: Any? = null
-        var origin__: Any? = null
+        var symbol: Any? = null
+        var memberAccess: Any? = null
+        var super_: Any? = null
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
-                    3 -> super__ = readWithLength { readIrDataIndex() }
-                    4 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                    3 -> super_ = readWithLength { readIrDataIndex() }
+                    4 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrCall(symbol__!!, member_access__!!, super__, origin__)
+        return createIrCall(symbol!!, memberAccess!!, super_, origin)
     }
 
     open fun readIrConstructorCall(): Any {
-        var symbol__: Any? = null
-        var constructor_type_arguments_count__: Int = 0
-        var member_access__: Any? = null
+        var symbol: Any? = null
+        var constructorTypeArgumentsCount: Int = 0
+        var memberAccess: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> constructor_type_arguments_count__ = readInt32()
-                    3 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> constructorTypeArgumentsCount = readInt32()
+                    3 -> memberAccess = readWithLength { readMemberAccessCommon() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrConstructorCall(symbol__!!, constructor_type_arguments_count__, member_access__!!)
+        return createIrConstructorCall(symbol!!, constructorTypeArgumentsCount, memberAccess!!)
     }
 
     open fun readIrFunctionReference(): Any {
-        var symbol__: Any? = null
-        var origin__: Any? = null
-        var member_access__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
+        var memberAccess: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
-                    3 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
+                    3 -> memberAccess = readWithLength { readMemberAccessCommon() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrFunctionReference(symbol__!!, origin__, member_access__!!)
+        return createIrFunctionReference(symbol!!, origin, memberAccess!!)
     }
 
     open fun readIrLocalDelegatedPropertyReference(): Any {
-        var delegate__: Any? = null
-        var getter__: Any? = null
-        var setter__: Any? = null
-        var symbol__: Any? = null
-        var origin__: Any? = null
+        var delegate: Any? = null
+        var getter: Any? = null
+        var setter: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> delegate__ = readWithLength { readIrDataIndex() }
-                    2 -> getter__ = readWithLength { readIrDataIndex() }
-                    3 -> setter__ = readWithLength { readIrDataIndex() }
-                    4 -> symbol__ = readWithLength { readIrDataIndex() }
-                    5 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> delegate = readWithLength { readIrDataIndex() }
+                    2 -> getter = readWithLength { readIrDataIndex() }
+                    3 -> setter = readWithLength { readIrDataIndex() }
+                    4 -> symbol = readWithLength { readIrDataIndex() }
+                    5 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrLocalDelegatedPropertyReference(delegate__!!, getter__, setter__, symbol__!!, origin__)
+        return createIrLocalDelegatedPropertyReference(delegate!!, getter, setter, symbol!!, origin)
     }
 
     open fun readIrPropertyReference(): Any {
-        var field__: Any? = null
-        var getter__: Any? = null
-        var setter__: Any? = null
-        var origin__: Any? = null
-        var member_access__: Any? = null
-        var symbol__: Any? = null
+        var field: Any? = null
+        var getter: Any? = null
+        var setter: Any? = null
+        var origin: Any? = null
+        var memberAccess: Any? = null
+        var symbol: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field__ = readWithLength { readIrDataIndex() }
-                    2 -> getter__ = readWithLength { readIrDataIndex() }
-                    3 -> setter__ = readWithLength { readIrDataIndex() }
-                    4 -> origin__ = readWithLength { readIrStatementOrigin() }
-                    5 -> member_access__ = readWithLength { readMemberAccessCommon() }
-                    6 -> symbol__ = readWithLength { readIrDataIndex() }
+                    1 -> field = readWithLength { readIrDataIndex() }
+                    2 -> getter = readWithLength { readIrDataIndex() }
+                    3 -> setter = readWithLength { readIrDataIndex() }
+                    4 -> origin = readWithLength { readIrStatementOrigin() }
+                    5 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                    6 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrPropertyReference(field__, getter__, setter__, origin__, member_access__!!, symbol__!!)
+        return createIrPropertyReference(field, getter, setter, origin, memberAccess!!, symbol!!)
     }
 
     open fun readIrComposite(): Any {
-        var statement__: MutableList<Any> = mutableListOf()
-        var origin__: Any? = null
+        var statement: MutableList<Any> = mutableListOf()
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> statement__.add(readWithLength { readIrStatement() })
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> statement.add(readWithLength { readIrStatement() })
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrComposite(statement__, origin__)
+        return createIrComposite(statement, origin)
     }
 
     open fun readIrClassReference(): Any {
-        var class_symbol__: Any? = null
-        var class_type__: Any? = null
+        var classSymbol: Any? = null
+        var classType: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> class_symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> class_type__ = readWithLength { readIrDataIndex() }
+                    1 -> classSymbol = readWithLength { readIrDataIndex() }
+                    2 -> classType = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrClassReference(class_symbol__!!, class_type__!!)
+        return createIrClassReference(classSymbol!!, classType!!)
     }
 
     open fun readIrConst(): Any {
-        var null__: Boolean? = null
-        var boolean__: Boolean? = null
-        var char__: Int? = null
-        var byte__: Int? = null
-        var short__: Int? = null
-        var int__: Int? = null
-        var long__: Long? = null
-        var float__: Float? = null
-        var double__: Double? = null
-        var string__: Any? = null
+        var null_: Boolean? = null
+        var boolean: Boolean? = null
+        var char: Int? = null
+        var byte: Int? = null
+        var short: Int? = null
+        var int: Int? = null
+        var long: Long? = null
+        var float: Float? = null
+        var double: Double? = null
+        var string: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        null__ = readBool()
+                        null_ = readBool()
                         oneOfIndex = 1
                     }
                     2 -> {
-                        boolean__ = readBool()
+                        boolean = readBool()
                         oneOfIndex = 2
                     }
                     3 -> {
-                        char__ = readInt32()
+                        char = readInt32()
                         oneOfIndex = 3
                     }
                     4 -> {
-                        byte__ = readInt32()
+                        byte = readInt32()
                         oneOfIndex = 4
                     }
                     5 -> {
-                        short__ = readInt32()
+                        short = readInt32()
                         oneOfIndex = 5
                     }
                     6 -> {
-                        int__ = readInt32()
+                        int = readInt32()
                         oneOfIndex = 6
                     }
                     7 -> {
-                        long__ = readInt64()
+                        long = readInt64()
                         oneOfIndex = 7
                     }
                     8 -> {
-                        float__ = readFloat()
+                        float = readFloat()
                         oneOfIndex = 8
                     }
                     9 -> {
-                        double__ = readDouble()
+                        double = readDouble()
                         oneOfIndex = 9
                     }
                     10 -> {
-                        string__ = readWithLength { readIrDataIndex() }
+                        string = readWithLength { readIrDataIndex() }
                         oneOfIndex = 10
                     }
                     else -> skip(type)
@@ -924,350 +920,350 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrConst_null_(null__!!)
-            2 -> return createIrConst_boolean(boolean__!!)
-            3 -> return createIrConst_char(char__!!)
-            4 -> return createIrConst_byte(byte__!!)
-            5 -> return createIrConst_short(short__!!)
-            6 -> return createIrConst_int(int__!!)
-            7 -> return createIrConst_long(long__!!)
-            8 -> return createIrConst_float(float__!!)
-            9 -> return createIrConst_double(double__!!)
-            10 -> return createIrConst_string(string__!!)
+            1 -> return createIrConst_null_(null_!!)
+            2 -> return createIrConst_boolean(boolean!!)
+            3 -> return createIrConst_char(char!!)
+            4 -> return createIrConst_byte(byte!!)
+            5 -> return createIrConst_short(short!!)
+            6 -> return createIrConst_int(int!!)
+            7 -> return createIrConst_long(long!!)
+            8 -> return createIrConst_float(float!!)
+            9 -> return createIrConst_double(double!!)
+            10 -> return createIrConst_string(string!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrContinue(): Any {
-        var loop_id__: Int = 0
-        var label__: Any? = null
+        var loopId: Int = 0
+        var label: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop_id__ = readInt32()
-                    2 -> label__ = readWithLength { readIrDataIndex() }
+                    1 -> loopId = readInt32()
+                    2 -> label = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrContinue(loop_id__, label__)
+        return createIrContinue(loopId, label)
     }
 
     open fun readIrDelegatingConstructorCall(): Any {
-        var symbol__: Any? = null
-        var member_access__: Any? = null
+        var symbol: Any? = null
+        var memberAccess: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDelegatingConstructorCall(symbol__!!, member_access__!!)
+        return createIrDelegatingConstructorCall(symbol!!, memberAccess!!)
     }
 
     open fun readIrDoWhile(): Any {
-        var loop__: Any? = null
+        var loop: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop__ = readWithLength { readLoop() }
+                    1 -> loop = readWithLength { readLoop() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDoWhile(loop__!!)
+        return createIrDoWhile(loop!!)
     }
 
     open fun readIrEnumConstructorCall(): Any {
-        var symbol__: Any? = null
-        var member_access__: Any? = null
+        var symbol: Any? = null
+        var memberAccess: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrEnumConstructorCall(symbol__!!, member_access__!!)
+        return createIrEnumConstructorCall(symbol!!, memberAccess!!)
     }
 
     open fun readIrGetClass(): Any {
-        var argument__: Any? = null
+        var argument: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> argument__ = readWithLength { readIrExpression() }
+                    1 -> argument = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetClass(argument__!!)
+        return createIrGetClass(argument!!)
     }
 
     open fun readIrGetEnumValue(): Any {
-        var symbol__: Any? = null
+        var symbol: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    2 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetEnumValue(symbol__!!)
+        return createIrGetEnumValue(symbol!!)
     }
 
     open fun readFieldAccessCommon(): Any {
-        var symbol__: Any? = null
-        var super__: Any? = null
-        var receiver__: Any? = null
+        var symbol: Any? = null
+        var super_: Any? = null
+        var receiver: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> super__ = readWithLength { readIrDataIndex() }
-                    3 -> receiver__ = readWithLength { readIrExpression() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> super_ = readWithLength { readIrDataIndex() }
+                    3 -> receiver = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createFieldAccessCommon(symbol__!!, super__, receiver__)
+        return createFieldAccessCommon(symbol!!, super_, receiver)
     }
 
     open fun readIrGetField(): Any {
-        var field_access__: Any? = null
-        var origin__: Any? = null
+        var fieldAccess: Any? = null
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field_access__ = readWithLength { readFieldAccessCommon() }
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> fieldAccess = readWithLength { readFieldAccessCommon() }
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetField(field_access__!!, origin__)
+        return createIrGetField(fieldAccess!!, origin)
     }
 
     open fun readIrGetValue(): Any {
-        var symbol__: Any? = null
-        var origin__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetValue(symbol__!!, origin__)
+        return createIrGetValue(symbol!!, origin)
     }
 
     open fun readIrGetObject(): Any {
-        var symbol__: Any? = null
+        var symbol: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetObject(symbol__!!)
+        return createIrGetObject(symbol!!)
     }
 
     open fun readIrInstanceInitializerCall(): Any {
-        var symbol__: Any? = null
+        var symbol: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrInstanceInitializerCall(symbol__!!)
+        return createIrInstanceInitializerCall(symbol!!)
     }
 
     open fun readLoop(): Any {
-        var loop_id__: Int = 0
-        var condition__: Any? = null
-        var label__: Any? = null
-        var body__: Any? = null
-        var origin__: Any? = null
+        var loopId: Int = 0
+        var condition: Any? = null
+        var label: Any? = null
+        var body: Any? = null
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop_id__ = readInt32()
-                    2 -> condition__ = readWithLength { readIrExpression() }
-                    3 -> label__ = readWithLength { readIrDataIndex() }
-                    4 -> body__ = readWithLength { readIrExpression() }
-                    5 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> loopId = readInt32()
+                    2 -> condition = readWithLength { readIrExpression() }
+                    3 -> label = readWithLength { readIrDataIndex() }
+                    4 -> body = readWithLength { readIrExpression() }
+                    5 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createLoop(loop_id__, condition__!!, label__, body__, origin__)
+        return createLoop(loopId, condition!!, label, body, origin)
     }
 
     open fun readIrReturn(): Any {
-        var return_target__: Any? = null
-        var value__: Any? = null
+        var returnTarget: Any? = null
+        var value: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> return_target__ = readWithLength { readIrDataIndex() }
-                    2 -> value__ = readWithLength { readIrExpression() }
+                    1 -> returnTarget = readWithLength { readIrDataIndex() }
+                    2 -> value = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrReturn(return_target__!!, value__!!)
+        return createIrReturn(returnTarget!!, value!!)
     }
 
     open fun readIrSetField(): Any {
-        var field_access__: Any? = null
-        var value__: Any? = null
-        var origin__: Any? = null
+        var fieldAccess: Any? = null
+        var value: Any? = null
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field_access__ = readWithLength { readFieldAccessCommon() }
-                    2 -> value__ = readWithLength { readIrExpression() }
-                    3 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> fieldAccess = readWithLength { readFieldAccessCommon() }
+                    2 -> value = readWithLength { readIrExpression() }
+                    3 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSetField(field_access__!!, value__!!, origin__)
+        return createIrSetField(fieldAccess!!, value!!, origin)
     }
 
     open fun readIrSetVariable(): Any {
-        var symbol__: Any? = null
-        var value__: Any? = null
-        var origin__: Any? = null
+        var symbol: Any? = null
+        var value: Any? = null
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> value__ = readWithLength { readIrExpression() }
-                    3 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> value = readWithLength { readIrExpression() }
+                    3 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSetVariable(symbol__!!, value__!!, origin__)
+        return createIrSetVariable(symbol!!, value!!, origin)
     }
 
     open fun readIrSpreadElement(): Any {
-        var expression__: Any? = null
-        var coordinates__: Any? = null
+        var expression: Any? = null
+        var coordinates: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readWithLength { readIrExpression() }
-                    2 -> coordinates__ = readWithLength { readCoordinates() }
+                    1 -> expression = readWithLength { readIrExpression() }
+                    2 -> coordinates = readWithLength { readCoordinates() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSpreadElement(expression__!!, coordinates__!!)
+        return createIrSpreadElement(expression!!, coordinates!!)
     }
 
     open fun readIrStringConcat(): Any {
-        var argument__: MutableList<Any> = mutableListOf()
+        var argument: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> argument__.add(readWithLength { readIrExpression() })
+                    1 -> argument.add(readWithLength { readIrExpression() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrStringConcat(argument__)
+        return createIrStringConcat(argument)
     }
 
     open fun readIrThrow(): Any {
-        var value__: Any? = null
+        var value: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> value__ = readWithLength { readIrExpression() }
+                    1 -> value = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrThrow(value__!!)
+        return createIrThrow(value!!)
     }
 
     open fun readIrTry(): Any {
-        var result__: Any? = null
-        var catch__: MutableList<Any> = mutableListOf()
-        var finally__: Any? = null
+        var result: Any? = null
+        var catch: MutableList<Any> = mutableListOf()
+        var finally: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> result__ = readWithLength { readIrExpression() }
-                    2 -> catch__.add(readWithLength { readIrStatement() })
-                    3 -> finally__ = readWithLength { readIrExpression() }
+                    1 -> result = readWithLength { readIrExpression() }
+                    2 -> catch.add(readWithLength { readIrStatement() })
+                    3 -> finally = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrTry(result__!!, catch__, finally__)
+        return createIrTry(result!!, catch, finally)
     }
 
     open fun readIrTypeOp(): Any {
-        var operator__: Any? = null
-        var operand__: Any? = null
-        var argument__: Any? = null
+        var operator: Any? = null
+        var operand: Any? = null
+        var argument: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operator__ = createIrTypeOperator(readInt32())
-                    2 -> operand__ = readWithLength { readIrDataIndex() }
-                    3 -> argument__ = readWithLength { readIrExpression() }
+                    1 -> operator = createIrTypeOperator(readInt32())
+                    2 -> operand = readWithLength { readIrDataIndex() }
+                    3 -> argument = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeOp(operator__!!, operand__!!, argument__!!)
+        return createIrTypeOp(operator!!, operand!!, argument!!)
     }
 
     open fun readIrVararg(): Any {
-        var element_type__: Any? = null
-        var element__: MutableList<Any> = mutableListOf()
+        var elementType: Any? = null
+        var element: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> element_type__ = readWithLength { readIrDataIndex() }
-                    2 -> element__.add(readWithLength { readIrVarargElement() })
+                    1 -> elementType = readWithLength { readIrDataIndex() }
+                    2 -> element.add(readWithLength { readIrVarargElement() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrVararg(element_type__!!, element__)
+        return createIrVararg(elementType!!, element)
     }
 
     open fun readIrVarargElement(): Any {
-        var expression__: Any? = null
-        var spread_element__: Any? = null
+        var expression: Any? = null
+        var spreadElement: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        expression__ = readWithLength { readIrExpression() }
+                        expression = readWithLength { readIrExpression() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        spread_element__ = readWithLength { readIrSpreadElement() }
+                        spreadElement = readWithLength { readIrSpreadElement() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -1275,255 +1271,255 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrVarargElement_expression(expression__!!)
-            2 -> return createIrVarargElement_spreadElement(spread_element__!!)
+            1 -> return createIrVarargElement_expression(expression!!)
+            2 -> return createIrVarargElement_spreadElement(spreadElement!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrWhen(): Any {
-        var branch__: MutableList<Any> = mutableListOf()
-        var origin__: Any? = null
+        var branch: MutableList<Any> = mutableListOf()
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> branch__.add(readWithLength { readIrStatement() })
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> branch.add(readWithLength { readIrStatement() })
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrWhen(branch__, origin__)
+        return createIrWhen(branch, origin)
     }
 
     open fun readIrWhile(): Any {
-        var loop__: Any? = null
+        var loop: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop__ = readWithLength { readLoop() }
+                    1 -> loop = readWithLength { readLoop() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrWhile(loop__!!)
+        return createIrWhile(loop!!)
     }
 
     open fun readIrFunctionExpression(): Any {
-        var function__: Any? = null
-        var origin__: Any? = null
+        var function: Any? = null
+        var origin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> function__ = readWithLength { readIrFunction() }
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> function = readWithLength { readIrFunction() }
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrFunctionExpression(function__!!, origin__!!)
+        return createIrFunctionExpression(function!!, origin!!)
     }
 
     open fun readIrDynamicMemberExpression(): Any {
-        var memberName__: Any? = null
-        var receiver__: Any? = null
+        var memberName: Any? = null
+        var receiver: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> memberName__ = readWithLength { readIrDataIndex() }
-                    2 -> receiver__ = readWithLength { readIrExpression() }
+                    1 -> memberName = readWithLength { readIrDataIndex() }
+                    2 -> receiver = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDynamicMemberExpression(memberName__!!, receiver__!!)
+        return createIrDynamicMemberExpression(memberName!!, receiver!!)
     }
 
     open fun readIrDynamicOperatorExpression(): Any {
-        var operator__: Any? = null
-        var receiver__: Any? = null
-        var argument__: MutableList<Any> = mutableListOf()
+        var operator: Any? = null
+        var receiver: Any? = null
+        var argument: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operator__ = createIrDynamicOperator(readInt32())
-                    2 -> receiver__ = readWithLength { readIrExpression() }
-                    3 -> argument__.add(readWithLength { readIrExpression() })
+                    1 -> operator = createIrDynamicOperator(readInt32())
+                    2 -> receiver = readWithLength { readIrExpression() }
+                    3 -> argument.add(readWithLength { readIrExpression() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrDynamicOperatorExpression(operator__!!, receiver__!!, argument__)
+        return createIrDynamicOperatorExpression(operator!!, receiver!!, argument)
     }
 
     open fun readIrOperation(): Any {
-        var block__: Any? = null
-        var break__: Any? = null
-        var call__: Any? = null
-        var class_reference__: Any? = null
-        var composite__: Any? = null
-        var const__: Any? = null
-        var continue__: Any? = null
-        var delegating_constructor_call__: Any? = null
-        var do_while__: Any? = null
-        var enum_constructor_call__: Any? = null
-        var function_reference__: Any? = null
-        var get_class__: Any? = null
-        var get_enum_value__: Any? = null
-        var get_field__: Any? = null
-        var get_object__: Any? = null
-        var get_value__: Any? = null
-        var instance_initializer_call__: Any? = null
-        var property_reference__: Any? = null
-        var return__: Any? = null
-        var set_field__: Any? = null
-        var set_variable__: Any? = null
-        var string_concat__: Any? = null
-        var throw__: Any? = null
-        var try__: Any? = null
-        var type_op__: Any? = null
-        var vararg__: Any? = null
-        var when__: Any? = null
-        var while__: Any? = null
-        var dynamic_member__: Any? = null
-        var dynamic_operator__: Any? = null
-        var local_delegated_property_reference__: Any? = null
-        var constructor_call__: Any? = null
-        var function_expression__: Any? = null
+        var block: Any? = null
+        var break_: Any? = null
+        var call: Any? = null
+        var classReference: Any? = null
+        var composite: Any? = null
+        var const: Any? = null
+        var continue_: Any? = null
+        var delegatingConstructorCall: Any? = null
+        var doWhile: Any? = null
+        var enumConstructorCall: Any? = null
+        var functionReference: Any? = null
+        var getClass: Any? = null
+        var getEnumValue: Any? = null
+        var getField: Any? = null
+        var getObject: Any? = null
+        var getValue: Any? = null
+        var instanceInitializerCall: Any? = null
+        var propertyReference: Any? = null
+        var return_: Any? = null
+        var setField: Any? = null
+        var setVariable: Any? = null
+        var stringConcat: Any? = null
+        var throw_: Any? = null
+        var try_: Any? = null
+        var typeOp: Any? = null
+        var vararg: Any? = null
+        var when_: Any? = null
+        var while_: Any? = null
+        var dynamicMember: Any? = null
+        var dynamicOperator: Any? = null
+        var localDelegatedPropertyReference: Any? = null
+        var constructorCall: Any? = null
+        var functionExpression: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        block__ = readWithLength { readIrBlock() }
+                        block = readWithLength { readIrBlock() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        break__ = readWithLength { readIrBreak() }
+                        break_ = readWithLength { readIrBreak() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        call__ = readWithLength { readIrCall() }
+                        call = readWithLength { readIrCall() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        class_reference__ = readWithLength { readIrClassReference() }
+                        classReference = readWithLength { readIrClassReference() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        composite__ = readWithLength { readIrComposite() }
+                        composite = readWithLength { readIrComposite() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        const__ = readWithLength { readIrConst() }
+                        const = readWithLength { readIrConst() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        continue__ = readWithLength { readIrContinue() }
+                        continue_ = readWithLength { readIrContinue() }
                         oneOfIndex = 7
                     }
                     8 -> {
-                        delegating_constructor_call__ = readWithLength { readIrDelegatingConstructorCall() }
+                        delegatingConstructorCall = readWithLength { readIrDelegatingConstructorCall() }
                         oneOfIndex = 8
                     }
                     9 -> {
-                        do_while__ = readWithLength { readIrDoWhile() }
+                        doWhile = readWithLength { readIrDoWhile() }
                         oneOfIndex = 9
                     }
                     10 -> {
-                        enum_constructor_call__ = readWithLength { readIrEnumConstructorCall() }
+                        enumConstructorCall = readWithLength { readIrEnumConstructorCall() }
                         oneOfIndex = 10
                     }
                     11 -> {
-                        function_reference__ = readWithLength { readIrFunctionReference() }
+                        functionReference = readWithLength { readIrFunctionReference() }
                         oneOfIndex = 11
                     }
                     12 -> {
-                        get_class__ = readWithLength { readIrGetClass() }
+                        getClass = readWithLength { readIrGetClass() }
                         oneOfIndex = 12
                     }
                     13 -> {
-                        get_enum_value__ = readWithLength { readIrGetEnumValue() }
+                        getEnumValue = readWithLength { readIrGetEnumValue() }
                         oneOfIndex = 13
                     }
                     14 -> {
-                        get_field__ = readWithLength { readIrGetField() }
+                        getField = readWithLength { readIrGetField() }
                         oneOfIndex = 14
                     }
                     15 -> {
-                        get_object__ = readWithLength { readIrGetObject() }
+                        getObject = readWithLength { readIrGetObject() }
                         oneOfIndex = 15
                     }
                     16 -> {
-                        get_value__ = readWithLength { readIrGetValue() }
+                        getValue = readWithLength { readIrGetValue() }
                         oneOfIndex = 16
                     }
                     17 -> {
-                        instance_initializer_call__ = readWithLength { readIrInstanceInitializerCall() }
+                        instanceInitializerCall = readWithLength { readIrInstanceInitializerCall() }
                         oneOfIndex = 17
                     }
                     18 -> {
-                        property_reference__ = readWithLength { readIrPropertyReference() }
+                        propertyReference = readWithLength { readIrPropertyReference() }
                         oneOfIndex = 18
                     }
                     19 -> {
-                        return__ = readWithLength { readIrReturn() }
+                        return_ = readWithLength { readIrReturn() }
                         oneOfIndex = 19
                     }
                     20 -> {
-                        set_field__ = readWithLength { readIrSetField() }
+                        setField = readWithLength { readIrSetField() }
                         oneOfIndex = 20
                     }
                     21 -> {
-                        set_variable__ = readWithLength { readIrSetVariable() }
+                        setVariable = readWithLength { readIrSetVariable() }
                         oneOfIndex = 21
                     }
                     22 -> {
-                        string_concat__ = readWithLength { readIrStringConcat() }
+                        stringConcat = readWithLength { readIrStringConcat() }
                         oneOfIndex = 22
                     }
                     23 -> {
-                        throw__ = readWithLength { readIrThrow() }
+                        throw_ = readWithLength { readIrThrow() }
                         oneOfIndex = 23
                     }
                     24 -> {
-                        try__ = readWithLength { readIrTry() }
+                        try_ = readWithLength { readIrTry() }
                         oneOfIndex = 24
                     }
                     25 -> {
-                        type_op__ = readWithLength { readIrTypeOp() }
+                        typeOp = readWithLength { readIrTypeOp() }
                         oneOfIndex = 25
                     }
                     26 -> {
-                        vararg__ = readWithLength { readIrVararg() }
+                        vararg = readWithLength { readIrVararg() }
                         oneOfIndex = 26
                     }
                     27 -> {
-                        when__ = readWithLength { readIrWhen() }
+                        when_ = readWithLength { readIrWhen() }
                         oneOfIndex = 27
                     }
                     28 -> {
-                        while__ = readWithLength { readIrWhile() }
+                        while_ = readWithLength { readIrWhile() }
                         oneOfIndex = 28
                     }
                     29 -> {
-                        dynamic_member__ = readWithLength { readIrDynamicMemberExpression() }
+                        dynamicMember = readWithLength { readIrDynamicMemberExpression() }
                         oneOfIndex = 29
                     }
                     30 -> {
-                        dynamic_operator__ = readWithLength { readIrDynamicOperatorExpression() }
+                        dynamicOperator = readWithLength { readIrDynamicOperatorExpression() }
                         oneOfIndex = 30
                     }
                     31 -> {
-                        local_delegated_property_reference__ = readWithLength { readIrLocalDelegatedPropertyReference() }
+                        localDelegatedPropertyReference = readWithLength { readIrLocalDelegatedPropertyReference() }
                         oneOfIndex = 31
                     }
                     32 -> {
-                        constructor_call__ = readWithLength { readIrConstructorCall() }
+                        constructorCall = readWithLength { readIrConstructorCall() }
                         oneOfIndex = 32
                     }
                     33 -> {
-                        function_expression__ = readWithLength { readIrFunctionExpression() }
+                        functionExpression = readWithLength { readIrFunctionExpression() }
                         oneOfIndex = 33
                     }
                     else -> skip(type)
@@ -1531,495 +1527,681 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrOperation_block(block__!!)
-            2 -> return createIrOperation_break_(break__!!)
-            3 -> return createIrOperation_call(call__!!)
-            4 -> return createIrOperation_classReference(class_reference__!!)
-            5 -> return createIrOperation_composite(composite__!!)
-            6 -> return createIrOperation_const(const__!!)
-            7 -> return createIrOperation_continue_(continue__!!)
-            8 -> return createIrOperation_delegatingConstructorCall(delegating_constructor_call__!!)
-            9 -> return createIrOperation_doWhile(do_while__!!)
-            10 -> return createIrOperation_enumConstructorCall(enum_constructor_call__!!)
-            11 -> return createIrOperation_functionReference(function_reference__!!)
-            12 -> return createIrOperation_getClass(get_class__!!)
-            13 -> return createIrOperation_getEnumValue(get_enum_value__!!)
-            14 -> return createIrOperation_getField(get_field__!!)
-            15 -> return createIrOperation_getObject(get_object__!!)
-            16 -> return createIrOperation_getValue(get_value__!!)
-            17 -> return createIrOperation_instanceInitializerCall(instance_initializer_call__!!)
-            18 -> return createIrOperation_propertyReference(property_reference__!!)
-            19 -> return createIrOperation_return_(return__!!)
-            20 -> return createIrOperation_setField(set_field__!!)
-            21 -> return createIrOperation_setVariable(set_variable__!!)
-            22 -> return createIrOperation_stringConcat(string_concat__!!)
-            23 -> return createIrOperation_throw_(throw__!!)
-            24 -> return createIrOperation_try_(try__!!)
-            25 -> return createIrOperation_typeOp(type_op__!!)
-            26 -> return createIrOperation_vararg(vararg__!!)
-            27 -> return createIrOperation_when_(when__!!)
-            28 -> return createIrOperation_while_(while__!!)
-            29 -> return createIrOperation_dynamicMember(dynamic_member__!!)
-            30 -> return createIrOperation_dynamicOperator(dynamic_operator__!!)
-            31 -> return createIrOperation_localDelegatedPropertyReference(local_delegated_property_reference__!!)
-            32 -> return createIrOperation_constructorCall(constructor_call__!!)
-            33 -> return createIrOperation_functionExpression(function_expression__!!)
+            1 -> return createIrOperation_block(block!!)
+            2 -> return createIrOperation_break_(break_!!)
+            3 -> return createIrOperation_call(call!!)
+            4 -> return createIrOperation_classReference(classReference!!)
+            5 -> return createIrOperation_composite(composite!!)
+            6 -> return createIrOperation_const(const!!)
+            7 -> return createIrOperation_continue_(continue_!!)
+            8 -> return createIrOperation_delegatingConstructorCall(delegatingConstructorCall!!)
+            9 -> return createIrOperation_doWhile(doWhile!!)
+            10 -> return createIrOperation_enumConstructorCall(enumConstructorCall!!)
+            11 -> return createIrOperation_functionReference(functionReference!!)
+            12 -> return createIrOperation_getClass(getClass!!)
+            13 -> return createIrOperation_getEnumValue(getEnumValue!!)
+            14 -> return createIrOperation_getField(getField!!)
+            15 -> return createIrOperation_getObject(getObject!!)
+            16 -> return createIrOperation_getValue(getValue!!)
+            17 -> return createIrOperation_instanceInitializerCall(instanceInitializerCall!!)
+            18 -> return createIrOperation_propertyReference(propertyReference!!)
+            19 -> return createIrOperation_return_(return_!!)
+            20 -> return createIrOperation_setField(setField!!)
+            21 -> return createIrOperation_setVariable(setVariable!!)
+            22 -> return createIrOperation_stringConcat(stringConcat!!)
+            23 -> return createIrOperation_throw_(throw_!!)
+            24 -> return createIrOperation_try_(try_!!)
+            25 -> return createIrOperation_typeOp(typeOp!!)
+            26 -> return createIrOperation_vararg(vararg!!)
+            27 -> return createIrOperation_when_(when_!!)
+            28 -> return createIrOperation_while_(while_!!)
+            29 -> return createIrOperation_dynamicMember(dynamicMember!!)
+            30 -> return createIrOperation_dynamicOperator(dynamicOperator!!)
+            31 -> return createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference!!)
+            32 -> return createIrOperation_constructorCall(constructorCall!!)
+            33 -> return createIrOperation_functionExpression(functionExpression!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrExpression(): Any {
-        var operation__: Any? = null
-        var type__: Any? = null
-        var coordinates__: Any? = null
+        var operation: Any? = null
+        var type_: Any? = null
+        var coordinates: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operation__ = readWithLength { readIrOperation() }
-                    2 -> type__ = readWithLength { readIrDataIndex() }
-                    3 -> coordinates__ = readWithLength { readCoordinates() }
+                    1 -> operation = readWithLength { readIrOperation() }
+                    2 -> type_ = readWithLength { readIrDataIndex() }
+                    3 -> coordinates = readWithLength { readCoordinates() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrExpression(operation__!!, type__!!, coordinates__!!)
+        return createIrExpression(operation!!, type_!!, coordinates!!)
     }
 
     open fun readNullableIrExpression(): Any {
-        var expression__: Any? = null
+        var expression: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readWithLength { readIrExpression() }
+                    1 -> expression = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createNullableIrExpression(expression__)
-    }
-
-    open fun readIrDeclarationBase(): Any {
-        var symbol__: Any? = null
-        var origin__: Any? = null
-        var coordinates__: Any? = null
-        var annotations__: Any? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> origin__ = readWithLength { readIrDeclarationOrigin() }
-                    3 -> coordinates__ = readWithLength { readCoordinates() }
-                    4 -> annotations__ = readWithLength { readAnnotations() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createIrDeclarationBase(symbol__!!, origin__!!, coordinates__!!, annotations__!!)
-    }
-
-    open fun readIrFunctionBase(): Any {
-        var base__: Any? = null
-        var name__: Any? = null
-        var visibility__: Any? = null
-        var is_inline__: Boolean = false
-        var is_external__: Boolean = false
-        var type_parameters__: Any? = null
-        var dispatch_receiver__: Any? = null
-        var extension_receiver__: Any? = null
-        var value_parameter__: MutableList<Any> = mutableListOf()
-        var body__: Any? = null
-        var return_type__: Any? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> visibility__ = readWithLength { readVisibility() }
-                    4 -> is_inline__ = readBool()
-                    5 -> is_external__ = readBool()
-                    6 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
-                    7 -> dispatch_receiver__ = readWithLength { readIrValueParameter() }
-                    8 -> extension_receiver__ = readWithLength { readIrValueParameter() }
-                    9 -> value_parameter__.add(readWithLength { readIrValueParameter() })
-                    10 -> body__ = readWithLength { readIrDataIndex() }
-                    11 -> return_type__ = readWithLength { readIrDataIndex() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createIrFunctionBase(base__!!, name__!!, visibility__!!, is_inline__, is_external__, type_parameters__!!, dispatch_receiver__, extension_receiver__, value_parameter__, body__, return_type__!!)
+        return createNullableIrExpression(expression)
     }
 
     open fun readIrFunction(): Any {
-        var base__: Any? = null
-        var modality__: Any? = null
-        var is_tailrec__: Boolean = false
-        var is_suspend__: Boolean = false
-        var overridden__: MutableList<Any> = mutableListOf()
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var visibility: Any? = null
+        var isInline: Boolean = false
+        var isExternal: Boolean = false
+        var typeParameters: Any? = null
+        var dispatchReceiver: Any? = null
+        var extensionReceiver: Any? = null
+        var valueParameter: MutableList<Any> = mutableListOf()
+        var body: Any? = null
+        var returnType: Any? = null
+        var modality: Any? = null
+        var isTailrec: Boolean = false
+        var isSuspend: Boolean = false
+        var overridden: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrFunctionBase() }
-                    2 -> modality__ = createModalityKind(readInt32())
-                    3 -> is_tailrec__ = readBool()
-                    4 -> is_suspend__ = readBool()
-                    5 -> overridden__.add(readWithLength { readIrDataIndex() })
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                                    4 -> annotations = readWithLength { readAnnotations() }
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    2 -> name = readWithLength { readIrDataIndex() }
+                                    3 -> visibility = readWithLength { readVisibility() }
+                                    4 -> isInline = readBool()
+                                    5 -> isExternal = readBool()
+                                    6 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                                    7 -> dispatchReceiver = readWithLength { readIrValueParameter() }
+                                    8 -> extensionReceiver = readWithLength { readIrValueParameter() }
+                                    9 -> valueParameter.add(readWithLength { readIrValueParameter() })
+                                    10 -> body = readWithLength { readIrDataIndex() }
+                                    11 -> returnType = readWithLength { readIrDataIndex() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> modality = createModalityKind(readInt32())
+                    3 -> isTailrec = readBool()
+                    4 -> isSuspend = readBool()
+                    5 -> overridden.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrFunction(base__!!, modality__!!, is_tailrec__, is_suspend__, overridden__)
+        return createIrFunction(symbol!!, origin!!, coordinates!!, annotations!!, name!!, visibility!!, isInline, isExternal, typeParameters!!, dispatchReceiver, extensionReceiver, valueParameter, body, returnType!!, modality!!, isTailrec, isSuspend, overridden)
     }
 
     open fun readIrConstructor(): Any {
-        var base__: Any? = null
-        var is_primary__: Boolean = false
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var visibility: Any? = null
+        var isInline: Boolean = false
+        var isExternal: Boolean = false
+        var typeParameters: Any? = null
+        var dispatchReceiver: Any? = null
+        var extensionReceiver: Any? = null
+        var valueParameter: MutableList<Any> = mutableListOf()
+        var body: Any? = null
+        var returnType: Any? = null
+        var isPrimary: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrFunctionBase() }
-                    2 -> is_primary__ = readBool()
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                                    4 -> annotations = readWithLength { readAnnotations() }
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    2 -> name = readWithLength { readIrDataIndex() }
+                                    3 -> visibility = readWithLength { readVisibility() }
+                                    4 -> isInline = readBool()
+                                    5 -> isExternal = readBool()
+                                    6 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                                    7 -> dispatchReceiver = readWithLength { readIrValueParameter() }
+                                    8 -> extensionReceiver = readWithLength { readIrValueParameter() }
+                                    9 -> valueParameter.add(readWithLength { readIrValueParameter() })
+                                    10 -> body = readWithLength { readIrDataIndex() }
+                                    11 -> returnType = readWithLength { readIrDataIndex() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> isPrimary = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createIrConstructor(base__!!, is_primary__)
+        return createIrConstructor(symbol!!, origin!!, coordinates!!, annotations!!, name!!, visibility!!, isInline, isExternal, typeParameters!!, dispatchReceiver, extensionReceiver, valueParameter, body, returnType!!, isPrimary)
     }
 
     open fun readIrField(): Any {
-        var base__: Any? = null
-        var initializer__: Any? = null
-        var name__: Any? = null
-        var visibility__: Any? = null
-        var is_final__: Boolean = false
-        var is_external__: Boolean = false
-        var is_static__: Boolean = false
-        var type__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var initializer: Any? = null
+        var name: Any? = null
+        var visibility: Any? = null
+        var isFinal: Boolean = false
+        var isExternal: Boolean = false
+        var isStatic: Boolean = false
+        var type_: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> initializer__ = readWithLength { readIrDataIndex() }
-                    3 -> name__ = readWithLength { readIrDataIndex() }
-                    4 -> visibility__ = readWithLength { readVisibility() }
-                    5 -> is_final__ = readBool()
-                    6 -> is_external__ = readBool()
-                    7 -> is_static__ = readBool()
-                    8 -> type__ = readWithLength { readIrDataIndex() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> initializer = readWithLength { readIrDataIndex() }
+                    3 -> name = readWithLength { readIrDataIndex() }
+                    4 -> visibility = readWithLength { readVisibility() }
+                    5 -> isFinal = readBool()
+                    6 -> isExternal = readBool()
+                    7 -> isStatic = readBool()
+                    8 -> type_ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrField(base__!!, initializer__, name__!!, visibility__!!, is_final__, is_external__, is_static__, type__!!)
+        return createIrField(symbol!!, origin!!, coordinates!!, annotations!!, initializer, name!!, visibility!!, isFinal, isExternal, isStatic, type_!!)
     }
 
     open fun readIrLocalDelegatedProperty(): Any {
-        var base__: Any? = null
-        var name__: Any? = null
-        var type__: Any? = null
-        var is_var__: Boolean = false
-        var delegate__: Any? = null
-        var getter__: Any? = null
-        var setter__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var type_: Any? = null
+        var isVar: Boolean = false
+        var delegate: Any? = null
+        var getter: Any? = null
+        var setter: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> type__ = readWithLength { readIrDataIndex() }
-                    4 -> is_var__ = readBool()
-                    5 -> delegate__ = readWithLength { readIrVariable() }
-                    6 -> getter__ = readWithLength { readIrFunction() }
-                    7 -> setter__ = readWithLength { readIrFunction() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> type_ = readWithLength { readIrDataIndex() }
+                    4 -> isVar = readBool()
+                    5 -> delegate = readWithLength { readIrVariable() }
+                    6 -> getter = readWithLength { readIrFunction() }
+                    7 -> setter = readWithLength { readIrFunction() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrLocalDelegatedProperty(base__!!, name__!!, type__!!, is_var__, delegate__!!, getter__, setter__)
+        return createIrLocalDelegatedProperty(symbol!!, origin!!, coordinates!!, annotations!!, name!!, type_!!, isVar, delegate!!, getter, setter)
     }
 
     open fun readIrProperty(): Any {
-        var base__: Any? = null
-        var name__: Any? = null
-        var visibility__: Any? = null
-        var modality__: Any? = null
-        var is_var__: Boolean = false
-        var is_const__: Boolean = false
-        var is_lateinit__: Boolean = false
-        var is_delegated__: Boolean = false
-        var is_external__: Boolean = false
-        var backing_field__: Any? = null
-        var getter__: Any? = null
-        var setter__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var visibility: Any? = null
+        var modality: Any? = null
+        var isVar: Boolean = false
+        var isConst: Boolean = false
+        var isLateinit: Boolean = false
+        var isDelegated: Boolean = false
+        var isExternal: Boolean = false
+        var backingField: Any? = null
+        var getter: Any? = null
+        var setter: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> visibility__ = readWithLength { readVisibility() }
-                    4 -> modality__ = createModalityKind(readInt32())
-                    5 -> is_var__ = readBool()
-                    6 -> is_const__ = readBool()
-                    7 -> is_lateinit__ = readBool()
-                    8 -> is_delegated__ = readBool()
-                    9 -> is_external__ = readBool()
-                    10 -> backing_field__ = readWithLength { readIrField() }
-                    11 -> getter__ = readWithLength { readIrFunction() }
-                    12 -> setter__ = readWithLength { readIrFunction() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> visibility = readWithLength { readVisibility() }
+                    4 -> modality = createModalityKind(readInt32())
+                    5 -> isVar = readBool()
+                    6 -> isConst = readBool()
+                    7 -> isLateinit = readBool()
+                    8 -> isDelegated = readBool()
+                    9 -> isExternal = readBool()
+                    10 -> backingField = readWithLength { readIrField() }
+                    11 -> getter = readWithLength { readIrFunction() }
+                    12 -> setter = readWithLength { readIrFunction() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrProperty(base__!!, name__!!, visibility__!!, modality__!!, is_var__, is_const__, is_lateinit__, is_delegated__, is_external__, backing_field__, getter__, setter__)
+        return createIrProperty(symbol!!, origin!!, coordinates!!, annotations!!, name!!, visibility!!, modality!!, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
     }
 
     open fun readIrVariable(): Any {
-        var base__: Any? = null
-        var name__: Any? = null
-        var type__: Any? = null
-        var is_var__: Boolean = false
-        var is_const__: Boolean = false
-        var is_lateinit__: Boolean = false
-        var initializer__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var type_: Any? = null
+        var isVar: Boolean = false
+        var isConst: Boolean = false
+        var isLateinit: Boolean = false
+        var initializer: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> type__ = readWithLength { readIrDataIndex() }
-                    4 -> is_var__ = readBool()
-                    5 -> is_const__ = readBool()
-                    6 -> is_lateinit__ = readBool()
-                    7 -> initializer__ = readWithLength { readIrExpression() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> type_ = readWithLength { readIrDataIndex() }
+                    4 -> isVar = readBool()
+                    5 -> isConst = readBool()
+                    6 -> isLateinit = readBool()
+                    7 -> initializer = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrVariable(base__!!, name__!!, type__!!, is_var__, is_const__, is_lateinit__, initializer__)
+        return createIrVariable(symbol!!, origin!!, coordinates!!, annotations!!, name!!, type_!!, isVar, isConst, isLateinit, initializer)
     }
 
     open fun readIrValueParameter(): Any {
-        var base__: Any? = null
-        var name__: Any? = null
-        var index__: Int = 0
-        var type__: Any? = null
-        var vararg_element_type__: Any? = null
-        var is_crossinline__: Boolean = false
-        var is_noinline__: Boolean = false
-        var default_value__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var index: Int = 0
+        var type_: Any? = null
+        var varargElementType: Any? = null
+        var isCrossinline: Boolean = false
+        var isNoinline: Boolean = false
+        var defaultValue: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> index__ = readInt32()
-                    4 -> type__ = readWithLength { readIrDataIndex() }
-                    5 -> vararg_element_type__ = readWithLength { readIrDataIndex() }
-                    6 -> is_crossinline__ = readBool()
-                    7 -> is_noinline__ = readBool()
-                    8 -> default_value__ = readWithLength { readIrDataIndex() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> index = readInt32()
+                    4 -> type_ = readWithLength { readIrDataIndex() }
+                    5 -> varargElementType = readWithLength { readIrDataIndex() }
+                    6 -> isCrossinline = readBool()
+                    7 -> isNoinline = readBool()
+                    8 -> defaultValue = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrValueParameter(base__!!, name__!!, index__, type__!!, vararg_element_type__, is_crossinline__, is_noinline__, default_value__)
+        return createIrValueParameter(symbol!!, origin!!, coordinates!!, annotations!!, name!!, index, type_!!, varargElementType, isCrossinline, isNoinline, defaultValue)
     }
 
     open fun readIrTypeParameter(): Any {
-        var base__: Any? = null
-        var name__: Any? = null
-        var index__: Int = 0
-        var variance__: Any? = null
-        var super_type__: MutableList<Any> = mutableListOf()
-        var is_reified__: Boolean = false
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var index: Int = 0
+        var variance: Any? = null
+        var superType: MutableList<Any> = mutableListOf()
+        var isReified: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> index__ = readInt32()
-                    4 -> variance__ = createIrTypeVariance(readInt32())
-                    5 -> super_type__.add(readWithLength { readIrDataIndex() })
-                    6 -> is_reified__ = readBool()
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> index = readInt32()
+                    4 -> variance = createIrTypeVariance(readInt32())
+                    5 -> superType.add(readWithLength { readIrDataIndex() })
+                    6 -> isReified = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeParameter(base__!!, name__!!, index__, variance__!!, super_type__, is_reified__)
+        return createIrTypeParameter(symbol!!, origin!!, coordinates!!, annotations!!, name!!, index, variance!!, superType, isReified)
     }
 
     open fun readIrTypeParameterContainer(): Any {
-        var type_parameter__: MutableList<Any> = mutableListOf()
+        var typeParameter: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> type_parameter__.add(readWithLength { readIrTypeParameter() })
+                    1 -> typeParameter.add(readWithLength { readIrTypeParameter() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeParameterContainer(type_parameter__)
+        return createIrTypeParameterContainer(typeParameter)
     }
 
     open fun readIrClass(): Any {
-        var base__: Any? = null
-        var name__: Any? = null
-        var kind__: Any? = null
-        var visibility__: Any? = null
-        var modality__: Any? = null
-        var is_companion__: Boolean = false
-        var is_inner__: Boolean = false
-        var is_data__: Boolean = false
-        var is_external__: Boolean = false
-        var is_inline__: Boolean = false
-        var this_receiver__: Any? = null
-        var type_parameters__: Any? = null
-        var declaration_container__: Any? = null
-        var super_type__: MutableList<Any> = mutableListOf()
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var kind: Any? = null
+        var visibility: Any? = null
+        var modality: Any? = null
+        var isCompanion: Boolean = false
+        var isInner: Boolean = false
+        var isData: Boolean = false
+        var isExternal: Boolean = false
+        var isInline: Boolean = false
+        var thisReceiver: Any? = null
+        var typeParameters: Any? = null
+        var declarationContainer: Any? = null
+        var superType: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> kind__ = createClassKind(readInt32())
-                    4 -> visibility__ = readWithLength { readVisibility() }
-                    5 -> modality__ = createModalityKind(readInt32())
-                    6 -> is_companion__ = readBool()
-                    7 -> is_inner__ = readBool()
-                    8 -> is_data__ = readBool()
-                    9 -> is_external__ = readBool()
-                    10 -> is_inline__ = readBool()
-                    11 -> this_receiver__ = readWithLength { readIrValueParameter() }
-                    12 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
-                    13 -> declaration_container__ = readWithLength { readIrDeclarationContainer() }
-                    14 -> super_type__.add(readWithLength { readIrDataIndex() })
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> kind = createClassKind(readInt32())
+                    4 -> visibility = readWithLength { readVisibility() }
+                    5 -> modality = createModalityKind(readInt32())
+                    6 -> isCompanion = readBool()
+                    7 -> isInner = readBool()
+                    8 -> isData = readBool()
+                    9 -> isExternal = readBool()
+                    10 -> isInline = readBool()
+                    11 -> thisReceiver = readWithLength { readIrValueParameter() }
+                    12 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                    13 -> declarationContainer = readWithLength { readIrDeclarationContainer() }
+                    14 -> superType.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrClass(base__!!, name__!!, kind__!!, visibility__!!, modality__!!, is_companion__, is_inner__, is_data__, is_external__, is_inline__, this_receiver__, type_parameters__!!, declaration_container__!!, super_type__)
+        return createIrClass(symbol!!, origin!!, coordinates!!, annotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters!!, declarationContainer!!, superType)
     }
 
     open fun readIrTypeAlias(): Any {
-        var base__: Any? = null
-        var name__: Any? = null
-        var visibility__: Any? = null
-        var type_parameters__: Any? = null
-        var expanded_type__: Any? = null
-        var is_actual__: Boolean = false
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var name: Any? = null
+        var visibility: Any? = null
+        var typeParameters: Any? = null
+        var expandedType: Any? = null
+        var isActual: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> visibility__ = readWithLength { readVisibility() }
-                    4 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
-                    5 -> expanded_type__ = readWithLength { readIrDataIndex() }
-                    6 -> is_actual__ = readBool()
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> visibility = readWithLength { readVisibility() }
+                    4 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                    5 -> expandedType = readWithLength { readIrDataIndex() }
+                    6 -> isActual = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeAlias(base__!!, name__!!, visibility__!!, type_parameters__!!, expanded_type__!!, is_actual__)
+        return createIrTypeAlias(symbol!!, origin!!, coordinates!!, annotations!!, name!!, visibility!!, typeParameters!!, expandedType!!, isActual)
     }
 
     open fun readIrEnumEntry(): Any {
-        var base__: Any? = null
-        var initializer__: Any? = null
-        var corresponding_class__: Any? = null
-        var name__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var initializer: Any? = null
+        var correspondingClass: Any? = null
+        var name: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> initializer__ = readWithLength { readIrDataIndex() }
-                    3 -> corresponding_class__ = readWithLength { readIrClass() }
-                    4 -> name__ = readWithLength { readIrDataIndex() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> initializer = readWithLength { readIrDataIndex() }
+                    3 -> correspondingClass = readWithLength { readIrClass() }
+                    4 -> name = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrEnumEntry(base__!!, initializer__, corresponding_class__, name__!!)
+        return createIrEnumEntry(symbol!!, origin!!, coordinates!!, annotations!!, initializer, correspondingClass, name!!)
     }
 
     open fun readIrAnonymousInit(): Any {
-        var base__: Any? = null
-        var body__: Any? = null
+        var symbol: Any? = null
+        var origin: Any? = null
+        var coordinates: Any? = null
+        var annotations: Any? = null
+        var body: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> body__ = readWithLength { readIrDataIndex() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> symbol = readWithLength { readIrDataIndex() }
+                                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> coordinates = readWithLength { readCoordinates() }
+                                    4 -> annotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> body = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrAnonymousInit(base__!!, body__!!)
+        return createIrAnonymousInit(symbol!!, origin!!, coordinates!!, annotations!!, body!!)
     }
 
     open fun readIrDeclaration(): Any {
-        var ir_anonymous_init__: Any? = null
-        var ir_class__: Any? = null
-        var ir_constructor__: Any? = null
-        var ir_enum_entry__: Any? = null
-        var ir_field__: Any? = null
-        var ir_function__: Any? = null
-        var ir_property__: Any? = null
-        var ir_type_parameter__: Any? = null
-        var ir_variable__: Any? = null
-        var ir_value_parameter__: Any? = null
-        var ir_local_delegated_property__: Any? = null
-        var ir_type_alias__: Any? = null
+        var irAnonymousInit: Any? = null
+        var irClass: Any? = null
+        var irConstructor: Any? = null
+        var irEnumEntry: Any? = null
+        var irField: Any? = null
+        var irFunction: Any? = null
+        var irProperty: Any? = null
+        var irTypeParameter: Any? = null
+        var irVariable: Any? = null
+        var irValueParameter: Any? = null
+        var irLocalDelegatedProperty: Any? = null
+        var irTypeAlias: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        ir_anonymous_init__ = readWithLength { readIrAnonymousInit() }
+                        irAnonymousInit = readWithLength { readIrAnonymousInit() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        ir_class__ = readWithLength { readIrClass() }
+                        irClass = readWithLength { readIrClass() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        ir_constructor__ = readWithLength { readIrConstructor() }
+                        irConstructor = readWithLength { readIrConstructor() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        ir_enum_entry__ = readWithLength { readIrEnumEntry() }
+                        irEnumEntry = readWithLength { readIrEnumEntry() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        ir_field__ = readWithLength { readIrField() }
+                        irField = readWithLength { readIrField() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        ir_function__ = readWithLength { readIrFunction() }
+                        irFunction = readWithLength { readIrFunction() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        ir_property__ = readWithLength { readIrProperty() }
+                        irProperty = readWithLength { readIrProperty() }
                         oneOfIndex = 7
                     }
                     8 -> {
-                        ir_type_parameter__ = readWithLength { readIrTypeParameter() }
+                        irTypeParameter = readWithLength { readIrTypeParameter() }
                         oneOfIndex = 8
                     }
                     9 -> {
-                        ir_variable__ = readWithLength { readIrVariable() }
+                        irVariable = readWithLength { readIrVariable() }
                         oneOfIndex = 9
                     }
                     10 -> {
-                        ir_value_parameter__ = readWithLength { readIrValueParameter() }
+                        irValueParameter = readWithLength { readIrValueParameter() }
                         oneOfIndex = 10
                     }
                     11 -> {
-                        ir_local_delegated_property__ = readWithLength { readIrLocalDelegatedProperty() }
+                        irLocalDelegatedProperty = readWithLength { readIrLocalDelegatedProperty() }
                         oneOfIndex = 11
                     }
                     12 -> {
-                        ir_type_alias__ = readWithLength { readIrTypeAlias() }
+                        irTypeAlias = readWithLength { readIrTypeAlias() }
                         oneOfIndex = 12
                     }
                     else -> skip(type)
@@ -2027,113 +2209,113 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrDeclaration_irAnonymousInit(ir_anonymous_init__!!)
-            2 -> return createIrDeclaration_irClass(ir_class__!!)
-            3 -> return createIrDeclaration_irConstructor(ir_constructor__!!)
-            4 -> return createIrDeclaration_irEnumEntry(ir_enum_entry__!!)
-            5 -> return createIrDeclaration_irField(ir_field__!!)
-            6 -> return createIrDeclaration_irFunction(ir_function__!!)
-            7 -> return createIrDeclaration_irProperty(ir_property__!!)
-            8 -> return createIrDeclaration_irTypeParameter(ir_type_parameter__!!)
-            9 -> return createIrDeclaration_irVariable(ir_variable__!!)
-            10 -> return createIrDeclaration_irValueParameter(ir_value_parameter__!!)
-            11 -> return createIrDeclaration_irLocalDelegatedProperty(ir_local_delegated_property__!!)
-            12 -> return createIrDeclaration_irTypeAlias(ir_type_alias__!!)
+            1 -> return createIrDeclaration_irAnonymousInit(irAnonymousInit!!)
+            2 -> return createIrDeclaration_irClass(irClass!!)
+            3 -> return createIrDeclaration_irConstructor(irConstructor!!)
+            4 -> return createIrDeclaration_irEnumEntry(irEnumEntry!!)
+            5 -> return createIrDeclaration_irField(irField!!)
+            6 -> return createIrDeclaration_irFunction(irFunction!!)
+            7 -> return createIrDeclaration_irProperty(irProperty!!)
+            8 -> return createIrDeclaration_irTypeParameter(irTypeParameter!!)
+            9 -> return createIrDeclaration_irVariable(irVariable!!)
+            10 -> return createIrDeclaration_irValueParameter(irValueParameter!!)
+            11 -> return createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty!!)
+            12 -> return createIrDeclaration_irTypeAlias(irTypeAlias!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrBranch(): Any {
-        var condition__: Any? = null
-        var result__: Any? = null
+        var condition: Any? = null
+        var result: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> condition__ = readWithLength { readIrExpression() }
-                    2 -> result__ = readWithLength { readIrExpression() }
+                    1 -> condition = readWithLength { readIrExpression() }
+                    2 -> result = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrBranch(condition__!!, result__!!)
+        return createIrBranch(condition!!, result!!)
     }
 
     open fun readIrBlockBody(): Any {
-        var statement__: MutableList<Any> = mutableListOf()
+        var statement: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> statement__.add(readWithLength { readIrStatement() })
+                    1 -> statement.add(readWithLength { readIrStatement() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrBlockBody(statement__)
+        return createIrBlockBody(statement)
     }
 
     open fun readIrCatch(): Any {
-        var catch_parameter__: Any? = null
-        var result__: Any? = null
+        var catchParameter: Any? = null
+        var result: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> catch_parameter__ = readWithLength { readIrVariable() }
-                    2 -> result__ = readWithLength { readIrExpression() }
+                    1 -> catchParameter = readWithLength { readIrVariable() }
+                    2 -> result = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrCatch(catch_parameter__!!, result__!!)
+        return createIrCatch(catchParameter!!, result!!)
     }
 
     open fun readIrSyntheticBody(): Any {
-        var kind__: Any? = null
+        var kind: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> kind__ = createIrSyntheticBodyKind(readInt32())
+                    1 -> kind = createIrSyntheticBodyKind(readInt32())
                     else -> skip(type)
                 }
             }
         }
-        return createIrSyntheticBody(kind__!!)
+        return createIrSyntheticBody(kind!!)
     }
 
     open fun readIrStatement(): Any {
-        var coordinates__: Any? = null
-        var declaration__: Any? = null
-        var expression__: Any? = null
-        var block_body__: Any? = null
-        var branch__: Any? = null
-        var catch__: Any? = null
-        var synthetic_body__: Any? = null
+        var coordinates: Any? = null
+        var declaration: Any? = null
+        var expression: Any? = null
+        var blockBody: Any? = null
+        var branch: Any? = null
+        var catch: Any? = null
+        var syntheticBody: Any? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> coordinates__ = readWithLength { readCoordinates() }
+                    1 -> coordinates = readWithLength { readCoordinates() }
                     2 -> {
-                        declaration__ = readWithLength { readIrDeclaration() }
+                        declaration = readWithLength { readIrDeclaration() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        expression__ = readWithLength { readIrExpression() }
+                        expression = readWithLength { readIrExpression() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        block_body__ = readWithLength { readIrBlockBody() }
+                        blockBody = readWithLength { readIrBlockBody() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        branch__ = readWithLength { readIrBranch() }
+                        branch = readWithLength { readIrBranch() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        catch__ = readWithLength { readIrCatch() }
+                        catch = readWithLength { readIrCatch() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        synthetic_body__ = readWithLength { readIrSyntheticBody() }
+                        syntheticBody = readWithLength { readIrSyntheticBody() }
                         oneOfIndex = 7
                     }
                     else -> skip(type)
@@ -2141,12 +2323,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             }
         }
         when (oneOfIndex) {
-            2 -> return createIrStatement_declaration(coordinates__!!, declaration__!!)
-            3 -> return createIrStatement_expression(coordinates__!!, expression__!!)
-            4 -> return createIrStatement_blockBody(coordinates__!!, block_body__!!)
-            5 -> return createIrStatement_branch(coordinates__!!, branch__!!)
-            6 -> return createIrStatement_catch(coordinates__!!, catch__!!)
-            7 -> return createIrStatement_syntheticBody(coordinates__!!, synthetic_body__!!)
+            2 -> return createIrStatement_declaration(coordinates!!, declaration!!)
+            3 -> return createIrStatement_expression(coordinates!!, expression!!)
+            4 -> return createIrStatement_blockBody(coordinates!!, blockBody!!)
+            5 -> return createIrStatement_branch(coordinates!!, branch!!)
+            6 -> return createIrStatement_catch(coordinates!!, catch!!)
+            7 -> return createIrStatement_syntheticBody(coordinates!!, syntheticBody!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }

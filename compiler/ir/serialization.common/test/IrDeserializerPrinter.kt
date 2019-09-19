@@ -84,7 +84,7 @@ private class IrDeserializerPrinter(
     private fun String.escape(): String {
         val result = this.split('_').fold("") { acc, c ->
             if (acc.isEmpty()) {
-                c
+                c[0].toLowerCase() + c.substring(1)
             } else {
                 acc + c[0].toUpperCase() + c.substring(1)
             }
@@ -101,7 +101,10 @@ private class IrDeserializerPrinter(
                 "return",
                 "throw",
                 "try",
-                "when"
+                "when",
+                "hasData",
+                "fieldNumber",
+                "type"
             )
         ) "_" else "")
     }
@@ -114,6 +117,8 @@ private class IrDeserializerPrinter(
                 appendln("    ${maybeAbstract}fun create${p.name}(index: Int): ${p.name.ktType}${impl}")
             }
             is Proto.Message -> {
+
+                if (p.isInline) return
 
                 fun addMessage(suffix: String, fields: List<MessageEntry.Field>) {
                     append("    ${maybeAbstract}fun create${p.name}${suffix}(")
@@ -138,20 +143,37 @@ private class IrDeserializerPrinter(
                     appendln("): ${p.name.ktType}$impl")
                 }
 
-                if (p.fields.any { it is MessageEntry.OneOf }) {
-                    val o = p.fields.filterIsInstance<MessageEntry.OneOf>().singleOrNull() ?: error("Too many oneof's in message ${p.name}")
+                val allFields = p.fields.inlined()
 
-                    val (fp, fs) = p.fields.splitBy(o)
+                if (allFields.any { it is MessageEntry.OneOf }) {
+                    val o =
+                        allFields.filterIsInstance<MessageEntry.OneOf>().singleOrNull() ?: error("Too many oneof's in message ${p.name}")
+
+                    val (fp, fs) = allFields.splitBy(o)
 
                     for (of in o.fields) {
                         addMessage("_${of.name.escape()}", fp + of + fs)
                     }
                 } else {
-                    addMessage("", p.fields.map { it as MessageEntry.Field })
+                    addMessage("", allFields.map { it as MessageEntry.Field })
                 }
             }
         }
         appendln()
+    }
+
+    val Proto.Message.isInline: Boolean
+        get() = "@inline" in this.directives
+
+    val MessageEntry.Field.isInline: Boolean
+        get() = type in typeMap && (typeMap[type]!! as? Proto.Message)?.isInline == true
+
+    fun List<MessageEntry>.inlined(): List<MessageEntry> {
+        return this.flatMap {
+            if (it is MessageEntry.Field && it.isInline) {
+                (typeMap[it.type] as Proto.Message).fields.inlined()
+            } else listOf(it)
+        }
     }
 
     private fun List<MessageEntry>.splitBy(of: MessageEntry.OneOf): Pair<List<MessageEntry.Field>, List<MessageEntry.Field>> {
@@ -204,8 +226,8 @@ private class IrDeserializerPrinter(
         }
     }
 
-    private val Proto.Message.allFields: List<MessageEntry.Field>
-        get() = fields.flatMap {
+    private val List<MessageEntry>.oneOfInlined: List<MessageEntry.Field>
+        get() = flatMap {
             when (it) {
                 is MessageEntry.OneOf -> it.fields
                 is MessageEntry.Field -> listOf(it)
@@ -213,7 +235,19 @@ private class IrDeserializerPrinter(
         }
 
     private fun StringBuilder.addMessage(m: Proto.Message) {
-        val allFields = m.allFields
+        if (m.isInline) return
+
+        val allFields = m.fields.inlined().oneOfInlined
+
+        allFields.fold(mutableMapOf<String, Int>()) { acc, c ->
+            val name = c.name.escape()
+            acc[name] = acc.getOrDefault(name, 0) + 1
+            acc
+        }.entries.forEach { (name, cnt) ->
+            if (cnt > 1) {
+                error("Duplication name '$name' in ${m.name}")
+            }
+        }
 
         appendln("    open fun read${m.name}(): ${m.name.ktType} {")
 
@@ -233,43 +267,54 @@ private class IrDeserializerPrinter(
                     "${f.type.ktType}?" to "null"
                 }
             }
-            appendln("        var ${f.name}__: $type = $initExpression")
+            appendln("        var ${f.name.escape()}: $type = $initExpression")
         }
 
 
-        val of = m.fields.filterIsInstance<MessageEntry.OneOf>().singleOrNull()?.let { of ->
+        val of = m.fields.inlined().filterIsInstance<MessageEntry.OneOf>().singleOrNull()?.let { of ->
             appendln("        var oneOfIndex: Int = -1")
             of
         }
 
-        appendln("        while (hasData) {")
-        appendln("            readField { fieldNumber, type -> ")
-        appendln("                when (fieldNumber) {")
 
-        val indent = "                    "
-        allFields.forEach { f ->
-            val readExpression = f.type.toReaderInvocation()
-            if (f.kind == FieldKind.REPEATED) {
-                appendln("${indent}${f.index} -> ${f.name}__.add($readExpression)")
-            } else if (f.kind == FieldKind.ONE_OF) {
-                appendln("${indent}${f.index} -> {")
-                appendln("${indent}    ${f.name}__ = $readExpression")
-                appendln("${indent}    oneOfIndex = ${f.index}")
-                appendln("${indent}}")
-            } else {
-                appendln("${indent}${f.index} -> ${f.name}__ = $readExpression")
+        fun readFields(shift: String, fields: List<MessageEntry.Field>) {
+            appendln("${shift}while (hasData) {")
+            appendln("${shift}    readField { fieldNumber, type -> ")
+            appendln("${shift}        when (fieldNumber) {")
+
+            val indent = "${shift}            "
+            fields.forEach { f ->
+                if (f.isInline) {
+                    appendln("${indent}${f.index} -> readWithLength {")
+                    readFields("${indent}    ", (typeMap[f.type] as Proto.Message).fields.oneOfInlined)
+                    appendln("${indent}}")
+                } else {
+                    val readExpression = f.type.toReaderInvocation()
+                    if (f.kind == FieldKind.REPEATED) {
+                        appendln("${indent}${f.index} -> ${f.name.escape()}.add($readExpression)")
+                    } else if (f.kind == FieldKind.ONE_OF) {
+                        appendln("${indent}${f.index} -> {")
+                        appendln("${indent}    ${f.name.escape()} = $readExpression")
+                        appendln("${indent}    oneOfIndex = ${f.index}")
+                        appendln("${indent}}")
+                    } else {
+                        appendln("${indent}${f.index} -> ${f.name.escape()} = $readExpression")
+                    }
+                }
             }
+
+            appendln("${shift}            else -> skip(type)")
+            appendln("${shift}        }")
+            appendln("${shift}    }")
+            appendln("${shift}}")
         }
 
-        appendln("                    else -> skip(type)")
-        appendln("                }")
-        appendln("            }")
-        appendln("        }")
+        readFields("        ", m.fields.oneOfInlined)
 
         fun invokeCreate(suffix: String, fields: List<MessageEntry.Field>): String {
             return "return create${m.name}${suffix}(${fields.fold("") { acc, c ->
                 var result = if (acc.isEmpty()) "" else "$acc, "
-                result += c.name + "__"
+                result += c.name.escape()
                 if ((c.kind == FieldKind.REQUIRED || c.kind == FieldKind.ONE_OF) && c in nullableFields) {
                     result += "!!"
                 }

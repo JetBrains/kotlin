@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
-sealed class Proto(val name: String) {
-    class Message(name: String, val fields: List<MessageEntry>) : Proto(name)
+sealed class Proto(val name: String, val directives: List<String>) {
+    class Message(name: String, val fields: List<MessageEntry>, directives: List<String> = emptyList()) : Proto(name, directives)
 
-    class Enum(name: String, val entries: List<EnumEntry>) : Proto(name)
+    class Enum(name: String, val entries: List<EnumEntry>, directives: List<String> = emptyList()) : Proto(name, directives)
 }
 
 class EnumEntry(

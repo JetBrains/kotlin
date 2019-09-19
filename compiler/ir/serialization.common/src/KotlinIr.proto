@@ -536,6 +536,7 @@ message NullableIrExpression {
 /* ------ Declarations --------------------------------------------- */
 
 message IrDeclarationBase {
+  /* @inline */
   required IrDataIndex symbol = 1;
   required IrDeclarationOrigin origin = 2;
   required Coordinates coordinates = 3;
@@ -543,6 +544,7 @@ message IrDeclarationBase {
 }
 
 message IrFunctionBase {
+  /* @inline */
   required IrDeclarationBase base = 1;
   required IrDataIndex name = 2;
   required Visibility visibility = 3;

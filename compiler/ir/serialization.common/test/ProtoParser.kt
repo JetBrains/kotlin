@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
 
     val result = ProtoParser(Files.readAllLines(Paths.get(protoFile))).parse()
 
-    println(result.createIrDeserializer(typeMappings, false))
+    println(result.createIrDeserializer(typeMappings, true))
 
 //    result.forEach {
 //        printProto(it)
@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
 }
 
 val Char.validIdSymbol: Boolean
-    get() = 'a' <= this && this <= 'z' || 'A' <= this && this <= 'Z' || '0' <= this && this <= '9' || this in "_."
+    get() = 'a' <= this && this <= 'z' || 'A' <= this && this <= 'Z' || '0' <= this && this <= '9' || this in "_.@"
 
 val Char.skip: Boolean
     get() = this in " \r\n\t"
@@ -142,10 +142,11 @@ class ProtoParser(val lines: List<String>) {
         }
         expect("{")
         val fields = mutableListOf<MessageEntry>()
+        val directives = mutableListOf<String>()
         while (true) {
             when (val token = nextToken()) {
                 "}" -> {
-                    result += Proto.Message(name, fields)
+                    result += Proto.Message(name, fields, directives)
                     return
                 }
                 "message" -> parseMessage(name)
@@ -154,7 +155,7 @@ class ProtoParser(val lines: List<String>) {
                 "optional" -> fields += parseField(FieldKind.OPTIONAL)
                 "repeated" -> fields += parseField(FieldKind.REPEATED)
                 "oneof" -> fields += parseOneOf()
-                "/" -> parseComment()
+                "/" -> directives += parseComment()
                 else -> raise(token)
             }
         }
@@ -239,15 +240,21 @@ class ProtoParser(val lines: List<String>) {
         expect(";")
     }
 
-    fun parseComment() {
+    fun parseComment(): List<String> {
         expect("*")
         var token = nextToken()
         var wasStar = false
+        val result = mutableListOf<String>()
         while (true) {
-            if (wasStar && token == "/") return
+            if (wasStar && token == "/") return result
+
+            if (token.startsWith('@')) {
+                result += token
+            }
 
             wasStar = token == "*"
             token = nextToken()
         }
+        return result
     }
 }
