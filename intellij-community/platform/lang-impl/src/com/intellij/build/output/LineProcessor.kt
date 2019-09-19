@@ -9,8 +9,8 @@ abstract class LineProcessor : Appendable, Closeable {
   abstract fun process(line: String)
 
   override fun append(csq: CharSequence): LineProcessor {
-    for (i in 0 until csq.length) {
-      append(csq[i])
+    for (element in csq) {
+      append(element)
     }
     return this
   }
