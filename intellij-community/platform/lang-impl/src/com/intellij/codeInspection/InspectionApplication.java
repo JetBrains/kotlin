@@ -19,6 +19,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.DumbService;
@@ -31,6 +32,7 @@ import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsListener;
 import com.intellij.openapi.vcs.changes.*;
@@ -69,8 +71,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
-
-import static com.intellij.codeInspection.InspectionApplicationUtilKt.runAnalysisAfterShelvingSync;
 
 /**
  * @author max
@@ -512,6 +512,13 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         reportMessage(2, text);
       }
     };
+  }
+
+  private static void runAnalysisAfterShelvingSync(Project project, List<VirtualFile> files,
+                                                   ProgressIndicator progressIndicator, Runnable afterShelve) {
+    Set<VirtualFile> versionedRoots = StreamEx.of(files).map(it -> ProjectLevelVcsManager.getInstance(project).getVcsRootFor(it)).nonNull().toSet();
+    String message = VcsBundle.message("searching.for.code.smells.freezing.process");
+    VcsPreservingExecutor.executeOperation(project, versionedRoots, message, progressIndicator, afterShelve);
   }
 
   private void gracefulExit() {
