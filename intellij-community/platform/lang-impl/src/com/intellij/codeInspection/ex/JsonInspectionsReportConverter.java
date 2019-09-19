@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import com.intellij.codeInspection.InspectionApplication;
 import com.intellij.codeInspection.InspectionsReportConverter;
+import com.intellij.codeInspection.ui.DefaultInspectionToolPresentation;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import org.jdom.Document;
@@ -22,6 +23,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.intellij.codeInspection.reference.SmartRefElementPointerImpl.*;
 
@@ -37,7 +39,6 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
   @NonNls protected static final String PROBLEM = "problem";
   @NonNls protected static final String PROBLEMS = "problems";
   @NonNls private static final String DESCRIPTION = "description";
-  @NonNls private static final String PROBLEM_CLASS = "problem_class";
   @NonNls private static final String SEVERITY_ATTR = "severity";
   @NonNls private static final String ATTRIBUTE_KEY_ATTR = "attribute_key";
   @NonNls private static final String HINT = "hint";
@@ -46,6 +47,7 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
   @NonNls private static final String SHORT_NAME = "shortName";
   @NonNls private static final String ENABLED = "enabled";
   @NonNls private static final String NAME = "name";
+  @NonNls private static final String ID = "id";
   @NonNls private static final String VALUE = "value";
   @NonNls private static final String GROUP = "group";
   @NonNls private static final String GROUPS = "groups";
@@ -160,7 +162,7 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
     writer.name(MODULE).value(problem.getChildText(MODULE));
     writer.name(PACKAGE).value(problem.getChildText(PACKAGE));
 
-    Element problemClassElement = problem.getChild(PROBLEM_CLASS);
+    Element problemClassElement = problem.getChild(DefaultInspectionToolPresentation.INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT);
     if (problemClassElement != null) {
       convertProblemClass(writer, problemClassElement);
     }
@@ -191,9 +193,16 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
   }
 
   private static void convertProblemClass(@NotNull JsonWriter writer, @NotNull Element problemClass) throws IOException {
-    writer.name(PROBLEM_CLASS);
+    writer.name(DefaultInspectionToolPresentation.INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT);
     writer.beginObject()
-      .name(NAME).value(problemClass.getText())
+      .name(NAME).value(problemClass.getText());
+
+    String inspectionId = problemClass.getAttributeValue(DefaultInspectionToolPresentation.INSPECTION_RESULTS_ID_ATTRIBUTE);
+    if (inspectionId != null) {
+      writer.name(ID).value(inspectionId);
+    }
+
+    writer
       .name(SEVERITY_ATTR).value(problemClass.getAttributeValue(SEVERITY_ATTR))
       .name(ATTRIBUTE_KEY_ATTR).value(problemClass.getAttributeValue(ATTRIBUTE_KEY_ATTR))
       .endObject();
@@ -218,27 +227,39 @@ public class JsonInspectionsReportConverter implements InspectionsReportConverte
 
   private static void convertDescriptions(@NotNull JsonWriter writer, @NotNull Document descriptions) throws IOException {
     writer.beginObject();
-    convertDescriptionsContents(writer, descriptions);
+    convertDescriptionsContents(writer, descriptions, null);
     writer.endObject();
   }
 
   protected static void convertDescriptionsContents(@NotNull JsonWriter writer,
-                                                    @NotNull Document descriptions) throws IOException {
+                                                    @NotNull Document descriptions,
+                                                    @Nullable Predicate<String> inspectionFilter) throws IOException {
     Element inspectionsElement = descriptions.getRootElement();
     writer.name(InspectionApplication.PROFILE).value(inspectionsElement.getAttributeValue(InspectionApplication.PROFILE));
     writer.name(GROUPS);
     writer.beginArray();
     for (Element group : inspectionsElement.getChildren(GROUP)) {
-      convertGroup(writer, group);
+      convertGroup(writer, group, inspectionFilter);
     }
     writer.endArray();
   }
 
-  private static void convertGroup(@NotNull JsonWriter writer, @NotNull Element group) throws IOException {
+  private static void convertGroup(@NotNull JsonWriter writer, @NotNull Element group, @Nullable Predicate<String> inspectionFilter) throws IOException {
+    if (inspectionFilter != null) {
+      boolean anyInspectionsInFilter = false;
+      for (Element inspection : group.getChildren(INSPECTION)) {
+        if (inspectionFilter.test(inspection.getAttributeValue(SHORT_NAME))) {
+          anyInspectionsInFilter = true;
+          break;
+        }
+      }
+      if (!anyInspectionsInFilter) return;
+    }
     writer.beginObject();
     writer.name(NAME).value(group.getAttributeValue(NAME));
     writer.name(InspectionApplication.INSPECTIONS_NODE).beginArray();
     for (Element inspection : group.getChildren(INSPECTION)) {
+      if (inspectionFilter != null && !inspectionFilter.test(inspection.getAttributeValue(SHORT_NAME))) continue;
       convertInspectionDescription(writer, inspection);
     }
     writer.endArray();

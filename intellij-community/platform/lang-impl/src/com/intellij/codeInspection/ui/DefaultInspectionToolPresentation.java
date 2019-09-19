@@ -52,6 +52,7 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
   public static final String INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT = "problem_class";
   public static final String INSPECTION_RESULTS_SEVERITY_ATTRIBUTE = "severity";
   public static final String INSPECTION_RESULTS_ATTRIBUTE_KEY_ATTRIBUTE = "attribute_key";
+  public static final String INSPECTION_RESULTS_ID_ATTRIBUTE = "id";
   public static final String INSPECTION_RESULTS_DESCRIPTION_ELEMENT = "description";
   public static final String INSPECTION_RESULTS_HINTS_ELEMENT = "hints";
   public static final String INSPECTION_RESULTS_HINT_ELEMENT = "hint";
@@ -371,6 +372,7 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
       final PsiElement psiElement = descriptor instanceof ProblemDescriptor ? ((ProblemDescriptor)descriptor).getPsiElement() : null;
 
       @NonNls Element problemClassElement = new Element(INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT);
+      problemClassElement.setAttribute(INSPECTION_RESULTS_ID_ATTRIBUTE, myToolWrapper.getShortName());
       problemClassElement.addContent(myToolWrapper.getDisplayName());
 
       final HighlightSeverity severity = InspectionToolPresentation.getSeverity(refEntity, psiElement, this);
