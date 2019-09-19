@@ -65,7 +65,7 @@ private class IrDeserializerPrinter(
 
         sb.appendln()
 
-        sb.appendln("abstract class IrSmartProtoReader(source: ByteArray) : ProtoReader(source) {")
+        sb.appendln("abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(source) {")
 
         protoList.forEach { sb.addAbstractFactory(it) }
 

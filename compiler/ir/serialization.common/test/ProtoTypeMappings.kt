@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization.nextgen
 val typeMappings = mapOf(
     "DescriptorReference" to "org.jetbrains.kotlin.descriptors.DeclarationDescriptor",
     "UniqId" to "org.jetbrains.kotlin.backend.common.serialization.UniqId",
-    "Coordinates" to "kotlin.Pair<Int, Int>",
+    "Coordinates" to "org.jetbrains.kotlin.backend.common.serialization.nextgen.CoordinatesCarrier",
     "Visibility" to "org.jetbrains.kotlin.descriptors.Visibility",
     "IrStatementOrigin" to "org.jetbrains.kotlin.ir.expressions.IrStatementOrigin",
     "KnownOrigin" to "org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin",

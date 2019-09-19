@@ -46,3 +46,5 @@ class MemberAccessCarrier(
 class FieldAccessCarrier(val symbolId: Int, val superId: Int, val receiver: IrExpression?)
 
 class LoopCarrier(val loopId: Int, val condition: IrExpression, val label: Int?, val body: IrExpression?, val origin: IrStatementOrigin?)
+
+class CoordinatesCarrier(val start: Int, val end: Int)
