@@ -223,16 +223,6 @@ public class InspectionsConfigTreeTable extends TreeTable {
     public abstract void updateRightPanel();
   }
 
-  public static void setToolEnabled(boolean newState,
-                                    @NotNull InspectionProfileImpl profile,
-                                    @NotNull String toolId,
-                                    @NotNull Project project) {
-    profile.setToolEnabled(toolId, newState, project, false);
-    for (ScopeToolState scopeToolState : profile.getTools(toolId, project).getTools()) {
-      scopeToolState.setEnabled(newState);
-    }
-  }
-
   private static class InspectionsConfigTreeTableModel extends DefaultTreeModel implements TreeTableModel {
 
     private final InspectionsConfigTreeTableSettings mySettings;
@@ -325,7 +315,7 @@ public class InspectionsConfigTreeTable extends TreeTable {
       final InspectionProfileImpl profile = mySettings.getInspectionProfile();
 
       for (final InspectionConfigTreeNode.Tool aNode : InspectionsAggregationUtil.getInspectionsNodes((InspectionConfigTreeNode)node)) {
-        setToolEnabled(doEnable, profile, aNode.getKey().toString(), mySettings.getProject());
+        InspectionProfileImpl.setToolEnabled(doEnable, profile, aNode.getKey().toString(), mySettings.getProject());
         mySettings.onChanged(aNode);
       }
       updateRightPanel();
@@ -360,7 +350,7 @@ public class InspectionsConfigTreeTable extends TreeTable {
       final InspectionProfileImpl profile = mySettings.getInspectionProfile();
 
       for (HighlightDisplayKey tool : tools) {
-        setToolEnabled(newState, profile, tool.toString(), mySettings.getProject());
+        InspectionProfileImpl.setToolEnabled(newState, profile, tool.toString(), mySettings.getProject());
       }
 
       for (InspectionConfigTreeNode node : nodes) {
