@@ -252,7 +252,7 @@ public class InspectionApplication {
                                 @NotNull List<? super Path> inspectionsResults) {
     ProgressManager.getInstance().runProcess(() -> {
       for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
-        configurator.configureProject(project);
+        configurator.configureProject(project, scope);
       }
 
       if (!GlobalInspectionContextUtil.canRunInspections(project, false)) {
