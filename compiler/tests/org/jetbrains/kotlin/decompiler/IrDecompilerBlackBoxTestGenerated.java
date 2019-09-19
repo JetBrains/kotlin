@@ -44,8 +44,18 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         runTest("compiler/testData/decompiler/box/loops.kt");
     }
 
+    @TestMetadata("paramWhen.kt")
+    public void testParamWhen() throws Exception {
+        runTest("compiler/testData/decompiler/box/paramWhen.kt");
+    }
+
     @TestMetadata("simpleOperators.kt")
     public void testSimpleOperators() throws Exception {
         runTest("compiler/testData/decompiler/box/simpleOperators.kt");
+    }
+
+    @TestMetadata("simpleWhen.kt")
+    public void testSimpleWhen() throws Exception {
+        runTest("compiler/testData/decompiler/box/simpleWhen.kt");
     }
 }

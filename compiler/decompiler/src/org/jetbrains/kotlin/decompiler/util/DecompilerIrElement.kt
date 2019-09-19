@@ -364,6 +364,9 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     append(" / ")
                     append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
                 }
+                IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ, IrStatementOrigin.MULTEQ, IrStatementOrigin.DIVEQ -> {
+                    append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                }
                 IrStatementOrigin.PERC -> {
                     append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
                     append(" % ")
@@ -435,7 +438,14 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
         expression.runTrimEnd {
-            "${expression.symbol.owner.name()} = ${expression.value.accept(this@DecompilerIrElementVisitor, null)}"
+            expression.symbol.owner.name() +
+                    when (expression.origin) {
+                        IrStatementOrigin.PLUSEQ -> " += ${expression.value.accept(this@DecompilerIrElementVisitor, null)}"
+                        IrStatementOrigin.MINUSEQ -> " -= ${expression.value.accept(this@DecompilerIrElementVisitor, null)}"
+                        IrStatementOrigin.MULTEQ -> " *= ${expression.value.accept(this@DecompilerIrElementVisitor, null)}"
+                        IrStatementOrigin.DIVEQ -> " /= ${expression.value.accept(this@DecompilerIrElementVisitor, null)}"
+                        else -> "${expression.symbol.owner.name()} = ${expression.value.accept(this@DecompilerIrElementVisitor, null)}"
+                    }
         }
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String = TODO()

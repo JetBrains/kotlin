@@ -66,7 +66,7 @@ class DecompileIrTreeVisitor(
 
     override fun visitBlock(expression: IrBlock, data: String) {
 //        if (expression.origin == IrStatementOrigin.WHEN || expression.origin == IrStatementOrigin.FOR_LOOP_ITERATOR) {
-            expression.statements.decompileElements()
+        expression.statements.decompileElements()
 //        } else {
 //            withBraces {
 //        expression.statements.decompileElements()
@@ -160,12 +160,16 @@ class DecompileIrTreeVisitor(
 
     override fun visitBranch(branch: IrBranch, data: String) {
         printer.print("${branch.condition.decompile()} -> ")
-        branch.result.accept(this, "")
+        withBraces {
+            branch.result.accept(this, "")
+        }
     }
 
     override fun visitElseBranch(branch: IrElseBranch, data: String) {
         printer.print("else -> ")
-        branch.result.accept(this, "")
+        withBraces {
+            branch.result.accept(this, "")
+        }
 
     }
 
