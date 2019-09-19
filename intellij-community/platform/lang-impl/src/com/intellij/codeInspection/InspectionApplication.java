@@ -142,8 +142,10 @@ public class InspectionApplication {
       return;
     }
 
-    for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
-      configurator.configureEnvironment();
+    for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getExtensionList()) {
+      if (configurator.isApplicable(projectPath)) {
+        configurator.configureEnvironment();
+      }
     }
 
     Project project = ProjectUtil.openOrImport(projectPath, null, false);
