@@ -7809,6 +7809,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testNonConstants() throws Exception {
             runTest("idea/testData/intentions/convertTwoComparisonsToRangeCheck/nonConstants.kt");
         }
+
+        @TestMetadata("until.kt")
+        public void testUntil() throws Exception {
+            runTest("idea/testData/intentions/convertTwoComparisonsToRangeCheck/until.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/convertUnsafeCastCallToUnsafeCast")

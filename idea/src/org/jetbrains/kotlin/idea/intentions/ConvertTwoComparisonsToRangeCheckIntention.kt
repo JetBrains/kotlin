@@ -21,6 +21,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.inspections.ReplaceRangeToWithUntilInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -49,13 +50,16 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val rangeData = generateRangeExpressionData(element) ?: return
         val factory = KtPsiFactory(element)
-        element.replace(
+        val replaced = element.replace(
             factory.createExpressionByPattern(
                 "$0 in $1..$2", rangeData.value,
                 factory.createExpression(rangeData.min),
                 factory.createExpression(rangeData.max)
             )
         )
+        (replaced as? KtBinaryExpression)?.right?.let {
+            ReplaceRangeToWithUntilInspection.applyFixIfApplicable(it)
+        }
     }
 
     private fun generateRangeExpressionData(condition: KtBinaryExpression): RangeExpressionData? {
