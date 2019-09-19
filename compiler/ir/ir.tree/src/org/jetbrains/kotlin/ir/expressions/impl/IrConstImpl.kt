@@ -57,22 +57,22 @@ class IrConstImpl<T>(
         fun constFalse(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl<Boolean> =
             boolean(startOffset, endOffset, type, false)
 
-        fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrExpression =
+        fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrConst<Long> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, value)
 
-        fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrExpression =
+        fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrConst<Float> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Float, value)
 
-        fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrExpression =
+        fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrConst<Double> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Double, value)
 
-        fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrExpression =
+        fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrConst<Char> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, value)
 
-        fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrExpression =
+        fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrConst<Byte> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Byte, value)
 
-        fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrExpression =
+        fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConst<Short> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
     }
 }
