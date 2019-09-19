@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
@@ -45,14 +47,24 @@ abstract class ReplaceCallFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val elvis = elvisOrEmpty(notNullNeeded)
+        val betweenReceiverAndOperation = element.elementsBetweenReceiverAndOperation().joinToString(separator = "") { it.text }
         val newExpression = KtPsiFactory(element).createExpressionByPattern(
-            "$0$operation$1$elvis",
-            element.receiverExpression, element.selectorExpression!!
+            "$0$betweenReceiverAndOperation$operation$1$elvis",
+            element.receiverExpression,
+            element.selectorExpression!!
         )
         val replacement = element.replace(newExpression)
         if (notNullNeeded) {
             replacement.moveCaretToEnd(editor, project)
         }
+    }
+
+    private fun KtQualifiedExpression.elementsBetweenReceiverAndOperation(): List<PsiElement> {
+        val receiver = receiverExpression
+        val operation = operationTokenNode as? PsiElement ?: return emptyList()
+        val start = receiver.nextSibling?.takeIf { it != operation } ?: return emptyList()
+        val end = operation.prevSibling?.takeIf { it != receiver } ?: return emptyList()
+        return PsiTreeUtil.getElementsOfRange(start, end)
     }
 }
 
