@@ -30,7 +30,9 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.VcsListener;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.ChangesUtil;
@@ -48,12 +50,14 @@ import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
 import com.intellij.util.containers.ConcurrentMultiMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.messages.MessageBusConnection;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import one.util.streamex.StreamEx;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,7 +69,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
 
 import static com.intellij.codeInspection.InspectionApplicationUtilKt.runAnalysisAfterShelvingSync;
@@ -90,6 +96,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   private int myVerboseLevel;
   private final Map<String, List<Range>> diffMap = new ConcurrentHashMap<>();
   private final MultiMap<Pair<String, Integer>, String> originalWarnings = new ConcurrentMultiMap<>();
+  private final AsyncPromise<Void> isMappingLoaded = new AsyncPromise<>();
   public String myOutputFormat;
 
   public boolean myErrorCodeRequired = true;
@@ -176,6 +183,13 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       gracefulExit();
       return;
     }
+    MessageBusConnection connection = project.getMessageBus().connect();
+    connection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, new VcsListener() {
+      @Override
+      public void directoryMappingChanged() {
+        isMappingLoaded.setResult(null);
+      }
+    });
 
     Disposer.register(parentDisposable, () -> closeProject(project));
 
@@ -297,6 +311,15 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     DumbService dumbService = DumbService.getInstance(project);
     while (dumbService.isDumb()) {
       LockSupport.parkNanos(50_000_000);
+    }
+    if (ProjectLevelVcsManager.getInstance(project).getAllVcsRoots().length == 0) {
+      try {
+        isMappingLoaded.blockingGet(60000);
+      }
+      catch (TimeoutException | ExecutionException e) {
+        reportError("Cannot initialize vcs mapping");
+        gracefulExit();
+      }
     }
     runAnalysisAfterShelvingSync(
       project,
