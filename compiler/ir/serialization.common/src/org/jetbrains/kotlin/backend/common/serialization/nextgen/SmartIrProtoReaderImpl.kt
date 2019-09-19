@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -140,7 +139,7 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun createIrStatement_syntheticBody(coordinates: CoordinatesCarrier, syntheticBody: IrSyntheticBodyKind): IrStatement {
+    override fun createIrStatement_syntheticBody(coordinates: CoordinatesCarrier, syntheticBody: IrSyntheticBody): IrStatement {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -162,7 +161,8 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     private fun loadString(id: Int): String {
-        TODO("JKJ")
+//        TODO("JKJ")
+        return "MockString$id"
     }
 
     private fun loadType(id: Int): IrType {
@@ -185,12 +185,12 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         TODO("")
     }
 
-    private fun delayedStart(): Int = TODO("start")
-    private fun delayedEnd(): Int = TODO("end")
+    private fun delayedStart(): Int = 0 // TODO("start")
+    private fun delayedEnd(): Int = 0 // TODO("end")
     private fun delayedType(): IrType = TODO("type")
 
     private val moduleDescriptor: ModuleDescriptor get() = TODO("moduleDescriptor")
-    private val symbolTable: SymbolTable get() = TODO("SymbolTable")
+    private val symbolTable: SymbolTable  = SymbolTable()
 
     override fun createUniqId(index: Long, isLocal: Boolean) = UniqId(index, isLocal)
 
@@ -212,7 +212,7 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrDeclarationOrigin_custom(custom: Int): IrDeclarationOrigin {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return object : IrDeclarationOriginImpl(loadString(custom)) {}
     }
 
     override fun createIrDeclarationOrigin_origin(origin: IrDeclarationOrigin): IrDeclarationOrigin {
@@ -991,8 +991,7 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrSyntheticBodyKind.values()[index]
     }
 
-    override fun createIrSyntheticBody(kind: IrSyntheticBodyKind): IrSyntheticBodyKind {
-        TODO("jkkjk")
-//        return IrSyntheticBodyImpl(delayedStart(), delayedEnd(), kind)
+    override fun createIrSyntheticBody(kind: IrSyntheticBodyKind): IrSyntheticBody {
+        return IrSyntheticBodyImpl(delayedStart(), delayedEnd(), kind)
     }
 }

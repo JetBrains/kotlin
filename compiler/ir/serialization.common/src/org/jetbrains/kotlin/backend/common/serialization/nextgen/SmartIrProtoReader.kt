@@ -92,7 +92,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBranch as IrBranchMessageType
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody as IrBlockBodyMessageType
 import org.jetbrains.kotlin.ir.expressions.IrCatch as IrCatchMessageType
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind as IrSyntheticBodyKindMessageType
-import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind as IrSyntheticBodyMessageType
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody as IrSyntheticBodyMessageType
 import org.jetbrains.kotlin.ir.IrStatement as IrStatementMessageType
 
 abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(source) {
