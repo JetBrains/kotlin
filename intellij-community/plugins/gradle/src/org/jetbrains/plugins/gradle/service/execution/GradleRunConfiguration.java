@@ -75,8 +75,9 @@ public class GradleRunConfiguration extends ExternalSystemRunConfiguration imple
     return editor;
   }
 
+  @NotNull
   @Override
-  public SMTRunnerConsoleProperties createTestConsoleProperties(Executor executor) {
+  public SMTRunnerConsoleProperties createTestConsoleProperties(@NotNull Executor executor) {
     return GradleIdeManager.getInstance().createTestConsoleProperties(getProject(), executor, this);
   }
 }
