@@ -335,7 +335,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
             val adapterJs = npmProject.dir.resolve("adapter.js")
             adapterJs.printWriter().use { writer ->
-                val karmaRunner = npmProject.require("kotlin-test-nodejs-runner/kotlin-test-karma-runner.js")
+                val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
                 writer.println("require('$karmaRunner')")
 
                 files.forEach { file ->

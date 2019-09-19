@@ -41,7 +41,7 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
         if (sourceMapStackTraces) {
             args(
                 "--require",
-                compilation.npmProject.require("kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support")
+                compilation.npmProject.require("kotlin-test-js-runner/kotlin-nodejs-source-map-support")
             )
         }
 

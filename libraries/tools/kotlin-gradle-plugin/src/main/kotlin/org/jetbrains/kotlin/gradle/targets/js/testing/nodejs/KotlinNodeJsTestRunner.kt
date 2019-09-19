@@ -29,7 +29,7 @@ class KotlinNodeJsTestRunner(override val compilation: KotlinJsCompilation) : Ko
         get() = "KotlinNodeJsTestRunner(ignoredTestSuites=$ignoredTestSuites)"
 
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = listOf(KotlinGradleNpmPackage("test-nodejs-runner"))
+        get() = listOf(KotlinGradleNpmPackage("test-js-runner"))
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -53,8 +53,8 @@ class KotlinNodeJsTestRunner(override val compilation: KotlinJsCompilation) : Ko
         )
 
         val testRuntimeNodeModules = listOf(
-            "kotlin-test-nodejs-runner/kotlin-test-nodejs-runner.js",
-            "kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support.js"
+            "kotlin-test-js-runner/kotlin-test-nodejs-runner.js",
+            "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js"
         )
 
         val args = nodeJsArgs +

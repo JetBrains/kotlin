@@ -51,8 +51,8 @@ class CodeConformanceTest : TestCase() {
             "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
             "libraries/tools/kotlin-maven-plugin/target",
             "libraries/tools/kotlinp/src",
-            "libraries/tools/kotlin-test-nodejs-runner/node_modules",
-            "libraries/tools/kotlin-test-nodejs-runner/.gradle",
+            "libraries/tools/kotlin-test-js-runner/node_modules",
+            "libraries/tools/kotlin-test-js-runner/.gradle",
             "compiler/testData/psi/kdoc",
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
@@ -81,8 +81,8 @@ class CodeConformanceTest : TestCase() {
             "libraries/stdlib/js-v1/node_modules",
             "libraries/tools/kotlin-maven-plugin-test/target",
             "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
-            "libraries/tools/kotlin-test-nodejs-runner/node_modules",
-            "libraries/tools/kotlin-test-nodejs-runner/.gradle",
+            "libraries/tools/kotlin-test-js-runner/node_modules",
+            "libraries/tools/kotlin-test-js-runner/.gradle",
             "buildSrc/prepare-deps/build",
             "compiler/ir/serialization.js/build"
         )

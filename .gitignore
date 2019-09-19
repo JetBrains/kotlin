@@ -51,5 +51,5 @@ build/
 kotlin-ultimate/
 node_modules/
 .rpt2_cache/
-libraries/tools/kotlin-test-nodejs-runner/lib/
+libraries/tools/kotlin-test-js-runner/lib/
 local.properties

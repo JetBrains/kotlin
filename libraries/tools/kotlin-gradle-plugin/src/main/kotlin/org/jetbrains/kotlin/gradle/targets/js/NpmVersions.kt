@@ -47,7 +47,7 @@ class NpmVersions {
 
     val puppeteer = NpmPackageVersion("puppeteer", "1.19.0")
 
-    val kotlinNodeJsTestRunner = KotlinGradleNpmPackage("test-nodejs-runner")
+    val kotlinNodeJsTestRunner = KotlinGradleNpmPackage("test-js-runner")
 
     val istanbulInstrumenterLoader = NpmPackageVersion("istanbul-instrumenter-loader", "3.0.1")
 }
