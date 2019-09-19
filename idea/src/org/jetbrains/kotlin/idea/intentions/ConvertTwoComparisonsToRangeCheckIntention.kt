@@ -34,12 +34,12 @@ import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 @Suppress("DEPRECATION")
 class ConvertTwoComparisonsToRangeCheckInspection : IntentionBasedInspection<KtBinaryExpression>(
-        ConvertTwoComparisonsToRangeCheckIntention::class
+    ConvertTwoComparisonsToRangeCheckIntention::class
 )
 
 class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
-        KtBinaryExpression::class.java,
-        "Convert to range check"
+    KtBinaryExpression::class.java,
+    "Convert to range check"
 ) {
 
     private data class RangeExpressionData(val value: KtExpression, val min: String, val max: String)
@@ -49,9 +49,13 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val rangeData = generateRangeExpressionData(element) ?: return
         val factory = KtPsiFactory(element)
-        element.replace(factory.createExpressionByPattern("$0 in $1..$2", rangeData.value,
-                                                          factory.createExpression(rangeData.min),
-                                                          factory.createExpression(rangeData.max)))
+        element.replace(
+            factory.createExpressionByPattern(
+                "$0 in $1..$2", rangeData.value,
+                factory.createExpression(rangeData.min),
+                factory.createExpression(rangeData.max)
+            )
+        )
     }
 
     private fun generateRangeExpressionData(condition: KtBinaryExpression): RangeExpressionData? {
@@ -85,27 +89,31 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
     private fun KtExpression.isSimple() = this is KtConstantExpression || this is KtNameReferenceExpression
 
     private fun generateRangeExpressionData(
-            firstLess: KtExpression, firstGreater: KtExpression, firstStrict: Boolean,
-            secondLess: KtExpression, secondGreater: KtExpression, secondStrict: Boolean
+        firstLess: KtExpression, firstGreater: KtExpression, firstStrict: Boolean,
+        secondLess: KtExpression, secondGreater: KtExpression, secondStrict: Boolean
     ) = when {
         firstGreater !is KtConstantExpression && firstGreater.evaluatesTo(secondLess) ->
-            generateRangeExpressionData(firstGreater,
-                                        min = firstLess,
-                                        max = secondGreater,
-                                        incrementMinByOne = firstStrict,
-                                        decrementMaxByOne = secondStrict)
+            generateRangeExpressionData(
+                firstGreater,
+                min = firstLess,
+                max = secondGreater,
+                incrementMinByOne = firstStrict,
+                decrementMaxByOne = secondStrict
+            )
         firstLess !is KtConstantExpression && firstLess.evaluatesTo(secondGreater) ->
-            generateRangeExpressionData(firstLess,
-                                        min = secondLess,
-                                        max = firstGreater,
-                                        incrementMinByOne = secondStrict,
-                                        decrementMaxByOne = firstStrict)
+            generateRangeExpressionData(
+                firstLess,
+                min = secondLess,
+                max = firstGreater,
+                incrementMinByOne = secondStrict,
+                decrementMaxByOne = firstStrict
+            )
         else ->
             null
     }
 
     private fun generateRangeExpressionData(
-            value: KtExpression, min: KtExpression, max: KtExpression, incrementMinByOne: Boolean, decrementMaxByOne: Boolean
+        value: KtExpression, min: KtExpression, max: KtExpression, incrementMinByOne: Boolean, decrementMaxByOne: Boolean
     ): RangeExpressionData? {
         fun KtExpression.getChangeBy(context: BindingContext, number: Int): String? {
             val type = getType(context) ?: return null
@@ -171,7 +179,7 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
         return (intConst as? Number)?.toDouble()?.toString()
     }
 
-    private fun KotlinType.isComparable() = DescriptorUtils.isSubtypeOfClass(this, this.builtIns.getComparable())
+    private fun KotlinType.isComparable() = DescriptorUtils.isSubtypeOfClass(this, this.builtIns.comparable)
 
     private fun KotlinType.isFloatingPoint(): Boolean {
         return KotlinBuiltIns.isFloat(this) || KotlinBuiltIns.isDouble(this)
@@ -179,13 +187,13 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
 
     private fun KotlinType.isInteger(): Boolean {
         return KotlinBuiltIns.isInt(this) ||
-               KotlinBuiltIns.isLong(this) ||
-               KotlinBuiltIns.isShort(this) ||
-               KotlinBuiltIns.isByte(this)
+                KotlinBuiltIns.isLong(this) ||
+                KotlinBuiltIns.isShort(this) ||
+                KotlinBuiltIns.isByte(this)
     }
 
     private fun KotlinType?.isValidTypeForIncrementDecrementByOne(): Boolean {
         this ?: return false
-        return this.isInteger()|| KotlinBuiltIns.isChar(this)
+        return this.isInteger() || KotlinBuiltIns.isChar(this)
     }
 }
