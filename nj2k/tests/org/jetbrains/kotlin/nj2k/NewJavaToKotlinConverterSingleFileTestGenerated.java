@@ -4080,6 +4080,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         public void testParenthesized2() throws Exception {
             runTest("nj2k/testData/newJ2k/parenthesizedExpression/parenthesized2.java");
         }
+
+        @TestMetadata("parenthesized3.java")
+        public void testParenthesized3() throws Exception {
+            runTest("nj2k/testData/newJ2k/parenthesizedExpression/parenthesized3.java");
+        }
     }
 
     @TestMetadata("nj2k/testData/newJ2k/polyadicExpression")

@@ -14004,9 +14004,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeUnnecessaryParentheses/necessaryParentheses5.kt");
         }
 
+        @TestMetadata("necessaryParentheses6.kt")
+        public void testNecessaryParentheses6() throws Exception {
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/necessaryParentheses6.kt");
+        }
+
+        @TestMetadata("necessaryParentheses7.kt")
+        public void testNecessaryParentheses7() throws Exception {
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/necessaryParentheses7.kt");
+        }
+
         @TestMetadata("unnecessaryParentheses1.kt")
         public void testUnnecessaryParentheses1() throws Exception {
             runTest("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParentheses1.kt");
+        }
+
+        @TestMetadata("unnecessaryParentheses10.kt")
+        public void testUnnecessaryParentheses10() throws Exception {
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParentheses10.kt");
         }
 
         @TestMetadata("unnecessaryParentheses2.kt")
@@ -14042,6 +14057,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("unnecessaryParentheses8.kt")
         public void testUnnecessaryParentheses8() throws Exception {
             runTest("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParentheses8.kt");
+        }
+
+        @TestMetadata("unnecessaryParentheses9.kt")
+        public void testUnnecessaryParentheses9() throws Exception {
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParentheses9.kt");
         }
 
         @TestMetadata("unnecessaryParenthesesWithComment.kt")
