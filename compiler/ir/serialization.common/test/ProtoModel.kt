@@ -28,7 +28,8 @@ sealed class MessageEntry(val name: String) {
         val kind: FieldKind,
         name: String,
         val index: Int,
-        val type: String
+        val type: String,
+        val defaultValue: String? = null
     ): MessageEntry(name)
 
     class OneOf(
@@ -57,7 +58,11 @@ fun printMessage(message: Proto.Message) {
                 println("  }")
             }
             is MessageEntry.Field -> {
-                println("  ${f.kind.toString().toLowerCase()} ${f.type} ${f.name} = ${f.index};")
+                print("  ${f.kind.toString().toLowerCase()} ${f.type} ${f.name} = ${f.index}")
+                if (f.defaultValue != null) {
+                    print(" [default = ${f.defaultValue}]")
+                }
+                println(";")
             }
         }
     }

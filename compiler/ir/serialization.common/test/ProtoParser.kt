@@ -20,7 +20,12 @@ fun main(args: Array<String>) {
 
     val result = ProtoParser(Files.readAllLines(Paths.get(protoFile))).parse()
 
-    println(result.createSimpleDeserializer())
+//    println(result.createSimpleDeserializer())
+
+    result.forEach {
+        printProto(it)
+        println()
+    }
 }
 
 val Char.validIdSymbol: Boolean
@@ -178,14 +183,20 @@ class ProtoParser(val lines: List<String>) {
         expect("=")
         val fieldNumber = nextToken().toInt()
 
+        var defaultValue: String? = null
+
         when (val token = nextToken()) {
             ";" -> Unit
-            "[" -> expect("default  = false];".tokenize())
+            "[" -> {
+                expect("default =".tokenize())
+                defaultValue = nextToken()
+                expect("];".tokenize())
+            }
             "/" -> parseComment()
             else -> raise(token)
         }
 
-        return MessageEntry.Field(kind, name, fieldNumber, type)
+        return MessageEntry.Field(kind, name, fieldNumber, type, defaultValue)
     }
 
     fun parseEnum(container: String? = null) {
