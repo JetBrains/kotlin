@@ -7,7 +7,7 @@ const pckg = require('./package.json');
 
 export default [
     {
-        input: './cli.ts',
+        input: './nodejs.ts',
         output: {
             file: 'lib/kotlin-test-nodejs-runner.js',
             format: 'cjs',

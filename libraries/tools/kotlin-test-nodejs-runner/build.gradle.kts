@@ -44,7 +44,7 @@ tasks {
 
         inputs.dir("src")
         inputs.files(
-            "cli.ts",
+            "nodejs.ts",
             "karma.ts",
             "nodejs-source-map-support.js",
             "package.json",
