@@ -146,6 +146,14 @@ abstract class KotlinIrLinker(
             inner class NextgenProtoParser(byteArray: ByteArray): SmartIrProtoReaderImpl(symbolTable, byteArray) {
                 override val descriptorReferenceDeserializer = this@KotlinIrLinker.descriptorReferenceDeserializer
 
+//                override fun resolveSpecialDescriptor(fqname: FqName): DeclarationDescriptor {
+//                    return globalDeserializationState.deserializedSymbols[id]?.descriptor ?:
+//                }
+
+                override fun checkBuiltinDescriptor(id: UniqId): DeclarationDescriptor? {
+                    return globalDeserializationState.deserializedSymbols[id]?.descriptor
+                }
+
                 override fun deserializeIrSymbolData(
                     kind: Int,
                     uniqId: UniqId,

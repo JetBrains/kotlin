@@ -174,6 +174,9 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         isEnumSpecial: Boolean?,
         isTypeParameter: Boolean?
     ): DeclarationDescriptor {
+        uniqId?.let {
+            checkBuiltinDescriptor(it)?.let { return it }
+        }
         return descriptorReferenceDeserializer.deserializeDescriptorReference(
             packageFqName,
             classFqName,
@@ -189,6 +192,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         )
     }
 
+    protected abstract fun checkBuiltinDescriptor(id: UniqId): DeclarationDescriptor?
 
     override fun createIrSymbolData(
         kind: Int,
@@ -199,6 +203,8 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     ) = deserializeIrSymbolData(kind, uniqId, topLevelUniqId, fqname, descriptorReference)
 
     protected abstract val descriptorReferenceDeserializer: DescriptorReferenceDeserializer
+
+//    protected abstract fun resolveSpecialDescriptor(id: UniqId): DeclarationDescriptor
 
     protected abstract fun deserializeIrSymbolData(
         kind: Int,
@@ -678,7 +684,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     }
 
     override fun createIrDynamicOperator(index: Int): IrDynamicOperator {
-        return IrDynamicOperator.values()[index]
+        return IrDynamicOperator.values()[index - 1]
     }
 
     override fun createIrDynamicOperatorExpression(
@@ -693,7 +699,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     }
 
     override fun createIrTypeOperator(index: Int): IrTypeOperator {
-        return IrTypeOperator.values()[index]
+        return IrTypeOperator.values()[index - 1]
     }
 
 //    override fun createIrExpression(operation: IrExpression, type: Int, coordinates: CoordinatesCarrier): IrExpression {
