@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import com.intellij.codeInspection.InspectionApplication;
-import com.intellij.codeInspection.ui.DefaultInspectionToolPresentation;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -63,17 +62,10 @@ public class JsonSingleFileInspectionsReportConverter extends JsonInspectionsRep
 
         for (File result : inspectionsResults) {
           if (!FileUtil.getNameWithoutExtension(result).equals(InspectionApplication.DESCRIPTIONS)) {
+            seenProblemIds.add(FileUtil.getNameWithoutExtension(result));
             Document doc = JDOMUtil.loadDocument(result);
             for (Element problem : doc.getRootElement().getChildren(PROBLEM)) {
               convertProblem(jsonWriter, problem);
-
-              Element problemClassElement = problem.getChild(DefaultInspectionToolPresentation.INSPECTION_RESULTS_PROBLEM_CLASS_ELEMENT);
-              if (problemClassElement != null) {
-                String id = problemClassElement.getAttributeValue(DefaultInspectionToolPresentation.INSPECTION_RESULTS_ID_ATTRIBUTE);
-                if (id != null) {
-                  seenProblemIds.add(id);
-                }
-              }
             }
           }
         }
