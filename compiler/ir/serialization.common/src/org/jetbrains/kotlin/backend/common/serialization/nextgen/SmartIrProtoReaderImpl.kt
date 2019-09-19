@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
 
-abstract class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(byteArray) {
+abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: ByteArray) : AbstractIrSmartProtoReader(byteArray) {
     override fun createIrTypeArgument_type_(oneOfType: IrTypeProjection) = oneOfType
 
     override fun createIrDoWhile(
@@ -224,8 +224,10 @@ abstract class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartPro
     private fun delayedEnd(): Int = 0 // TODO("end")
     private fun delayedType(): IrType = TODO("type")
 
-    private val moduleDescriptor: ModuleDescriptor get() = TODO("moduleDescriptor")
-    private val symbolTable: SymbolTable  = SymbolTable()
+//    private val moduleDescriptor: ModuleDescriptor get() = TODO("moduleDescriptor")
+//    protected abstract val symbolTable: SymbolTable
+//    protected abstract val irBuiltInts: IrBuiltIns
+//    protected abstract val symbolTable: SymbolTable
 
     override fun createUniqId(index: Long, isLocal: Boolean) = UniqId(index, isLocal)
 
@@ -234,7 +236,10 @@ abstract class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartPro
             .INTERNAL, Visibilities.INVISIBLE_FAKE, Visibilities.LOCAL
     )
 
-    override fun createVisibility(name: Int) = visibilities[name]
+    override fun createVisibility(name: Int): Visibility {
+        val nameString = loadString(name)
+        return visibilities.single { it.name == nameString }
+    }
 
     override fun createIrStatementOrigin(name: Int): IrStatementOrigin {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -270,13 +275,15 @@ abstract class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartPro
         annotations: List<IrConstructorCall>,
         explicitlyExportedToCompiler: List<Int>
     ): IrFile {
-        val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
 
-        val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
+        error("Temporary should not be invoked")
+//        val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
+
+//        val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
 
         // TODO: Create file deserializer here
 
-        return IrFileImpl(fileEntry, symbol, fqName)
+//        return IrFileImpl(fileEntry, symbol, fqName)
     }
 
     override fun createStringTable(strings: List<String>): Array<String> {

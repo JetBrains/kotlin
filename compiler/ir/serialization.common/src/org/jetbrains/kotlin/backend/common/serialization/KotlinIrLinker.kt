@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.serialization.nextgen.SimpleIrProtoReader
+import org.jetbrains.kotlin.backend.common.serialization.nextgen.SmartIrProtoReaderImpl
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoBodyIndex
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
@@ -136,64 +139,247 @@ abstract class KotlinIrLinker(
         // This is a heavy initializer
         val module = deserializeIrModuleHeader()
 
-        inner class IrDeserializerForFile(private var annotationsProto: ProtoAnnotations?, private val fileIndex: Int, onlyHeaders: Boolean) :
+        inner class IrDeserializerForFile(private val fileIndex: Int, onlyHeaders: Boolean) :
             IrFileDeserializer(logger, builtIns, symbolTable) {
+
+
+            inner class NextgenProtoParser(byteArray: ByteArray): SmartIrProtoReaderImpl(symbolTable, byteArray) {
+                override val descriptorReferenceDeserializer = this@KotlinIrLinker.descriptorReferenceDeserializer
+
+                override fun deserializeIrSymbolData(
+                    kind: Int,
+                    uniqId: UniqId,
+                    topLevelUniqId: UniqId,
+                    fqname: FqName?,
+                    descriptorReference: DeclarationDescriptor?
+                ): IrSymbol {
+                    val key = uniqId
+                    val topLevelKey = topLevelUniqId
+
+                    val topLevelDeserializationState = getStateForID(topLevelKey)
+
+                    if (topLevelKey !in topLevelDeserializationState) {
+                        topLevelDeserializationState.addUniqID(topLevelKey)
+                    }
+
+                    // If topLevel declaration is module-public and current declaration in not (e.g. value parameter)
+                    // they should be proccesed via different tables
+                    val deserializationState =
+                        if (topLevelKey.isLocal xor key.isLocal) getStateForID(key) else topLevelDeserializationState
+
+                    val symbol = deserializationState.deserializedSymbols.getOrPut(key) {
+                        val descriptor = descriptorReference
+
+                        resolvedForwardDeclarations[key]?.let {
+                            val fdState = getStateForID(it)
+                            fdState.addUniqID(it)
+                        }
+
+                        referenceDeserializedSymbol(kind, descriptor)
+                    }
+                    if (symbol.descriptor is ClassDescriptor &&
+                        symbol.descriptor !is WrappedDeclarationDescriptor<*> &&
+                        symbol.descriptor.module.isForwardDeclarationModule
+                    ) {
+                        forwardDeclarations.add(symbol)
+                    }
+
+                    return symbol
+                }
+
+                override fun getLoopById(id: Int): IrLoop {
+                    return fileLoops[id] ?: error("No loop found for id $id")
+                }
+
+                override fun registerLoopById(id: Int, loop: IrLoop) {
+                    fileLoops[id] = loop as IrLoopBase
+                }
+
+                override fun loadType(id: Int): IrType {
+                    return this@IrDeserializerForFile.loadType(id)
+                }
+
+                override fun loadSymbol(id: Int): IrSymbol {
+                    return this@IrDeserializerForFile.loadSymbol(id)
+                }
+
+                override fun loadExpressionBody(id: Int): IrExpression {
+                    return this@IrDeserializerForFile.loadExpressionBody(id)
+                }
+
+                override fun loadStatementBody(id: Int): IrElement {
+                    return this@IrDeserializerForFile.loadStatementBody(id)
+                }
+
+                override fun loadString(id: Int) = this@IrDeserializerForFile.loadString(id)
+            }
+
+
+            var annotationsProto: ProtoAnnotations? = null
 
             private var fileLoops = mutableMapOf<Int, IrLoopBase>()
 
             private val symbolProtosCache = mutableMapOf<Int, ProtoSymbolData>()
-            private val typeProtosCache = mutableMapOf<Int, ProtoType>()
-            private val stringsCache = mutableMapOf<Int, String>()
 
             lateinit var file: IrFile
 
             private val deserializeBodies: Boolean = !onlyHeaders
+
+            // Internal per-file contant pool cache (OrderId -> IrData)
+            private val typeCache = mutableMapOf<Int, IrType>()
+            private val symbolCache = mutableMapOf<Int, IrSymbol>()
 
             private val fileLocalResolvedForwardDeclarations = mutableMapOf<UniqId, UniqId>()
 
             val fileLocalDeserializationState = DeserializationState.SimpleDeserializationState()
 
             fun deserializeDeclaration(key: UniqId): IrDeclaration {
-                return deserializeDeclaration(loadTopLevelDeclarationProto(key), file)
+//                return deserializeDeclaration(loadTopLevelDeclarationProto(key), file)
+                return loadTopLevelDeclaration(key)
             }
 
-            private fun loadTopLevelDeclarationProto(uniqId: UniqId): ProtoDeclaration {
+            private fun loadTopLevelDeclaration(uniqId: UniqId): IrDeclaration {
                 val byteArray = reader(moduleDescriptor, fileIndex, uniqId)
-                SimpleIrProtoReader(byteArray).readIrDeclaration()
-                val stream = byteArray.codedInputStream
-                return ProtoDeclaration.parseFrom(stream, newInstance())
+                return NextgenProtoParser(byteArray).readIrDeclaration()
             }
 
-            private fun loadSymbolProto(index: Int): ProtoSymbolData {
-                val byteArray = readSymbol(moduleDescriptor, fileIndex, index)
-                SimpleIrProtoReader(byteArray).readIrSymbolData()
-                val stream = byteArray.codedInputStream
-                return ProtoSymbolData.parseFrom(stream, newInstance())
+//            private fun loadTopLevelDeclarationProto(uniqId: UniqId): ProtoDeclaration {
+//                val byteArray = reader(moduleDescriptor, fileIndex, uniqId)
+//                SimpleIrProtoReader(byteArray).readIrDeclaration()
+//                val stream = byteArray.codedInputStream
+//                return ProtoDeclaration.parseFrom(stream, newInstance())
+//            }
+
+            private fun loadSymbol(index: Int): IrSymbol {
+                return symbolCache.getOrPut(index) {
+                    val byteArray = readSymbol(moduleDescriptor, fileIndex, index)
+                    NextgenProtoParser(byteArray).readIrSymbolData()
+                }
             }
 
-            private fun loadTypeProto(index: Int): ProtoType {
-                val byteArray = readType(moduleDescriptor, fileIndex, index)
-                SimpleIrProtoReader(byteArray).readIrType()
-                val stream = byteArray.codedInputStream
-                return ProtoType.parseFrom(stream, newInstance())
+//            private fun loadSymbolProto(index: Int): ProtoSymbolData {
+//                val byteArray = readSymbol(moduleDescriptor, fileIndex, index)
+//                SimpleIrProtoReader(byteArray).readIrSymbolData()
+//                val stream = byteArray.codedInputStream
+//                return ProtoSymbolData.parseFrom(stream, newInstance())
+//            }
+
+            private fun loadType(index: Int): IrType {
+                return typeCache.getOrPut(index) {
+                    val byteArray = readType(moduleDescriptor, fileIndex, index)
+                    NextgenProtoParser(byteArray).readIrType()
+                }
             }
 
-            private fun loadStatementBodyProto(index: Int): ProtoStatement {
+//            private fun loadTypeProto(index: Int): ProtoType {
+//                val byteArray = readType(moduleDescriptor, fileIndex, index)
+//                SimpleIrProtoReader(byteArray).readIrType()
+//                val stream = byteArray.codedInputStream
+//                return ProtoType.parseFrom(stream, newInstance())
+//            }
+
+            private fun loadStatementBody(index: Int): IrElement {
                 val byteArray = readBody(moduleDescriptor, fileIndex, index)
-                SimpleIrProtoReader(byteArray).readIrStatement()
-                val stream = byteArray.codedInputStream
-                return ProtoStatement.parseFrom(stream, newInstance())
+                return NextgenProtoParser(byteArray).readIrStatement()
             }
 
-            private fun loadExpressionBodyProto(index: Int): ProtoExpression {
+//            private fun loadStatementBodyProto(index: Int): ProtoStatement {
+//                val byteArray = readBody(moduleDescriptor, fileIndex, index)
+//                SimpleIrProtoReader(byteArray).readIrStatement()
+//                val stream = byteArray.codedInputStream
+//                return ProtoStatement.parseFrom(stream, newInstance())
+//            }
+
+            private fun loadExpressionBody(index: Int): IrExpression {
                 val byteArray = readBody(moduleDescriptor, fileIndex, index)
-                SimpleIrProtoReader(byteArray).readIrExpression()
-                val stream = byteArray.codedInputStream
-                return ProtoExpression.parseFrom(stream, newInstance())
+                return NextgenProtoParser(byteArray).readIrExpression()
             }
 
-            private fun loadStringProto(index: Int): String {
+//            private fun loadExpressionBodyProto(index: Int): ProtoExpression {
+//                val byteArray = readBody(moduleDescriptor, fileIndex, index)
+//                SimpleIrProtoReader(byteArray).readIrExpression()
+//                val stream = byteArray.codedInputStream
+//                return ProtoExpression.parseFrom(stream, newInstance())
+//            }
+
+            private fun loadString(index: Int): String {
                 return String(readString(moduleDescriptor, fileIndex, index))
+            }
+
+//            private fun loadStringProto(index: Int): String {
+//                return String(readString(moduleDescriptor, fileIndex, index))
+//            }
+
+            private fun referenceDeserializedSymbol(
+                kind: Int,
+                descriptor: DeclarationDescriptor?
+            ): IrSymbol = when (ProtoSymbolKind.values()[kind - 1]) {
+                ProtoSymbolKind.ANONYMOUS_INIT_SYMBOL ->
+                    IrAnonymousInitializerSymbolImpl(
+                        descriptor as ClassDescriptor?
+                            ?: WrappedClassDescriptor()
+                    )
+                ProtoSymbolKind.CLASS_SYMBOL ->
+                    symbolTable.referenceClass(
+                        descriptor as ClassDescriptor?
+                            ?: WrappedClassDescriptor()
+                    )
+                ProtoSymbolKind.CONSTRUCTOR_SYMBOL ->
+                    symbolTable.referenceConstructor(
+                        descriptor as ClassConstructorDescriptor?
+                            ?: WrappedClassConstructorDescriptor()
+                    )
+                ProtoSymbolKind.TYPE_PARAMETER_SYMBOL ->
+                    symbolTable.referenceTypeParameter(
+                        descriptor as TypeParameterDescriptor?
+                            ?: WrappedTypeParameterDescriptor()
+                    )
+                ProtoSymbolKind.ENUM_ENTRY_SYMBOL ->
+                    symbolTable.referenceEnumEntry(
+                        descriptor as ClassDescriptor?
+                            ?: WrappedEnumEntryDescriptor()
+                    )
+                ProtoSymbolKind.STANDALONE_FIELD_SYMBOL ->
+                    symbolTable.referenceField(WrappedFieldDescriptor())
+
+                ProtoSymbolKind.FIELD_SYMBOL ->
+                    symbolTable.referenceField(
+                        descriptor as PropertyDescriptor?
+                            ?: WrappedPropertyDescriptor()
+                    )
+                ProtoSymbolKind.FUNCTION_SYMBOL ->
+                    symbolTable.referenceSimpleFunction(
+                        descriptor as FunctionDescriptor?
+                            ?: WrappedSimpleFunctionDescriptor()
+                    )
+                ProtoSymbolKind.TYPEALIAS_SYMBOL ->
+                    symbolTable.referenceTypeAlias(
+                        descriptor as TypeAliasDescriptor?
+                            ?: WrappedTypeAliasDescriptor()
+                    )
+                ProtoSymbolKind.VARIABLE_SYMBOL ->
+                    IrVariableSymbolImpl(
+                        descriptor as VariableDescriptor?
+                            ?: WrappedVariableDescriptor()
+                    )
+                ProtoSymbolKind.VALUE_PARAMETER_SYMBOL ->
+                    IrValueParameterSymbolImpl(
+                        descriptor as ParameterDescriptor?
+                            ?: WrappedValueParameterDescriptor()
+                    )
+                ProtoSymbolKind.RECEIVER_PARAMETER_SYMBOL ->
+                    IrValueParameterSymbolImpl(
+                        descriptor as ParameterDescriptor? ?: WrappedReceiverParameterDescriptor()
+                    )
+                ProtoSymbolKind.PROPERTY_SYMBOL ->
+                    symbolTable.referenceProperty(
+                        descriptor as PropertyDescriptor? ?: WrappedPropertyDescriptor()
+                    )
+                ProtoSymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
+                    IrLocalDelegatedPropertySymbolImpl(
+                        descriptor as? VariableDescriptorWithAccessors ?: WrappedVariableDescriptorWithAccessor()
+                    )
+                else -> TODO("Unexpected classifier symbol kind: ${kind}")
             }
 
             private fun referenceDeserializedSymbol(
@@ -268,23 +454,11 @@ abstract class KotlinIrLinker(
                 else -> TODO("Unexpected classifier symbol kind: ${proto.kind}")
             }
 
-            fun loadSymbolData(index: Int): ProtoSymbolData {
-                return symbolProtosCache.getOrPut(index) {
-                    loadSymbolProto(index)
-                }
-            }
-
-            private fun loadTypeData(index: Int): ProtoType {
-                return typeProtosCache.getOrPut(index) {
-                    loadTypeProto(index)
-                }
-            }
-
-            private fun loadString(index: Int): String {
-                return stringsCache.getOrPut(index) {
-                    loadStringProto(index)
-                }
-            }
+//            fun loadSymbolData(index: Int): ProtoSymbolData {
+//                return symbolProtosCache.getOrPut(index) {
+//                    loadSymbolProto(index)
+//                }
+//            }
 
             private fun isGlobalUniqID(uniqId: UniqId): Boolean {
                 return uniqId in globalDeserializationState ||
@@ -357,25 +531,29 @@ abstract class KotlinIrLinker(
                 )
 
             override fun deserializeIrSymbol(proto: ProtoSymbolIndex): IrSymbol {
-                val symbolData = loadSymbolProto(proto.index)
-                return deserializeIrSymbolData(symbolData)
+//                val symbolData = loadSymbolProto(proto.index)
+//                return deserializeIrSymbolData(symbolData)
+                return loadSymbol(proto.index)
             }
 
             override fun deserializeIrType(proto: ProtoTypeIndex): IrType {
-                val typeData = loadTypeProto(proto.index)
-                return deserializeIrTypeData(typeData)
+//                val typeData = loadTypeProto(proto.index)
+//                return deserializeIrTypeData(typeData)
+                return loadType(proto.index)
             }
 
             override fun deserializeString(proto: ProtoStringIndex): String =
-                loadStringProto(proto.index)
+//                loadStringProto(proto.index)
+                loadString(proto.index)
 
             override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase) =
                 fileLoops.getOrPut(loopIndex, loopBuilder)
 
             override fun deserializeExpressionBody(proto: ProtoBodyIndex): IrExpression {
                 if (deserializeBodies) {
-                    val bodyData = loadExpressionBodyProto(proto.index)
-                    return deserializeExpression(bodyData)
+                    return loadExpressionBody(proto.index)
+//                    val bodyData = loadExpressionBodyProto(proto.index)
+//                    return deserializeExpression(bodyData)
                 } else {
                     val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
                     return IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet")
@@ -384,8 +562,9 @@ abstract class KotlinIrLinker(
 
             override fun deserializeStatementBody(proto: ProtoBodyIndex): IrElement {
                 if (deserializeBodies) {
-                    val bodyData = loadStatementBodyProto(proto.index)
-                    return deserializeStatement(bodyData)
+//                    val bodyData = loadStatementBodyProto(proto.index)
+//                    return deserializeStatement(bodyData)
+                    return loadStatementBody(proto.index)
                 } else {
                     val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
                     return IrBlockBodyImpl(-1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet")))
@@ -412,11 +591,12 @@ abstract class KotlinIrLinker(
 
         private fun deserializeIrFile(fileProto: ProtoFile, fileIndex: Int): IrFile {
 
+
+            val fileDeserializer = IrDeserializerForFile(fileIndex, !deserializationStrategy.needBodies)
+
+            fileDeserializer.annotationsProto = fileProto.annotations
             val fileName = fileProto.fileEntry.name
-
             val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
-
-            val fileDeserializer = IrDeserializerForFile(fileProto.annotations, fileIndex, !deserializationStrategy.needBodies)
 
             val fqName = fileDeserializer.deserializeFqName(fileProto.fqName)
 
@@ -437,9 +617,9 @@ abstract class KotlinIrLinker(
             val forceLoadedIds = deserializationStrategy.run {
                 when {
                     theWholeWorld -> fileProto.declarationIdList
-                    explicitlyExported -> fileProto.explicitlyExportedToCompilerList.map {
-                        fileDeserializer.loadSymbolData(it.index).topLevelUniqId
-                    }
+//                    explicitlyExported -> fileProto.explicitlyExportedToCompilerList.map {
+//                        fileDeserializer.loadSymbolData(it.index).topLevelUniqId
+//                    }
                     else -> emptyList()
                 }
             }
