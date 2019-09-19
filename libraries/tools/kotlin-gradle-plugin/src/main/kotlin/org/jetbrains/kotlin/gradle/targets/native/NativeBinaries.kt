@@ -215,12 +215,7 @@ class Framework(
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
-    var embedBitcode: BitcodeEmbeddingMode =
-        if (target.konanTarget == KonanTarget.IOS_ARM64 || target.konanTarget == KonanTarget.IOS_ARM32) {
-            buildType.iosEmbedBitcode
-        } else {
-            BitcodeEmbeddingMode.DISABLE
-        }
+    var embedBitcode: BitcodeEmbeddingMode = buildType.embedBitcode(target.konanTarget)
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].

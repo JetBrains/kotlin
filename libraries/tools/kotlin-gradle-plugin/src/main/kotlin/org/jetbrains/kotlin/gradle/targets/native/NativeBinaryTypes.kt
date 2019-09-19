@@ -3,19 +3,29 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Named
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework.BitcodeEmbeddingMode
+import org.jetbrains.kotlin.konan.target.Architecture.ARM32
+import org.jetbrains.kotlin.konan.target.Architecture.ARM64
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 enum class NativeBuildType(
     val optimized: Boolean,
     val debuggable: Boolean,
-    internal val iosEmbedBitcode: BitcodeEmbeddingMode
+    private val embedBitcodeForAppleDevices: BitcodeEmbeddingMode
 ) : Named {
     RELEASE(true, false, BitcodeEmbeddingMode.BITCODE),
     DEBUG(false, true, BitcodeEmbeddingMode.MARKER);
 
     override fun getName(): String = name.toLowerCase()
+
+    fun embedBitcode(target: KonanTarget) = with(target) {
+        if (family in listOf(IOS, WATCHOS, TVOS) && architecture in listOf(ARM32, ARM64)) {
+            embedBitcodeForAppleDevices
+        } else {
+            BitcodeEmbeddingMode.DISABLE
+        }
+    }
 
     companion object {
         val DEFAULT_BUILD_TYPES = setOf(DEBUG, RELEASE)
