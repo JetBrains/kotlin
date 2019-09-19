@@ -114,29 +114,60 @@ private class IrDeserializerPrinter(
                 appendln("    ${maybeAbstract}fun create${p.name}(index: Int): ${p.name.ktType}${impl}")
             }
             is Proto.Message -> {
-                append("    ${maybeAbstract}fun create${p.name}(")
-                p.allFields.forEachIndexed { i, f ->
-                    if (i != 0) append(", ")
-                    val type = when (f.kind) {
-                        FieldKind.REPEATED -> "List<${f.type.ktType}>"
-                        FieldKind.REQUIRED -> f.type.ktType
-                        else -> "${f.type.ktType}?"
-                    }
-                    append("${f.name.escape()} : $type")
-                }
 
-                val impl = if (!isSimple) "" else {
-                    val args = p.allFields.fold("") { acc, c ->
-                        (if (acc == "") "" else acc + ", ") + c.name.escape()
+                fun addMessage(suffix: String, fields: List<MessageEntry.Field>) {
+                    append("    ${maybeAbstract}fun create${p.name}${suffix}(")
+                    fields.forEachIndexed { i, f ->
+                        if (i != 0) append(", ")
+                        val type = when (f.kind) {
+                            FieldKind.REPEATED -> "List<${f.type.ktType}>"
+                            FieldKind.REQUIRED -> f.type.ktType
+                            else -> "${f.type.ktType}?"
+                        }
+                        append("${f.name.escape()} : $type")
                     }
 
-                    " = arrayOf<Any?>($args)"
+                    val impl = if (!isSimple) "" else {
+                        val args = fields.fold("") { acc, c ->
+                            (if (acc == "") "" else acc + ", ") + c.name.escape()
+                        }
+
+                        " = arrayOf<Any?>($args)"
+                    }
+
+                    appendln("): ${p.name.ktType}$impl")
                 }
 
-                appendln("): ${p.name.ktType}$impl")
+                if (p.fields.any { it is MessageEntry.OneOf }) {
+                    val o = p.fields.filterIsInstance<MessageEntry.OneOf>().singleOrNull() ?: error("Too many oneof's in message ${p.name}")
+
+                    val (fp, fs) = p.fields.splitBy(o)
+
+                    for (of in o.fields) {
+                        addMessage("_${of.name.escape()}", fp + of + fs)
+                    }
+                } else {
+                    addMessage("", p.fields.map { it as MessageEntry.Field })
+                }
             }
         }
         appendln()
+    }
+
+    private fun List<MessageEntry>.splitBy(of: MessageEntry.OneOf): Pair<List<MessageEntry.Field>, List<MessageEntry.Field>> {
+        val fp = mutableListOf<MessageEntry.Field>()
+        val fs = mutableListOf<MessageEntry.Field>()
+
+        var cf = fp
+        this.forEach {
+            if (it === of) {
+                cf = fs
+            } else {
+                cf.add(it as MessageEntry.Field)
+            }
+        }
+
+        return fp to fs
     }
 
     private val String.ktType: String
@@ -205,6 +236,12 @@ private class IrDeserializerPrinter(
             appendln("        var ${f.name}__: $type = $initExpression")
         }
 
+
+        val of = m.fields.filterIsInstance<MessageEntry.OneOf>().singleOrNull()?.let { of ->
+            appendln("        var oneOfIndex: Int = -1")
+            of
+        }
+
         appendln("        while (hasData) {")
         appendln("            readField { fieldNumber, type -> ")
         appendln("                when (fieldNumber) {")
@@ -214,6 +251,11 @@ private class IrDeserializerPrinter(
             val readExpression = f.type.toReaderInvocation()
             if (f.kind == FieldKind.REPEATED) {
                 appendln("${indent}${f.index} -> ${f.name}__.add($readExpression)")
+            } else if (f.kind == FieldKind.ONE_OF) {
+                appendln("${indent}${f.index} -> {")
+                appendln("${indent}    ${f.name}__ = $readExpression")
+                appendln("${indent}    oneOfIndex = ${f.index}")
+                appendln("${indent}}")
             } else {
                 appendln("${indent}${f.index} -> ${f.name}__ = $readExpression")
             }
@@ -224,14 +266,29 @@ private class IrDeserializerPrinter(
         appendln("            }")
         appendln("        }")
 
-        appendln("        return create${m.name}(${allFields.fold("") { acc, c ->
-            var result = if (acc.isEmpty()) "" else "$acc, "
-            result += c.name + "__"
-            if (c.kind == FieldKind.REQUIRED && c in nullableFields) {
-                result += "!!"
+        fun invokeCreate(suffix: String, fields: List<MessageEntry.Field>): String {
+            return "return create${m.name}${suffix}(${fields.fold("") { acc, c ->
+                var result = if (acc.isEmpty()) "" else "$acc, "
+                result += c.name + "__"
+                if ((c.kind == FieldKind.REQUIRED || c.kind == FieldKind.ONE_OF) && c in nullableFields) {
+                    result += "!!"
+                }
+                result
+            }})"
+        }
+
+        if (of == null) {
+            appendln("        ${invokeCreate("", allFields)}")
+        } else {
+            val (fp, fs) = m.fields.splitBy(of)
+
+            appendln("        when (oneOfIndex) {")
+            for (f in of.fields) {
+                appendln("            ${f.index} -> ${invokeCreate("_${f.name.escape()}", fp + f + fs)}")
             }
-            result
-        }})")
+            appendln("            else -> error(\"Incorrect oneOf index: \" + oneOfIndex)")
+            appendln("        }")
+        }
 
         appendln("    }")
         appendln()

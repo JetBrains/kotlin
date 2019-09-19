@@ -18,7 +18,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createKnownOrigin(index: Int): Any = index
 
-    fun createIrDeclarationOrigin(origin : Any?, custom : Any?): Any = arrayOf<Any?>(origin, custom)
+    fun createIrDeclarationOrigin_origin(origin : Any?): Any = arrayOf<Any?>(origin)
+    fun createIrDeclarationOrigin_custom(custom : Any?): Any = arrayOf<Any?>(custom)
 
     fun createIrDataIndex(index : Int): Any = arrayOf<Any?>(index)
 
@@ -48,7 +49,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrTypeProjection(variance : Any, type : Any): Any = arrayOf<Any?>(variance, type)
 
-    fun createIrTypeArgument(star : Any?, type : Any?): Any = arrayOf<Any?>(star, type)
+    fun createIrTypeArgument_star(star : Any?): Any = arrayOf<Any?>(star)
+    fun createIrTypeArgument_type(type : Any?): Any = arrayOf<Any?>(type)
 
     fun createIrSimpleType(annotations : Any, classifier : Any, hasQuestionMark : Boolean, argument : List<Any>, abbreviation : Any?): Any = arrayOf<Any?>(annotations, classifier, hasQuestionMark, argument, abbreviation)
 
@@ -58,7 +60,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrErrorType(annotations : Any): Any = arrayOf<Any?>(annotations)
 
-    fun createIrType(simple : Any?, dynamic : Any?, error : Any?): Any = arrayOf<Any?>(simple, dynamic, error)
+    fun createIrType_simple(simple : Any?): Any = arrayOf<Any?>(simple)
+    fun createIrType_dynamic(dynamic : Any?): Any = arrayOf<Any?>(dynamic)
+    fun createIrType_error(error : Any?): Any = arrayOf<Any?>(error)
 
     fun createIrTypeTable(types : List<Any>): Any = arrayOf<Any?>(types)
 
@@ -82,7 +86,16 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrClassReference(classSymbol : Any, classType : Any): Any = arrayOf<Any?>(classSymbol, classType)
 
-    fun createIrConst(null_ : Boolean?, boolean : Boolean?, char : Int?, byte : Int?, short : Int?, int : Int?, long : Long?, float : Float?, double : Double?, string : Any?): Any = arrayOf<Any?>(null_, boolean, char, byte, short, int, long, float, double, string)
+    fun createIrConst_null_(null_ : Boolean?): Any = arrayOf<Any?>(null_)
+    fun createIrConst_boolean(boolean : Boolean?): Any = arrayOf<Any?>(boolean)
+    fun createIrConst_char(char : Int?): Any = arrayOf<Any?>(char)
+    fun createIrConst_byte(byte : Int?): Any = arrayOf<Any?>(byte)
+    fun createIrConst_short(short : Int?): Any = arrayOf<Any?>(short)
+    fun createIrConst_int(int : Int?): Any = arrayOf<Any?>(int)
+    fun createIrConst_long(long : Long?): Any = arrayOf<Any?>(long)
+    fun createIrConst_float(float : Float?): Any = arrayOf<Any?>(float)
+    fun createIrConst_double(double : Double?): Any = arrayOf<Any?>(double)
+    fun createIrConst_string(string : Any?): Any = arrayOf<Any?>(string)
 
     fun createIrContinue(loopId : Int, label : Any?): Any = arrayOf<Any?>(loopId, label)
 
@@ -126,7 +139,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrVararg(elementType : Any, element : List<Any>): Any = arrayOf<Any?>(elementType, element)
 
-    fun createIrVarargElement(expression : Any?, spreadElement : Any?): Any = arrayOf<Any?>(expression, spreadElement)
+    fun createIrVarargElement_expression(expression : Any?): Any = arrayOf<Any?>(expression)
+    fun createIrVarargElement_spreadElement(spreadElement : Any?): Any = arrayOf<Any?>(spreadElement)
 
     fun createIrWhen(branch : List<Any>, origin : Any?): Any = arrayOf<Any?>(branch, origin)
 
@@ -140,7 +154,39 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrDynamicOperatorExpression(operator : Any, receiver : Any, argument : List<Any>): Any = arrayOf<Any?>(operator, receiver, argument)
 
-    fun createIrOperation(block : Any?, break_ : Any?, call : Any?, classReference : Any?, composite : Any?, const : Any?, continue_ : Any?, delegatingConstructorCall : Any?, doWhile : Any?, enumConstructorCall : Any?, functionReference : Any?, getClass : Any?, getEnumValue : Any?, getField : Any?, getObject : Any?, getValue : Any?, instanceInitializerCall : Any?, propertyReference : Any?, return_ : Any?, setField : Any?, setVariable : Any?, stringConcat : Any?, throw_ : Any?, try_ : Any?, typeOp : Any?, vararg : Any?, when_ : Any?, while_ : Any?, dynamicMember : Any?, dynamicOperator : Any?, localDelegatedPropertyReference : Any?, constructorCall : Any?, functionExpression : Any?): Any = arrayOf<Any?>(block, break_, call, classReference, composite, const, continue_, delegatingConstructorCall, doWhile, enumConstructorCall, functionReference, getClass, getEnumValue, getField, getObject, getValue, instanceInitializerCall, propertyReference, return_, setField, setVariable, stringConcat, throw_, try_, typeOp, vararg, when_, while_, dynamicMember, dynamicOperator, localDelegatedPropertyReference, constructorCall, functionExpression)
+    fun createIrOperation_block(block : Any?): Any = arrayOf<Any?>(block)
+    fun createIrOperation_break_(break_ : Any?): Any = arrayOf<Any?>(break_)
+    fun createIrOperation_call(call : Any?): Any = arrayOf<Any?>(call)
+    fun createIrOperation_classReference(classReference : Any?): Any = arrayOf<Any?>(classReference)
+    fun createIrOperation_composite(composite : Any?): Any = arrayOf<Any?>(composite)
+    fun createIrOperation_const(const : Any?): Any = arrayOf<Any?>(const)
+    fun createIrOperation_continue_(continue_ : Any?): Any = arrayOf<Any?>(continue_)
+    fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall : Any?): Any = arrayOf<Any?>(delegatingConstructorCall)
+    fun createIrOperation_doWhile(doWhile : Any?): Any = arrayOf<Any?>(doWhile)
+    fun createIrOperation_enumConstructorCall(enumConstructorCall : Any?): Any = arrayOf<Any?>(enumConstructorCall)
+    fun createIrOperation_functionReference(functionReference : Any?): Any = arrayOf<Any?>(functionReference)
+    fun createIrOperation_getClass(getClass : Any?): Any = arrayOf<Any?>(getClass)
+    fun createIrOperation_getEnumValue(getEnumValue : Any?): Any = arrayOf<Any?>(getEnumValue)
+    fun createIrOperation_getField(getField : Any?): Any = arrayOf<Any?>(getField)
+    fun createIrOperation_getObject(getObject : Any?): Any = arrayOf<Any?>(getObject)
+    fun createIrOperation_getValue(getValue : Any?): Any = arrayOf<Any?>(getValue)
+    fun createIrOperation_instanceInitializerCall(instanceInitializerCall : Any?): Any = arrayOf<Any?>(instanceInitializerCall)
+    fun createIrOperation_propertyReference(propertyReference : Any?): Any = arrayOf<Any?>(propertyReference)
+    fun createIrOperation_return_(return_ : Any?): Any = arrayOf<Any?>(return_)
+    fun createIrOperation_setField(setField : Any?): Any = arrayOf<Any?>(setField)
+    fun createIrOperation_setVariable(setVariable : Any?): Any = arrayOf<Any?>(setVariable)
+    fun createIrOperation_stringConcat(stringConcat : Any?): Any = arrayOf<Any?>(stringConcat)
+    fun createIrOperation_throw_(throw_ : Any?): Any = arrayOf<Any?>(throw_)
+    fun createIrOperation_try_(try_ : Any?): Any = arrayOf<Any?>(try_)
+    fun createIrOperation_typeOp(typeOp : Any?): Any = arrayOf<Any?>(typeOp)
+    fun createIrOperation_vararg(vararg : Any?): Any = arrayOf<Any?>(vararg)
+    fun createIrOperation_when_(when_ : Any?): Any = arrayOf<Any?>(when_)
+    fun createIrOperation_while_(while_ : Any?): Any = arrayOf<Any?>(while_)
+    fun createIrOperation_dynamicMember(dynamicMember : Any?): Any = arrayOf<Any?>(dynamicMember)
+    fun createIrOperation_dynamicOperator(dynamicOperator : Any?): Any = arrayOf<Any?>(dynamicOperator)
+    fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference : Any?): Any = arrayOf<Any?>(localDelegatedPropertyReference)
+    fun createIrOperation_constructorCall(constructorCall : Any?): Any = arrayOf<Any?>(constructorCall)
+    fun createIrOperation_functionExpression(functionExpression : Any?): Any = arrayOf<Any?>(functionExpression)
 
     fun createIrTypeOperator(index: Int): Any = index
 
@@ -182,7 +228,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrAnonymousInit(base : Any, body : Any): Any = arrayOf<Any?>(base, body)
 
-    fun createIrDeclaration(irAnonymousInit : Any?, irClass : Any?, irConstructor : Any?, irEnumEntry : Any?, irField : Any?, irFunction : Any?, irProperty : Any?, irTypeParameter : Any?, irVariable : Any?, irValueParameter : Any?, irLocalDelegatedProperty : Any?, irTypeAlias : Any?): Any = arrayOf<Any?>(irAnonymousInit, irClass, irConstructor, irEnumEntry, irField, irFunction, irProperty, irTypeParameter, irVariable, irValueParameter, irLocalDelegatedProperty, irTypeAlias)
+    fun createIrDeclaration_irAnonymousInit(irAnonymousInit : Any?): Any = arrayOf<Any?>(irAnonymousInit)
+    fun createIrDeclaration_irClass(irClass : Any?): Any = arrayOf<Any?>(irClass)
+    fun createIrDeclaration_irConstructor(irConstructor : Any?): Any = arrayOf<Any?>(irConstructor)
+    fun createIrDeclaration_irEnumEntry(irEnumEntry : Any?): Any = arrayOf<Any?>(irEnumEntry)
+    fun createIrDeclaration_irField(irField : Any?): Any = arrayOf<Any?>(irField)
+    fun createIrDeclaration_irFunction(irFunction : Any?): Any = arrayOf<Any?>(irFunction)
+    fun createIrDeclaration_irProperty(irProperty : Any?): Any = arrayOf<Any?>(irProperty)
+    fun createIrDeclaration_irTypeParameter(irTypeParameter : Any?): Any = arrayOf<Any?>(irTypeParameter)
+    fun createIrDeclaration_irVariable(irVariable : Any?): Any = arrayOf<Any?>(irVariable)
+    fun createIrDeclaration_irValueParameter(irValueParameter : Any?): Any = arrayOf<Any?>(irValueParameter)
+    fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty : Any?): Any = arrayOf<Any?>(irLocalDelegatedProperty)
+    fun createIrDeclaration_irTypeAlias(irTypeAlias : Any?): Any = arrayOf<Any?>(irTypeAlias)
 
     fun createIrBranch(condition : Any, result : Any): Any = arrayOf<Any?>(condition, result)
 
@@ -194,7 +251,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrSyntheticBody(kind : Any): Any = arrayOf<Any?>(kind)
 
-    fun createIrStatement(coordinates : Any, declaration : Any?, expression : Any?, blockBody : Any?, branch : Any?, catch : Any?, syntheticBody : Any?): Any = arrayOf<Any?>(coordinates, declaration, expression, blockBody, branch, catch, syntheticBody)
+    fun createIrStatement_declaration(coordinates : Any, declaration : Any?): Any = arrayOf<Any?>(coordinates, declaration)
+    fun createIrStatement_expression(coordinates : Any, expression : Any?): Any = arrayOf<Any?>(coordinates, expression)
+    fun createIrStatement_blockBody(coordinates : Any, blockBody : Any?): Any = arrayOf<Any?>(coordinates, blockBody)
+    fun createIrStatement_branch(coordinates : Any, branch : Any?): Any = arrayOf<Any?>(coordinates, branch)
+    fun createIrStatement_catch(coordinates : Any, catch : Any?): Any = arrayOf<Any?>(coordinates, catch)
+    fun createIrStatement_syntheticBody(coordinates : Any, syntheticBody : Any?): Any = arrayOf<Any?>(coordinates, syntheticBody)
 
     open fun readDescriptorReference(): Any {
         var package_fq_name__: Any? = null
@@ -290,16 +352,27 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     open fun readIrDeclarationOrigin(): Any {
         var origin__: Any? = null
         var custom__: Any? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> origin__ = createKnownOrigin(readInt32())
-                    2 -> custom__ = readWithLength { readIrDataIndex() }
+                    1 -> {
+                        origin__ = createKnownOrigin(readInt32())
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        custom__ = readWithLength { readIrDataIndex() }
+                        oneOfIndex = 2
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDeclarationOrigin(origin__, custom__)
+        when (oneOfIndex) {
+            1 -> return createIrDeclarationOrigin_origin(origin__!!)
+            2 -> return createIrDeclarationOrigin_custom(custom__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrDataIndex(): Any {
@@ -481,16 +554,27 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     open fun readIrTypeArgument(): Any {
         var star__: Any? = null
         var type__: Any? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> star__ = readWithLength { readIrStarProjection() }
-                    2 -> type__ = readWithLength { readIrTypeProjection() }
+                    1 -> {
+                        star__ = readWithLength { readIrStarProjection() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        type__ = readWithLength { readIrTypeProjection() }
+                        oneOfIndex = 2
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeArgument(star__, type__)
+        when (oneOfIndex) {
+            1 -> return createIrTypeArgument_star(star__!!)
+            2 -> return createIrTypeArgument_type(type__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrSimpleType(): Any {
@@ -563,17 +647,32 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var simple__: Any? = null
         var dynamic__: Any? = null
         var error__: Any? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> simple__ = readWithLength { readIrSimpleType() }
-                    2 -> dynamic__ = readWithLength { readIrDynamicType() }
-                    3 -> error__ = readWithLength { readIrErrorType() }
+                    1 -> {
+                        simple__ = readWithLength { readIrSimpleType() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        dynamic__ = readWithLength { readIrDynamicType() }
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        error__ = readWithLength { readIrErrorType() }
+                        oneOfIndex = 3
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrType(simple__, dynamic__, error__)
+        when (oneOfIndex) {
+            1 -> return createIrType_simple(simple__!!)
+            2 -> return createIrType_dynamic(dynamic__!!)
+            3 -> return createIrType_error(error__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrTypeTable(): Any {
@@ -776,24 +875,67 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var float__: Float? = null
         var double__: Double? = null
         var string__: Any? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> null__ = readBool()
-                    2 -> boolean__ = readBool()
-                    3 -> char__ = readInt32()
-                    4 -> byte__ = readInt32()
-                    5 -> short__ = readInt32()
-                    6 -> int__ = readInt32()
-                    7 -> long__ = readInt64()
-                    8 -> float__ = readFloat()
-                    9 -> double__ = readDouble()
-                    10 -> string__ = readWithLength { readIrDataIndex() }
+                    1 -> {
+                        null__ = readBool()
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        boolean__ = readBool()
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        char__ = readInt32()
+                        oneOfIndex = 3
+                    }
+                    4 -> {
+                        byte__ = readInt32()
+                        oneOfIndex = 4
+                    }
+                    5 -> {
+                        short__ = readInt32()
+                        oneOfIndex = 5
+                    }
+                    6 -> {
+                        int__ = readInt32()
+                        oneOfIndex = 6
+                    }
+                    7 -> {
+                        long__ = readInt64()
+                        oneOfIndex = 7
+                    }
+                    8 -> {
+                        float__ = readFloat()
+                        oneOfIndex = 8
+                    }
+                    9 -> {
+                        double__ = readDouble()
+                        oneOfIndex = 9
+                    }
+                    10 -> {
+                        string__ = readWithLength { readIrDataIndex() }
+                        oneOfIndex = 10
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrConst(null__, boolean__, char__, byte__, short__, int__, long__, float__, double__, string__)
+        when (oneOfIndex) {
+            1 -> return createIrConst_null_(null__!!)
+            2 -> return createIrConst_boolean(boolean__!!)
+            3 -> return createIrConst_char(char__!!)
+            4 -> return createIrConst_byte(byte__!!)
+            5 -> return createIrConst_short(short__!!)
+            6 -> return createIrConst_int(int__!!)
+            7 -> return createIrConst_long(long__!!)
+            8 -> return createIrConst_float(float__!!)
+            9 -> return createIrConst_double(double__!!)
+            10 -> return createIrConst_string(string__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrContinue(): Any {
@@ -1116,16 +1258,27 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     open fun readIrVarargElement(): Any {
         var expression__: Any? = null
         var spread_element__: Any? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readWithLength { readIrExpression() }
-                    2 -> spread_element__ = readWithLength { readIrSpreadElement() }
+                    1 -> {
+                        expression__ = readWithLength { readIrExpression() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        spread_element__ = readWithLength { readIrSpreadElement() }
+                        oneOfIndex = 2
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrVarargElement(expression__, spread_element__)
+        when (oneOfIndex) {
+            1 -> return createIrVarargElement_expression(expression__!!)
+            2 -> return createIrVarargElement_spreadElement(spread_element__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrWhen(): Any {
@@ -1237,47 +1390,182 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var local_delegated_property_reference__: Any? = null
         var constructor_call__: Any? = null
         var function_expression__: Any? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> block__ = readWithLength { readIrBlock() }
-                    2 -> break__ = readWithLength { readIrBreak() }
-                    3 -> call__ = readWithLength { readIrCall() }
-                    4 -> class_reference__ = readWithLength { readIrClassReference() }
-                    5 -> composite__ = readWithLength { readIrComposite() }
-                    6 -> const__ = readWithLength { readIrConst() }
-                    7 -> continue__ = readWithLength { readIrContinue() }
-                    8 -> delegating_constructor_call__ = readWithLength { readIrDelegatingConstructorCall() }
-                    9 -> do_while__ = readWithLength { readIrDoWhile() }
-                    10 -> enum_constructor_call__ = readWithLength { readIrEnumConstructorCall() }
-                    11 -> function_reference__ = readWithLength { readIrFunctionReference() }
-                    12 -> get_class__ = readWithLength { readIrGetClass() }
-                    13 -> get_enum_value__ = readWithLength { readIrGetEnumValue() }
-                    14 -> get_field__ = readWithLength { readIrGetField() }
-                    15 -> get_object__ = readWithLength { readIrGetObject() }
-                    16 -> get_value__ = readWithLength { readIrGetValue() }
-                    17 -> instance_initializer_call__ = readWithLength { readIrInstanceInitializerCall() }
-                    18 -> property_reference__ = readWithLength { readIrPropertyReference() }
-                    19 -> return__ = readWithLength { readIrReturn() }
-                    20 -> set_field__ = readWithLength { readIrSetField() }
-                    21 -> set_variable__ = readWithLength { readIrSetVariable() }
-                    22 -> string_concat__ = readWithLength { readIrStringConcat() }
-                    23 -> throw__ = readWithLength { readIrThrow() }
-                    24 -> try__ = readWithLength { readIrTry() }
-                    25 -> type_op__ = readWithLength { readIrTypeOp() }
-                    26 -> vararg__ = readWithLength { readIrVararg() }
-                    27 -> when__ = readWithLength { readIrWhen() }
-                    28 -> while__ = readWithLength { readIrWhile() }
-                    29 -> dynamic_member__ = readWithLength { readIrDynamicMemberExpression() }
-                    30 -> dynamic_operator__ = readWithLength { readIrDynamicOperatorExpression() }
-                    31 -> local_delegated_property_reference__ = readWithLength { readIrLocalDelegatedPropertyReference() }
-                    32 -> constructor_call__ = readWithLength { readIrConstructorCall() }
-                    33 -> function_expression__ = readWithLength { readIrFunctionExpression() }
+                    1 -> {
+                        block__ = readWithLength { readIrBlock() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        break__ = readWithLength { readIrBreak() }
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        call__ = readWithLength { readIrCall() }
+                        oneOfIndex = 3
+                    }
+                    4 -> {
+                        class_reference__ = readWithLength { readIrClassReference() }
+                        oneOfIndex = 4
+                    }
+                    5 -> {
+                        composite__ = readWithLength { readIrComposite() }
+                        oneOfIndex = 5
+                    }
+                    6 -> {
+                        const__ = readWithLength { readIrConst() }
+                        oneOfIndex = 6
+                    }
+                    7 -> {
+                        continue__ = readWithLength { readIrContinue() }
+                        oneOfIndex = 7
+                    }
+                    8 -> {
+                        delegating_constructor_call__ = readWithLength { readIrDelegatingConstructorCall() }
+                        oneOfIndex = 8
+                    }
+                    9 -> {
+                        do_while__ = readWithLength { readIrDoWhile() }
+                        oneOfIndex = 9
+                    }
+                    10 -> {
+                        enum_constructor_call__ = readWithLength { readIrEnumConstructorCall() }
+                        oneOfIndex = 10
+                    }
+                    11 -> {
+                        function_reference__ = readWithLength { readIrFunctionReference() }
+                        oneOfIndex = 11
+                    }
+                    12 -> {
+                        get_class__ = readWithLength { readIrGetClass() }
+                        oneOfIndex = 12
+                    }
+                    13 -> {
+                        get_enum_value__ = readWithLength { readIrGetEnumValue() }
+                        oneOfIndex = 13
+                    }
+                    14 -> {
+                        get_field__ = readWithLength { readIrGetField() }
+                        oneOfIndex = 14
+                    }
+                    15 -> {
+                        get_object__ = readWithLength { readIrGetObject() }
+                        oneOfIndex = 15
+                    }
+                    16 -> {
+                        get_value__ = readWithLength { readIrGetValue() }
+                        oneOfIndex = 16
+                    }
+                    17 -> {
+                        instance_initializer_call__ = readWithLength { readIrInstanceInitializerCall() }
+                        oneOfIndex = 17
+                    }
+                    18 -> {
+                        property_reference__ = readWithLength { readIrPropertyReference() }
+                        oneOfIndex = 18
+                    }
+                    19 -> {
+                        return__ = readWithLength { readIrReturn() }
+                        oneOfIndex = 19
+                    }
+                    20 -> {
+                        set_field__ = readWithLength { readIrSetField() }
+                        oneOfIndex = 20
+                    }
+                    21 -> {
+                        set_variable__ = readWithLength { readIrSetVariable() }
+                        oneOfIndex = 21
+                    }
+                    22 -> {
+                        string_concat__ = readWithLength { readIrStringConcat() }
+                        oneOfIndex = 22
+                    }
+                    23 -> {
+                        throw__ = readWithLength { readIrThrow() }
+                        oneOfIndex = 23
+                    }
+                    24 -> {
+                        try__ = readWithLength { readIrTry() }
+                        oneOfIndex = 24
+                    }
+                    25 -> {
+                        type_op__ = readWithLength { readIrTypeOp() }
+                        oneOfIndex = 25
+                    }
+                    26 -> {
+                        vararg__ = readWithLength { readIrVararg() }
+                        oneOfIndex = 26
+                    }
+                    27 -> {
+                        when__ = readWithLength { readIrWhen() }
+                        oneOfIndex = 27
+                    }
+                    28 -> {
+                        while__ = readWithLength { readIrWhile() }
+                        oneOfIndex = 28
+                    }
+                    29 -> {
+                        dynamic_member__ = readWithLength { readIrDynamicMemberExpression() }
+                        oneOfIndex = 29
+                    }
+                    30 -> {
+                        dynamic_operator__ = readWithLength { readIrDynamicOperatorExpression() }
+                        oneOfIndex = 30
+                    }
+                    31 -> {
+                        local_delegated_property_reference__ = readWithLength { readIrLocalDelegatedPropertyReference() }
+                        oneOfIndex = 31
+                    }
+                    32 -> {
+                        constructor_call__ = readWithLength { readIrConstructorCall() }
+                        oneOfIndex = 32
+                    }
+                    33 -> {
+                        function_expression__ = readWithLength { readIrFunctionExpression() }
+                        oneOfIndex = 33
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrOperation(block__, break__, call__, class_reference__, composite__, const__, continue__, delegating_constructor_call__, do_while__, enum_constructor_call__, function_reference__, get_class__, get_enum_value__, get_field__, get_object__, get_value__, instance_initializer_call__, property_reference__, return__, set_field__, set_variable__, string_concat__, throw__, try__, type_op__, vararg__, when__, while__, dynamic_member__, dynamic_operator__, local_delegated_property_reference__, constructor_call__, function_expression__)
+        when (oneOfIndex) {
+            1 -> return createIrOperation_block(block__!!)
+            2 -> return createIrOperation_break_(break__!!)
+            3 -> return createIrOperation_call(call__!!)
+            4 -> return createIrOperation_classReference(class_reference__!!)
+            5 -> return createIrOperation_composite(composite__!!)
+            6 -> return createIrOperation_const(const__!!)
+            7 -> return createIrOperation_continue_(continue__!!)
+            8 -> return createIrOperation_delegatingConstructorCall(delegating_constructor_call__!!)
+            9 -> return createIrOperation_doWhile(do_while__!!)
+            10 -> return createIrOperation_enumConstructorCall(enum_constructor_call__!!)
+            11 -> return createIrOperation_functionReference(function_reference__!!)
+            12 -> return createIrOperation_getClass(get_class__!!)
+            13 -> return createIrOperation_getEnumValue(get_enum_value__!!)
+            14 -> return createIrOperation_getField(get_field__!!)
+            15 -> return createIrOperation_getObject(get_object__!!)
+            16 -> return createIrOperation_getValue(get_value__!!)
+            17 -> return createIrOperation_instanceInitializerCall(instance_initializer_call__!!)
+            18 -> return createIrOperation_propertyReference(property_reference__!!)
+            19 -> return createIrOperation_return_(return__!!)
+            20 -> return createIrOperation_setField(set_field__!!)
+            21 -> return createIrOperation_setVariable(set_variable__!!)
+            22 -> return createIrOperation_stringConcat(string_concat__!!)
+            23 -> return createIrOperation_throw_(throw__!!)
+            24 -> return createIrOperation_try_(try__!!)
+            25 -> return createIrOperation_typeOp(type_op__!!)
+            26 -> return createIrOperation_vararg(vararg__!!)
+            27 -> return createIrOperation_when_(when__!!)
+            28 -> return createIrOperation_while_(while__!!)
+            29 -> return createIrOperation_dynamicMember(dynamic_member__!!)
+            30 -> return createIrOperation_dynamicOperator(dynamic_operator__!!)
+            31 -> return createIrOperation_localDelegatedPropertyReference(local_delegated_property_reference__!!)
+            32 -> return createIrOperation_constructorCall(constructor_call__!!)
+            33 -> return createIrOperation_functionExpression(function_expression__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrExpression(): Any {
@@ -1682,26 +1970,77 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var ir_value_parameter__: Any? = null
         var ir_local_delegated_property__: Any? = null
         var ir_type_alias__: Any? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> ir_anonymous_init__ = readWithLength { readIrAnonymousInit() }
-                    2 -> ir_class__ = readWithLength { readIrClass() }
-                    3 -> ir_constructor__ = readWithLength { readIrConstructor() }
-                    4 -> ir_enum_entry__ = readWithLength { readIrEnumEntry() }
-                    5 -> ir_field__ = readWithLength { readIrField() }
-                    6 -> ir_function__ = readWithLength { readIrFunction() }
-                    7 -> ir_property__ = readWithLength { readIrProperty() }
-                    8 -> ir_type_parameter__ = readWithLength { readIrTypeParameter() }
-                    9 -> ir_variable__ = readWithLength { readIrVariable() }
-                    10 -> ir_value_parameter__ = readWithLength { readIrValueParameter() }
-                    11 -> ir_local_delegated_property__ = readWithLength { readIrLocalDelegatedProperty() }
-                    12 -> ir_type_alias__ = readWithLength { readIrTypeAlias() }
+                    1 -> {
+                        ir_anonymous_init__ = readWithLength { readIrAnonymousInit() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        ir_class__ = readWithLength { readIrClass() }
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        ir_constructor__ = readWithLength { readIrConstructor() }
+                        oneOfIndex = 3
+                    }
+                    4 -> {
+                        ir_enum_entry__ = readWithLength { readIrEnumEntry() }
+                        oneOfIndex = 4
+                    }
+                    5 -> {
+                        ir_field__ = readWithLength { readIrField() }
+                        oneOfIndex = 5
+                    }
+                    6 -> {
+                        ir_function__ = readWithLength { readIrFunction() }
+                        oneOfIndex = 6
+                    }
+                    7 -> {
+                        ir_property__ = readWithLength { readIrProperty() }
+                        oneOfIndex = 7
+                    }
+                    8 -> {
+                        ir_type_parameter__ = readWithLength { readIrTypeParameter() }
+                        oneOfIndex = 8
+                    }
+                    9 -> {
+                        ir_variable__ = readWithLength { readIrVariable() }
+                        oneOfIndex = 9
+                    }
+                    10 -> {
+                        ir_value_parameter__ = readWithLength { readIrValueParameter() }
+                        oneOfIndex = 10
+                    }
+                    11 -> {
+                        ir_local_delegated_property__ = readWithLength { readIrLocalDelegatedProperty() }
+                        oneOfIndex = 11
+                    }
+                    12 -> {
+                        ir_type_alias__ = readWithLength { readIrTypeAlias() }
+                        oneOfIndex = 12
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDeclaration(ir_anonymous_init__, ir_class__, ir_constructor__, ir_enum_entry__, ir_field__, ir_function__, ir_property__, ir_type_parameter__, ir_variable__, ir_value_parameter__, ir_local_delegated_property__, ir_type_alias__)
+        when (oneOfIndex) {
+            1 -> return createIrDeclaration_irAnonymousInit(ir_anonymous_init__!!)
+            2 -> return createIrDeclaration_irClass(ir_class__!!)
+            3 -> return createIrDeclaration_irConstructor(ir_constructor__!!)
+            4 -> return createIrDeclaration_irEnumEntry(ir_enum_entry__!!)
+            5 -> return createIrDeclaration_irField(ir_field__!!)
+            6 -> return createIrDeclaration_irFunction(ir_function__!!)
+            7 -> return createIrDeclaration_irProperty(ir_property__!!)
+            8 -> return createIrDeclaration_irTypeParameter(ir_type_parameter__!!)
+            9 -> return createIrDeclaration_irVariable(ir_variable__!!)
+            10 -> return createIrDeclaration_irValueParameter(ir_value_parameter__!!)
+            11 -> return createIrDeclaration_irLocalDelegatedProperty(ir_local_delegated_property__!!)
+            12 -> return createIrDeclaration_irTypeAlias(ir_type_alias__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrBranch(): Any {
@@ -1768,21 +2107,48 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var branch__: Any? = null
         var catch__: Any? = null
         var synthetic_body__: Any? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> coordinates__ = readWithLength { readCoordinates() }
-                    2 -> declaration__ = readWithLength { readIrDeclaration() }
-                    3 -> expression__ = readWithLength { readIrExpression() }
-                    4 -> block_body__ = readWithLength { readIrBlockBody() }
-                    5 -> branch__ = readWithLength { readIrBranch() }
-                    6 -> catch__ = readWithLength { readIrCatch() }
-                    7 -> synthetic_body__ = readWithLength { readIrSyntheticBody() }
+                    2 -> {
+                        declaration__ = readWithLength { readIrDeclaration() }
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        expression__ = readWithLength { readIrExpression() }
+                        oneOfIndex = 3
+                    }
+                    4 -> {
+                        block_body__ = readWithLength { readIrBlockBody() }
+                        oneOfIndex = 4
+                    }
+                    5 -> {
+                        branch__ = readWithLength { readIrBranch() }
+                        oneOfIndex = 5
+                    }
+                    6 -> {
+                        catch__ = readWithLength { readIrCatch() }
+                        oneOfIndex = 6
+                    }
+                    7 -> {
+                        synthetic_body__ = readWithLength { readIrSyntheticBody() }
+                        oneOfIndex = 7
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrStatement(coordinates__!!, declaration__, expression__, block_body__, branch__, catch__, synthetic_body__)
+        when (oneOfIndex) {
+            2 -> return createIrStatement_declaration(coordinates__!!, declaration__!!)
+            3 -> return createIrStatement_expression(coordinates__!!, expression__!!)
+            4 -> return createIrStatement_blockBody(coordinates__!!, block_body__!!)
+            5 -> return createIrStatement_branch(coordinates__!!, branch__!!)
+            6 -> return createIrStatement_catch(coordinates__!!, catch__!!)
+            7 -> return createIrStatement_syntheticBody(coordinates__!!, synthetic_body__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
 }
