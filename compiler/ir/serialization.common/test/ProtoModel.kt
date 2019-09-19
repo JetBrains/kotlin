@@ -29,6 +29,7 @@ sealed class MessageEntry(val name: String) {
         name: String,
         val index: Int,
         val type: String,
+        val directives: List<String> = emptyList(),
         val defaultValue: String? = null
     ): MessageEntry(name)
 
@@ -61,6 +62,9 @@ fun printMessage(message: Proto.Message) {
                 print("  ${f.kind.toString().toLowerCase()} ${f.type} ${f.name} = ${f.index}")
                 if (f.defaultValue != null) {
                     print(" [default = ${f.defaultValue}]")
+                }
+                if (f.directives.isNotEmpty()) {
+                    print(" /*${f.directives.fold("") { acc, c -> acc + " " + c}} */")
                 }
                 println(";")
             }

@@ -529,8 +529,8 @@ enum IrTypeOperator {
 
 message IrExpression {
   required IrOperation operation = 1;
-  required IrDataIndex type = 2; // @exposed
-  required Coordinates coordinates = 3; // @exposed
+  required IrDataIndex type = 2 /* @exposed */;
+  required Coordinates coordinates = 3 /* @exposed */;
 }
 
 message NullableIrExpression {
@@ -554,11 +554,11 @@ message IrFunctionBase {
   required Visibility visibility = 3;
   required bool is_inline = 4;
   required bool is_external = 5;
-  required IrTypeParameterContainer type_parameters = 6; // @order=1
-  optional IrValueParameter dispatch_receiver = 7; // @order=1
-  optional IrValueParameter extension_receiver = 8; // @order=1
-  repeated IrValueParameter value_parameter = 9; // @order=1
-  optional IrDataIndex body = 10; // @order=2
+  required IrTypeParameterContainer type_parameters = 6 /* @order_1 */;
+  optional IrValueParameter dispatch_receiver = 7 /* @order_1 */;
+  optional IrValueParameter extension_receiver = 8 /* @order_1 */;
+  repeated IrValueParameter value_parameter = 9  /* @order_1 */;
+  optional IrDataIndex body = 10 /* @order_2 */;
   required IrDataIndex return_type = 11;
 }
 
@@ -675,9 +675,9 @@ message IrClass {
   required bool is_data = 8;
   required bool is_external = 9;
   required bool is_inline = 10;
-  optional IrValueParameter this_receiver = 11; // @order=1
-  required IrTypeParameterContainer type_parameters = 12; // @order=1
-  required IrDeclarationContainer declaration_container = 13; // @order=2
+  optional IrValueParameter this_receiver = 11 /* @order_1 */;
+  required IrTypeParameterContainer type_parameters = 12 /* @order_1 */;
+  required IrDeclarationContainer declaration_container = 13 /* @order_2 */;
   repeated IrDataIndex super_type = 14;
 }
 
@@ -749,7 +749,7 @@ message IrSyntheticBody {
 
 // Let's try to map IrElement as well as IrStatement to IrStatement.
 message IrStatement {
-  required Coordinates coordinates = 1; // @exposed
+  required Coordinates coordinates = 1 /* @exposed */;
   oneof statement {
     IrDeclaration declaration = 2;
     IrExpression expression = 3;
