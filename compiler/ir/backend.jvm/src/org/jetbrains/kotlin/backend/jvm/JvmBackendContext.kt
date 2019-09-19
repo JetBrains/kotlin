@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
@@ -89,6 +90,8 @@ class JvmBackendContext(
     val fakeContinuation: IrExpression = createFakeContinuation(this)
 
     val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
+
+    val inlineClassReplacements = MemoizedInlineClassReplacements()
 
     internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
         val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
