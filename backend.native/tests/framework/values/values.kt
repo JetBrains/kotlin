@@ -778,3 +778,7 @@ class SharedRefs {
 open class ClassForTypeCheck
 
 fun testClassTypeCheck(x: Any) = x is ClassForTypeCheck
+
+interface InterfaceForTypeCheck
+
+fun testInterfaceTypeCheck(x: Any) = x is InterfaceForTypeCheck

@@ -141,6 +141,8 @@ class MutablePairImpl(first: Int, second: Int) : NSObject(), MutablePairProtocol
     constructor() : this(123, 321)
 }
 
+interface Zzz
+
 fun testTypeOps() {
     assertTrue(99.asAny() is NSNumber)
     assertTrue(null.asAny() is NSNumber?)
@@ -149,6 +151,7 @@ fun testTypeOps() {
     assertTrue("bar".asAny() is NSString)
 
     assertTrue(Foo.asAny() is FooMeta)
+    assertFalse(Foo.asAny() is Zzz)
     assertTrue(Foo.asAny() is NSObjectMeta)
     assertTrue(Foo.asAny() is NSObject)
     assertFalse(Foo.asAny() is Foo)

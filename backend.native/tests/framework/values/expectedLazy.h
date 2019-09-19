@@ -989,6 +989,11 @@ __attribute__((swift_name("ClassForTypeCheck")))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
+__attribute__((swift_name("InterfaceForTypeCheck")))
+@protocol ValuesInterfaceForTypeCheck
+@required
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
@@ -1069,6 +1074,7 @@ __attribute__((swift_name("ValuesKt")))
 + (void)warning __attribute__((swift_name("warning()"))) __attribute__((deprecated("warning")));
 + (void)gc __attribute__((swift_name("gc()")));
 + (BOOL)testClassTypeCheckX:(id)x __attribute__((swift_name("testClassTypeCheck(x:)")));
++ (BOOL)testInterfaceTypeCheckX:(id)x __attribute__((swift_name("testInterfaceTypeCheck(x:)")));
 @property (class, readonly) double dbl __attribute__((swift_name("dbl")));
 @property (class, readonly) float flt __attribute__((swift_name("flt")));
 @property (class, readonly) int32_t integer __attribute__((swift_name("integer")));

@@ -1004,6 +1004,18 @@ func testClassTypeCheck() throws {
     try assertTrue(ValuesKt.testClassTypeCheck(x: ClassForTypeCheckInheritor()))
 }
 
+class ClassForInterfaceTypeCheckInheritor1 : InterfaceForTypeCheck { }
+class ClassForInterfaceTypeCheckInheritor2 : Base23, InterfaceForTypeCheck { }
+class ClassForInterfaceTypeCheckInheritor3 : Base23, ExtendedBase1, InterfaceForTypeCheck { }
+class ClassForInterfaceTypeCheck_Fail : Base23 { }
+
+func testInterfaceTypeCheck() throws {
+    try assertTrue(ValuesKt.testInterfaceTypeCheck(x: ClassForInterfaceTypeCheckInheritor1()))
+    try assertTrue(ValuesKt.testInterfaceTypeCheck(x: ClassForInterfaceTypeCheckInheritor2()))
+    try assertTrue(ValuesKt.testInterfaceTypeCheck(x: ClassForInterfaceTypeCheckInheritor3()))
+    try assertFalse(ValuesKt.testInterfaceTypeCheck(x: ClassForInterfaceTypeCheck_Fail()))
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -1054,6 +1066,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestWeakRefs", method: withAutorelease(testWeakRefs)),
             TestCase(name: "TestSharedRefs", method: withAutorelease(TestSharedRefs().test)),
             TestCase(name: "TestClassTypeCheck", method: withAutorelease(testClassTypeCheck)),
+            TestCase(name: "TestInterfaceTypeCheck", method: withAutorelease(testInterfaceTypeCheck)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }
