@@ -21,23 +21,22 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ResolveScopeProvider
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesInfo
-import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesSourceInfo
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 
 class ScriptDependenciesResolveScopeProvider : ResolveScopeProvider() {
     override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {
-        if (ScriptConfigurationManager.getInstance(project).getAllScriptsDependenciesClassFiles().isEmpty()) return null
+        val manager = ScriptConfigurationManager.getInstance(project)
+        if (manager.getAllScriptsDependenciesClassFiles().isEmpty()) return null
 
-        val moduleInfo = getModuleInfoByVirtualFile(project, file) ?: return null
-        val scriptDependenciesModuleInfo = (moduleInfo as? ScriptDependenciesInfo)
-                                           ?: (moduleInfo as? ScriptDependenciesSourceInfo)?.binariesModuleInfo
-                                           ?: return null
+        if (file !in manager.getAllScriptsDependenciesClassFilesScope() && file !in manager.getAllScriptDependenciesSourcesScope()) {
+            return null
+        }
+
         return GlobalSearchScope.union(
-                arrayOf(
-                        GlobalSearchScope.fileScope(project, file),
-                        *scriptDependenciesModuleInfo.dependencies().map { it.contentScope() }.toTypedArray()
-                )
+            arrayOf(
+                GlobalSearchScope.fileScope(project, file),
+                *ScriptDependenciesInfo.ForProject(project).dependencies().map { it.contentScope() }.toTypedArray()
+            )
         )
     }
 }

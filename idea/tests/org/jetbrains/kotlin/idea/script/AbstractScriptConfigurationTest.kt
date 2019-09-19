@@ -100,19 +100,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             ModuleRootModificationUtil.addDependency(myModule, newModule)
         }
 
-        if (configureConflictingModule in environment) {
-            val sharedLib = VfsUtil.findFileByIoFile(environment["lib-classes"] as File, true)!!
-            if (module == null) {
-                myModule = createTestModuleByName("mainModule")
-            }
-            module.addDependency(projectLibrary("sharedLib", classesRoot = sharedLib))
-        }
-
         if (module != null) {
-            ModuleRootModificationUtil.updateModel(module) { model ->
-                model.sdk = sdk
-            }
-
             module.addDependency(
                 projectLibrary(
                     "script-runtime",
@@ -127,6 +115,21 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
                         classesRoot = VfsUtil.findFileByIoFile(environment["template-classes"] as File, true)
                     )
                 )
+            }
+        }
+
+        if (configureConflictingModule in environment) {
+            val sharedLib = VfsUtil.findFileByIoFile(environment["lib-classes"] as File, true)!!
+            if (module == null) {
+                // Force create module if it doesn't exist
+                myModule = createTestModuleByName("mainModule")
+            }
+            module.addDependency(projectLibrary("sharedLib", classesRoot = sharedLib))
+        }
+
+        if (module != null) {
+            ModuleRootModificationUtil.updateModel(module) { model ->
+                model.sdk = sdk
             }
         }
 
