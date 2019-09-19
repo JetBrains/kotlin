@@ -84,21 +84,3 @@ private fun StringBuilder.addMessage(m: Proto.Message, typeMap: Map<String, Prot
     appendln("    }")
     appendln()
 }
-
-
-//fun readFileEntry(): NaiveSourceBasedFileEntryImpl {
-//    var name: String? = null
-//    val offsets = mutableListOf<Int>()
-//
-//    while (hasData) {
-//        readField { fieldNumber, type ->
-//            when (fieldNumber) {
-//                1 -> name = readString()
-//                2 -> offsets += readInt32()
-//                else -> skip(type)
-//            }
-//        }
-//    }
-//
-//    return NaiveSourceBasedFileEntryImpl(name!!, offsets.toIntArray())
-//}
