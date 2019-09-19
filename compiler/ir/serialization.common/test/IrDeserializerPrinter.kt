@@ -69,7 +69,7 @@ private class IrDeserializerPrinter(
         sb.appendln()
 
         val prefix = if (isSimple) "" else "abstract "
-        val name = if (isSimple) "SimpleIr" else "AbstractIr"
+        val name = if (isSimple) "SimpleIr" else "AbstractIrSmart"
         sb.appendln("${prefix}class ${name}ProtoReader(source: ByteArray) : ProtoReader(source) {")
 
         protoList.forEach { sb.addAbstractFactory(it) }

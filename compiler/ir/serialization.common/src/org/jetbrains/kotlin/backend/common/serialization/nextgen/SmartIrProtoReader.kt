@@ -108,7 +108,8 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createKnownOrigin(index: Int): KnownOriginMessageType
 
-    abstract fun createIrDeclarationOrigin(origin : KnownOriginMessageType?, custom : Int?): IrDeclarationOriginMessageType
+    abstract fun createIrDeclarationOrigin_origin(origin : KnownOriginMessageType?): IrDeclarationOriginMessageType
+    abstract fun createIrDeclarationOrigin_custom(custom : Int?): IrDeclarationOriginMessageType
 
     abstract fun createIrDataIndex(index : Int): Int
 
@@ -138,7 +139,8 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrTypeProjection(variance : IrTypeVarianceMessageType, type : Int): IrTypeProjectionMessageType
 
-    abstract fun createIrTypeArgument(star : IrStarProjectionMessageType?, type : IrTypeProjectionMessageType?): IrTypeArgumentMessageType
+    abstract fun createIrTypeArgument_star(star : IrStarProjectionMessageType?): IrTypeArgumentMessageType
+    abstract fun createIrTypeArgument_type(type : IrTypeProjectionMessageType?): IrTypeArgumentMessageType
 
     abstract fun createIrSimpleType(annotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, classifier : Int, hasQuestionMark : Boolean, argument : List<IrTypeArgumentMessageType>, abbreviation : IrTypeAbbreviationMessageType?): IrSimpleTypeMessageType
 
@@ -148,7 +150,9 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrErrorType(annotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>): IrErrorTypeMessageType
 
-    abstract fun createIrType(simple : IrSimpleTypeMessageType?, dynamic : IrDynamicTypeMessageType?, error : IrErrorTypeMessageType?): IrTypeMessageType
+    abstract fun createIrType_simple(simple : IrSimpleTypeMessageType?): IrTypeMessageType
+    abstract fun createIrType_dynamic(dynamic : IrDynamicTypeMessageType?): IrTypeMessageType
+    abstract fun createIrType_error(error : IrErrorTypeMessageType?): IrTypeMessageType
 
     abstract fun createIrTypeTable(types : List<IrTypeMessageType>): Array<org.jetbrains.kotlin.ir.types.IrType>
 
@@ -172,7 +176,16 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrClassReference(classSymbol : Int, classType : Int): IrClassReferenceMessageType
 
-    abstract fun createIrConst(null_ : Boolean?, boolean : Boolean?, char : Int?, byte : Int?, short : Int?, int : Int?, long : Long?, float : Float?, double : Double?, string : Int?): IrConstMessageType<*>
+    abstract fun createIrConst_null_(null_ : Boolean?): IrConstMessageType<*>
+    abstract fun createIrConst_boolean(boolean : Boolean?): IrConstMessageType<*>
+    abstract fun createIrConst_char(char : Int?): IrConstMessageType<*>
+    abstract fun createIrConst_byte(byte : Int?): IrConstMessageType<*>
+    abstract fun createIrConst_short(short : Int?): IrConstMessageType<*>
+    abstract fun createIrConst_int(int : Int?): IrConstMessageType<*>
+    abstract fun createIrConst_long(long : Long?): IrConstMessageType<*>
+    abstract fun createIrConst_float(float : Float?): IrConstMessageType<*>
+    abstract fun createIrConst_double(double : Double?): IrConstMessageType<*>
+    abstract fun createIrConst_string(string : Int?): IrConstMessageType<*>
 
     abstract fun createIrContinue(loopId : Int, label : Int?): IrContinueMessageType
 
@@ -216,7 +229,8 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrVararg(elementType : Int, element : List<IrVarargElementMessageType>): IrVarargMessageType
 
-    abstract fun createIrVarargElement(expression : IrExpressionMessageType?, spreadElement : IrSpreadElementMessageType?): IrVarargElementMessageType
+    abstract fun createIrVarargElement_expression(expression : IrExpressionMessageType?): IrVarargElementMessageType
+    abstract fun createIrVarargElement_spreadElement(spreadElement : IrSpreadElementMessageType?): IrVarargElementMessageType
 
     abstract fun createIrWhen(branch : List<IrStatementMessageType>, origin : IrStatementOriginMessageType?): IrWhenMessageType
 
@@ -230,7 +244,39 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrDynamicOperatorExpression(operator : IrDynamicOperatorMessageType, receiver : IrExpressionMessageType, argument : List<IrExpressionMessageType>): IrDynamicOperatorExpressionMessageType
 
-    abstract fun createIrOperation(block : IrBlockMessageType?, break_ : IrBreakMessageType?, call : IrCallMessageType?, classReference : IrClassReferenceMessageType?, composite : IrCompositeMessageType?, const : IrConstMessageType<*>?, continue_ : IrContinueMessageType?, delegatingConstructorCall : IrDelegatingConstructorCallMessageType?, doWhile : IrDoWhileMessageType?, enumConstructorCall : IrEnumConstructorCallMessageType?, functionReference : IrFunctionReferenceMessageType?, getClass : IrGetClassMessageType?, getEnumValue : IrGetEnumValueMessageType?, getField : IrGetFieldMessageType?, getObject : IrGetObjectMessageType?, getValue : IrGetValueMessageType?, instanceInitializerCall : IrInstanceInitializerCallMessageType?, propertyReference : IrPropertyReferenceMessageType?, return_ : IrReturnMessageType?, setField : IrSetFieldMessageType?, setVariable : IrSetVariableMessageType?, stringConcat : IrStringConcatMessageType?, throw_ : IrThrowMessageType?, try_ : IrTryMessageType?, typeOp : IrTypeOpMessageType?, vararg : IrVarargMessageType?, when_ : IrWhenMessageType?, while_ : IrWhileMessageType?, dynamicMember : IrDynamicMemberExpressionMessageType?, dynamicOperator : IrDynamicOperatorExpressionMessageType?, localDelegatedPropertyReference : IrLocalDelegatedPropertyReferenceMessageType?, constructorCall : IrConstructorCallMessageType?, functionExpression : IrFunctionExpressionMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_block(block : IrBlockMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_break_(break_ : IrBreakMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_call(call : IrCallMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_classReference(classReference : IrClassReferenceMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_composite(composite : IrCompositeMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_const(const : IrConstMessageType<*>?): IrOperationMessageType
+    abstract fun createIrOperation_continue_(continue_ : IrContinueMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall : IrDelegatingConstructorCallMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_doWhile(doWhile : IrDoWhileMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_enumConstructorCall(enumConstructorCall : IrEnumConstructorCallMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_functionReference(functionReference : IrFunctionReferenceMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_getClass(getClass : IrGetClassMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_getEnumValue(getEnumValue : IrGetEnumValueMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_getField(getField : IrGetFieldMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_getObject(getObject : IrGetObjectMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_getValue(getValue : IrGetValueMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_instanceInitializerCall(instanceInitializerCall : IrInstanceInitializerCallMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_propertyReference(propertyReference : IrPropertyReferenceMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_return_(return_ : IrReturnMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_setField(setField : IrSetFieldMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_setVariable(setVariable : IrSetVariableMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_stringConcat(stringConcat : IrStringConcatMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_throw_(throw_ : IrThrowMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_try_(try_ : IrTryMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_typeOp(typeOp : IrTypeOpMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_vararg(vararg : IrVarargMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_when_(when_ : IrWhenMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_while_(while_ : IrWhileMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_dynamicMember(dynamicMember : IrDynamicMemberExpressionMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_dynamicOperator(dynamicOperator : IrDynamicOperatorExpressionMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference : IrLocalDelegatedPropertyReferenceMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_constructorCall(constructorCall : IrConstructorCallMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_functionExpression(functionExpression : IrFunctionExpressionMessageType?): IrOperationMessageType
 
     abstract fun createIrTypeOperator(index: Int): IrTypeOperatorMessageType
 
@@ -272,7 +318,18 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrAnonymousInit(base : IrDeclarationBaseMessageType, body : Int): IrAnonymousInitMessageType
 
-    abstract fun createIrDeclaration(irAnonymousInit : IrAnonymousInitMessageType?, irClass : IrClassMessageType?, irConstructor : IrConstructorMessageType?, irEnumEntry : IrEnumEntryMessageType?, irField : IrFieldMessageType?, irFunction : IrFunctionMessageType?, irProperty : IrPropertyMessageType?, irTypeParameter : IrTypeParameterMessageType?, irVariable : IrVariableMessageType?, irValueParameter : IrValueParameterMessageType?, irLocalDelegatedProperty : IrLocalDelegatedPropertyMessageType?, irTypeAlias : IrTypeAliasMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irAnonymousInit(irAnonymousInit : IrAnonymousInitMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irClass(irClass : IrClassMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irConstructor(irConstructor : IrConstructorMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irEnumEntry(irEnumEntry : IrEnumEntryMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irField(irField : IrFieldMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irFunction(irFunction : IrFunctionMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irProperty(irProperty : IrPropertyMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irTypeParameter(irTypeParameter : IrTypeParameterMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irVariable(irVariable : IrVariableMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irValueParameter(irValueParameter : IrValueParameterMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty : IrLocalDelegatedPropertyMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irTypeAlias(irTypeAlias : IrTypeAliasMessageType?): IrDeclarationMessageType
 
     abstract fun createIrBranch(condition : IrExpressionMessageType, result : IrExpressionMessageType): IrBranchMessageType
 
@@ -284,7 +341,12 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrSyntheticBody(kind : IrSyntheticBodyKindMessageType): IrSyntheticBodyMessageType
 
-    abstract fun createIrStatement(coordinates : CoordinatesMessageType, declaration : IrDeclarationMessageType?, expression : IrExpressionMessageType?, blockBody : IrBlockBodyMessageType?, branch : IrBranchMessageType?, catch : IrCatchMessageType?, syntheticBody : IrSyntheticBodyMessageType?): IrStatementMessageType
+    abstract fun createIrStatement_declaration(coordinates : CoordinatesMessageType, declaration : IrDeclarationMessageType?): IrStatementMessageType
+    abstract fun createIrStatement_expression(coordinates : CoordinatesMessageType, expression : IrExpressionMessageType?): IrStatementMessageType
+    abstract fun createIrStatement_blockBody(coordinates : CoordinatesMessageType, blockBody : IrBlockBodyMessageType?): IrStatementMessageType
+    abstract fun createIrStatement_branch(coordinates : CoordinatesMessageType, branch : IrBranchMessageType?): IrStatementMessageType
+    abstract fun createIrStatement_catch(coordinates : CoordinatesMessageType, catch : IrCatchMessageType?): IrStatementMessageType
+    abstract fun createIrStatement_syntheticBody(coordinates : CoordinatesMessageType, syntheticBody : IrSyntheticBodyMessageType?): IrStatementMessageType
 
     open fun readDescriptorReference(): DescriptorReferenceMessageType {
         var package_fq_name__: FqNameMessageType? = null
@@ -380,16 +442,27 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
     open fun readIrDeclarationOrigin(): IrDeclarationOriginMessageType {
         var origin__: KnownOriginMessageType? = null
         var custom__: Int? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> origin__ = createKnownOrigin(readInt32())
-                    2 -> custom__ = readWithLength { readIrDataIndex() }
+                    1 -> {
+                        origin__ = createKnownOrigin(readInt32())
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        custom__ = readWithLength { readIrDataIndex() }
+                        oneOfIndex = 2
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDeclarationOrigin(origin__, custom__)
+        when (oneOfIndex) {
+            1 -> return createIrDeclarationOrigin_origin(origin__!!)
+            2 -> return createIrDeclarationOrigin_custom(custom__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrDataIndex(): Int {
@@ -571,16 +644,27 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
     open fun readIrTypeArgument(): IrTypeArgumentMessageType {
         var star__: IrStarProjectionMessageType? = null
         var type__: IrTypeProjectionMessageType? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> star__ = readWithLength { readIrStarProjection() }
-                    2 -> type__ = readWithLength { readIrTypeProjection() }
+                    1 -> {
+                        star__ = readWithLength { readIrStarProjection() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        type__ = readWithLength { readIrTypeProjection() }
+                        oneOfIndex = 2
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeArgument(star__, type__)
+        when (oneOfIndex) {
+            1 -> return createIrTypeArgument_star(star__!!)
+            2 -> return createIrTypeArgument_type(type__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrSimpleType(): IrSimpleTypeMessageType {
@@ -653,17 +737,32 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var simple__: IrSimpleTypeMessageType? = null
         var dynamic__: IrDynamicTypeMessageType? = null
         var error__: IrErrorTypeMessageType? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> simple__ = readWithLength { readIrSimpleType() }
-                    2 -> dynamic__ = readWithLength { readIrDynamicType() }
-                    3 -> error__ = readWithLength { readIrErrorType() }
+                    1 -> {
+                        simple__ = readWithLength { readIrSimpleType() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        dynamic__ = readWithLength { readIrDynamicType() }
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        error__ = readWithLength { readIrErrorType() }
+                        oneOfIndex = 3
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrType(simple__, dynamic__, error__)
+        when (oneOfIndex) {
+            1 -> return createIrType_simple(simple__!!)
+            2 -> return createIrType_dynamic(dynamic__!!)
+            3 -> return createIrType_error(error__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrTypeTable(): Array<org.jetbrains.kotlin.ir.types.IrType> {
@@ -866,24 +965,67 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var float__: Float? = null
         var double__: Double? = null
         var string__: Int? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> null__ = readBool()
-                    2 -> boolean__ = readBool()
-                    3 -> char__ = readInt32()
-                    4 -> byte__ = readInt32()
-                    5 -> short__ = readInt32()
-                    6 -> int__ = readInt32()
-                    7 -> long__ = readInt64()
-                    8 -> float__ = readFloat()
-                    9 -> double__ = readDouble()
-                    10 -> string__ = readWithLength { readIrDataIndex() }
+                    1 -> {
+                        null__ = readBool()
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        boolean__ = readBool()
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        char__ = readInt32()
+                        oneOfIndex = 3
+                    }
+                    4 -> {
+                        byte__ = readInt32()
+                        oneOfIndex = 4
+                    }
+                    5 -> {
+                        short__ = readInt32()
+                        oneOfIndex = 5
+                    }
+                    6 -> {
+                        int__ = readInt32()
+                        oneOfIndex = 6
+                    }
+                    7 -> {
+                        long__ = readInt64()
+                        oneOfIndex = 7
+                    }
+                    8 -> {
+                        float__ = readFloat()
+                        oneOfIndex = 8
+                    }
+                    9 -> {
+                        double__ = readDouble()
+                        oneOfIndex = 9
+                    }
+                    10 -> {
+                        string__ = readWithLength { readIrDataIndex() }
+                        oneOfIndex = 10
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrConst(null__, boolean__, char__, byte__, short__, int__, long__, float__, double__, string__)
+        when (oneOfIndex) {
+            1 -> return createIrConst_null_(null__!!)
+            2 -> return createIrConst_boolean(boolean__!!)
+            3 -> return createIrConst_char(char__!!)
+            4 -> return createIrConst_byte(byte__!!)
+            5 -> return createIrConst_short(short__!!)
+            6 -> return createIrConst_int(int__!!)
+            7 -> return createIrConst_long(long__!!)
+            8 -> return createIrConst_float(float__!!)
+            9 -> return createIrConst_double(double__!!)
+            10 -> return createIrConst_string(string__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrContinue(): IrContinueMessageType {
@@ -1206,16 +1348,27 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
     open fun readIrVarargElement(): IrVarargElementMessageType {
         var expression__: IrExpressionMessageType? = null
         var spread_element__: IrSpreadElementMessageType? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readWithLength { readIrExpression() }
-                    2 -> spread_element__ = readWithLength { readIrSpreadElement() }
+                    1 -> {
+                        expression__ = readWithLength { readIrExpression() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        spread_element__ = readWithLength { readIrSpreadElement() }
+                        oneOfIndex = 2
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrVarargElement(expression__, spread_element__)
+        when (oneOfIndex) {
+            1 -> return createIrVarargElement_expression(expression__!!)
+            2 -> return createIrVarargElement_spreadElement(spread_element__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrWhen(): IrWhenMessageType {
@@ -1327,47 +1480,182 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var local_delegated_property_reference__: IrLocalDelegatedPropertyReferenceMessageType? = null
         var constructor_call__: IrConstructorCallMessageType? = null
         var function_expression__: IrFunctionExpressionMessageType? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> block__ = readWithLength { readIrBlock() }
-                    2 -> break__ = readWithLength { readIrBreak() }
-                    3 -> call__ = readWithLength { readIrCall() }
-                    4 -> class_reference__ = readWithLength { readIrClassReference() }
-                    5 -> composite__ = readWithLength { readIrComposite() }
-                    6 -> const__ = readWithLength { readIrConst() }
-                    7 -> continue__ = readWithLength { readIrContinue() }
-                    8 -> delegating_constructor_call__ = readWithLength { readIrDelegatingConstructorCall() }
-                    9 -> do_while__ = readWithLength { readIrDoWhile() }
-                    10 -> enum_constructor_call__ = readWithLength { readIrEnumConstructorCall() }
-                    11 -> function_reference__ = readWithLength { readIrFunctionReference() }
-                    12 -> get_class__ = readWithLength { readIrGetClass() }
-                    13 -> get_enum_value__ = readWithLength { readIrGetEnumValue() }
-                    14 -> get_field__ = readWithLength { readIrGetField() }
-                    15 -> get_object__ = readWithLength { readIrGetObject() }
-                    16 -> get_value__ = readWithLength { readIrGetValue() }
-                    17 -> instance_initializer_call__ = readWithLength { readIrInstanceInitializerCall() }
-                    18 -> property_reference__ = readWithLength { readIrPropertyReference() }
-                    19 -> return__ = readWithLength { readIrReturn() }
-                    20 -> set_field__ = readWithLength { readIrSetField() }
-                    21 -> set_variable__ = readWithLength { readIrSetVariable() }
-                    22 -> string_concat__ = readWithLength { readIrStringConcat() }
-                    23 -> throw__ = readWithLength { readIrThrow() }
-                    24 -> try__ = readWithLength { readIrTry() }
-                    25 -> type_op__ = readWithLength { readIrTypeOp() }
-                    26 -> vararg__ = readWithLength { readIrVararg() }
-                    27 -> when__ = readWithLength { readIrWhen() }
-                    28 -> while__ = readWithLength { readIrWhile() }
-                    29 -> dynamic_member__ = readWithLength { readIrDynamicMemberExpression() }
-                    30 -> dynamic_operator__ = readWithLength { readIrDynamicOperatorExpression() }
-                    31 -> local_delegated_property_reference__ = readWithLength { readIrLocalDelegatedPropertyReference() }
-                    32 -> constructor_call__ = readWithLength { readIrConstructorCall() }
-                    33 -> function_expression__ = readWithLength { readIrFunctionExpression() }
+                    1 -> {
+                        block__ = readWithLength { readIrBlock() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        break__ = readWithLength { readIrBreak() }
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        call__ = readWithLength { readIrCall() }
+                        oneOfIndex = 3
+                    }
+                    4 -> {
+                        class_reference__ = readWithLength { readIrClassReference() }
+                        oneOfIndex = 4
+                    }
+                    5 -> {
+                        composite__ = readWithLength { readIrComposite() }
+                        oneOfIndex = 5
+                    }
+                    6 -> {
+                        const__ = readWithLength { readIrConst() }
+                        oneOfIndex = 6
+                    }
+                    7 -> {
+                        continue__ = readWithLength { readIrContinue() }
+                        oneOfIndex = 7
+                    }
+                    8 -> {
+                        delegating_constructor_call__ = readWithLength { readIrDelegatingConstructorCall() }
+                        oneOfIndex = 8
+                    }
+                    9 -> {
+                        do_while__ = readWithLength { readIrDoWhile() }
+                        oneOfIndex = 9
+                    }
+                    10 -> {
+                        enum_constructor_call__ = readWithLength { readIrEnumConstructorCall() }
+                        oneOfIndex = 10
+                    }
+                    11 -> {
+                        function_reference__ = readWithLength { readIrFunctionReference() }
+                        oneOfIndex = 11
+                    }
+                    12 -> {
+                        get_class__ = readWithLength { readIrGetClass() }
+                        oneOfIndex = 12
+                    }
+                    13 -> {
+                        get_enum_value__ = readWithLength { readIrGetEnumValue() }
+                        oneOfIndex = 13
+                    }
+                    14 -> {
+                        get_field__ = readWithLength { readIrGetField() }
+                        oneOfIndex = 14
+                    }
+                    15 -> {
+                        get_object__ = readWithLength { readIrGetObject() }
+                        oneOfIndex = 15
+                    }
+                    16 -> {
+                        get_value__ = readWithLength { readIrGetValue() }
+                        oneOfIndex = 16
+                    }
+                    17 -> {
+                        instance_initializer_call__ = readWithLength { readIrInstanceInitializerCall() }
+                        oneOfIndex = 17
+                    }
+                    18 -> {
+                        property_reference__ = readWithLength { readIrPropertyReference() }
+                        oneOfIndex = 18
+                    }
+                    19 -> {
+                        return__ = readWithLength { readIrReturn() }
+                        oneOfIndex = 19
+                    }
+                    20 -> {
+                        set_field__ = readWithLength { readIrSetField() }
+                        oneOfIndex = 20
+                    }
+                    21 -> {
+                        set_variable__ = readWithLength { readIrSetVariable() }
+                        oneOfIndex = 21
+                    }
+                    22 -> {
+                        string_concat__ = readWithLength { readIrStringConcat() }
+                        oneOfIndex = 22
+                    }
+                    23 -> {
+                        throw__ = readWithLength { readIrThrow() }
+                        oneOfIndex = 23
+                    }
+                    24 -> {
+                        try__ = readWithLength { readIrTry() }
+                        oneOfIndex = 24
+                    }
+                    25 -> {
+                        type_op__ = readWithLength { readIrTypeOp() }
+                        oneOfIndex = 25
+                    }
+                    26 -> {
+                        vararg__ = readWithLength { readIrVararg() }
+                        oneOfIndex = 26
+                    }
+                    27 -> {
+                        when__ = readWithLength { readIrWhen() }
+                        oneOfIndex = 27
+                    }
+                    28 -> {
+                        while__ = readWithLength { readIrWhile() }
+                        oneOfIndex = 28
+                    }
+                    29 -> {
+                        dynamic_member__ = readWithLength { readIrDynamicMemberExpression() }
+                        oneOfIndex = 29
+                    }
+                    30 -> {
+                        dynamic_operator__ = readWithLength { readIrDynamicOperatorExpression() }
+                        oneOfIndex = 30
+                    }
+                    31 -> {
+                        local_delegated_property_reference__ = readWithLength { readIrLocalDelegatedPropertyReference() }
+                        oneOfIndex = 31
+                    }
+                    32 -> {
+                        constructor_call__ = readWithLength { readIrConstructorCall() }
+                        oneOfIndex = 32
+                    }
+                    33 -> {
+                        function_expression__ = readWithLength { readIrFunctionExpression() }
+                        oneOfIndex = 33
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrOperation(block__, break__, call__, class_reference__, composite__, const__, continue__, delegating_constructor_call__, do_while__, enum_constructor_call__, function_reference__, get_class__, get_enum_value__, get_field__, get_object__, get_value__, instance_initializer_call__, property_reference__, return__, set_field__, set_variable__, string_concat__, throw__, try__, type_op__, vararg__, when__, while__, dynamic_member__, dynamic_operator__, local_delegated_property_reference__, constructor_call__, function_expression__)
+        when (oneOfIndex) {
+            1 -> return createIrOperation_block(block__!!)
+            2 -> return createIrOperation_break_(break__!!)
+            3 -> return createIrOperation_call(call__!!)
+            4 -> return createIrOperation_classReference(class_reference__!!)
+            5 -> return createIrOperation_composite(composite__!!)
+            6 -> return createIrOperation_const(const__!!)
+            7 -> return createIrOperation_continue_(continue__!!)
+            8 -> return createIrOperation_delegatingConstructorCall(delegating_constructor_call__!!)
+            9 -> return createIrOperation_doWhile(do_while__!!)
+            10 -> return createIrOperation_enumConstructorCall(enum_constructor_call__!!)
+            11 -> return createIrOperation_functionReference(function_reference__!!)
+            12 -> return createIrOperation_getClass(get_class__!!)
+            13 -> return createIrOperation_getEnumValue(get_enum_value__!!)
+            14 -> return createIrOperation_getField(get_field__!!)
+            15 -> return createIrOperation_getObject(get_object__!!)
+            16 -> return createIrOperation_getValue(get_value__!!)
+            17 -> return createIrOperation_instanceInitializerCall(instance_initializer_call__!!)
+            18 -> return createIrOperation_propertyReference(property_reference__!!)
+            19 -> return createIrOperation_return_(return__!!)
+            20 -> return createIrOperation_setField(set_field__!!)
+            21 -> return createIrOperation_setVariable(set_variable__!!)
+            22 -> return createIrOperation_stringConcat(string_concat__!!)
+            23 -> return createIrOperation_throw_(throw__!!)
+            24 -> return createIrOperation_try_(try__!!)
+            25 -> return createIrOperation_typeOp(type_op__!!)
+            26 -> return createIrOperation_vararg(vararg__!!)
+            27 -> return createIrOperation_when_(when__!!)
+            28 -> return createIrOperation_while_(while__!!)
+            29 -> return createIrOperation_dynamicMember(dynamic_member__!!)
+            30 -> return createIrOperation_dynamicOperator(dynamic_operator__!!)
+            31 -> return createIrOperation_localDelegatedPropertyReference(local_delegated_property_reference__!!)
+            32 -> return createIrOperation_constructorCall(constructor_call__!!)
+            33 -> return createIrOperation_functionExpression(function_expression__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrExpression(): IrExpressionMessageType {
@@ -1772,26 +2060,77 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var ir_value_parameter__: IrValueParameterMessageType? = null
         var ir_local_delegated_property__: IrLocalDelegatedPropertyMessageType? = null
         var ir_type_alias__: IrTypeAliasMessageType? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> ir_anonymous_init__ = readWithLength { readIrAnonymousInit() }
-                    2 -> ir_class__ = readWithLength { readIrClass() }
-                    3 -> ir_constructor__ = readWithLength { readIrConstructor() }
-                    4 -> ir_enum_entry__ = readWithLength { readIrEnumEntry() }
-                    5 -> ir_field__ = readWithLength { readIrField() }
-                    6 -> ir_function__ = readWithLength { readIrFunction() }
-                    7 -> ir_property__ = readWithLength { readIrProperty() }
-                    8 -> ir_type_parameter__ = readWithLength { readIrTypeParameter() }
-                    9 -> ir_variable__ = readWithLength { readIrVariable() }
-                    10 -> ir_value_parameter__ = readWithLength { readIrValueParameter() }
-                    11 -> ir_local_delegated_property__ = readWithLength { readIrLocalDelegatedProperty() }
-                    12 -> ir_type_alias__ = readWithLength { readIrTypeAlias() }
+                    1 -> {
+                        ir_anonymous_init__ = readWithLength { readIrAnonymousInit() }
+                        oneOfIndex = 1
+                    }
+                    2 -> {
+                        ir_class__ = readWithLength { readIrClass() }
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        ir_constructor__ = readWithLength { readIrConstructor() }
+                        oneOfIndex = 3
+                    }
+                    4 -> {
+                        ir_enum_entry__ = readWithLength { readIrEnumEntry() }
+                        oneOfIndex = 4
+                    }
+                    5 -> {
+                        ir_field__ = readWithLength { readIrField() }
+                        oneOfIndex = 5
+                    }
+                    6 -> {
+                        ir_function__ = readWithLength { readIrFunction() }
+                        oneOfIndex = 6
+                    }
+                    7 -> {
+                        ir_property__ = readWithLength { readIrProperty() }
+                        oneOfIndex = 7
+                    }
+                    8 -> {
+                        ir_type_parameter__ = readWithLength { readIrTypeParameter() }
+                        oneOfIndex = 8
+                    }
+                    9 -> {
+                        ir_variable__ = readWithLength { readIrVariable() }
+                        oneOfIndex = 9
+                    }
+                    10 -> {
+                        ir_value_parameter__ = readWithLength { readIrValueParameter() }
+                        oneOfIndex = 10
+                    }
+                    11 -> {
+                        ir_local_delegated_property__ = readWithLength { readIrLocalDelegatedProperty() }
+                        oneOfIndex = 11
+                    }
+                    12 -> {
+                        ir_type_alias__ = readWithLength { readIrTypeAlias() }
+                        oneOfIndex = 12
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDeclaration(ir_anonymous_init__, ir_class__, ir_constructor__, ir_enum_entry__, ir_field__, ir_function__, ir_property__, ir_type_parameter__, ir_variable__, ir_value_parameter__, ir_local_delegated_property__, ir_type_alias__)
+        when (oneOfIndex) {
+            1 -> return createIrDeclaration_irAnonymousInit(ir_anonymous_init__!!)
+            2 -> return createIrDeclaration_irClass(ir_class__!!)
+            3 -> return createIrDeclaration_irConstructor(ir_constructor__!!)
+            4 -> return createIrDeclaration_irEnumEntry(ir_enum_entry__!!)
+            5 -> return createIrDeclaration_irField(ir_field__!!)
+            6 -> return createIrDeclaration_irFunction(ir_function__!!)
+            7 -> return createIrDeclaration_irProperty(ir_property__!!)
+            8 -> return createIrDeclaration_irTypeParameter(ir_type_parameter__!!)
+            9 -> return createIrDeclaration_irVariable(ir_variable__!!)
+            10 -> return createIrDeclaration_irValueParameter(ir_value_parameter__!!)
+            11 -> return createIrDeclaration_irLocalDelegatedProperty(ir_local_delegated_property__!!)
+            12 -> return createIrDeclaration_irTypeAlias(ir_type_alias__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
     open fun readIrBranch(): IrBranchMessageType {
@@ -1858,21 +2197,48 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var branch__: IrBranchMessageType? = null
         var catch__: IrCatchMessageType? = null
         var synthetic_body__: IrSyntheticBodyMessageType? = null
+        var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> coordinates__ = readWithLength { readCoordinates() }
-                    2 -> declaration__ = readWithLength { readIrDeclaration() }
-                    3 -> expression__ = readWithLength { readIrExpression() }
-                    4 -> block_body__ = readWithLength { readIrBlockBody() }
-                    5 -> branch__ = readWithLength { readIrBranch() }
-                    6 -> catch__ = readWithLength { readIrCatch() }
-                    7 -> synthetic_body__ = readWithLength { readIrSyntheticBody() }
+                    2 -> {
+                        declaration__ = readWithLength { readIrDeclaration() }
+                        oneOfIndex = 2
+                    }
+                    3 -> {
+                        expression__ = readWithLength { readIrExpression() }
+                        oneOfIndex = 3
+                    }
+                    4 -> {
+                        block_body__ = readWithLength { readIrBlockBody() }
+                        oneOfIndex = 4
+                    }
+                    5 -> {
+                        branch__ = readWithLength { readIrBranch() }
+                        oneOfIndex = 5
+                    }
+                    6 -> {
+                        catch__ = readWithLength { readIrCatch() }
+                        oneOfIndex = 6
+                    }
+                    7 -> {
+                        synthetic_body__ = readWithLength { readIrSyntheticBody() }
+                        oneOfIndex = 7
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrStatement(coordinates__!!, declaration__, expression__, block_body__, branch__, catch__, synthetic_body__)
+        when (oneOfIndex) {
+            2 -> return createIrStatement_declaration(coordinates__!!, declaration__!!)
+            3 -> return createIrStatement_expression(coordinates__!!, expression__!!)
+            4 -> return createIrStatement_blockBody(coordinates__!!, block_body__!!)
+            5 -> return createIrStatement_branch(coordinates__!!, branch__!!)
+            6 -> return createIrStatement_catch(coordinates__!!, catch__!!)
+            7 -> return createIrStatement_syntheticBody(coordinates__!!, synthetic_body__!!)
+            else -> error("Incorrect oneOf index: " + oneOfIndex)
+        }
     }
 
 }
