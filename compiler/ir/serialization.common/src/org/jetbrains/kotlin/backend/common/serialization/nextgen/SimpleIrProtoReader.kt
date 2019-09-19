@@ -126,11 +126,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readFqName(): Any {
-        var segment__: List<Any> = mutableListOf<Any>()
+        var segment__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> segment__ += readIrDataIndex()
+                    1 -> segment__.add(readIrDataIndex())
                     else -> skip(type)
                 }
             }
@@ -139,11 +139,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrDeclarationContainer(): Any {
-        var declaration__: List<Any> = mutableListOf<Any>()
+        var declaration__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> declaration__ += readIrDeclaration()
+                    1 -> declaration__.add(readIrDeclaration())
                     else -> skip(type)
                 }
             }
@@ -153,12 +153,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun readFileEntry(): Any {
         var name__: Any? = null
-        var line_start_offsets__: List<Any> = mutableListOf<Any>()
+        var line_start_offsets__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> name__ = readString()
-                    2 -> line_start_offsets__ += readInt32()
+                    2 -> line_start_offsets__.add(readInt32())
                     else -> skip(type)
                 }
             }
@@ -167,19 +167,19 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrFile(): Any {
-        var declaration_id__: List<Any> = mutableListOf<Any>()
+        var declaration_id__: MutableList<Any> = mutableListOf<Any>()
         var file_entry__: Any? = null
         var fq_name__: Any? = null
         var annotations__: Any? = null
-        var explicitly_exported_to_compiler__: List<Any> = mutableListOf<Any>()
+        var explicitly_exported_to_compiler__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> declaration_id__ += readUniqId()
+                    1 -> declaration_id__.add(readUniqId())
                     2 -> file_entry__ = readFileEntry()
                     3 -> fq_name__ = readFqName()
                     4 -> annotations__ = readAnnotations()
-                    5 -> explicitly_exported_to_compiler__ += readIrDataIndex()
+                    5 -> explicitly_exported_to_compiler__.add(readIrDataIndex())
                     else -> skip(type)
                 }
             }
@@ -188,11 +188,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readStringTable(): Any {
-        var strings__: List<Any> = mutableListOf<Any>()
+        var strings__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> strings__ += readString()
+                    1 -> strings__.add(readString())
                     else -> skip(type)
                 }
             }
@@ -222,11 +222,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrSymbolTable(): Any {
-        var symbols__: List<Any> = mutableListOf<Any>()
+        var symbols__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbols__ += readIrSymbolData()
+                    1 -> symbols__.add(readIrSymbolData())
                     else -> skip(type)
                 }
             }
@@ -235,11 +235,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readAnnotations(): Any {
-        var annotation__: List<Any> = mutableListOf<Any>()
+        var annotation__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotation__ += readIrConstructorCall()
+                    1 -> annotation__.add(readIrConstructorCall())
                     else -> skip(type)
                 }
             }
@@ -248,11 +248,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readTypeArguments(): Any {
-        var type_argument__: List<Any> = mutableListOf<Any>()
+        var type_argument__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> type_argument__ += readIrDataIndex()
+                    1 -> type_argument__.add(readIrDataIndex())
                     else -> skip(type)
                 }
             }
@@ -307,7 +307,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var annotations__: Any? = null
         var classifier__: Any? = null
         var has_question_mark__: Any? = null
-        var argument__: List<Any> = mutableListOf<Any>()
+        var argument__: MutableList<Any> = mutableListOf<Any>()
         var abbreviation__: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
@@ -315,7 +315,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                     1 -> annotations__ = readAnnotations()
                     2 -> classifier__ = readIrDataIndex()
                     3 -> has_question_mark__ = readBool()
-                    4 -> argument__ += readIrTypeArgument()
+                    4 -> argument__.add(readIrTypeArgument())
                     5 -> abbreviation__ = readIrTypeAbbreviation()
                     else -> skip(type)
                 }
@@ -328,14 +328,14 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var annotations__: Any? = null
         var type_alias__: Any? = null
         var has_question_mark__: Any? = null
-        var argument__: List<Any> = mutableListOf<Any>()
+        var argument__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> annotations__ = readAnnotations()
                     2 -> type_alias__ = readIrDataIndex()
                     3 -> has_question_mark__ = readBool()
-                    4 -> argument__ += readIrTypeArgument()
+                    4 -> argument__.add(readIrTypeArgument())
                     else -> skip(type)
                 }
             }
@@ -387,11 +387,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrTypeTable(): Any {
-        var types__: List<Any> = mutableListOf<Any>()
+        var types__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> types__ += readIrType()
+                    1 -> types__.add(readIrType())
                     else -> skip(type)
                 }
             }
@@ -416,12 +416,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun readIrBlock(): Any {
         var origin__: Any? = null
-        var statement__: List<Any> = mutableListOf<Any>()
+        var statement__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> origin__ = readIrStatementOrigin()
-                    2 -> statement__ += readIrStatement()
+                    2 -> statement__.add(readIrStatement())
                     else -> skip(type)
                 }
             }
@@ -432,14 +432,14 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     fun readMemberAccessCommon(): Any {
         var dispatch_receiver__: Any? = null
         var extension_receiver__: Any? = null
-        var value_argument__: List<Any> = mutableListOf<Any>()
+        var value_argument__: MutableList<Any> = mutableListOf<Any>()
         var type_arguments__: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> dispatch_receiver__ = readIrExpression()
                     2 -> extension_receiver__ = readIrExpression()
-                    3 -> value_argument__ += readNullableIrExpression()
+                    3 -> value_argument__.add(readNullableIrExpression())
                     4 -> type_arguments__ = readTypeArguments()
                     else -> skip(type)
                 }
@@ -546,12 +546,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrComposite(): Any {
-        var statement__: List<Any> = mutableListOf<Any>()
+        var statement__: MutableList<Any> = mutableListOf<Any>()
         var origin__: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> statement__ += readIrStatement()
+                    1 -> statement__.add(readIrStatement())
                     2 -> origin__ = readIrStatementOrigin()
                     else -> skip(type)
                 }
@@ -849,11 +849,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrStringConcat(): Any {
-        var argument__: List<Any> = mutableListOf<Any>()
+        var argument__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> argument__ += readIrExpression()
+                    1 -> argument__.add(readIrExpression())
                     else -> skip(type)
                 }
             }
@@ -876,13 +876,13 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun readIrTry(): Any {
         var result__: Any? = null
-        var catch__: List<Any> = mutableListOf<Any>()
+        var catch__: MutableList<Any> = mutableListOf<Any>()
         var finally__: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> result__ = readIrExpression()
-                    2 -> catch__ += readIrStatement()
+                    2 -> catch__.add(readIrStatement())
                     3 -> finally__ = readIrExpression()
                     else -> skip(type)
                 }
@@ -910,12 +910,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun readIrVararg(): Any {
         var element_type__: Any? = null
-        var element__: List<Any> = mutableListOf<Any>()
+        var element__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> element_type__ = readIrDataIndex()
-                    2 -> element__ += readIrVarargElement()
+                    2 -> element__.add(readIrVarargElement())
                     else -> skip(type)
                 }
             }
@@ -939,12 +939,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrWhen(): Any {
-        var branch__: List<Any> = mutableListOf<Any>()
+        var branch__: MutableList<Any> = mutableListOf<Any>()
         var origin__: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> branch__ += readIrStatement()
+                    1 -> branch__.add(readIrStatement())
                     2 -> origin__ = readIrStatementOrigin()
                     else -> skip(type)
                 }
@@ -999,13 +999,13 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     fun readIrDynamicOperatorExpression(): Any {
         var operator__: Any? = null
         var receiver__: Any? = null
-        var argument__: List<Any> = mutableListOf<Any>()
+        var argument__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> operator__ = readInt32()
                     2 -> receiver__ = readIrExpression()
-                    3 -> argument__ += readIrExpression()
+                    3 -> argument__.add(readIrExpression())
                     else -> skip(type)
                 }
             }
@@ -1148,7 +1148,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var type_parameters__: Any? = null
         var dispatch_receiver__: Any? = null
         var extension_receiver__: Any? = null
-        var value_parameter__: List<Any> = mutableListOf<Any>()
+        var value_parameter__: MutableList<Any> = mutableListOf<Any>()
         var body__: Any? = null
         var return_type__: Any? = null
         while (hasData) {
@@ -1162,7 +1162,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                     6 -> type_parameters__ = readIrTypeParameterContainer()
                     7 -> dispatch_receiver__ = readIrValueParameter()
                     8 -> extension_receiver__ = readIrValueParameter()
-                    9 -> value_parameter__ += readIrValueParameter()
+                    9 -> value_parameter__.add(readIrValueParameter())
                     10 -> body__ = readIrDataIndex()
                     11 -> return_type__ = readIrDataIndex()
                     else -> skip(type)
@@ -1177,7 +1177,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var modality__: Any? = null
         var is_tailrec__: Any? = null
         var is_suspend__: Any? = null
-        var overridden__: List<Any> = mutableListOf<Any>()
+        var overridden__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
@@ -1185,7 +1185,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                     2 -> modality__ = readInt32()
                     3 -> is_tailrec__ = readBool()
                     4 -> is_suspend__ = readBool()
-                    5 -> overridden__ += readIrDataIndex()
+                    5 -> overridden__.add(readIrDataIndex())
                     else -> skip(type)
                 }
             }
@@ -1352,7 +1352,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var name__: Any? = null
         var index__: Any? = null
         var variance__: Any? = null
-        var super_type__: List<Any> = mutableListOf<Any>()
+        var super_type__: MutableList<Any> = mutableListOf<Any>()
         var is_reified__: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
@@ -1361,7 +1361,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                     2 -> name__ = readIrDataIndex()
                     3 -> index__ = readInt32()
                     4 -> variance__ = readInt32()
-                    5 -> super_type__ += readIrDataIndex()
+                    5 -> super_type__.add(readIrDataIndex())
                     6 -> is_reified__ = readBool()
                     else -> skip(type)
                 }
@@ -1371,11 +1371,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrTypeParameterContainer(): Any {
-        var type_parameter__: List<Any> = mutableListOf<Any>()
+        var type_parameter__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> type_parameter__ += readIrTypeParameter()
+                    1 -> type_parameter__.add(readIrTypeParameter())
                     else -> skip(type)
                 }
             }
@@ -1397,7 +1397,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var this_receiver__: Any? = null
         var type_parameters__: Any? = null
         var declaration_container__: Any? = null
-        var super_type__: List<Any> = mutableListOf<Any>()
+        var super_type__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
@@ -1414,7 +1414,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                     11 -> this_receiver__ = readIrValueParameter()
                     12 -> type_parameters__ = readIrTypeParameterContainer()
                     13 -> declaration_container__ = readIrDeclarationContainer()
-                    14 -> super_type__ += readIrDataIndex()
+                    14 -> super_type__.add(readIrDataIndex())
                     else -> skip(type)
                 }
             }
@@ -1530,11 +1530,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
     }
 
     fun readIrBlockBody(): Any {
-        var statement__: List<Any> = mutableListOf<Any>()
+        var statement__: MutableList<Any> = mutableListOf<Any>()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> statement__ += readIrStatement()
+                    1 -> statement__.add(readIrStatement())
                     else -> skip(type)
                 }
             }

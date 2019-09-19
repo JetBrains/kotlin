@@ -53,7 +53,7 @@ private fun StringBuilder.addMessage(m: Proto.Message, typeMap: Map<String, Prot
 
     allFields.forEach { f ->
         val (type, initExpression) = if (f.kind == FieldKind.REPEATED) {
-            "List<Any>" to "mutableListOf<Any>()"
+            "MutableList<Any>" to "mutableListOf<Any>()"
         } else {
             "Any?" to "null"
         }
@@ -66,9 +66,12 @@ private fun StringBuilder.addMessage(m: Proto.Message, typeMap: Map<String, Prot
 
     val indent = "                    "
     allFields.forEach { f ->
-        val op = if (f.kind == FieldKind.REPEATED) "+=" else "="
         val readExpression = f.type.toReaderFun(typeMap)
-        appendln("${indent}${f.index} -> ${f.name}__ $op $readExpression()")
+        if (f.kind == FieldKind.REPEATED) {
+            appendln("${indent}${f.index} -> ${f.name}__.add($readExpression())")
+        } else {
+            appendln("${indent}${f.index} -> ${f.name}__ = $readExpression()")
+        }
     }
 
     appendln("                    else -> skip(type)")
