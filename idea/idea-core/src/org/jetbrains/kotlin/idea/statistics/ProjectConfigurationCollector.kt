@@ -26,12 +26,14 @@ class ProjectConfigurationCollector : ProjectUsagesCollector() {
     override fun getUsages(project: Project): Set<UsageDescriptor> {
         val usages = mutableSetOf<UsageDescriptor>()
         val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
+
         if (modulesWithFacet.isNotEmpty()) {
+            val pluginVersion = KotlinPluginUtil.getPluginVersion()
             modulesWithFacet.forEach {
                 val buildSystem = getBuildSystemType(it)
                 val platform = getPlatform(it)
                 val data = FeatureUsageData()
-                    .addData("pluginVersion", KotlinPluginUtil.getPluginVersion())
+                    .addData("pluginVersion", pluginVersion)
                     .addData("system", buildSystem)
                     .addData("platform", platform)
                 val usageDescriptor = UsageDescriptor("Build", data)
