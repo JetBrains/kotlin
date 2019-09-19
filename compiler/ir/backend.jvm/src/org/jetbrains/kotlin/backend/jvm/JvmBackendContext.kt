@@ -86,7 +86,7 @@ class JvmBackendContext(
     val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrClass, IrFunction>()
     val continuationClassBuilders = mutableMapOf<IrClass, ClassBuilder>()
     val suspendFunctionViews = mutableMapOf<IrFunction, IrFunction>()
-    val FAKE_CONTINUATION: IrExpression = createFakeContinuation(this)
+    val fakeContinuation: IrExpression = createFakeContinuation(this)
 
     val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
 

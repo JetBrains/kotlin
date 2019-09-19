@@ -177,7 +177,7 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
             when {
                 caller.isInvokeSuspendOfLambda(context) || caller.isInvokeSuspendOfContinuation(context) ->
                     IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.dispatchReceiverParameter!!.symbol)
-                callerIsInlineLambda -> context.FAKE_CONTINUATION
+                callerIsInlineLambda -> context.fakeContinuation
                 else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters.last().symbol)
             }
         it.putValueArgument(valueArgumentsCount, continuationParameter)
