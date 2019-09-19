@@ -26,8 +26,8 @@ import javax.lang.model.element.TypeParameterElement
 import javax.lang.model.type.*
 
 sealed class SymbolBasedType<out T : TypeMirror>(
-        val typeMirror: T,
-        val javac: JavacWrapper
+    val typeMirror: T,
+    val javac: JavacWrapper
 ) : JavaType, JavaAnnotationOwner {
 
     companion object {
@@ -57,8 +57,8 @@ sealed class SymbolBasedType<out T : TypeMirror>(
 }
 
 class SymbolBasedPrimitiveType(
-        typeMirror: TypeMirror,
-        javac: JavacWrapper
+    typeMirror: TypeMirror,
+    javac: JavacWrapper
 ) : SymbolBasedType<TypeMirror>(typeMirror, javac), JavaPrimitiveType {
 
     override val type: PrimitiveType?
@@ -67,23 +67,22 @@ class SymbolBasedPrimitiveType(
 }
 
 class SymbolBasedClassifierType<out T : TypeMirror>(
-        typeMirror: T,
-        javac: JavacWrapper
+    typeMirror: T,
+    javac: JavacWrapper
 ) : SymbolBasedType<T>(typeMirror, javac), JavaClassifierType {
 
     override val classifier: JavaClassifier?
-        by lazy {
-            when (typeMirror.kind) {
-                TypeKind.DECLARED -> ((typeMirror as DeclaredType).asElement() as Symbol.ClassSymbol).let { symbol ->
-                    // try to find cached javaClass
-                    val classId = symbol.computeClassId()
-                    classId?.let { javac.findClass(it) }
-                    ?: SymbolBasedClass(symbol, javac, classId, symbol.classfile)
+            by lazy {
+                when (typeMirror.kind) {
+                    TypeKind.DECLARED -> ((typeMirror as DeclaredType).asElement() as Symbol.ClassSymbol).let { symbol ->
+                        // try to find cached javaClass
+                        val classId = symbol.computeClassId()
+                        classId?.let { javac.findClass(it) } ?: SymbolBasedClass(symbol, javac, classId, symbol.classfile)
+                    }
+                    TypeKind.TYPEVAR -> SymbolBasedTypeParameter((typeMirror as TypeVariable).asElement() as TypeParameterElement, javac)
+                    else -> null
                 }
-                TypeKind.TYPEVAR -> SymbolBasedTypeParameter((typeMirror as TypeVariable).asElement() as TypeParameterElement, javac)
-                else -> null
             }
-        }
 
     override val typeArguments: List<JavaType>
         get() {
@@ -120,8 +119,8 @@ class SymbolBasedClassifierType<out T : TypeMirror>(
 }
 
 class SymbolBasedWildcardType(
-        typeMirror: WildcardType,
-        javac: JavacWrapper
+    typeMirror: WildcardType,
+    javac: JavacWrapper
 ) : SymbolBasedType<WildcardType>(typeMirror, javac), JavaWildcardType {
 
     override val bound: JavaType?
@@ -136,8 +135,8 @@ class SymbolBasedWildcardType(
 }
 
 class SymbolBasedArrayType(
-        typeMirror: ArrayType,
-        javac: JavacWrapper
+    typeMirror: ArrayType,
+    javac: JavacWrapper
 ) : SymbolBasedType<ArrayType>(typeMirror, javac), JavaArrayType {
 
     override val componentType: JavaType
