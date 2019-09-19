@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor as DescriptorReferenceMessageType
 import org.jetbrains.kotlin.backend.common.serialization.UniqId as UniqIdMessageType
-import org.jetbrains.kotlin.backend.common.serialization.nextgen.CoordinatesCarrier as CoordinatesMessageType
 import org.jetbrains.kotlin.descriptors.Visibility as VisibilityMessageType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin as IrStatementOriginMessageType
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin as KnownOriginMessageType
@@ -45,12 +44,10 @@ import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop as IrDoWhileMessageType
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall as IrEnumConstructorCallMessageType
 import org.jetbrains.kotlin.ir.expressions.IrGetClass as IrGetClassMessageType
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue as IrGetEnumValueMessageType
-import org.jetbrains.kotlin.backend.common.serialization.nextgen.FieldAccessCarrier as FieldAccessCommonMessageType
 import org.jetbrains.kotlin.ir.expressions.IrGetField as IrGetFieldMessageType
 import org.jetbrains.kotlin.ir.expressions.IrGetValue as IrGetValueMessageType
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue as IrGetObjectMessageType
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall as IrInstanceInitializerCallMessageType
-import org.jetbrains.kotlin.backend.common.serialization.nextgen.LoopCarrier as LoopMessageType
 import org.jetbrains.kotlin.ir.expressions.IrReturn as IrReturnMessageType
 import org.jetbrains.kotlin.ir.expressions.IrSetField as IrSetFieldMessageType
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable as IrSetVariableMessageType
@@ -71,8 +68,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression as IrOperationMessageTyp
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator as IrTypeOperatorMessageType
 import org.jetbrains.kotlin.ir.expressions.IrExpression as IrExpressionMessageType
 import org.jetbrains.kotlin.ir.expressions.IrExpression as NullableIrExpressionMessageType
-import org.jetbrains.kotlin.backend.common.serialization.nextgen.DeclarationBaseCarrier as IrDeclarationBaseMessageType
-import org.jetbrains.kotlin.backend.common.serialization.nextgen.FunctionBaseCarrier as IrFunctionBaseMessageType
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction as IrFunctionMessageType
 import org.jetbrains.kotlin.ir.declarations.IrConstructor as IrConstructorMessageType
 import org.jetbrains.kotlin.ir.declarations.IrField as IrFieldMessageType
@@ -100,16 +95,14 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createUniqId(index : Long, isLocal : Boolean): UniqIdMessageType
 
-    abstract fun createCoordinates(startOffset : Int, endOffset : Int): CoordinatesMessageType
-
     abstract fun createVisibility(name : Int): VisibilityMessageType
 
     abstract fun createIrStatementOrigin(name : Int): IrStatementOriginMessageType
 
     abstract fun createKnownOrigin(index: Int): KnownOriginMessageType
 
-    abstract fun createIrDeclarationOrigin_origin(origin : KnownOriginMessageType): IrDeclarationOriginMessageType
-    abstract fun createIrDeclarationOrigin_custom(custom : Int): IrDeclarationOriginMessageType
+    abstract fun createIrDeclarationOrigin_origin(oneOfOrigin : KnownOriginMessageType): IrDeclarationOriginMessageType
+    abstract fun createIrDeclarationOrigin_custom(oneOfCustom : Int): IrDeclarationOriginMessageType
 
     abstract fun createIrDataIndex(index : Int): Int
 
@@ -137,10 +130,10 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrStarProjection(void : Boolean?): IrStarProjectionMessageType
 
-    abstract fun createIrTypeProjection(variance : IrTypeVarianceMessageType, type : Int): IrTypeProjectionMessageType
+    abstract fun createIrTypeProjection(variance : IrTypeVarianceMessageType, type_ : Int): IrTypeProjectionMessageType
 
-    abstract fun createIrTypeArgument_star(star : IrStarProjectionMessageType): IrTypeArgumentMessageType
-    abstract fun createIrTypeArgument_type(type : IrTypeProjectionMessageType): IrTypeArgumentMessageType
+    abstract fun createIrTypeArgument_star(oneOfStar : IrStarProjectionMessageType): IrTypeArgumentMessageType
+    abstract fun createIrTypeArgument_type_(oneOfType : IrTypeProjectionMessageType): IrTypeArgumentMessageType
 
     abstract fun createIrSimpleType(annotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, classifier : Int, hasQuestionMark : Boolean, argument : List<IrTypeArgumentMessageType>, abbreviation : IrTypeAbbreviationMessageType?): IrSimpleTypeMessageType
 
@@ -150,9 +143,9 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrErrorType(annotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>): IrErrorTypeMessageType
 
-    abstract fun createIrType_simple(simple : IrSimpleTypeMessageType): IrTypeMessageType
-    abstract fun createIrType_dynamic(dynamic : IrDynamicTypeMessageType): IrTypeMessageType
-    abstract fun createIrType_error(error : IrErrorTypeMessageType): IrTypeMessageType
+    abstract fun createIrType_simple(oneOfSimple : IrSimpleTypeMessageType): IrTypeMessageType
+    abstract fun createIrType_dynamic(oneOfDynamic : IrDynamicTypeMessageType): IrTypeMessageType
+    abstract fun createIrType_error(oneOfError : IrErrorTypeMessageType): IrTypeMessageType
 
     abstract fun createIrTypeTable(types : List<IrTypeMessageType>): Array<org.jetbrains.kotlin.ir.types.IrType>
 
@@ -160,48 +153,44 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrBlock(origin : IrStatementOriginMessageType?, statement : List<IrStatementMessageType>): IrBlockMessageType
 
-    abstract fun createMemberAccessCommon(dispatchReceiver : IrExpressionMessageType?, extensionReceiver : IrExpressionMessageType?, valueArgument : List<NullableIrExpressionMessageType>, typeArguments : List<org.jetbrains.kotlin.ir.types.IrType>): MemberAccessCommonMessageType
+    abstract fun createIrCall(symbol : Int, memberAccessDispatchReceiver : IrExpressionMessageType?, memberAccessExtensionReceiver : IrExpressionMessageType?, memberAccessValueArgument : List<NullableIrExpressionMessageType>, memberAccessTypeArguments : List<org.jetbrains.kotlin.ir.types.IrType>, super_ : Int?, origin : IrStatementOriginMessageType?): IrCallMessageType
 
-    abstract fun createIrCall(symbol : Int, memberAccess : MemberAccessCommonMessageType, super_ : Int?, origin : IrStatementOriginMessageType?): IrCallMessageType
+    abstract fun createIrConstructorCall(symbol : Int, constructorTypeArgumentsCount : Int, memberAccessDispatchReceiver : IrExpressionMessageType?, memberAccessExtensionReceiver : IrExpressionMessageType?, memberAccessValueArgument : List<NullableIrExpressionMessageType>, memberAccessTypeArguments : List<org.jetbrains.kotlin.ir.types.IrType>): IrConstructorCallMessageType
 
-    abstract fun createIrConstructorCall(symbol : Int, constructorTypeArgumentsCount : Int, memberAccess : MemberAccessCommonMessageType): IrConstructorCallMessageType
-
-    abstract fun createIrFunctionReference(symbol : Int, origin : IrStatementOriginMessageType?, memberAccess : MemberAccessCommonMessageType): IrFunctionReferenceMessageType
+    abstract fun createIrFunctionReference(symbol : Int, origin : IrStatementOriginMessageType?, memberAccessDispatchReceiver : IrExpressionMessageType?, memberAccessExtensionReceiver : IrExpressionMessageType?, memberAccessValueArgument : List<NullableIrExpressionMessageType>, memberAccessTypeArguments : List<org.jetbrains.kotlin.ir.types.IrType>): IrFunctionReferenceMessageType
 
     abstract fun createIrLocalDelegatedPropertyReference(delegate : Int, getter : Int?, setter : Int?, symbol : Int, origin : IrStatementOriginMessageType?): IrLocalDelegatedPropertyReferenceMessageType
 
-    abstract fun createIrPropertyReference(field : Int?, getter : Int?, setter : Int?, origin : IrStatementOriginMessageType?, memberAccess : MemberAccessCommonMessageType, symbol : Int): IrPropertyReferenceMessageType
+    abstract fun createIrPropertyReference(field : Int?, getter : Int?, setter : Int?, origin : IrStatementOriginMessageType?, memberAccessDispatchReceiver : IrExpressionMessageType?, memberAccessExtensionReceiver : IrExpressionMessageType?, memberAccessValueArgument : List<NullableIrExpressionMessageType>, memberAccessTypeArguments : List<org.jetbrains.kotlin.ir.types.IrType>, symbol : Int): IrPropertyReferenceMessageType
 
     abstract fun createIrComposite(statement : List<IrStatementMessageType>, origin : IrStatementOriginMessageType?): IrCompositeMessageType
 
     abstract fun createIrClassReference(classSymbol : Int, classType : Int): IrClassReferenceMessageType
 
-    abstract fun createIrConst_null_(null_ : Boolean): IrConstMessageType<*>
-    abstract fun createIrConst_boolean(boolean : Boolean): IrConstMessageType<*>
-    abstract fun createIrConst_char(char : Int): IrConstMessageType<*>
-    abstract fun createIrConst_byte(byte : Int): IrConstMessageType<*>
-    abstract fun createIrConst_short(short : Int): IrConstMessageType<*>
-    abstract fun createIrConst_int(int : Int): IrConstMessageType<*>
-    abstract fun createIrConst_long(long : Long): IrConstMessageType<*>
-    abstract fun createIrConst_float(float : Float): IrConstMessageType<*>
-    abstract fun createIrConst_double(double : Double): IrConstMessageType<*>
-    abstract fun createIrConst_string(string : Int): IrConstMessageType<*>
+    abstract fun createIrConst_null_(oneOfNull : Boolean): IrConstMessageType<*>
+    abstract fun createIrConst_boolean(oneOfBoolean : Boolean): IrConstMessageType<*>
+    abstract fun createIrConst_char(oneOfChar : Int): IrConstMessageType<*>
+    abstract fun createIrConst_byte(oneOfByte : Int): IrConstMessageType<*>
+    abstract fun createIrConst_short(oneOfShort : Int): IrConstMessageType<*>
+    abstract fun createIrConst_int(oneOfInt : Int): IrConstMessageType<*>
+    abstract fun createIrConst_long(oneOfLong : Long): IrConstMessageType<*>
+    abstract fun createIrConst_float(oneOfFloat : Float): IrConstMessageType<*>
+    abstract fun createIrConst_double(oneOfDouble : Double): IrConstMessageType<*>
+    abstract fun createIrConst_string(oneOfString : Int): IrConstMessageType<*>
 
     abstract fun createIrContinue(loopId : Int, label : Int?): IrContinueMessageType
 
-    abstract fun createIrDelegatingConstructorCall(symbol : Int, memberAccess : MemberAccessCommonMessageType): IrDelegatingConstructorCallMessageType
+    abstract fun createIrDelegatingConstructorCall(symbol : Int, memberAccessDispatchReceiver : IrExpressionMessageType?, memberAccessExtensionReceiver : IrExpressionMessageType?, memberAccessValueArgument : List<NullableIrExpressionMessageType>, memberAccessTypeArguments : List<org.jetbrains.kotlin.ir.types.IrType>): IrDelegatingConstructorCallMessageType
 
-    abstract fun createIrDoWhile(loop : LoopMessageType): IrDoWhileMessageType
+    abstract fun createIrDoWhile(loopLoopId : Int, loopCondition : IrExpressionMessageType, loopLabel : Int?, loopBody : IrExpressionMessageType?, loopOrigin : IrStatementOriginMessageType?): IrDoWhileMessageType
 
-    abstract fun createIrEnumConstructorCall(symbol : Int, memberAccess : MemberAccessCommonMessageType): IrEnumConstructorCallMessageType
+    abstract fun createIrEnumConstructorCall(symbol : Int, memberAccessDispatchReceiver : IrExpressionMessageType?, memberAccessExtensionReceiver : IrExpressionMessageType?, memberAccessValueArgument : List<NullableIrExpressionMessageType>, memberAccessTypeArguments : List<org.jetbrains.kotlin.ir.types.IrType>): IrEnumConstructorCallMessageType
 
     abstract fun createIrGetClass(argument : IrExpressionMessageType): IrGetClassMessageType
 
     abstract fun createIrGetEnumValue(symbol : Int): IrGetEnumValueMessageType
 
-    abstract fun createFieldAccessCommon(symbol : Int, super_ : Int?, receiver : IrExpressionMessageType?): FieldAccessCommonMessageType
-
-    abstract fun createIrGetField(fieldAccess : FieldAccessCommonMessageType, origin : IrStatementOriginMessageType?): IrGetFieldMessageType
+    abstract fun createIrGetField(fieldAccessSymbol : Int, fieldAccessSuper : Int?, fieldAccessReceiver : IrExpressionMessageType?, origin : IrStatementOriginMessageType?): IrGetFieldMessageType
 
     abstract fun createIrGetValue(symbol : Int, origin : IrStatementOriginMessageType?): IrGetValueMessageType
 
@@ -209,15 +198,13 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrInstanceInitializerCall(symbol : Int): IrInstanceInitializerCallMessageType
 
-    abstract fun createLoop(loopId : Int, condition : IrExpressionMessageType, label : Int?, body : IrExpressionMessageType?, origin : IrStatementOriginMessageType?): LoopMessageType
-
     abstract fun createIrReturn(returnTarget : Int, value : IrExpressionMessageType): IrReturnMessageType
 
-    abstract fun createIrSetField(fieldAccess : FieldAccessCommonMessageType, value : IrExpressionMessageType, origin : IrStatementOriginMessageType?): IrSetFieldMessageType
+    abstract fun createIrSetField(fieldAccessSymbol : Int, fieldAccessSuper : Int?, fieldAccessReceiver : IrExpressionMessageType?, value : IrExpressionMessageType, origin : IrStatementOriginMessageType?): IrSetFieldMessageType
 
     abstract fun createIrSetVariable(symbol : Int, value : IrExpressionMessageType, origin : IrStatementOriginMessageType?): IrSetVariableMessageType
 
-    abstract fun createIrSpreadElement(expression : IrExpressionMessageType, coordinates : CoordinatesMessageType): IrSpreadElementMessageType
+    abstract fun createIrSpreadElement(expression : IrExpressionMessageType, coordinatesStartOffset : Int, coordinatesEndOffset : Int): IrSpreadElementMessageType
 
     abstract fun createIrStringConcat(argument : List<IrExpressionMessageType>): IrStringConcatMessageType
 
@@ -229,12 +216,12 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrVararg(elementType : Int, element : List<IrVarargElementMessageType>): IrVarargMessageType
 
-    abstract fun createIrVarargElement_expression(expression : IrExpressionMessageType): IrVarargElementMessageType
-    abstract fun createIrVarargElement_spreadElement(spreadElement : IrSpreadElementMessageType): IrVarargElementMessageType
+    abstract fun createIrVarargElement_expression(oneOfExpression : IrExpressionMessageType): IrVarargElementMessageType
+    abstract fun createIrVarargElement_spreadElement(oneOfSpreadElement : IrSpreadElementMessageType): IrVarargElementMessageType
 
     abstract fun createIrWhen(branch : List<IrStatementMessageType>, origin : IrStatementOriginMessageType?): IrWhenMessageType
 
-    abstract fun createIrWhile(loop : LoopMessageType): IrWhileMessageType
+    abstract fun createIrWhile(loopLoopId : Int, loopCondition : IrExpressionMessageType, loopLabel : Int?, loopBody : IrExpressionMessageType?, loopOrigin : IrStatementOriginMessageType?): IrWhileMessageType
 
     abstract fun createIrFunctionExpression(function : IrFunctionMessageType, origin : IrStatementOriginMessageType): IrFunctionExpressionMessageType
 
@@ -244,92 +231,88 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrDynamicOperatorExpression(operator : IrDynamicOperatorMessageType, receiver : IrExpressionMessageType, argument : List<IrExpressionMessageType>): IrDynamicOperatorExpressionMessageType
 
-    abstract fun createIrOperation_block(block : IrBlockMessageType): IrOperationMessageType
-    abstract fun createIrOperation_break_(break_ : IrBreakMessageType): IrOperationMessageType
-    abstract fun createIrOperation_call(call : IrCallMessageType): IrOperationMessageType
-    abstract fun createIrOperation_classReference(classReference : IrClassReferenceMessageType): IrOperationMessageType
-    abstract fun createIrOperation_composite(composite : IrCompositeMessageType): IrOperationMessageType
-    abstract fun createIrOperation_const(const : IrConstMessageType<*>): IrOperationMessageType
-    abstract fun createIrOperation_continue_(continue_ : IrContinueMessageType): IrOperationMessageType
-    abstract fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall : IrDelegatingConstructorCallMessageType): IrOperationMessageType
-    abstract fun createIrOperation_doWhile(doWhile : IrDoWhileMessageType): IrOperationMessageType
-    abstract fun createIrOperation_enumConstructorCall(enumConstructorCall : IrEnumConstructorCallMessageType): IrOperationMessageType
-    abstract fun createIrOperation_functionReference(functionReference : IrFunctionReferenceMessageType): IrOperationMessageType
-    abstract fun createIrOperation_getClass(getClass : IrGetClassMessageType): IrOperationMessageType
-    abstract fun createIrOperation_getEnumValue(getEnumValue : IrGetEnumValueMessageType): IrOperationMessageType
-    abstract fun createIrOperation_getField(getField : IrGetFieldMessageType): IrOperationMessageType
-    abstract fun createIrOperation_getObject(getObject : IrGetObjectMessageType): IrOperationMessageType
-    abstract fun createIrOperation_getValue(getValue : IrGetValueMessageType): IrOperationMessageType
-    abstract fun createIrOperation_instanceInitializerCall(instanceInitializerCall : IrInstanceInitializerCallMessageType): IrOperationMessageType
-    abstract fun createIrOperation_propertyReference(propertyReference : IrPropertyReferenceMessageType): IrOperationMessageType
-    abstract fun createIrOperation_return_(return_ : IrReturnMessageType): IrOperationMessageType
-    abstract fun createIrOperation_setField(setField : IrSetFieldMessageType): IrOperationMessageType
-    abstract fun createIrOperation_setVariable(setVariable : IrSetVariableMessageType): IrOperationMessageType
-    abstract fun createIrOperation_stringConcat(stringConcat : IrStringConcatMessageType): IrOperationMessageType
-    abstract fun createIrOperation_throw_(throw_ : IrThrowMessageType): IrOperationMessageType
-    abstract fun createIrOperation_try_(try_ : IrTryMessageType): IrOperationMessageType
-    abstract fun createIrOperation_typeOp(typeOp : IrTypeOpMessageType): IrOperationMessageType
-    abstract fun createIrOperation_vararg(vararg : IrVarargMessageType): IrOperationMessageType
-    abstract fun createIrOperation_when_(when_ : IrWhenMessageType): IrOperationMessageType
-    abstract fun createIrOperation_while_(while_ : IrWhileMessageType): IrOperationMessageType
-    abstract fun createIrOperation_dynamicMember(dynamicMember : IrDynamicMemberExpressionMessageType): IrOperationMessageType
-    abstract fun createIrOperation_dynamicOperator(dynamicOperator : IrDynamicOperatorExpressionMessageType): IrOperationMessageType
-    abstract fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference : IrLocalDelegatedPropertyReferenceMessageType): IrOperationMessageType
-    abstract fun createIrOperation_constructorCall(constructorCall : IrConstructorCallMessageType): IrOperationMessageType
-    abstract fun createIrOperation_functionExpression(functionExpression : IrFunctionExpressionMessageType): IrOperationMessageType
+    abstract fun createIrOperation_block(oneOfBlock : IrBlockMessageType): IrOperationMessageType
+    abstract fun createIrOperation_break_(oneOfBreak : IrBreakMessageType): IrOperationMessageType
+    abstract fun createIrOperation_call(oneOfCall : IrCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_classReference(oneOfClassReference : IrClassReferenceMessageType): IrOperationMessageType
+    abstract fun createIrOperation_composite(oneOfComposite : IrCompositeMessageType): IrOperationMessageType
+    abstract fun createIrOperation_const(oneOfConst : IrConstMessageType<*>): IrOperationMessageType
+    abstract fun createIrOperation_continue_(oneOfContinue : IrContinueMessageType): IrOperationMessageType
+    abstract fun createIrOperation_delegatingConstructorCall(oneOfDelegatingConstructorCall : IrDelegatingConstructorCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_doWhile(oneOfDoWhile : IrDoWhileMessageType): IrOperationMessageType
+    abstract fun createIrOperation_enumConstructorCall(oneOfEnumConstructorCall : IrEnumConstructorCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_functionReference(oneOfFunctionReference : IrFunctionReferenceMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getClass(oneOfGetClass : IrGetClassMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getEnumValue(oneOfGetEnumValue : IrGetEnumValueMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getField(oneOfGetField : IrGetFieldMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getObject(oneOfGetObject : IrGetObjectMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getValue(oneOfGetValue : IrGetValueMessageType): IrOperationMessageType
+    abstract fun createIrOperation_instanceInitializerCall(oneOfInstanceInitializerCall : IrInstanceInitializerCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_propertyReference(oneOfPropertyReference : IrPropertyReferenceMessageType): IrOperationMessageType
+    abstract fun createIrOperation_return_(oneOfReturn : IrReturnMessageType): IrOperationMessageType
+    abstract fun createIrOperation_setField(oneOfSetField : IrSetFieldMessageType): IrOperationMessageType
+    abstract fun createIrOperation_setVariable(oneOfSetVariable : IrSetVariableMessageType): IrOperationMessageType
+    abstract fun createIrOperation_stringConcat(oneOfStringConcat : IrStringConcatMessageType): IrOperationMessageType
+    abstract fun createIrOperation_throw_(oneOfThrow : IrThrowMessageType): IrOperationMessageType
+    abstract fun createIrOperation_try_(oneOfTry : IrTryMessageType): IrOperationMessageType
+    abstract fun createIrOperation_typeOp(oneOfTypeOp : IrTypeOpMessageType): IrOperationMessageType
+    abstract fun createIrOperation_vararg(oneOfVararg : IrVarargMessageType): IrOperationMessageType
+    abstract fun createIrOperation_when_(oneOfWhen : IrWhenMessageType): IrOperationMessageType
+    abstract fun createIrOperation_while_(oneOfWhile : IrWhileMessageType): IrOperationMessageType
+    abstract fun createIrOperation_dynamicMember(oneOfDynamicMember : IrDynamicMemberExpressionMessageType): IrOperationMessageType
+    abstract fun createIrOperation_dynamicOperator(oneOfDynamicOperator : IrDynamicOperatorExpressionMessageType): IrOperationMessageType
+    abstract fun createIrOperation_localDelegatedPropertyReference(oneOfLocalDelegatedPropertyReference : IrLocalDelegatedPropertyReferenceMessageType): IrOperationMessageType
+    abstract fun createIrOperation_constructorCall(oneOfConstructorCall : IrConstructorCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_functionExpression(oneOfFunctionExpression : IrFunctionExpressionMessageType): IrOperationMessageType
 
     abstract fun createIrTypeOperator(index: Int): IrTypeOperatorMessageType
 
-    abstract fun createIrExpression(operation : IrOperationMessageType, type : Int, coordinates : CoordinatesMessageType): IrExpressionMessageType
+    abstract fun createIrExpression(operation : IrOperationMessageType, type_ : Int, coordinatesStartOffset : Int, coordinatesEndOffset : Int): IrExpressionMessageType
 
     abstract fun createNullableIrExpression(expression : IrExpressionMessageType?): NullableIrExpressionMessageType
 
-    abstract fun createIrDeclarationBase(symbol : Int, origin : IrDeclarationOriginMessageType, coordinates : CoordinatesMessageType, annotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>): IrDeclarationBaseMessageType
+    abstract fun createIrFunction(baseBaseSymbol : Int, baseBaseOrigin : IrDeclarationOriginMessageType, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, baseName : Int, baseVisibility : VisibilityMessageType, baseIsInline : Boolean, baseIsExternal : Boolean, baseTypeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, baseDispatchReceiver : IrValueParameterMessageType?, baseExtensionReceiver : IrValueParameterMessageType?, baseValueParameter : List<IrValueParameterMessageType>, baseBody : Int?, baseReturnType : Int, modality : ModalityKindMessageType, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Int>): IrFunctionMessageType
 
-    abstract fun createIrFunctionBase(base : IrDeclarationBaseMessageType, name : Int, visibility : VisibilityMessageType, isInline : Boolean, isExternal : Boolean, typeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, dispatchReceiver : IrValueParameterMessageType?, extensionReceiver : IrValueParameterMessageType?, valueParameter : List<IrValueParameterMessageType>, body : Int?, returnType : Int): IrFunctionBaseMessageType
+    abstract fun createIrConstructor(baseBaseSymbol : Int, baseBaseOrigin : IrDeclarationOriginMessageType, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, baseName : Int, baseVisibility : VisibilityMessageType, baseIsInline : Boolean, baseIsExternal : Boolean, baseTypeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, baseDispatchReceiver : IrValueParameterMessageType?, baseExtensionReceiver : IrValueParameterMessageType?, baseValueParameter : List<IrValueParameterMessageType>, baseBody : Int?, baseReturnType : Int, isPrimary : Boolean): IrConstructorMessageType
 
-    abstract fun createIrFunction(base : IrFunctionBaseMessageType, modality : ModalityKindMessageType, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Int>): IrFunctionMessageType
+    abstract fun createIrField(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, initializer : Int?, name : Int, visibility : VisibilityMessageType, isFinal : Boolean, isExternal : Boolean, isStatic : Boolean, type_ : Int): IrFieldMessageType
 
-    abstract fun createIrConstructor(base : IrFunctionBaseMessageType, isPrimary : Boolean): IrConstructorMessageType
+    abstract fun createIrLocalDelegatedProperty(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, type_ : Int, isVar : Boolean, delegate : IrVariableMessageType, getter : IrFunctionMessageType?, setter : IrFunctionMessageType?): IrLocalDelegatedPropertyMessageType
 
-    abstract fun createIrField(base : IrDeclarationBaseMessageType, initializer : Int?, name : Int, visibility : VisibilityMessageType, isFinal : Boolean, isExternal : Boolean, isStatic : Boolean, type : Int): IrFieldMessageType
+    abstract fun createIrProperty(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, visibility : VisibilityMessageType, modality : ModalityKindMessageType, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, isDelegated : Boolean, isExternal : Boolean, backingField : IrFieldMessageType?, getter : IrFunctionMessageType?, setter : IrFunctionMessageType?): IrPropertyMessageType
 
-    abstract fun createIrLocalDelegatedProperty(base : IrDeclarationBaseMessageType, name : Int, type : Int, isVar : Boolean, delegate : IrVariableMessageType, getter : IrFunctionMessageType?, setter : IrFunctionMessageType?): IrLocalDelegatedPropertyMessageType
-
-    abstract fun createIrProperty(base : IrDeclarationBaseMessageType, name : Int, visibility : VisibilityMessageType, modality : ModalityKindMessageType, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, isDelegated : Boolean, isExternal : Boolean, backingField : IrFieldMessageType?, getter : IrFunctionMessageType?, setter : IrFunctionMessageType?): IrPropertyMessageType
-
-    abstract fun createIrVariable(base : IrDeclarationBaseMessageType, name : Int, type : Int, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, initializer : IrExpressionMessageType?): IrVariableMessageType
+    abstract fun createIrVariable(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, type_ : Int, isVar : Boolean, isConst : Boolean, isLateinit : Boolean, initializer : IrExpressionMessageType?): IrVariableMessageType
 
     abstract fun createClassKind(index: Int): ClassKindMessageType
 
     abstract fun createModalityKind(index: Int): ModalityKindMessageType
 
-    abstract fun createIrValueParameter(base : IrDeclarationBaseMessageType, name : Int, index : Int, type : Int, varargElementType : Int?, isCrossinline : Boolean, isNoinline : Boolean, defaultValue : Int?): IrValueParameterMessageType
+    abstract fun createIrValueParameter(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, index : Int, type_ : Int, varargElementType : Int?, isCrossinline : Boolean, isNoinline : Boolean, defaultValue : Int?): IrValueParameterMessageType
 
-    abstract fun createIrTypeParameter(base : IrDeclarationBaseMessageType, name : Int, index : Int, variance : IrTypeVarianceMessageType, superType : List<Int>, isReified : Boolean): IrTypeParameterMessageType
+    abstract fun createIrTypeParameter(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, index : Int, variance : IrTypeVarianceMessageType, superType : List<Int>, isReified : Boolean): IrTypeParameterMessageType
 
     abstract fun createIrTypeParameterContainer(typeParameter : List<IrTypeParameterMessageType>): List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>
 
-    abstract fun createIrClass(base : IrDeclarationBaseMessageType, name : Int, kind : ClassKindMessageType, visibility : VisibilityMessageType, modality : ModalityKindMessageType, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, thisReceiver : IrValueParameterMessageType?, typeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, declarationContainer : List<org.jetbrains.kotlin.ir.declarations.IrDeclaration>, superType : List<Int>): IrClassMessageType
+    abstract fun createIrClass(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, kind : ClassKindMessageType, visibility : VisibilityMessageType, modality : ModalityKindMessageType, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, thisReceiver : IrValueParameterMessageType?, typeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, declarationContainer : List<org.jetbrains.kotlin.ir.declarations.IrDeclaration>, superType : List<Int>): IrClassMessageType
 
-    abstract fun createIrTypeAlias(base : IrDeclarationBaseMessageType, name : Int, visibility : VisibilityMessageType, typeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, expandedType : Int, isActual : Boolean): IrTypeAliasMessageType
+    abstract fun createIrTypeAlias(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, visibility : VisibilityMessageType, typeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, expandedType : Int, isActual : Boolean): IrTypeAliasMessageType
 
-    abstract fun createIrEnumEntry(base : IrDeclarationBaseMessageType, initializer : Int?, correspondingClass : IrClassMessageType?, name : Int): IrEnumEntryMessageType
+    abstract fun createIrEnumEntry(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, initializer : Int?, correspondingClass : IrClassMessageType?, name : Int): IrEnumEntryMessageType
 
-    abstract fun createIrAnonymousInit(base : IrDeclarationBaseMessageType, body : Int): IrAnonymousInitMessageType
+    abstract fun createIrAnonymousInit(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, body : Int): IrAnonymousInitMessageType
 
-    abstract fun createIrDeclaration_irAnonymousInit(irAnonymousInit : IrAnonymousInitMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irClass(irClass : IrClassMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irConstructor(irConstructor : IrConstructorMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irEnumEntry(irEnumEntry : IrEnumEntryMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irField(irField : IrFieldMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irFunction(irFunction : IrFunctionMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irProperty(irProperty : IrPropertyMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irTypeParameter(irTypeParameter : IrTypeParameterMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irVariable(irVariable : IrVariableMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irValueParameter(irValueParameter : IrValueParameterMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty : IrLocalDelegatedPropertyMessageType): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irTypeAlias(irTypeAlias : IrTypeAliasMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irAnonymousInit(oneOfIrAnonymousInit : IrAnonymousInitMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irClass(oneOfIrClass : IrClassMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irConstructor(oneOfIrConstructor : IrConstructorMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irEnumEntry(oneOfIrEnumEntry : IrEnumEntryMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irField(oneOfIrField : IrFieldMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irFunction(oneOfIrFunction : IrFunctionMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irProperty(oneOfIrProperty : IrPropertyMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irTypeParameter(oneOfIrTypeParameter : IrTypeParameterMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irVariable(oneOfIrVariable : IrVariableMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irValueParameter(oneOfIrValueParameter : IrValueParameterMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irLocalDelegatedProperty(oneOfIrLocalDelegatedProperty : IrLocalDelegatedPropertyMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irTypeAlias(oneOfIrTypeAlias : IrTypeAliasMessageType): IrDeclarationMessageType
 
     abstract fun createIrBranch(condition : IrExpressionMessageType, result : IrExpressionMessageType): IrBranchMessageType
 
@@ -341,117 +324,102 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrSyntheticBody(kind : IrSyntheticBodyKindMessageType): IrSyntheticBodyMessageType
 
-    abstract fun createIrStatement_declaration(coordinates : CoordinatesMessageType, declaration : IrDeclarationMessageType): IrStatementMessageType
-    abstract fun createIrStatement_expression(coordinates : CoordinatesMessageType, expression : IrExpressionMessageType): IrStatementMessageType
-    abstract fun createIrStatement_blockBody(coordinates : CoordinatesMessageType, blockBody : IrBlockBodyMessageType): IrStatementMessageType
-    abstract fun createIrStatement_branch(coordinates : CoordinatesMessageType, branch : IrBranchMessageType): IrStatementMessageType
-    abstract fun createIrStatement_catch(coordinates : CoordinatesMessageType, catch : IrCatchMessageType): IrStatementMessageType
-    abstract fun createIrStatement_syntheticBody(coordinates : CoordinatesMessageType, syntheticBody : IrSyntheticBodyMessageType): IrStatementMessageType
+    abstract fun createIrStatement_declaration(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfDeclaration : IrDeclarationMessageType): IrStatementMessageType
+    abstract fun createIrStatement_expression(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfExpression : IrExpressionMessageType): IrStatementMessageType
+    abstract fun createIrStatement_blockBody(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfBlockBody : IrBlockBodyMessageType): IrStatementMessageType
+    abstract fun createIrStatement_branch(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfBranch : IrBranchMessageType): IrStatementMessageType
+    abstract fun createIrStatement_catch(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfCatch : IrCatchMessageType): IrStatementMessageType
+    abstract fun createIrStatement_syntheticBody(coordinatesStartOffset : Int, coordinatesEndOffset : Int, oneOfSyntheticBody : IrSyntheticBodyMessageType): IrStatementMessageType
 
     open fun readDescriptorReference(): DescriptorReferenceMessageType {
-        var package_fq_name__: FqNameMessageType? = null
-        var class_fq_name__: FqNameMessageType? = null
-        var name__: Int? = null
-        var uniq_id__: UniqIdMessageType? = null
-        var is_getter__: Boolean = false
-        var is_setter__: Boolean = false
-        var is_backing_field__: Boolean = false
-        var is_fake_override__: Boolean = false
-        var is_default_constructor__: Boolean = false
-        var is_enum_entry__: Boolean = false
-        var is_enum_special__: Boolean = false
-        var is_type_parameter__: Boolean = false
+        var packageFqName: FqNameMessageType? = null
+        var classFqName: FqNameMessageType? = null
+        var name: Int? = null
+        var uniqId: UniqIdMessageType? = null
+        var isGetter: Boolean = false
+        var isSetter: Boolean = false
+        var isBackingField: Boolean = false
+        var isFakeOverride: Boolean = false
+        var isDefaultConstructor: Boolean = false
+        var isEnumEntry: Boolean = false
+        var isEnumSpecial: Boolean = false
+        var isTypeParameter: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> package_fq_name__ = readWithLength { readFqName() }
-                    2 -> class_fq_name__ = readWithLength { readFqName() }
-                    3 -> name__ = readWithLength { readIrDataIndex() }
-                    4 -> uniq_id__ = readWithLength { readUniqId() }
-                    5 -> is_getter__ = readBool()
-                    6 -> is_setter__ = readBool()
-                    7 -> is_backing_field__ = readBool()
-                    8 -> is_fake_override__ = readBool()
-                    9 -> is_default_constructor__ = readBool()
-                    10 -> is_enum_entry__ = readBool()
-                    11 -> is_enum_special__ = readBool()
-                    12 -> is_type_parameter__ = readBool()
+                    1 -> packageFqName = readWithLength { readFqName() }
+                    2 -> classFqName = readWithLength { readFqName() }
+                    3 -> name = readWithLength { readIrDataIndex() }
+                    4 -> uniqId = readWithLength { readUniqId() }
+                    5 -> isGetter = readBool()
+                    6 -> isSetter = readBool()
+                    7 -> isBackingField = readBool()
+                    8 -> isFakeOverride = readBool()
+                    9 -> isDefaultConstructor = readBool()
+                    10 -> isEnumEntry = readBool()
+                    11 -> isEnumSpecial = readBool()
+                    12 -> isTypeParameter = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createDescriptorReference(package_fq_name__!!, class_fq_name__!!, name__!!, uniq_id__, is_getter__, is_setter__, is_backing_field__, is_fake_override__, is_default_constructor__, is_enum_entry__, is_enum_special__, is_type_parameter__)
+        return createDescriptorReference(packageFqName!!, classFqName!!, name!!, uniqId, isGetter, isSetter, isBackingField, isFakeOverride, isDefaultConstructor, isEnumEntry, isEnumSpecial, isTypeParameter)
     }
 
     open fun readUniqId(): UniqIdMessageType {
-        var index__: Long = 0L
-        var isLocal__: Boolean = false
+        var index: Long = 0L
+        var isLocal: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> index__ = readInt64()
-                    2 -> isLocal__ = readBool()
+                    1 -> index = readInt64()
+                    2 -> isLocal = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createUniqId(index__, isLocal__)
-    }
-
-    open fun readCoordinates(): CoordinatesMessageType {
-        var start_offset__: Int = 0
-        var end_offset__: Int = 0
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> start_offset__ = readInt32()
-                    2 -> end_offset__ = readInt32()
-                    else -> skip(type)
-                }
-            }
-        }
-        return createCoordinates(start_offset__, end_offset__)
+        return createUniqId(index, isLocal)
     }
 
     open fun readVisibility(): VisibilityMessageType {
-        var name__: Int? = null
+        var name: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> name__ = readWithLength { readIrDataIndex() }
+                    1 -> name = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createVisibility(name__!!)
+        return createVisibility(name!!)
     }
 
     open fun readIrStatementOrigin(): IrStatementOriginMessageType {
-        var name__: Int? = null
+        var name: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> name__ = readWithLength { readIrDataIndex() }
+                    1 -> name = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrStatementOrigin(name__!!)
+        return createIrStatementOrigin(name!!)
     }
 
     open fun readIrDeclarationOrigin(): IrDeclarationOriginMessageType {
-        var origin__: KnownOriginMessageType? = null
-        var custom__: Int? = null
+        var oneOfOrigin: KnownOriginMessageType? = null
+        var oneOfCustom: Int? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        origin__ = createKnownOrigin(readInt32())
+                        oneOfOrigin = createKnownOrigin(readInt32())
                         oneOfIndex = 1
                     }
                     2 -> {
-                        custom__ = readWithLength { readIrDataIndex() }
+                        oneOfCustom = readWithLength { readIrDataIndex() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -459,201 +427,201 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrDeclarationOrigin_origin(origin__!!)
-            2 -> return createIrDeclarationOrigin_custom(custom__!!)
+            1 -> return createIrDeclarationOrigin_origin(oneOfOrigin!!)
+            2 -> return createIrDeclarationOrigin_custom(oneOfCustom!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrDataIndex(): Int {
-        var index__: Int = 0
+        var index: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> index__ = readInt32()
+                    1 -> index = readInt32()
                     else -> skip(type)
                 }
             }
         }
-        return createIrDataIndex(index__)
+        return createIrDataIndex(index)
     }
 
     open fun readFqName(): FqNameMessageType {
-        var segment__: MutableList<Int> = mutableListOf()
+        var segment: MutableList<Int> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> segment__.add(readWithLength { readIrDataIndex() })
+                    1 -> segment.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createFqName(segment__)
+        return createFqName(segment)
     }
 
     open fun readIrDeclarationContainer(): List<org.jetbrains.kotlin.ir.declarations.IrDeclaration> {
-        var declaration__: MutableList<IrDeclarationMessageType> = mutableListOf()
+        var declaration: MutableList<IrDeclarationMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> declaration__.add(readWithLength { readIrDeclaration() })
+                    1 -> declaration.add(readWithLength { readIrDeclaration() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrDeclarationContainer(declaration__)
+        return createIrDeclarationContainer(declaration)
     }
 
     open fun readFileEntry(): FileEntryMessageType {
-        var name__: String = ""
-        var line_start_offsets__: MutableList<Int> = mutableListOf()
+        var name: String = ""
+        var lineStartOffsets: MutableList<Int> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> name__ = readString()
-                    2 -> line_start_offsets__.add(readInt32())
+                    1 -> name = readString()
+                    2 -> lineStartOffsets.add(readInt32())
                     else -> skip(type)
                 }
             }
         }
-        return createFileEntry(name__, line_start_offsets__)
+        return createFileEntry(name, lineStartOffsets)
     }
 
     open fun readIrFile(): IrFileMessageType {
-        var declaration_id__: MutableList<UniqIdMessageType> = mutableListOf()
-        var file_entry__: FileEntryMessageType? = null
-        var fq_name__: FqNameMessageType? = null
-        var annotations__: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
-        var explicitly_exported_to_compiler__: MutableList<Int> = mutableListOf()
+        var declarationId: MutableList<UniqIdMessageType> = mutableListOf()
+        var fileEntry: FileEntryMessageType? = null
+        var fqName: FqNameMessageType? = null
+        var annotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var explicitlyExportedToCompiler: MutableList<Int> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> declaration_id__.add(readWithLength { readUniqId() })
-                    2 -> file_entry__ = readWithLength { readFileEntry() }
-                    3 -> fq_name__ = readWithLength { readFqName() }
-                    4 -> annotations__ = readWithLength { readAnnotations() }
-                    5 -> explicitly_exported_to_compiler__.add(readWithLength { readIrDataIndex() })
+                    1 -> declarationId.add(readWithLength { readUniqId() })
+                    2 -> fileEntry = readWithLength { readFileEntry() }
+                    3 -> fqName = readWithLength { readFqName() }
+                    4 -> annotations = readWithLength { readAnnotations() }
+                    5 -> explicitlyExportedToCompiler.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrFile(declaration_id__, file_entry__!!, fq_name__!!, annotations__!!, explicitly_exported_to_compiler__)
+        return createIrFile(declarationId, fileEntry!!, fqName!!, annotations!!, explicitlyExportedToCompiler)
     }
 
     open fun readStringTable(): Array<String> {
-        var strings__: MutableList<String> = mutableListOf()
+        var strings: MutableList<String> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> strings__.add(readString())
+                    1 -> strings.add(readString())
                     else -> skip(type)
                 }
             }
         }
-        return createStringTable(strings__)
+        return createStringTable(strings)
     }
 
     open fun readIrSymbolData(): IrSymbolDataMessageType {
-        var kind__: Int? = null
-        var uniq_id__: UniqIdMessageType? = null
-        var top_level_uniq_id__: UniqIdMessageType? = null
-        var fqname__: FqNameMessageType? = null
-        var descriptor_reference__: DescriptorReferenceMessageType? = null
+        var kind: Int? = null
+        var uniqId: UniqIdMessageType? = null
+        var topLevelUniqId: UniqIdMessageType? = null
+        var fqname: FqNameMessageType? = null
+        var descriptorReference: DescriptorReferenceMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> kind__ = createIrSymbolKind(readInt32())
-                    2 -> uniq_id__ = readWithLength { readUniqId() }
-                    3 -> top_level_uniq_id__ = readWithLength { readUniqId() }
-                    4 -> fqname__ = readWithLength { readFqName() }
-                    5 -> descriptor_reference__ = readWithLength { readDescriptorReference() }
+                    1 -> kind = createIrSymbolKind(readInt32())
+                    2 -> uniqId = readWithLength { readUniqId() }
+                    3 -> topLevelUniqId = readWithLength { readUniqId() }
+                    4 -> fqname = readWithLength { readFqName() }
+                    5 -> descriptorReference = readWithLength { readDescriptorReference() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSymbolData(kind__!!, uniq_id__!!, top_level_uniq_id__!!, fqname__, descriptor_reference__)
+        return createIrSymbolData(kind!!, uniqId!!, topLevelUniqId!!, fqname, descriptorReference)
     }
 
     open fun readIrSymbolTable(): Array<org.jetbrains.kotlin.ir.symbols.IrSymbol> {
-        var symbols__: MutableList<IrSymbolDataMessageType> = mutableListOf()
+        var symbols: MutableList<IrSymbolDataMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbols__.add(readWithLength { readIrSymbolData() })
+                    1 -> symbols.add(readWithLength { readIrSymbolData() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrSymbolTable(symbols__)
+        return createIrSymbolTable(symbols)
     }
 
     open fun readAnnotations(): List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall> {
-        var annotation__: MutableList<IrConstructorCallMessageType> = mutableListOf()
+        var annotation: MutableList<IrConstructorCallMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotation__.add(readWithLength { readIrConstructorCall() })
+                    1 -> annotation.add(readWithLength { readIrConstructorCall() })
                     else -> skip(type)
                 }
             }
         }
-        return createAnnotations(annotation__)
+        return createAnnotations(annotation)
     }
 
     open fun readTypeArguments(): List<org.jetbrains.kotlin.ir.types.IrType> {
-        var type_argument__: MutableList<Int> = mutableListOf()
+        var typeArgument: MutableList<Int> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> type_argument__.add(readWithLength { readIrDataIndex() })
+                    1 -> typeArgument.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createTypeArguments(type_argument__)
+        return createTypeArguments(typeArgument)
     }
 
     open fun readIrStarProjection(): IrStarProjectionMessageType {
-        var void__: Boolean? = null
+        var void: Boolean? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> void__ = readBool()
+                    1 -> void = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createIrStarProjection(void__)
+        return createIrStarProjection(void)
     }
 
     open fun readIrTypeProjection(): IrTypeProjectionMessageType {
-        var variance__: IrTypeVarianceMessageType? = null
-        var type__: Int? = null
+        var variance: IrTypeVarianceMessageType? = null
+        var type_: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> variance__ = createIrTypeVariance(readInt32())
-                    2 -> type__ = readWithLength { readIrDataIndex() }
+                    1 -> variance = createIrTypeVariance(readInt32())
+                    2 -> type_ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeProjection(variance__!!, type__!!)
+        return createIrTypeProjection(variance!!, type_!!)
     }
 
     open fun readIrTypeArgument(): IrTypeArgumentMessageType {
-        var star__: IrStarProjectionMessageType? = null
-        var type__: IrTypeProjectionMessageType? = null
+        var oneOfStar: IrStarProjectionMessageType? = null
+        var oneOfType: IrTypeProjectionMessageType? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        star__ = readWithLength { readIrStarProjection() }
+                        oneOfStar = readWithLength { readIrStarProjection() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        type__ = readWithLength { readIrTypeProjection() }
+                        oneOfType = readWithLength { readIrTypeProjection() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -661,96 +629,96 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrTypeArgument_star(star__!!)
-            2 -> return createIrTypeArgument_type(type__!!)
+            1 -> return createIrTypeArgument_star(oneOfStar!!)
+            2 -> return createIrTypeArgument_type_(oneOfType!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrSimpleType(): IrSimpleTypeMessageType {
-        var annotations__: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
-        var classifier__: Int? = null
-        var has_question_mark__: Boolean = false
-        var argument__: MutableList<IrTypeArgumentMessageType> = mutableListOf()
-        var abbreviation__: IrTypeAbbreviationMessageType? = null
+        var annotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var classifier: Int? = null
+        var hasQuestionMark: Boolean = false
+        var argument: MutableList<IrTypeArgumentMessageType> = mutableListOf()
+        var abbreviation: IrTypeAbbreviationMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readWithLength { readAnnotations() }
-                    2 -> classifier__ = readWithLength { readIrDataIndex() }
-                    3 -> has_question_mark__ = readBool()
-                    4 -> argument__.add(readWithLength { readIrTypeArgument() })
-                    5 -> abbreviation__ = readWithLength { readIrTypeAbbreviation() }
+                    1 -> annotations = readWithLength { readAnnotations() }
+                    2 -> classifier = readWithLength { readIrDataIndex() }
+                    3 -> hasQuestionMark = readBool()
+                    4 -> argument.add(readWithLength { readIrTypeArgument() })
+                    5 -> abbreviation = readWithLength { readIrTypeAbbreviation() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSimpleType(annotations__!!, classifier__!!, has_question_mark__, argument__, abbreviation__)
+        return createIrSimpleType(annotations!!, classifier!!, hasQuestionMark, argument, abbreviation)
     }
 
     open fun readIrTypeAbbreviation(): IrTypeAbbreviationMessageType {
-        var annotations__: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
-        var type_alias__: Int? = null
-        var has_question_mark__: Boolean = false
-        var argument__: MutableList<IrTypeArgumentMessageType> = mutableListOf()
+        var annotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var typeAlias: Int? = null
+        var hasQuestionMark: Boolean = false
+        var argument: MutableList<IrTypeArgumentMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readWithLength { readAnnotations() }
-                    2 -> type_alias__ = readWithLength { readIrDataIndex() }
-                    3 -> has_question_mark__ = readBool()
-                    4 -> argument__.add(readWithLength { readIrTypeArgument() })
+                    1 -> annotations = readWithLength { readAnnotations() }
+                    2 -> typeAlias = readWithLength { readIrDataIndex() }
+                    3 -> hasQuestionMark = readBool()
+                    4 -> argument.add(readWithLength { readIrTypeArgument() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeAbbreviation(annotations__!!, type_alias__!!, has_question_mark__, argument__)
+        return createIrTypeAbbreviation(annotations!!, typeAlias!!, hasQuestionMark, argument)
     }
 
     open fun readIrDynamicType(): IrDynamicTypeMessageType {
-        var annotations__: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var annotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readWithLength { readAnnotations() }
+                    1 -> annotations = readWithLength { readAnnotations() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDynamicType(annotations__!!)
+        return createIrDynamicType(annotations!!)
     }
 
     open fun readIrErrorType(): IrErrorTypeMessageType {
-        var annotations__: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var annotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> annotations__ = readWithLength { readAnnotations() }
+                    1 -> annotations = readWithLength { readAnnotations() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrErrorType(annotations__!!)
+        return createIrErrorType(annotations!!)
     }
 
     open fun readIrType(): IrTypeMessageType {
-        var simple__: IrSimpleTypeMessageType? = null
-        var dynamic__: IrDynamicTypeMessageType? = null
-        var error__: IrErrorTypeMessageType? = null
+        var oneOfSimple: IrSimpleTypeMessageType? = null
+        var oneOfDynamic: IrDynamicTypeMessageType? = null
+        var oneOfError: IrErrorTypeMessageType? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        simple__ = readWithLength { readIrSimpleType() }
+                        oneOfSimple = readWithLength { readIrSimpleType() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        dynamic__ = readWithLength { readIrDynamicType() }
+                        oneOfDynamic = readWithLength { readIrDynamicType() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        error__ = readWithLength { readIrErrorType() }
+                        oneOfError = readWithLength { readIrErrorType() }
                         oneOfIndex = 3
                     }
                     else -> skip(type)
@@ -758,255 +726,296 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrType_simple(simple__!!)
-            2 -> return createIrType_dynamic(dynamic__!!)
-            3 -> return createIrType_error(error__!!)
+            1 -> return createIrType_simple(oneOfSimple!!)
+            2 -> return createIrType_dynamic(oneOfDynamic!!)
+            3 -> return createIrType_error(oneOfError!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrTypeTable(): Array<org.jetbrains.kotlin.ir.types.IrType> {
-        var types__: MutableList<IrTypeMessageType> = mutableListOf()
+        var types: MutableList<IrTypeMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> types__.add(readWithLength { readIrType() })
+                    1 -> types.add(readWithLength { readIrType() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeTable(types__)
+        return createIrTypeTable(types)
     }
 
     open fun readIrBreak(): IrBreakMessageType {
-        var loop_id__: Int = 0
-        var label__: Int? = null
+        var loopId: Int = 0
+        var label: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop_id__ = readInt32()
-                    2 -> label__ = readWithLength { readIrDataIndex() }
+                    1 -> loopId = readInt32()
+                    2 -> label = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrBreak(loop_id__, label__)
+        return createIrBreak(loopId, label)
     }
 
     open fun readIrBlock(): IrBlockMessageType {
-        var origin__: IrStatementOriginMessageType? = null
-        var statement__: MutableList<IrStatementMessageType> = mutableListOf()
+        var origin: IrStatementOriginMessageType? = null
+        var statement: MutableList<IrStatementMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> origin__ = readWithLength { readIrStatementOrigin() }
-                    2 -> statement__.add(readWithLength { readIrStatement() })
+                    1 -> origin = readWithLength { readIrStatementOrigin() }
+                    2 -> statement.add(readWithLength { readIrStatement() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrBlock(origin__, statement__)
-    }
-
-    open fun readMemberAccessCommon(): MemberAccessCommonMessageType {
-        var dispatch_receiver__: IrExpressionMessageType? = null
-        var extension_receiver__: IrExpressionMessageType? = null
-        var value_argument__: MutableList<NullableIrExpressionMessageType> = mutableListOf()
-        var type_arguments__: List<org.jetbrains.kotlin.ir.types.IrType>? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> dispatch_receiver__ = readWithLength { readIrExpression() }
-                    2 -> extension_receiver__ = readWithLength { readIrExpression() }
-                    3 -> value_argument__.add(readWithLength { readNullableIrExpression() })
-                    4 -> type_arguments__ = readWithLength { readTypeArguments() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createMemberAccessCommon(dispatch_receiver__, extension_receiver__, value_argument__, type_arguments__!!)
+        return createIrBlock(origin, statement)
     }
 
     open fun readIrCall(): IrCallMessageType {
-        var symbol__: Int? = null
-        var member_access__: MemberAccessCommonMessageType? = null
-        var super__: Int? = null
-        var origin__: IrStatementOriginMessageType? = null
+        var symbol: Int? = null
+        var memberAccessDispatchReceiver: IrExpressionMessageType? = null
+        var memberAccessExtensionReceiver: IrExpressionMessageType? = null
+        var memberAccessValueArgument: MutableList<NullableIrExpressionMessageType> = mutableListOf()
+        var memberAccessTypeArguments: List<org.jetbrains.kotlin.ir.types.IrType>? = null
+        var super_: Int? = null
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
-                    3 -> super__ = readWithLength { readIrDataIndex() }
-                    4 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    3 -> super_ = readWithLength { readIrDataIndex() }
+                    4 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrCall(symbol__!!, member_access__!!, super__, origin__)
+        return createIrCall(symbol!!, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!, super_, origin)
     }
 
     open fun readIrConstructorCall(): IrConstructorCallMessageType {
-        var symbol__: Int? = null
-        var constructor_type_arguments_count__: Int = 0
-        var member_access__: MemberAccessCommonMessageType? = null
+        var symbol: Int? = null
+        var constructorTypeArgumentsCount: Int = 0
+        var memberAccessDispatchReceiver: IrExpressionMessageType? = null
+        var memberAccessExtensionReceiver: IrExpressionMessageType? = null
+        var memberAccessValueArgument: MutableList<NullableIrExpressionMessageType> = mutableListOf()
+        var memberAccessTypeArguments: List<org.jetbrains.kotlin.ir.types.IrType>? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> constructor_type_arguments_count__ = readInt32()
-                    3 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> constructorTypeArgumentsCount = readInt32()
+                    3 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrConstructorCall(symbol__!!, constructor_type_arguments_count__, member_access__!!)
+        return createIrConstructorCall(symbol!!, constructorTypeArgumentsCount, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!)
     }
 
     open fun readIrFunctionReference(): IrFunctionReferenceMessageType {
-        var symbol__: Int? = null
-        var origin__: IrStatementOriginMessageType? = null
-        var member_access__: MemberAccessCommonMessageType? = null
+        var symbol: Int? = null
+        var origin: IrStatementOriginMessageType? = null
+        var memberAccessDispatchReceiver: IrExpressionMessageType? = null
+        var memberAccessExtensionReceiver: IrExpressionMessageType? = null
+        var memberAccessValueArgument: MutableList<NullableIrExpressionMessageType> = mutableListOf()
+        var memberAccessTypeArguments: List<org.jetbrains.kotlin.ir.types.IrType>? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
-                    3 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
+                    3 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrFunctionReference(symbol__!!, origin__, member_access__!!)
+        return createIrFunctionReference(symbol!!, origin, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!)
     }
 
     open fun readIrLocalDelegatedPropertyReference(): IrLocalDelegatedPropertyReferenceMessageType {
-        var delegate__: Int? = null
-        var getter__: Int? = null
-        var setter__: Int? = null
-        var symbol__: Int? = null
-        var origin__: IrStatementOriginMessageType? = null
+        var delegate: Int? = null
+        var getter: Int? = null
+        var setter: Int? = null
+        var symbol: Int? = null
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> delegate__ = readWithLength { readIrDataIndex() }
-                    2 -> getter__ = readWithLength { readIrDataIndex() }
-                    3 -> setter__ = readWithLength { readIrDataIndex() }
-                    4 -> symbol__ = readWithLength { readIrDataIndex() }
-                    5 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> delegate = readWithLength { readIrDataIndex() }
+                    2 -> getter = readWithLength { readIrDataIndex() }
+                    3 -> setter = readWithLength { readIrDataIndex() }
+                    4 -> symbol = readWithLength { readIrDataIndex() }
+                    5 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrLocalDelegatedPropertyReference(delegate__!!, getter__, setter__, symbol__!!, origin__)
+        return createIrLocalDelegatedPropertyReference(delegate!!, getter, setter, symbol!!, origin)
     }
 
     open fun readIrPropertyReference(): IrPropertyReferenceMessageType {
-        var field__: Int? = null
-        var getter__: Int? = null
-        var setter__: Int? = null
-        var origin__: IrStatementOriginMessageType? = null
-        var member_access__: MemberAccessCommonMessageType? = null
-        var symbol__: Int? = null
+        var field: Int? = null
+        var getter: Int? = null
+        var setter: Int? = null
+        var origin: IrStatementOriginMessageType? = null
+        var memberAccessDispatchReceiver: IrExpressionMessageType? = null
+        var memberAccessExtensionReceiver: IrExpressionMessageType? = null
+        var memberAccessValueArgument: MutableList<NullableIrExpressionMessageType> = mutableListOf()
+        var memberAccessTypeArguments: List<org.jetbrains.kotlin.ir.types.IrType>? = null
+        var symbol: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field__ = readWithLength { readIrDataIndex() }
-                    2 -> getter__ = readWithLength { readIrDataIndex() }
-                    3 -> setter__ = readWithLength { readIrDataIndex() }
-                    4 -> origin__ = readWithLength { readIrStatementOrigin() }
-                    5 -> member_access__ = readWithLength { readMemberAccessCommon() }
-                    6 -> symbol__ = readWithLength { readIrDataIndex() }
+                    1 -> field = readWithLength { readIrDataIndex() }
+                    2 -> getter = readWithLength { readIrDataIndex() }
+                    3 -> setter = readWithLength { readIrDataIndex() }
+                    4 -> origin = readWithLength { readIrStatementOrigin() }
+                    5 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    6 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrPropertyReference(field__, getter__, setter__, origin__, member_access__!!, symbol__!!)
+        return createIrPropertyReference(field, getter, setter, origin, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!, symbol!!)
     }
 
     open fun readIrComposite(): IrCompositeMessageType {
-        var statement__: MutableList<IrStatementMessageType> = mutableListOf()
-        var origin__: IrStatementOriginMessageType? = null
+        var statement: MutableList<IrStatementMessageType> = mutableListOf()
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> statement__.add(readWithLength { readIrStatement() })
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> statement.add(readWithLength { readIrStatement() })
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrComposite(statement__, origin__)
+        return createIrComposite(statement, origin)
     }
 
     open fun readIrClassReference(): IrClassReferenceMessageType {
-        var class_symbol__: Int? = null
-        var class_type__: Int? = null
+        var classSymbol: Int? = null
+        var classType: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> class_symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> class_type__ = readWithLength { readIrDataIndex() }
+                    1 -> classSymbol = readWithLength { readIrDataIndex() }
+                    2 -> classType = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrClassReference(class_symbol__!!, class_type__!!)
+        return createIrClassReference(classSymbol!!, classType!!)
     }
 
     open fun readIrConst(): IrConstMessageType<*> {
-        var null__: Boolean? = null
-        var boolean__: Boolean? = null
-        var char__: Int? = null
-        var byte__: Int? = null
-        var short__: Int? = null
-        var int__: Int? = null
-        var long__: Long? = null
-        var float__: Float? = null
-        var double__: Double? = null
-        var string__: Int? = null
+        var oneOfNull: Boolean? = null
+        var oneOfBoolean: Boolean? = null
+        var oneOfChar: Int? = null
+        var oneOfByte: Int? = null
+        var oneOfShort: Int? = null
+        var oneOfInt: Int? = null
+        var oneOfLong: Long? = null
+        var oneOfFloat: Float? = null
+        var oneOfDouble: Double? = null
+        var oneOfString: Int? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        null__ = readBool()
+                        oneOfNull = readBool()
                         oneOfIndex = 1
                     }
                     2 -> {
-                        boolean__ = readBool()
+                        oneOfBoolean = readBool()
                         oneOfIndex = 2
                     }
                     3 -> {
-                        char__ = readInt32()
+                        oneOfChar = readInt32()
                         oneOfIndex = 3
                     }
                     4 -> {
-                        byte__ = readInt32()
+                        oneOfByte = readInt32()
                         oneOfIndex = 4
                     }
                     5 -> {
-                        short__ = readInt32()
+                        oneOfShort = readInt32()
                         oneOfIndex = 5
                     }
                     6 -> {
-                        int__ = readInt32()
+                        oneOfInt = readInt32()
                         oneOfIndex = 6
                     }
                     7 -> {
-                        long__ = readInt64()
+                        oneOfLong = readInt64()
                         oneOfIndex = 7
                     }
                     8 -> {
-                        float__ = readFloat()
+                        oneOfFloat = readFloat()
                         oneOfIndex = 8
                     }
                     9 -> {
-                        double__ = readDouble()
+                        oneOfDouble = readDouble()
                         oneOfIndex = 9
                     }
                     10 -> {
-                        string__ = readWithLength { readIrDataIndex() }
+                        oneOfString = readWithLength { readIrDataIndex() }
                         oneOfIndex = 10
                     }
                     else -> skip(type)
@@ -1014,350 +1023,396 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrConst_null_(null__!!)
-            2 -> return createIrConst_boolean(boolean__!!)
-            3 -> return createIrConst_char(char__!!)
-            4 -> return createIrConst_byte(byte__!!)
-            5 -> return createIrConst_short(short__!!)
-            6 -> return createIrConst_int(int__!!)
-            7 -> return createIrConst_long(long__!!)
-            8 -> return createIrConst_float(float__!!)
-            9 -> return createIrConst_double(double__!!)
-            10 -> return createIrConst_string(string__!!)
+            1 -> return createIrConst_null_(oneOfNull!!)
+            2 -> return createIrConst_boolean(oneOfBoolean!!)
+            3 -> return createIrConst_char(oneOfChar!!)
+            4 -> return createIrConst_byte(oneOfByte!!)
+            5 -> return createIrConst_short(oneOfShort!!)
+            6 -> return createIrConst_int(oneOfInt!!)
+            7 -> return createIrConst_long(oneOfLong!!)
+            8 -> return createIrConst_float(oneOfFloat!!)
+            9 -> return createIrConst_double(oneOfDouble!!)
+            10 -> return createIrConst_string(oneOfString!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrContinue(): IrContinueMessageType {
-        var loop_id__: Int = 0
-        var label__: Int? = null
+        var loopId: Int = 0
+        var label: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop_id__ = readInt32()
-                    2 -> label__ = readWithLength { readIrDataIndex() }
+                    1 -> loopId = readInt32()
+                    2 -> label = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrContinue(loop_id__, label__)
+        return createIrContinue(loopId, label)
     }
 
     open fun readIrDelegatingConstructorCall(): IrDelegatingConstructorCallMessageType {
-        var symbol__: Int? = null
-        var member_access__: MemberAccessCommonMessageType? = null
+        var symbol: Int? = null
+        var memberAccessDispatchReceiver: IrExpressionMessageType? = null
+        var memberAccessExtensionReceiver: IrExpressionMessageType? = null
+        var memberAccessValueArgument: MutableList<NullableIrExpressionMessageType> = mutableListOf()
+        var memberAccessTypeArguments: List<org.jetbrains.kotlin.ir.types.IrType>? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDelegatingConstructorCall(symbol__!!, member_access__!!)
+        return createIrDelegatingConstructorCall(symbol!!, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!)
     }
 
     open fun readIrDoWhile(): IrDoWhileMessageType {
-        var loop__: LoopMessageType? = null
+        var loopLoopId: Int = 0
+        var loopCondition: IrExpressionMessageType? = null
+        var loopLabel: Int? = null
+        var loopBody: IrExpressionMessageType? = null
+        var loopOrigin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop__ = readWithLength { readLoop() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> loopLoopId = readInt32()
+                                    2 -> loopCondition = readWithLength { readIrExpression() }
+                                    3 -> loopLabel = readWithLength { readIrDataIndex() }
+                                    4 -> loopBody = readWithLength { readIrExpression() }
+                                    5 -> loopOrigin = readWithLength { readIrStatementOrigin() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDoWhile(loop__!!)
+        return createIrDoWhile(loopLoopId, loopCondition!!, loopLabel, loopBody, loopOrigin)
     }
 
     open fun readIrEnumConstructorCall(): IrEnumConstructorCallMessageType {
-        var symbol__: Int? = null
-        var member_access__: MemberAccessCommonMessageType? = null
+        var symbol: Int? = null
+        var memberAccessDispatchReceiver: IrExpressionMessageType? = null
+        var memberAccessExtensionReceiver: IrExpressionMessageType? = null
+        var memberAccessValueArgument: MutableList<NullableIrExpressionMessageType> = mutableListOf()
+        var memberAccessTypeArguments: List<org.jetbrains.kotlin.ir.types.IrType>? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> member_access__ = readWithLength { readMemberAccessCommon() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> memberAccessDispatchReceiver = readWithLength { readIrExpression() }
+                                    2 -> memberAccessExtensionReceiver = readWithLength { readIrExpression() }
+                                    3 -> memberAccessValueArgument.add(readWithLength { readNullableIrExpression() })
+                                    4 -> memberAccessTypeArguments = readWithLength { readTypeArguments() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrEnumConstructorCall(symbol__!!, member_access__!!)
+        return createIrEnumConstructorCall(symbol!!, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments!!)
     }
 
     open fun readIrGetClass(): IrGetClassMessageType {
-        var argument__: IrExpressionMessageType? = null
+        var argument: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> argument__ = readWithLength { readIrExpression() }
+                    1 -> argument = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetClass(argument__!!)
+        return createIrGetClass(argument!!)
     }
 
     open fun readIrGetEnumValue(): IrGetEnumValueMessageType {
-        var symbol__: Int? = null
+        var symbol: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    2 -> symbol__ = readWithLength { readIrDataIndex() }
+                    2 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetEnumValue(symbol__!!)
-    }
-
-    open fun readFieldAccessCommon(): FieldAccessCommonMessageType {
-        var symbol__: Int? = null
-        var super__: Int? = null
-        var receiver__: IrExpressionMessageType? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> super__ = readWithLength { readIrDataIndex() }
-                    3 -> receiver__ = readWithLength { readIrExpression() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createFieldAccessCommon(symbol__!!, super__, receiver__)
+        return createIrGetEnumValue(symbol!!)
     }
 
     open fun readIrGetField(): IrGetFieldMessageType {
-        var field_access__: FieldAccessCommonMessageType? = null
-        var origin__: IrStatementOriginMessageType? = null
+        var fieldAccessSymbol: Int? = null
+        var fieldAccessSuper: Int? = null
+        var fieldAccessReceiver: IrExpressionMessageType? = null
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field_access__ = readWithLength { readFieldAccessCommon() }
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> fieldAccessSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> fieldAccessSuper = readWithLength { readIrDataIndex() }
+                                    3 -> fieldAccessReceiver = readWithLength { readIrExpression() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetField(field_access__!!, origin__)
+        return createIrGetField(fieldAccessSymbol!!, fieldAccessSuper, fieldAccessReceiver, origin)
     }
 
     open fun readIrGetValue(): IrGetValueMessageType {
-        var symbol__: Int? = null
-        var origin__: IrStatementOriginMessageType? = null
+        var symbol: Int? = null
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetValue(symbol__!!, origin__)
+        return createIrGetValue(symbol!!, origin)
     }
 
     open fun readIrGetObject(): IrGetObjectMessageType {
-        var symbol__: Int? = null
+        var symbol: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrGetObject(symbol__!!)
+        return createIrGetObject(symbol!!)
     }
 
     open fun readIrInstanceInitializerCall(): IrInstanceInitializerCallMessageType {
-        var symbol__: Int? = null
+        var symbol: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrInstanceInitializerCall(symbol__!!)
-    }
-
-    open fun readLoop(): LoopMessageType {
-        var loop_id__: Int = 0
-        var condition__: IrExpressionMessageType? = null
-        var label__: Int? = null
-        var body__: IrExpressionMessageType? = null
-        var origin__: IrStatementOriginMessageType? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> loop_id__ = readInt32()
-                    2 -> condition__ = readWithLength { readIrExpression() }
-                    3 -> label__ = readWithLength { readIrDataIndex() }
-                    4 -> body__ = readWithLength { readIrExpression() }
-                    5 -> origin__ = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createLoop(loop_id__, condition__!!, label__, body__, origin__)
+        return createIrInstanceInitializerCall(symbol!!)
     }
 
     open fun readIrReturn(): IrReturnMessageType {
-        var return_target__: Int? = null
-        var value__: IrExpressionMessageType? = null
+        var returnTarget: Int? = null
+        var value: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> return_target__ = readWithLength { readIrDataIndex() }
-                    2 -> value__ = readWithLength { readIrExpression() }
+                    1 -> returnTarget = readWithLength { readIrDataIndex() }
+                    2 -> value = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrReturn(return_target__!!, value__!!)
+        return createIrReturn(returnTarget!!, value!!)
     }
 
     open fun readIrSetField(): IrSetFieldMessageType {
-        var field_access__: FieldAccessCommonMessageType? = null
-        var value__: IrExpressionMessageType? = null
-        var origin__: IrStatementOriginMessageType? = null
+        var fieldAccessSymbol: Int? = null
+        var fieldAccessSuper: Int? = null
+        var fieldAccessReceiver: IrExpressionMessageType? = null
+        var value: IrExpressionMessageType? = null
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> field_access__ = readWithLength { readFieldAccessCommon() }
-                    2 -> value__ = readWithLength { readIrExpression() }
-                    3 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> fieldAccessSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> fieldAccessSuper = readWithLength { readIrDataIndex() }
+                                    3 -> fieldAccessReceiver = readWithLength { readIrExpression() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> value = readWithLength { readIrExpression() }
+                    3 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSetField(field_access__!!, value__!!, origin__)
+        return createIrSetField(fieldAccessSymbol!!, fieldAccessSuper, fieldAccessReceiver, value!!, origin)
     }
 
     open fun readIrSetVariable(): IrSetVariableMessageType {
-        var symbol__: Int? = null
-        var value__: IrExpressionMessageType? = null
-        var origin__: IrStatementOriginMessageType? = null
+        var symbol: Int? = null
+        var value: IrExpressionMessageType? = null
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> value__ = readWithLength { readIrExpression() }
-                    3 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> symbol = readWithLength { readIrDataIndex() }
+                    2 -> value = readWithLength { readIrExpression() }
+                    3 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSetVariable(symbol__!!, value__!!, origin__)
+        return createIrSetVariable(symbol!!, value!!, origin)
     }
 
     open fun readIrSpreadElement(): IrSpreadElementMessageType {
-        var expression__: IrExpressionMessageType? = null
-        var coordinates__: CoordinatesMessageType? = null
+        var expression: IrExpressionMessageType? = null
+        var coordinatesStartOffset: Int = 0
+        var coordinatesEndOffset: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readWithLength { readIrExpression() }
-                    2 -> coordinates__ = readWithLength { readCoordinates() }
+                    1 -> expression = readWithLength { readIrExpression() }
+                    2 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> coordinatesStartOffset = readInt32()
+                                    2 -> coordinatesEndOffset = readInt32()
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrSpreadElement(expression__!!, coordinates__!!)
+        return createIrSpreadElement(expression!!, coordinatesStartOffset, coordinatesEndOffset)
     }
 
     open fun readIrStringConcat(): IrStringConcatMessageType {
-        var argument__: MutableList<IrExpressionMessageType> = mutableListOf()
+        var argument: MutableList<IrExpressionMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> argument__.add(readWithLength { readIrExpression() })
+                    1 -> argument.add(readWithLength { readIrExpression() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrStringConcat(argument__)
+        return createIrStringConcat(argument)
     }
 
     open fun readIrThrow(): IrThrowMessageType {
-        var value__: IrExpressionMessageType? = null
+        var value: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> value__ = readWithLength { readIrExpression() }
+                    1 -> value = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrThrow(value__!!)
+        return createIrThrow(value!!)
     }
 
     open fun readIrTry(): IrTryMessageType {
-        var result__: IrExpressionMessageType? = null
-        var catch__: MutableList<IrStatementMessageType> = mutableListOf()
-        var finally__: IrExpressionMessageType? = null
+        var result: IrExpressionMessageType? = null
+        var catch: MutableList<IrStatementMessageType> = mutableListOf()
+        var finally: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> result__ = readWithLength { readIrExpression() }
-                    2 -> catch__.add(readWithLength { readIrStatement() })
-                    3 -> finally__ = readWithLength { readIrExpression() }
+                    1 -> result = readWithLength { readIrExpression() }
+                    2 -> catch.add(readWithLength { readIrStatement() })
+                    3 -> finally = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrTry(result__!!, catch__, finally__)
+        return createIrTry(result!!, catch, finally)
     }
 
     open fun readIrTypeOp(): IrTypeOpMessageType {
-        var operator__: IrTypeOperatorMessageType? = null
-        var operand__: Int? = null
-        var argument__: IrExpressionMessageType? = null
+        var operator: IrTypeOperatorMessageType? = null
+        var operand: Int? = null
+        var argument: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operator__ = createIrTypeOperator(readInt32())
-                    2 -> operand__ = readWithLength { readIrDataIndex() }
-                    3 -> argument__ = readWithLength { readIrExpression() }
+                    1 -> operator = createIrTypeOperator(readInt32())
+                    2 -> operand = readWithLength { readIrDataIndex() }
+                    3 -> argument = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeOp(operator__!!, operand__!!, argument__!!)
+        return createIrTypeOp(operator!!, operand!!, argument!!)
     }
 
     open fun readIrVararg(): IrVarargMessageType {
-        var element_type__: Int? = null
-        var element__: MutableList<IrVarargElementMessageType> = mutableListOf()
+        var elementType: Int? = null
+        var element: MutableList<IrVarargElementMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> element_type__ = readWithLength { readIrDataIndex() }
-                    2 -> element__.add(readWithLength { readIrVarargElement() })
+                    1 -> elementType = readWithLength { readIrDataIndex() }
+                    2 -> element.add(readWithLength { readIrVarargElement() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrVararg(element_type__!!, element__)
+        return createIrVararg(elementType!!, element)
     }
 
     open fun readIrVarargElement(): IrVarargElementMessageType {
-        var expression__: IrExpressionMessageType? = null
-        var spread_element__: IrSpreadElementMessageType? = null
+        var oneOfExpression: IrExpressionMessageType? = null
+        var oneOfSpreadElement: IrSpreadElementMessageType? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        expression__ = readWithLength { readIrExpression() }
+                        oneOfExpression = readWithLength { readIrExpression() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        spread_element__ = readWithLength { readIrSpreadElement() }
+                        oneOfSpreadElement = readWithLength { readIrSpreadElement() }
                         oneOfIndex = 2
                     }
                     else -> skip(type)
@@ -1365,255 +1420,272 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrVarargElement_expression(expression__!!)
-            2 -> return createIrVarargElement_spreadElement(spread_element__!!)
+            1 -> return createIrVarargElement_expression(oneOfExpression!!)
+            2 -> return createIrVarargElement_spreadElement(oneOfSpreadElement!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrWhen(): IrWhenMessageType {
-        var branch__: MutableList<IrStatementMessageType> = mutableListOf()
-        var origin__: IrStatementOriginMessageType? = null
+        var branch: MutableList<IrStatementMessageType> = mutableListOf()
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> branch__.add(readWithLength { readIrStatement() })
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> branch.add(readWithLength { readIrStatement() })
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrWhen(branch__, origin__)
+        return createIrWhen(branch, origin)
     }
 
     open fun readIrWhile(): IrWhileMessageType {
-        var loop__: LoopMessageType? = null
+        var loopLoopId: Int = 0
+        var loopCondition: IrExpressionMessageType? = null
+        var loopLabel: Int? = null
+        var loopBody: IrExpressionMessageType? = null
+        var loopOrigin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> loop__ = readWithLength { readLoop() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> loopLoopId = readInt32()
+                                    2 -> loopCondition = readWithLength { readIrExpression() }
+                                    3 -> loopLabel = readWithLength { readIrDataIndex() }
+                                    4 -> loopBody = readWithLength { readIrExpression() }
+                                    5 -> loopOrigin = readWithLength { readIrStatementOrigin() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrWhile(loop__!!)
+        return createIrWhile(loopLoopId, loopCondition!!, loopLabel, loopBody, loopOrigin)
     }
 
     open fun readIrFunctionExpression(): IrFunctionExpressionMessageType {
-        var function__: IrFunctionMessageType? = null
-        var origin__: IrStatementOriginMessageType? = null
+        var function: IrFunctionMessageType? = null
+        var origin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> function__ = readWithLength { readIrFunction() }
-                    2 -> origin__ = readWithLength { readIrStatementOrigin() }
+                    1 -> function = readWithLength { readIrFunction() }
+                    2 -> origin = readWithLength { readIrStatementOrigin() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrFunctionExpression(function__!!, origin__!!)
+        return createIrFunctionExpression(function!!, origin!!)
     }
 
     open fun readIrDynamicMemberExpression(): IrDynamicMemberExpressionMessageType {
-        var memberName__: Int? = null
-        var receiver__: IrExpressionMessageType? = null
+        var memberName: Int? = null
+        var receiver: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> memberName__ = readWithLength { readIrDataIndex() }
-                    2 -> receiver__ = readWithLength { readIrExpression() }
+                    1 -> memberName = readWithLength { readIrDataIndex() }
+                    2 -> receiver = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrDynamicMemberExpression(memberName__!!, receiver__!!)
+        return createIrDynamicMemberExpression(memberName!!, receiver!!)
     }
 
     open fun readIrDynamicOperatorExpression(): IrDynamicOperatorExpressionMessageType {
-        var operator__: IrDynamicOperatorMessageType? = null
-        var receiver__: IrExpressionMessageType? = null
-        var argument__: MutableList<IrExpressionMessageType> = mutableListOf()
+        var operator: IrDynamicOperatorMessageType? = null
+        var receiver: IrExpressionMessageType? = null
+        var argument: MutableList<IrExpressionMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operator__ = createIrDynamicOperator(readInt32())
-                    2 -> receiver__ = readWithLength { readIrExpression() }
-                    3 -> argument__.add(readWithLength { readIrExpression() })
+                    1 -> operator = createIrDynamicOperator(readInt32())
+                    2 -> receiver = readWithLength { readIrExpression() }
+                    3 -> argument.add(readWithLength { readIrExpression() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrDynamicOperatorExpression(operator__!!, receiver__!!, argument__)
+        return createIrDynamicOperatorExpression(operator!!, receiver!!, argument)
     }
 
     open fun readIrOperation(): IrOperationMessageType {
-        var block__: IrBlockMessageType? = null
-        var break__: IrBreakMessageType? = null
-        var call__: IrCallMessageType? = null
-        var class_reference__: IrClassReferenceMessageType? = null
-        var composite__: IrCompositeMessageType? = null
-        var const__: IrConstMessageType<*>? = null
-        var continue__: IrContinueMessageType? = null
-        var delegating_constructor_call__: IrDelegatingConstructorCallMessageType? = null
-        var do_while__: IrDoWhileMessageType? = null
-        var enum_constructor_call__: IrEnumConstructorCallMessageType? = null
-        var function_reference__: IrFunctionReferenceMessageType? = null
-        var get_class__: IrGetClassMessageType? = null
-        var get_enum_value__: IrGetEnumValueMessageType? = null
-        var get_field__: IrGetFieldMessageType? = null
-        var get_object__: IrGetObjectMessageType? = null
-        var get_value__: IrGetValueMessageType? = null
-        var instance_initializer_call__: IrInstanceInitializerCallMessageType? = null
-        var property_reference__: IrPropertyReferenceMessageType? = null
-        var return__: IrReturnMessageType? = null
-        var set_field__: IrSetFieldMessageType? = null
-        var set_variable__: IrSetVariableMessageType? = null
-        var string_concat__: IrStringConcatMessageType? = null
-        var throw__: IrThrowMessageType? = null
-        var try__: IrTryMessageType? = null
-        var type_op__: IrTypeOpMessageType? = null
-        var vararg__: IrVarargMessageType? = null
-        var when__: IrWhenMessageType? = null
-        var while__: IrWhileMessageType? = null
-        var dynamic_member__: IrDynamicMemberExpressionMessageType? = null
-        var dynamic_operator__: IrDynamicOperatorExpressionMessageType? = null
-        var local_delegated_property_reference__: IrLocalDelegatedPropertyReferenceMessageType? = null
-        var constructor_call__: IrConstructorCallMessageType? = null
-        var function_expression__: IrFunctionExpressionMessageType? = null
+        var oneOfBlock: IrBlockMessageType? = null
+        var oneOfBreak: IrBreakMessageType? = null
+        var oneOfCall: IrCallMessageType? = null
+        var oneOfClassReference: IrClassReferenceMessageType? = null
+        var oneOfComposite: IrCompositeMessageType? = null
+        var oneOfConst: IrConstMessageType<*>? = null
+        var oneOfContinue: IrContinueMessageType? = null
+        var oneOfDelegatingConstructorCall: IrDelegatingConstructorCallMessageType? = null
+        var oneOfDoWhile: IrDoWhileMessageType? = null
+        var oneOfEnumConstructorCall: IrEnumConstructorCallMessageType? = null
+        var oneOfFunctionReference: IrFunctionReferenceMessageType? = null
+        var oneOfGetClass: IrGetClassMessageType? = null
+        var oneOfGetEnumValue: IrGetEnumValueMessageType? = null
+        var oneOfGetField: IrGetFieldMessageType? = null
+        var oneOfGetObject: IrGetObjectMessageType? = null
+        var oneOfGetValue: IrGetValueMessageType? = null
+        var oneOfInstanceInitializerCall: IrInstanceInitializerCallMessageType? = null
+        var oneOfPropertyReference: IrPropertyReferenceMessageType? = null
+        var oneOfReturn: IrReturnMessageType? = null
+        var oneOfSetField: IrSetFieldMessageType? = null
+        var oneOfSetVariable: IrSetVariableMessageType? = null
+        var oneOfStringConcat: IrStringConcatMessageType? = null
+        var oneOfThrow: IrThrowMessageType? = null
+        var oneOfTry: IrTryMessageType? = null
+        var oneOfTypeOp: IrTypeOpMessageType? = null
+        var oneOfVararg: IrVarargMessageType? = null
+        var oneOfWhen: IrWhenMessageType? = null
+        var oneOfWhile: IrWhileMessageType? = null
+        var oneOfDynamicMember: IrDynamicMemberExpressionMessageType? = null
+        var oneOfDynamicOperator: IrDynamicOperatorExpressionMessageType? = null
+        var oneOfLocalDelegatedPropertyReference: IrLocalDelegatedPropertyReferenceMessageType? = null
+        var oneOfConstructorCall: IrConstructorCallMessageType? = null
+        var oneOfFunctionExpression: IrFunctionExpressionMessageType? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        block__ = readWithLength { readIrBlock() }
+                        oneOfBlock = readWithLength { readIrBlock() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        break__ = readWithLength { readIrBreak() }
+                        oneOfBreak = readWithLength { readIrBreak() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        call__ = readWithLength { readIrCall() }
+                        oneOfCall = readWithLength { readIrCall() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        class_reference__ = readWithLength { readIrClassReference() }
+                        oneOfClassReference = readWithLength { readIrClassReference() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        composite__ = readWithLength { readIrComposite() }
+                        oneOfComposite = readWithLength { readIrComposite() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        const__ = readWithLength { readIrConst() }
+                        oneOfConst = readWithLength { readIrConst() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        continue__ = readWithLength { readIrContinue() }
+                        oneOfContinue = readWithLength { readIrContinue() }
                         oneOfIndex = 7
                     }
                     8 -> {
-                        delegating_constructor_call__ = readWithLength { readIrDelegatingConstructorCall() }
+                        oneOfDelegatingConstructorCall = readWithLength { readIrDelegatingConstructorCall() }
                         oneOfIndex = 8
                     }
                     9 -> {
-                        do_while__ = readWithLength { readIrDoWhile() }
+                        oneOfDoWhile = readWithLength { readIrDoWhile() }
                         oneOfIndex = 9
                     }
                     10 -> {
-                        enum_constructor_call__ = readWithLength { readIrEnumConstructorCall() }
+                        oneOfEnumConstructorCall = readWithLength { readIrEnumConstructorCall() }
                         oneOfIndex = 10
                     }
                     11 -> {
-                        function_reference__ = readWithLength { readIrFunctionReference() }
+                        oneOfFunctionReference = readWithLength { readIrFunctionReference() }
                         oneOfIndex = 11
                     }
                     12 -> {
-                        get_class__ = readWithLength { readIrGetClass() }
+                        oneOfGetClass = readWithLength { readIrGetClass() }
                         oneOfIndex = 12
                     }
                     13 -> {
-                        get_enum_value__ = readWithLength { readIrGetEnumValue() }
+                        oneOfGetEnumValue = readWithLength { readIrGetEnumValue() }
                         oneOfIndex = 13
                     }
                     14 -> {
-                        get_field__ = readWithLength { readIrGetField() }
+                        oneOfGetField = readWithLength { readIrGetField() }
                         oneOfIndex = 14
                     }
                     15 -> {
-                        get_object__ = readWithLength { readIrGetObject() }
+                        oneOfGetObject = readWithLength { readIrGetObject() }
                         oneOfIndex = 15
                     }
                     16 -> {
-                        get_value__ = readWithLength { readIrGetValue() }
+                        oneOfGetValue = readWithLength { readIrGetValue() }
                         oneOfIndex = 16
                     }
                     17 -> {
-                        instance_initializer_call__ = readWithLength { readIrInstanceInitializerCall() }
+                        oneOfInstanceInitializerCall = readWithLength { readIrInstanceInitializerCall() }
                         oneOfIndex = 17
                     }
                     18 -> {
-                        property_reference__ = readWithLength { readIrPropertyReference() }
+                        oneOfPropertyReference = readWithLength { readIrPropertyReference() }
                         oneOfIndex = 18
                     }
                     19 -> {
-                        return__ = readWithLength { readIrReturn() }
+                        oneOfReturn = readWithLength { readIrReturn() }
                         oneOfIndex = 19
                     }
                     20 -> {
-                        set_field__ = readWithLength { readIrSetField() }
+                        oneOfSetField = readWithLength { readIrSetField() }
                         oneOfIndex = 20
                     }
                     21 -> {
-                        set_variable__ = readWithLength { readIrSetVariable() }
+                        oneOfSetVariable = readWithLength { readIrSetVariable() }
                         oneOfIndex = 21
                     }
                     22 -> {
-                        string_concat__ = readWithLength { readIrStringConcat() }
+                        oneOfStringConcat = readWithLength { readIrStringConcat() }
                         oneOfIndex = 22
                     }
                     23 -> {
-                        throw__ = readWithLength { readIrThrow() }
+                        oneOfThrow = readWithLength { readIrThrow() }
                         oneOfIndex = 23
                     }
                     24 -> {
-                        try__ = readWithLength { readIrTry() }
+                        oneOfTry = readWithLength { readIrTry() }
                         oneOfIndex = 24
                     }
                     25 -> {
-                        type_op__ = readWithLength { readIrTypeOp() }
+                        oneOfTypeOp = readWithLength { readIrTypeOp() }
                         oneOfIndex = 25
                     }
                     26 -> {
-                        vararg__ = readWithLength { readIrVararg() }
+                        oneOfVararg = readWithLength { readIrVararg() }
                         oneOfIndex = 26
                     }
                     27 -> {
-                        when__ = readWithLength { readIrWhen() }
+                        oneOfWhen = readWithLength { readIrWhen() }
                         oneOfIndex = 27
                     }
                     28 -> {
-                        while__ = readWithLength { readIrWhile() }
+                        oneOfWhile = readWithLength { readIrWhile() }
                         oneOfIndex = 28
                     }
                     29 -> {
-                        dynamic_member__ = readWithLength { readIrDynamicMemberExpression() }
+                        oneOfDynamicMember = readWithLength { readIrDynamicMemberExpression() }
                         oneOfIndex = 29
                     }
                     30 -> {
-                        dynamic_operator__ = readWithLength { readIrDynamicOperatorExpression() }
+                        oneOfDynamicOperator = readWithLength { readIrDynamicOperatorExpression() }
                         oneOfIndex = 30
                     }
                     31 -> {
-                        local_delegated_property_reference__ = readWithLength { readIrLocalDelegatedPropertyReference() }
+                        oneOfLocalDelegatedPropertyReference = readWithLength { readIrLocalDelegatedPropertyReference() }
                         oneOfIndex = 31
                     }
                     32 -> {
-                        constructor_call__ = readWithLength { readIrConstructorCall() }
+                        oneOfConstructorCall = readWithLength { readIrConstructorCall() }
                         oneOfIndex = 32
                     }
                     33 -> {
-                        function_expression__ = readWithLength { readIrFunctionExpression() }
+                        oneOfFunctionExpression = readWithLength { readIrFunctionExpression() }
                         oneOfIndex = 33
                     }
                     else -> skip(type)
@@ -1621,495 +1693,824 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrOperation_block(block__!!)
-            2 -> return createIrOperation_break_(break__!!)
-            3 -> return createIrOperation_call(call__!!)
-            4 -> return createIrOperation_classReference(class_reference__!!)
-            5 -> return createIrOperation_composite(composite__!!)
-            6 -> return createIrOperation_const(const__!!)
-            7 -> return createIrOperation_continue_(continue__!!)
-            8 -> return createIrOperation_delegatingConstructorCall(delegating_constructor_call__!!)
-            9 -> return createIrOperation_doWhile(do_while__!!)
-            10 -> return createIrOperation_enumConstructorCall(enum_constructor_call__!!)
-            11 -> return createIrOperation_functionReference(function_reference__!!)
-            12 -> return createIrOperation_getClass(get_class__!!)
-            13 -> return createIrOperation_getEnumValue(get_enum_value__!!)
-            14 -> return createIrOperation_getField(get_field__!!)
-            15 -> return createIrOperation_getObject(get_object__!!)
-            16 -> return createIrOperation_getValue(get_value__!!)
-            17 -> return createIrOperation_instanceInitializerCall(instance_initializer_call__!!)
-            18 -> return createIrOperation_propertyReference(property_reference__!!)
-            19 -> return createIrOperation_return_(return__!!)
-            20 -> return createIrOperation_setField(set_field__!!)
-            21 -> return createIrOperation_setVariable(set_variable__!!)
-            22 -> return createIrOperation_stringConcat(string_concat__!!)
-            23 -> return createIrOperation_throw_(throw__!!)
-            24 -> return createIrOperation_try_(try__!!)
-            25 -> return createIrOperation_typeOp(type_op__!!)
-            26 -> return createIrOperation_vararg(vararg__!!)
-            27 -> return createIrOperation_when_(when__!!)
-            28 -> return createIrOperation_while_(while__!!)
-            29 -> return createIrOperation_dynamicMember(dynamic_member__!!)
-            30 -> return createIrOperation_dynamicOperator(dynamic_operator__!!)
-            31 -> return createIrOperation_localDelegatedPropertyReference(local_delegated_property_reference__!!)
-            32 -> return createIrOperation_constructorCall(constructor_call__!!)
-            33 -> return createIrOperation_functionExpression(function_expression__!!)
+            1 -> return createIrOperation_block(oneOfBlock!!)
+            2 -> return createIrOperation_break_(oneOfBreak!!)
+            3 -> return createIrOperation_call(oneOfCall!!)
+            4 -> return createIrOperation_classReference(oneOfClassReference!!)
+            5 -> return createIrOperation_composite(oneOfComposite!!)
+            6 -> return createIrOperation_const(oneOfConst!!)
+            7 -> return createIrOperation_continue_(oneOfContinue!!)
+            8 -> return createIrOperation_delegatingConstructorCall(oneOfDelegatingConstructorCall!!)
+            9 -> return createIrOperation_doWhile(oneOfDoWhile!!)
+            10 -> return createIrOperation_enumConstructorCall(oneOfEnumConstructorCall!!)
+            11 -> return createIrOperation_functionReference(oneOfFunctionReference!!)
+            12 -> return createIrOperation_getClass(oneOfGetClass!!)
+            13 -> return createIrOperation_getEnumValue(oneOfGetEnumValue!!)
+            14 -> return createIrOperation_getField(oneOfGetField!!)
+            15 -> return createIrOperation_getObject(oneOfGetObject!!)
+            16 -> return createIrOperation_getValue(oneOfGetValue!!)
+            17 -> return createIrOperation_instanceInitializerCall(oneOfInstanceInitializerCall!!)
+            18 -> return createIrOperation_propertyReference(oneOfPropertyReference!!)
+            19 -> return createIrOperation_return_(oneOfReturn!!)
+            20 -> return createIrOperation_setField(oneOfSetField!!)
+            21 -> return createIrOperation_setVariable(oneOfSetVariable!!)
+            22 -> return createIrOperation_stringConcat(oneOfStringConcat!!)
+            23 -> return createIrOperation_throw_(oneOfThrow!!)
+            24 -> return createIrOperation_try_(oneOfTry!!)
+            25 -> return createIrOperation_typeOp(oneOfTypeOp!!)
+            26 -> return createIrOperation_vararg(oneOfVararg!!)
+            27 -> return createIrOperation_when_(oneOfWhen!!)
+            28 -> return createIrOperation_while_(oneOfWhile!!)
+            29 -> return createIrOperation_dynamicMember(oneOfDynamicMember!!)
+            30 -> return createIrOperation_dynamicOperator(oneOfDynamicOperator!!)
+            31 -> return createIrOperation_localDelegatedPropertyReference(oneOfLocalDelegatedPropertyReference!!)
+            32 -> return createIrOperation_constructorCall(oneOfConstructorCall!!)
+            33 -> return createIrOperation_functionExpression(oneOfFunctionExpression!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrExpression(): IrExpressionMessageType {
-        var operation__: IrOperationMessageType? = null
-        var type__: Int? = null
-        var coordinates__: CoordinatesMessageType? = null
+        var operation: IrOperationMessageType? = null
+        var type_: Int? = null
+        var coordinatesStartOffset: Int = 0
+        var coordinatesEndOffset: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operation__ = readWithLength { readIrOperation() }
-                    2 -> type__ = readWithLength { readIrDataIndex() }
-                    3 -> coordinates__ = readWithLength { readCoordinates() }
+                    1 -> operation = readWithLength { readIrOperation() }
+                    2 -> type_ = readWithLength { readIrDataIndex() }
+                    3 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> coordinatesStartOffset = readInt32()
+                                    2 -> coordinatesEndOffset = readInt32()
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     else -> skip(type)
                 }
             }
         }
-        return createIrExpression(operation__!!, type__!!, coordinates__!!)
+        return createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
     }
 
     open fun readNullableIrExpression(): NullableIrExpressionMessageType {
-        var expression__: IrExpressionMessageType? = null
+        var expression: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> expression__ = readWithLength { readIrExpression() }
+                    1 -> expression = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createNullableIrExpression(expression__)
-    }
-
-    open fun readIrDeclarationBase(): IrDeclarationBaseMessageType {
-        var symbol__: Int? = null
-        var origin__: IrDeclarationOriginMessageType? = null
-        var coordinates__: CoordinatesMessageType? = null
-        var annotations__: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> symbol__ = readWithLength { readIrDataIndex() }
-                    2 -> origin__ = readWithLength { readIrDeclarationOrigin() }
-                    3 -> coordinates__ = readWithLength { readCoordinates() }
-                    4 -> annotations__ = readWithLength { readAnnotations() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createIrDeclarationBase(symbol__!!, origin__!!, coordinates__!!, annotations__!!)
-    }
-
-    open fun readIrFunctionBase(): IrFunctionBaseMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var name__: Int? = null
-        var visibility__: VisibilityMessageType? = null
-        var is_inline__: Boolean = false
-        var is_external__: Boolean = false
-        var type_parameters__: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
-        var dispatch_receiver__: IrValueParameterMessageType? = null
-        var extension_receiver__: IrValueParameterMessageType? = null
-        var value_parameter__: MutableList<IrValueParameterMessageType> = mutableListOf()
-        var body__: Int? = null
-        var return_type__: Int? = null
-        while (hasData) {
-            readField { fieldNumber, type ->
-                when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> visibility__ = readWithLength { readVisibility() }
-                    4 -> is_inline__ = readBool()
-                    5 -> is_external__ = readBool()
-                    6 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
-                    7 -> dispatch_receiver__ = readWithLength { readIrValueParameter() }
-                    8 -> extension_receiver__ = readWithLength { readIrValueParameter() }
-                    9 -> value_parameter__.add(readWithLength { readIrValueParameter() })
-                    10 -> body__ = readWithLength { readIrDataIndex() }
-                    11 -> return_type__ = readWithLength { readIrDataIndex() }
-                    else -> skip(type)
-                }
-            }
-        }
-        return createIrFunctionBase(base__!!, name__!!, visibility__!!, is_inline__, is_external__, type_parameters__!!, dispatch_receiver__, extension_receiver__, value_parameter__, body__, return_type__!!)
+        return createNullableIrExpression(expression)
     }
 
     open fun readIrFunction(): IrFunctionMessageType {
-        var base__: IrFunctionBaseMessageType? = null
-        var modality__: ModalityKindMessageType? = null
-        var is_tailrec__: Boolean = false
-        var is_suspend__: Boolean = false
-        var overridden__: MutableList<Int> = mutableListOf()
+        var baseBaseSymbol: Int? = null
+        var baseBaseOrigin: IrDeclarationOriginMessageType? = null
+        var baseBaseCoordinatesStartOffset: Int = 0
+        var baseBaseCoordinatesEndOffset: Int = 0
+        var baseBaseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var baseName: Int? = null
+        var baseVisibility: VisibilityMessageType? = null
+        var baseIsInline: Boolean = false
+        var baseIsExternal: Boolean = false
+        var baseTypeParameters: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
+        var baseDispatchReceiver: IrValueParameterMessageType? = null
+        var baseExtensionReceiver: IrValueParameterMessageType? = null
+        var baseValueParameter: MutableList<IrValueParameterMessageType> = mutableListOf()
+        var baseBody: Int? = null
+        var baseReturnType: Int? = null
+        var modality: ModalityKindMessageType? = null
+        var isTailrec: Boolean = false
+        var isSuspend: Boolean = false
+        var overridden: MutableList<Int> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrFunctionBase() }
-                    2 -> modality__ = createModalityKind(readInt32())
-                    3 -> is_tailrec__ = readBool()
-                    4 -> is_suspend__ = readBool()
-                    5 -> overridden__.add(readWithLength { readIrDataIndex() })
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseBaseSymbol = readWithLength { readIrDataIndex() }
+                                                    2 -> baseBaseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                                    3 -> readWithLength {
+                                                        while (hasData) {
+                                                            readField { fieldNumber, type ->
+                                                                when (fieldNumber) {
+                                                                    1 -> baseBaseCoordinatesStartOffset = readInt32()
+                                                                    2 -> baseBaseCoordinatesEndOffset = readInt32()
+                                                                    else -> skip(type)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    4 -> baseBaseAnnotations = readWithLength { readAnnotations() }
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    2 -> baseName = readWithLength { readIrDataIndex() }
+                                    3 -> baseVisibility = readWithLength { readVisibility() }
+                                    4 -> baseIsInline = readBool()
+                                    5 -> baseIsExternal = readBool()
+                                    6 -> baseTypeParameters = readWithLength { readIrTypeParameterContainer() }
+                                    7 -> baseDispatchReceiver = readWithLength { readIrValueParameter() }
+                                    8 -> baseExtensionReceiver = readWithLength { readIrValueParameter() }
+                                    9 -> baseValueParameter.add(readWithLength { readIrValueParameter() })
+                                    10 -> baseBody = readWithLength { readIrDataIndex() }
+                                    11 -> baseReturnType = readWithLength { readIrDataIndex() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> modality = createModalityKind(readInt32())
+                    3 -> isTailrec = readBool()
+                    4 -> isSuspend = readBool()
+                    5 -> overridden.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrFunction(base__!!, modality__!!, is_tailrec__, is_suspend__, overridden__)
+        return createIrFunction(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType!!, modality!!, isTailrec, isSuspend, overridden)
     }
 
     open fun readIrConstructor(): IrConstructorMessageType {
-        var base__: IrFunctionBaseMessageType? = null
-        var is_primary__: Boolean = false
+        var baseBaseSymbol: Int? = null
+        var baseBaseOrigin: IrDeclarationOriginMessageType? = null
+        var baseBaseCoordinatesStartOffset: Int = 0
+        var baseBaseCoordinatesEndOffset: Int = 0
+        var baseBaseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var baseName: Int? = null
+        var baseVisibility: VisibilityMessageType? = null
+        var baseIsInline: Boolean = false
+        var baseIsExternal: Boolean = false
+        var baseTypeParameters: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
+        var baseDispatchReceiver: IrValueParameterMessageType? = null
+        var baseExtensionReceiver: IrValueParameterMessageType? = null
+        var baseValueParameter: MutableList<IrValueParameterMessageType> = mutableListOf()
+        var baseBody: Int? = null
+        var baseReturnType: Int? = null
+        var isPrimary: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrFunctionBase() }
-                    2 -> is_primary__ = readBool()
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseBaseSymbol = readWithLength { readIrDataIndex() }
+                                                    2 -> baseBaseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                                    3 -> readWithLength {
+                                                        while (hasData) {
+                                                            readField { fieldNumber, type ->
+                                                                when (fieldNumber) {
+                                                                    1 -> baseBaseCoordinatesStartOffset = readInt32()
+                                                                    2 -> baseBaseCoordinatesEndOffset = readInt32()
+                                                                    else -> skip(type)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    4 -> baseBaseAnnotations = readWithLength { readAnnotations() }
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    2 -> baseName = readWithLength { readIrDataIndex() }
+                                    3 -> baseVisibility = readWithLength { readVisibility() }
+                                    4 -> baseIsInline = readBool()
+                                    5 -> baseIsExternal = readBool()
+                                    6 -> baseTypeParameters = readWithLength { readIrTypeParameterContainer() }
+                                    7 -> baseDispatchReceiver = readWithLength { readIrValueParameter() }
+                                    8 -> baseExtensionReceiver = readWithLength { readIrValueParameter() }
+                                    9 -> baseValueParameter.add(readWithLength { readIrValueParameter() })
+                                    10 -> baseBody = readWithLength { readIrDataIndex() }
+                                    11 -> baseReturnType = readWithLength { readIrDataIndex() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> isPrimary = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createIrConstructor(base__!!, is_primary__)
+        return createIrConstructor(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType!!, isPrimary)
     }
 
     open fun readIrField(): IrFieldMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var initializer__: Int? = null
-        var name__: Int? = null
-        var visibility__: VisibilityMessageType? = null
-        var is_final__: Boolean = false
-        var is_external__: Boolean = false
-        var is_static__: Boolean = false
-        var type__: Int? = null
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var initializer: Int? = null
+        var name: Int? = null
+        var visibility: VisibilityMessageType? = null
+        var isFinal: Boolean = false
+        var isExternal: Boolean = false
+        var isStatic: Boolean = false
+        var type_: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> initializer__ = readWithLength { readIrDataIndex() }
-                    3 -> name__ = readWithLength { readIrDataIndex() }
-                    4 -> visibility__ = readWithLength { readVisibility() }
-                    5 -> is_final__ = readBool()
-                    6 -> is_external__ = readBool()
-                    7 -> is_static__ = readBool()
-                    8 -> type__ = readWithLength { readIrDataIndex() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> initializer = readWithLength { readIrDataIndex() }
+                    3 -> name = readWithLength { readIrDataIndex() }
+                    4 -> visibility = readWithLength { readVisibility() }
+                    5 -> isFinal = readBool()
+                    6 -> isExternal = readBool()
+                    7 -> isStatic = readBool()
+                    8 -> type_ = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrField(base__!!, initializer__, name__!!, visibility__!!, is_final__, is_external__, is_static__, type__!!)
+        return createIrField(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, initializer, name!!, visibility!!, isFinal, isExternal, isStatic, type_!!)
     }
 
     open fun readIrLocalDelegatedProperty(): IrLocalDelegatedPropertyMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var name__: Int? = null
-        var type__: Int? = null
-        var is_var__: Boolean = false
-        var delegate__: IrVariableMessageType? = null
-        var getter__: IrFunctionMessageType? = null
-        var setter__: IrFunctionMessageType? = null
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var name: Int? = null
+        var type_: Int? = null
+        var isVar: Boolean = false
+        var delegate: IrVariableMessageType? = null
+        var getter: IrFunctionMessageType? = null
+        var setter: IrFunctionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> type__ = readWithLength { readIrDataIndex() }
-                    4 -> is_var__ = readBool()
-                    5 -> delegate__ = readWithLength { readIrVariable() }
-                    6 -> getter__ = readWithLength { readIrFunction() }
-                    7 -> setter__ = readWithLength { readIrFunction() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> type_ = readWithLength { readIrDataIndex() }
+                    4 -> isVar = readBool()
+                    5 -> delegate = readWithLength { readIrVariable() }
+                    6 -> getter = readWithLength { readIrFunction() }
+                    7 -> setter = readWithLength { readIrFunction() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrLocalDelegatedProperty(base__!!, name__!!, type__!!, is_var__, delegate__!!, getter__, setter__)
+        return createIrLocalDelegatedProperty(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, type_!!, isVar, delegate!!, getter, setter)
     }
 
     open fun readIrProperty(): IrPropertyMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var name__: Int? = null
-        var visibility__: VisibilityMessageType? = null
-        var modality__: ModalityKindMessageType? = null
-        var is_var__: Boolean = false
-        var is_const__: Boolean = false
-        var is_lateinit__: Boolean = false
-        var is_delegated__: Boolean = false
-        var is_external__: Boolean = false
-        var backing_field__: IrFieldMessageType? = null
-        var getter__: IrFunctionMessageType? = null
-        var setter__: IrFunctionMessageType? = null
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var name: Int? = null
+        var visibility: VisibilityMessageType? = null
+        var modality: ModalityKindMessageType? = null
+        var isVar: Boolean = false
+        var isConst: Boolean = false
+        var isLateinit: Boolean = false
+        var isDelegated: Boolean = false
+        var isExternal: Boolean = false
+        var backingField: IrFieldMessageType? = null
+        var getter: IrFunctionMessageType? = null
+        var setter: IrFunctionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> visibility__ = readWithLength { readVisibility() }
-                    4 -> modality__ = createModalityKind(readInt32())
-                    5 -> is_var__ = readBool()
-                    6 -> is_const__ = readBool()
-                    7 -> is_lateinit__ = readBool()
-                    8 -> is_delegated__ = readBool()
-                    9 -> is_external__ = readBool()
-                    10 -> backing_field__ = readWithLength { readIrField() }
-                    11 -> getter__ = readWithLength { readIrFunction() }
-                    12 -> setter__ = readWithLength { readIrFunction() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> visibility = readWithLength { readVisibility() }
+                    4 -> modality = createModalityKind(readInt32())
+                    5 -> isVar = readBool()
+                    6 -> isConst = readBool()
+                    7 -> isLateinit = readBool()
+                    8 -> isDelegated = readBool()
+                    9 -> isExternal = readBool()
+                    10 -> backingField = readWithLength { readIrField() }
+                    11 -> getter = readWithLength { readIrFunction() }
+                    12 -> setter = readWithLength { readIrFunction() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrProperty(base__!!, name__!!, visibility__!!, modality__!!, is_var__, is_const__, is_lateinit__, is_delegated__, is_external__, backing_field__, getter__, setter__)
+        return createIrProperty(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, visibility!!, modality!!, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
     }
 
     open fun readIrVariable(): IrVariableMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var name__: Int? = null
-        var type__: Int? = null
-        var is_var__: Boolean = false
-        var is_const__: Boolean = false
-        var is_lateinit__: Boolean = false
-        var initializer__: IrExpressionMessageType? = null
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var name: Int? = null
+        var type_: Int? = null
+        var isVar: Boolean = false
+        var isConst: Boolean = false
+        var isLateinit: Boolean = false
+        var initializer: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> type__ = readWithLength { readIrDataIndex() }
-                    4 -> is_var__ = readBool()
-                    5 -> is_const__ = readBool()
-                    6 -> is_lateinit__ = readBool()
-                    7 -> initializer__ = readWithLength { readIrExpression() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> type_ = readWithLength { readIrDataIndex() }
+                    4 -> isVar = readBool()
+                    5 -> isConst = readBool()
+                    6 -> isLateinit = readBool()
+                    7 -> initializer = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrVariable(base__!!, name__!!, type__!!, is_var__, is_const__, is_lateinit__, initializer__)
+        return createIrVariable(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, type_!!, isVar, isConst, isLateinit, initializer)
     }
 
     open fun readIrValueParameter(): IrValueParameterMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var name__: Int? = null
-        var index__: Int = 0
-        var type__: Int? = null
-        var vararg_element_type__: Int? = null
-        var is_crossinline__: Boolean = false
-        var is_noinline__: Boolean = false
-        var default_value__: Int? = null
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var name: Int? = null
+        var index: Int = 0
+        var type_: Int? = null
+        var varargElementType: Int? = null
+        var isCrossinline: Boolean = false
+        var isNoinline: Boolean = false
+        var defaultValue: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> index__ = readInt32()
-                    4 -> type__ = readWithLength { readIrDataIndex() }
-                    5 -> vararg_element_type__ = readWithLength { readIrDataIndex() }
-                    6 -> is_crossinline__ = readBool()
-                    7 -> is_noinline__ = readBool()
-                    8 -> default_value__ = readWithLength { readIrDataIndex() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> index = readInt32()
+                    4 -> type_ = readWithLength { readIrDataIndex() }
+                    5 -> varargElementType = readWithLength { readIrDataIndex() }
+                    6 -> isCrossinline = readBool()
+                    7 -> isNoinline = readBool()
+                    8 -> defaultValue = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrValueParameter(base__!!, name__!!, index__, type__!!, vararg_element_type__, is_crossinline__, is_noinline__, default_value__)
+        return createIrValueParameter(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, index, type_!!, varargElementType, isCrossinline, isNoinline, defaultValue)
     }
 
     open fun readIrTypeParameter(): IrTypeParameterMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var name__: Int? = null
-        var index__: Int = 0
-        var variance__: IrTypeVarianceMessageType? = null
-        var super_type__: MutableList<Int> = mutableListOf()
-        var is_reified__: Boolean = false
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var name: Int? = null
+        var index: Int = 0
+        var variance: IrTypeVarianceMessageType? = null
+        var superType: MutableList<Int> = mutableListOf()
+        var isReified: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> index__ = readInt32()
-                    4 -> variance__ = createIrTypeVariance(readInt32())
-                    5 -> super_type__.add(readWithLength { readIrDataIndex() })
-                    6 -> is_reified__ = readBool()
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> index = readInt32()
+                    4 -> variance = createIrTypeVariance(readInt32())
+                    5 -> superType.add(readWithLength { readIrDataIndex() })
+                    6 -> isReified = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeParameter(base__!!, name__!!, index__, variance__!!, super_type__, is_reified__)
+        return createIrTypeParameter(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, index, variance!!, superType, isReified)
     }
 
     open fun readIrTypeParameterContainer(): List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter> {
-        var type_parameter__: MutableList<IrTypeParameterMessageType> = mutableListOf()
+        var typeParameter: MutableList<IrTypeParameterMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> type_parameter__.add(readWithLength { readIrTypeParameter() })
+                    1 -> typeParameter.add(readWithLength { readIrTypeParameter() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeParameterContainer(type_parameter__)
+        return createIrTypeParameterContainer(typeParameter)
     }
 
     open fun readIrClass(): IrClassMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var name__: Int? = null
-        var kind__: ClassKindMessageType? = null
-        var visibility__: VisibilityMessageType? = null
-        var modality__: ModalityKindMessageType? = null
-        var is_companion__: Boolean = false
-        var is_inner__: Boolean = false
-        var is_data__: Boolean = false
-        var is_external__: Boolean = false
-        var is_inline__: Boolean = false
-        var this_receiver__: IrValueParameterMessageType? = null
-        var type_parameters__: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
-        var declaration_container__: List<org.jetbrains.kotlin.ir.declarations.IrDeclaration>? = null
-        var super_type__: MutableList<Int> = mutableListOf()
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var name: Int? = null
+        var kind: ClassKindMessageType? = null
+        var visibility: VisibilityMessageType? = null
+        var modality: ModalityKindMessageType? = null
+        var isCompanion: Boolean = false
+        var isInner: Boolean = false
+        var isData: Boolean = false
+        var isExternal: Boolean = false
+        var isInline: Boolean = false
+        var thisReceiver: IrValueParameterMessageType? = null
+        var typeParameters: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
+        var declarationContainer: List<org.jetbrains.kotlin.ir.declarations.IrDeclaration>? = null
+        var superType: MutableList<Int> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> kind__ = createClassKind(readInt32())
-                    4 -> visibility__ = readWithLength { readVisibility() }
-                    5 -> modality__ = createModalityKind(readInt32())
-                    6 -> is_companion__ = readBool()
-                    7 -> is_inner__ = readBool()
-                    8 -> is_data__ = readBool()
-                    9 -> is_external__ = readBool()
-                    10 -> is_inline__ = readBool()
-                    11 -> this_receiver__ = readWithLength { readIrValueParameter() }
-                    12 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
-                    13 -> declaration_container__ = readWithLength { readIrDeclarationContainer() }
-                    14 -> super_type__.add(readWithLength { readIrDataIndex() })
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> kind = createClassKind(readInt32())
+                    4 -> visibility = readWithLength { readVisibility() }
+                    5 -> modality = createModalityKind(readInt32())
+                    6 -> isCompanion = readBool()
+                    7 -> isInner = readBool()
+                    8 -> isData = readBool()
+                    9 -> isExternal = readBool()
+                    10 -> isInline = readBool()
+                    11 -> thisReceiver = readWithLength { readIrValueParameter() }
+                    12 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                    13 -> declarationContainer = readWithLength { readIrDeclarationContainer() }
+                    14 -> superType.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrClass(base__!!, name__!!, kind__!!, visibility__!!, modality__!!, is_companion__, is_inner__, is_data__, is_external__, is_inline__, this_receiver__, type_parameters__!!, declaration_container__!!, super_type__)
+        return createIrClass(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters!!, declarationContainer!!, superType)
     }
 
     open fun readIrTypeAlias(): IrTypeAliasMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var name__: Int? = null
-        var visibility__: VisibilityMessageType? = null
-        var type_parameters__: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
-        var expanded_type__: Int? = null
-        var is_actual__: Boolean = false
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var name: Int? = null
+        var visibility: VisibilityMessageType? = null
+        var typeParameters: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
+        var expandedType: Int? = null
+        var isActual: Boolean = false
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> name__ = readWithLength { readIrDataIndex() }
-                    3 -> visibility__ = readWithLength { readVisibility() }
-                    4 -> type_parameters__ = readWithLength { readIrTypeParameterContainer() }
-                    5 -> expanded_type__ = readWithLength { readIrDataIndex() }
-                    6 -> is_actual__ = readBool()
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> name = readWithLength { readIrDataIndex() }
+                    3 -> visibility = readWithLength { readVisibility() }
+                    4 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                    5 -> expandedType = readWithLength { readIrDataIndex() }
+                    6 -> isActual = readBool()
                     else -> skip(type)
                 }
             }
         }
-        return createIrTypeAlias(base__!!, name__!!, visibility__!!, type_parameters__!!, expanded_type__!!, is_actual__)
+        return createIrTypeAlias(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, visibility!!, typeParameters!!, expandedType!!, isActual)
     }
 
     open fun readIrEnumEntry(): IrEnumEntryMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var initializer__: Int? = null
-        var corresponding_class__: IrClassMessageType? = null
-        var name__: Int? = null
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var initializer: Int? = null
+        var correspondingClass: IrClassMessageType? = null
+        var name: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> initializer__ = readWithLength { readIrDataIndex() }
-                    3 -> corresponding_class__ = readWithLength { readIrClass() }
-                    4 -> name__ = readWithLength { readIrDataIndex() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> initializer = readWithLength { readIrDataIndex() }
+                    3 -> correspondingClass = readWithLength { readIrClass() }
+                    4 -> name = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrEnumEntry(base__!!, initializer__, corresponding_class__, name__!!)
+        return createIrEnumEntry(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, initializer, correspondingClass, name!!)
     }
 
     open fun readIrAnonymousInit(): IrAnonymousInitMessageType {
-        var base__: IrDeclarationBaseMessageType? = null
-        var body__: Int? = null
+        var baseSymbol: Int? = null
+        var baseOrigin: IrDeclarationOriginMessageType? = null
+        var baseCoordinatesStartOffset: Int = 0
+        var baseCoordinatesEndOffset: Int = 0
+        var baseAnnotations: List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>? = null
+        var body: Int? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> base__ = readWithLength { readIrDeclarationBase() }
-                    2 -> body__ = readWithLength { readIrDataIndex() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> baseSymbol = readWithLength { readIrDataIndex() }
+                                    2 -> baseOrigin = readWithLength { readIrDeclarationOrigin() }
+                                    3 -> readWithLength {
+                                        while (hasData) {
+                                            readField { fieldNumber, type ->
+                                                when (fieldNumber) {
+                                                    1 -> baseCoordinatesStartOffset = readInt32()
+                                                    2 -> baseCoordinatesEndOffset = readInt32()
+                                                    else -> skip(type)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    4 -> baseAnnotations = readWithLength { readAnnotations() }
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
+                    2 -> body = readWithLength { readIrDataIndex() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrAnonymousInit(base__!!, body__!!)
+        return createIrAnonymousInit(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, body!!)
     }
 
     open fun readIrDeclaration(): IrDeclarationMessageType {
-        var ir_anonymous_init__: IrAnonymousInitMessageType? = null
-        var ir_class__: IrClassMessageType? = null
-        var ir_constructor__: IrConstructorMessageType? = null
-        var ir_enum_entry__: IrEnumEntryMessageType? = null
-        var ir_field__: IrFieldMessageType? = null
-        var ir_function__: IrFunctionMessageType? = null
-        var ir_property__: IrPropertyMessageType? = null
-        var ir_type_parameter__: IrTypeParameterMessageType? = null
-        var ir_variable__: IrVariableMessageType? = null
-        var ir_value_parameter__: IrValueParameterMessageType? = null
-        var ir_local_delegated_property__: IrLocalDelegatedPropertyMessageType? = null
-        var ir_type_alias__: IrTypeAliasMessageType? = null
+        var oneOfIrAnonymousInit: IrAnonymousInitMessageType? = null
+        var oneOfIrClass: IrClassMessageType? = null
+        var oneOfIrConstructor: IrConstructorMessageType? = null
+        var oneOfIrEnumEntry: IrEnumEntryMessageType? = null
+        var oneOfIrField: IrFieldMessageType? = null
+        var oneOfIrFunction: IrFunctionMessageType? = null
+        var oneOfIrProperty: IrPropertyMessageType? = null
+        var oneOfIrTypeParameter: IrTypeParameterMessageType? = null
+        var oneOfIrVariable: IrVariableMessageType? = null
+        var oneOfIrValueParameter: IrValueParameterMessageType? = null
+        var oneOfIrLocalDelegatedProperty: IrLocalDelegatedPropertyMessageType? = null
+        var oneOfIrTypeAlias: IrTypeAliasMessageType? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
                     1 -> {
-                        ir_anonymous_init__ = readWithLength { readIrAnonymousInit() }
+                        oneOfIrAnonymousInit = readWithLength { readIrAnonymousInit() }
                         oneOfIndex = 1
                     }
                     2 -> {
-                        ir_class__ = readWithLength { readIrClass() }
+                        oneOfIrClass = readWithLength { readIrClass() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        ir_constructor__ = readWithLength { readIrConstructor() }
+                        oneOfIrConstructor = readWithLength { readIrConstructor() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        ir_enum_entry__ = readWithLength { readIrEnumEntry() }
+                        oneOfIrEnumEntry = readWithLength { readIrEnumEntry() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        ir_field__ = readWithLength { readIrField() }
+                        oneOfIrField = readWithLength { readIrField() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        ir_function__ = readWithLength { readIrFunction() }
+                        oneOfIrFunction = readWithLength { readIrFunction() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        ir_property__ = readWithLength { readIrProperty() }
+                        oneOfIrProperty = readWithLength { readIrProperty() }
                         oneOfIndex = 7
                     }
                     8 -> {
-                        ir_type_parameter__ = readWithLength { readIrTypeParameter() }
+                        oneOfIrTypeParameter = readWithLength { readIrTypeParameter() }
                         oneOfIndex = 8
                     }
                     9 -> {
-                        ir_variable__ = readWithLength { readIrVariable() }
+                        oneOfIrVariable = readWithLength { readIrVariable() }
                         oneOfIndex = 9
                     }
                     10 -> {
-                        ir_value_parameter__ = readWithLength { readIrValueParameter() }
+                        oneOfIrValueParameter = readWithLength { readIrValueParameter() }
                         oneOfIndex = 10
                     }
                     11 -> {
-                        ir_local_delegated_property__ = readWithLength { readIrLocalDelegatedProperty() }
+                        oneOfIrLocalDelegatedProperty = readWithLength { readIrLocalDelegatedProperty() }
                         oneOfIndex = 11
                     }
                     12 -> {
-                        ir_type_alias__ = readWithLength { readIrTypeAlias() }
+                        oneOfIrTypeAlias = readWithLength { readIrTypeAlias() }
                         oneOfIndex = 12
                     }
                     else -> skip(type)
@@ -2117,113 +2518,124 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
             }
         }
         when (oneOfIndex) {
-            1 -> return createIrDeclaration_irAnonymousInit(ir_anonymous_init__!!)
-            2 -> return createIrDeclaration_irClass(ir_class__!!)
-            3 -> return createIrDeclaration_irConstructor(ir_constructor__!!)
-            4 -> return createIrDeclaration_irEnumEntry(ir_enum_entry__!!)
-            5 -> return createIrDeclaration_irField(ir_field__!!)
-            6 -> return createIrDeclaration_irFunction(ir_function__!!)
-            7 -> return createIrDeclaration_irProperty(ir_property__!!)
-            8 -> return createIrDeclaration_irTypeParameter(ir_type_parameter__!!)
-            9 -> return createIrDeclaration_irVariable(ir_variable__!!)
-            10 -> return createIrDeclaration_irValueParameter(ir_value_parameter__!!)
-            11 -> return createIrDeclaration_irLocalDelegatedProperty(ir_local_delegated_property__!!)
-            12 -> return createIrDeclaration_irTypeAlias(ir_type_alias__!!)
+            1 -> return createIrDeclaration_irAnonymousInit(oneOfIrAnonymousInit!!)
+            2 -> return createIrDeclaration_irClass(oneOfIrClass!!)
+            3 -> return createIrDeclaration_irConstructor(oneOfIrConstructor!!)
+            4 -> return createIrDeclaration_irEnumEntry(oneOfIrEnumEntry!!)
+            5 -> return createIrDeclaration_irField(oneOfIrField!!)
+            6 -> return createIrDeclaration_irFunction(oneOfIrFunction!!)
+            7 -> return createIrDeclaration_irProperty(oneOfIrProperty!!)
+            8 -> return createIrDeclaration_irTypeParameter(oneOfIrTypeParameter!!)
+            9 -> return createIrDeclaration_irVariable(oneOfIrVariable!!)
+            10 -> return createIrDeclaration_irValueParameter(oneOfIrValueParameter!!)
+            11 -> return createIrDeclaration_irLocalDelegatedProperty(oneOfIrLocalDelegatedProperty!!)
+            12 -> return createIrDeclaration_irTypeAlias(oneOfIrTypeAlias!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
 
     open fun readIrBranch(): IrBranchMessageType {
-        var condition__: IrExpressionMessageType? = null
-        var result__: IrExpressionMessageType? = null
+        var condition: IrExpressionMessageType? = null
+        var result: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> condition__ = readWithLength { readIrExpression() }
-                    2 -> result__ = readWithLength { readIrExpression() }
+                    1 -> condition = readWithLength { readIrExpression() }
+                    2 -> result = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrBranch(condition__!!, result__!!)
+        return createIrBranch(condition!!, result!!)
     }
 
     open fun readIrBlockBody(): IrBlockBodyMessageType {
-        var statement__: MutableList<IrStatementMessageType> = mutableListOf()
+        var statement: MutableList<IrStatementMessageType> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> statement__.add(readWithLength { readIrStatement() })
+                    1 -> statement.add(readWithLength { readIrStatement() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrBlockBody(statement__)
+        return createIrBlockBody(statement)
     }
 
     open fun readIrCatch(): IrCatchMessageType {
-        var catch_parameter__: IrVariableMessageType? = null
-        var result__: IrExpressionMessageType? = null
+        var catchParameter: IrVariableMessageType? = null
+        var result: IrExpressionMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> catch_parameter__ = readWithLength { readIrVariable() }
-                    2 -> result__ = readWithLength { readIrExpression() }
+                    1 -> catchParameter = readWithLength { readIrVariable() }
+                    2 -> result = readWithLength { readIrExpression() }
                     else -> skip(type)
                 }
             }
         }
-        return createIrCatch(catch_parameter__!!, result__!!)
+        return createIrCatch(catchParameter!!, result!!)
     }
 
     open fun readIrSyntheticBody(): IrSyntheticBodyMessageType {
-        var kind__: IrSyntheticBodyKindMessageType? = null
+        var kind: IrSyntheticBodyKindMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> kind__ = createIrSyntheticBodyKind(readInt32())
+                    1 -> kind = createIrSyntheticBodyKind(readInt32())
                     else -> skip(type)
                 }
             }
         }
-        return createIrSyntheticBody(kind__!!)
+        return createIrSyntheticBody(kind!!)
     }
 
     open fun readIrStatement(): IrStatementMessageType {
-        var coordinates__: CoordinatesMessageType? = null
-        var declaration__: IrDeclarationMessageType? = null
-        var expression__: IrExpressionMessageType? = null
-        var block_body__: IrBlockBodyMessageType? = null
-        var branch__: IrBranchMessageType? = null
-        var catch__: IrCatchMessageType? = null
-        var synthetic_body__: IrSyntheticBodyMessageType? = null
+        var coordinatesStartOffset: Int = 0
+        var coordinatesEndOffset: Int = 0
+        var oneOfDeclaration: IrDeclarationMessageType? = null
+        var oneOfExpression: IrExpressionMessageType? = null
+        var oneOfBlockBody: IrBlockBodyMessageType? = null
+        var oneOfBranch: IrBranchMessageType? = null
+        var oneOfCatch: IrCatchMessageType? = null
+        var oneOfSyntheticBody: IrSyntheticBodyMessageType? = null
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> coordinates__ = readWithLength { readCoordinates() }
+                    1 -> readWithLength {
+                        while (hasData) {
+                            readField { fieldNumber, type ->
+                                when (fieldNumber) {
+                                    1 -> coordinatesStartOffset = readInt32()
+                                    2 -> coordinatesEndOffset = readInt32()
+                                    else -> skip(type)
+                                }
+                            }
+                        }
+                    }
                     2 -> {
-                        declaration__ = readWithLength { readIrDeclaration() }
+                        oneOfDeclaration = readWithLength { readIrDeclaration() }
                         oneOfIndex = 2
                     }
                     3 -> {
-                        expression__ = readWithLength { readIrExpression() }
+                        oneOfExpression = readWithLength { readIrExpression() }
                         oneOfIndex = 3
                     }
                     4 -> {
-                        block_body__ = readWithLength { readIrBlockBody() }
+                        oneOfBlockBody = readWithLength { readIrBlockBody() }
                         oneOfIndex = 4
                     }
                     5 -> {
-                        branch__ = readWithLength { readIrBranch() }
+                        oneOfBranch = readWithLength { readIrBranch() }
                         oneOfIndex = 5
                     }
                     6 -> {
-                        catch__ = readWithLength { readIrCatch() }
+                        oneOfCatch = readWithLength { readIrCatch() }
                         oneOfIndex = 6
                     }
                     7 -> {
-                        synthetic_body__ = readWithLength { readIrSyntheticBody() }
+                        oneOfSyntheticBody = readWithLength { readIrSyntheticBody() }
                         oneOfIndex = 7
                     }
                     else -> skip(type)
@@ -2231,12 +2643,12 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
             }
         }
         when (oneOfIndex) {
-            2 -> return createIrStatement_declaration(coordinates__!!, declaration__!!)
-            3 -> return createIrStatement_expression(coordinates__!!, expression__!!)
-            4 -> return createIrStatement_blockBody(coordinates__!!, block_body__!!)
-            5 -> return createIrStatement_branch(coordinates__!!, branch__!!)
-            6 -> return createIrStatement_catch(coordinates__!!, catch__!!)
-            7 -> return createIrStatement_syntheticBody(coordinates__!!, synthetic_body__!!)
+            2 -> return createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
+            3 -> return createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)
+            4 -> return createIrStatement_blockBody(coordinatesStartOffset, coordinatesEndOffset, oneOfBlockBody!!)
+            5 -> return createIrStatement_branch(coordinatesStartOffset, coordinatesEndOffset, oneOfBranch!!)
+            6 -> return createIrStatement_catch(coordinatesStartOffset, coordinatesEndOffset, oneOfCatch!!)
+            7 -> return createIrStatement_syntheticBody(coordinatesStartOffset, coordinatesEndOffset, oneOfSyntheticBody!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
