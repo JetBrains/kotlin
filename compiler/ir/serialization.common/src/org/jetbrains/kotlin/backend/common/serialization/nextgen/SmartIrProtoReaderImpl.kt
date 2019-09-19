@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorReferenceDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.UniqId
+import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -240,8 +242,28 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         return visibilities.single { it.name == nameString }
     }
 
+    private val allKnownDeclarationOrigins =
+        IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
+
+    private val declarationOriginIndex =
+        allKnownDeclarationOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
+
+    private val allKnownStatementOrigins =
+        IrStatementOrigin::class.nestedClasses.toList()
+    private val statementOriginIndex =
+        allKnownStatementOrigins.map { it.objectInstance as? IrStatementOriginImpl }.filterNotNull().associateBy { it.debugName }
+
     override fun createIrStatementOrigin(name: Int): IrStatementOrigin {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val nameOrin = loadString(name)
+        return nameOrin.let {
+            val componentPrefix = "COMPONENT_"
+            when {
+                it.startsWith(componentPrefix) -> {
+                    IrStatementOrigin.COMPONENT_N.withIndex(it.removePrefix(componentPrefix).toInt())
+                }
+                else -> statementOriginIndex[it] ?: error("Unexpected statement origin: $it")
+            }
+        }
     }
 
     override fun createKnownOrigin(index: Int): IrDeclarationOrigin {
@@ -249,7 +271,8 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     }
 
     override fun createIrDeclarationOrigin_custom(custom: Int): IrDeclarationOrigin {
-        return object : IrDeclarationOriginImpl(loadString(custom)) {}
+        val name = loadString(custom)
+        return declarationOriginIndex[name] ?: object : IrDeclarationOriginImpl(name) {}
     }
 
     override fun createIrDeclarationOrigin_origin(origin: IrDeclarationOrigin) = origin
@@ -359,7 +382,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     override fun createIrCall(
         symbol: Int, memberAccessDispatchReceiver: IrExpression?,
         memberAccessExtensionReceiver: IrExpression?,
-        memberAccessValueArgument: List<IrExpression>,
+        memberAccessValueArgument: List<NullableExpression>,
         memberAccessTypeArguments: List<IrType>, super_: Int?, origin: IrStatementOrigin?
     ): IrCall {
         val functionSymbol = loadSymbol(symbol) as IrSimpleFunctionSymbol
@@ -377,7 +400,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
             dispatchReceiver = memberAccessDispatchReceiver
             extensionReceiver = memberAccessExtensionReceiver
             memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value.expression) }
         }
     }
 
@@ -386,7 +409,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         constructorTypeArgumentsCount: Int,
         memberAccessDispatchReceiver: IrExpression?,
         memberAccessExtensionReceiver: IrExpression?,
-        memberAccessValueArgument: List<IrExpression>,
+        memberAccessValueArgument: List<NullableExpression>,
         memberAccessTypeArguments: List<IrType>
     ): IrConstructorCall {
         val constructorSymbol = loadSymbol(symbol) as IrConstructorSymbol
@@ -403,7 +426,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
             dispatchReceiver = memberAccessDispatchReceiver
             extensionReceiver = memberAccessExtensionReceiver
             memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value.expression) }
         }
     }
 
@@ -412,7 +435,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         origin: IrStatementOrigin?,
         memberAccessDispatchReceiver: IrExpression?,
         memberAccessExtensionReceiver: IrExpression?,
-        memberAccessValueArgument: List<IrExpression>,
+        memberAccessValueArgument: List<NullableExpression>,
         memberAccessTypeArguments: List<IrType>
     ): IrFunctionReference {
         val functionSymbol = loadSymbol(symbol) as IrFunctionSymbol
@@ -429,7 +452,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
             dispatchReceiver = memberAccessDispatchReceiver
             extensionReceiver = memberAccessExtensionReceiver
             memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value.expression) }
         }
 
         return callable
@@ -456,7 +479,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         origin: IrStatementOrigin?,
         memberAccessDispatchReceiver: IrExpression?,
         memberAccessExtensionReceiver: IrExpression?,
-        memberAccessValueArgument: List<IrExpression>,
+        memberAccessValueArgument: List<NullableExpression>,
         memberAccessTypeArguments: List<IrType>,
         symbol: Int
     ): IrPropertyReference {
@@ -478,7 +501,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
             dispatchReceiver = memberAccessDispatchReceiver
             extensionReceiver = memberAccessExtensionReceiver
             memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value.expression) }
         }
     }
 
@@ -512,7 +535,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     override fun createIrDelegatingConstructorCall(
         symbol: Int, memberAccessDispatchReceiver: IrExpression?,
         memberAccessExtensionReceiver: IrExpression?,
-        memberAccessValueArgument: List<IrExpression>,
+        memberAccessValueArgument: List<NullableExpression>,
         memberAccessTypeArguments: List<IrType>
     ): IrDelegatingConstructorCall {
         val constructorSymbol = loadSymbol(symbol) as IrConstructorSymbol
@@ -528,7 +551,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
             dispatchReceiver = memberAccessDispatchReceiver
             extensionReceiver = memberAccessExtensionReceiver
             memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value.expression) }
         }
     }
 
@@ -536,7 +559,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         symbol: Int,
         memberAccessDispatchReceiver: IrExpression?,
         memberAccessExtensionReceiver: IrExpression?,
-        memberAccessValueArgument: List<IrExpression>,
+        memberAccessValueArgument: List<NullableExpression>,
         memberAccessTypeArguments: List<IrType>
     ): IrEnumConstructorCall {
         val constructorSymbol = loadSymbol(symbol) as IrConstructorSymbol
@@ -551,7 +574,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
             dispatchReceiver = memberAccessDispatchReceiver
             extensionReceiver = memberAccessExtensionReceiver
             memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value.expression) }
         }
     }
 
@@ -677,8 +700,8 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 //    }
 
-    override fun createNullableIrExpression(expression: IrExpression?): IrExpression {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun createNullableIrExpression(expression: IrExpression?): NullableExpression {
+        return NullableExpression(expression)
     }
 
 
@@ -1135,7 +1158,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     }
 
     override fun createIrSyntheticBodyKind(index: Int): IrSyntheticBodyKind {
-        return IrSyntheticBodyKind.values()[index]
+        return IrSyntheticBodyKind.values()[index - 1]
     }
 
     override fun createIrSyntheticBody(kind: IrSyntheticBodyKind): IrSyntheticBody {

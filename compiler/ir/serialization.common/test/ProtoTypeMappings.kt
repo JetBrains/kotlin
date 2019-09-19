@@ -73,7 +73,7 @@ val typeMappings = mapOf(
     "IrOperation" to "org.jetbrains.kotlin.ir.expressions.IrExpression",
     "IrTypeOperator" to "org.jetbrains.kotlin.ir.expressions.IrTypeOperator",
     "IrExpression" to "org.jetbrains.kotlin.ir.expressions.IrExpression",
-    "NullableIrExpression" to "org.jetbrains.kotlin.ir.expressions.IrExpression",
+    "NullableIrExpression" to "org.jetbrains.kotlin.backend.common.serialization.nextgen.NullableExpression",
     "IrFunction" to "org.jetbrains.kotlin.ir.declarations.IrSimpleFunction",
     "IrConstructor" to "org.jetbrains.kotlin.ir.declarations.IrConstructor",
     "IrField" to "org.jetbrains.kotlin.ir.declarations.IrField",

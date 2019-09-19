@@ -67,7 +67,7 @@ import org.jetbrains.kotlin.ir.expressions.IrDynamicOperatorExpression as IrDyna
 import org.jetbrains.kotlin.ir.expressions.IrExpression as IrOperationMessageType
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator as IrTypeOperatorMessageType
 import org.jetbrains.kotlin.ir.expressions.IrExpression as IrExpressionMessageType
-import org.jetbrains.kotlin.ir.expressions.IrExpression as NullableIrExpressionMessageType
+import org.jetbrains.kotlin.backend.common.serialization.nextgen.NullableExpression as NullableIrExpressionMessageType
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction as IrFunctionMessageType
 import org.jetbrains.kotlin.ir.declarations.IrConstructor as IrConstructorMessageType
 import org.jetbrains.kotlin.ir.declarations.IrField as IrFieldMessageType

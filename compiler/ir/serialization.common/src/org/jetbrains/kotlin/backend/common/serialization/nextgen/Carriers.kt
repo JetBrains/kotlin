@@ -48,3 +48,5 @@ class FieldAccessCarrier(val symbolId: Int, val superId: Int?, val receiver: IrE
 class LoopCarrier(val loopId: Int, val condition: IrExpression, val label: Int?, val body: IrExpression?, val origin: IrStatementOrigin?)
 
 class CoordinatesCarrier(val start: Int, val end: Int)
+
+class NullableExpression(val expression: IrExpression?)
