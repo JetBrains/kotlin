@@ -94,4 +94,25 @@ class ProtoBenchmarks {
             ProtoStatement.parseFrom(bodyBytes)
         }
     }
+
+    @Test
+    fun testClassNextgen() {
+        runBenchWithWarmup("Parse class bytes with Nextgen Parser", 50, 30, 15000, MeasureUnits.MICROSECONDS) {
+            SimpleIrProtoReader(classBytes).readIrClass()
+        }
+    }
+
+    @Test
+    fun testFunctionHeaderNextgen() {
+        runBenchWithWarmup("Parse function header bytes with Nextgen Parser", 50, 30, 15000, MeasureUnits.NANOSECONDS) {
+            SimpleIrProtoReader(headerBytes).readIrFunction()
+        }
+    }
+
+    @Test
+    fun testFunctionBodyNextgen() {
+        runBenchWithWarmup("Parse function body bytes with Nextgen Parser", 50, 30, 15000, MeasureUnits.MICROSECONDS) {
+            SimpleIrProtoReader(bodyBytes).readIrStatement()
+        }
+    }
 }
