@@ -20,12 +20,12 @@ fun main(args: Array<String>) {
 
     val result = ProtoParser(Files.readAllLines(Paths.get(protoFile))).parse()
 
-//    println(result.createIrDeserializer(typeMappings, true))
+    println(result.createIrDeserializer(typeMappings, false))
 
-    result.forEach {
-        printProto(it)
-        println()
-    }
+//    result.forEach {
+//        printProto(it)
+//        println()
+//    }
 }
 
 val Char.validIdSymbol: Boolean

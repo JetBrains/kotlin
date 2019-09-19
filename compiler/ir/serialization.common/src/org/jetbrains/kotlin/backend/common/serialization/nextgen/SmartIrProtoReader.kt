@@ -271,9 +271,11 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createNullableIrExpression(expression : IrExpressionMessageType?): NullableIrExpressionMessageType
 
-    abstract fun createIrFunction(baseBaseSymbol : Int, baseBaseOrigin : IrDeclarationOriginMessageType, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, baseName : Int, baseVisibility : VisibilityMessageType, baseIsInline : Boolean, baseIsExternal : Boolean, baseTypeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, baseDispatchReceiver : IrValueParameterMessageType?, baseExtensionReceiver : IrValueParameterMessageType?, baseValueParameter : List<IrValueParameterMessageType>, baseBody : Int?, baseReturnType : Int, modality : ModalityKindMessageType, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Int>): IrFunctionMessageType
+    abstract fun createIrFunction(baseBaseSymbol : Int, baseBaseOrigin : IrDeclarationOriginMessageType, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, baseName : Int, baseVisibility : VisibilityMessageType, baseIsInline : Boolean, baseIsExternal : Boolean, baseReturnType : Int, modality : ModalityKindMessageType, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Int>): IrFunctionMessageType
+    abstract fun createIrFunction1(partial: IrFunctionMessageType, baseTypeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, baseDispatchReceiver : IrValueParameterMessageType?, baseExtensionReceiver : IrValueParameterMessageType?, baseValueParameter : List<IrValueParameterMessageType>, baseBody : Int?): IrFunctionMessageType
 
-    abstract fun createIrConstructor(baseBaseSymbol : Int, baseBaseOrigin : IrDeclarationOriginMessageType, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, baseName : Int, baseVisibility : VisibilityMessageType, baseIsInline : Boolean, baseIsExternal : Boolean, baseTypeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, baseDispatchReceiver : IrValueParameterMessageType?, baseExtensionReceiver : IrValueParameterMessageType?, baseValueParameter : List<IrValueParameterMessageType>, baseBody : Int?, baseReturnType : Int, isPrimary : Boolean): IrConstructorMessageType
+    abstract fun createIrConstructor(baseBaseSymbol : Int, baseBaseOrigin : IrDeclarationOriginMessageType, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, baseName : Int, baseVisibility : VisibilityMessageType, baseIsInline : Boolean, baseIsExternal : Boolean, baseReturnType : Int, isPrimary : Boolean): IrConstructorMessageType
+    abstract fun createIrConstructor1(partial: IrConstructorMessageType, baseTypeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, baseDispatchReceiver : IrValueParameterMessageType?, baseExtensionReceiver : IrValueParameterMessageType?, baseValueParameter : List<IrValueParameterMessageType>, baseBody : Int?): IrConstructorMessageType
 
     abstract fun createIrField(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, initializer : Int?, name : Int, visibility : VisibilityMessageType, isFinal : Boolean, isExternal : Boolean, isStatic : Boolean, type_ : Int): IrFieldMessageType
 
@@ -293,7 +295,9 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrTypeParameterContainer(typeParameter : List<IrTypeParameterMessageType>): List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>
 
-    abstract fun createIrClass(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, kind : ClassKindMessageType, visibility : VisibilityMessageType, modality : ModalityKindMessageType, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, thisReceiver : IrValueParameterMessageType?, typeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, declarationContainer : List<org.jetbrains.kotlin.ir.declarations.IrDeclaration>, superType : List<Int>): IrClassMessageType
+    abstract fun createIrClass(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, kind : ClassKindMessageType, visibility : VisibilityMessageType, modality : ModalityKindMessageType, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, superType : List<Int>): IrClassMessageType
+    abstract fun createIrClass1(partial: IrClassMessageType, thisReceiver : IrValueParameterMessageType?, typeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>): IrClassMessageType
+    abstract fun createIrClass2(partial: IrClassMessageType, declarationContainer : List<org.jetbrains.kotlin.ir.declarations.IrDeclaration>): IrClassMessageType
 
     abstract fun createIrTypeAlias(baseSymbol : Int, baseOrigin : IrDeclarationOriginMessageType, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, name : Int, visibility : VisibilityMessageType, typeParameters : List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>, expandedType : Int, isActual : Boolean): IrTypeAliasMessageType
 
@@ -1730,15 +1734,23 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         }
     }
 
+    protected var fieldIrExpressionType: Int? = null
+    protected var fieldIrExpressionCoordinatesStartOffset: Int = 0
+    protected var fieldIrExpressionCoordinatesEndOffset: Int = 0
+
     open fun readIrExpression(): IrExpressionMessageType {
         var operation: IrOperationMessageType? = null
+        var operationOffset: Int = -1
         var type_: Int? = null
         var coordinatesStartOffset: Int = 0
         var coordinatesEndOffset: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operation = readWithLength { readIrOperation() }
+                    1 -> {
+                        operationOffset = offset
+                        skip(type)
+                    }
                     2 -> type_ = readWithLength { readIrDataIndex() }
                     3 -> readWithLength {
                         while (hasData) {
@@ -1755,6 +1767,10 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                 }
             }
         }
+        fieldIrExpressionType = type_
+        fieldIrExpressionCoordinatesStartOffset = coordinatesStartOffset
+        fieldIrExpressionCoordinatesEndOffset = coordinatesEndOffset
+        operation = delayed(operationOffset) { readWithLength { readIrOperation() } }
         return createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
     }
 
@@ -1782,10 +1798,15 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var baseIsInline: Boolean = false
         var baseIsExternal: Boolean = false
         var baseTypeParameters: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
+        var baseTypeParametersOffset: Int = -1
         var baseDispatchReceiver: IrValueParameterMessageType? = null
+        var baseDispatchReceiverOffset: Int = -1
         var baseExtensionReceiver: IrValueParameterMessageType? = null
+        var baseExtensionReceiverOffset: Int = -1
         var baseValueParameter: MutableList<IrValueParameterMessageType> = mutableListOf()
+        var baseValueParameterOffsetList: MutableList<Int> = arrayListOf()
         var baseBody: Int? = null
+        var baseBodyOffset: Int = -1
         var baseReturnType: Int? = null
         var modality: ModalityKindMessageType? = null
         var isTailrec: Boolean = false
@@ -1825,11 +1846,26 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                                     3 -> baseVisibility = readWithLength { readVisibility() }
                                     4 -> baseIsInline = readBool()
                                     5 -> baseIsExternal = readBool()
-                                    6 -> baseTypeParameters = readWithLength { readIrTypeParameterContainer() }
-                                    7 -> baseDispatchReceiver = readWithLength { readIrValueParameter() }
-                                    8 -> baseExtensionReceiver = readWithLength { readIrValueParameter() }
-                                    9 -> baseValueParameter.add(readWithLength { readIrValueParameter() })
-                                    10 -> baseBody = readWithLength { readIrDataIndex() }
+                                    6 -> {
+                                        baseTypeParametersOffset = offset
+                                        skip(type)
+                                    }
+                                    7 -> {
+                                        baseDispatchReceiverOffset = offset
+                                        skip(type)
+                                    }
+                                    8 -> {
+                                        baseExtensionReceiverOffset = offset
+                                        skip(type)
+                                    }
+                                    9 -> {
+                                        baseValueParameterOffsetList.add(offset)
+                                        skip(type)
+                                    }
+                                    10 -> {
+                                        baseBodyOffset = offset
+                                        skip(type)
+                                    }
                                     11 -> baseReturnType = readWithLength { readIrDataIndex() }
                                     else -> skip(type)
                                 }
@@ -1844,7 +1880,16 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                 }
             }
         }
-        return createIrFunction(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType!!, modality!!, isTailrec, isSuspend, overridden)
+        val p0 = createIrFunction(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseReturnType!!, modality!!, isTailrec, isSuspend, overridden)
+
+        baseTypeParameters = delayed(baseTypeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        baseDispatchReceiver = delayed(baseDispatchReceiverOffset) { readWithLength { readIrValueParameter() } }
+        baseExtensionReceiver = delayed(baseExtensionReceiverOffset) { readWithLength { readIrValueParameter() } }
+        for (o in baseValueParameterOffsetList) {
+            baseValueParameter.add(delayed(o) { readWithLength { readIrValueParameter() } })
+        }
+        baseBody = delayed(baseBodyOffset) { readWithLength { readIrDataIndex() } }
+        return createIrFunction1(p0, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody)
     }
 
     open fun readIrConstructor(): IrConstructorMessageType {
@@ -1858,10 +1903,15 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var baseIsInline: Boolean = false
         var baseIsExternal: Boolean = false
         var baseTypeParameters: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
+        var baseTypeParametersOffset: Int = -1
         var baseDispatchReceiver: IrValueParameterMessageType? = null
+        var baseDispatchReceiverOffset: Int = -1
         var baseExtensionReceiver: IrValueParameterMessageType? = null
+        var baseExtensionReceiverOffset: Int = -1
         var baseValueParameter: MutableList<IrValueParameterMessageType> = mutableListOf()
+        var baseValueParameterOffsetList: MutableList<Int> = arrayListOf()
         var baseBody: Int? = null
+        var baseBodyOffset: Int = -1
         var baseReturnType: Int? = null
         var isPrimary: Boolean = false
         while (hasData) {
@@ -1898,11 +1948,26 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                                     3 -> baseVisibility = readWithLength { readVisibility() }
                                     4 -> baseIsInline = readBool()
                                     5 -> baseIsExternal = readBool()
-                                    6 -> baseTypeParameters = readWithLength { readIrTypeParameterContainer() }
-                                    7 -> baseDispatchReceiver = readWithLength { readIrValueParameter() }
-                                    8 -> baseExtensionReceiver = readWithLength { readIrValueParameter() }
-                                    9 -> baseValueParameter.add(readWithLength { readIrValueParameter() })
-                                    10 -> baseBody = readWithLength { readIrDataIndex() }
+                                    6 -> {
+                                        baseTypeParametersOffset = offset
+                                        skip(type)
+                                    }
+                                    7 -> {
+                                        baseDispatchReceiverOffset = offset
+                                        skip(type)
+                                    }
+                                    8 -> {
+                                        baseExtensionReceiverOffset = offset
+                                        skip(type)
+                                    }
+                                    9 -> {
+                                        baseValueParameterOffsetList.add(offset)
+                                        skip(type)
+                                    }
+                                    10 -> {
+                                        baseBodyOffset = offset
+                                        skip(type)
+                                    }
                                     11 -> baseReturnType = readWithLength { readIrDataIndex() }
                                     else -> skip(type)
                                 }
@@ -1914,7 +1979,16 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                 }
             }
         }
-        return createIrConstructor(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType!!, isPrimary)
+        val p0 = createIrConstructor(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseReturnType!!, isPrimary)
+
+        baseTypeParameters = delayed(baseTypeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        baseDispatchReceiver = delayed(baseDispatchReceiverOffset) { readWithLength { readIrValueParameter() } }
+        baseExtensionReceiver = delayed(baseExtensionReceiverOffset) { readWithLength { readIrValueParameter() } }
+        for (o in baseValueParameterOffsetList) {
+            baseValueParameter.add(delayed(o) { readWithLength { readIrValueParameter() } })
+        }
+        baseBody = delayed(baseBodyOffset) { readWithLength { readIrDataIndex() } }
+        return createIrConstructor1(p0, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody)
     }
 
     open fun readIrField(): IrFieldMessageType {
@@ -2264,8 +2338,11 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var isExternal: Boolean = false
         var isInline: Boolean = false
         var thisReceiver: IrValueParameterMessageType? = null
+        var thisReceiverOffset: Int = -1
         var typeParameters: List<org.jetbrains.kotlin.ir.declarations.IrTypeParameter>? = null
+        var typeParametersOffset: Int = -1
         var declarationContainer: List<org.jetbrains.kotlin.ir.declarations.IrDeclaration>? = null
+        var declarationContainerOffset: Int = -1
         var superType: MutableList<Int> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
@@ -2302,15 +2379,31 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                     8 -> isData = readBool()
                     9 -> isExternal = readBool()
                     10 -> isInline = readBool()
-                    11 -> thisReceiver = readWithLength { readIrValueParameter() }
-                    12 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
-                    13 -> declarationContainer = readWithLength { readIrDeclarationContainer() }
+                    11 -> {
+                        thisReceiverOffset = offset
+                        skip(type)
+                    }
+                    12 -> {
+                        typeParametersOffset = offset
+                        skip(type)
+                    }
+                    13 -> {
+                        declarationContainerOffset = offset
+                        skip(type)
+                    }
                     14 -> superType.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrClass(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters!!, declarationContainer!!, superType)
+        val p0 = createIrClass(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, superType)
+
+        thisReceiver = delayed(thisReceiverOffset) { readWithLength { readIrValueParameter() } }
+        typeParameters = delayed(typeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        val p1 = createIrClass1(p0, thisReceiver, typeParameters!!)
+
+        declarationContainer = delayed(declarationContainerOffset) { readWithLength { readIrDeclarationContainer() } }
+        return createIrClass2(p1, declarationContainer!!)
     }
 
     open fun readIrTypeAlias(): IrTypeAliasMessageType {
@@ -2590,15 +2683,24 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         return createIrSyntheticBody(kind!!)
     }
 
+    protected var fieldIrStatementCoordinatesStartOffset: Int = 0
+    protected var fieldIrStatementCoordinatesEndOffset: Int = 0
+
     open fun readIrStatement(): IrStatementMessageType {
         var coordinatesStartOffset: Int = 0
         var coordinatesEndOffset: Int = 0
         var oneOfDeclaration: IrDeclarationMessageType? = null
+        var oneOfDeclarationOffset: Int = -1
         var oneOfExpression: IrExpressionMessageType? = null
+        var oneOfExpressionOffset: Int = -1
         var oneOfBlockBody: IrBlockBodyMessageType? = null
+        var oneOfBlockBodyOffset: Int = -1
         var oneOfBranch: IrBranchMessageType? = null
+        var oneOfBranchOffset: Int = -1
         var oneOfCatch: IrCatchMessageType? = null
+        var oneOfCatchOffset: Int = -1
         var oneOfSyntheticBody: IrSyntheticBodyMessageType? = null
+        var oneOfSyntheticBodyOffset: Int = -1
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
@@ -2615,33 +2717,47 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                         }
                     }
                     2 -> {
-                        oneOfDeclaration = readWithLength { readIrDeclaration() }
+                        oneOfDeclarationOffset = offset
+                        skip(type)
                         oneOfIndex = 2
                     }
                     3 -> {
-                        oneOfExpression = readWithLength { readIrExpression() }
+                        oneOfExpressionOffset = offset
+                        skip(type)
                         oneOfIndex = 3
                     }
                     4 -> {
-                        oneOfBlockBody = readWithLength { readIrBlockBody() }
+                        oneOfBlockBodyOffset = offset
+                        skip(type)
                         oneOfIndex = 4
                     }
                     5 -> {
-                        oneOfBranch = readWithLength { readIrBranch() }
+                        oneOfBranchOffset = offset
+                        skip(type)
                         oneOfIndex = 5
                     }
                     6 -> {
-                        oneOfCatch = readWithLength { readIrCatch() }
+                        oneOfCatchOffset = offset
+                        skip(type)
                         oneOfIndex = 6
                     }
                     7 -> {
-                        oneOfSyntheticBody = readWithLength { readIrSyntheticBody() }
+                        oneOfSyntheticBodyOffset = offset
+                        skip(type)
                         oneOfIndex = 7
                     }
                     else -> skip(type)
                 }
             }
         }
+        fieldIrStatementCoordinatesStartOffset = coordinatesStartOffset
+        fieldIrStatementCoordinatesEndOffset = coordinatesEndOffset
+        oneOfDeclaration = delayed(oneOfDeclarationOffset) { readWithLength { readIrDeclaration() } }
+        oneOfExpression = delayed(oneOfExpressionOffset) { readWithLength { readIrExpression() } }
+        oneOfBlockBody = delayed(oneOfBlockBodyOffset) { readWithLength { readIrBlockBody() } }
+        oneOfBranch = delayed(oneOfBranchOffset) { readWithLength { readIrBranch() } }
+        oneOfCatch = delayed(oneOfCatchOffset) { readWithLength { readIrCatch() } }
+        oneOfSyntheticBody = delayed(oneOfSyntheticBodyOffset) { readWithLength { readIrSyntheticBody() } }
         when (oneOfIndex) {
             2 -> return createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
             3 -> return createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)

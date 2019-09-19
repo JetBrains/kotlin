@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 open class ProtoReader(
     val source: ByteArray,
-    offset: Int = 0
+    var offset: Int = 0
 ) {
-
-    var offset: Int = offset
-        private set
 
     var currentEnd = source.size
 
@@ -126,6 +123,17 @@ open class ProtoReader(
             }
             3, 4 -> error("groups")
             5 -> offset += 4
+        }
+    }
+
+    inline fun <T> delayed(o: Int, block: () -> T): T {
+        val oldOffset = offset
+
+        try {
+            offset = o
+            return block()
+        } finally {
+            offset = oldOffset
         }
     }
 }

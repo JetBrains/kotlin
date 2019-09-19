@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
+import org.jetbrains.kotlin.backend.common.atMostOne
 import java.lang.StringBuilder
 
 fun List<Proto>.createIrDeserializer(classMap: Map<String, String>, isSimple: Boolean): String {
@@ -125,10 +126,15 @@ private class IrDeserializerPrinter(
                 val names = mutableMapOf<MessageEntry, String>()
                 names += p.fields.buildNames("")
 
-                fun addMessage(suffix: String, fields: List<MessageEntry.Field>) {
-                    append("    ${maybeAbstract}fun create${p.name}${suffix}(")
+                fun addMessage(index: Int, suffix: String, fields: List<MessageEntry.Field>) {
+                    val actualSuffix = if (index != 0) "" + index + suffix else suffix
+                    append("    ${maybeAbstract}fun create${p.name}${actualSuffix}(")
                     fields.forEachIndexed { i, f ->
-                        if (i != 0) append(", ")
+                        if (i != 0) {
+                            append(", ")
+                        } else if (index != 0) {
+                            append("partial: ${p.name.ktType}, ")
+                        }
                         val type = when (f.kind) {
                             FieldKind.REPEATED -> "List<${f.type.ktType}>"
                             FieldKind.REQUIRED, FieldKind.ONE_OF -> f.type.ktType
@@ -148,24 +154,35 @@ private class IrDeserializerPrinter(
                     appendln("): ${p.name.ktType}$impl")
                 }
 
-                val allFields = p.fields.inlined()
+                val fieldsByOrder = p.fields.inlined().splitByOrder()
 
-                if (allFields.any { it is MessageEntry.OneOf }) {
-                    val o =
-                        allFields.filterIsInstance<MessageEntry.OneOf>().singleOrNull() ?: error("Too many oneof's in message ${p.name}")
+                fieldsByOrder.forEachIndexed { i, allFields ->
+                    if (allFields.any { it is MessageEntry.OneOf }) {
+                        val o =
+                            allFields.filterIsInstance<MessageEntry.OneOf>().singleOrNull()
+                                ?: error("Too many oneof's in message ${p.name}")
 
-                    val (fp, fs) = allFields.splitBy(o)
+                        val (fp, fs) = allFields.splitBy(o)
 
-                    for (of in o.fields.inlined()) {
-                        of as MessageEntry.Field
-                        addMessage("_${of.name.escape()}", fp + of + fs)
+                        for (of in o.fields.inlined()) {
+                            of as MessageEntry.Field
+                            addMessage(i, "_${of.name.escape()}", fp + of + fs)
+                        }
+                    } else {
+                        addMessage(i, "", allFields.map { it as MessageEntry.Field })
                     }
-                } else {
-                    addMessage("", allFields.map { it as MessageEntry.Field })
                 }
             }
         }
         appendln()
+    }
+
+    val MessageEntry.order: Int
+        get() = (this as? MessageEntry.Field)?.directives?.atMostOne { it.startsWith("@order_") }?.substring("@order_".length)?.toInt()
+            ?: 0
+
+    private fun List<MessageEntry>.splitByOrder(): List<List<MessageEntry>> {
+        return this.groupBy { it.order }.entries.sortedBy { (k, _) -> k }.map { (_, v) -> v }
     }
 
     val Proto.Message.isInline: Boolean
@@ -262,16 +279,43 @@ private class IrDeserializerPrinter(
         return result
     }
 
+    val MessageEntry.Field.isExposed: Boolean
+        get() = "@exposed" in this.directives
+
+    private fun List<MessageEntry>.buildExposedSet(exposeAll: Boolean = false): List<MessageEntry.Field> {
+        val result = mutableListOf<MessageEntry.Field>()
+
+        forEach { f ->
+            when (f) {
+                is MessageEntry.Field -> {
+                    if (exposeAll || f.isExposed) {
+                        if (f.isInline) {
+                            result += (typeMap[f.type] as Proto.Message).fields.buildExposedSet(true)
+                        } else {
+                            result += f
+                        }
+                    }
+                }
+                is MessageEntry.OneOf -> {
+                    result += f.fields.buildExposedSet(exposeAll)
+                }
+            }
+        }
+
+        return result
+    }
+
     private fun StringBuilder.addMessage(m: Proto.Message) {
         if (m.isInline) return
+
+        val exposedFields = m.fields.buildExposedSet()
 
         val allFields = m.fields.inlined().oneOfInlined.inlined().oneOfInlined // TODO
 
         val names = m.fields.buildNames("")
 
         fun getName(field: MessageEntry.Field): String {
-            return names[field] ?:
-                    error("sd")
+            return names[field]!!
         }
 
         allFields.fold(mutableMapOf<String, Int>()) { acc, c ->
@@ -284,9 +328,31 @@ private class IrDeserializerPrinter(
             }
         }
 
+        val exposedName = mutableMapOf<MessageEntry.Field, String>()
+
+        if (exposedFields.isNotEmpty()) {
+            for (f in exposedFields) {
+                val name = "field_${m.name}_${getName(f)}".escape()
+                exposedName[f] = name
+                f.type.zeroValue?.let {
+                    appendln("    protected var $name: ${f.type.ktType} = ${it}")
+                } ?: appendln("    protected var $name: ${f.type.ktType}? = null")
+            }
+
+            appendln()
+        }
+
         appendln("    open fun read${m.name}(): ${m.name.ktType} {")
 
+        val iterations = allFields.groupBy { if (it in exposedFields) -1 else it.order }.entries.sortedBy { (k, _) -> k }.map { (_, v) -> v }.filter { !it.isEmpty() }
+        val fieldToIteration = mutableMapOf<MessageEntry.Field, Int>()
+        iterations.forEachIndexed { index, list ->
+            list.forEach { fieldToIteration[it] = index }
+        }
+
         val nullableFields = mutableSetOf<MessageEntry.Field>()
+
+        val delayedReads = mutableSetOf<MessageEntry.Field>()
 
         allFields.forEach { f ->
             val (type, initExpression) = if (f.kind == FieldKind.REPEATED) {
@@ -303,6 +369,15 @@ private class IrDeserializerPrinter(
                 }
             }
             appendln("        var ${getName(f)}: $type = $initExpression")
+
+            if (fieldToIteration[f] != 0 && typeMap[f.type] is Proto.Message) {
+                delayedReads += f
+                if (f.kind == FieldKind.REPEATED) {
+                    appendln("        var ${getName(f)}OffsetList: MutableList<Int> = arrayListOf()")
+                } else {
+                    appendln("        var ${getName(f)}Offset: Int = -1")
+                }
+            }
         }
 
 
@@ -326,14 +401,33 @@ private class IrDeserializerPrinter(
                 } else {
                     val readExpression = f.type.toReaderInvocation()
                     if (f.kind == FieldKind.REPEATED) {
-                        appendln("${indent}${f.index} -> ${getName(f)}.add($readExpression)")
+                        if (f in delayedReads) {
+                            appendln("${indent}${f.index} -> {")
+                            appendln("${indent}    ${getName(f)}OffsetList.add(offset)")
+                            appendln("${indent}    skip(type)")
+                            appendln("${indent}}")
+                        } else {
+                            appendln("${indent}${f.index} -> ${getName(f)}.add($readExpression)")
+                        }
                     } else if (f.kind == FieldKind.ONE_OF) {
                         appendln("${indent}${f.index} -> {")
-                        appendln("${indent}    ${getName(f)} = $readExpression")
+                        if (f in delayedReads) {
+                            appendln("${indent}    ${getName(f)}Offset = offset")
+                            appendln("${indent}    skip(type)")
+                        } else {
+                            appendln("${indent}    ${getName(f)} = $readExpression")
+                        }
                         appendln("${indent}    oneOfIndex = ${f.index}")
                         appendln("${indent}}")
                     } else {
-                        appendln("${indent}${f.index} -> ${getName(f)} = $readExpression")
+                        if (f in delayedReads) {
+                            appendln("${indent}${f.index} -> {")
+                            appendln("${indent}    ${getName(f)}Offset = offset")
+                            appendln("${indent}    skip(type)")
+                            appendln("${indent}}")
+                        } else {
+                            appendln("${indent}${f.index} -> ${getName(f)} = $readExpression")
+                        }
                     }
                 }
             }
@@ -346,8 +440,18 @@ private class IrDeserializerPrinter(
 
         readFields("        ", m.fields.oneOfInlined)
 
-        fun invokeCreate(suffix: String, fields: List<MessageEntry.Field>): String {
-            return "return create${m.name}${suffix}(${fields.fold("") { acc, c ->
+        val lastIteration = allFields.splitByOrder().size - 1
+
+        fun invokeCreate(index: Int, suffix: String, fields: List<MessageEntry.Field>): String {
+            val prefix = if (index != lastIteration) {
+                "create${m.name}${suffix}("
+            } else {
+                "return create${m.name}${suffix}("
+            } + if (index == 0) "" else {
+                "p${index - 1}, "
+            }
+
+            return "${prefix}${fields.fold("") { acc, c ->
                 var result = if (acc.isEmpty()) "" else "$acc, "
                 result += getName(c)
                 if ((c.kind == FieldKind.REQUIRED || c.kind == FieldKind.ONE_OF) && c in nullableFields) {
@@ -357,17 +461,80 @@ private class IrDeserializerPrinter(
             }})"
         }
 
-        if (of == null) {
-            appendln("        ${invokeCreate("", allFields)}")
-        } else {
-            val (fp, fs) = m.fields.inlined().splitBy(of)
+        fun invokeCreateWithOneOf(index: Int, fields: List<MessageEntry.Field>) {
 
-            appendln("        when (oneOfIndex) {")
-            for (f in of.fields.inlined().oneOfInlined) {
-                appendln("            ${f.index} -> ${invokeCreate("_${f.name.escape()}", fp + f + fs)}")
+            val hasOneOf = fields.any { it.kind == FieldKind.ONE_OF }
+
+            val suffixPrefix = if (index == 0) "" else "" + index
+
+            if (!hasOneOf) {
+                if (index != lastIteration) {
+                    appendln("        val p${index} = ${invokeCreate(index, suffixPrefix, fields)}")
+                } else {
+                    appendln("        ${invokeCreate(index, suffixPrefix, fields)}")
+                }
+            } else {
+                val fp = mutableListOf<MessageEntry.Field>()
+                val fs = mutableListOf<MessageEntry.Field>()
+                val mf = mutableListOf<MessageEntry.Field>()
+
+                var cf = fp
+
+                fields.forEach {
+                    if (it.kind == FieldKind.ONE_OF) {
+                        cf = fs
+                        mf.add(it)
+                    } else {
+                        cf.add(it)
+                    }
+                }
+
+                if (index != lastIteration) {
+                    appendln("        val p${index} = when (oneOfIndex) {")
+                } else {
+                    appendln("        when (oneOfIndex) {")
+                }
+
+                for (f in mf) {
+                    appendln("            ${f.index} -> ${invokeCreate(index, "${suffixPrefix}_${f.name.escape()}", fp + f + fs)}")
+                }
+                appendln("            else -> error(\"Incorrect oneOf index: \" + oneOfIndex)")
+                appendln("        }")
             }
-            appendln("            else -> error(\"Incorrect oneOf index: \" + oneOfIndex)")
-            appendln("        }")
+        }
+
+//        if (m.name == "IrExpression") {
+//            println("!!!")
+//        }
+
+        val hasExposed = exposedFields.isNotEmpty()
+
+        if (!hasExposed) {
+            invokeCreateWithOneOf(0, iterations[0])
+            if (lastIteration != 0) appendln()
+        } else {
+            for (f in exposedFields) {
+                appendln("        ${exposedName[f]} = ${getName(f)}")
+            }
+        }
+
+        for (i in 1 until iterations.size) {
+            val fields = iterations[i].filter { it in delayedReads }
+            for (f in fields) {
+                if (f.kind == FieldKind.REPEATED) {
+                    appendln("        for (o in ${getName(f)}OffsetList) {")
+                    appendln("            ${getName(f)}.add(delayed(o) { ${f.type.toReaderInvocation()} })")
+                    appendln("        }")
+                } else {
+                    appendln("        ${getName(f)} = delayed(${getName(f)}Offset) { ${f.type.toReaderInvocation()} }")
+                }
+            }
+
+            val params = if (i == 1 && hasExposed) allFields.splitByOrder()[0].map { it as MessageEntry.Field } else iterations[i]
+            val index = if (hasExposed) i - 1 else i
+
+            invokeCreateWithOneOf(index, params)
+            if (lastIteration != index) appendln()
         }
 
         appendln("    }")

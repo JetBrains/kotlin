@@ -186,9 +186,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createNullableIrExpression(expression : Any?): Any = arrayOf<Any?>(expression)
 
-    fun createIrFunction(baseBaseSymbol : Any, baseBaseOrigin : Any, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : Any, baseName : Any, baseVisibility : Any, baseIsInline : Boolean, baseIsExternal : Boolean, baseTypeParameters : Any, baseDispatchReceiver : Any?, baseExtensionReceiver : Any?, baseValueParameter : List<Any>, baseBody : Any?, baseReturnType : Any, modality : Any, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Any>): Any = arrayOf<Any?>(baseBaseSymbol, baseBaseOrigin, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations, baseName, baseVisibility, baseIsInline, baseIsExternal, baseTypeParameters, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType, modality, isTailrec, isSuspend, overridden)
+    fun createIrFunction(baseBaseSymbol : Any, baseBaseOrigin : Any, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : Any, baseName : Any, baseVisibility : Any, baseIsInline : Boolean, baseIsExternal : Boolean, baseReturnType : Any, modality : Any, isTailrec : Boolean, isSuspend : Boolean, overridden : List<Any>): Any = arrayOf<Any?>(baseBaseSymbol, baseBaseOrigin, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations, baseName, baseVisibility, baseIsInline, baseIsExternal, baseReturnType, modality, isTailrec, isSuspend, overridden)
+    fun createIrFunction1(partial: Any, baseTypeParameters : Any, baseDispatchReceiver : Any?, baseExtensionReceiver : Any?, baseValueParameter : List<Any>, baseBody : Any?): Any = arrayOf<Any?>(baseTypeParameters, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody)
 
-    fun createIrConstructor(baseBaseSymbol : Any, baseBaseOrigin : Any, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : Any, baseName : Any, baseVisibility : Any, baseIsInline : Boolean, baseIsExternal : Boolean, baseTypeParameters : Any, baseDispatchReceiver : Any?, baseExtensionReceiver : Any?, baseValueParameter : List<Any>, baseBody : Any?, baseReturnType : Any, isPrimary : Boolean): Any = arrayOf<Any?>(baseBaseSymbol, baseBaseOrigin, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations, baseName, baseVisibility, baseIsInline, baseIsExternal, baseTypeParameters, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType, isPrimary)
+    fun createIrConstructor(baseBaseSymbol : Any, baseBaseOrigin : Any, baseBaseCoordinatesStartOffset : Int, baseBaseCoordinatesEndOffset : Int, baseBaseAnnotations : Any, baseName : Any, baseVisibility : Any, baseIsInline : Boolean, baseIsExternal : Boolean, baseReturnType : Any, isPrimary : Boolean): Any = arrayOf<Any?>(baseBaseSymbol, baseBaseOrigin, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations, baseName, baseVisibility, baseIsInline, baseIsExternal, baseReturnType, isPrimary)
+    fun createIrConstructor1(partial: Any, baseTypeParameters : Any, baseDispatchReceiver : Any?, baseExtensionReceiver : Any?, baseValueParameter : List<Any>, baseBody : Any?): Any = arrayOf<Any?>(baseTypeParameters, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody)
 
     fun createIrField(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, initializer : Any?, name : Any, visibility : Any, isFinal : Boolean, isExternal : Boolean, isStatic : Boolean, type_ : Any): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, initializer, name, visibility, isFinal, isExternal, isStatic, type_)
 
@@ -208,7 +210,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrTypeParameterContainer(typeParameter : List<Any>): Any = arrayOf<Any?>(typeParameter)
 
-    fun createIrClass(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, kind : Any, visibility : Any, modality : Any, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, thisReceiver : Any?, typeParameters : Any, declarationContainer : Any, superType : List<Any>): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters, declarationContainer, superType)
+    fun createIrClass(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, kind : Any, visibility : Any, modality : Any, isCompanion : Boolean, isInner : Boolean, isData : Boolean, isExternal : Boolean, isInline : Boolean, superType : List<Any>): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline, superType)
+    fun createIrClass1(partial: Any, thisReceiver : Any?, typeParameters : Any): Any = arrayOf<Any?>(thisReceiver, typeParameters)
+    fun createIrClass2(partial: Any, declarationContainer : Any): Any = arrayOf<Any?>(declarationContainer)
 
     fun createIrTypeAlias(baseSymbol : Any, baseOrigin : Any, baseCoordinatesStartOffset : Int, baseCoordinatesEndOffset : Int, baseAnnotations : Any, name : Any, visibility : Any, typeParameters : Any, expandedType : Any, isActual : Boolean): Any = arrayOf<Any?>(baseSymbol, baseOrigin, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations, name, visibility, typeParameters, expandedType, isActual)
 
@@ -1645,15 +1649,23 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         }
     }
 
+    protected var fieldIrExpressionType: Any? = null
+    protected var fieldIrExpressionCoordinatesStartOffset: Int = 0
+    protected var fieldIrExpressionCoordinatesEndOffset: Int = 0
+
     open fun readIrExpression(): Any {
         var operation: Any? = null
+        var operationOffset: Int = -1
         var type_: Any? = null
         var coordinatesStartOffset: Int = 0
         var coordinatesEndOffset: Int = 0
         while (hasData) {
             readField { fieldNumber, type ->
                 when (fieldNumber) {
-                    1 -> operation = readWithLength { readIrOperation() }
+                    1 -> {
+                        operationOffset = offset
+                        skip(type)
+                    }
                     2 -> type_ = readWithLength { readIrDataIndex() }
                     3 -> readWithLength {
                         while (hasData) {
@@ -1670,6 +1682,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
+        fieldIrExpressionType = type_
+        fieldIrExpressionCoordinatesStartOffset = coordinatesStartOffset
+        fieldIrExpressionCoordinatesEndOffset = coordinatesEndOffset
+        operation = delayed(operationOffset) { readWithLength { readIrOperation() } }
         return createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
     }
 
@@ -1697,10 +1713,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var baseIsInline: Boolean = false
         var baseIsExternal: Boolean = false
         var baseTypeParameters: Any? = null
+        var baseTypeParametersOffset: Int = -1
         var baseDispatchReceiver: Any? = null
+        var baseDispatchReceiverOffset: Int = -1
         var baseExtensionReceiver: Any? = null
+        var baseExtensionReceiverOffset: Int = -1
         var baseValueParameter: MutableList<Any> = mutableListOf()
+        var baseValueParameterOffsetList: MutableList<Int> = arrayListOf()
         var baseBody: Any? = null
+        var baseBodyOffset: Int = -1
         var baseReturnType: Any? = null
         var modality: Any? = null
         var isTailrec: Boolean = false
@@ -1740,11 +1761,26 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                                     3 -> baseVisibility = readWithLength { readVisibility() }
                                     4 -> baseIsInline = readBool()
                                     5 -> baseIsExternal = readBool()
-                                    6 -> baseTypeParameters = readWithLength { readIrTypeParameterContainer() }
-                                    7 -> baseDispatchReceiver = readWithLength { readIrValueParameter() }
-                                    8 -> baseExtensionReceiver = readWithLength { readIrValueParameter() }
-                                    9 -> baseValueParameter.add(readWithLength { readIrValueParameter() })
-                                    10 -> baseBody = readWithLength { readIrDataIndex() }
+                                    6 -> {
+                                        baseTypeParametersOffset = offset
+                                        skip(type)
+                                    }
+                                    7 -> {
+                                        baseDispatchReceiverOffset = offset
+                                        skip(type)
+                                    }
+                                    8 -> {
+                                        baseExtensionReceiverOffset = offset
+                                        skip(type)
+                                    }
+                                    9 -> {
+                                        baseValueParameterOffsetList.add(offset)
+                                        skip(type)
+                                    }
+                                    10 -> {
+                                        baseBodyOffset = offset
+                                        skip(type)
+                                    }
                                     11 -> baseReturnType = readWithLength { readIrDataIndex() }
                                     else -> skip(type)
                                 }
@@ -1759,7 +1795,16 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrFunction(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType!!, modality!!, isTailrec, isSuspend, overridden)
+        val p0 = createIrFunction(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseReturnType!!, modality!!, isTailrec, isSuspend, overridden)
+
+        baseTypeParameters = delayed(baseTypeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        baseDispatchReceiver = delayed(baseDispatchReceiverOffset) { readWithLength { readIrValueParameter() } }
+        baseExtensionReceiver = delayed(baseExtensionReceiverOffset) { readWithLength { readIrValueParameter() } }
+        for (o in baseValueParameterOffsetList) {
+            baseValueParameter.add(delayed(o) { readWithLength { readIrValueParameter() } })
+        }
+        baseBody = delayed(baseBodyOffset) { readWithLength { readIrDataIndex() } }
+        return createIrFunction1(p0, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody)
     }
 
     open fun readIrConstructor(): Any {
@@ -1773,10 +1818,15 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var baseIsInline: Boolean = false
         var baseIsExternal: Boolean = false
         var baseTypeParameters: Any? = null
+        var baseTypeParametersOffset: Int = -1
         var baseDispatchReceiver: Any? = null
+        var baseDispatchReceiverOffset: Int = -1
         var baseExtensionReceiver: Any? = null
+        var baseExtensionReceiverOffset: Int = -1
         var baseValueParameter: MutableList<Any> = mutableListOf()
+        var baseValueParameterOffsetList: MutableList<Int> = arrayListOf()
         var baseBody: Any? = null
+        var baseBodyOffset: Int = -1
         var baseReturnType: Any? = null
         var isPrimary: Boolean = false
         while (hasData) {
@@ -1813,11 +1863,26 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                                     3 -> baseVisibility = readWithLength { readVisibility() }
                                     4 -> baseIsInline = readBool()
                                     5 -> baseIsExternal = readBool()
-                                    6 -> baseTypeParameters = readWithLength { readIrTypeParameterContainer() }
-                                    7 -> baseDispatchReceiver = readWithLength { readIrValueParameter() }
-                                    8 -> baseExtensionReceiver = readWithLength { readIrValueParameter() }
-                                    9 -> baseValueParameter.add(readWithLength { readIrValueParameter() })
-                                    10 -> baseBody = readWithLength { readIrDataIndex() }
+                                    6 -> {
+                                        baseTypeParametersOffset = offset
+                                        skip(type)
+                                    }
+                                    7 -> {
+                                        baseDispatchReceiverOffset = offset
+                                        skip(type)
+                                    }
+                                    8 -> {
+                                        baseExtensionReceiverOffset = offset
+                                        skip(type)
+                                    }
+                                    9 -> {
+                                        baseValueParameterOffsetList.add(offset)
+                                        skip(type)
+                                    }
+                                    10 -> {
+                                        baseBodyOffset = offset
+                                        skip(type)
+                                    }
                                     11 -> baseReturnType = readWithLength { readIrDataIndex() }
                                     else -> skip(type)
                                 }
@@ -1829,7 +1894,16 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrConstructor(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody, baseReturnType!!, isPrimary)
+        val p0 = createIrConstructor(baseBaseSymbol!!, baseBaseOrigin!!, baseBaseCoordinatesStartOffset, baseBaseCoordinatesEndOffset, baseBaseAnnotations!!, baseName!!, baseVisibility!!, baseIsInline, baseIsExternal, baseReturnType!!, isPrimary)
+
+        baseTypeParameters = delayed(baseTypeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        baseDispatchReceiver = delayed(baseDispatchReceiverOffset) { readWithLength { readIrValueParameter() } }
+        baseExtensionReceiver = delayed(baseExtensionReceiverOffset) { readWithLength { readIrValueParameter() } }
+        for (o in baseValueParameterOffsetList) {
+            baseValueParameter.add(delayed(o) { readWithLength { readIrValueParameter() } })
+        }
+        baseBody = delayed(baseBodyOffset) { readWithLength { readIrDataIndex() } }
+        return createIrConstructor1(p0, baseTypeParameters!!, baseDispatchReceiver, baseExtensionReceiver, baseValueParameter, baseBody)
     }
 
     open fun readIrField(): Any {
@@ -2179,8 +2253,11 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var isExternal: Boolean = false
         var isInline: Boolean = false
         var thisReceiver: Any? = null
+        var thisReceiverOffset: Int = -1
         var typeParameters: Any? = null
+        var typeParametersOffset: Int = -1
         var declarationContainer: Any? = null
+        var declarationContainerOffset: Int = -1
         var superType: MutableList<Any> = mutableListOf()
         while (hasData) {
             readField { fieldNumber, type ->
@@ -2217,15 +2294,31 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                     8 -> isData = readBool()
                     9 -> isExternal = readBool()
                     10 -> isInline = readBool()
-                    11 -> thisReceiver = readWithLength { readIrValueParameter() }
-                    12 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
-                    13 -> declarationContainer = readWithLength { readIrDeclarationContainer() }
+                    11 -> {
+                        thisReceiverOffset = offset
+                        skip(type)
+                    }
+                    12 -> {
+                        typeParametersOffset = offset
+                        skip(type)
+                    }
+                    13 -> {
+                        declarationContainerOffset = offset
+                        skip(type)
+                    }
                     14 -> superType.add(readWithLength { readIrDataIndex() })
                     else -> skip(type)
                 }
             }
         }
-        return createIrClass(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters!!, declarationContainer!!, superType)
+        val p0 = createIrClass(baseSymbol!!, baseOrigin!!, baseCoordinatesStartOffset, baseCoordinatesEndOffset, baseAnnotations!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, superType)
+
+        thisReceiver = delayed(thisReceiverOffset) { readWithLength { readIrValueParameter() } }
+        typeParameters = delayed(typeParametersOffset) { readWithLength { readIrTypeParameterContainer() } }
+        val p1 = createIrClass1(p0, thisReceiver, typeParameters!!)
+
+        declarationContainer = delayed(declarationContainerOffset) { readWithLength { readIrDeclarationContainer() } }
+        return createIrClass2(p1, declarationContainer!!)
     }
 
     open fun readIrTypeAlias(): Any {
@@ -2505,15 +2598,24 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         return createIrSyntheticBody(kind!!)
     }
 
+    protected var fieldIrStatementCoordinatesStartOffset: Int = 0
+    protected var fieldIrStatementCoordinatesEndOffset: Int = 0
+
     open fun readIrStatement(): Any {
         var coordinatesStartOffset: Int = 0
         var coordinatesEndOffset: Int = 0
         var oneOfDeclaration: Any? = null
+        var oneOfDeclarationOffset: Int = -1
         var oneOfExpression: Any? = null
+        var oneOfExpressionOffset: Int = -1
         var oneOfBlockBody: Any? = null
+        var oneOfBlockBodyOffset: Int = -1
         var oneOfBranch: Any? = null
+        var oneOfBranchOffset: Int = -1
         var oneOfCatch: Any? = null
+        var oneOfCatchOffset: Int = -1
         var oneOfSyntheticBody: Any? = null
+        var oneOfSyntheticBodyOffset: Int = -1
         var oneOfIndex: Int = -1
         while (hasData) {
             readField { fieldNumber, type ->
@@ -2530,33 +2632,47 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                         }
                     }
                     2 -> {
-                        oneOfDeclaration = readWithLength { readIrDeclaration() }
+                        oneOfDeclarationOffset = offset
+                        skip(type)
                         oneOfIndex = 2
                     }
                     3 -> {
-                        oneOfExpression = readWithLength { readIrExpression() }
+                        oneOfExpressionOffset = offset
+                        skip(type)
                         oneOfIndex = 3
                     }
                     4 -> {
-                        oneOfBlockBody = readWithLength { readIrBlockBody() }
+                        oneOfBlockBodyOffset = offset
+                        skip(type)
                         oneOfIndex = 4
                     }
                     5 -> {
-                        oneOfBranch = readWithLength { readIrBranch() }
+                        oneOfBranchOffset = offset
+                        skip(type)
                         oneOfIndex = 5
                     }
                     6 -> {
-                        oneOfCatch = readWithLength { readIrCatch() }
+                        oneOfCatchOffset = offset
+                        skip(type)
                         oneOfIndex = 6
                     }
                     7 -> {
-                        oneOfSyntheticBody = readWithLength { readIrSyntheticBody() }
+                        oneOfSyntheticBodyOffset = offset
+                        skip(type)
                         oneOfIndex = 7
                     }
                     else -> skip(type)
                 }
             }
         }
+        fieldIrStatementCoordinatesStartOffset = coordinatesStartOffset
+        fieldIrStatementCoordinatesEndOffset = coordinatesEndOffset
+        oneOfDeclaration = delayed(oneOfDeclarationOffset) { readWithLength { readIrDeclaration() } }
+        oneOfExpression = delayed(oneOfExpressionOffset) { readWithLength { readIrExpression() } }
+        oneOfBlockBody = delayed(oneOfBlockBodyOffset) { readWithLength { readIrBlockBody() } }
+        oneOfBranch = delayed(oneOfBranchOffset) { readWithLength { readIrBranch() } }
+        oneOfCatch = delayed(oneOfCatchOffset) { readWithLength { readIrCatch() } }
+        oneOfSyntheticBody = delayed(oneOfSyntheticBodyOffset) { readWithLength { readIrSyntheticBody() } }
         when (oneOfIndex) {
             2 -> return createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
             3 -> return createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)
@@ -2567,4 +2683,5 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
     }
+
 }
