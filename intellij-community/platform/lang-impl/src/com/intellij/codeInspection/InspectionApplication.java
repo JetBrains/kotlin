@@ -94,6 +94,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   private final MultiMap<Pair<String, Integer>, String> originalWarnings = new ConcurrentMultiMap<>();
   private final AsyncPromise<Void> isMappingLoaded = new AsyncPromise<>();
   public String myOutputFormat;
+  private InspectionProfileImpl myInspectionProfile;
 
   public boolean myErrorCodeRequired = true;
 
@@ -196,13 +197,10 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     reportMessage(1, InspectionsBundle.message("inspection.done"));
     reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.initializing.project"));
 
-    InspectionProfileImpl inspectionProfile = loadInspectionProfile(project);
-    if (inspectionProfile == null) return;
+    myInspectionProfile = loadInspectionProfile(project);
+    if (myInspectionProfile == null) return;
 
-    final InspectionManagerEx im = (InspectionManagerEx)InspectionManager.getInstance(project);
-    GlobalInspectionContextImpl context = im.createNewGlobalContext();
-    context.setExternalProfile(inspectionProfile);
-    im.setProfile(inspectionProfile.getName());
+    GlobalInspectionContextImpl context = createGlobalInspectionContext(project);
 
     final AnalysisScope scope;
     if (myAnalyzeChanges) {
@@ -213,7 +211,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
           reportMessage(0, "modified file" + file.getPath());
         }
         try {
-          runAnalysisOnScope(parentDisposable, project, inspectionProfile, context,
+          runAnalysisOnScope(parentDisposable, project, myInspectionProfile,
                              new AnalysisScope(project, files));
         }
         catch (IOException e) {
@@ -241,13 +239,22 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         scope = new AnalysisScope(Objects.requireNonNull(psiDirectory));
 
       }
-      runAnalysisOnScope(parentDisposable, project, inspectionProfile, context, scope);
+      runAnalysisOnScope(parentDisposable, project, myInspectionProfile, scope);
     }
+  }
+
+  @NotNull
+  private GlobalInspectionContextImpl createGlobalInspectionContext(Project project) {
+    final InspectionManagerEx im = (InspectionManagerEx)InspectionManager.getInstance(project);
+    GlobalInspectionContextImpl context = im.createNewGlobalContext();
+    context.setExternalProfile(myInspectionProfile);
+    im.setProfile(myInspectionProfile.getName());
+    return context;
   }
 
   private void runAnalysisOnScope(@NotNull Disposable parentDisposable,
                                   Project project,
-                                  InspectionProfileImpl inspectionProfile, GlobalInspectionContextImpl context, AnalysisScope scope)
+                                  InspectionProfileImpl inspectionProfile, AnalysisScope scope)
     throws IOException {
     reportMessage(1, InspectionsBundle.message("inspection.done"));
 
@@ -287,18 +294,18 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       configurator.configureProject(project, scope, this);
     }
 
-    runAnalysis(project, inspectionProfile, context, scope, reportConverter, resultsDataPath);
+    runAnalysis(project, inspectionProfile, scope, reportConverter, resultsDataPath);
   }
 
   private void runAnalysis(Project project,
                            InspectionProfileImpl inspectionProfile,
-                           GlobalInspectionContextImpl context,
                            AnalysisScope scope, InspectionsReportConverter reportConverter, Path resultsDataPath) throws IOException {
     if (myAnalyzeChanges) {
-      scope = runFirstStage(project, context, scope, resultsDataPath);
+      scope = runFirstStage(project, createGlobalInspectionContext(project), scope, resultsDataPath);
     }
 
     final List<Path> inspectionsResults = new ArrayList<>();
+    GlobalInspectionContextImpl context = createGlobalInspectionContext(project);
     runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
     final Path descriptionsFile = resultsDataPath.resolve(DESCRIPTIONS + XML_EXTENSION);
     describeInspections(descriptionsFile,
