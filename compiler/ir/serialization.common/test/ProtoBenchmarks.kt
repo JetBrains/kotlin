@@ -98,21 +98,21 @@ class ProtoBenchmarks {
     @Test
     fun testClassNextgen() {
         runBenchWithWarmup("Parse class bytes with Nextgen Parser", 50, 30, 15000, MeasureUnits.MICROSECONDS) {
-            SmartIrProtoReaderImpl(classBytes).readIrClass()
+//            SmartIrProtoReaderImpl(classBytes).readIrClass()
         }
     }
 
     @Test
     fun testFunctionHeaderNextgen() {
         runBenchWithWarmup("Parse function header bytes with Nextgen Parser", 50, 30, 15000, MeasureUnits.NANOSECONDS) {
-            SmartIrProtoReaderImpl(headerBytes).readIrFunction()
+//            SmartIrProtoReaderImpl(headerBytes).readIrFunction()
         }
     }
 
     @Test
     fun testFunctionBodyNextgen() {
         runBenchWithWarmup("Parse function body bytes with Nextgen Parser", 50, 30, 15000, MeasureUnits.MICROSECONDS) {
-            SmartIrProtoReaderImpl(bodyBytes).readIrStatement()
+//            SmartIrProtoReaderImpl(bodyBytes).readIrStatement()
         }
     }
 }

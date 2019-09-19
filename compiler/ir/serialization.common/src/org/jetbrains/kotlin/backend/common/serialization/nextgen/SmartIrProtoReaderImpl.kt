@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
 import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorReferenceDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.UniqId
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
 
-class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(byteArray) {
+abstract class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(byteArray) {
     override fun createIrTypeArgument_type_(oneOfType: IrTypeProjection) = oneOfType
 
     override fun createIrDoWhile(
@@ -100,95 +101,63 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun createIrOperation_block(block: IrBlock) = block
+    override fun createIrOperation_block(oneOfBlock: IrBlock) = oneOfBlock
 
-    override fun createIrOperation_break_(break_: IrBreak) = break_
+    override fun createIrOperation_break_(oneOfBreak: IrBreak): IrBreak = oneOfBreak
 
-    override fun createIrOperation_call(call: IrCall) = call
+    override fun createIrOperation_call(oneOfCall: IrCall) = oneOfCall
 
-    override fun createIrOperation_classReference(classReference: IrClassReference) = classReference
+    override fun createIrOperation_classReference(oneOfClassReference: IrClassReference) = oneOfClassReference
 
-    override fun createIrOperation_composite(composite: IrComposite) = composite
+    override fun createIrOperation_composite(oneOfComposite: IrComposite) = oneOfComposite
 
-    override fun createIrOperation_const(const: IrConst<*>) = const
+    override fun createIrOperation_const(oneOfConst: IrConst<*>) = oneOfConst
 
-    override fun createIrOperation_continue_(continue_: IrContinue) = continue_
+    override fun createIrOperation_continue_(oneOfContinue: IrContinue) = oneOfContinue
 
-    override fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall) = delegatingConstructorCall
+    override fun createIrOperation_delegatingConstructorCall(oneOfDelegatingConstructorCall: IrDelegatingConstructorCall) = oneOfDelegatingConstructorCall
 
-    override fun createIrOperation_doWhile(doWhile: IrDoWhileLoop) = doWhile
+    override fun createIrOperation_doWhile(oneOfDoWhile: IrDoWhileLoop) = oneOfDoWhile
 
-    override fun createIrOperation_enumConstructorCall(enumConstructorCall: IrEnumConstructorCall) = enumConstructorCall
+    override fun createIrOperation_enumConstructorCall(oneOfEnumConstructorCall: IrEnumConstructorCall) = oneOfEnumConstructorCall
 
-    override fun createIrOperation_functionReference(functionReference: IrFunctionReference) = functionReference
+    override fun createIrOperation_functionReference(oneOfFunctionReference: IrFunctionReference) = oneOfFunctionReference
 
-    override fun createIrOperation_getClass(getClass: IrGetClass) = getClass
+    override fun createIrOperation_getClass(oneOfGetClass: IrGetClass) = oneOfGetClass
 
-    override fun createIrOperation_getEnumValue(getEnumValue: IrGetEnumValue) = getEnumValue
-
-    override fun createIrOperation_getField(getField: IrGetField) = getField
-
-    override fun createIrOperation_getObject(getObject: IrGetObjectValue) = getObject
-
-    override fun createIrOperation_getValue(getValue: IrGetValue) = getValue
-
-    override fun createIrOperation_instanceInitializerCall(instanceInitializerCall: IrInstanceInitializerCall) = instanceInitializerCall
-
-    override fun createIrOperation_propertyReference(propertyReference: IrPropertyReference) = propertyReference
-
-    override fun createIrOperation_return_(return_: IrReturn) = return_
-
-    override fun createIrOperation_setField(setField: IrSetField) = setField
-
-    override fun createIrOperation_setVariable(setVariable: IrSetVariable) = setVariable
-
-    override fun createIrOperation_stringConcat(stringConcat: IrStringConcatenation) = stringConcat
-
-    override fun createIrOperation_throw_(throw_: IrThrow) = throw_
-
-    override fun createIrOperation_try_(try_: IrTry) = try_
-
-    override fun createIrOperation_typeOp(typeOp: IrTypeOperatorCall) = typeOp
-
-    override fun createIrOperation_vararg(vararg: IrVararg) = vararg
-
-    override fun createIrOperation_when_(when_: IrWhen) = when_
-
-    override fun createIrOperation_while_(while_: IrWhileLoop) = while_
-
-    override fun createIrOperation_dynamicMember(dynamicMember: IrDynamicMemberExpression) = dynamicMember
-
-    override fun createIrOperation_dynamicOperator(dynamicOperator: IrDynamicOperatorExpression) = dynamicOperator
-
-    override fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference: IrLocalDelegatedPropertyReference) = localDelegatedPropertyReference
-
-    override fun createIrOperation_constructorCall(constructorCall: IrConstructorCall) = constructorCall
-
-    override fun createIrOperation_functionExpression(functionExpression: IrFunctionExpression) = functionExpression
-
-    override fun createIrDeclaration_irAnonymousInit(irAnonymousInit: IrAnonymousInitializer) = irAnonymousInit
-
-    override fun createIrDeclaration_irClass(irClass: IrClass) = irClass
-
-    override fun createIrDeclaration_irConstructor(irConstructor: IrConstructor) = irConstructor
-
-    override fun createIrDeclaration_irEnumEntry(irEnumEntry: IrEnumEntry) = irEnumEntry
-
-    override fun createIrDeclaration_irField(irField: IrField) = irField
-
-    override fun createIrDeclaration_irFunction(irFunction: IrSimpleFunction) = irFunction
-
-    override fun createIrDeclaration_irProperty(irProperty: IrProperty) = irProperty
-
-    override fun createIrDeclaration_irTypeParameter(irTypeParameter: IrTypeParameter) = irTypeParameter
-
-    override fun createIrDeclaration_irVariable(irVariable: IrVariable) = irVariable
-
-    override fun createIrDeclaration_irValueParameter(irValueParameter: IrValueParameter) = irValueParameter
-
-    override fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty: IrLocalDelegatedProperty) = irLocalDelegatedProperty
-
-    override fun createIrDeclaration_irTypeAlias(irTypeAlias: IrTypeAlias) = irTypeAlias
+    override fun createIrOperation_getEnumValue(oneOfGetEnumValue: IrGetEnumValue) = oneOfGetEnumValue
+    override fun createIrOperation_getField(oneOfGetField: IrGetField) = oneOfGetField
+    override fun createIrOperation_getObject(oneOfGetObject: IrGetObjectValue) = oneOfGetObject
+    override fun createIrOperation_getValue(oneOfGetValue: IrGetValue) = oneOfGetValue
+    override fun createIrOperation_instanceInitializerCall(oneOfInstanceInitializerCall: IrInstanceInitializerCall) = oneOfInstanceInitializerCall
+    override fun createIrOperation_propertyReference(oneOfpropertyReference: IrPropertyReference) = oneOfpropertyReference
+    override fun createIrOperation_return_(oneOfreturn_: IrReturn) = oneOfreturn_
+    override fun createIrOperation_setField(oneOfsetField: IrSetField) = oneOfsetField
+    override fun createIrOperation_setVariable(oneOfsetVariable: IrSetVariable) = oneOfsetVariable
+    override fun createIrOperation_stringConcat(oneOfstringConcat: IrStringConcatenation) = oneOfstringConcat
+    override fun createIrOperation_throw_(oneOfthrow_: IrThrow) = oneOfthrow_
+    override fun createIrOperation_try_(oneOftry_: IrTry) = oneOftry_
+    override fun createIrOperation_typeOp(oneOftypeOp: IrTypeOperatorCall) = oneOftypeOp
+    override fun createIrOperation_vararg(oneOfvararg: IrVararg) = oneOfvararg
+    override fun createIrOperation_when_(oneOfwhen_: IrWhen) = oneOfwhen_
+    override fun createIrOperation_while_(oneOfwhile_: IrWhileLoop) = oneOfwhile_
+    override fun createIrOperation_dynamicMember(oneOfdynamicMember: IrDynamicMemberExpression) = oneOfdynamicMember
+    override fun createIrOperation_dynamicOperator(oneOfdynamicOperator: IrDynamicOperatorExpression) = oneOfdynamicOperator
+    override fun createIrOperation_localDelegatedPropertyReference(oneOflocalDelegatedPropertyReference: IrLocalDelegatedPropertyReference) = oneOflocalDelegatedPropertyReference
+    override fun createIrOperation_constructorCall(oneOfconstructorCall: IrConstructorCall) = oneOfconstructorCall
+    override fun createIrOperation_functionExpression(oneOffunctionExpression: IrFunctionExpression) = oneOffunctionExpression
+    override fun createIrDeclaration_irAnonymousInit(oneOfirAnonymousInit: IrAnonymousInitializer) = oneOfirAnonymousInit
+    override fun createIrDeclaration_irClass(oneOfirClass: IrClass) = oneOfirClass
+    override fun createIrDeclaration_irConstructor(oneOfirConstructor: IrConstructor) = oneOfirConstructor
+    override fun createIrDeclaration_irEnumEntry(oneOfirEnumEntry: IrEnumEntry) = oneOfirEnumEntry
+    override fun createIrDeclaration_irField(oneOfirField: IrField) = oneOfirField
+    override fun createIrDeclaration_irFunction(oneOfirFunction: IrSimpleFunction) = oneOfirFunction
+    override fun createIrDeclaration_irProperty(oneOfirProperty: IrProperty) = oneOfirProperty
+    override fun createIrDeclaration_irTypeParameter(oneOfirTypeParameter: IrTypeParameter) = oneOfirTypeParameter
+    override fun createIrDeclaration_irVariable(oneOfirVariable: IrVariable) = oneOfirVariable
+    override fun createIrDeclaration_irValueParameter(oneOfirValueParameter: IrValueParameter) = oneOfirValueParameter
+    override fun createIrDeclaration_irLocalDelegatedProperty(oneOfirLocalDelegatedProperty: IrLocalDelegatedProperty) = oneOfirLocalDelegatedProperty
+    override fun createIrDeclaration_irTypeAlias(oneOfirTypeAlias: IrTypeAlias) = oneOfirTypeAlias
 
     override fun createDescriptorReference(
         packageFqName: FqName,
@@ -204,33 +173,52 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         isEnumSpecial: Boolean?,
         isTypeParameter: Boolean?
     ): DeclarationDescriptor {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return descriptorReferenceDeserializer.deserializeDescriptorReference(
+            packageFqName,
+            classFqName,
+            loadString(name),
+            uniqId?.index,
+            isEnumEntry ?: false,
+            isEnumSpecial ?: false,
+            isDefaultConstructor ?: false,
+            isFakeOverride ?: false,
+            isGetter ?: false,
+            isSetter ?: false,
+            isTypeParameter ?: false
+        )
     }
 
-    private fun loadString(id: Int): String {
-//        TODO("JKJ")
-        return "MockString$id"
-    }
 
-    private fun loadType(id: Int): IrType {
-        TODO("jkjkk")
-    }
+    override fun createIrSymbolData(
+        kind: Int,
+        uniqId: UniqId,
+        topLevelUniqId: UniqId,
+        fqname: FqName?,
+        descriptorReference: DeclarationDescriptor?
+    ) = deserializeIrSymbolData(kind, uniqId, topLevelUniqId, fqname, descriptorReference)
 
-    private fun loadSymbol(id: Int): IrSymbol {
-        TODO("kkl")
-    }
+    protected abstract val descriptorReferenceDeserializer: DescriptorReferenceDeserializer
 
-    private fun loadStatementBody(id: Int): IrElement {
-        TODO("")
-    }
+    protected abstract fun deserializeIrSymbolData(
+        kind: Int,
+        uniqId: UniqId,
+        topLevelUniqId: UniqId,
+        fqname: FqName?,
+        descriptorReference: DeclarationDescriptor?
+    ): IrSymbol
 
-    private fun loadExpressionBody(id: Int): IrExpression {
-        TODO("kjkjk")
-    }
+    protected abstract fun loadString(id: Int): String
 
-    private fun getLoopById(id: Int): IrLoop {
-        TODO("")
-    }
+    protected abstract fun loadType(id: Int): IrType
+
+    protected abstract fun loadSymbol(id: Int): IrSymbol
+
+    protected abstract fun loadStatementBody(id: Int): IrElement
+
+    protected abstract fun loadExpressionBody(id: Int): IrExpression
+
+    protected abstract fun getLoopById(id: Int): IrLoop
+    protected abstract fun registerLoopById(id: Int, loop: IrLoop)
 
     private fun delayedStart(): Int = 0 // TODO("start")
     private fun delayedEnd(): Int = 0 // TODO("end")
@@ -297,16 +285,6 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
 
     override fun createIrSymbolKind(index: Int) = index
 
-    override fun createIrSymbolData(
-        kind: Int,
-        uniqId: UniqId,
-        topLevelUniqId: UniqId,
-        fqname: FqName?,
-        descriptorReference: DeclarationDescriptor?
-    ): IrSymbol {
-        TODO("jkjkkjk")
-    }
-
     override fun createIrSymbolTable(symbols: List<IrSymbol>): Array<IrSymbol> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -354,11 +332,11 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
-    override fun createIrType_dynamic(dynamic: IrDynamicType) = dynamic
+    override fun createIrType_dynamic(oneOfDynamic: IrDynamicType) = oneOfDynamic
 
-    override fun createIrType_error(error: IrErrorType) = error
+    override fun createIrType_error(oneOfError: IrErrorType) = oneOfError
 
-    override fun createIrType_simple(simple: IrSimpleType) = simple
+    override fun createIrType_simple(oneOfSimple: IrSimpleType) = oneOfSimple
 
     override fun createIrTypeTable(types: List<IrType>): Array<IrType> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -510,16 +488,16 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrClassReferenceImpl(delayedStart(), delayedEnd(), delayedType(), symbol, type)
     }
 
-    override fun createIrConst_boolean(boolean: Boolean) = IrConstImpl.boolean(delayedStart(), delayedEnd(), delayedType(), boolean)
-    override fun createIrConst_byte(byte: Int) = IrConstImpl.byte(delayedStart(), delayedEnd(), delayedType(), byte.toByte())
-    override fun createIrConst_char(char: Int) = IrConstImpl.char(delayedStart(), delayedEnd(), delayedType(), char.toChar())
-    override fun createIrConst_double(double: Double) = IrConstImpl.double(delayedStart(), delayedEnd(), delayedType(), double)
-    override fun createIrConst_float(float: Float) = IrConstImpl.float(delayedStart(), delayedEnd(), delayedType(), float)
-    override fun createIrConst_int(int: Int) = IrConstImpl.int(delayedStart(), delayedEnd(), delayedType(), int)
-    override fun createIrConst_long(long: Long) = IrConstImpl.long(delayedStart(), delayedEnd(), delayedType(), long)
-    override fun createIrConst_null_(null_: Boolean) = IrConstImpl.constNull(delayedStart(), delayedEnd(), delayedType())
-    override fun createIrConst_short(short: Int) = IrConstImpl.short(delayedStart(), delayedEnd(), delayedType(), short.toShort())
-    override fun createIrConst_string(string: Int) = IrConstImpl.string(delayedStart(), delayedEnd(), delayedType(), loadString(string))
+    override fun createIrConst_boolean(oneOfBoolean: Boolean) = IrConstImpl.boolean(delayedStart(), delayedEnd(), delayedType(), oneOfBoolean)
+    override fun createIrConst_byte(oneOfByte: Int) = IrConstImpl.byte(delayedStart(), delayedEnd(), delayedType(), oneOfByte.toByte())
+    override fun createIrConst_char(oneOfChar: Int) = IrConstImpl.char(delayedStart(), delayedEnd(), delayedType(), oneOfChar.toChar())
+    override fun createIrConst_double(oneOfDouble: Double) = IrConstImpl.double(delayedStart(), delayedEnd(), delayedType(), oneOfDouble)
+    override fun createIrConst_float(oneOfFloat: Float) = IrConstImpl.float(delayedStart(), delayedEnd(), delayedType(), oneOfFloat)
+    override fun createIrConst_int(oneOfInt: Int) = IrConstImpl.int(delayedStart(), delayedEnd(), delayedType(), oneOfInt)
+    override fun createIrConst_long(oneOfLong: Long) = IrConstImpl.long(delayedStart(), delayedEnd(), delayedType(), oneOfLong)
+    override fun createIrConst_null_(oneOfNull: Boolean) = IrConstImpl.constNull(delayedStart(), delayedEnd(), delayedType())
+    override fun createIrConst_short(oneOfShort: Int) = IrConstImpl.short(delayedStart(), delayedEnd(), delayedType(), oneOfShort.toShort())
+    override fun createIrConst_string(oneOfString: Int) = IrConstImpl.string(delayedStart(), delayedEnd(), delayedType(), loadString(oneOfString))
 
     override fun createIrContinue(loopId: Int, label: Int?): IrContinue {
         return IrContinueImpl(delayedStart(), delayedEnd(), delayedType(), getLoopById(loopId)).also {
@@ -652,9 +630,9 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrVarargImpl(delayedStart(), delayedEnd(), delayedType(), loadType(elementType), element)
     }
 
-    override fun createIrVarargElement_expression(expression: IrExpression) = expression
+    override fun createIrVarargElement_expression(oneOfExpression: IrExpression) = oneOfExpression
 
-    override fun createIrVarargElement_spreadElement(spreadElement: IrSpreadElement) = spreadElement
+    override fun createIrVarargElement_spreadElement(oneOfSpreadElement: IrSpreadElement) = oneOfSpreadElement
 
     override fun createIrWhen(branch: List<IrStatement>, origin: IrStatementOrigin?): IrWhen {
         return IrWhenImpl(delayedStart(), delayedEnd(), delayedType(), origin, branch as List<IrBranch>)
