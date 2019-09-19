@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -220,9 +219,9 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
     protected abstract fun getLoopById(id: Int): IrLoop
     protected abstract fun registerLoopById(id: Int, loop: IrLoop)
 
-    private fun delayedStart(): Int = 0 // TODO("start")
-    private fun delayedEnd(): Int = 0 // TODO("end")
-    private fun delayedType(): IrType = TODO("type")
+    private fun delayedStart(): Int = fieldIrExpressionCoordinatesStartOffset
+    private fun delayedEnd(): Int = fieldIrStatementCoordinatesEndOffset
+    private fun delayedType(): IrType = loadType(fieldIrExpressionType ?: error("Should be initialized"))
 
 //    private val moduleDescriptor: ModuleDescriptor get() = TODO("moduleDescriptor")
 //    protected abstract val symbolTable: SymbolTable
@@ -682,6 +681,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+
     override fun createIrFunction(
         baseBaseSymbol: Int,
         baseBaseOrigin: IrDeclarationOrigin,
@@ -692,11 +692,6 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         baseVisibility: Visibility,
         baseIsInline: Boolean,
         baseIsExternal: Boolean,
-        baseTypeParameters: List<IrTypeParameter>,
-        baseDispatchReceiver: IrValueParameter?,
-        baseExtensionReceiver: IrValueParameter?,
-        baseValueParameter: List<IrValueParameter>,
-        baseBody: Int?,
         baseReturnType: Int,
         modality: Modality,
         isTailrec: Boolean,
@@ -707,24 +702,45 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         val end = baseBaseCoordinatesEndOffset
         val origin = baseBaseOrigin
         val functionSymbol = loadSymbol(baseBaseSymbol) as IrSimpleFunctionSymbol
-        val name = Name.guessByFirstCharacter(loadString(baseName
-        ))
+        val name = Name.guessByFirstCharacter(loadString(baseName))
         val returnType = loadType(baseReturnType)
         val visibility = baseVisibility
-        val bodyIndex = baseBody
-
-        return IrFunctionImpl(start, end, origin, functionSymbol, name, visibility, modality, returnType, baseIsInline, baseIsExternal, isTailrec, isSuspend).apply {
+        return IrFunctionImpl(
+            start,
+            end,
+            origin,
+            functionSymbol,
+            name,
+            visibility,
+            modality,
+            returnType,
+            baseIsInline,
+            baseIsExternal,
+            isTailrec,
+            isSuspend
+        ).apply {
             annotations.addAll(baseBaseAnnotations)
             overridden.mapTo(overriddenSymbols) { loadSymbol(it) as IrSimpleFunctionSymbol }
 
+//            (descriptor as? WrappedSimpleFunctionDescriptor).bind(this)
+        }
+    }
+
+    override fun createIrFunction1(
+        partial: IrSimpleFunction,
+        baseTypeParameters: List<IrTypeParameter>,
+        baseDispatchReceiver: IrValueParameter?,
+        baseExtensionReceiver: IrValueParameter?,
+        baseValueParameter: List<IrValueParameter>,
+        baseBody: Int?
+    ): IrSimpleFunction {
+        return partial.apply {
             dispatchReceiverParameter = baseDispatchReceiver
             extensionReceiverParameter = baseExtensionReceiver
             valueParameters.addAll(baseValueParameter)
             typeParameters.addAll(baseTypeParameters)
 
-            body = bodyIndex?.let { loadStatementBody(it) as IrBody }
-
-//            (descriptor as? WrappedSimpleFunctionDescriptor).bind(this)
+            body = baseBody?.let { loadStatementBody(it) as IrBody }
         }
     }
 
@@ -738,11 +754,6 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         baseVisibility: Visibility,
         baseIsInline: Boolean,
         baseIsExternal: Boolean,
-        baseTypeParameters: List<IrTypeParameter>,
-        baseDispatchReceiver: IrValueParameter?,
-        baseExtensionReceiver: IrValueParameter?,
-        baseValueParameter: List<IrValueParameter>,
-        baseBody: Int?,
         baseReturnType: Int,
         isPrimary: Boolean
     ): IrConstructor {
@@ -753,8 +764,6 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         val name = Name.special(loadString(baseName))
         val returnType = loadType(baseReturnType)
         val visibility = baseVisibility
-        val bodyIndex = baseBody
-
         return IrConstructorImpl(
             start,
             end,
@@ -768,16 +777,30 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
             isPrimary
         ).apply {
             annotations.addAll(baseBaseAnnotations)
+
+            // (descriptor as? WrappedClassConstructorDescriptor)?.bind(this)
+        }
+    }
+
+    override fun createIrConstructor1(
+        partial: IrConstructor,
+        baseTypeParameters: List<IrTypeParameter>,
+        baseDispatchReceiver: IrValueParameter?,
+        baseExtensionReceiver: IrValueParameter?,
+        baseValueParameter: List<IrValueParameter>,
+        baseBody: Int?
+    ): IrConstructor {
+        val bodyIndex = baseBody
+        return partial.apply {
             dispatchReceiverParameter = baseDispatchReceiver
             extensionReceiverParameter = baseExtensionReceiver
             valueParameters.addAll(baseValueParameter)
             typeParameters.addAll(baseTypeParameters)
 
             body = bodyIndex?.let { loadStatementBody(it) as IrBody }
-
-            // (descriptor as? WrappedClassConstructorDescriptor)?.bind(this)
         }
     }
+
 
     override fun createIrField(
         baseSymbol: Int,
@@ -965,11 +988,12 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
             this.annotations.addAll(baseAnnotations)
             superType.mapTo(this.superTypes) { loadType(it) }
 
-            (typeParameterDescriptor as? WrappedTypeParameterDescriptor)?.bind(this)
+//            (typeParameterDescriptor as? WrappedTypeParameterDescriptor)?.bind(this)
         }
     }
 
     override fun createIrTypeParameterContainer(typeParameter: List<IrTypeParameter>) = typeParameter
+
 
     override fun createIrClass(
         baseSymbol: Int,
@@ -986,9 +1010,6 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         isData: Boolean,
         isExternal: Boolean,
         isInline: Boolean,
-        thisReceiver: IrValueParameter?,
-        typeParameters: List<IrTypeParameter>,
-        declarationContainer: List<IrDeclaration>,
         superType: List<Int>
     ): IrClass {
         val start = baseCoordinatesStartOffset
@@ -997,14 +1018,40 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         val classSymbol = loadSymbol(baseSymbol) as IrClassSymbol
         val className = Name.guessByFirstCharacter(loadString(name))
 
-        return IrClassImpl(start, end, origin, classSymbol, className, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline).apply {
+        return IrClassImpl(
+            start,
+            end,
+            origin,
+            classSymbol,
+            className,
+            kind,
+            visibility,
+            modality,
+            isCompanion,
+            isInner,
+            isData,
+            isExternal,
+            isInline
+        ).apply {
             this.annotations.addAll(baseAnnotations)
             superType.mapTo(this.superTypes) { loadType(it) }
-            this.thisReceiver = thisReceiver
-            this.typeParameters.addAll(typeParameters)
-            this.declarations.addAll(declarationContainer)
 
 //            (descriptor as? WrappedClassDescriptor)?.bind(this)
+        }
+    }
+
+    override fun createIrClass1(partial: IrClass, thisReceiver: IrValueParameter?, typeParameters: List<IrTypeParameter>): IrClass {
+        return partial.apply {
+            this.thisReceiver = thisReceiver?.also { it.parent = partial }
+            typeParameters.forEach { it.parent = partial }
+            this.typeParameters.addAll(typeParameters)
+        }
+    }
+
+    override fun createIrClass2(partial: IrClass, declarationContainer: List<IrDeclaration>): IrClass {
+        return partial.apply {
+            declarationContainer.forEach { it.parent = partial }
+            this.declarations.addAll(declarationContainer)
         }
     }
 
