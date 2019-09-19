@@ -201,7 +201,7 @@
         <lightClassApplicabilityCheckExtension implementation="org.jetbrains.kotlin.allopen.ide.IdeAllOpenApplicabilityExtension"/>
 
         <storageComponentContainerContributor implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgComponentContainerContributor"/>
-        <expressionCodegenExtension implementation="org.jetbrains.kotlin.noarg.NoArgExpressionCodegenExtension"/>
+        <expressionCodegenExtension implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgExpressionCodegenExtension"/>
         <lightClassApplicabilityCheckExtension implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgApplicabilityExtension"/>
         <defaultErrorMessages implementation="org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg"/>
 

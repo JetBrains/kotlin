@@ -83,7 +83,7 @@ class NoArgComponentRegistrar : ComponentRegistrar {
         StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations))
 
         val invokeInitializers = configuration[INVOKE_INITIALIZERS] ?: false
-        ExpressionCodegenExtension.registerExtension(project, NoArgExpressionCodegenExtension(invokeInitializers))
+        ExpressionCodegenExtension.registerExtension(project, CliNoArgExpressionCodegenExtension(annotations, invokeInitializers))
     }
 }
 

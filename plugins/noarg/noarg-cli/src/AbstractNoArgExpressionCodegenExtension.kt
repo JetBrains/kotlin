@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -21,7 +23,15 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-class NoArgExpressionCodegenExtension(val invokeInitializers: Boolean = false) : ExpressionCodegenExtension {
+
+class CliNoArgExpressionCodegenExtension(private val annotations: List<String>, invokeInitializers: Boolean = false) :
+    AbstractNoArgExpressionCodegenExtension(invokeInitializers) {
+
+    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = annotations
+}
+
+abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: Boolean) : ExpressionCodegenExtension, AnnotationBasedExtension {
+
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) = with(codegen) {
         if (shouldGenerateNoArgConstructor()) {
             generateNoArgConstructor()
@@ -71,12 +81,10 @@ class NoArgExpressionCodegenExtension(val invokeInitializers: Boolean = false) :
         }
     }
 
-    private fun KtClass.isNoArgClass() = this.getUserData(NO_ARG_CLASS_KEY) ?: false
-
     private fun ImplementationBodyCodegen.shouldGenerateNoArgConstructor(): Boolean {
         val origin = myClass as? KtClass ?: return false
 
-        if (descriptor.kind != ClassKind.CLASS || !origin.isNoArgClass()) {
+        if (descriptor.kind != ClassKind.CLASS || !descriptor.hasSpecialAnnotation(origin)) {
             return false
         }
 
