@@ -78,7 +78,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
         for (function in actualClass.functions.toList()) { // Copy the list, because we are adding new declarations from the loop
             if (function.origin !== IrDeclarationOrigin.FAKE_OVERRIDE) continue
 
-            // In classes, only generate interface delegation for functions immediately inherited from am interface.
+            // In classes, only generate interface delegation for functions immediately inherited from an interface.
             // (Otherwise, delegation will be present in the parent class)
             if (!isDefaultImplsGeneration &&
                 function.overriddenSymbols.any {
@@ -92,7 +92,9 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             val implementation = function.resolveFakeOverride() ?: continue
             if (!implementation.hasInterfaceParent() ||
                 Visibilities.isPrivate(implementation.visibility) ||
-                implementation.isDefinitelyNotDefaultImplsMethod() || implementation.isMethodOfAny()
+                implementation.isDefinitelyNotDefaultImplsMethod() ||
+                implementation.isMethodOfAny() ||
+                (!context.state.jvmDefaultMode.isCompatibility && implementation.hasJvmDefault())
             ) {
                 continue
             }
@@ -205,8 +207,9 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
         if (expression.superQualifierSymbol?.owner?.isInterface != true) {
             return super.visitCall(expression)
         }
+
         val superCallee = (expression.symbol.owner as IrSimpleFunction).resolveFakeOverride()!!
-        if (superCallee.isDefinitelyNotDefaultImplsMethod()) return super.visitCall(expression)
+        if (superCallee.isDefinitelyNotDefaultImplsMethod() || superCallee.hasJvmDefault()) return super.visitCall(expression)
 
         val redirectTarget = context.declarationFactory.getDefaultImplsFunction(superCallee)
         val newCall = irCall(expression, redirectTarget, receiversAsArguments = true)
@@ -222,7 +225,7 @@ internal val interfaceDefaultCallsPhase = makeIrFilePhase(
 )
 
 private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
-
+    // TODO If there are no default _implementations_ we can avoid generating defaultImpls class entirely by moving default arg dispatchers to the interface class
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
