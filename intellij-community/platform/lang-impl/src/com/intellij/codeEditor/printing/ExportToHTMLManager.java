@@ -33,14 +33,23 @@ class ExportToHTMLManager {
   /**
    * Should be invoked in event dispatch thread
    */
-  public static void executeExport(final DataContext dataContext) throws FileNotFoundException {
-    PsiDirectory psiDirectory = null;
-    PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if (psiElement instanceof PsiDirectory) {
-      psiDirectory = (PsiDirectory)psiElement;
-    }
+  public static void executeExport(@NotNull final DataContext dataContext) throws FileNotFoundException {
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
-    Project project = CommonDataKeys.PROJECT.getData(dataContext);
+    PsiDirectory psiDirectory = null;
+    if (psiFile != null) {
+      psiDirectory = psiFile.getContainingDirectory();
+    }
+    else {
+      PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+      if (psiElement instanceof PsiDirectory) {
+        psiDirectory = (PsiDirectory)psiElement;
+      }
+    }
+
+    Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+    Project project = editor.getProject();
+
+
     String shortFileName = null;
     String directoryName = null;
     if (psiFile != null || psiDirectory != null) {
@@ -55,11 +64,8 @@ class ExportToHTMLManager {
       }
     }
 
-    Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
-    boolean isSelectedTextEnabled = false;
-    if (editor != null && editor.getSelectionModel().hasSelection()) {
-      isSelectedTextEnabled = true;
-    }
+    final boolean isSelectedTextEnabled = editor != null && editor.getSelectionModel().hasSelection();
+
     ExportToHTMLDialog exportToHTMLDialog = new ExportToHTMLDialog(shortFileName, directoryName, isSelectedTextEnabled, project);
 
     ExportToHTMLSettings exportToHTMLSettings = ExportToHTMLSettings.getInstance(project);
@@ -110,7 +116,8 @@ class ExportToHTMLManager {
     }
     else {
       myLastException = null;
-      ExportRunnable exportRunnable = new ExportRunnable(exportToHTMLSettings, psiDirectory, outputDirectoryName, project);
+      ExportRunnable exportRunnable =
+        new ExportRunnable(exportToHTMLSettings, psiDirectory, outputDirectoryName, project);
       ProgressManager.getInstance()
         .runProcessWithProgressSynchronously(exportRunnable, CodeEditorBundle.message("export.to.html.title"), true, project);
       if (myLastException != null) {
