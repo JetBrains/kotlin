@@ -49,6 +49,13 @@ public class JsonSingleFileInspectionsReportConverter extends JsonInspectionsRep
            JsonWriter jsonWriter = gson.newJsonWriter(writer)) {
         jsonWriter.beginObject();
 
+        File patches = ContainerUtil.find(inspectionsResults,
+                                          (file) -> FileUtil.getNameWithoutExtension(file).equals("fixes"));
+        if (patches != null) {
+          Element patchesElement = JDOMUtil.loadDocument(patches).getRootElement();
+          jsonWriter.name("patch").value(patchesElement.getTextTrim());
+        }
+
         jsonWriter.name(PROBLEMS);
         jsonWriter.beginArray();
 
