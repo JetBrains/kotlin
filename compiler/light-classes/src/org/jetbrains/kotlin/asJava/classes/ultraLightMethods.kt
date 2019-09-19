@@ -62,7 +62,7 @@ internal abstract class KtUltraLightMethod(
                 override fun getParent() = this@KtUltraLightMethod
                 override fun getContainingFile() = this@KtUltraLightMethod.containingFile
             }
-        computeDescriptor()?.let {
+        methodDescriptor?.let {
             for (ex in FunctionCodegen.getThrownExceptions(it)) {
                 val psiClassType = ex.defaultType.asPsiType(support, TypeMappingMode.DEFAULT, list) as? PsiClassType ?: continue
                 list.addReference(psiClassType)
@@ -92,10 +92,10 @@ internal abstract class KtUltraLightMethod(
 
     override fun getThrowsList(): PsiReferenceList = _throwsList
 
-    abstract fun computeDescriptor(): FunctionDescriptor?
+    abstract val methodDescriptor: FunctionDescriptor?
 
     private val lazyTypeErasure = lazyPub {
-        computeDescriptor()
+        methodDescriptor
             ?.getSpecialSignatureInfo()
             ?.isObjectReplacedWithTypeParameter
             ?: false
@@ -139,11 +139,11 @@ internal class KtUltraLightMethodForSourceDeclaration(
         else LightTypeParameterListBuilder(manager, language)
     }
 
-    override fun computeDescriptor() = kotlinOrigin?.resolve() as? FunctionDescriptor
+    override val methodDescriptor = kotlinOrigin?.resolve() as? FunctionDescriptor
 }
 
 internal class KtUltraLightMethodForDescriptor(
-    private val descriptor: FunctionDescriptor,
+    override val methodDescriptor: FunctionDescriptor,
     delegate: LightMethodBuilder,
     lightMemberOrigin: LightMemberOrigin?,
     support: KtUltraLightSupport,
@@ -154,14 +154,11 @@ internal class KtUltraLightMethodForDescriptor(
     support,
     containingClass
 ) {
-
-    override fun buildTypeParameterList() = buildTypeParameterList(descriptor, this, support)
-
-    override fun computeDescriptor() = descriptor
+    override fun buildTypeParameterList() = buildTypeParameterList(methodDescriptor, this, support)
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType?
-        get() = descriptor.returnType
+        get() = methodDescriptor.returnType
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>
-        get() = descriptor.obtainLightAnnotations(support, this)
+        get() = methodDescriptor.obtainLightAnnotations(support, this)
 }
