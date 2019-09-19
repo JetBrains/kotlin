@@ -558,7 +558,7 @@ message IrFunctionBase {
   optional IrValueParameter dispatch_receiver = 7 /* @order_1 */;
   optional IrValueParameter extension_receiver = 8 /* @order_1 */;
   repeated IrValueParameter value_parameter = 9  /* @order_1 */;
-  optional IrDataIndex body = 10 /* @order_2 */;
+  optional IrDataIndex body = 10;
   required IrDataIndex return_type = 11;
 }
 

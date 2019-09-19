@@ -29,6 +29,77 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.Variance
 
 class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(byteArray) {
+    override fun createIrTypeArgument_type_(oneOfType: IrTypeProjection) = oneOfType
+
+    override fun createIrDoWhile(
+        loopLoopId: Int,
+        loopCondition: IrExpression,
+        loopLabel: Int?,
+        loopBody: IrExpression?,
+        loopOrigin: IrStatementOrigin?
+    ): IrDoWhileLoop {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrWhile(
+        loopLoopId: Int,
+        loopCondition: IrExpression,
+        loopLabel: Int?,
+        loopBody: IrExpression?,
+        loopOrigin: IrStatementOrigin?
+    ): IrWhileLoop {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrExpression(
+        operation: IrExpression,
+        type_: Int,
+        coordinatesStartOffset: Int,
+        coordinatesEndOffset: Int
+    ): IrExpression {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_declaration(
+        coordinatesStartOffset: Int,
+        coordinatesEndOffset: Int,
+        oneOfDeclaration: IrDeclaration
+    ): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_expression(
+        coordinatesStartOffset: Int,
+        coordinatesEndOffset: Int,
+        oneOfExpression: IrExpression
+    ): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_blockBody(
+        coordinatesStartOffset: Int,
+        coordinatesEndOffset: Int,
+        oneOfBlockBody: IrBlockBody
+    ): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_branch(coordinatesStartOffset: Int, coordinatesEndOffset: Int, oneOfBranch: IrBranch): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_catch(coordinatesStartOffset: Int, coordinatesEndOffset: Int, oneOfCatch: IrCatch): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createIrStatement_syntheticBody(
+        coordinatesStartOffset: Int,
+        coordinatesEndOffset: Int,
+        oneOfSyntheticBody: IrSyntheticBody
+    ): IrStatement {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun createIrOperation_block(block: IrBlock) = block
 
     override fun createIrOperation_break_(break_: IrBreak) = break_
@@ -119,30 +190,6 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
 
     override fun createIrDeclaration_irTypeAlias(irTypeAlias: IrTypeAlias) = irTypeAlias
 
-    override fun createIrStatement_declaration(coordinates: CoordinatesCarrier, declaration: IrDeclaration): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createIrStatement_expression(coordinates: CoordinatesCarrier, expression: IrExpression): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createIrStatement_blockBody(coordinates: CoordinatesCarrier, blockBody: IrBlockBody): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createIrStatement_branch(coordinates: CoordinatesCarrier, branch: IrBranch): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createIrStatement_catch(coordinates: CoordinatesCarrier, catch: IrCatch): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createIrStatement_syntheticBody(coordinates: CoordinatesCarrier, syntheticBody: IrSyntheticBody): IrStatement {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun createDescriptorReference(
         packageFqName: FqName,
         classFqName: FqName,
@@ -193,8 +240,6 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     private val symbolTable: SymbolTable  = SymbolTable()
 
     override fun createUniqId(index: Long, isLocal: Boolean) = UniqId(index, isLocal)
-
-    override fun createCoordinates(startOffset: Int, endOffset: Int) = CoordinatesCarrier(startOffset, endOffset)
 
     private val visibilities = listOf(
         Visibilities.PUBLIC, Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.PROTECTED, Visibilities
@@ -280,7 +325,7 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
 
     override fun createIrTypeArgument_star(star: IrStarProjection) = star
 
-    override fun createIrTypeArgument_type(type: IrTypeProjection) = type
+//    override fun createIrTypeArgument_type(type: IrTypeProjection) = type
 
     override fun createIrSimpleType(
         annotations: List<IrConstructorCall>,
@@ -329,16 +374,12 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrBlockImpl(delayedStart(), delayedEnd(), delayedType(), origin, statement)
     }
 
-    override fun createMemberAccessCommon(
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArgument: List<IrExpression>,
-        typeArguments: List<IrType>
-    ): MemberAccessCarrier {
-        return MemberAccessCarrier(dispatchReceiver, extensionReceiver, valueArgument, typeArguments)
-    }
-
-    override fun createIrCall(symbol: Int, memberAccess: MemberAccessCarrier, super_: Int?, origin: IrStatementOrigin?): IrCall {
+    override fun createIrCall(
+        symbol: Int, memberAccessDispatchReceiver: IrExpression?,
+        memberAccessExtensionReceiver: IrExpression?,
+        memberAccessValueArgument: List<IrExpression>,
+        memberAccessTypeArguments: List<IrType>, super_: Int?, origin: IrStatementOrigin?
+    ): IrCall {
         val functionSymbol = loadSymbol(symbol) as IrSimpleFunctionSymbol
         val superSymbol = super_?.let { loadSymbol(it) as IrClassSymbol }
         return IrCallImpl(
@@ -347,22 +388,24 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
             delayedType(),
             functionSymbol,
             functionSymbol.descriptor,
-            memberAccess.typeArguments.size,
-            memberAccess.valueArguments.size,
-            origin,
-            superSymbol
+            memberAccessTypeArguments.size,
+            memberAccessValueArgument.size,
+            origin, superSymbol
         ).apply {
-            dispatchReceiver = memberAccess.dispatchReceiver
-            extensionReceiver = memberAccess.extensionReceiver
-            memberAccess.typeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccess.valueArguments.forEachIndexed { index, value -> putValueArgument(index, value) }
+            dispatchReceiver = memberAccessDispatchReceiver
+            extensionReceiver = memberAccessExtensionReceiver
+            memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
         }
     }
 
     override fun createIrConstructorCall(
         symbol: Int,
         constructorTypeArgumentsCount: Int,
-        memberAccess: MemberAccessCarrier
+        memberAccessDispatchReceiver: IrExpression?,
+        memberAccessExtensionReceiver: IrExpression?,
+        memberAccessValueArgument: List<IrExpression>,
+        memberAccessTypeArguments: List<IrType>
     ): IrConstructorCall {
         val constructorSymbol = loadSymbol(symbol) as IrConstructorSymbol
         return IrConstructorCallImpl(
@@ -371,21 +414,24 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
             delayedType(),
             constructorSymbol,
             constructorSymbol.descriptor,
-            memberAccess.typeArguments.size,
+            memberAccessTypeArguments.size,
             constructorTypeArgumentsCount,
-            memberAccess.valueArguments.size
+            memberAccessValueArgument.size
         ).apply {
-            dispatchReceiver = memberAccess.dispatchReceiver
-            extensionReceiver = memberAccess.extensionReceiver
-            memberAccess.typeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccess.valueArguments.forEachIndexed { index, value -> putValueArgument(index, value) }
+            dispatchReceiver = memberAccessDispatchReceiver
+            extensionReceiver = memberAccessExtensionReceiver
+            memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
         }
     }
 
     override fun createIrFunctionReference(
         symbol: Int,
         origin: IrStatementOrigin?,
-        memberAccess: MemberAccessCarrier
+        memberAccessDispatchReceiver: IrExpression?,
+        memberAccessExtensionReceiver: IrExpression?,
+        memberAccessValueArgument: List<IrExpression>,
+        memberAccessTypeArguments: List<IrType>
     ): IrFunctionReference {
         val functionSymbol = loadSymbol(symbol) as IrFunctionSymbol
         val callable = IrFunctionReferenceImpl(
@@ -394,14 +440,14 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
             delayedType(),
             functionSymbol,
             functionSymbol.descriptor,
-            memberAccess.typeArguments.size,
-            memberAccess.valueArguments.size,
+            memberAccessTypeArguments.size,
+            memberAccessValueArgument.size,
             origin
         ).apply {
-            dispatchReceiver = memberAccess.dispatchReceiver
-            extensionReceiver = memberAccess.extensionReceiver
-            memberAccess.typeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccess.valueArguments.forEachIndexed { index, value -> putValueArgument(index, value) }
+            dispatchReceiver = memberAccessDispatchReceiver
+            extensionReceiver = memberAccessExtensionReceiver
+            memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
         }
 
         return callable
@@ -426,7 +472,10 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         getter: Int?,
         setter: Int?,
         origin: IrStatementOrigin?,
-        memberAccess: MemberAccessCarrier,
+        memberAccessDispatchReceiver: IrExpression?,
+        memberAccessExtensionReceiver: IrExpression?,
+        memberAccessValueArgument: List<IrExpression>,
+        memberAccessTypeArguments: List<IrType>,
         symbol: Int
     ): IrPropertyReference {
         val propertySymbol = loadSymbol(symbol) as IrPropertySymbol
@@ -438,16 +487,16 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrPropertyReferenceImpl(
             delayedStart(), delayedEnd(), delayedType(),
             propertySymbol,
-            memberAccess.typeArguments.size,
+            memberAccessTypeArguments.size,
             fieldSymbol,
             getterSymbol,
             setterSymbol,
             origin
         ).apply {
-            dispatchReceiver = memberAccess.dispatchReceiver
-            extensionReceiver = memberAccess.extensionReceiver
-            memberAccess.typeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccess.valueArguments.forEachIndexed { index, value -> putValueArgument(index, value) }
+            dispatchReceiver = memberAccessDispatchReceiver
+            extensionReceiver = memberAccessExtensionReceiver
+            memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
         }
     }
 
@@ -478,27 +527,49 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         }
     }
 
-    override fun createIrDelegatingConstructorCall(symbol: Int, memberAccess: MemberAccessCarrier): IrDelegatingConstructorCall {
+    override fun createIrDelegatingConstructorCall(
+        symbol: Int, memberAccessDispatchReceiver: IrExpression?,
+        memberAccessExtensionReceiver: IrExpression?,
+        memberAccessValueArgument: List<IrExpression>,
+        memberAccessTypeArguments: List<IrType>
+    ): IrDelegatingConstructorCall {
         val constructorSymbol = loadSymbol(symbol) as IrConstructorSymbol
-        return IrDelegatingConstructorCallImpl(delayedStart(), delayedEnd(), delayedType(), constructorSymbol, constructorSymbol.descriptor, memberAccess.typeArguments.size, memberAccess.valueArguments.size).apply {
-            dispatchReceiver = memberAccess.dispatchReceiver
-            extensionReceiver = memberAccess.extensionReceiver
-            memberAccess.typeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccess.valueArguments.forEachIndexed { index, value -> putValueArgument(index, value) }
+        return IrDelegatingConstructorCallImpl(
+            delayedStart(),
+            delayedEnd(),
+            delayedType(),
+            constructorSymbol,
+            constructorSymbol.descriptor,
+            memberAccessTypeArguments.size,
+            memberAccessValueArgument.size
+        ).apply {
+            dispatchReceiver = memberAccessDispatchReceiver
+            extensionReceiver = memberAccessExtensionReceiver
+            memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
         }
     }
 
-    override fun createIrDoWhile(loop: LoopCarrier): IrDoWhileLoop {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createIrEnumConstructorCall(symbol: Int, memberAccess: MemberAccessCarrier): IrEnumConstructorCall {
+    override fun createIrEnumConstructorCall(
+        symbol: Int,
+        memberAccessDispatchReceiver: IrExpression?,
+        memberAccessExtensionReceiver: IrExpression?,
+        memberAccessValueArgument: List<IrExpression>,
+        memberAccessTypeArguments: List<IrType>
+    ): IrEnumConstructorCall {
         val constructorSymbol = loadSymbol(symbol) as IrConstructorSymbol
-        return IrEnumConstructorCallImpl(delayedStart(), delayedEnd(), delayedType(), constructorSymbol, memberAccess.typeArguments.size, memberAccess.valueArguments.size).apply {
-            dispatchReceiver = memberAccess.dispatchReceiver
-            extensionReceiver = memberAccess.extensionReceiver
-            memberAccess.typeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
-            memberAccess.valueArguments.forEachIndexed { index, value -> putValueArgument(index, value) }
+        return IrEnumConstructorCallImpl(
+            delayedStart(),
+            delayedEnd(),
+            delayedType(),
+            constructorSymbol,
+            memberAccessTypeArguments.size,
+            memberAccessValueArgument.size
+        ).apply {
+            dispatchReceiver = memberAccessDispatchReceiver
+            extensionReceiver = memberAccessExtensionReceiver
+            memberAccessTypeArguments.forEachIndexed { index, type -> putTypeArgument(index, type) }
+            memberAccessValueArgument.forEachIndexed { index, value -> putValueArgument(index, value) }
         }
     }
 
@@ -511,14 +582,15 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrGetEnumValueImpl(delayedStart(), delayedEnd(), delayedType(), enumEntrySymbol)
     }
 
-    override fun createFieldAccessCommon(symbol: Int, super_: Int?, receiver: IrExpression?): FieldAccessCarrier {
-        return FieldAccessCarrier(symbol, super_, receiver)
-    }
-
-    override fun createIrGetField(fieldAccess: FieldAccessCarrier, origin: IrStatementOrigin?): IrGetField {
-        val fieldSymbol = loadSymbol(fieldAccess.symbolId) as IrFieldSymbol
-        val superSymbol = fieldAccess.superId?.let { loadSymbol(it) as IrClassSymbol }
-        return IrGetFieldImpl(delayedStart(), delayedEnd(), fieldSymbol, delayedType(), fieldAccess.receiver, origin, superSymbol)
+    override fun createIrGetField(
+        fieldAccessSymbol: Int,
+        fieldAccessSuper: Int?,
+        fieldAccessReceiver: IrExpression?,
+        origin: IrStatementOrigin?
+    ): IrGetField {
+        val fieldSymbol = loadSymbol(fieldAccessSymbol) as IrFieldSymbol
+        val superSymbol = fieldAccessSuper?.let { loadSymbol(it) as IrClassSymbol }
+        return IrGetFieldImpl(delayedStart(), delayedEnd(), fieldSymbol, delayedType(), fieldAccessReceiver, origin, superSymbol)
     }
 
     override fun createIrGetValue(symbol: Int, origin: IrStatementOrigin?): IrGetValue {
@@ -536,25 +608,19 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrInstanceInitializerCallImpl(delayedStart(), delayedEnd(), classSymbol, delayedType())
     }
 
-    override fun createLoop(
-        loopId: Int,
-        condition: IrExpression,
-        label: Int?,
-        body: IrExpression?,
-        origin: IrStatementOrigin?
-    ): LoopCarrier {
-        return LoopCarrier(loopId, condition, label, body, origin)
-    }
-
     override fun createIrReturn(returnTarget: Int, value: IrExpression): IrReturn {
         val returnSymbol = loadSymbol(returnTarget) as IrReturnTargetSymbol
         return IrReturnImpl(delayedStart(), delayedEnd(), delayedType(), returnSymbol, value)
     }
 
-    override fun createIrSetField(fieldAccess: FieldAccessCarrier, value: IrExpression, origin: IrStatementOrigin?): IrSetField {
-        val fieldSymbol = loadSymbol(fieldAccess.symbolId) as IrFieldSymbol
-        val superSymbol = fieldAccess.superId?.let { loadSymbol(it) as IrClassSymbol }
-        return IrSetFieldImpl(delayedStart(), delayedEnd(), fieldSymbol, fieldAccess.receiver, value, delayedType(), origin, superSymbol)
+    override fun createIrSetField(
+        fieldAccessSymbol: Int,
+        fieldAccessSuper: Int?,
+        fieldAccessReceiver: IrExpression?, value: IrExpression, origin: IrStatementOrigin?
+    ): IrSetField {
+        val fieldSymbol = loadSymbol(fieldAccessSymbol) as IrFieldSymbol
+        val superSymbol = fieldAccessSuper?.let { loadSymbol(it) as IrClassSymbol }
+        return IrSetFieldImpl(delayedStart(), delayedEnd(), fieldSymbol, fieldAccessReceiver, value, delayedType(), origin, superSymbol)
     }
 
     override fun createIrSetVariable(symbol: Int, value: IrExpression, origin: IrStatementOrigin?): IrSetVariable {
@@ -562,8 +628,8 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrSetVariableImpl(delayedStart(), delayedEnd(), delayedType(), variableSymbol, value, origin)
     }
 
-    override fun createIrSpreadElement(expression: IrExpression, coordinates: CoordinatesCarrier): IrSpreadElement {
-        return IrSpreadElementImpl(coordinates.start, coordinates.end, expression)
+    override fun createIrSpreadElement(expression: IrExpression, coordinatesStartOffset: Int, coordinatesEndOffset: Int): IrSpreadElement {
+        return IrSpreadElementImpl(coordinatesStartOffset, coordinatesEndOffset, expression)
     }
 
     override fun createIrStringConcat(argument: List<IrExpression>): IrStringConcatenation {
@@ -594,9 +660,9 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrWhenImpl(delayedStart(), delayedEnd(), delayedType(), origin, branch as List<IrBranch>)
     }
 
-    override fun createIrWhile(loop: LoopCarrier): IrWhileLoop {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+//    override fun createIrWhile(loop: LoopCarrier): IrWhileLoop {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//    }
 
     override fun createIrFunctionExpression(function: IrSimpleFunction, origin: IrStatementOrigin): IrFunctionExpression {
         return IrFunctionExpressionImpl(delayedStart(), delayedEnd(), delayedType(), function, origin)
@@ -625,75 +691,53 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         return IrTypeOperator.values()[index]
     }
 
-    override fun createIrExpression(operation: IrExpression, type: Int, coordinates: CoordinatesCarrier): IrExpression {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+//    override fun createIrExpression(operation: IrExpression, type: Int, coordinates: CoordinatesCarrier): IrExpression {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//    }
 
     override fun createNullableIrExpression(expression: IrExpression?): IrExpression {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun createIrDeclarationBase(
-        symbol: Int,
-        origin: IrDeclarationOrigin,
-        coordinates: CoordinatesCarrier,
-        annotations: List<IrConstructorCall>
-    ): DeclarationBaseCarrier {
-        return DeclarationBaseCarrier(symbol, origin, coordinates, annotations)
-    }
-
-    override fun createIrFunctionBase(
-        base: DeclarationBaseCarrier,
-        name: Int,
-        visibility: Visibility,
-        isInline: Boolean,
-        isExternal: Boolean,
-        typeParameters: List<IrTypeParameter>,
-        dispatchReceiver: IrValueParameter?,
-        extensionReceiver: IrValueParameter?,
-        valueParameter: List<IrValueParameter>,
-        body: Int?,
-        returnType: Int
-    ): FunctionBaseCarrier {
-        return FunctionBaseCarrier(
-            base,
-            name,
-            visibility,
-            isInline,
-            isExternal,
-            typeParameters,
-            dispatchReceiver,
-            extensionReceiver,
-            valueParameter,
-            body,
-            returnType
-        )
-    }
-
     override fun createIrFunction(
-        base: FunctionBaseCarrier,
+        baseBaseSymbol: Int,
+        baseBaseOrigin: IrDeclarationOrigin,
+        baseBaseCoordinatesStartOffset: Int,
+        baseBaseCoordinatesEndOffset: Int,
+        baseBaseAnnotations: List<IrConstructorCall>,
+        baseName: Int,
+        baseVisibility: Visibility,
+        baseIsInline: Boolean,
+        baseIsExternal: Boolean,
+        baseTypeParameters: List<IrTypeParameter>,
+        baseDispatchReceiver: IrValueParameter?,
+        baseExtensionReceiver: IrValueParameter?,
+        baseValueParameter: List<IrValueParameter>,
+        baseBody: Int?,
+        baseReturnType: Int,
         modality: Modality,
         isTailrec: Boolean,
         isSuspend: Boolean,
         overridden: List<Int>
     ): IrSimpleFunction {
-        val start = base.declarationBaseCarrier.coordinates.start
-        val end = base.declarationBaseCarrier.coordinates.end
-        val origin = base.declarationBaseCarrier.origin
-        val functionSymbol = loadSymbol(base.declarationBaseCarrier.symbolId) as IrSimpleFunctionSymbol
-        val name = Name.guessByFirstCharacter(loadString(base.nameId))
-        val returnType = loadType(base.returnTypeIndex)
-        val visibility = base.visibility
-        val bodyIndex = base.bodyIndex
+        val start = baseBaseCoordinatesStartOffset
+        val end = baseBaseCoordinatesEndOffset
+        val origin = baseBaseOrigin
+        val functionSymbol = loadSymbol(baseBaseSymbol) as IrSimpleFunctionSymbol
+        val name = Name.guessByFirstCharacter(loadString(baseName
+        ))
+        val returnType = loadType(baseReturnType)
+        val visibility = baseVisibility
+        val bodyIndex = baseBody
 
-        return IrFunctionImpl(start, end, origin, functionSymbol, name, visibility, modality, returnType, base.isInline, base.isExternal, isTailrec, isSuspend).apply {
-            annotations.addAll(base.declarationBaseCarrier.annotations)
+        return IrFunctionImpl(start, end, origin, functionSymbol, name, visibility, modality, returnType, baseIsInline, baseIsExternal, isTailrec, isSuspend).apply {
+            annotations.addAll(baseBaseAnnotations)
             overridden.mapTo(overriddenSymbols) { loadSymbol(it) as IrSimpleFunctionSymbol }
 
-            dispatchReceiverParameter = base.dispathReceiver
-            extensionReceiverParameter = base.extensionReceiver
-            valueParameters.addAll(base.valueParameters)
-            typeParameters.addAll(base.typeParameters)
+            dispatchReceiverParameter = baseDispatchReceiver
+            extensionReceiverParameter = baseExtensionReceiver
+            valueParameters.addAll(baseValueParameter)
+            typeParameters.addAll(baseTypeParameters)
 
             body = bodyIndex?.let { loadStatementBody(it) as IrBody }
 
@@ -701,22 +745,50 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         }
     }
 
-    override fun createIrConstructor(base: FunctionBaseCarrier, isPrimary: Boolean): IrConstructor {
-        val start = base.declarationBaseCarrier.coordinates.start
-        val end = base.declarationBaseCarrier.coordinates.end
-        val origin = base.declarationBaseCarrier.origin
-        val constructorSymbol = loadSymbol(base.declarationBaseCarrier.symbolId) as IrConstructorSymbol
-        val name = Name.special(loadString(base.nameId))
-        val returnType = loadType(base.returnTypeIndex)
-        val visibility = base.visibility
-        val bodyIndex = base.bodyIndex
+    override fun createIrConstructor(
+        baseBaseSymbol: Int,
+        baseBaseOrigin: IrDeclarationOrigin,
+        baseBaseCoordinatesStartOffset: Int,
+        baseBaseCoordinatesEndOffset: Int,
+        baseBaseAnnotations: List<IrConstructorCall>,
+        baseName: Int,
+        baseVisibility: Visibility,
+        baseIsInline: Boolean,
+        baseIsExternal: Boolean,
+        baseTypeParameters: List<IrTypeParameter>,
+        baseDispatchReceiver: IrValueParameter?,
+        baseExtensionReceiver: IrValueParameter?,
+        baseValueParameter: List<IrValueParameter>,
+        baseBody: Int?,
+        baseReturnType: Int,
+        isPrimary: Boolean
+    ): IrConstructor {
+        val start = baseBaseCoordinatesStartOffset
+        val end = baseBaseCoordinatesEndOffset
+        val origin = baseBaseOrigin
+        val constructorSymbol = loadSymbol(baseBaseSymbol) as IrConstructorSymbol
+        val name = Name.special(loadString(baseName))
+        val returnType = loadType(baseReturnType)
+        val visibility = baseVisibility
+        val bodyIndex = baseBody
 
-        return IrConstructorImpl(start, end, origin, constructorSymbol, name, visibility, returnType, base.isInline, base.isExternal, isPrimary).apply {
-            annotations.addAll(base.declarationBaseCarrier.annotations)
-            dispatchReceiverParameter = base.dispathReceiver
-            extensionReceiverParameter = base.extensionReceiver
-            valueParameters.addAll(base.valueParameters)
-            typeParameters.addAll(base.typeParameters)
+        return IrConstructorImpl(
+            start,
+            end,
+            origin,
+            constructorSymbol,
+            name,
+            visibility,
+            returnType,
+            baseIsInline,
+            baseIsExternal,
+            isPrimary
+        ).apply {
+            annotations.addAll(baseBaseAnnotations)
+            dispatchReceiverParameter = baseDispatchReceiver
+            extensionReceiverParameter = baseExtensionReceiver
+            valueParameters.addAll(baseValueParameter)
+            typeParameters.addAll(baseTypeParameters)
 
             body = bodyIndex?.let { loadStatementBody(it) as IrBody }
 
@@ -725,23 +797,27 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrField(
-        base: DeclarationBaseCarrier,
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
         initializer: Int?,
         name: Int,
         visibility: Visibility,
         isFinal: Boolean,
         isExternal: Boolean,
         isStatic: Boolean,
-        type: Int
+        type_: Int
     ): IrField {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val fieldSymbol = loadSymbol(base.symbolId) as IrFieldSymbol
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val fieldSymbol = loadSymbol(baseSymbol) as IrFieldSymbol
         val fieldName = Name.guessByFirstCharacter(loadString(name))
-        val fieldType = loadType(type)
+        val fieldType = loadType(type_)
         return IrFieldImpl(start, end, origin, fieldSymbol, fieldName, fieldType, visibility, isFinal, isExternal, isStatic).apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             this.initializer = initializer?.let { IrExpressionBodyImpl(loadExpressionBody(it)) }
 
 //            (descriptor as? WrappedFieldDescriptor)?.bind(this)
@@ -749,23 +825,27 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrLocalDelegatedProperty(
-        base: DeclarationBaseCarrier,
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
         name: Int,
-        type: Int,
+        type_: Int,
         isVar: Boolean,
         delegate: IrVariable,
         getter: IrSimpleFunction?,
         setter: IrSimpleFunction?
     ): IrLocalDelegatedProperty {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val propertySymbol = loadSymbol(base.symbolId) as IrLocalDelegatedPropertySymbol
-        val propertyType = loadType(type)
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val propertySymbol = loadSymbol(baseSymbol) as IrLocalDelegatedPropertySymbol
+        val propertyType = loadType(type_)
         val propertyName = Name.guessByFirstCharacter(loadString(name))
 
         return IrLocalDelegatedPropertyImpl(start, end, origin, propertySymbol, propertyName, propertyType, isVar).apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             this.delegate = delegate
             this.getter = getter ?: error("Should be non-null for some reason")
             this.setter = setter
@@ -775,7 +855,11 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrProperty(
-        base: DeclarationBaseCarrier,
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
         name: Int,
         visibility: Visibility,
         modality: Modality,
@@ -788,14 +872,14 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         getter: IrSimpleFunction?,
         setter: IrSimpleFunction?
     ): IrProperty {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val propertySymbol = loadSymbol(base.symbolId) as IrPropertySymbol
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val propertySymbol = loadSymbol(baseSymbol) as IrPropertySymbol
         val propertyName = Name.guessByFirstCharacter(loadString(name))
 
         return IrPropertyImpl(start, end, origin, propertySymbol, propertyName, visibility, modality, isVar, isConst, isLateinit, isDelegated, isExternal).apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             this.backingField = backingField?.also { it.correspondingPropertySymbol = propertySymbol }
             this.getter = getter?.also { it.correspondingPropertySymbol = propertySymbol }
             this.setter = setter?.also { it.correspondingPropertySymbol = propertySymbol }
@@ -805,22 +889,26 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrVariable(
-        base: DeclarationBaseCarrier,
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
         name: Int,
-        type: Int,
+        type_: Int,
         isVar: Boolean,
         isConst: Boolean,
         isLateinit: Boolean,
         initializer: IrExpression?
     ): IrVariable {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val variableSymbol = loadSymbol(base.symbolId) as IrVariableSymbol
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val variableSymbol = loadSymbol(baseSymbol) as IrVariableSymbol
         val variableName = Name.guessByFirstCharacter(loadString(name))
 
-        return IrVariableImpl(start, end, origin, variableSymbol, variableName, loadType(type), isVar, isConst, isLateinit).apply {
-            this.annotations.addAll(base.annotations)
+        return IrVariableImpl(start, end, origin, variableSymbol, variableName, loadType(type_), isVar, isConst, isLateinit).apply {
+            this.annotations.addAll(baseAnnotations)
             this.initializer = initializer
         }
     }
@@ -834,24 +922,28 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrValueParameter(
-        base: DeclarationBaseCarrier,
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
         name: Int,
         index: Int,
-        type: Int,
+        type_: Int,
         varargElementType: Int?,
         isCrossinline: Boolean,
         isNoinline: Boolean,
         defaultValue: Int?
     ): IrValueParameter {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val valueSymbol = loadSymbol(base.symbolId) as IrValueParameterSymbol
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val valueSymbol = loadSymbol(baseSymbol) as IrValueParameterSymbol
         val valueName = Name.guessByFirstCharacter(loadString(name))
-        val valueType = loadType(type)
+        val valueType = loadType(type_)
         val valueVarargType = varargElementType?.let { loadType(it) }
         return IrValueParameterImpl(start, end, origin, valueSymbol, valueName, index, valueType, valueVarargType, isCrossinline, isNoinline).apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             this.defaultValue = defaultValue?.let { IrExpressionBodyImpl(loadExpressionBody(it)) }
 
 //            (descriptor as? WrappedValueParameterDescriptor)?.bind(this)
@@ -861,17 +953,21 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrTypeParameter(
-        base: DeclarationBaseCarrier,
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
         name: Int,
         index: Int,
         variance: Variance,
         superType: List<Int>,
         isReified: Boolean
     ): IrTypeParameter {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val typeParameterSymbol = loadSymbol(base.symbolId) as IrTypeParameterSymbol
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val typeParameterSymbol = loadSymbol(baseSymbol) as IrTypeParameterSymbol
         val typeParameterName = Name.guessByFirstCharacter(loadString(name))
         val typeParameterDescriptor = typeParameterSymbol.descriptor
 
@@ -883,7 +979,7 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
                 IrTypeParameterImpl(start, end, origin, it, typeParameterName, index, isReified, variance)
             }
         }.apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             superType.mapTo(this.superTypes) { loadType(it) }
 
             (typeParameterDescriptor as? WrappedTypeParameterDescriptor)?.bind(this)
@@ -893,7 +989,11 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     override fun createIrTypeParameterContainer(typeParameter: List<IrTypeParameter>) = typeParameter
 
     override fun createIrClass(
-        base: DeclarationBaseCarrier,
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
         name: Int,
         kind: ClassKind,
         visibility: Visibility,
@@ -908,14 +1008,14 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         declarationContainer: List<IrDeclaration>,
         superType: List<Int>
     ): IrClass {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val classSymbol = loadSymbol(base.symbolId) as IrClassSymbol
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val classSymbol = loadSymbol(baseSymbol) as IrClassSymbol
         val className = Name.guessByFirstCharacter(loadString(name))
 
         return IrClassImpl(start, end, origin, classSymbol, className, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline).apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             superType.mapTo(this.superTypes) { loadType(it) }
             this.thisReceiver = thisReceiver
             this.typeParameters.addAll(typeParameters)
@@ -926,36 +1026,46 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
     }
 
     override fun createIrTypeAlias(
-        base: DeclarationBaseCarrier,
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
         name: Int,
         visibility: Visibility,
         typeParameters: List<IrTypeParameter>,
         expandedType: Int,
         isActual: Boolean
     ): IrTypeAlias {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val typeAliasSymbol = loadSymbol(base.symbolId) as IrTypeAliasSymbol
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val typeAliasSymbol = loadSymbol(baseSymbol) as IrTypeAliasSymbol
         val typeAliasName = Name.guessByFirstCharacter(loadString(name))
 
         return IrTypeAliasImpl(start, end, typeAliasSymbol, typeAliasName, visibility, loadType(expandedType), isActual, origin).apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             this.typeParameters.addAll(typeParameters)
 
 //            (descriptor as? WrappedTypeAliasDescriptor)?.bind(this)
         }
     }
 
-    override fun createIrEnumEntry(base: DeclarationBaseCarrier, initializer: Int?, correspondingClass: IrClass?, name: Int): IrEnumEntry {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val enumEntrySymbol = loadSymbol(base.symbolId) as IrEnumEntrySymbol
+    override fun createIrEnumEntry(
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>, initializer: Int?, correspondingClass: IrClass?, name: Int
+    ): IrEnumEntry {
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val enumEntrySymbol = loadSymbol(baseSymbol) as IrEnumEntrySymbol
         val enumEntryName = Name.guessByFirstCharacter(loadString(name))
 
         return IrEnumEntryImpl(start, end, origin, enumEntrySymbol, enumEntryName).apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             this.correspondingClass = correspondingClass
             this.initializerExpression = initializer?.let { loadExpressionBody(it) }
 
@@ -963,14 +1073,21 @@ class SmartIrProtoReaderImpl(byteArray: ByteArray) : AbstractIrSmartProtoReader(
         }
     }
 
-    override fun createIrAnonymousInit(base: DeclarationBaseCarrier, body: Int): IrAnonymousInitializer {
-        val start = base.coordinates.start
-        val end = base.coordinates.end
-        val origin = base.origin
-        val initSymbol = loadSymbol(base.symbolId) as IrAnonymousInitializerSymbol
+    override fun createIrAnonymousInit(
+        baseSymbol: Int,
+        baseOrigin: IrDeclarationOrigin,
+        baseCoordinatesStartOffset: Int,
+        baseCoordinatesEndOffset: Int,
+        baseAnnotations: List<IrConstructorCall>,
+        body: Int
+    ): IrAnonymousInitializer {
+        val start = baseCoordinatesStartOffset
+        val end = baseCoordinatesEndOffset
+        val origin = baseOrigin
+        val initSymbol = loadSymbol(baseSymbol) as IrAnonymousInitializerSymbol
 
         return IrAnonymousInitializerImpl(start, end, origin, initSymbol).apply {
-            this.annotations.addAll(base.annotations)
+            this.annotations.addAll(baseAnnotations)
             this.body = loadStatementBody(body) as IrBlockBody
         }
     }
