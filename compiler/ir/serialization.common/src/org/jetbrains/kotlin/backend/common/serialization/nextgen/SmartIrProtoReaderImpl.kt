@@ -253,9 +253,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
         return object : IrDeclarationOriginImpl(loadString(custom)) {}
     }
 
-    override fun createIrDeclarationOrigin_origin(origin: IrDeclarationOrigin): IrDeclarationOrigin {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun createIrDeclarationOrigin_origin(origin: IrDeclarationOrigin) = origin
 
     override fun createIrDataIndex(index: Int) = index
 
