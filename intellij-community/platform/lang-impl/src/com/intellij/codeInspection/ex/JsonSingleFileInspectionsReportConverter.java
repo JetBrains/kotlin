@@ -53,6 +53,15 @@ public class JsonSingleFileInspectionsReportConverter extends JsonInspectionsRep
         if (patches != null) {
           Element patchesElement = JDOMUtil.loadDocument(patches).getRootElement();
           jsonWriter.name("patch").value(patchesElement.getTextTrim());
+          jsonWriter.name("patchedFiles");
+          jsonWriter.beginArray();
+          for (Element patchedFile : patchesElement.getChildren("patchedFile")) {
+            jsonWriter.beginObject();
+            jsonWriter.name("path").value(patchedFile.getAttributeValue("path"));
+            jsonWriter.name("content").value(patchedFile.getTextTrim());
+            jsonWriter.endObject();
+          }
+          jsonWriter.endArray();
         }
 
         jsonWriter.name(PROBLEMS);
