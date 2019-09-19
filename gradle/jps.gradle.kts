@@ -115,7 +115,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                         fun idea(
                             title: String,
                             sandboxDir: File,
-                            pluginDir: File
+                            pluginDir: File,
+                            disableProcessCanceledException: Boolean = false
                         ) {
                             application(title) {
                                 moduleName = "kotlin.idea-runner.main"
@@ -133,12 +134,15 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     "-Dapple.laf.useScreenMenuBar=true",
                                     "-Dapple.awt.graphics.UseQuartz=true",
                                     "-Dsun.io.useCanonCaches=false",
-                                    "-Dplugin.path=${pluginDir.absolutePath}"
+                                    "-Dplugin.path=${pluginDir.absolutePath}",
+                                    "-Didea.ProcessCanceledException=${if (disableProcessCanceledException) "disabled" else "enabled"}"
                                 ).joinToString(" ")
                             }
                         }
 
                         idea("[JPS] IDEA", ideaSandboxDir, ideaPluginDir)
+
+                        idea("[JPS] IDEA (No ProcessCanceledException)", ideaSandboxDir, ideaPluginDir, disableProcessCanceledException = true)
 
                         if (intellijUltimateEnabled) {
                             idea("[JPS] IDEA Ultimate", ideaUltimateSandboxDir, ideaPluginDir)
