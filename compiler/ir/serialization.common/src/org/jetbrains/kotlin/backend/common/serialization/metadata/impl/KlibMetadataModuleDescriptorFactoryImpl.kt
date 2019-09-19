@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.serialization.konan.impl
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleDescriptorFactory
@@ -29,7 +31,7 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
 ): KlibMetadataModuleDescriptorFactory {
-
+/*
     override fun createDescriptor(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
@@ -44,13 +46,14 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
         storageManager: StorageManager,
         packageAccessedHandler: PackageAccessedHandler?
     ) = createDescriptorOptionalBuiltIns(library, languageVersionSettings, storageManager, null, packageAccessedHandler)
-
-    private fun createDescriptorOptionalBuiltIns(
+*/
+    override fun createDescriptorOptionalBuiltIns(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
-        packageAccessedHandler: PackageAccessedHandler?
+        packageAccessedHandler: PackageAccessedHandler?,
+        createBuiltinPackageFragment: Boolean
     ): ModuleDescriptorImpl {
 
         val libraryProto = parseModuleHeader(library.moduleHeaderData)
@@ -65,13 +68,19 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
 
         val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
+        val compositePackageFragmentAddend = if (builtIns == null) {
+            functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
+        } else null
+
         val provider = createPackageFragmentProvider(
             library,
             packageAccessedHandler,
             libraryProto.packageFragmentNameList,
             storageManager,
             moduleDescriptor,
-            deserializationConfiguration)
+            deserializationConfiguration,
+            compositePackageFragmentAddend
+        )
 
         moduleDescriptor.initialize(provider)
 
@@ -84,12 +93,14 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
         packageFragmentNames: List<String>,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
-        configuration: DeserializationConfiguration
+        configuration: DeserializationConfiguration,
+        compositePackageFragmentAddend: PackageFragmentProvider?
     ): PackageFragmentProvider {
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
             library, packageFragmentNames, moduleDescriptor, packageAccessedHandler, storageManager)
 
+        // TODO: this is native specific. Move to a child class.
         val syntheticPackageFragments = packageFragmentsFactory.createSyntheticPackageFragments(
             library, deserializedPackageFragments, moduleDescriptor)
 
@@ -123,6 +134,8 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
             packageFragment.initialize(components)
         }
 
-        return provider
+        return compositePackageFragmentAddend ?.let {
+            CompositePackageFragmentProvider(listOf(it, provider))
+        } ?: provider
     }
 }

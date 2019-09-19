@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 
+// TODO: eliminate Native specifics.
 class KlibResolvedModuleDescriptorsFactoryImpl(
         override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 ): KlibResolvedModuleDescriptorsFactory {

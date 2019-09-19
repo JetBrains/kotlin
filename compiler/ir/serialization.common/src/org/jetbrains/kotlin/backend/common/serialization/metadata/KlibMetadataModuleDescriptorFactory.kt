@@ -13,7 +13,7 @@ interface KlibMetadataModuleDescriptorFactory {
     val descriptorFactory: KlibModuleDescriptorFactory
     val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
 
-    fun createDescriptor(
+    /*    fun createDescriptor(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
@@ -30,5 +30,36 @@ interface KlibMetadataModuleDescriptorFactory {
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         packageAccessedHandler: PackageAccessedHandler? = null
+    ): ModuleDescriptorImpl
+
+*/
+    fun createDescriptor(
+        library: KotlinLibrary,
+        languageVersionSettings: LanguageVersionSettings,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns,
+        packageAccessedHandler: PackageAccessedHandler?
+    ) = createDescriptorOptionalBuiltIns(
+        library,
+        languageVersionSettings,
+        storageManager,
+        builtIns,
+        packageAccessedHandler
+    )
+
+    fun createDescriptorAndNewBuiltIns(
+        library: KotlinLibrary,
+        languageVersionSettings: LanguageVersionSettings,
+        storageManager: StorageManager,
+        packageAccessedHandler: PackageAccessedHandler?
+    ) = createDescriptorOptionalBuiltIns(library, languageVersionSettings, storageManager, null, packageAccessedHandler)
+
+    fun createDescriptorOptionalBuiltIns(
+        library: KotlinLibrary,
+        languageVersionSettings: LanguageVersionSettings,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns?,
+        packageAccessedHandler: PackageAccessedHandler?,
+        createBuiltinPackageFragment: Boolean
     ): ModuleDescriptorImpl
 }

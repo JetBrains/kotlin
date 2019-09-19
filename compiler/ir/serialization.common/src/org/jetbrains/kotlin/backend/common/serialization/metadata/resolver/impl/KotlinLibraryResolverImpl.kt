@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.konan.util.WithLogger
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 
-internal class KonanLibraryResolverImpl<L: KotlinLibrary>(
+fun <L: KotlinLibrary> SearchPathResolver<L>.libraryResolver() = KotlinLibraryResolverImpl<L>(this)
+
+class KotlinLibraryResolverImpl<L: KotlinLibrary>(
         override val searchPathResolver: SearchPathResolverWithAttributes<L>
 ): KotlinLibraryResolver<L>, WithLogger by searchPathResolver {
 

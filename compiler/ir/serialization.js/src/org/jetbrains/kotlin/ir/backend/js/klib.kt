@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.KonanVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.name.FqName
@@ -52,6 +54,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
@@ -212,9 +215,11 @@ private fun loadKlibMetadataParts(
 
 val ModuleDescriptor.kotlinLibrary get() = this.getCapability(JS_KLIBRARY_CAPABILITY)!!
 
+private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
+val JsFactories = KlibMetadataFactories(::createBuiltIns)
+
 private fun loadKlibMetadata(
-    parts: JsKlibMetadataParts,
-    moduleId: KotlinLibrary,
+    klib: KotlinLibrary,
     isBuiltIn: Boolean,
     lookupTracker: LookupTracker,
     storageManager: LockBasedStorageManager,
@@ -224,17 +229,27 @@ private fun loadKlibMetadata(
     dependencies: List<ModuleDescriptorImpl>
 ): ModuleDescriptorImpl {
     assert(isBuiltIn == (builtinsModule === null))
-    val builtIns = builtinsModule?.builtIns ?: object : KotlinBuiltIns(storageManager) {}
-    val md = ModuleDescriptorImpl(
-        Name.special("<${moduleId.moduleName}>"),
+/*
+    val parts = loadKlibMetadataParts(klib)
+
+    val builtIns = builtinsModule?.builtIns ?: createBuiltIns(storageManager)
+
+    val md = JsFactories.DefaultDescriptorFactory.createDescriptor(
+        Name.special("<${klib.moduleName}>"),
         storageManager,
         builtIns,
-        capabilities = mapOf(JS_KLIBRARY_CAPABILITY to moduleId)
+        DeserializedKlibModuleOrigin(klib)
+
     )
+
     if (isBuiltIn) builtIns.builtInsModule = md
     val currentModuleFragmentProvider =
         createJsKlibMetadataPackageFragmentProvider(
-            storageManager, md, parts.header, parts.body, metadataVersion,
+            storageManager,
+            md,
+            parts.header,
+            parts.body,
+            metadataVersion,
             CompilerDeserializationConfiguration(languageVersionSettings),
             lookupTracker
         )
@@ -245,11 +260,23 @@ private fun loadKlibMetadata(
     } else currentModuleFragmentProvider
 
     md.initialize(packageFragmentProvider)
+    */
+
+    val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+        klib,
+        languageVersionSettings,
+        storageManager,
+        builtinsModule?.builtIns,
+        packageAccessedHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
+        createBuiltinPackageFragment = true // TODO: This is JS specific. Move me to inheritance.
+    )
+
     md.setDependencies(listOf(md) + dependencies)
 
     return md
 }
 
+// TODO: refactor with ResolvedDependencies class in Native.
 private class ModulesStructure(
     private val project: Project,
     private val files: List<KtFile>,
@@ -257,12 +284,13 @@ private class ModulesStructure(
     private val allDependencies: List<KotlinLibrary>,
     private val friendDependencies: List<KotlinLibrary>
 ) {
+/*
     private val deserializedModuleParts: Map<KotlinLibrary, JsKlibMetadataParts> =
         allDependencies.associateWith { loadKlibMetadataParts(it) }
 
     fun findModuleByName(name: String): KotlinLibrary =
         allDependencies.find { it.moduleName == name } ?: error("Module is not found: $name")
-
+*/
     val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> =
         deserializedModuleParts.mapValues { (klib, _) ->
             klib.unresolvedDependencies.map { findModuleByName(it.path) }
@@ -295,24 +323,24 @@ private class ModulesStructure(
     private val storageManager: LockBasedStorageManager = LockBasedStorageManager("ModulesStructure")
     private var runtimeModule: ModuleDescriptorImpl? = null
 
+    // TODO: these are roughly equivalent to KlibResolvedModuleDescriptorsFactoryImpl. Refactor me.
     val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
-
     fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl = descriptors.getOrPut(current) {
-        val parts = loadKlibMetadataParts(current)
-        val isBuiltIns = parts.importedModules.isEmpty()
-        loadKlibMetadata(
-            parts,
+        val isBuiltIns = current.unresolvedDependencies.isEmpty()
+
+        val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             current,
-            isBuiltIns,
-            lookupTracker,
-            storageManager,
-            metadataVersion,
             languageVersionSettings,
-            runtimeModule,
-            moduleDependencies.getValue(current).map { getModuleDescriptor(it) }
-        ).also {
-            if (isBuiltIns) runtimeModule = it
-        }
+            storageManager,
+            runtimeModule?.builtIns,
+            packageAccessedHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
+            createBuiltinPackageFragment = true // TODO: This is JS specific. Move me to inheritance.
+        )
+        if (isBuiltIns) runtimeModule = md
+
+        val dependencies = moduleDependencies.getValue(current).map { getModuleDescriptor(it) }
+        md.setDependencies(listOf(md) + dependencies)
+        md
     }
 
     val builtInModuleDescriptor =

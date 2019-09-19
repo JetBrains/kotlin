@@ -123,6 +123,7 @@ class KlibMetadataIncrementalSerializer(
     }
 
     fun readModuleAsProto(metadata: ByteArray, importedModuleList: List<String>): JsKlibMetadataParts {
+        val header =
         val inputStream = ByteArrayInputStream(metadata)
         val header = KlibMetadataProtoBuf.Header.parseDelimitedFrom(inputStream, KlibMetadataSerializerProtocol.extensionRegistry)
         val content = KlibMetadataProtoBuf.Library.parseFrom(inputStream, KlibMetadataSerializerProtocol.extensionRegistry)
