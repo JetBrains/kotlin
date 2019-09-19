@@ -71,13 +71,17 @@ class SymbolBasedClassifierType<out T : TypeMirror>(
     javac: JavacWrapper
 ) : SymbolBasedType<T>(typeMirror, javac), JavaClassifierType {
 
+    private val isFake get() = classifier is FakeSymbolBasedClass
+
+    // TODO: we should replace this with a "link" to classifier, not an actual classifier itself
+    // It should be something like ConeClassifierLookupTag (see compiler:fir:cones)
     override val classifier: JavaClassifier?
             by lazy {
                 when (typeMirror.kind) {
                     TypeKind.DECLARED -> ((typeMirror as DeclaredType).asElement() as Symbol.ClassSymbol).let { symbol ->
                         // try to find cached javaClass
                         val classId = symbol.computeClassId()
-                        classId?.let { javac.findClass(it) } ?: SymbolBasedClass(symbol, javac, classId, symbol.classfile)
+                        classId?.let { javac.findClass(it) } ?: FakeSymbolBasedClass(symbol, javac, classId, symbol.classfile)
                     }
                     TypeKind.TYPEVAR -> SymbolBasedTypeParameter((typeMirror as TypeVariable).asElement() as TypeParameterElement, javac)
                     else -> null
@@ -86,7 +90,7 @@ class SymbolBasedClassifierType<out T : TypeMirror>(
 
     override val typeArguments: List<JavaType>
         get() {
-            if (typeMirror.kind != TypeKind.DECLARED) return emptyList()
+            if (typeMirror.kind != TypeKind.DECLARED || isFake) return emptyList()
 
             val arguments = arrayListOf<JavaType>()
             var type = typeMirror as DeclaredType
@@ -106,6 +110,7 @@ class SymbolBasedClassifierType<out T : TypeMirror>(
     override val isRaw: Boolean
         get() = when {
             typeMirror !is DeclaredType -> false
+            isFake -> false
             (classifier as? JavaClass)?.typeParameters?.isEmpty() == true -> false
             else -> typeMirror.typeArguments.isEmpty() || (classifier as? JavaClass)?.typeParameters?.size != typeMirror.typeArguments.size
         }
@@ -116,6 +121,8 @@ class SymbolBasedClassifierType<out T : TypeMirror>(
     override val presentableText: String
         get() = typeMirror.toString()
 
+    override val isDeprecatedInJavaDoc: Boolean
+        get() = !isFake && super.isDeprecatedInJavaDoc
 }
 
 class SymbolBasedWildcardType(
