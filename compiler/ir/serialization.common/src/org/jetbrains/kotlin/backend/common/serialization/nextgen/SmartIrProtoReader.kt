@@ -108,8 +108,8 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createKnownOrigin(index: Int): KnownOriginMessageType
 
-    abstract fun createIrDeclarationOrigin_origin(origin : KnownOriginMessageType?): IrDeclarationOriginMessageType
-    abstract fun createIrDeclarationOrigin_custom(custom : Int?): IrDeclarationOriginMessageType
+    abstract fun createIrDeclarationOrigin_origin(origin : KnownOriginMessageType): IrDeclarationOriginMessageType
+    abstract fun createIrDeclarationOrigin_custom(custom : Int): IrDeclarationOriginMessageType
 
     abstract fun createIrDataIndex(index : Int): Int
 
@@ -139,8 +139,8 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrTypeProjection(variance : IrTypeVarianceMessageType, type : Int): IrTypeProjectionMessageType
 
-    abstract fun createIrTypeArgument_star(star : IrStarProjectionMessageType?): IrTypeArgumentMessageType
-    abstract fun createIrTypeArgument_type(type : IrTypeProjectionMessageType?): IrTypeArgumentMessageType
+    abstract fun createIrTypeArgument_star(star : IrStarProjectionMessageType): IrTypeArgumentMessageType
+    abstract fun createIrTypeArgument_type(type : IrTypeProjectionMessageType): IrTypeArgumentMessageType
 
     abstract fun createIrSimpleType(annotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>, classifier : Int, hasQuestionMark : Boolean, argument : List<IrTypeArgumentMessageType>, abbreviation : IrTypeAbbreviationMessageType?): IrSimpleTypeMessageType
 
@@ -150,9 +150,9 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrErrorType(annotations : List<org.jetbrains.kotlin.ir.expressions.IrConstructorCall>): IrErrorTypeMessageType
 
-    abstract fun createIrType_simple(simple : IrSimpleTypeMessageType?): IrTypeMessageType
-    abstract fun createIrType_dynamic(dynamic : IrDynamicTypeMessageType?): IrTypeMessageType
-    abstract fun createIrType_error(error : IrErrorTypeMessageType?): IrTypeMessageType
+    abstract fun createIrType_simple(simple : IrSimpleTypeMessageType): IrTypeMessageType
+    abstract fun createIrType_dynamic(dynamic : IrDynamicTypeMessageType): IrTypeMessageType
+    abstract fun createIrType_error(error : IrErrorTypeMessageType): IrTypeMessageType
 
     abstract fun createIrTypeTable(types : List<IrTypeMessageType>): Array<org.jetbrains.kotlin.ir.types.IrType>
 
@@ -176,16 +176,16 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrClassReference(classSymbol : Int, classType : Int): IrClassReferenceMessageType
 
-    abstract fun createIrConst_null_(null_ : Boolean?): IrConstMessageType<*>
-    abstract fun createIrConst_boolean(boolean : Boolean?): IrConstMessageType<*>
-    abstract fun createIrConst_char(char : Int?): IrConstMessageType<*>
-    abstract fun createIrConst_byte(byte : Int?): IrConstMessageType<*>
-    abstract fun createIrConst_short(short : Int?): IrConstMessageType<*>
-    abstract fun createIrConst_int(int : Int?): IrConstMessageType<*>
-    abstract fun createIrConst_long(long : Long?): IrConstMessageType<*>
-    abstract fun createIrConst_float(float : Float?): IrConstMessageType<*>
-    abstract fun createIrConst_double(double : Double?): IrConstMessageType<*>
-    abstract fun createIrConst_string(string : Int?): IrConstMessageType<*>
+    abstract fun createIrConst_null_(null_ : Boolean): IrConstMessageType<*>
+    abstract fun createIrConst_boolean(boolean : Boolean): IrConstMessageType<*>
+    abstract fun createIrConst_char(char : Int): IrConstMessageType<*>
+    abstract fun createIrConst_byte(byte : Int): IrConstMessageType<*>
+    abstract fun createIrConst_short(short : Int): IrConstMessageType<*>
+    abstract fun createIrConst_int(int : Int): IrConstMessageType<*>
+    abstract fun createIrConst_long(long : Long): IrConstMessageType<*>
+    abstract fun createIrConst_float(float : Float): IrConstMessageType<*>
+    abstract fun createIrConst_double(double : Double): IrConstMessageType<*>
+    abstract fun createIrConst_string(string : Int): IrConstMessageType<*>
 
     abstract fun createIrContinue(loopId : Int, label : Int?): IrContinueMessageType
 
@@ -229,8 +229,8 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrVararg(elementType : Int, element : List<IrVarargElementMessageType>): IrVarargMessageType
 
-    abstract fun createIrVarargElement_expression(expression : IrExpressionMessageType?): IrVarargElementMessageType
-    abstract fun createIrVarargElement_spreadElement(spreadElement : IrSpreadElementMessageType?): IrVarargElementMessageType
+    abstract fun createIrVarargElement_expression(expression : IrExpressionMessageType): IrVarargElementMessageType
+    abstract fun createIrVarargElement_spreadElement(spreadElement : IrSpreadElementMessageType): IrVarargElementMessageType
 
     abstract fun createIrWhen(branch : List<IrStatementMessageType>, origin : IrStatementOriginMessageType?): IrWhenMessageType
 
@@ -244,39 +244,39 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrDynamicOperatorExpression(operator : IrDynamicOperatorMessageType, receiver : IrExpressionMessageType, argument : List<IrExpressionMessageType>): IrDynamicOperatorExpressionMessageType
 
-    abstract fun createIrOperation_block(block : IrBlockMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_break_(break_ : IrBreakMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_call(call : IrCallMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_classReference(classReference : IrClassReferenceMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_composite(composite : IrCompositeMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_const(const : IrConstMessageType<*>?): IrOperationMessageType
-    abstract fun createIrOperation_continue_(continue_ : IrContinueMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall : IrDelegatingConstructorCallMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_doWhile(doWhile : IrDoWhileMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_enumConstructorCall(enumConstructorCall : IrEnumConstructorCallMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_functionReference(functionReference : IrFunctionReferenceMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_getClass(getClass : IrGetClassMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_getEnumValue(getEnumValue : IrGetEnumValueMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_getField(getField : IrGetFieldMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_getObject(getObject : IrGetObjectMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_getValue(getValue : IrGetValueMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_instanceInitializerCall(instanceInitializerCall : IrInstanceInitializerCallMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_propertyReference(propertyReference : IrPropertyReferenceMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_return_(return_ : IrReturnMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_setField(setField : IrSetFieldMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_setVariable(setVariable : IrSetVariableMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_stringConcat(stringConcat : IrStringConcatMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_throw_(throw_ : IrThrowMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_try_(try_ : IrTryMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_typeOp(typeOp : IrTypeOpMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_vararg(vararg : IrVarargMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_when_(when_ : IrWhenMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_while_(while_ : IrWhileMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_dynamicMember(dynamicMember : IrDynamicMemberExpressionMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_dynamicOperator(dynamicOperator : IrDynamicOperatorExpressionMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference : IrLocalDelegatedPropertyReferenceMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_constructorCall(constructorCall : IrConstructorCallMessageType?): IrOperationMessageType
-    abstract fun createIrOperation_functionExpression(functionExpression : IrFunctionExpressionMessageType?): IrOperationMessageType
+    abstract fun createIrOperation_block(block : IrBlockMessageType): IrOperationMessageType
+    abstract fun createIrOperation_break_(break_ : IrBreakMessageType): IrOperationMessageType
+    abstract fun createIrOperation_call(call : IrCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_classReference(classReference : IrClassReferenceMessageType): IrOperationMessageType
+    abstract fun createIrOperation_composite(composite : IrCompositeMessageType): IrOperationMessageType
+    abstract fun createIrOperation_const(const : IrConstMessageType<*>): IrOperationMessageType
+    abstract fun createIrOperation_continue_(continue_ : IrContinueMessageType): IrOperationMessageType
+    abstract fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall : IrDelegatingConstructorCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_doWhile(doWhile : IrDoWhileMessageType): IrOperationMessageType
+    abstract fun createIrOperation_enumConstructorCall(enumConstructorCall : IrEnumConstructorCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_functionReference(functionReference : IrFunctionReferenceMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getClass(getClass : IrGetClassMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getEnumValue(getEnumValue : IrGetEnumValueMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getField(getField : IrGetFieldMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getObject(getObject : IrGetObjectMessageType): IrOperationMessageType
+    abstract fun createIrOperation_getValue(getValue : IrGetValueMessageType): IrOperationMessageType
+    abstract fun createIrOperation_instanceInitializerCall(instanceInitializerCall : IrInstanceInitializerCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_propertyReference(propertyReference : IrPropertyReferenceMessageType): IrOperationMessageType
+    abstract fun createIrOperation_return_(return_ : IrReturnMessageType): IrOperationMessageType
+    abstract fun createIrOperation_setField(setField : IrSetFieldMessageType): IrOperationMessageType
+    abstract fun createIrOperation_setVariable(setVariable : IrSetVariableMessageType): IrOperationMessageType
+    abstract fun createIrOperation_stringConcat(stringConcat : IrStringConcatMessageType): IrOperationMessageType
+    abstract fun createIrOperation_throw_(throw_ : IrThrowMessageType): IrOperationMessageType
+    abstract fun createIrOperation_try_(try_ : IrTryMessageType): IrOperationMessageType
+    abstract fun createIrOperation_typeOp(typeOp : IrTypeOpMessageType): IrOperationMessageType
+    abstract fun createIrOperation_vararg(vararg : IrVarargMessageType): IrOperationMessageType
+    abstract fun createIrOperation_when_(when_ : IrWhenMessageType): IrOperationMessageType
+    abstract fun createIrOperation_while_(while_ : IrWhileMessageType): IrOperationMessageType
+    abstract fun createIrOperation_dynamicMember(dynamicMember : IrDynamicMemberExpressionMessageType): IrOperationMessageType
+    abstract fun createIrOperation_dynamicOperator(dynamicOperator : IrDynamicOperatorExpressionMessageType): IrOperationMessageType
+    abstract fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference : IrLocalDelegatedPropertyReferenceMessageType): IrOperationMessageType
+    abstract fun createIrOperation_constructorCall(constructorCall : IrConstructorCallMessageType): IrOperationMessageType
+    abstract fun createIrOperation_functionExpression(functionExpression : IrFunctionExpressionMessageType): IrOperationMessageType
 
     abstract fun createIrTypeOperator(index: Int): IrTypeOperatorMessageType
 
@@ -318,18 +318,18 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrAnonymousInit(base : IrDeclarationBaseMessageType, body : Int): IrAnonymousInitMessageType
 
-    abstract fun createIrDeclaration_irAnonymousInit(irAnonymousInit : IrAnonymousInitMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irClass(irClass : IrClassMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irConstructor(irConstructor : IrConstructorMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irEnumEntry(irEnumEntry : IrEnumEntryMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irField(irField : IrFieldMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irFunction(irFunction : IrFunctionMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irProperty(irProperty : IrPropertyMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irTypeParameter(irTypeParameter : IrTypeParameterMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irVariable(irVariable : IrVariableMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irValueParameter(irValueParameter : IrValueParameterMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty : IrLocalDelegatedPropertyMessageType?): IrDeclarationMessageType
-    abstract fun createIrDeclaration_irTypeAlias(irTypeAlias : IrTypeAliasMessageType?): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irAnonymousInit(irAnonymousInit : IrAnonymousInitMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irClass(irClass : IrClassMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irConstructor(irConstructor : IrConstructorMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irEnumEntry(irEnumEntry : IrEnumEntryMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irField(irField : IrFieldMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irFunction(irFunction : IrFunctionMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irProperty(irProperty : IrPropertyMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irTypeParameter(irTypeParameter : IrTypeParameterMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irVariable(irVariable : IrVariableMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irValueParameter(irValueParameter : IrValueParameterMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty : IrLocalDelegatedPropertyMessageType): IrDeclarationMessageType
+    abstract fun createIrDeclaration_irTypeAlias(irTypeAlias : IrTypeAliasMessageType): IrDeclarationMessageType
 
     abstract fun createIrBranch(condition : IrExpressionMessageType, result : IrExpressionMessageType): IrBranchMessageType
 
@@ -341,12 +341,12 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrSyntheticBody(kind : IrSyntheticBodyKindMessageType): IrSyntheticBodyMessageType
 
-    abstract fun createIrStatement_declaration(coordinates : CoordinatesMessageType, declaration : IrDeclarationMessageType?): IrStatementMessageType
-    abstract fun createIrStatement_expression(coordinates : CoordinatesMessageType, expression : IrExpressionMessageType?): IrStatementMessageType
-    abstract fun createIrStatement_blockBody(coordinates : CoordinatesMessageType, blockBody : IrBlockBodyMessageType?): IrStatementMessageType
-    abstract fun createIrStatement_branch(coordinates : CoordinatesMessageType, branch : IrBranchMessageType?): IrStatementMessageType
-    abstract fun createIrStatement_catch(coordinates : CoordinatesMessageType, catch : IrCatchMessageType?): IrStatementMessageType
-    abstract fun createIrStatement_syntheticBody(coordinates : CoordinatesMessageType, syntheticBody : IrSyntheticBodyMessageType?): IrStatementMessageType
+    abstract fun createIrStatement_declaration(coordinates : CoordinatesMessageType, declaration : IrDeclarationMessageType): IrStatementMessageType
+    abstract fun createIrStatement_expression(coordinates : CoordinatesMessageType, expression : IrExpressionMessageType): IrStatementMessageType
+    abstract fun createIrStatement_blockBody(coordinates : CoordinatesMessageType, blockBody : IrBlockBodyMessageType): IrStatementMessageType
+    abstract fun createIrStatement_branch(coordinates : CoordinatesMessageType, branch : IrBranchMessageType): IrStatementMessageType
+    abstract fun createIrStatement_catch(coordinates : CoordinatesMessageType, catch : IrCatchMessageType): IrStatementMessageType
+    abstract fun createIrStatement_syntheticBody(coordinates : CoordinatesMessageType, syntheticBody : IrSyntheticBodyMessageType): IrStatementMessageType
 
     open fun readDescriptorReference(): DescriptorReferenceMessageType {
         var package_fq_name__: FqNameMessageType? = null

@@ -121,7 +121,7 @@ private class IrDeserializerPrinter(
                         if (i != 0) append(", ")
                         val type = when (f.kind) {
                             FieldKind.REPEATED -> "List<${f.type.ktType}>"
-                            FieldKind.REQUIRED -> f.type.ktType
+                            FieldKind.REQUIRED, FieldKind.ONE_OF -> f.type.ktType
                             else -> "${f.type.ktType}?"
                         }
                         append("${f.name.escape()} : $type")

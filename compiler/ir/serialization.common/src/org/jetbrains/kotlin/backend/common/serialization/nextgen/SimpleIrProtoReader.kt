@@ -18,8 +18,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createKnownOrigin(index: Int): Any = index
 
-    fun createIrDeclarationOrigin_origin(origin : Any?): Any = arrayOf<Any?>(origin)
-    fun createIrDeclarationOrigin_custom(custom : Any?): Any = arrayOf<Any?>(custom)
+    fun createIrDeclarationOrigin_origin(origin : Any): Any = arrayOf<Any?>(origin)
+    fun createIrDeclarationOrigin_custom(custom : Any): Any = arrayOf<Any?>(custom)
 
     fun createIrDataIndex(index : Int): Any = arrayOf<Any?>(index)
 
@@ -49,8 +49,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrTypeProjection(variance : Any, type : Any): Any = arrayOf<Any?>(variance, type)
 
-    fun createIrTypeArgument_star(star : Any?): Any = arrayOf<Any?>(star)
-    fun createIrTypeArgument_type(type : Any?): Any = arrayOf<Any?>(type)
+    fun createIrTypeArgument_star(star : Any): Any = arrayOf<Any?>(star)
+    fun createIrTypeArgument_type(type : Any): Any = arrayOf<Any?>(type)
 
     fun createIrSimpleType(annotations : Any, classifier : Any, hasQuestionMark : Boolean, argument : List<Any>, abbreviation : Any?): Any = arrayOf<Any?>(annotations, classifier, hasQuestionMark, argument, abbreviation)
 
@@ -60,9 +60,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrErrorType(annotations : Any): Any = arrayOf<Any?>(annotations)
 
-    fun createIrType_simple(simple : Any?): Any = arrayOf<Any?>(simple)
-    fun createIrType_dynamic(dynamic : Any?): Any = arrayOf<Any?>(dynamic)
-    fun createIrType_error(error : Any?): Any = arrayOf<Any?>(error)
+    fun createIrType_simple(simple : Any): Any = arrayOf<Any?>(simple)
+    fun createIrType_dynamic(dynamic : Any): Any = arrayOf<Any?>(dynamic)
+    fun createIrType_error(error : Any): Any = arrayOf<Any?>(error)
 
     fun createIrTypeTable(types : List<Any>): Any = arrayOf<Any?>(types)
 
@@ -86,16 +86,16 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrClassReference(classSymbol : Any, classType : Any): Any = arrayOf<Any?>(classSymbol, classType)
 
-    fun createIrConst_null_(null_ : Boolean?): Any = arrayOf<Any?>(null_)
-    fun createIrConst_boolean(boolean : Boolean?): Any = arrayOf<Any?>(boolean)
-    fun createIrConst_char(char : Int?): Any = arrayOf<Any?>(char)
-    fun createIrConst_byte(byte : Int?): Any = arrayOf<Any?>(byte)
-    fun createIrConst_short(short : Int?): Any = arrayOf<Any?>(short)
-    fun createIrConst_int(int : Int?): Any = arrayOf<Any?>(int)
-    fun createIrConst_long(long : Long?): Any = arrayOf<Any?>(long)
-    fun createIrConst_float(float : Float?): Any = arrayOf<Any?>(float)
-    fun createIrConst_double(double : Double?): Any = arrayOf<Any?>(double)
-    fun createIrConst_string(string : Any?): Any = arrayOf<Any?>(string)
+    fun createIrConst_null_(null_ : Boolean): Any = arrayOf<Any?>(null_)
+    fun createIrConst_boolean(boolean : Boolean): Any = arrayOf<Any?>(boolean)
+    fun createIrConst_char(char : Int): Any = arrayOf<Any?>(char)
+    fun createIrConst_byte(byte : Int): Any = arrayOf<Any?>(byte)
+    fun createIrConst_short(short : Int): Any = arrayOf<Any?>(short)
+    fun createIrConst_int(int : Int): Any = arrayOf<Any?>(int)
+    fun createIrConst_long(long : Long): Any = arrayOf<Any?>(long)
+    fun createIrConst_float(float : Float): Any = arrayOf<Any?>(float)
+    fun createIrConst_double(double : Double): Any = arrayOf<Any?>(double)
+    fun createIrConst_string(string : Any): Any = arrayOf<Any?>(string)
 
     fun createIrContinue(loopId : Int, label : Any?): Any = arrayOf<Any?>(loopId, label)
 
@@ -139,8 +139,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrVararg(elementType : Any, element : List<Any>): Any = arrayOf<Any?>(elementType, element)
 
-    fun createIrVarargElement_expression(expression : Any?): Any = arrayOf<Any?>(expression)
-    fun createIrVarargElement_spreadElement(spreadElement : Any?): Any = arrayOf<Any?>(spreadElement)
+    fun createIrVarargElement_expression(expression : Any): Any = arrayOf<Any?>(expression)
+    fun createIrVarargElement_spreadElement(spreadElement : Any): Any = arrayOf<Any?>(spreadElement)
 
     fun createIrWhen(branch : List<Any>, origin : Any?): Any = arrayOf<Any?>(branch, origin)
 
@@ -154,39 +154,39 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrDynamicOperatorExpression(operator : Any, receiver : Any, argument : List<Any>): Any = arrayOf<Any?>(operator, receiver, argument)
 
-    fun createIrOperation_block(block : Any?): Any = arrayOf<Any?>(block)
-    fun createIrOperation_break_(break_ : Any?): Any = arrayOf<Any?>(break_)
-    fun createIrOperation_call(call : Any?): Any = arrayOf<Any?>(call)
-    fun createIrOperation_classReference(classReference : Any?): Any = arrayOf<Any?>(classReference)
-    fun createIrOperation_composite(composite : Any?): Any = arrayOf<Any?>(composite)
-    fun createIrOperation_const(const : Any?): Any = arrayOf<Any?>(const)
-    fun createIrOperation_continue_(continue_ : Any?): Any = arrayOf<Any?>(continue_)
-    fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall : Any?): Any = arrayOf<Any?>(delegatingConstructorCall)
-    fun createIrOperation_doWhile(doWhile : Any?): Any = arrayOf<Any?>(doWhile)
-    fun createIrOperation_enumConstructorCall(enumConstructorCall : Any?): Any = arrayOf<Any?>(enumConstructorCall)
-    fun createIrOperation_functionReference(functionReference : Any?): Any = arrayOf<Any?>(functionReference)
-    fun createIrOperation_getClass(getClass : Any?): Any = arrayOf<Any?>(getClass)
-    fun createIrOperation_getEnumValue(getEnumValue : Any?): Any = arrayOf<Any?>(getEnumValue)
-    fun createIrOperation_getField(getField : Any?): Any = arrayOf<Any?>(getField)
-    fun createIrOperation_getObject(getObject : Any?): Any = arrayOf<Any?>(getObject)
-    fun createIrOperation_getValue(getValue : Any?): Any = arrayOf<Any?>(getValue)
-    fun createIrOperation_instanceInitializerCall(instanceInitializerCall : Any?): Any = arrayOf<Any?>(instanceInitializerCall)
-    fun createIrOperation_propertyReference(propertyReference : Any?): Any = arrayOf<Any?>(propertyReference)
-    fun createIrOperation_return_(return_ : Any?): Any = arrayOf<Any?>(return_)
-    fun createIrOperation_setField(setField : Any?): Any = arrayOf<Any?>(setField)
-    fun createIrOperation_setVariable(setVariable : Any?): Any = arrayOf<Any?>(setVariable)
-    fun createIrOperation_stringConcat(stringConcat : Any?): Any = arrayOf<Any?>(stringConcat)
-    fun createIrOperation_throw_(throw_ : Any?): Any = arrayOf<Any?>(throw_)
-    fun createIrOperation_try_(try_ : Any?): Any = arrayOf<Any?>(try_)
-    fun createIrOperation_typeOp(typeOp : Any?): Any = arrayOf<Any?>(typeOp)
-    fun createIrOperation_vararg(vararg : Any?): Any = arrayOf<Any?>(vararg)
-    fun createIrOperation_when_(when_ : Any?): Any = arrayOf<Any?>(when_)
-    fun createIrOperation_while_(while_ : Any?): Any = arrayOf<Any?>(while_)
-    fun createIrOperation_dynamicMember(dynamicMember : Any?): Any = arrayOf<Any?>(dynamicMember)
-    fun createIrOperation_dynamicOperator(dynamicOperator : Any?): Any = arrayOf<Any?>(dynamicOperator)
-    fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference : Any?): Any = arrayOf<Any?>(localDelegatedPropertyReference)
-    fun createIrOperation_constructorCall(constructorCall : Any?): Any = arrayOf<Any?>(constructorCall)
-    fun createIrOperation_functionExpression(functionExpression : Any?): Any = arrayOf<Any?>(functionExpression)
+    fun createIrOperation_block(block : Any): Any = arrayOf<Any?>(block)
+    fun createIrOperation_break_(break_ : Any): Any = arrayOf<Any?>(break_)
+    fun createIrOperation_call(call : Any): Any = arrayOf<Any?>(call)
+    fun createIrOperation_classReference(classReference : Any): Any = arrayOf<Any?>(classReference)
+    fun createIrOperation_composite(composite : Any): Any = arrayOf<Any?>(composite)
+    fun createIrOperation_const(const : Any): Any = arrayOf<Any?>(const)
+    fun createIrOperation_continue_(continue_ : Any): Any = arrayOf<Any?>(continue_)
+    fun createIrOperation_delegatingConstructorCall(delegatingConstructorCall : Any): Any = arrayOf<Any?>(delegatingConstructorCall)
+    fun createIrOperation_doWhile(doWhile : Any): Any = arrayOf<Any?>(doWhile)
+    fun createIrOperation_enumConstructorCall(enumConstructorCall : Any): Any = arrayOf<Any?>(enumConstructorCall)
+    fun createIrOperation_functionReference(functionReference : Any): Any = arrayOf<Any?>(functionReference)
+    fun createIrOperation_getClass(getClass : Any): Any = arrayOf<Any?>(getClass)
+    fun createIrOperation_getEnumValue(getEnumValue : Any): Any = arrayOf<Any?>(getEnumValue)
+    fun createIrOperation_getField(getField : Any): Any = arrayOf<Any?>(getField)
+    fun createIrOperation_getObject(getObject : Any): Any = arrayOf<Any?>(getObject)
+    fun createIrOperation_getValue(getValue : Any): Any = arrayOf<Any?>(getValue)
+    fun createIrOperation_instanceInitializerCall(instanceInitializerCall : Any): Any = arrayOf<Any?>(instanceInitializerCall)
+    fun createIrOperation_propertyReference(propertyReference : Any): Any = arrayOf<Any?>(propertyReference)
+    fun createIrOperation_return_(return_ : Any): Any = arrayOf<Any?>(return_)
+    fun createIrOperation_setField(setField : Any): Any = arrayOf<Any?>(setField)
+    fun createIrOperation_setVariable(setVariable : Any): Any = arrayOf<Any?>(setVariable)
+    fun createIrOperation_stringConcat(stringConcat : Any): Any = arrayOf<Any?>(stringConcat)
+    fun createIrOperation_throw_(throw_ : Any): Any = arrayOf<Any?>(throw_)
+    fun createIrOperation_try_(try_ : Any): Any = arrayOf<Any?>(try_)
+    fun createIrOperation_typeOp(typeOp : Any): Any = arrayOf<Any?>(typeOp)
+    fun createIrOperation_vararg(vararg : Any): Any = arrayOf<Any?>(vararg)
+    fun createIrOperation_when_(when_ : Any): Any = arrayOf<Any?>(when_)
+    fun createIrOperation_while_(while_ : Any): Any = arrayOf<Any?>(while_)
+    fun createIrOperation_dynamicMember(dynamicMember : Any): Any = arrayOf<Any?>(dynamicMember)
+    fun createIrOperation_dynamicOperator(dynamicOperator : Any): Any = arrayOf<Any?>(dynamicOperator)
+    fun createIrOperation_localDelegatedPropertyReference(localDelegatedPropertyReference : Any): Any = arrayOf<Any?>(localDelegatedPropertyReference)
+    fun createIrOperation_constructorCall(constructorCall : Any): Any = arrayOf<Any?>(constructorCall)
+    fun createIrOperation_functionExpression(functionExpression : Any): Any = arrayOf<Any?>(functionExpression)
 
     fun createIrTypeOperator(index: Int): Any = index
 
@@ -228,18 +228,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrAnonymousInit(base : Any, body : Any): Any = arrayOf<Any?>(base, body)
 
-    fun createIrDeclaration_irAnonymousInit(irAnonymousInit : Any?): Any = arrayOf<Any?>(irAnonymousInit)
-    fun createIrDeclaration_irClass(irClass : Any?): Any = arrayOf<Any?>(irClass)
-    fun createIrDeclaration_irConstructor(irConstructor : Any?): Any = arrayOf<Any?>(irConstructor)
-    fun createIrDeclaration_irEnumEntry(irEnumEntry : Any?): Any = arrayOf<Any?>(irEnumEntry)
-    fun createIrDeclaration_irField(irField : Any?): Any = arrayOf<Any?>(irField)
-    fun createIrDeclaration_irFunction(irFunction : Any?): Any = arrayOf<Any?>(irFunction)
-    fun createIrDeclaration_irProperty(irProperty : Any?): Any = arrayOf<Any?>(irProperty)
-    fun createIrDeclaration_irTypeParameter(irTypeParameter : Any?): Any = arrayOf<Any?>(irTypeParameter)
-    fun createIrDeclaration_irVariable(irVariable : Any?): Any = arrayOf<Any?>(irVariable)
-    fun createIrDeclaration_irValueParameter(irValueParameter : Any?): Any = arrayOf<Any?>(irValueParameter)
-    fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty : Any?): Any = arrayOf<Any?>(irLocalDelegatedProperty)
-    fun createIrDeclaration_irTypeAlias(irTypeAlias : Any?): Any = arrayOf<Any?>(irTypeAlias)
+    fun createIrDeclaration_irAnonymousInit(irAnonymousInit : Any): Any = arrayOf<Any?>(irAnonymousInit)
+    fun createIrDeclaration_irClass(irClass : Any): Any = arrayOf<Any?>(irClass)
+    fun createIrDeclaration_irConstructor(irConstructor : Any): Any = arrayOf<Any?>(irConstructor)
+    fun createIrDeclaration_irEnumEntry(irEnumEntry : Any): Any = arrayOf<Any?>(irEnumEntry)
+    fun createIrDeclaration_irField(irField : Any): Any = arrayOf<Any?>(irField)
+    fun createIrDeclaration_irFunction(irFunction : Any): Any = arrayOf<Any?>(irFunction)
+    fun createIrDeclaration_irProperty(irProperty : Any): Any = arrayOf<Any?>(irProperty)
+    fun createIrDeclaration_irTypeParameter(irTypeParameter : Any): Any = arrayOf<Any?>(irTypeParameter)
+    fun createIrDeclaration_irVariable(irVariable : Any): Any = arrayOf<Any?>(irVariable)
+    fun createIrDeclaration_irValueParameter(irValueParameter : Any): Any = arrayOf<Any?>(irValueParameter)
+    fun createIrDeclaration_irLocalDelegatedProperty(irLocalDelegatedProperty : Any): Any = arrayOf<Any?>(irLocalDelegatedProperty)
+    fun createIrDeclaration_irTypeAlias(irTypeAlias : Any): Any = arrayOf<Any?>(irTypeAlias)
 
     fun createIrBranch(condition : Any, result : Any): Any = arrayOf<Any?>(condition, result)
 
@@ -251,12 +251,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrSyntheticBody(kind : Any): Any = arrayOf<Any?>(kind)
 
-    fun createIrStatement_declaration(coordinates : Any, declaration : Any?): Any = arrayOf<Any?>(coordinates, declaration)
-    fun createIrStatement_expression(coordinates : Any, expression : Any?): Any = arrayOf<Any?>(coordinates, expression)
-    fun createIrStatement_blockBody(coordinates : Any, blockBody : Any?): Any = arrayOf<Any?>(coordinates, blockBody)
-    fun createIrStatement_branch(coordinates : Any, branch : Any?): Any = arrayOf<Any?>(coordinates, branch)
-    fun createIrStatement_catch(coordinates : Any, catch : Any?): Any = arrayOf<Any?>(coordinates, catch)
-    fun createIrStatement_syntheticBody(coordinates : Any, syntheticBody : Any?): Any = arrayOf<Any?>(coordinates, syntheticBody)
+    fun createIrStatement_declaration(coordinates : Any, declaration : Any): Any = arrayOf<Any?>(coordinates, declaration)
+    fun createIrStatement_expression(coordinates : Any, expression : Any): Any = arrayOf<Any?>(coordinates, expression)
+    fun createIrStatement_blockBody(coordinates : Any, blockBody : Any): Any = arrayOf<Any?>(coordinates, blockBody)
+    fun createIrStatement_branch(coordinates : Any, branch : Any): Any = arrayOf<Any?>(coordinates, branch)
+    fun createIrStatement_catch(coordinates : Any, catch : Any): Any = arrayOf<Any?>(coordinates, catch)
+    fun createIrStatement_syntheticBody(coordinates : Any, syntheticBody : Any): Any = arrayOf<Any?>(coordinates, syntheticBody)
 
     open fun readDescriptorReference(): Any {
         var package_fq_name__: Any? = null
