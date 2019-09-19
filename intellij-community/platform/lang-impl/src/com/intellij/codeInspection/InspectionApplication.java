@@ -33,17 +33,13 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsListener;
-import com.intellij.openapi.vcs.changes.Change;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.ChangesUtil;
-import com.intellij.openapi.vcs.changes.ContentRevision;
+import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vcs.ex.RangesBuilder;
 import com.intellij.openapi.vfs.*;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
@@ -210,31 +206,49 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
 
     final AnalysisScope scope;
     if (myAnalyzeChanges) {
-      List<VirtualFile> files = ChangeListManager.getInstance(project).getAffectedFiles();
-      for (VirtualFile file : files) {
-        reportMessage(0, "modified file" + file.getPath());
-      }
-      scope = new AnalysisScope(GlobalSearchScope.filesScope(project, files), project);
-    }
-    else if (mySourceDirectory == null) {
-      final String scopeName = System.getProperty("idea.analyze.scope");
-      final NamedScope namedScope = scopeName != null ? NamedScopesHolder.getScope(project, scopeName) : null;
-      scope = namedScope != null ? new AnalysisScope(GlobalSearchScopesCore.filterScope(project, namedScope), project)
-                                 : new AnalysisScope(project);
+      ChangeListManager changeListManager = ChangeListManager.getInstance(project);
+      changeListManager.invokeAfterUpdate(() -> {
+        List<VirtualFile> files = changeListManager.getAffectedFiles();
+        for (VirtualFile file : files) {
+          reportMessage(0, "modified file" + file.getPath());
+        }
+        try {
+          runAnalysisOnScope(parentDisposable, project, inspectionProfile, context,
+                             new AnalysisScope(project, files));
+        }
+        catch (IOException e) {
+          e.printStackTrace();
+        }
+      }, InvokeAfterUpdateMode.SYNCHRONOUS_NOT_CANCELLABLE, null, null);
     }
     else {
-      mySourceDirectory = mySourceDirectory.replace(File.separatorChar, '/');
-
-      VirtualFile vfsDir = LocalFileSystem.getInstance().findFileByPath(mySourceDirectory);
-      if (vfsDir == null) {
-        reportError(InspectionsBundle.message("inspection.application.directory.cannot.be.found", mySourceDirectory));
-        printHelp();
+      if (mySourceDirectory == null) {
+        final String scopeName = System.getProperty("idea.analyze.scope");
+        final NamedScope namedScope = scopeName != null ? NamedScopesHolder.getScope(project, scopeName) : null;
+        scope = namedScope != null ? new AnalysisScope(GlobalSearchScopesCore.filterScope(project, namedScope), project)
+                                   : new AnalysisScope(project);
       }
+      else {
+        mySourceDirectory = mySourceDirectory.replace(File.separatorChar, '/');
 
-      PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(vfsDir);
-      scope = new AnalysisScope(Objects.requireNonNull(psiDirectory));
+        VirtualFile vfsDir = LocalFileSystem.getInstance().findFileByPath(mySourceDirectory);
+        if (vfsDir == null) {
+          reportError(InspectionsBundle.message("inspection.application.directory.cannot.be.found", mySourceDirectory));
+          printHelp();
+        }
+
+        PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(vfsDir);
+        scope = new AnalysisScope(Objects.requireNonNull(psiDirectory));
+
+      }
+      runAnalysisOnScope(parentDisposable, project, inspectionProfile, context, scope);
     }
+  }
 
+  private void runAnalysisOnScope(@NotNull Disposable parentDisposable,
+                                  Project project,
+                                  InspectionProfileImpl inspectionProfile, GlobalInspectionContextImpl context, AnalysisScope scope)
+    throws IOException {
     reportMessage(1, InspectionsBundle.message("inspection.done"));
 
     if (!myRunWithEditorSettings) {
