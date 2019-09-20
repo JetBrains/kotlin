@@ -353,7 +353,7 @@ message Loop {
   required int32 loop_id = 1;
   required IrExpression condition = 2;
   optional IrDataIndex label = 3;
-  optional IrExpression body = 4; // @order=1
+  optional IrExpression body = 4 /* @order_1 */;
   optional IrStatementOrigin origin = 5;
 }
 

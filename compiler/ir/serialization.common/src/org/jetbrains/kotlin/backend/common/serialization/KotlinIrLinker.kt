@@ -143,7 +143,7 @@ abstract class KotlinIrLinker(
             IrFileDeserializer(logger, builtIns, symbolTable) {
 
 
-            inner class NextgenProtoParser(byteArray: ByteArray): SmartIrProtoReaderImpl(symbolTable, byteArray) {
+            inner class NextgenProtoParser(byteArray: ByteArray): SmartIrProtoReaderImpl(symbolTable, builtIns, byteArray) {
                 override val descriptorReferenceDeserializer = this@KotlinIrLinker.descriptorReferenceDeserializer
 
 //                override fun resolveSpecialDescriptor(fqname: FqName): DeclarationDescriptor {
@@ -195,13 +195,13 @@ abstract class KotlinIrLinker(
                     return symbol
                 }
 
-                override fun getLoopById(id: Int): IrLoop {
-                    return fileLoops[id] ?: error("No loop found for id $id")
-                }
-
-                override fun registerLoopById(id: Int, loop: IrLoop) {
-                    fileLoops[id] = loop as IrLoopBase
-                }
+//                override fun getLoopById(id: Int): IrLoop {
+//                    return fileLoops[id] ?: error("No loop found for id $id")
+//                }
+//
+//                override fun registerLoopById(id: Int, loop: IrLoop) {
+//                    fileLoops[id] = loop as IrLoopBase
+//                }
 
                 override fun loadType(id: Int): IrType {
                     return this@IrDeserializerForFile.loadType(id)

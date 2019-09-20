@@ -182,7 +182,8 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrDelegatingConstructorCall(symbol : Int, memberAccessDispatchReceiver : IrExpressionMessageType?, memberAccessExtensionReceiver : IrExpressionMessageType?, memberAccessValueArgument : List<NullableIrExpressionMessageType>, memberAccessTypeArguments : List<org.jetbrains.kotlin.ir.types.IrType>): IrDelegatingConstructorCallMessageType
 
-    abstract fun createIrDoWhile(loopLoopId : Int, loopCondition : IrExpressionMessageType, loopLabel : Int?, loopBody : IrExpressionMessageType?, loopOrigin : IrStatementOriginMessageType?): IrDoWhileMessageType
+    abstract fun createIrDoWhile(loopLoopId : Int, loopCondition : IrExpressionMessageType, loopLabel : Int?, loopOrigin : IrStatementOriginMessageType?): IrDoWhileMessageType
+    abstract fun createIrDoWhile1(partial: IrDoWhileMessageType, loopBody : IrExpressionMessageType?): IrDoWhileMessageType
 
     abstract fun createIrEnumConstructorCall(symbol : Int, memberAccessDispatchReceiver : IrExpressionMessageType?, memberAccessExtensionReceiver : IrExpressionMessageType?, memberAccessValueArgument : List<NullableIrExpressionMessageType>, memberAccessTypeArguments : List<org.jetbrains.kotlin.ir.types.IrType>): IrEnumConstructorCallMessageType
 
@@ -221,7 +222,8 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
 
     abstract fun createIrWhen(branch : List<IrStatementMessageType>, origin : IrStatementOriginMessageType?): IrWhenMessageType
 
-    abstract fun createIrWhile(loopLoopId : Int, loopCondition : IrExpressionMessageType, loopLabel : Int?, loopBody : IrExpressionMessageType?, loopOrigin : IrStatementOriginMessageType?): IrWhileMessageType
+    abstract fun createIrWhile(loopLoopId : Int, loopCondition : IrExpressionMessageType, loopLabel : Int?, loopOrigin : IrStatementOriginMessageType?): IrWhileMessageType
+    abstract fun createIrWhile1(partial: IrWhileMessageType, loopBody : IrExpressionMessageType?): IrWhileMessageType
 
     abstract fun createIrFunctionExpression(function : IrFunctionMessageType, origin : IrStatementOriginMessageType): IrFunctionExpressionMessageType
 
@@ -1091,6 +1093,7 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var loopCondition: IrExpressionMessageType? = null
         var loopLabel: Int? = null
         var loopBody: IrExpressionMessageType? = null
+        var loopBodyOffset: Int = -1
         var loopOrigin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
@@ -1102,7 +1105,10 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                                     1 -> loopLoopId = readInt32()
                                     2 -> loopCondition = readWithLength { readIrExpression() }
                                     3 -> loopLabel = readWithLength { readIrDataIndex() }
-                                    4 -> loopBody = readWithLength { readIrExpression() }
+                                    4 -> {
+                                        loopBodyOffset = offset
+                                        skip(type)
+                                    }
                                     5 -> loopOrigin = readWithLength { readIrStatementOrigin() }
                                     else -> skip(type)
                                 }
@@ -1113,7 +1119,12 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                 }
             }
         }
-        return createIrDoWhile(loopLoopId, loopCondition!!, loopLabel, loopBody, loopOrigin)
+        val p0 = createIrDoWhile(loopLoopId, loopCondition!!, loopLabel, loopOrigin)
+
+        if (loopBodyOffset != -1) {
+            loopBody = delayed(loopBodyOffset) { readWithLength { readIrExpression() } }
+        }
+        return createIrDoWhile1(p0, loopBody)
     }
 
     open fun readIrEnumConstructorCall(): IrEnumConstructorCallMessageType {
@@ -1450,6 +1461,7 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         var loopCondition: IrExpressionMessageType? = null
         var loopLabel: Int? = null
         var loopBody: IrExpressionMessageType? = null
+        var loopBodyOffset: Int = -1
         var loopOrigin: IrStatementOriginMessageType? = null
         while (hasData) {
             readField { fieldNumber, type ->
@@ -1461,7 +1473,10 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                                     1 -> loopLoopId = readInt32()
                                     2 -> loopCondition = readWithLength { readIrExpression() }
                                     3 -> loopLabel = readWithLength { readIrDataIndex() }
-                                    4 -> loopBody = readWithLength { readIrExpression() }
+                                    4 -> {
+                                        loopBodyOffset = offset
+                                        skip(type)
+                                    }
                                     5 -> loopOrigin = readWithLength { readIrStatementOrigin() }
                                     else -> skip(type)
                                 }
@@ -1472,7 +1487,12 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                 }
             }
         }
-        return createIrWhile(loopLoopId, loopCondition!!, loopLabel, loopBody, loopOrigin)
+        val p0 = createIrWhile(loopLoopId, loopCondition!!, loopLabel, loopOrigin)
+
+        if (loopBodyOffset != -1) {
+            loopBody = delayed(loopBodyOffset) { readWithLength { readIrExpression() } }
+        }
+        return createIrWhile1(p0, loopBody)
     }
 
     open fun readIrFunctionExpression(): IrFunctionExpressionMessageType {

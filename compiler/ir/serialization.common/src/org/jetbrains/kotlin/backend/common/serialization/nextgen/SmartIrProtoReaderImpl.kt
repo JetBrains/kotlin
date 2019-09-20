@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.nextgen
 
-import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorReferenceDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.UniqId
-import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -30,27 +28,42 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
 
-abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: ByteArray) : AbstractIrSmartProtoReader(byteArray) {
+abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, val irBuiltIns: IrBuiltIns, byteArray: ByteArray) : AbstractIrSmartProtoReader(byteArray) {
     override fun createIrTypeArgument_type_(oneOfType: IrTypeProjection) = oneOfType
 
     override fun createIrDoWhile(
         loopLoopId: Int,
         loopCondition: IrExpression,
         loopLabel: Int?,
-        loopBody: IrExpression?,
         loopOrigin: IrStatementOrigin?
     ): IrDoWhileLoop {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val loop = IrDoWhileLoopImpl(delayedStart(), delayedEnd(), delayedType(), loopOrigin).apply {
+            this.condition = loopCondition
+            this.label = loopLabel?.let { loadString(it) }
+        }
+        registerLoopById(loopLoopId, loop)
+        return loop
     }
 
-    override fun createIrWhile(
-        loopLoopId: Int,
-        loopCondition: IrExpression,
-        loopLabel: Int?,
-        loopBody: IrExpression?,
-        loopOrigin: IrStatementOrigin?
-    ): IrWhileLoop {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun createIrDoWhile1(partial: IrDoWhileLoop, loopBody: IrExpression?): IrDoWhileLoop {
+        return partial.apply {
+            this.body = loopBody
+        }
+    }
+
+    override fun createIrWhile(loopLoopId: Int, loopCondition: IrExpression, loopLabel: Int?, loopOrigin: IrStatementOrigin?): IrWhileLoop {
+        val loop = IrWhileLoopImpl(delayedStart(), delayedEnd(), delayedType(), loopOrigin).apply {
+            this.condition = loopCondition
+            this.label = loopLabel?.let { loadString(it) }
+        }
+        registerLoopById(loopLoopId, loop)
+        return loop
+    }
+
+    override fun createIrWhile1(partial: IrWhileLoop, loopBody: IrExpression?): IrWhileLoop {
+        return partial.apply {
+            this.body = loopBody
+        }
     }
 
     override fun createIrExpression(
@@ -224,12 +237,19 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, byteArray: B
 
     protected abstract fun loadExpressionBody(id: Int): IrExpression
 
-    protected abstract fun getLoopById(id: Int): IrLoop
-    protected abstract fun registerLoopById(id: Int, loop: IrLoop)
+    private val fileLoops = mutableMapOf<Int, IrLoop>()
+
+    private fun getLoopById(id: Int): IrLoop {
+        return fileLoops[id] ?: error("No loop found for id $id")
+    }
+
+    private fun registerLoopById(id: Int, loop: IrLoop) {
+        fileLoops[id] = loop
+    }
 
     private fun delayedStart(): Int = fieldIrExpressionCoordinatesStartOffset
     private fun delayedEnd(): Int = fieldIrStatementCoordinatesEndOffset
-    private fun delayedType(): IrType = loadType(fieldIrExpressionType ?: error("Should be initialized"))
+    private fun delayedType(): IrType = fieldIrExpressionType?.let { loadType(it) } ?: irBuiltIns.unitType //error("Should be initialized"))
 
 //    private val moduleDescriptor: ModuleDescriptor get() = TODO("moduleDescriptor")
 //    protected abstract val symbolTable: SymbolTable
