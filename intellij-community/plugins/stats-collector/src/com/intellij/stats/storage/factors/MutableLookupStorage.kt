@@ -27,8 +27,8 @@ class MutableLookupStorage(
       return lookup.getUserData(LOOKUP_STORAGE)
     }
 
-    fun initLookupStorage(lookup: LookupImpl, language: Language, startedTimestamp: Long): MutableLookupStorage {
-      val storage = MutableLookupStorage(startedTimestamp, language, RankingSupport.getRankingModel(language))
+    fun initLookupStorage(lookup: LookupImpl, language: Language): MutableLookupStorage {
+      val storage = MutableLookupStorage(System.currentTimeMillis(), language, RankingSupport.getRankingModel(language))
       lookup.putUserData(LOOKUP_STORAGE, storage)
       return storage
     }
