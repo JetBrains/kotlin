@@ -81,20 +81,22 @@ extern "C" {
 
 extern const TypeInfo* theAnyTypeInfo;
 extern const TypeInfo* theArrayTypeInfo;
+extern const TypeInfo* theBooleanArrayTypeInfo;
 extern const TypeInfo* theByteArrayTypeInfo;
 extern const TypeInfo* theCharArrayTypeInfo;
-extern const TypeInfo* theShortArrayTypeInfo;
+extern const TypeInfo* theDoubleArrayTypeInfo;
+extern const TypeInfo* theForeignObjCObjectTypeInfo;
 extern const TypeInfo* theIntArrayTypeInfo;
 extern const TypeInfo* theLongArrayTypeInfo;
+extern const TypeInfo* theNativePtrArrayTypeInfo;
 extern const TypeInfo* theFloatArrayTypeInfo;
-extern const TypeInfo* theDoubleArrayTypeInfo;
-extern const TypeInfo* theBooleanArrayTypeInfo;
+extern const TypeInfo* theForeignObjCObjectTypeInfo;
+extern const TypeInfo* theFreezableAtomicReferenceTypeInfo;
+extern const TypeInfo* theObjCObjectWrapperTypeInfo;
+extern const TypeInfo* theShortArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
 extern const TypeInfo* theUnitTypeInfo;
-extern const TypeInfo* theForeignObjCObjectTypeInfo;
-extern const TypeInfo* theObjCObjectWrapperTypeInfo;
-extern const TypeInfo* theNativePtrArrayTypeInfo;
 
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);

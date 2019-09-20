@@ -5,6 +5,7 @@
 
 package kotlin.native.concurrent
 
+import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.Frozen
 import kotlin.native.internal.NoReorderFields
 import kotlin.native.SymbolName
@@ -279,6 +280,7 @@ public class AtomicReference<T>(private var value_: T) {
  * otherwise behaves as regular box for the value.
  */
 @NoReorderFields
+@ExportTypeInfo("theFreezableAtomicReferenceTypeInfo")
 public class FreezableAtomicReference<T>(private var value_: T) {
     // A spinlock to fix potential ARC race.
     private var lock: Int = 0
