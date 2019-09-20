@@ -1,11 +1,13 @@
 package androidx.compose.plugins.kotlin.analysis
 
 import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
+import androidx.compose.plugins.kotlin.ComposerEmitMetadata
 import androidx.compose.plugins.kotlin.ResolvedKtxElementCall
 import androidx.compose.plugins.kotlin.ResolvedRestartCalls
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -35,6 +37,8 @@ object ComposeWritableSlices {
     val RESTART_CALLS_NEEDED: WritableSlice<SimpleFunctionDescriptor, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val RESTART_CALLS: WritableSlice<SimpleFunctionDescriptor, ResolvedRestartCalls> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val COMPOSER_EMIT_METADATA: WritableSlice<VariableDescriptor, ComposerEmitMetadata> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
 
