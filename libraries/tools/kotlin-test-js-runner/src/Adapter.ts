@@ -4,28 +4,19 @@
  */
 
 import {CliArgValues} from "./CliArgsParser";
-import {IgnoredTestSuitesReporting, runWithTeamCityReporter} from "./KotlinTestTeamCityReporter";
-import {TeamCityMessagesFlow} from "./TeamCityMessagesFlow";
 import {KotlinTestRunner} from "./KotlinTestRunner";
-import {hrTimer} from "./Timer";
 import {configureFiltering} from "./CliFiltertingConfiguration";
 
-export function getAdapter(
+export function getFilteringAdapter(
     initialAdapter: KotlinTestRunner,
     cliArgsValue: CliArgValues
 ): KotlinTestRunner {
     const args = {
-        onIgnoredTestSuites: (cliArgsValue.ignoredTestSuites
-            || IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored) as IgnoredTestSuitesReporting,
         include: cliArgsValue.include as string[],
         exclude: cliArgsValue.exclude as string[],
     };
 
-    const realConsoleLog = console.log;
-    const teamCity = new TeamCityMessagesFlow(null, (payload) => realConsoleLog(payload));
-
     let runner: KotlinTestRunner = initialAdapter;
-    runner = runWithTeamCityReporter(runner, args.onIgnoredTestSuites, teamCity, hrTimer);
     runner = configureFiltering(runner, args.include, args.exclude);
 
     return runner;

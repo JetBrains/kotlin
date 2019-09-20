@@ -4,7 +4,7 @@
  */
 
 import {CliArgsParser, getDefaultCliDescription} from "./src/CliArgsParser";
-import {getAdapter} from "./src/Adapter";
+import {getFilteringAdapter} from "./src/Adapter";
 
 const kotlin_test = require('kotlin-test');
 
@@ -20,4 +20,4 @@ const parser = new CliArgsParser(cliDescription);
 const untypedArgs = parser.parse(processArgs);
 
 const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
-kotlin_test.setAdapter(getAdapter(initialAdapter, untypedArgs));
+kotlin_test.setAdapter(getFilteringAdapter(initialAdapter, untypedArgs));
