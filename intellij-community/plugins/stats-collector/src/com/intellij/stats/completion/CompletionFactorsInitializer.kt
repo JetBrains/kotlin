@@ -1,0 +1,60 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.stats.completion
+
+import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.tracker.PositionTrackingListener
+import com.intellij.lang.Language
+import com.intellij.stats.personalization.UserFactorDescriptions
+import com.intellij.stats.personalization.UserFactorStorage
+import com.intellij.stats.personalization.UserFactorsManager
+import com.intellij.stats.personalization.session.SessionFactorsUtils
+import com.intellij.stats.personalization.session.SessionPrefixTracker
+import com.intellij.stats.storage.factors.MutableLookupStorage
+
+class CompletionFactorsInitializer : LookupTracker() {
+  override fun lookupCreated(language: Language?, lookup: LookupImpl) {
+    if (language == null) return
+    val lookupStorage = MutableLookupStorage.initLookupStorage(lookup, language)
+
+    processUserFactors(lookup, lookupStorage)
+    processSessionFactors(lookup, lookupStorage)
+  }
+
+  override fun lookupClosed() {
+  }
+
+  private fun shouldUseUserFactors() = UserFactorsManager.ENABLE_USER_FACTORS
+
+  private fun shouldUseSessionFactors(): Boolean = SessionFactorsUtils.shouldUseSessionFactors()
+
+  private fun processUserFactors(lookup: LookupImpl,
+                                 lookupStorage: MutableLookupStorage) {
+    if (!shouldUseUserFactors()) return
+
+    val userFactors = UserFactorsManager.getInstance().getAllFactors()
+    val userFactorValues = mutableMapOf<String, String?>()
+    userFactors.associateTo(userFactorValues) { "${it.id}:App" to it.compute(UserFactorStorage.getInstance()) }
+    userFactors.associateTo(userFactorValues) { "${it.id}:Project" to it.compute(UserFactorStorage.getInstance(lookup.project)) }
+
+    lookupStorage.userFactors = userFactorValues
+
+    UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_USAGE) {
+      it.fireCompletionUsed()
+    }
+
+    // setPrefixChangeListener has addPrefixChangeListener semantics
+    lookup.setPrefixChangeListener(TimeBetweenTypingTracker(lookup.project))
+    lookup.addLookupListener(LookupCompletedTracker())
+    lookup.addLookupListener(LookupStartedTracker())
+  }
+
+  private fun processSessionFactors(lookup: LookupImpl, lookupStorage: MutableLookupStorage) {
+    if (!shouldUseSessionFactors()) return
+
+    lookup.setPrefixChangeListener(SessionPrefixTracker(lookupStorage.sessionFactors))
+    lookup.addLookupListener(LookupSelectionTracker(lookupStorage))
+
+    val shownTimesTracker = PositionTrackingListener(lookup)
+    lookup.setPrefixChangeListener(shownTimesTracker)
+  }
+}
