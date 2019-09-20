@@ -50,7 +50,7 @@ public class QuickChangeCodeStyleSchemeAction extends QuickSwitchSchemeAction {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         CodeStyleSchemes.getInstance().setCurrentScheme(scheme);
-        manager.updateSettingsTracker(); //TODO<rv> Consider a better way to fix via proper caching
+        manager.updateSettingsTracker();
         manager.USE_PER_PROJECT_SETTINGS = false;
         manager.PREFERRED_PROJECT_CODE_STYLE = scheme.getName();
         manager.fireCodeStyleSettingsChanged(null);

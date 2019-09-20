@@ -222,10 +222,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     if (caretKeeper != null) {
       caretKeeper.restoreCaretPosition();
     }
-    if (editor instanceof EditorEx && isFullReformat) {
-      //TODO<rv> Move to another place
-      //CodeStyleSettingsManager.getInstance(myProject).fireCodeStyleSettingsChanged(file);
-    }
   }
 
   public static void formatRanges(@NotNull PsiFile file,
