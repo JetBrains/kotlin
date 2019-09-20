@@ -32,11 +32,18 @@ public open class Throwable(open val message: String?, open val cause: Throwable
         getStackTraceStrings(stackTrace).freeze()
     }
 
+    /**
+     * Returns an array of stack trace strings representing the stack trace
+     * pertaining to this throwable.
+     */
     public fun getStackTrace(): Array<String> = stackTraceStrings
 
-    internal fun Throwable.getStackTraceAddressesInternal(): List<Long> =
+    internal fun getStackTraceAddressesInternal(): List<Long> =
             (0 until stackTrace.size).map { index -> stackTrace[index].toLong() }
 
+    /**
+     * Prints the stack trace of this throwable to the standard output.
+     */
     public fun printStackTrace(): Unit = dumpStackTrace { println(it) }
 
     internal fun dumpStackTrace(): String = buildString {

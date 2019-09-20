@@ -4,5 +4,9 @@
  */
 package kotlin.native
 
+/**
+ * Returns a list of stack trace addresses representing the stack trace
+ * pertaining to this throwable.
+ */
 public fun Throwable.getStackTraceAddresses(): List<Long> =
         this.getStackTraceAddressesInternal()
