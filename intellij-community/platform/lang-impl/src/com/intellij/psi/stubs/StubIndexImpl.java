@@ -69,7 +69,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
   private StubIndexState myPreviouslyRegistered;
 
   public StubIndexImpl() {
-    myStubProcessingHelper = new StubProcessingHelper(FileBasedIndex.getInstance());
+    myStubProcessingHelper = new StubProcessingHelper();
   }
 
   @Nullable

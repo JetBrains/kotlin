@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -12,13 +13,8 @@ import java.util.Set;
 /**
  * Author: dmitrylomov
  */
-public class StubProcessingHelper extends StubProcessingHelperBase {
-  private final FileBasedIndex myFileBasedIndex;
+public final class StubProcessingHelper extends StubProcessingHelperBase {
   private final ThreadLocal<Set<VirtualFile>> myFilesHavingProblems = new ThreadLocal<>();
-
-  public StubProcessingHelper(FileBasedIndex fileBasedIndex) {
-    myFileBasedIndex = fileBasedIndex;
-  }
 
   @Override
   protected void onInternalError(final VirtualFile file) {
@@ -27,9 +23,9 @@ public class StubProcessingHelper extends StubProcessingHelperBase {
     set.add(file);
     // requestReindex() may want to acquire write lock (for indices not requiring content loading)
     // thus, because here we are under read lock, need to use invoke later
-    ApplicationManager.getApplication().invokeLater(() -> myFileBasedIndex.requestReindex(file), ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeLater(() -> FileBasedIndex.getInstance().requestReindex(file), ModalityState.NON_MODAL);
   }
-  
+
   @Nullable
   Set<VirtualFile> takeAccumulatedFilesWithIndexProblems() {
     Set<VirtualFile> filesWithProblems = myFilesHavingProblems.get();
