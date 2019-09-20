@@ -106,7 +106,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             fun getSize() = irCall(size).apply { dispatchReceiver = irGet(spreadVar) }
             val result = irTemporary(newArray(getSize()))
             +irCall(builder.irSymbols.systemArraycopy).apply {
-                putValueArgument(0, irGet(spreadVar))
+                putValueArgument(0, coerce(irGet(spreadVar), unwrappedArrayType))
                 putValueArgument(1, irInt(0))
                 putValueArgument(2, irGet(result))
                 putValueArgument(3, irInt(0))
@@ -135,7 +135,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             for (element in elements) {
                 +irCall(if (element.isSpread) addSpread else addElement).apply {
                     dispatchReceiver = irGet(spreadBuilderVar)
-                    putValueArgument(0, if (element.isSpread) element.expression else coerce(element.expression, elementType))
+                    putValueArgument(0, coerce(element.expression, if (element.isSpread) unwrappedArrayType else elementType))
                 }
             }
 
