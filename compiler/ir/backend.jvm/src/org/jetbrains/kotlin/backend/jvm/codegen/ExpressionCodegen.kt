@@ -100,7 +100,7 @@ class ExpressionCodegen(
     override val frameMap: IrFrameMap,
     val mv: InstructionAdapter,
     val classCodegen: ClassCodegen,
-    val isInlineLambda: Boolean = false
+    val inlinedInto: ExpressionCodegen?
 ) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
 
     var finallyDepth = 0
@@ -202,7 +202,7 @@ class ExpressionCodegen(
         if (state.isParamAssertionsDisabled)
             return
 
-        val notCallableFromJava = isInlineLambda ||
+        val notCallableFromJava = inlinedInto != null ||
                 Visibilities.isPrivate(irFunction.visibility) ||
                 irFunction.origin.isSynthetic ||
                 // TODO: refine this condition to not generate nullability assertions on parameters
@@ -314,7 +314,7 @@ class ExpressionCodegen(
         visitStatementContainer(expression, data).coerce(expression.type)
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
-        return visitFunctionAccess(expression.createSuspendFunctionCallViewIfNeeded(context, irFunction, isInlineLambda), data)
+        return visitFunctionAccess(expression.createSuspendFunctionCallViewIfNeeded(context, irFunction, inlinedInto != null), data)
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
@@ -1012,7 +1012,26 @@ class ExpressionCodegen(
 
     override fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
         require(typeParameter is IrTypeParameterSymbol)
-        if (typeParameter.owner.parent != irFunction) {
+        // This is a hack to work around the problem in LocalDeclarationsLowering. Specifically, suppose an inline
+        // lambda uses a reified type parameter declared by a function:
+        //
+        //     object {
+        //         inline fun <reified T : Any> f() = run { T::class.java.getName() }
+        //     }
+        //
+        // LocalDeclarationsLowering would extract that lambda into a method of the enclosing type, but will not create
+        // a reified type parameter in it (in fact, the lambda method isn't even marked as inline):
+        //
+        //     object {
+        //         /* static */ private fun `f$lambda-0`() = T::class.java.getName()
+        //         inline fun <reified T : Any> f() = run(::`f$lambda-0`)
+        //     }
+        //
+        // The parent of the type parameter then is not `irFunction` (i.e. the lambda itself), but the function
+        // it is inlined into.
+        //
+        // TODO make LocalDeclarationsLowering handle captured type parameters and only compare with `irFunction`.
+        if (generateSequence(this) { it.inlinedInto }.none { it.irFunction == typeParameter.owner.parent }) {
             classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
         }
     }
@@ -1039,7 +1058,7 @@ class ExpressionCodegen(
     }
 
     fun isFinallyMarkerRequired(): Boolean {
-        return irFunction.isInline || isInlineLambda
+        return irFunction.isInline || inlinedInto != null
     }
 
     private val IrType.isReifiedTypeParameter: Boolean
