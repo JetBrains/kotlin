@@ -69,6 +69,10 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest()
     }
 
+    fun testPropertyFunctionConflict() {
+        doTest()
+    }
+
     fun testExclCharInsertImport() {
         doTest('!')
     }
