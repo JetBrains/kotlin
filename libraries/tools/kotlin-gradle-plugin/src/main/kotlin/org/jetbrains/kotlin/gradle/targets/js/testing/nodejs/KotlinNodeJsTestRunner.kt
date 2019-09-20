@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.nodejs
 
 import org.gradle.api.Project
-import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.process.ProcessForkOptions
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -16,12 +14,11 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.testing.JSServiceMessagesClient
+import org.jetbrains.kotlin.gradle.targets.js.testing.JSServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.testing.IgnoredTestSuites
-import org.slf4j.Logger
 
 class KotlinNodeJsTestRunner(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
     val project: Project
@@ -67,19 +64,11 @@ class KotlinNodeJsTestRunner(override val compilation: KotlinJsCompilation) : Ko
                 } +
                 cliArgs.toList()
 
-        return object : TCServiceMessagesTestExecutionSpec(
+        return JSServiceMessagesTestExecutionSpec(
             forkOptions,
             args,
             true,
             clientSettings
-        ) {
-            override fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient {
-                return JSServiceMessagesClient(
-                    testResultProcessor,
-                    clientSettings,
-                    log
-                )
-            }
-        }
+        )
     }
 }

@@ -12,7 +12,6 @@ import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.operation
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -22,9 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
@@ -418,14 +415,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                 nodeModules.map { npmProject.require(it) } +
                 listOf("start", karmaConfJs.absolutePath, "--debug")
 
-        return object : TCServiceMessagesTestExecutionSpec(
+        return object : JSServiceMessagesTestExecutionSpec(
             forkOptions,
             args,
             false,
             clientSettings
         ) {
             lateinit var progressLogger: ProgressLogger
-            val suppressedOutput = StringBuilder()
 
             var isLaunchFailed: Boolean = false
 
@@ -441,12 +437,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                 }
             }
 
-            override fun showSuppressedOutput() {
-                println(suppressedOutput)
-            }
-
             override fun createClient(testResultProcessor: TestResultProcessor, log: Logger) =
-                object : TCServiceMessagesClient(testResultProcessor, clientSettings, log) {
+                object : JSServiceMessagesClient(
+                    testResultProcessor,
+                    clientSettings,
+                    log,
+                    suppressedOutput
+                ) {
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
 
@@ -490,7 +487,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                             return
                         }
 
-                        suppressedOutput.appendln(text)
+                        super.printNonTestOutput(text)
                     }
                 }
         }
