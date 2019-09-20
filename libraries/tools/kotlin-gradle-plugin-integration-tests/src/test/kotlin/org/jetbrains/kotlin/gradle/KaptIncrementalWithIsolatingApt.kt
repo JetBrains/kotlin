@@ -97,7 +97,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             
             tasks.whenTaskAdded {
                 if (it.name == "kaptKotlin") {
-                  it.getInputs().files("${additionalInputs.canonicalPath}")
+                  it.getInputs().files("${additionalInputs.invariantSeparatorsPath}")
                 }
             }
         """.trimIndent()
