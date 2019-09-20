@@ -14,61 +14,27 @@ interface ModalityCommonizer : Commonizer<Modality, Modality> {
 }
 
 private class DefaultModalityCommonizer : ModalityCommonizer {
-    private enum class State {
-        EMPTY {
-            override fun getNext(modality: Modality) = when (modality) {
-                Modality.ABSTRACT -> CAN_HAVE_ONLY_ABSTRACT
-                Modality.SEALED -> CAN_HAVE_ONLY_SEALED
-                Modality.FINAL -> HAS_FINAL
-                Modality.OPEN -> HAS_OPEN
-            }
-        },
-        ERROR {
-            override fun getNext(modality: Modality) = ERROR
-        },
-        CAN_HAVE_ONLY_SEALED {
-            override fun getNext(modality: Modality) = if (modality == Modality.SEALED) this else ERROR
-        },
-        CAN_HAVE_ONLY_ABSTRACT {
-            override fun getNext(modality: Modality) = if (modality == Modality.ABSTRACT) this else ERROR
-        },
-        HAS_FINAL {
-            override fun getNext(modality: Modality) = when (modality) {
-                Modality.FINAL -> this
-                Modality.OPEN -> HAS_FINAL_AND_OPEN
-                else -> ERROR
-            }
-        },
-        HAS_OPEN {
-            override fun getNext(modality: Modality) = when (modality) {
-                Modality.FINAL -> HAS_FINAL_AND_OPEN
-                Modality.OPEN -> this
-                else -> ERROR
-            }
-        },
-        HAS_FINAL_AND_OPEN {
-            override fun getNext(modality: Modality) = when (modality) {
-                Modality.FINAL, Modality.OPEN -> this
-                else -> ERROR
-            }
-        };
-
-        abstract fun getNext(modality: Modality): State
-    }
-
-    private var state = State.EMPTY
+    private var temp: Modality? = null
+    private var error = false
 
     override val result: Modality
-        get() = when (state) {
-            State.CAN_HAVE_ONLY_SEALED -> Modality.SEALED
-            State.CAN_HAVE_ONLY_ABSTRACT -> Modality.ABSTRACT
-            State.HAS_FINAL, State.HAS_FINAL_AND_OPEN -> Modality.FINAL
-            State.HAS_OPEN -> Modality.OPEN
-            else -> throw IllegalCommonizerStateException()
-        }
+        get() = temp?.takeIf { !error } ?: throw IllegalCommonizerStateException()
 
     override fun commonizeWith(next: Modality): Boolean {
-        state = state.getNext(next)
-        return state != State.ERROR
+        if (error)
+            return false
+
+        val temp = temp
+        this.temp = if (temp != null) getNext(temp, next) else next
+        error = this.temp == null
+
+        return !error
+    }
+
+    private fun getNext(current: Modality, next: Modality): Modality? = when {
+        current == Modality.FINAL && next == Modality.OPEN -> Modality.FINAL
+        current == Modality.OPEN && next == Modality.FINAL -> Modality.FINAL
+        current == next -> current
+        else -> null
     }
 }

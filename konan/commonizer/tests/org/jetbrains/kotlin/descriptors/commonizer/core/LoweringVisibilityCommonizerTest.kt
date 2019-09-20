@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.Visibilities.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.DeclarationWithVisibility
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.MaybeVirtualCallableMember
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.junit.Test
 
 abstract class LoweringVisibilityCommonizerTest(
@@ -30,9 +32,19 @@ abstract class LoweringVisibilityCommonizerTest(
 
     final override fun createCommonizer() = VisibilityCommonizer.lowering(allowPrivate = allowPrivate)
 
-    protected fun Visibility.toMock() = object : MaybeVirtualCallableMember {
+    protected fun Visibility.toMock() = object : FunctionOrProperty {
         override val visibility: Visibility = this@toMock
-        override val isVirtual: Boolean = !isPrivate(visibility) && areMembersVirtual
+        override val modality: Modality get() = if (areMembersVirtual) Modality.OPEN else Modality.FINAL
+        override val containingClassModality: Modality? get() = if (areMembersVirtual) Modality.OPEN else null
+        override val containingClassKind: ClassKind? get() = if (areMembersVirtual) ClassKind.CLASS else null
+        override val isExternal: Boolean get() = unsupported()
+        override val extensionReceiver: ExtensionReceiver? get() = unsupported()
+        override val returnType: UnwrappedType get() = unsupported()
+        override val kind: CallableMemberDescriptor.Kind get() = unsupported()
+        override val annotations: Annotations get() = unsupported()
+        override val name: Name get() = unsupported()
+        override val containingClassIsData: Boolean? get() = unsupported()
+        override val typeParameters: List<TypeParameter> get() = unsupported()
     }
 
     class PrivateMembers : LoweringVisibilityCommonizerTest(true, false) {

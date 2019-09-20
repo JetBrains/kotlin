@@ -15,7 +15,4 @@ class CallableMemberCommonizationFromSourcesTest : AbstractCommonizationFromSour
     fun testReturnTypes() = doTestSuccessfulCommonization()
 
     fun testExtensionReceivers() = doTestSuccessfulCommonization()
-
-    // TODO: test modality (possible only inside classes)
-    // TODO: test virtual val/fun visibility commonization (possible only inside classes)
 }

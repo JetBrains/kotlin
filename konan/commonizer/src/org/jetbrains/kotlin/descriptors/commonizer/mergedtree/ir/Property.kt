@@ -33,6 +33,7 @@ data class CommonProperty(
     override val isExternal: Boolean,
     override val extensionReceiver: ExtensionReceiver?,
     override val returnType: UnwrappedType,
+    override val kind: CallableMemberDescriptor.Kind,
     override val setter: Setter?,
     override val typeParameters: List<TypeParameter>
 ) : CommonFunctionOrProperty(), Property {
@@ -89,9 +90,7 @@ data class Setter(
     override val isDefault: Boolean,
     override val isExternal: Boolean,
     override val isInline: Boolean
-) : PropertyAccessor, MaybeVirtualCallableMember {
-    override val isVirtual get() = false
-
+) : PropertyAccessor, DeclarationWithVisibility {
     companion object {
         fun createDefaultNoAnnotations(visibility: Visibility) = Setter(
             Annotations.EMPTY,

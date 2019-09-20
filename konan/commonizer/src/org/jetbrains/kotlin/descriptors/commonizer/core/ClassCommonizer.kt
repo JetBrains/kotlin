@@ -45,7 +45,6 @@ class ClassCommonizer(cache: ClassifiersCache) : AbstractStandardCommonizer<Clas
                 && isInner == next.isInner
                 && isInline == next.isInline
                 && isCompanion == next.isCompanion
-                && next.sealedSubclasses.isEmpty() // commonization of sealed classes is not supported, but their subclasses can be commonized
                 && modality.commonizeWith(next.modality)
                 && visibility.commonizeWith(next)
                 && typeParameters.commonizeWith(next.typeParameters)

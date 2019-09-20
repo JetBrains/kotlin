@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.DeclarationWithVisibility
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.MaybeVirtualCallableMember
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionOrProperty
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.isVirtual
 
 abstract class VisibilityCommonizer(private val allowPrivate: Boolean) : Commonizer<DeclarationWithVisibility, Visibility> {
 
@@ -19,9 +20,7 @@ abstract class VisibilityCommonizer(private val allowPrivate: Boolean) : Commoni
     private var temp: Visibility? = null
 
     override val result: Visibility
-        get() {
-            return temp?.takeIf { it != Visibilities.UNKNOWN } ?: throw IllegalCommonizerStateException()
-        }
+        get() = temp?.takeIf { it != Visibilities.UNKNOWN } ?: throw IllegalCommonizerStateException()
 
     override fun commonizeWith(next: DeclarationWithVisibility): Boolean {
         if (temp == Visibilities.UNKNOWN)
@@ -52,7 +51,7 @@ private class LoweringVisibilityCommonizer(allowPrivate: Boolean) : VisibilityCo
 
     override fun canBeCommonized(next: DeclarationWithVisibility): Boolean {
         if (!atLeastOneVirtualCallableMet)
-            atLeastOneVirtualCallableMet = (next as? MaybeVirtualCallableMember)?.isVirtual == true
+            atLeastOneVirtualCallableMet = (next as? FunctionOrProperty)?.isVirtual() == true
 
         return !atLeastOneVirtualCallableMet || !atLeastTwoVisibilitiesMet
     }

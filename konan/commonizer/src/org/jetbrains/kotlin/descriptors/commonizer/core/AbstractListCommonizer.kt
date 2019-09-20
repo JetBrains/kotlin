@@ -41,7 +41,7 @@ abstract class AbstractListCommonizer<T, R>(
         if (commonizers.size != next.size) // lists must be of the same size
             error = true
         else
-            for (index in 0 until next.size) {
+            for (index in next.indices) {
                 val commonizer = commonizers[index]
                 val nextElement = next[index]
 

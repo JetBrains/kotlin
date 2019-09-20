@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -19,12 +20,13 @@ internal fun FunctionNode.buildDescriptors(
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
     val commonFunction = common()
+    val markAsExpectAndActual = commonFunction != null && commonFunction.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
 
     target.forEachIndexed { index, function ->
-        function?.buildDescriptor(output, index, containingDeclarations, isActual = commonFunction != null)
+        function?.buildDescriptor(output, index, containingDeclarations, isActual = markAsExpectAndActual)
     }
 
-    commonFunction?.buildDescriptor(output, indexOfCommon, containingDeclarations, isExpect = true)
+    commonFunction?.buildDescriptor(output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
 }
 
 private fun Function.buildDescriptor(

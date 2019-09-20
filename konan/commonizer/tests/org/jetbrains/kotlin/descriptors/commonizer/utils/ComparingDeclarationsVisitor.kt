@@ -3,47 +3,25 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer
+package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import junit.framework.TestCase.fail
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.commonizer.fqName
+import org.jetbrains.kotlin.descriptors.commonizer.fqNameWithTypeParameters
+import org.jetbrains.kotlin.descriptors.commonizer.isNull
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.getAbbreviation
-import java.io.File
 import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import kotlin.reflect.KCallable
-
-fun assertIsDirectory(file: File) {
-    if (!file.isDirectory)
-        fail("Not a directory: $file")
-}
+import kotlin.test.fail
 
 @ExperimentalContracts
-fun assertCommonizationPerformed(result: CommonizationResult) {
-    contract {
-        returns() implies (result is CommonizationPerformed)
-    }
-
-    if (result !is CommonizationPerformed)
-        fail("$result is not instance of ${CommonizationPerformed::class}")
-}
-
-@ExperimentalContracts
-fun assertModulesAreEqual(expected: ModuleDescriptor, actual: ModuleDescriptor, designatorMessage: String) {
-    val visitor = ComparingDeclarationsVisitor(designatorMessage)
-    val context = visitor.Context(actual)
-
-    expected.accept(visitor, context)
-}
-
-@ExperimentalContracts
-private class ComparingDeclarationsVisitor(
+internal class ComparingDeclarationsVisitor(
     val designatorMessage: String
 ) : DeclarationDescriptorVisitor<Unit, ComparingDeclarationsVisitor.Context> {
 
@@ -91,7 +69,7 @@ private class ComparingDeclarationsVisitor(
         }
     }
 
-    fun visitMemberScopes(expected: MemberScope, actual: MemberScope, context: Context) {
+    private fun visitMemberScopes(expected: MemberScope, actual: MemberScope, context: Context) {
         val expectedProperties = mutableMapOf<PropertyApproximationKey, PropertyDescriptor>()
         val expectedFunctions = mutableMapOf<FunctionApproximationKey, SimpleFunctionDescriptor>()
         val expectedClasses = mutableMapOf<FqName, ClassDescriptor>()
@@ -162,9 +140,15 @@ private class ComparingDeclarationsVisitor(
         context.assertFieldsEqual(expected::isSuspend, actual::isSuspend)
         context.assertFieldsEqual(expected::isExternal, actual::isExternal)
         context.assertFieldsEqual(expected::isExpect, actual::isExpect)
-        context.assertFieldsEqual(expected::isActual, actual::isActual)
         context.assertFieldsEqual(expected::hasStableParameterNames, actual::hasStableParameterNames)
         context.assertFieldsEqual(expected::hasSynthesizedParameterNames, actual::hasSynthesizedParameterNames)
+
+        if (!expected.isActual || actual.kind != CallableMemberDescriptor.Kind.DELEGATION) {
+            context.assertFieldsEqual(expected::isActual, actual::isActual)
+        } /* else {
+            // don't check, because there can be any value in expect.isActual
+            // see org.jetbrains.kotlin.resolve.DelegationResolver
+        } */
 
         visitType(expected.returnType, actual.returnType, context.nextLevel("Function type"))
 
@@ -176,7 +160,7 @@ private class ComparingDeclarationsVisitor(
         visitTypeParameters(expected.typeParameters, actual.typeParameters, context.nextLevel("Function type parameters"))
     }
 
-    fun visitValueParameterDescriptorList(
+    private fun visitValueParameterDescriptorList(
         expected: List<ValueParameterDescriptor>,
         actual: List<ValueParameterDescriptor>,
         context: Context
@@ -339,9 +323,17 @@ private class ComparingDeclarationsVisitor(
         context.assertFieldsEqual(expected::isConst, actual::isConst)
         context.assertFieldsEqual(expected::isExternal, actual::isExternal)
         context.assertFieldsEqual(expected::isExpect, actual::isExpect)
-        context.assertFieldsEqual(expected::isActual, actual::isActual)
+
+        if (!expected.isActual || actual.kind != CallableMemberDescriptor.Kind.DELEGATION) {
+            context.assertFieldsEqual(expected::isActual, actual::isActual)
+        } /* else {
+            // don't check, because there can be any value in expect.isActual
+            // see org.jetbrains.kotlin.resolve.DelegationResolver
+        } */
+
         @Suppress("DEPRECATION")
         context.assertFieldsEqual(expected::isDelegated, actual::isDelegated)
+
         visitAnnotations(
             expected.delegateField?.annotations,
             actual.delegateField?.annotations,
@@ -352,6 +344,7 @@ private class ComparingDeclarationsVisitor(
             actual.backingField?.annotations,
             context.nextLevel("Property backing field annotations")
         )
+
         context.assertEquals(expected.compileTimeInitializer.isNull(), actual.compileTimeInitializer.isNull(), "compile-time initializers")
         visitType(expected.type, actual.type, context.nextLevel("Property type"))
 

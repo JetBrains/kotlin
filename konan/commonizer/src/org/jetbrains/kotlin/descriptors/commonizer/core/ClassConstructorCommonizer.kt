@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassConstructor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonClassConstructor
@@ -35,7 +36,9 @@ class ClassConstructorCommonizer(cache: ClassifiersCache) : AbstractStandardComm
     }
 
     override fun doCommonizeWith(next: ClassConstructor): Boolean {
-        val result = isPrimary == next.isPrimary
+        val result = !next.containingClassKind.isSingleton // don't commonize constructors for objects and enum entries
+                && next.containingClassModality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
+                && isPrimary == next.isPrimary
                 && kind == next.kind
                 && visibility.commonizeWith(next)
                 && typeParameters.commonizeWith(next.typeParameters)

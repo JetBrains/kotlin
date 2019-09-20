@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
-import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
-import org.jetbrains.kotlin.descriptors.commonizer.mockTAType
+import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
+import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.LockBasedStorageManager

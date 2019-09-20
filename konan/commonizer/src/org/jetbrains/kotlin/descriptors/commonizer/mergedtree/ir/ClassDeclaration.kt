@@ -13,22 +13,23 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
-interface ClassDeclaration : AnnotatedDeclaration, NamedDeclaration, DeclarationWithTypeParameters, DeclarationWithVisibility {
+interface ClassDeclaration : AnnotatedDeclaration, NamedDeclaration, DeclarationWithTypeParameters, DeclarationWithVisibility, DeclarationWithModality {
     val companion: FqName? // null means no companion object
     val kind: ClassKind
-    val modality: Modality
     val isCompanion: Boolean
     val isData: Boolean
     val isInline: Boolean
     val isInner: Boolean
     val isExternal: Boolean
-    val sealedSubclasses: Collection<FqName>
     val supertypes: Collection<KotlinType>
 }
 
-interface ClassConstructor : AnnotatedDeclaration, DeclarationWithTypeParameters, DeclarationWithVisibility, CallableMemberWithParameters {
+interface ClassConstructor : AnnotatedDeclaration, DeclarationWithTypeParameters, DeclarationWithVisibility, MaybeCallableMemberOfClass, CallableMemberWithParameters {
     val isPrimary: Boolean
     val kind: CallableMemberDescriptor.Kind
+    override val containingClassKind: ClassKind
+    override val containingClassModality: Modality
+    override val containingClassIsData: Boolean
 }
 
 data class CommonClassDeclaration(
@@ -45,7 +46,6 @@ data class CommonClassDeclaration(
     override val isData get() = false
     override val isExternal get() = false
     override var companion: FqName? = null
-    override val sealedSubclasses: Collection<FqName> get() = emptyList()
     override val supertypes: MutableCollection<KotlinType> = ArrayList()
 }
 
@@ -59,6 +59,9 @@ data class CommonClassConstructor(
     override val hasSynthesizedParameterNames: Boolean
 ) : ClassConstructor {
     override val annotations: Annotations get() = Annotations.EMPTY
+    override val containingClassKind: ClassKind get() = unsupported()
+    override val containingClassModality: Modality get() = unsupported()
+    override val containingClassIsData: Boolean get() = unsupported()
 }
 
 class TargetClassDeclaration(private val descriptor: ClassDescriptor) : ClassDeclaration {
@@ -74,13 +77,15 @@ class TargetClassDeclaration(private val descriptor: ClassDescriptor) : ClassDec
     override val isInline get() = descriptor.isInline
     override val isInner get() = descriptor.isInner
     override val isExternal get() = descriptor.isExternal
-    override val sealedSubclasses by lazy(PUBLICATION) { descriptor.sealedSubclasses.map { it.fqNameSafe } }
     override val supertypes: Collection<KotlinType> get() = descriptor.typeConstructor.supertypes
 }
 
 class TargetClassConstructor(private val descriptor: ClassConstructorDescriptor) : ClassConstructor {
     override val isPrimary: Boolean get() = descriptor.isPrimary
     override val kind: CallableMemberDescriptor.Kind get() = descriptor.kind
+    override val containingClassKind: ClassKind get() = descriptor.containingDeclaration.kind
+    override val containingClassModality: Modality get() = descriptor.containingDeclaration.modality
+    override val containingClassIsData: Boolean get() = descriptor.containingDeclaration.isData
     override val annotations: Annotations get() = descriptor.annotations
     override val visibility: Visibility get() = descriptor.visibility
     override val typeParameters: List<TypeParameter> by lazy(PUBLICATION) { descriptor.typeParameters.map(::TargetTypeParameter) }
@@ -98,7 +103,6 @@ object ClassDeclarationRecursionMarker : ClassDeclaration, RecursionMarker {
     override val isInline: Boolean get() = unsupported()
     override val isInner: Boolean get() = unsupported()
     override val isExternal: Boolean get() = unsupported()
-    override val sealedSubclasses: Collection<FqName> get() = unsupported()
     override val supertypes: Collection<KotlinType> get() = unsupported()
     override val annotations: Annotations get() = unsupported()
     override val name: Name get() = unsupported()

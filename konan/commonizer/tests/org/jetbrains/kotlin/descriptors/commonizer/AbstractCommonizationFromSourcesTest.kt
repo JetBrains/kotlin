@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.utils.assertCommonizationPerformed
+import org.jetbrains.kotlin.descriptors.commonizer.utils.assertIsDirectory
+import org.jetbrains.kotlin.descriptors.commonizer.utils.assertModulesAreEqual
+import org.jetbrains.kotlin.descriptors.commonizer.utils.assertValidModule
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
@@ -130,6 +134,8 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         val commonModuleAsExpected = commonizedModules.getValue("common")
         val commonModuleByCommonizer = result.commonModules.single()
 
+        assertValidModule(commonModuleAsExpected)
+        assertValidModule(commonModuleByCommonizer)
         assertModulesAreEqual(commonModuleAsExpected, commonModuleByCommonizer, "\"common\" target")
 
         val concreteTargetNames = commonizedModules.keys - "common"
@@ -139,6 +145,8 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             val targetModuleAsExpected = commonizedModules.getValue(targetName)
             val targetModuleByCommonizer = result.modulesByTargets.getValue(targetName).single()
 
+            assertValidModule(targetModuleAsExpected)
+            assertValidModule(targetModuleByCommonizer)
             assertModulesAreEqual(targetModuleAsExpected, targetModuleByCommonizer, "\"$targetName\" target")
         }
     }

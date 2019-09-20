@@ -1,24 +1,50 @@
 import kotlin.annotation.AnnotationTarget.*
 
-@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, TYPE_PARAMETER, FUNCTION)
-annotation class Foo(val text: String)
+@Target(ANNOTATION_CLASS)
+annotation class CommonAnnotationForAnnotationClassesOnly(val text: String)
 
-@Foo("property")
+@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, TYPE_PARAMETER, FUNCTION, CLASS, CONSTRUCTOR, TYPEALIAS, TYPE)
+@JsAnnotationForAnnotationClassesOnly("annotation-class")
+@CommonAnnotationForAnnotationClassesOnly("annotation-class")
+annotation class CommonAnnotation(val text: String)
+
+@Target(ANNOTATION_CLASS)
+annotation class JsAnnotationForAnnotationClassesOnly(val text: String)
+
+@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, TYPE_PARAMETER, FUNCTION, CLASS, CONSTRUCTOR, TYPEALIAS, TYPE)
+@JsAnnotationForAnnotationClassesOnly("annotation-class")
+@CommonAnnotationForAnnotationClassesOnly("annotation-class")
+annotation class JsAnnotation(val text: String)
+
+@JsAnnotation("property")
+@CommonAnnotation("property")
 var propertyWithoutBackingField
-    @Foo("getter") get() = 3.14
-    @Foo("setter") set(@Foo("parameter") value) = Unit
+    @JsAnnotation("getter") @CommonAnnotation("getter") get() = 3.14
+    @JsAnnotation("setter") @CommonAnnotation("setter") set(@JsAnnotation("parameter") @CommonAnnotation("parameter") value) = Unit
 
-@field:Foo("field")
+@field:JsAnnotation("field")
+@field:CommonAnnotation("field")
 val propertyWithBackingField = 3.14
 
-@delegate:Foo("field")
+@delegate:JsAnnotation("field")
+@delegate:CommonAnnotation("field")
 val propertyWithDelegateField: Int by lazy { 42 }
 
-val <@Foo("type-parameter") T : CharSequence> @receiver:Foo("receiver") T.propertyWithExtensionReceiver: Int
+val <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") T : CharSequence> @receiver:JsAnnotation("receiver") @receiver:CommonAnnotation("receiver") T.propertyWithExtensionReceiver: Int
     get() = length
 
-@Foo("function")
-fun function1(@Foo("parameter") text: String) = text
+@JsAnnotation("function")
+@CommonAnnotation("function")
+fun function1(@JsAnnotation("parameter") @CommonAnnotation("parameter") text: String) = text
 
-@Foo("function")
-fun <@Foo("type-parameter") Q : Number> @receiver:Foo("receiver") Q.function2() = this
+@JsAnnotation("function")
+@CommonAnnotation("function")
+fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @JsAnnotation("type1") @CommonAnnotation("type1") Number> @receiver:JsAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): @JsAnnotation("type2") @CommonAnnotation("type2") Q = this
+
+@JsAnnotation("class")
+@CommonAnnotation("class")
+class AnnotatedClass @JsAnnotation("constructor") @CommonAnnotation("constructor") constructor(val value: String)
+
+@JsAnnotation("type-alias")
+@CommonAnnotation("type-alias")
+typealias AnnotatedTypeAlias = AnnotatedClass

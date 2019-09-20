@@ -23,10 +23,10 @@ fun Double.mismatchedFunction2() = 42
 val <T> T.propertyWithTypeParameter1 get() = 42
 val <T : Any?> T.propertyWithTypeParameter2 get() = 42
 val <T : Any> T.propertyWithTypeParameter3 get() = 42
-val <T : CharSequence> T.propertyWithTypeParameter4 get() = length
-val <T : Appendable> T.propertyWithTypeParameter5 get() = length
-val <T : String> T.propertyWithTypeParameter6 get() = length
-val String.propertyWithTypeParameter7 get() = length
+val <T : CharSequence> T.propertyWithTypeParameter4: Int get() = length
+val <T : Appendable> T.propertyWithTypeParameter5: Int get() = length
+val <T : String> T.propertyWithTypeParameter6: Int get() = length
+val String.propertyWithTypeParameter7: Int get() = length
 val <Q> Q.propertyWithTypeParameter8 get() = 42
 val <T, Q> T.propertyWithTypeParameter9 get() = 42
 

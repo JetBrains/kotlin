@@ -92,8 +92,12 @@ class CommonizedClassDescriptor(
         if (isExpect && kind.isSingleton) {
             check(constructors.isEmpty())
 
-            primaryConstructor = createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE).apply { returnType = getDefaultType() }
-            this.constructors = listOf(primaryConstructor!!)
+            primaryConstructor = if (kind == ClassKind.ENUM_ENTRY)
+                createPrimaryConstructorForObject(this, SourceElement.NO_SOURCE).apply { returnType = getDefaultType() }
+            else
+                null
+
+            this.constructors = listOfNotNull(primaryConstructor)
         } else {
             constructors.forEach { it.returnType = getDefaultType() }
 

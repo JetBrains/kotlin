@@ -11,20 +11,18 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiv
 import org.jetbrains.kotlin.types.UnwrappedType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
-interface FunctionOrProperty : AnnotatedDeclaration, NamedDeclaration, DeclarationWithTypeParameters, MaybeVirtualCallableMember {
-    val modality: Modality
+interface FunctionOrProperty : AnnotatedDeclaration, NamedDeclaration, DeclarationWithTypeParameters, DeclarationWithVisibility, DeclarationWithModality, MaybeCallableMemberOfClass {
     val isExternal: Boolean
     val extensionReceiver: ExtensionReceiver?
     val returnType: UnwrappedType
     val kind: CallableMemberDescriptor.Kind
-    val isNonAbstractCallableMemberInInterface: Boolean
 }
 
 abstract class CommonFunctionOrProperty : FunctionOrProperty {
     final override val annotations get() = Annotations.EMPTY
-    final override val kind get() = CallableMemberDescriptor.Kind.DECLARATION
-    final override val isVirtual get() = unsupported()
-    final override val isNonAbstractCallableMemberInInterface get() = unsupported()
+    final override val containingClassKind: ClassKind? get() = unsupported()
+    final override val containingClassModality: Modality? get() = unsupported()
+    final override val containingClassIsData: Boolean? get() = unsupported()
 }
 
 abstract class TargetFunctionOrProperty<T : CallableMemberDescriptor>(protected val descriptor: T) : FunctionOrProperty {
@@ -36,10 +34,11 @@ abstract class TargetFunctionOrProperty<T : CallableMemberDescriptor>(protected 
     final override val extensionReceiver by lazy(PUBLICATION) { descriptor.extensionReceiverParameter?.toReceiver() }
     final override val returnType by lazy(PUBLICATION) { descriptor.returnType!!.unwrap() }
     final override val kind get() = descriptor.kind
-    final override val isVirtual get() = descriptor.isOverridable
-    final override val isNonAbstractCallableMemberInInterface
-        get() = modality != Modality.ABSTRACT && (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE
+    final override val containingClassKind: ClassKind? get() = containingClass?.kind
+    final override val containingClassModality: Modality? get() = containingClass?.modality
+    final override val containingClassIsData: Boolean? get() = containingClass?.isData
     final override val typeParameters by lazy(PUBLICATION) { descriptor.typeParameters.map(::TargetTypeParameter) }
+    private val containingClass: ClassDescriptor? get() = descriptor.containingDeclaration as? ClassDescriptor
 }
 
 data class ExtensionReceiver(
@@ -51,3 +50,11 @@ data class ExtensionReceiver(
         fun ReceiverParameterDescriptor.toReceiver() = ExtensionReceiver(annotations, type.unwrap())
     }
 }
+
+fun FunctionOrProperty.isNonAbstractMemberInInterface() =
+    modality != Modality.ABSTRACT && containingClassKind == ClassKind.INTERFACE
+
+fun FunctionOrProperty.isVirtual() =
+    visibility != Visibilities.PRIVATE
+            && modality != Modality.FINAL
+            && !(containingClassModality == Modality.FINAL && containingClassKind != ClassKind.ENUM_CLASS)

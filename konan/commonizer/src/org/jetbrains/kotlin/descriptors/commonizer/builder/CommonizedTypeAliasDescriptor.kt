@@ -40,8 +40,8 @@ class CommonizedTypeAliasDescriptor(
 
     override fun isActual() = isActual
 
-    fun initialize(underlyingType: SimpleType, expandedType: SimpleType) {
-        super.initialize(emptyList())
+    fun initialize(declaredTypeParameters: List<TypeParameterDescriptor>, underlyingType: SimpleType, expandedType: SimpleType) {
+        super.initialize(declaredTypeParameters)
         this.underlyingType = underlyingType
         this.expandedType = expandedType
         typeConstructorParameters = computeConstructorTypeParameters()
@@ -60,6 +60,7 @@ class CommonizedTypeAliasDescriptor(
             isActual = isActual
         )
         substituted.initialize(
+            declaredTypeParameters,
             substitutor.safeSubstitute(underlyingType, Variance.INVARIANT).asSimpleType(),
             substitutor.safeSubstitute(expandedType, Variance.INVARIANT).asSimpleType()
         )

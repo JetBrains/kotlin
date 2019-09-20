@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
-import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
+import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.refinement.TypeRefinement

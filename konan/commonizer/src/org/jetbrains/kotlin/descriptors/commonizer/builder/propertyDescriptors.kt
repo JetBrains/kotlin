@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -23,12 +24,16 @@ internal fun PropertyNode.buildDescriptors(
     storageManager: StorageManager
 ) {
     val commonProperty = common()
+    val markAsExpectAndActual = commonProperty != null && commonProperty.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
 
     target.forEachIndexed { index, property ->
-        property?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = commonProperty != null)
+        // target property is DELEGATION
+        // AND
+        // the property it overrides is actual
+        property?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = markAsExpectAndActual)
     }
 
-    commonProperty?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = true)
+    commonProperty?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = markAsExpectAndActual)
 }
 
 private fun Property.buildDescriptor(

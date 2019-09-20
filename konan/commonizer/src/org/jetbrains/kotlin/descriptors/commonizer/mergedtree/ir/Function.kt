@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -37,6 +34,7 @@ data class CommonFunction(
     override val visibility: Visibility,
     override val extensionReceiver: ExtensionReceiver?,
     override val returnType: UnwrappedType,
+    override val kind: CallableMemberDescriptor.Kind,
     private val modifiers: FunctionModifiers,
     override val valueParameters: List<ValueParameter>,
     override val typeParameters: List<TypeParameter>,

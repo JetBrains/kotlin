@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionOrProperty
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.isNonAbstractMemberInInterface
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractFunctionOrPropertyCommonizer<T : FunctionOrProperty>(cache: ClassifiersCache) : AbstractStandardCommonizer<T, T>() {
@@ -15,14 +19,19 @@ abstract class AbstractFunctionOrPropertyCommonizer<T : FunctionOrProperty>(cach
     protected val visibility = VisibilityCommonizer.lowering()
     protected val extensionReceiver = ExtensionReceiverCommonizer.default(cache)
     protected val returnType = TypeCommonizer.default(cache)
+    protected lateinit var kind: CallableMemberDescriptor.Kind
     protected val typeParameters = TypeParameterListCommonizer.default(cache)
 
     override fun initialize(first: T) {
         name = first.name
+        kind = first.kind
     }
 
-    override fun doCommonizeWith(next: T) =
-        !next.isNonAbstractCallableMemberInInterface // non-abstract callable members declared in interface can't be commonized
+    override fun doCommonizeWith(next: T): Boolean =
+        !next.isNonAbstractMemberInInterface() // non-abstract callable members declared in interface can't be commonized
+                && next.kind != DELEGATION // delegated members should not be commonized
+                && (next.kind != SYNTHESIZED || next.containingClassIsData != true) // synthesized members of data classes should not be commonized
+                && kind == next.kind
                 && modality.commonizeWith(next.modality)
                 && visibility.commonizeWith(next)
                 && extensionReceiver.commonizeWith(next.extensionReceiver)

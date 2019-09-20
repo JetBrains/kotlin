@@ -21,6 +21,7 @@ class PropertyCommonizer(cache: ClassifiersCache) : AbstractFunctionOrPropertyCo
         isExternal = isExternal,
         extensionReceiver = extensionReceiver.result?.toReceiverNoAnnotations(),
         returnType = returnType.result,
+        kind = kind,
         setter = setter.result,
         typeParameters = typeParameters.result
     )

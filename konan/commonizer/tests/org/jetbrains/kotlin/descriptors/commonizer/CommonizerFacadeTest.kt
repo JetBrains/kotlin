@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.junit.Assert.*
+import kotlin.test.*
 import org.junit.Test
 import org.jetbrains.kotlin.descriptors.commonizer.AbstractCommonizationFromSourcesTest.Companion.eachModuleAsTarget
+import org.jetbrains.kotlin.descriptors.commonizer.utils.assertCommonizationPerformed
+import org.jetbrains.kotlin.descriptors.commonizer.utils.mockEmptyModule
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts

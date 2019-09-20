@@ -1,24 +1,50 @@
 import kotlin.annotation.AnnotationTarget.*
 
-@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER)
-annotation class Bar(val text: String)
+@Target(ANNOTATION_CLASS)
+actual annotation class CommonAnnotationForAnnotationClassesOnly actual constructor(actual val text: String)
 
-@Bar("property")
+@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, TYPE_PARAMETER, FUNCTION, CLASS, CONSTRUCTOR, TYPEALIAS, TYPE)
+@JvmAnnotationForAnnotationClassesOnly("annotation-class")
+@CommonAnnotationForAnnotationClassesOnly("annotation-class")
+actual annotation class CommonAnnotation actual constructor(actual val text: String)
+
+@Target(ANNOTATION_CLASS)
+annotation class JvmAnnotationForAnnotationClassesOnly(val text: String)
+
+@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, TYPE_PARAMETER, FUNCTION, CLASS, CONSTRUCTOR, TYPEALIAS, TYPE)
+@JvmAnnotationForAnnotationClassesOnly("annotation-class")
+@CommonAnnotationForAnnotationClassesOnly("annotation-class")
+annotation class JvmAnnotation(val text: String)
+
+@JvmAnnotation("property")
+@CommonAnnotation("property")
 actual var propertyWithoutBackingField
-    @Bar("getter") get() = 3.14
-    @Bar("setter") set(@Bar("parameter") value) = Unit
+    @JvmAnnotation("getter") @CommonAnnotation("getter") get() = 3.14
+    @JvmAnnotation("setter") @CommonAnnotation("setter") set(@JvmAnnotation("parameter") @CommonAnnotation("parameter") value) = Unit
 
-@field:Bar("field")
+@field:JvmAnnotation("field")
+@field:CommonAnnotation("field")
 actual val propertyWithBackingField = 3.14
 
-@delegate:Bar("field")
+@delegate:JvmAnnotation("field")
+@delegate:CommonAnnotation("field")
 actual val propertyWithDelegateField: Int by lazy { 42 }
 
-actual val <@Bar("type-parameter") T : CharSequence> @receiver:Bar("receiver") T.propertyWithExtensionReceiver: Int
+actual val <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") T : CharSequence> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") T.propertyWithExtensionReceiver: Int
     get() = length
 
-@Bar("function")
-actual fun function1(@Bar("parameter") text: String) = text
+@JvmAnnotation("function")
+@CommonAnnotation("function")
+actual fun function1(@JvmAnnotation("parameter") @CommonAnnotation("parameter") text: String) = text
 
-@Bar("function")
-actual fun <@Bar("type-parameter") Q : Number> @receiver:Bar("receiver") Q.function2() = this
+@JvmAnnotation("function")
+@CommonAnnotation("function")
+actual fun <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @JvmAnnotation("type1") @CommonAnnotation("type1") Number> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): @JvmAnnotation("type2") @CommonAnnotation("type2") Q = this
+
+@JvmAnnotation("class")
+@CommonAnnotation("class")
+actual class AnnotatedClass @JvmAnnotation("constructor") @CommonAnnotation("constructor") actual constructor(actual val value: String)
+
+@JvmAnnotation("type-alias")
+@CommonAnnotation("type-alias")
+actual typealias AnnotatedTypeAlias = AnnotatedClass

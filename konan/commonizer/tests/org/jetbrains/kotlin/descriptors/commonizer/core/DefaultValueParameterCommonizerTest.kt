@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.core.TestValueParameter.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.mockClassType
+import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.refinement.TypeRefinement

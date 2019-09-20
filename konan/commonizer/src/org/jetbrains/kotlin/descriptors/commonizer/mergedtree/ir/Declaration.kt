@@ -36,8 +36,14 @@ interface DeclarationWithVisibility : Declaration {
     val visibility: Visibility
 }
 
-interface MaybeVirtualCallableMember : DeclarationWithVisibility {
-    val isVirtual: Boolean
+interface DeclarationWithModality : Declaration {
+    val modality: Modality
+}
+
+interface MaybeCallableMemberOfClass : Declaration {
+    val containingClassKind: ClassKind? // null assumes no containing class
+    val containingClassModality: Modality? // null assumes no containing class
+    val containingClassIsData: Boolean? // null assumes no containing class
 }
 
 interface DeclarationWithTypeParameters : Declaration {
@@ -47,5 +53,5 @@ interface DeclarationWithTypeParameters : Declaration {
 /** Indicates presence of recursion in lazy calculations. */
 interface RecursionMarker : Declaration
 
-@Suppress("unused")
-internal fun Declaration.unsupported(): Nothing = error("This method should never be called")
+@Suppress("unused", "NOTHING_TO_INLINE")
+internal inline fun Declaration.unsupported(): Nothing = error("This method should never be called")

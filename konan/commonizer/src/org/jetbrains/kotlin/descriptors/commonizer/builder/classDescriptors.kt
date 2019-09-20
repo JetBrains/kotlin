@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
@@ -20,9 +17,10 @@ internal fun ClassNode.buildDescriptors(
     storageManager: StorageManager
 ) {
     val commonClass = common()
+    val markAsActual = commonClass != null && commonClass.kind != ClassKind.ENUM_ENTRY
 
     target.forEachIndexed { index, clazz ->
-        clazz?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = commonClass != null)
+        clazz?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = markAsActual)
     }
 
     commonClass?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = true)
@@ -67,13 +65,13 @@ internal fun ClassConstructorNode.buildDescriptors(
     containingDeclarations: List<ClassDescriptor?>
 ) {
     val commonConstructor = common()
+    val markAsActual = commonConstructor != null
 
     target.forEachIndexed { index, constructor ->
-        constructor?.buildDescriptor(output, index, containingDeclarations, isActual = commonConstructor != null)
+        constructor?.buildDescriptor(output, index, containingDeclarations, isActual = markAsActual)
     }
 
     commonConstructor?.buildDescriptor(output, indexOfCommon, containingDeclarations, isExpect = true)
-
 }
 
 private fun ClassConstructor.buildDescriptor(

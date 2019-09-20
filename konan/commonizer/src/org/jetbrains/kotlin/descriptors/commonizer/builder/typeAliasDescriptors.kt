@@ -20,9 +20,10 @@ internal fun TypeAliasNode.buildDescriptors(
     storageManager: StorageManager
 ) {
     val commonClass: ClassDeclaration? = common()
+    val markAsActual = commonClass != null
 
     target.forEachIndexed { index, typeAlias ->
-        typeAlias?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = commonClass != null)
+        typeAlias?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = markAsActual)
     }
 
     commonClass?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = true)
@@ -46,7 +47,11 @@ private fun TypeAlias.buildDescriptor(
         isActual = isActual
     )
 
-    typeAliasDescriptor.initialize(underlyingType, expandedType)
+    typeAliasDescriptor.initialize(
+        declaredTypeParameters = typeParameters.buildDescriptors(typeAliasDescriptor),
+        underlyingType = underlyingType,
+        expandedType = expandedType
+    )
 
     output[index] = typeAliasDescriptor
 }

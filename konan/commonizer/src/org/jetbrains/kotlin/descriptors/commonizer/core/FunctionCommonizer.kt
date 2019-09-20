@@ -22,6 +22,7 @@ class FunctionCommonizer(cache: ClassifiersCache) : AbstractFunctionOrPropertyCo
         visibility = visibility.result,
         extensionReceiver = extensionReceiver.result?.toReceiverNoAnnotations(),
         returnType = returnType.result,
+        kind = kind,
         modifiers = modifiers.result,
         valueParameters = valueParameters.result,
         typeParameters = typeParameters.result,

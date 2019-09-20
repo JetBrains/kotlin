@@ -1,24 +1,50 @@
 import kotlin.annotation.AnnotationTarget.*
 
-@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER)
-annotation class Bar(val text: String)
+@Target(ANNOTATION_CLASS)
+annotation class CommonAnnotationForAnnotationClassesOnly(val text: String)
 
-@Bar("property")
+@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, TYPE_PARAMETER, FUNCTION, CLASS, CONSTRUCTOR, TYPEALIAS, TYPE)
+@JvmAnnotationForAnnotationClassesOnly("annotation-class")
+@CommonAnnotationForAnnotationClassesOnly("annotation-class")
+annotation class CommonAnnotation(val text: String)
+
+@Target(ANNOTATION_CLASS)
+annotation class JvmAnnotationForAnnotationClassesOnly(val text: String)
+
+@Target(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, VALUE_PARAMETER, TYPE_PARAMETER, FUNCTION, CLASS, CONSTRUCTOR, TYPEALIAS, TYPE)
+@JvmAnnotationForAnnotationClassesOnly("annotation-class")
+@CommonAnnotationForAnnotationClassesOnly("annotation-class")
+annotation class JvmAnnotation(val text: String)
+
+@JvmAnnotation("property")
+@CommonAnnotation("property")
 var propertyWithoutBackingField
-    @Bar("getter") get() = 3.14
-    @Bar("setter") set(@Bar("parameter") value) = Unit
+    @JvmAnnotation("getter") @CommonAnnotation("getter") get() = 3.14
+    @JvmAnnotation("setter") @CommonAnnotation("setter") set(@JvmAnnotation("parameter") @CommonAnnotation("parameter") value) = Unit
 
-@field:Bar("field")
+@field:JvmAnnotation("field")
+@field:CommonAnnotation("field")
 val propertyWithBackingField = 3.14
 
-@delegate:Bar("field")
+@delegate:JvmAnnotation("field")
+@delegate:CommonAnnotation("field")
 val propertyWithDelegateField: Int by lazy { 42 }
 
-val <@Bar("type-parameter") T : CharSequence> @receiver:Bar("receiver") T.propertyWithExtensionReceiver: Int
+val <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") T : CharSequence> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") T.propertyWithExtensionReceiver: Int
     get() = length
 
-@Bar("function")
-fun function1(@Bar("parameter") text: String) = text
+@JvmAnnotation("function")
+@CommonAnnotation("function")
+fun function1(@JvmAnnotation("parameter") @CommonAnnotation("parameter") text: String) = text
 
-@Bar("function")
-fun <@Bar("type-parameter") Q : Number> @receiver:Bar("receiver") Q.function2() = this
+@JvmAnnotation("function")
+@CommonAnnotation("function")
+fun <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @JvmAnnotation("type1") @CommonAnnotation("type1") Number> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): @JvmAnnotation("type2") @CommonAnnotation("type2") Q = this
+
+@JvmAnnotation("class")
+@CommonAnnotation("class")
+class AnnotatedClass @JvmAnnotation("constructor") @CommonAnnotation("constructor") constructor(val value: String)
+
+@JvmAnnotation("type-alias")
+@CommonAnnotation("type-alias")
+typealias AnnotatedTypeAlias = AnnotatedClass

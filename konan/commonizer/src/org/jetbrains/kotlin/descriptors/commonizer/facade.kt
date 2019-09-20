@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.mergeRoots
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-class CommonizationSession {
-    // TODO (???): add progress tracker
-    // TODO (???): add logger
-}
-
 class CommonizationParameters {
     private val modulesByTargets = LinkedHashMap<ConcreteTargetId, Collection<ModuleDescriptor>>()
 
