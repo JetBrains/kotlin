@@ -109,7 +109,7 @@ fun getPossibleTypeParameterContainers(startFrom: PsiElement): List<KtTypeParame
         .filter {
             ((it is KtClass && !it.isInterface() && it !is KtEnumEntry) ||
                     it is KtNamedFunction ||
-                    (it is KtProperty && !it.isLocal) ||
+                    (it is KtProperty && !it.isLocal && it.receiverTypeReference != null) ||
                     it is KtTypeAlias) && it.nameIdentifier != null
         }
         .toList()
