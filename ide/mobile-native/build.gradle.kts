@@ -25,6 +25,7 @@ dependencies {
     compile(project(":kotlin-ultimate:ide:cidr-native"))
     compile("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
     compile("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
+    compile("com.jetbrains.intellij.cidr:cidr-xctest:$clionVersion") { isTransitive = false }
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
     compile("com.android.tools.ddms:ddmlib:26.0.0")
 
