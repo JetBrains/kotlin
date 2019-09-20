@@ -524,6 +524,10 @@ private fun PsiType.collectTypeParameters(): List<PsiTypeParameter> {
 
 
 internal fun PsiType.resolveToKotlinType(resolutionFacade: ResolutionFacade): KotlinType? {
+    if (this == PsiType.NULL) {
+        return resolutionFacade.moduleDescriptor.builtIns.nullableAnyType
+    }
+
     val typeParameters = collectTypeParameters()
     val components = resolutionFacade.getFrontendService(JavaResolverComponents::class.java)
     val rootContext = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY) { null }
