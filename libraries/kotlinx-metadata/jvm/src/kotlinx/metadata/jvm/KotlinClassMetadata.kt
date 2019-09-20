@@ -35,18 +35,23 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
 
         /**
          * Visits metadata of this class with a new [KmClass] instance and returns that instance.
+         *
+         * @param scope the scopes to visit.
          */
-        fun toKmClass(): KmClass =
-            KmClass().apply(this::accept)
+        fun toKmClass(scope: Scope.Class = Scope.Class.ALL): KmClass =
+            KmClass().apply {
+                accept(this, scope)
+            }
 
         /**
          * Makes the given visitor visit metadata of this class.
          *
          * @param v the visitor that must visit this class
+         * @param scope the scopes to visit.
          */
-        fun accept(v: KmClassVisitor) {
+        fun accept(v: KmClassVisitor, scope: Scope.Class = Scope.Class.ALL) {
             val (strings, proto) = classData
-            proto.accept(v, strings)
+            proto.accept(v, strings, scope)
         }
 
         /**
