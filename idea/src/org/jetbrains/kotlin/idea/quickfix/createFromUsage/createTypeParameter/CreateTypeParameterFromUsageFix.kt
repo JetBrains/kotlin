@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -96,7 +97,8 @@ class CreateTypeParameterFromUsageFix(
                     IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBoundType)
                 } else null
                 val upperBound = upperBoundText?.let { psiFactory.createType(it) }
-                val newTypeParameterText = if (upperBound != null) "${typeParameter.name} : ${upperBound.text}" else typeParameter.name
+                val typeParameterName = typeParameter.name.quoteIfNeeded()
+                val newTypeParameterText = if (upperBound != null) "$typeParameterName : ${upperBound.text}" else typeParameterName
                 val newTypeParameter = declaration.addTypeParameter(psiFactory.createTypeParameter(newTypeParameterText))
                     ?: error("Couldn't create type parameter from '$newTypeParameterText' for '$declaration'")
                 elementsToShorten += newTypeParameter
