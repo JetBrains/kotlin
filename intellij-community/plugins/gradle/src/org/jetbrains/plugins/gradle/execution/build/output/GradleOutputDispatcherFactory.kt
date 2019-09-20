@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle.execution.build.output
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
 import com.intellij.build.events.DuplicateMessageAware
+import com.intellij.build.events.FinishBuildEvent
 import com.intellij.build.events.StartEvent
 import com.intellij.build.events.impl.OutputBuildEventImpl
 import com.intellij.build.output.BuildOutputInstantReaderImpl
@@ -11,12 +12,16 @@ import com.intellij.build.output.BuildOutputParser
 import com.intellij.build.output.LineProcessor
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputDispatcherFactory
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputMessageDispatcher
+import com.intellij.util.SmartList
+import com.intellij.util.containers.toMutableSmartList
 import org.apache.commons.lang.ClassUtils
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
   override val externalSystemId: Any? = GradleConstants.SYSTEM_ID
@@ -38,6 +43,7 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
     private var myCurrentReader: BuildOutputInstantReaderImpl
     private val tasksOutputReaders = mutableMapOf<String, BuildOutputInstantReaderImpl>()
     private val tasksEventIds = mutableMapOf<String, Any>()
+    private val onCompletionHandlers = SmartList<Consumer<Throwable?>>()
 
     init {
       val deferredRootEvents = mutableListOf<BuildEvent>()
@@ -57,9 +63,8 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
           myBuildProgressListener.onEvent(buildId, buildEvent)
         }
       }, parsers) {
-        override fun close() {
-          closeAndGetFuture().whenComplete { _, _ -> deferredRootEvents.forEach { myBuildProgressListener.onEvent(buildId, it) } }
-        }
+        override fun closeAndGetFuture(): CompletableFuture<Unit> =
+          super.closeAndGetFuture().whenComplete { _, _ -> deferredRootEvents.forEach { myBuildProgressListener.onEvent(buildId, it) } }
       }
       var isBuildException = false
       myCurrentReader = myRootReader
@@ -94,7 +99,12 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
     }
 
     override fun onEvent(buildId: Any, event: BuildEvent) {
-      myBuildProgressListener.onEvent(buildId, event)
+      when (event) {
+        is FinishBuildEvent -> {
+          invokeOnCompletion(Consumer { myBuildProgressListener.onEvent(buildId, event) })
+        }
+        else -> myBuildProgressListener.onEvent(buildId, event)
+      }
       if (event is StartEvent && event.parentId == buildId) {
         tasksOutputReaders[event.message]?.close() // multiple invocations of the same task during the build session
 
@@ -104,11 +114,22 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
       }
     }
 
+    override fun invokeOnCompletion(handler: Consumer<Throwable?>) {
+      onCompletionHandlers.add(handler)
+    }
+
     override fun close() {
       lineProcessor.close()
-      tasksOutputReaders.forEach { (_, reader) -> reader.close() }
-      myRootReader.close()
+      val futures = mutableListOf<CompletableFuture<Unit>>()
+      tasksOutputReaders.forEach { (_, reader) -> reader.closeAndGetFuture().let { futures += it } }
+      myRootReader.closeAndGetFuture().let { futures += it }
       tasksOutputReaders.clear()
+      val future = CompletableFuture.allOf(*futures.toTypedArray())
+      val handlers = onCompletionHandlers.toMutableSmartList()
+      onCompletionHandlers.clear()
+      for (handler in handlers) {
+        future.whenComplete { _, u -> handler.accept(u) }
+      }
     }
 
     override fun append(csq: CharSequence): Appendable {

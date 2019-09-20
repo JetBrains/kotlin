@@ -84,7 +84,7 @@ open class BuildOutputInstantReaderImpl(private val buildId: Any,
     closeAndGetFuture()
   }
 
-  fun closeAndGetFuture(): CompletableFuture<Unit> {
+  open fun closeAndGetFuture(): CompletableFuture<Unit> {
     appendedLineProcessor.close()
     outputLinesChannel.close()
     return CoroutineScope(Dispatchers.Default).future {

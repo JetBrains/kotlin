@@ -544,7 +544,13 @@ public class ExternalSystemUtil {
             .execute(indicator, ArrayUtil.prepend(taskListener, ExternalSystemTaskNotificationListener.EP_NAME.getExtensions()));
           LOG.info("External project [" + externalProjectPath + "] resolution task executed in " +
                    (System.currentTimeMillis() - startTS) + " ms.");
+          handExecutionResult(externalSystemTaskActivator, eventDispatcher, finishSyncEventSupplier);
         }
+      }
+
+      private void handExecutionResult(@NotNull ExternalSystemTaskActivator externalSystemTaskActivator,
+                                       @NotNull BuildEventDispatcher eventDispatcher,
+                                       @NotNull Ref<Supplier<FinishBuildEvent>> finishSyncEventSupplier) {
         if (project.isDisposed()) return;
 
         try {
@@ -584,7 +590,7 @@ public class ExternalSystemUtil {
         finally {
           if (!isPreviewMode) {
             boolean isNewProject = isNewProject(project);
-            if(isNewProject) {
+            if (isNewProject) {
               VirtualFile virtualFile = VfsUtil.findFileByIoFile(projectFile, false);
               if (virtualFile != null) {
                 VfsUtil.markDirtyAndRefresh(true, false, true, virtualFile);
@@ -592,33 +598,27 @@ public class ExternalSystemUtil {
             }
             project.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, null);
             project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, null);
-            sendSyncFinishEvent(finishSyncEventSupplier);
+            eventDispatcher.onEvent(resolveProjectTask.getId(), getSyncFinishEvent(finishSyncEventSupplier));
           }
         }
       }
 
-      private void sendSyncFinishEvent(@NotNull Ref<? extends Supplier<FinishBuildEvent>> finishSyncEventSupplier) {
+      @NotNull
+      private FinishBuildEvent getSyncFinishEvent(@NotNull Ref<? extends Supplier<FinishBuildEvent>> finishSyncEventSupplier) {
         Exception exception = null;
-        FinishBuildEvent finishBuildEvent = null;
         Supplier<FinishBuildEvent> finishBuildEventSupplier = finishSyncEventSupplier.get();
         if (finishBuildEventSupplier != null) {
           try {
-            finishBuildEvent = finishBuildEventSupplier.get();
+            return finishBuildEventSupplier.get();
           }
           catch (Exception e) {
             exception = e;
           }
         }
-        if (finishBuildEvent != null) {
-          ServiceManager.getService(project, SyncViewManager.class).onEvent(resolveProjectTask.getId(), finishBuildEvent);
-        }
-        else {
-          String message = "Sync finish event has not been received";
-          LOG.warn(message, exception);
-          ServiceManager.getService(project, SyncViewManager.class).onEvent(resolveProjectTask.getId(),
-            new FinishBuildEventImpl(resolveProjectTask.getId(), null, System.currentTimeMillis(), "failed",
-                                     new FailureResultImpl(new Exception(message, exception))));
-        }
+        String message = "Sync finish event has not been received";
+        LOG.warn(message, exception);
+        return new FinishBuildEventImpl(resolveProjectTask.getId(), null, System.currentTimeMillis(), "failed",
+                                        new FailureResultImpl(new Exception(message, exception)));
       }
 
       private void cancelImport() {
