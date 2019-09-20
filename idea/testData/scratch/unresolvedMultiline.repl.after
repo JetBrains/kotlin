@@ -11,8 +11,8 @@ fun goo(a: String) {    // ERROR: error: unresolved reference: goo...
 foo.forEach {
 ^
 error: cannot choose among the following candidates without completing type inference:
-@HidesMembers public inline fun <T> Iterable<???>.forEach(action: (???) -> Unit): Unit defined in kotlin.collections
-@HidesMembers public inline fun <K, V> Map<out ???, ???>.forEach(action: (Map.Entry<???, ???>) -> Unit): Unit defined in kotlin.collections
+public inline fun <T> Iterable<???>.forEach(action: (???) -> Unit): Unit defined in kotlin.collections
+public inline fun <K, V> Map<out ???, ???>.forEach(action: (Map.Entry<???, ???>) -> Unit): Unit defined in kotlin.collections
 foo.forEach {
 ^ */
 /** unresolvedMultiline.kts:7 error: unresolved reference: goo

@@ -77,7 +77,7 @@ private fun collectClassifiersFqNames(objectsToRender: Collection<Any?>): Set<Fq
     collectMentionedClassifiersFqNames(objectsToRender, this)
 }
 
-private fun collectMentionedClassifiersFqNames(contextObjects: Collection<Any?>, result: MutableSet<FqNameUnsafe>) {
+private fun collectMentionedClassifiersFqNames(contextObjects: Iterable<Any?>, result: MutableSet<FqNameUnsafe>) {
     fun KotlinType.addMentionedTypeConstructor() {
         constructor.declarationDescriptor?.let { result.add(it.fqNameUnsafe) }
     }
@@ -90,7 +90,7 @@ private fun collectMentionedClassifiersFqNames(contextObjects: Collection<Any?>,
         }
     }
 
-    contextObjects.filterIsInstance<Collection<*>>().forEach {
+    contextObjects.filterIsInstance<Iterable<*>>().forEach {
         collectMentionedClassifiersFqNames(it, result)
     }
     contextObjects.filterIsInstance<ClassifierDescriptor>().forEach {

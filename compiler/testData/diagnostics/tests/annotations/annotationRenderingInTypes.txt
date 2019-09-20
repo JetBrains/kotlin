@@ -1,0 +1,17 @@
+package
+
+public var test3: kotlin.Int
+public val test4: kotlin.Unit
+public fun f1(/*0*/ x: kotlin.String): kotlin.Unit
+public fun f2(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ @Ann R : @Ann kotlin.Any> f3(/*0*/ a: kotlin.Array<@Ann R>): kotlin.Array<@Ann R?>
+public fun f4(/*0*/ fn: (@Ann kotlin.Int, @Ann kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun test1(): kotlin.Unit
+public fun test2(/*0*/ a: @Ann kotlin.Array<in @Ann kotlin.Int>): kotlin.Unit
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.TYPE}) public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

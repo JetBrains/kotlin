@@ -1,0 +1,35 @@
+package
+
+@An public interface A {
+    @An public abstract val p1: @An kotlin.String
+    @An public abstract var p2: @An kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @An public abstract fun test(/*0*/ @An arg: @An kotlin.String): @An kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER}) public final annotation class An : kotlin.Annotation {
+    public constructor An()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@An public interface B : A {
+    public abstract override /*1*/ val p1: kotlin.Int
+    @An public abstract override /*1*/ val p2: @An kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun test(/*0*/ arg: kotlin.String): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface C : A {
+    @An public abstract override /*1*/ /*fake_override*/ val p1: @An kotlin.String
+    public abstract override /*1*/ var p2: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @An public abstract override /*1*/ /*fake_override*/ fun test(/*0*/ @An arg: @An kotlin.String): @An kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

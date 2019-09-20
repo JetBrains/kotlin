@@ -828,6 +828,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/annotations/annotationOnParameterInFunctionType.kt");
             }
 
+            @TestMetadata("annotationRenderingInTypes.kt")
+            public void testAnnotationRenderingInTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/annotationRenderingInTypes.kt");
+            }
+
             @TestMetadata("AnnotationsForClasses.kt")
             public void testAnnotationsForClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/AnnotationsForClasses.kt");
@@ -1422,6 +1427,74 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     public void testValueparam() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/annotations/options/targets/valueparam.kt");
                     }
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/rendering")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Rendering extends AbstractDiagnosticsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInRendering() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/rendering"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("cannotOverrideInvisibleMember.kt")
+                public void testCannotOverrideInvisibleMember() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/cannotOverrideInvisibleMember.kt");
+                }
+
+                @TestMetadata("conflictingOverloads.kt")
+                public void testConflictingOverloads() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/conflictingOverloads.kt");
+                }
+
+                @TestMetadata("differentNamesForParameter.kt")
+                public void testDifferentNamesForParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/differentNamesForParameter.kt");
+                }
+
+                @TestMetadata("memberProjectedOut.kt")
+                public void testMemberProjectedOut() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/memberProjectedOut.kt");
+                }
+
+                @TestMetadata("multipleInheritedDefaults.kt")
+                public void testMultipleInheritedDefaults() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/multipleInheritedDefaults.kt");
+                }
+
+                @TestMetadata("notImplementedMembers.kt")
+                public void testNotImplementedMembers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/notImplementedMembers.kt");
+                }
+
+                @TestMetadata("tooManyArguments.kt")
+                public void testTooManyArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/tooManyArguments.kt");
+                }
+
+                @TestMetadata("typeMismatchDueToTypeProjections.kt")
+                public void testTypeMismatchDueToTypeProjections() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/typeMismatchDueToTypeProjections.kt");
+                }
+
+                @TestMetadata("typeMismatchOnOverride.kt")
+                public void testTypeMismatchOnOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/typeMismatchOnOverride.kt");
+                }
+
+                @TestMetadata("typeMismatchOnOverrideJavaNullable.kt")
+                public void testTypeMismatchOnOverrideJavaNullable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/typeMismatchOnOverrideJavaNullable.kt");
+                }
+
+                @TestMetadata("unusedValue.kt")
+                public void testUnusedValue() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/rendering/unusedValue.kt");
                 }
             }
 

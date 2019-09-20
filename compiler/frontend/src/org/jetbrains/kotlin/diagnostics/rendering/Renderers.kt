@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.*
@@ -157,7 +158,25 @@ object Renderers {
     val RENDER_CLASS_OR_OBJECT_NAME = Renderer<ClassifierDescriptorWithTypeParameters> { it.renderKindWithName() }
 
     @JvmField
-    val RENDER_TYPE = SmartTypeRenderer(DescriptorRenderer.FQ_NAMES_IN_TYPES.withOptions { parameterNamesInFunctionalTypes = false })
+    val RENDER_TYPE = SmartTypeRenderer(DescriptorRenderer.FQ_NAMES_IN_TYPES.withOptions {
+        parameterNamesInFunctionalTypes = false
+    })
+
+    @JvmField
+    val RENDER_TYPE_WITH_ANNOTATIONS = SmartTypeRenderer(DescriptorRenderer.FQ_NAMES_IN_TYPES_WITH_ANNOTATIONS.withOptions {
+        parameterNamesInFunctionalTypes = false
+    })
+
+    @JvmField
+    val TYPE_PROJECTION = Renderer<TypeProjection> { projection ->
+        when {
+            projection.isStarProjection -> "*"
+            projection.projectionKind == Variance.INVARIANT ->
+                RENDER_TYPE.render(projection.type, RenderingContext.of(projection.type))
+            else ->
+                "${projection.projectionKind} ${RENDER_TYPE.render(projection.type, RenderingContext.of(projection.type))}"
+        }
+    }
 
     @JvmField
     val RENDER_POSITION_VARIANCE = Renderer { variance: Variance ->
@@ -504,7 +523,10 @@ object Renderers {
             newText().normal(
                 typeParameter.name.wrapIntoQuotes() +
                         " cannot capture " +
-                        "${capturedTypeConstructor.projection.toString().wrapIntoQuotes()}. " +
+                        "${result.typeProjectionRenderer.render(
+                            capturedTypeConstructor.projection,
+                            RenderingContext.of(capturedTypeConstructor.projection)
+                        ).wrapIntoQuotes()}. " +
                         explanation
             )
         )
@@ -527,11 +549,18 @@ object Renderers {
         }
     }
 
-    private fun renderTypes(types: Collection<KotlinType>, context: RenderingContext) =
-        StringUtil.join(types, { RENDER_TYPE.render(it, context) }, ", ")
+    private fun renderTypes(
+        types: Collection<KotlinType>,
+        typeRenderer: DiagnosticParameterRenderer<KotlinType>,
+        context: RenderingContext
+    ): String {
+        return StringUtil.join(types, { typeRenderer.render(it, context) }, ", ")
+    }
 
     @JvmField
-    val RENDER_COLLECTION_OF_TYPES = ContextDependentRenderer<Collection<KotlinType>> { types, context -> renderTypes(types, context) }
+    val RENDER_COLLECTION_OF_TYPES = ContextDependentRenderer<Collection<KotlinType>> { types, context ->
+        renderTypes(types, RENDER_TYPE, context)
+    }
 
     enum class ConstraintSystemRenderingVerbosity {
         COMPACT,
@@ -634,13 +663,13 @@ object Renderers {
         if (TypeUtils.noExpectedType(inferenceErrorData.expectedType)) {
             append(inferenceErrorData.expectedType)
         } else {
-            append(RENDER_TYPE.render(inferenceErrorData.expectedType, context))
+            append(RENDER_TYPE_WITH_ANNOTATIONS.render(inferenceErrorData.expectedType, context))
         }
         append("\nArgument types:\n")
         if (inferenceErrorData.receiverArgumentType != null) {
-            append(RENDER_TYPE.render(inferenceErrorData.receiverArgumentType, context)).append(".")
+            append(RENDER_TYPE_WITH_ANNOTATIONS.render(inferenceErrorData.receiverArgumentType, context)).append(".")
         }
-        append("(").append(renderTypes(inferenceErrorData.valueArgumentsTypes, context)).append(")")
+        append("(").append(renderTypes(inferenceErrorData.valueArgumentsTypes, RENDER_TYPE_WITH_ANNOTATIONS, context)).append(")")
     }
 
     private fun String.wrapIntoQuotes(): String = "'$this'"
@@ -661,6 +690,10 @@ object Renderers {
 
     @JvmField
     val FQ_NAMES_IN_TYPES = DescriptorRenderer.FQ_NAMES_IN_TYPES.asRenderer()
+    @JvmField
+    val FQ_NAMES_IN_TYPES_ANNOTATIONS_WHITELIST = DescriptorRenderer.FQ_NAMES_IN_TYPES_WITH_ANNOTATIONS.withAnnotationsWhitelist()
+    @JvmField
+    val FQ_NAMES_IN_TYPES_WITH_ANNOTATIONS = DescriptorRenderer.FQ_NAMES_IN_TYPES_WITH_ANNOTATIONS.asRenderer()
     @JvmField
     val COMPACT = DescriptorRenderer.COMPACT.asRenderer()
     @JvmField
