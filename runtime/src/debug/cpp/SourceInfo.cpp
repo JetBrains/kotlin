@@ -40,7 +40,7 @@ typedef struct _CSRange {
 
 typedef unsigned long long CSArchitecture;
 
-#define kCSNow LONG_MAX
+#define kCSNow LLONG_MAX
 
 namespace {
 
@@ -49,7 +49,7 @@ CSSymbolicatorRef (*CSSymbolicatorCreateWithPid)(pid_t pid);
 CSSymbolOwnerRef (*CSSymbolicatorGetSymbolOwnerWithAddressAtTime)(
     CSSymbolicatorRef symbolicator,
     unsigned long long address,
-    long time
+    long long time
 );
 
 CSSourceInfoRef (*CSSymbolOwnerGetSourceInfoWithAddress)(
