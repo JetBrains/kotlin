@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.compiler.actions.GenerateAntBuildDialog">
+  <grid id="3d49c" binding="myPanel" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="52" y="58" width="727" height="229"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="770dc" layout-manager="GridLayoutManager" row-count="3" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="7d65" class="javax.swing.JRadioButton" binding="myRbGenerateMultipleFilesBuild">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.generate.multiple.files"/>
+            </properties>
+          </component>
+          <component id="f1821" class="javax.swing.JRadioButton" binding="myRbGenerateSingleFileBuild">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.single.file"/>
+            </properties>
+          </component>
+          <component id="81381" class="javax.swing.JRadioButton" binding="myRbBackupFiles">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.backup.files"/>
+            </properties>
+          </component>
+          <component id="a019e" class="javax.swing.JRadioButton" binding="myRbOverwriteFiles">
+            <constraints>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.overwrite.files"/>
+            </properties>
+          </component>
+          <component id="cd13a" class="javax.swing.JTextField" binding="myOutputFileNameField">
+            <constraints>
+              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="3a774" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.filename"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <component id="ec5e9" class="javax.swing.JCheckBox" binding="myCbEnableUIFormsCompilation">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.enable.ui.forms.compilation"/>
+        </properties>
+      </component>
+      <xy id="6f3e8" binding="myChunksPanel" layout-manager="XYLayout" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </xy>
+      <component id="c9ba" class="javax.swing.JCheckBox" binding="myCbForceTargetJdk">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.use.jdk.definitions"/>
+        </properties>
+      </component>
+      <component id="ca33b" class="javax.swing.JCheckBox" binding="myCbInlineRuntimeClasspath">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.inline.runtime.classpaths"/>
+        </properties>
+      </component>
+      <component id="c612c" class="javax.swing.JCheckBox" binding="myGenerateIdeaHomeProperty" default-binding="true">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="false"/>
+          <text resource-bundle="messages/CompilerBundle" key="label.generate.ant.script.generate.idea.home"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

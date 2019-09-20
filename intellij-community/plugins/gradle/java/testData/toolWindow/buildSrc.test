@@ -1,0 +1,63 @@
+View root() {
+  rooot() {
+    Tasks() {
+      build setup() {
+        init()
+        wrapper()
+      }
+      help() {
+        buildEnvironment()
+        components()
+        dependencies()
+        dependencyInsight()
+        dependentComponents()
+        help()
+        model()
+        projects()
+        properties()
+        tasks()
+      }
+    }
+    buildSrc() {
+      Source Sets() {
+        main() {
+          Dependencies() {
+            gradle-api-5.0.jar()
+            gradle-api-5.0.jar()
+            gradle-installation-beacon-5.0.jar()
+            groovy-all-1.0-2.5.4.jar()
+            groovy-all-1.0-2.5.4.jar()
+            gradle-installation-beacon-5.0.jar()
+          }
+        }
+        test() {
+          Dependencies() {
+            buildSrc:main()
+            gradle-api-5.0.jar()
+            gradle-installation-beacon-5.0.jar()
+            groovy-all-1.0-2.5.4.jar()
+            gradle-api-5.0.jar()
+            groovy-all-1.0-2.5.4.jar()
+            gradle-installation-beacon-5.0.jar()
+          }
+        }
+      }
+    }
+    child1() {
+      Tasks() {
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+      }
+    }
+  }
+}

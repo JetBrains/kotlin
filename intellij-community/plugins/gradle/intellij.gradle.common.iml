@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/compatibilityResources">
+      <sourceFolder url="file://$MODULE_DIR$/compatibilityResources" type="java-resource" />
+    </content>
+    <content url="file://$MODULE_DIR$/resources">
+      <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
+    </content>
+    <content url="file://$MODULE_DIR$/src">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingExtension" exported="" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingExtension.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" exported="" />
+    <orderEntry type="library" exported="" name="Slf4j" level="project" />
+    <orderEntry type="library" exported="" name="Gradle" level="project" />
+    <orderEntry type="library" name="Groovy" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingLoaderRt" />
+    <orderEntry type="library" name="ion" level="project" />
+  </component>
+</module>

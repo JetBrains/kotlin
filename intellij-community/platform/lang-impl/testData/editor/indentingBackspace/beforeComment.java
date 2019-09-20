@@ -1,0 +1,4 @@
+class A {
+
+    <caret>// comment
+}

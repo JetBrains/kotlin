@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.diagnostic.logging.EditLogPatternDialog">
+  <grid id="e4bc1" binding="myWholePanel" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="107" y="146" width="556" height="76"/>
+      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="e6b11" class="javax.swing.JLabel">
+        <constraints>
+          <xy x="2" y="5" width="30" height="14"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0"/>
+        </constraints>
+        <properties>
+          <labelFor value="73c9a"/>
+          <text resource-bundle="messages/DiagnosticBundle" key="log.monitor.edit.aliases.name"/>
+        </properties>
+      </component>
+      <component id="73c9a" class="javax.swing.JTextField" binding="myNameField">
+        <constraints>
+          <xy x="99" y="2" width="455" height="20"/>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="d1928" class="javax.swing.JLabel">
+        <constraints>
+          <xy x="2" y="30" width="87" height="14"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0"/>
+        </constraints>
+        <properties>
+          <labelFor value=""/>
+          <text resource-bundle="messages/DiagnosticBundle" key="log.monitor.edit.aliases.location"/>
+        </properties>
+      </component>
+      <component id="73dba" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myFilePattern">
+        <constraints>
+          <xy x="99" y="27" width="455" height="20"/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="99f94" class="javax.swing.JCheckBox" binding="myShowFilesCombo">
+        <constraints>
+          <xy x="312" y="52" width="242" height="22"/>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/DiagnosticBundle" key="log.monitor.edit.aliases.show.all.checkbox.title"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

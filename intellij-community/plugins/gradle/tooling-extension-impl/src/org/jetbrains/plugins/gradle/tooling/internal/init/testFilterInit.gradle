@@ -1,0 +1,54 @@
+import org.gradle.util.GradleVersion
+
+String[] ijTestIncludes = ${TEST_NAME_INCLUDES}
+boolean ijTestFilteringSupported = GradleVersion.current().compareTo(GradleVersion.version("1.10"))>=0
+boolean skipExecution
+
+gradle.addBuildListener(new BuildListener() {
+  void	buildFinished(BuildResult result) {
+    if(result.failure?.message?.startsWith("Task 'cleanTest' not found in") || result.failure?.message?.startsWith("Task 'test' not found in")) {
+      IJTestEventLogger.logConfigurationError(
+        "Unable to run unit tests",
+        "Unable to run unit tests, since there is no 'test' task configured in the project." +
+        "\n<br>You can add the following into the project gradle script: apply plugin: 'java'" +
+        "\n<br><br>See <a href='https://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.testing.Test.html'>Gradle Test task</a> for details",
+        false
+      )
+    }
+  }
+  void	buildStarted(Gradle gradle){}
+  void	projectsEvaluated(Gradle gradle){}
+  void	projectsLoaded(Gradle gradle){}
+  void	settingsEvaluated(Settings settings){}
+})
+
+for (incl in ijTestIncludes) {
+  if(incl != '*' && !ijTestFilteringSupported)  {
+    skipExecution = true
+    IJTestEventLogger.logConfigurationError(
+      "Unable to configure test filtering",
+      "Unable to configure test filtering for " + GradleVersion.current() +".<br>Please, use Gradle 1.10 or above or run all tests of a module.",
+      true)
+    break;
+  }
+}
+
+gradle.taskGraph.beforeTask { Task task ->
+  task.onlyIf { !skipExecution }
+
+  if (task instanceof Test) {
+    try {
+      if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
+        task.filter {
+          setIncludePatterns(new String[0])
+          ijTestIncludes.each(){ includeTestsMatching "${it}" }
+        }
+      }
+    }
+    catch (all) {
+      logger.error("", all)
+    }
+  }
+}
+
+

@@ -1,0 +1,6 @@
+#if (${MODULE_GROUP} && ${MODULE_GROUP} != "")
+group = "${MODULE_GROUP}"
+#end
+#if (${MODULE_VERSION} && ${MODULE_VERSION} != "")
+version = "${MODULE_VERSION}"
+#end

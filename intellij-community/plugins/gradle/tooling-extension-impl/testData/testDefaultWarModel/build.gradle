@@ -1,0 +1,42 @@
+//noinspection GrPackage
+
+apply plugin: 'war'
+
+configurations {
+  moreLibs
+}
+
+//repositories {
+//  flatDir { dirs "lib" }
+//  mavenCentral()
+//}
+//
+//dependencies {
+//  compile module(":compile:1.0") {
+//    dependency ":compile-transitive-1.0@jar"
+//    dependency ":providedCompile-transitive:1.0@jar"
+//  }
+//  providedCompile "javax.servlet:servlet-api:2.5"
+//  providedCompile module(":providedCompile:1.0") {
+//    dependency ":providedCompile-transitive:1.0@jar"
+//  }
+//  runtime ":runtime:1.0"
+//  providedRuntime ":providedRuntime:1.0@jar"
+//  testCompile "junit:junit:4.11"
+//  moreLibs ":otherLib:1.0"
+//
+//  runtime files('extras')
+//}
+
+
+war {
+  from('src/rootContent') {
+    into 'bar'
+  }
+  webInf { from 'src/additionalWebInf' } // adds a file-set to the WEB-INF dir.
+  exclude 'excl'
+  classpath fileTree('additionalLibs') // adds a file-set to the WEB-INF/lib dir.
+  classpath configurations.moreLibs // adds a configuration to the WEB-INF/lib dir.
+  webXml = file('src/someWeb.xml') // copies a file to WEB-INF/web.xml
+  classpath file('src/bbb')
+}
