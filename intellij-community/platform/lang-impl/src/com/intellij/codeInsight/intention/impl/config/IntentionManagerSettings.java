@@ -2,7 +2,6 @@
 package com.intellij.codeInsight.intention.impl.config;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInsight.intention.IntentionActionBean;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.ide.ui.search.SearchableOptionsRegistrar;
 import com.intellij.openapi.application.Application;
@@ -30,6 +29,7 @@ import java.util.regex.Pattern;
 @State(name = "IntentionManagerSettings", storages = @Storage("intentionSettings.xml"))
 public final class IntentionManagerSettings implements PersistentStateComponent<Element> {
   private static final Logger LOG = Logger.getInstance(IntentionManagerSettings.class);
+  private static final ExecutorService ourExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Intentions Loader");
 
   private static final class MetaDataKey extends Pair<String, String> {
     private static final Interner<String> ourInterner = new WeakStringInterner();
@@ -46,10 +46,10 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   private static final Pattern HTML_PATTERN = Pattern.compile("<[^<>]*>");
 
   public IntentionManagerSettings() {
-    for (IntentionActionBean extension : IntentionManager.EP_INTENTION_ACTIONS.getExtensionList()) {
+    IntentionManager.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension -> {
       String[] categories = extension.getCategories();
       if (categories == null) {
-        continue;
+        return;
       }
 
       IntentionActionWrapper instance = new IntentionActionWrapper(extension, categories);
@@ -62,7 +62,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
       }
       catch (ExtensionNotApplicableException ignore) {
       }
-    }
+    });
   }
 
   @NotNull
@@ -150,18 +150,24 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
     myMetaData.put(key, metaData);
   }
 
-  private static final ExecutorService ourExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Intentions Loader");
-
   private static void processMetaData(@NotNull IntentionActionMetaData metaData) {
-    final Application app = ApplicationManager.getApplication();
-    if (app.isUnitTestMode() || app.isHeadlessEnvironment()) return;
+    Application app = ApplicationManager.getApplication();
+    if (app.isUnitTestMode() || app.isHeadlessEnvironment()) {
+      return;
+    }
 
-    final TextDescriptor description = metaData.getDescription();
     ourExecutor.execute(() -> {
+      if (app.isDisposedOrDisposeInProgress()) {
+        return;
+      }
+
       try {
         SearchableOptionsRegistrar registrar = SearchableOptionsRegistrar.getInstance();
-        if (registrar == null) return;
-        @NonNls String descriptionText = StringUtil.toLowerCase(description.getText());
+        if (registrar == null) {
+          return;
+        }
+
+        @NonNls String descriptionText = StringUtil.toLowerCase(metaData.getDescription().getText());
         descriptionText = HTML_PATTERN.matcher(descriptionText).replaceAll(" ");
         Set<String> words = registrar.getProcessedWordsWithoutStemming(descriptionText);
         words.addAll(registrar.getProcessedWords(metaData.getFamily()));

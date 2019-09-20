@@ -4,7 +4,10 @@ package com.intellij.codeInsight.intention.impl.config;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInsight.daemon.impl.CleanupOnScopeIntention;
 import com.intellij.codeInsight.daemon.impl.EditCleanupProfileIntentionAction;
-import com.intellij.codeInsight.intention.*;
+import com.intellij.codeInsight.intention.FileModifier;
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInsight.intention.IntentionActionDelegate;
+import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.codeInspection.GlobalInspectionTool;
 import com.intellij.codeInspection.GlobalSimpleInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -41,9 +44,9 @@ public final class IntentionManagerImpl extends IntentionManager {
   public IntentionManagerImpl() {
     List<IntentionAction> actions = new ArrayList<>();
     actions.add(new EditInspectionToolsSettingsInSuppressedPlaceIntention());
-    for (IntentionActionBean extension : IntentionManager.EP_INTENTION_ACTIONS.getExtensionList()) {
+    IntentionManager.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension -> {
       actions.add(new IntentionActionWrapper(extension, extension.getCategories()));
-    }
+    });
     myActions = ContainerUtil.createLockFreeCopyOnWriteList(actions);
   }
 
