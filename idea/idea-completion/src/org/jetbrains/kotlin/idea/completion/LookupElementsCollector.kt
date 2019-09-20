@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import java.util.*
 import kotlin.math.max
 
@@ -90,7 +91,7 @@ class LookupElementsCollector(
         withReceiverCast: Boolean = false,
         prohibitDuplicates: Boolean = false
     ) {
-        if (prohibitDuplicates && descriptor is CallableDescriptor && descriptor in processedCallables) return
+        if (prohibitDuplicates && descriptor is CallableDescriptor && unwrapIfImportedFromObject(descriptor) in processedCallables) return
 
         var lookupElements = lookupElementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes = true)
 
@@ -100,7 +101,7 @@ class LookupElementsCollector(
 
         addElements(lookupElements, notImported)
 
-        if (prohibitDuplicates && descriptor is CallableDescriptor) processedCallables.add(descriptor)
+        if (prohibitDuplicates && descriptor is CallableDescriptor) processedCallables.add(unwrapIfImportedFromObject(descriptor))
     }
 
     fun addElement(element: LookupElement, notImported: Boolean = false) {
@@ -176,3 +177,6 @@ class LookupElementsCollector(
         resultSet.restartCompletionOnPrefixChange(prefixCondition)
     }
 }
+
+private fun unwrapIfImportedFromObject(descriptor: CallableDescriptor): CallableDescriptor =
+    if (descriptor is ImportedFromObjectCallableDescriptor<*>) descriptor.callableFromObject else descriptor

@@ -441,6 +441,16 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             runTest("idea/idea-completion/testData/basic/common/KT13780_1.kt");
         }
 
+        @TestMetadata("KT33903_1.kt")
+        public void testKT33903_1() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/KT33903_1.kt");
+        }
+
+        @TestMetadata("KT33903_2.kt")
+        public void testKT33903_2() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/KT33903_2.kt");
+        }
+
         @TestMetadata("LocalMultideclarationValues.kt")
         public void testLocalMultideclarationValues() throws Exception {
             runTest("idea/idea-completion/testData/basic/common/LocalMultideclarationValues.kt");
