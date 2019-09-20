@@ -114,7 +114,7 @@ compileKotlin2Js {
             "-Xuse-experimental=kotlin.Experimental",
             "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-            "-XXLanguage:+InlineClasses",
+            "-Xinline-classes",
         ]
     }
 }

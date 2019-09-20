@@ -53,7 +53,7 @@ compileKotlinCommon {
                 "-Xuse-experimental=kotlin.Experimental",
                 "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-                "-XXLanguage:+InlineClasses",
+                "-Xinline-classes",
                 "-Xallow-kotlin-package",
                 "-Xallow-result-return-type"
         ]
