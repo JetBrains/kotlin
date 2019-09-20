@@ -180,8 +180,9 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       if (indexRootHasChildren) FileUtil.deleteWithRenaming(indexRootDir);
       IndexingStamp.rewriteVersion(indexKey, version); // todo snapshots indices
     }
+    FileBasedIndexImpl fileBasedIndexManager = (FileBasedIndexImpl)FileBasedIndex.getInstance();
     UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex =
-      ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
+      fileBasedIndexManager.getIndex(StubUpdatingIndex.INDEX_ID);
     ReadWriteLock lock = stubUpdatingIndex.getLock();
 
     for (int attempt = 0; attempt < 2; attempt++) {
@@ -516,6 +517,8 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
 
   @Override
   public void initializeComponent() {
+    // ensure that FileBasedIndex task "FileIndexDataInitialization" submitted first
+    FileBasedIndex.getInstance();
     myStateFuture = IndexInfrastructure.submitGenesisTask(new StubIndexInitialization());
 
     if (!IndexInfrastructure.ourDoAsyncIndicesInitialization) {
