@@ -442,8 +442,10 @@ private class IrDeserializerPrinter(
 
         val lastIteration = allFields.splitByOrder().size - 1
 
+        val hasExposed = exposedFields.isNotEmpty()
+
         fun invokeCreate(index: Int, suffix: String, fields: List<MessageEntry.Field>): String {
-            val prefix = if (index != lastIteration) {
+            val prefix = if (index != lastIteration || hasExposed) {
                 "create${m.name}${suffix}("
             } else {
                 "return create${m.name}${suffix}("
@@ -468,7 +470,7 @@ private class IrDeserializerPrinter(
             val suffixPrefix = if (index == 0) "" else "" + index
 
             if (!hasOneOf) {
-                if (index != lastIteration) {
+                if (index != lastIteration || hasExposed) {
                     appendln("        val p${index} = ${invokeCreate(index, suffixPrefix, fields)}")
                 } else {
                     appendln("        ${invokeCreate(index, suffixPrefix, fields)}")
@@ -489,7 +491,7 @@ private class IrDeserializerPrinter(
                     }
                 }
 
-                if (index != lastIteration) {
+                if (index != lastIteration || hasExposed) {
                     appendln("        val p${index} = when (oneOfIndex) {")
                 } else {
                     appendln("        when (oneOfIndex) {")
@@ -503,13 +505,12 @@ private class IrDeserializerPrinter(
             }
         }
 
-        val hasExposed = exposedFields.isNotEmpty()
-
         if (!hasExposed) {
             invokeCreateWithOneOf(0, iterations[0])
             if (lastIteration != 0) appendln()
         } else {
             for (f in exposedFields) {
+                appendln("        val old${exposedName[f]} = ${exposedName[f]}")
                 appendln("        ${exposedName[f]} = ${getName(f)}")
             }
         }
@@ -533,6 +534,14 @@ private class IrDeserializerPrinter(
 
             invokeCreateWithOneOf(index, params)
             if (lastIteration != index) appendln()
+        }
+
+        for (f in exposedFields) {
+            appendln("        ${exposedName[f]} = old${exposedName[f]}")
+        }
+
+        if (hasExposed) {
+            appendln("        return p${lastIteration}")
         }
 
         appendln("    }")

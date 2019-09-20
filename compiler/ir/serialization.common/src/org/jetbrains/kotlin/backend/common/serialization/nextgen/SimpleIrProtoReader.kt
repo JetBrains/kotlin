@@ -97,7 +97,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrDelegatingConstructorCall(symbol : Any, memberAccessDispatchReceiver : Any?, memberAccessExtensionReceiver : Any?, memberAccessValueArgument : List<Any>, memberAccessTypeArguments : Any): Any = arrayOf<Any?>(symbol, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments)
 
-    fun createIrDoWhile(loopLoopId : Int, loopCondition : Any, loopLabel : Any?, loopBody : Any?, loopOrigin : Any?): Any = arrayOf<Any?>(loopLoopId, loopCondition, loopLabel, loopBody, loopOrigin)
+    fun createIrDoWhile(loopLoopId : Int, loopCondition : Any, loopLabel : Any?, loopOrigin : Any?): Any = arrayOf<Any?>(loopLoopId, loopCondition, loopLabel, loopOrigin)
+    fun createIrDoWhile1(partial: Any, loopBody : Any?): Any = arrayOf<Any?>(loopBody)
 
     fun createIrEnumConstructorCall(symbol : Any, memberAccessDispatchReceiver : Any?, memberAccessExtensionReceiver : Any?, memberAccessValueArgument : List<Any>, memberAccessTypeArguments : Any): Any = arrayOf<Any?>(symbol, memberAccessDispatchReceiver, memberAccessExtensionReceiver, memberAccessValueArgument, memberAccessTypeArguments)
 
@@ -136,7 +137,8 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
 
     fun createIrWhen(branch : List<Any>, origin : Any?): Any = arrayOf<Any?>(branch, origin)
 
-    fun createIrWhile(loopLoopId : Int, loopCondition : Any, loopLabel : Any?, loopBody : Any?, loopOrigin : Any?): Any = arrayOf<Any?>(loopLoopId, loopCondition, loopLabel, loopBody, loopOrigin)
+    fun createIrWhile(loopLoopId : Int, loopCondition : Any, loopLabel : Any?, loopOrigin : Any?): Any = arrayOf<Any?>(loopLoopId, loopCondition, loopLabel, loopOrigin)
+    fun createIrWhile1(partial: Any, loopBody : Any?): Any = arrayOf<Any?>(loopBody)
 
     fun createIrFunctionExpression(function : Any, origin : Any): Any = arrayOf<Any?>(function, origin)
 
@@ -1006,6 +1008,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var loopCondition: Any? = null
         var loopLabel: Any? = null
         var loopBody: Any? = null
+        var loopBodyOffset: Int = -1
         var loopOrigin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
@@ -1017,7 +1020,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                                     1 -> loopLoopId = readInt32()
                                     2 -> loopCondition = readWithLength { readIrExpression() }
                                     3 -> loopLabel = readWithLength { readIrDataIndex() }
-                                    4 -> loopBody = readWithLength { readIrExpression() }
+                                    4 -> {
+                                        loopBodyOffset = offset
+                                        skip(type)
+                                    }
                                     5 -> loopOrigin = readWithLength { readIrStatementOrigin() }
                                     else -> skip(type)
                                 }
@@ -1028,7 +1034,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrDoWhile(loopLoopId, loopCondition!!, loopLabel, loopBody, loopOrigin)
+        val p0 = createIrDoWhile(loopLoopId, loopCondition!!, loopLabel, loopOrigin)
+
+        if (loopBodyOffset != -1) {
+            loopBody = delayed(loopBodyOffset) { readWithLength { readIrExpression() } }
+        }
+        return createIrDoWhile1(p0, loopBody)
     }
 
     open fun readIrEnumConstructorCall(): Any {
@@ -1365,6 +1376,7 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         var loopCondition: Any? = null
         var loopLabel: Any? = null
         var loopBody: Any? = null
+        var loopBodyOffset: Int = -1
         var loopOrigin: Any? = null
         while (hasData) {
             readField { fieldNumber, type ->
@@ -1376,7 +1388,10 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                                     1 -> loopLoopId = readInt32()
                                     2 -> loopCondition = readWithLength { readIrExpression() }
                                     3 -> loopLabel = readWithLength { readIrDataIndex() }
-                                    4 -> loopBody = readWithLength { readIrExpression() }
+                                    4 -> {
+                                        loopBodyOffset = offset
+                                        skip(type)
+                                    }
                                     5 -> loopOrigin = readWithLength { readIrStatementOrigin() }
                                     else -> skip(type)
                                 }
@@ -1387,7 +1402,12 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
-        return createIrWhile(loopLoopId, loopCondition!!, loopLabel, loopBody, loopOrigin)
+        val p0 = createIrWhile(loopLoopId, loopCondition!!, loopLabel, loopOrigin)
+
+        if (loopBodyOffset != -1) {
+            loopBody = delayed(loopBodyOffset) { readWithLength { readIrExpression() } }
+        }
+        return createIrWhile1(p0, loopBody)
     }
 
     open fun readIrFunctionExpression(): Any {
@@ -1682,13 +1702,20 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
+        val oldfieldIrExpressionType = fieldIrExpressionType
         fieldIrExpressionType = type_
+        val oldfieldIrExpressionCoordinatesStartOffset = fieldIrExpressionCoordinatesStartOffset
         fieldIrExpressionCoordinatesStartOffset = coordinatesStartOffset
+        val oldfieldIrExpressionCoordinatesEndOffset = fieldIrExpressionCoordinatesEndOffset
         fieldIrExpressionCoordinatesEndOffset = coordinatesEndOffset
         if (operationOffset != -1) {
             operation = delayed(operationOffset) { readWithLength { readIrOperation() } }
         }
-        return createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
+        val p0 = createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
+        fieldIrExpressionType = oldfieldIrExpressionType
+        fieldIrExpressionCoordinatesStartOffset = oldfieldIrExpressionCoordinatesStartOffset
+        fieldIrExpressionCoordinatesEndOffset = oldfieldIrExpressionCoordinatesEndOffset
+        return p0
     }
 
     open fun readNullableIrExpression(): Any {
@@ -2689,7 +2716,9 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
                 }
             }
         }
+        val oldfieldIrStatementCoordinatesStartOffset = fieldIrStatementCoordinatesStartOffset
         fieldIrStatementCoordinatesStartOffset = coordinatesStartOffset
+        val oldfieldIrStatementCoordinatesEndOffset = fieldIrStatementCoordinatesEndOffset
         fieldIrStatementCoordinatesEndOffset = coordinatesEndOffset
         if (oneOfDeclarationOffset != -1) {
             oneOfDeclaration = delayed(oneOfDeclarationOffset) { readWithLength { readIrDeclaration() } }
@@ -2709,15 +2738,18 @@ class SimpleIrProtoReader(source: ByteArray) : ProtoReader(source) {
         if (oneOfSyntheticBodyOffset != -1) {
             oneOfSyntheticBody = delayed(oneOfSyntheticBodyOffset) { readWithLength { readIrSyntheticBody() } }
         }
-        when (oneOfIndex) {
-            2 -> return createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
-            3 -> return createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)
-            4 -> return createIrStatement_blockBody(coordinatesStartOffset, coordinatesEndOffset, oneOfBlockBody!!)
-            5 -> return createIrStatement_branch(coordinatesStartOffset, coordinatesEndOffset, oneOfBranch!!)
-            6 -> return createIrStatement_catch(coordinatesStartOffset, coordinatesEndOffset, oneOfCatch!!)
-            7 -> return createIrStatement_syntheticBody(coordinatesStartOffset, coordinatesEndOffset, oneOfSyntheticBody!!)
+        val p0 = when (oneOfIndex) {
+            2 -> createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
+            3 -> createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)
+            4 -> createIrStatement_blockBody(coordinatesStartOffset, coordinatesEndOffset, oneOfBlockBody!!)
+            5 -> createIrStatement_branch(coordinatesStartOffset, coordinatesEndOffset, oneOfBranch!!)
+            6 -> createIrStatement_catch(coordinatesStartOffset, coordinatesEndOffset, oneOfCatch!!)
+            7 -> createIrStatement_syntheticBody(coordinatesStartOffset, coordinatesEndOffset, oneOfSyntheticBody!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
+        fieldIrStatementCoordinatesStartOffset = oldfieldIrStatementCoordinatesStartOffset
+        fieldIrStatementCoordinatesEndOffset = oldfieldIrStatementCoordinatesEndOffset
+        return p0
     }
 
 }

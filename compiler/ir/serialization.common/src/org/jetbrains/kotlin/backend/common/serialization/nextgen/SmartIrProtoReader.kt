@@ -1787,13 +1787,20 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                 }
             }
         }
+        val oldfieldIrExpressionType = fieldIrExpressionType
         fieldIrExpressionType = type_
+        val oldfieldIrExpressionCoordinatesStartOffset = fieldIrExpressionCoordinatesStartOffset
         fieldIrExpressionCoordinatesStartOffset = coordinatesStartOffset
+        val oldfieldIrExpressionCoordinatesEndOffset = fieldIrExpressionCoordinatesEndOffset
         fieldIrExpressionCoordinatesEndOffset = coordinatesEndOffset
         if (operationOffset != -1) {
             operation = delayed(operationOffset) { readWithLength { readIrOperation() } }
         }
-        return createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
+        val p0 = createIrExpression(operation!!, type_!!, coordinatesStartOffset, coordinatesEndOffset)
+        fieldIrExpressionType = oldfieldIrExpressionType
+        fieldIrExpressionCoordinatesStartOffset = oldfieldIrExpressionCoordinatesStartOffset
+        fieldIrExpressionCoordinatesEndOffset = oldfieldIrExpressionCoordinatesEndOffset
+        return p0
     }
 
     open fun readNullableIrExpression(): NullableIrExpressionMessageType {
@@ -2794,7 +2801,9 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
                 }
             }
         }
+        val oldfieldIrStatementCoordinatesStartOffset = fieldIrStatementCoordinatesStartOffset
         fieldIrStatementCoordinatesStartOffset = coordinatesStartOffset
+        val oldfieldIrStatementCoordinatesEndOffset = fieldIrStatementCoordinatesEndOffset
         fieldIrStatementCoordinatesEndOffset = coordinatesEndOffset
         if (oneOfDeclarationOffset != -1) {
             oneOfDeclaration = delayed(oneOfDeclarationOffset) { readWithLength { readIrDeclaration() } }
@@ -2814,15 +2823,18 @@ abstract class AbstractIrSmartProtoReader(source: ByteArray) : ProtoReader(sourc
         if (oneOfSyntheticBodyOffset != -1) {
             oneOfSyntheticBody = delayed(oneOfSyntheticBodyOffset) { readWithLength { readIrSyntheticBody() } }
         }
-        when (oneOfIndex) {
-            2 -> return createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
-            3 -> return createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)
-            4 -> return createIrStatement_blockBody(coordinatesStartOffset, coordinatesEndOffset, oneOfBlockBody!!)
-            5 -> return createIrStatement_branch(coordinatesStartOffset, coordinatesEndOffset, oneOfBranch!!)
-            6 -> return createIrStatement_catch(coordinatesStartOffset, coordinatesEndOffset, oneOfCatch!!)
-            7 -> return createIrStatement_syntheticBody(coordinatesStartOffset, coordinatesEndOffset, oneOfSyntheticBody!!)
+        val p0 = when (oneOfIndex) {
+            2 -> createIrStatement_declaration(coordinatesStartOffset, coordinatesEndOffset, oneOfDeclaration!!)
+            3 -> createIrStatement_expression(coordinatesStartOffset, coordinatesEndOffset, oneOfExpression!!)
+            4 -> createIrStatement_blockBody(coordinatesStartOffset, coordinatesEndOffset, oneOfBlockBody!!)
+            5 -> createIrStatement_branch(coordinatesStartOffset, coordinatesEndOffset, oneOfBranch!!)
+            6 -> createIrStatement_catch(coordinatesStartOffset, coordinatesEndOffset, oneOfCatch!!)
+            7 -> createIrStatement_syntheticBody(coordinatesStartOffset, coordinatesEndOffset, oneOfSyntheticBody!!)
             else -> error("Incorrect oneOf index: " + oneOfIndex)
         }
+        fieldIrStatementCoordinatesStartOffset = oldfieldIrStatementCoordinatesStartOffset
+        fieldIrStatementCoordinatesEndOffset = oldfieldIrStatementCoordinatesEndOffset
+        return p0
     }
 
 }
