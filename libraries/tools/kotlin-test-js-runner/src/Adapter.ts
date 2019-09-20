@@ -21,7 +21,8 @@ export function getAdapter(
         exclude: cliArgsValue.exclude as string[],
     };
 
-    const teamCity = new TeamCityMessagesFlow(null, (payload) => console.log(payload));
+    const realConsoleLog = console.log;
+    const teamCity = new TeamCityMessagesFlow(null, (payload) => realConsoleLog(payload));
 
     let runner: KotlinTestRunner = initialAdapter;
     runner = runWithTeamCityReporter(runner, args.onIgnoredTestSuites, teamCity, hrTimer);

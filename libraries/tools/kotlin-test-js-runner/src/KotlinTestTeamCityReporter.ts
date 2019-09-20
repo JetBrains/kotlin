@@ -1,6 +1,7 @@
 import {KotlinTestRunner} from "./KotlinTestRunner";
 import {TeamCityMessageData, TeamCityMessagesFlow} from "./TeamCityMessagesFlow";
 import {Timer} from "./Timer";
+import {format} from "util";
 
 const kotlin_test = require('kotlin-test');
 
@@ -77,7 +78,33 @@ export function runWithTeamCityReporter(
                 const startTime = timer ? timer.start() : null;
                 teamCity.sendMessage('testStarted', withName(name));
                 try {
-                    runner.test(name, isIgnored, fn);
+                    runner.test(name, isIgnored, () => {
+                        const log = (type: string) => function (message?: any, ...optionalParams: any[]) {
+                            teamCity.sendMessage(
+                                "testStdOut",
+                                withName(
+                                    name,
+                                    {
+                                        "out": `[${type}] ${format(message, ...optionalParams)}\n`
+                                    }
+                                )
+                            )
+                        };
+
+                        const logMethods = ['log', 'info', 'warn', 'error', 'debug'];
+
+                        const globalConsole = console as unknown as {
+                            [method: string]: (message?: any, ...optionalParams: any[]) => void
+                        };
+
+                        const revertLogMethods = logMethods.map(method => {
+                            const realMethod = globalConsole[method];
+                            globalConsole[method] = log(method);
+                            return () => globalConsole[method] = realMethod
+                        });
+                        fn();
+                        revertLogMethods.forEach(revert => revert());
+                    });
                 } catch (e) {
                     const data: TeamCityMessageData = withName(name, {
                         "message": e.message,
