@@ -29,22 +29,6 @@ class BuildCacheIT : BaseGradleIT() {
     }
 
     @Test
-    fun testNoCacheWithGradlePre43() = with(Project("simpleProject", GradleVersionRequired.Exact("4.2"))) {
-        // Check that even with the build cache enabled, the Kotlin tasks are not cacheable with Gradle < 4.3:
-        val optionsWithCache = defaultBuildOptions().copy(withBuildCache = true)
-
-        build("assemble", options = optionsWithCache) {
-            assertSuccessful()
-            assertNotContains("Packing task ':compileKotlin'")
-        }
-        build("clean", "assemble", options = optionsWithCache) {
-            assertSuccessful()
-            assertNotContains(":compileKotlin FROM-CACHE")
-            assertContains(":compileJava FROM-CACHE")
-        }
-    }
-
-    @Test
     fun testKotlinCachingEnabledFlag() = with(Project("simpleProject", GRADLE_VERSION)) {
         prepareLocalBuildCache()
 
@@ -70,6 +54,7 @@ class BuildCacheIT : BaseGradleIT() {
         build("clean", "assemble") {
             assertSuccessful()
             assertContains(":compileKotlin FROM-CACHE")
+            assertContains(":compileJava FROM-CACHE")
         }
     }
 
