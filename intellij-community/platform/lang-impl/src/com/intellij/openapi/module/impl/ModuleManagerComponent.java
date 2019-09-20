@@ -56,7 +56,8 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
 
         Activity activity = StartUpMeasurer.startMainActivity("module loading");
         loadModules(myModuleModel);
-        activity.end("module count: " + myModuleModel.getModules().length);
+        activity.end();
+        activity.setDescription("module count: " + myModuleModel.getModules().length);
       }
     });
 
