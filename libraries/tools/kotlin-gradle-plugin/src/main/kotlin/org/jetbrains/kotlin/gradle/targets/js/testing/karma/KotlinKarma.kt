@@ -155,7 +155,16 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                             log.push(endMessage);
                         
                             this.browserResults[browser.id].consoleCollector = []
-                        }
+                        };
+                        
+                        this.flushLogs = function (browserResult) {
+                            while (browserResult.log.length > 0) {
+                                var line = browserResult.log.shift();
+                                line = line.replace("flowId=''", "flowId='" + browserResult.flowId + "'");
+                            
+                                this.write(line);
+                            }
+  }
                     };
                     
                     LogReporter.${"$"}inject = ['baseReporterDecorator'];
