@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtLambdaArgument
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -69,6 +70,25 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         name: Name,
         location: LookupLocation
     ): Collection<FunctionDescriptor> {
+        if (ComposeFlags.NEW_CALL_RESOLUTION_INTERCEPTION) {
+            val callResolver = (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
+            val element = resolutionContext.call.callElement as KtExpression
+            val project = element.project
+            val psiFactory = KtPsiFactory(project, markGenerated = false)
+
+            return ComposeCallResolver(
+                callResolver,
+                project,
+                psiFactory
+            ).interceptCandidates(
+                candidates,
+                scopeTower,
+                resolutionContext,
+                resolutionScope,
+                name,
+                location
+            )
+        }
         if (candidates.isEmpty()) return candidates
         if (KtxCallResolver.resolving.get().get()) return candidates
 

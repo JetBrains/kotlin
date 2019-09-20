@@ -3347,7 +3347,7 @@ private fun ExpressionTypingContext.withThrowawayTrace(expression: KtExpression)
 
 private val builtIns = DefaultBuiltIns.Instance
 
-private fun makeCall(
+fun makeCall(
     callElement: KtElement,
     calleeExpression: KtExpression? = null,
     valueArguments: List<ValueArgument> = emptyList(),
@@ -3439,7 +3439,7 @@ private fun KotlinType.satisfiesConstraintsOf(T: TypeParameterDescriptor): Boole
     return T.upperBounds.all { isSubtypeOf(it) }
 }
 
-private fun KotlinType.satisfiesConstraintsOf(bounds: List<KotlinType>): Boolean {
+fun KotlinType.satisfiesConstraintsOf(bounds: List<KotlinType>): Boolean {
     return bounds.all { isSubtypeOf(it) }
 }
 
@@ -3502,7 +3502,7 @@ private fun KtExpression?.refExpressions(): List<KtReferenceExpression> = when (
     else -> emptyList()
 }
 
-private fun KotlinType.upperBounds(): List<KotlinType> {
+fun KotlinType.upperBounds(): List<KotlinType> {
     return if (isTypeParameter()) {
         TypeUtils.getTypeParameterDescriptorOrNull(this)?.upperBounds ?: emptyList()
     } else {

@@ -16,8 +16,7 @@
 
 package androidx.compose.plugins.kotlin
 
-object ComposeFlags {
-    var FRAMED_COMPONENTS = false
-    var FRAMED_MODEL_CLASSES = true
-    var NEW_CALL_RESOLUTION_INTERCEPTION = false
-}
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+
+class ComposableFunctionDescriptor(val underlyingDescriptor: FunctionDescriptor)
+    : FunctionDescriptor by underlyingDescriptor
