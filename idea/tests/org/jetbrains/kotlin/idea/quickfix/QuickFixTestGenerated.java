@@ -4748,6 +4748,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inAnnotation.kt");
                 }
 
+                @TestMetadata("inExtensionProperty.kt")
+                public void testInExtensionProperty() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inExtensionProperty.kt");
+                }
+
+                @TestMetadata("inExtensionProperty2.kt")
+                public void testInExtensionProperty2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inExtensionProperty2.kt");
+                }
+
+                @TestMetadata("inExtensionProperty3.kt")
+                public void testInExtensionProperty3() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inExtensionProperty3.kt");
+                }
+
+                @TestMetadata("inProperty.kt")
+                public void testInProperty() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inProperty.kt");
+                }
+
+                @TestMetadata("inProperty2.kt")
+                public void testInProperty2() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inProperty2.kt");
+                }
+
+                @TestMetadata("inProperty3.kt")
+                public void testInProperty3() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inProperty3.kt");
+                }
+
                 @TestMetadata("inSuperTypeEntry.kt")
                 public void testInSuperTypeEntry() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/inSuperTypeEntry.kt");
