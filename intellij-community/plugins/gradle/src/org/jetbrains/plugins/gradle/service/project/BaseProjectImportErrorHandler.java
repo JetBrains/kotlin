@@ -32,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.issue.GradleIssueChecker;
 import org.jetbrains.plugins.gradle.issue.GradleIssueData;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionErrorHandler;
-import org.jetbrains.plugins.gradle.service.notification.GotoSourceNotificationCallback;
 import org.jetbrains.plugins.gradle.service.notification.OpenGradleSettingsCallback;
 
 import java.io.FileNotFoundException;
@@ -122,24 +121,6 @@ public class BaseProjectImportErrorHandler extends AbstractProjectImportErrorHan
           OpenGradleSettingsCallback.ID);
         return createUserFriendlyError(msg, location, OpenGradleSettingsCallback.ID);
       }
-    }
-
-    final String rootCauseText = rootCause.toString();
-    if (StringUtil.startsWith(rootCauseText, "org.gradle.api.internal.MissingMethodException")) {
-      String method = parseMissingMethod(rootCauseText);
-      String msg = "Build script error, unsupported Gradle DSL method found: '" + method + "'!";
-      msg += (EMPTY_LINE + "Possible causes could be:  ");
-      msg += String.format(
-        "%s  - you are using Gradle version where the method is absent (<a href=\"%s\">Fix Gradle settings</a>)",
-        '\n', OpenGradleSettingsCallback.ID);
-      //msg += String.format(
-      //  "%s  - you didn't apply Gradle plugin which provides the method (<a href=\"%s\">Apply Gradle plugin</a>)",
-      //  '\n', ApplyGradlePluginCallback.ID);
-      msg += String.format(
-        "%s  - or there is a mistake in a build script (<a href=\"%s\">Goto source</a>)",
-        '\n', GotoSourceNotificationCallback.ID);
-      return createUserFriendlyError(
-        msg, location, OpenGradleSettingsCallback.ID, /*ApplyGradlePluginCallback.ID,*/ GotoSourceNotificationCallback.ID);
     }
 
     if (rootCause instanceof OutOfMemoryError) {
