@@ -133,13 +133,7 @@ class CompletionTrackerInitializer : ApplicationInitializedListener {
     busConnection.subscribe(AnActionListener.TOPIC, actionListener)
     busConnection.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
       override fun projectOpened(project: Project) {
-        val lookupManager = LookupManager.getInstance(project)
-        lookupManager.addPropertyChangeListener(lookupTrackerInitializer)
-      }
-
-      override fun projectClosed(project: Project) {
-        val lookupManager = LookupManager.getInstance(project)
-        lookupManager.removePropertyChangeListener(lookupTrackerInitializer)
+        LookupManager.getInstance(project).addPropertyChangeListener(lookupTrackerInitializer, project)
       }
     })
   }
