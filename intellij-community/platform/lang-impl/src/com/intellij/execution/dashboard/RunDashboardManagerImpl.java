@@ -839,12 +839,6 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     syncConfigurations();
   }
 
-  @Override
-  public void noStateLoaded() {
-    myTypes.clear();
-    myTypes.addAll(getEnableByDefaultTypes());
-  }
-
   static class State {
     public final Set<String> configurationTypes = new THashSet<>();
     public final Set<String> excludedTypes = new THashSet<>();
