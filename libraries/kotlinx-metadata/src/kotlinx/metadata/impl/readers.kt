@@ -37,51 +37,71 @@ class ReadContext(
         }
 }
 
-fun ProtoBuf.Class.accept(v: KmClassVisitor, strings: NameResolver) {
+fun ProtoBuf.Class.accept(
+    v: KmClassVisitor,
+    strings: NameResolver,
+    scope: Scope.Class
+) {
     val c = ReadContext(strings, TypeTable(typeTable), VersionRequirementTable.create(versionRequirementTable))
         .withTypeParameters(typeParameterList)
 
     v.visit(flags, c.className(fqName))
 
-    for (typeParameter in typeParameterList) {
-        typeParameter.accept(v::visitTypeParameter, c)
-    }
-
-    for (supertype in supertypes(c.types)) {
-        v.visitSupertype(supertype.typeFlags)?.let { supertype.accept(it, c) }
-    }
-
-    for (constructor in constructorList) {
-        v.visitConstructor(constructor.flags)?.let { constructor.accept(it, c) }
-    }
-
-    v.visitDeclarations(functionList, propertyList, typeAliasList, c)
-
-    if (hasCompanionObjectName()) {
-        v.visitCompanionObject(c[companionObjectName])
-    }
-
-    for (nestedClassName in nestedClassNameList) {
-        v.visitNestedClass(c[nestedClassName])
-    }
-
-    for (enumEntry in enumEntryList) {
-        if (!enumEntry.hasName()) {
-            throw InconsistentKotlinMetadataException("No name for EnumEntry")
+    if (scope.typeParameters) {
+        for (typeParameter in typeParameterList) {
+            typeParameter.accept(v::visitTypeParameter, c)
         }
-        v.visitEnumEntry(c[enumEntry.name])
     }
 
-    for (sealedSubclassFqName in sealedSubclassFqNameList) {
-        v.visitSealedSubclass(c.className(sealedSubclassFqName))
+    if (scope.superTypes) {
+        for (supertype in supertypes(c.types)) {
+            v.visitSupertype(supertype.typeFlags)?.let { supertype.accept(it, c) }
+        }
+    }
+
+    if (scope.constructors) {
+        for (constructor in constructorList) {
+            v.visitConstructor(constructor.flags)?.let { constructor.accept(it, c) }
+        }
+    }
+
+    v.visitDeclarations(functionList, propertyList, typeAliasList, c, scope)
+
+    if (scope.companionObject) {
+        if (hasCompanionObjectName()) {
+            v.visitCompanionObject(c[companionObjectName])
+        }
+    }
+
+    if (scope.nestedClasses) {
+        for (nestedClassName in nestedClassNameList) {
+            v.visitNestedClass(c[nestedClassName])
+        }
+    }
+
+    if (scope.enumEntries) {
+        for (enumEntry in enumEntryList) {
+            if (!enumEntry.hasName()) {
+                throw InconsistentKotlinMetadataException("No name for EnumEntry")
+            }
+            v.visitEnumEntry(c[enumEntry.name])
+        }
+    }
+
+    if (scope.sealedSubClasses) {
+        for (sealedSubclassFqName in sealedSubclassFqNameList) {
+            v.visitSealedSubclass(c.className(sealedSubclassFqName))
+        }
     }
 
     for (versionRequirement in versionRequirementList) {
         v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
     }
 
-    for (extension in c.extensions) {
-        extension.readClassExtensions(v, this, c)
+    if (scope.extensions) {
+        for (extension in c.extensions) {
+            extension.readClassExtensions(v, this, c)
+        }
     }
 
     v.visitEnd()
@@ -103,20 +123,27 @@ private fun KmDeclarationContainerVisitor.visitDeclarations(
     functions: List<ProtoBuf.Function>,
     properties: List<ProtoBuf.Property>,
     typeAliases: List<ProtoBuf.TypeAlias>,
-    c: ReadContext
+    c: ReadContext,
+    scope: Scope.DeclarationContainer = Scope.DeclarationContainer.ALL
 ) {
-    for (function in functions) {
-        visitFunction(function.flags, c[function.name])?.let { function.accept(it, c) }
+    if (scope.functions) {
+        for (function in functions) {
+            visitFunction(function.flags, c[function.name])?.let { function.accept(it, c) }
+        }
     }
 
-    for (property in properties) {
-        visitProperty(
-            property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
-        )?.let { property.accept(it, c) }
+    if (scope.properties) {
+        for (property in properties) {
+            visitProperty(
+                property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
+            )?.let { property.accept(it, c) }
+        }
     }
 
-    for (typeAlias in typeAliases) {
-        visitTypeAlias(typeAlias.flags, c[typeAlias.name])?.let { typeAlias.accept(it, c) }
+    if (scope.typeAliases) {
+        for (typeAlias in typeAliases) {
+            visitTypeAlias(typeAlias.flags, c[typeAlias.name])?.let { typeAlias.accept(it, c) }
+        }
     }
 }
 
