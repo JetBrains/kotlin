@@ -188,7 +188,9 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, val irBuiltI
         isTypeParameter: Boolean?
     ): DeclarationDescriptor {
         uniqId?.let {
-            checkBuiltinDescriptor(it)?.let { return it }
+            if (isFakeOverride != true) {
+                checkBuiltinDescriptor(it)?.let { return it }
+            }
         }
         return descriptorReferenceDeserializer.deserializeDescriptorReference(
             packageFqName,
@@ -537,7 +539,7 @@ abstract class SmartIrProtoReaderImpl(val symbolTable: SymbolTable, val irBuiltI
 
     override fun createIrClassReference(classSymbol: Int, classType: Int): IrClassReference {
         val symbol = loadSymbol(classSymbol) as IrClassSymbol
-        val type = loadType(classSymbol)
+        val type = loadType(classType)
         return IrClassReferenceImpl(delayedStart(), delayedEnd(), delayedType(), symbol, type)
     }
 

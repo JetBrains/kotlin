@@ -260,6 +260,9 @@ abstract class KotlinIrLinker(
 
             private fun loadSymbol(index: Int): IrSymbol {
                 return symbolCache.getOrPut(index) {
+                    if (index == 478) {
+                        println("jsdalkal")
+                    }
                     val byteArray = readSymbol(moduleDescriptor, fileIndex, index)
                     NextgenProtoParser(byteArray).readIrSymbolData()
                 }

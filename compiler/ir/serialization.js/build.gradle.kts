@@ -179,7 +179,7 @@ val packFullRuntimeKLib by tasks.registering(Jar::class) {
     archiveFileName.set("full-runtime.klib")
 }
 
-val generateReducedRuntimeKLib by eagerTask<NoDebugJavaExec> {
+val generateReducedRuntimeKLib by eagerTask<JavaExec> {
     dependsOn(reducedRuntimeSources)
 
     val outPath = buildDir.resolve("reducedRuntime/klib").absolutePath

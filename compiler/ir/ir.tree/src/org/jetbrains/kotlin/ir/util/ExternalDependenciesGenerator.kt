@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.min
 
 class ExternalDependenciesGenerator(
@@ -73,17 +75,17 @@ class ExternalDependenciesGenerator(
 
         deserializer?.declareForwardDeclarations()
 
-        assertEmpty(symbolTable.unboundClasses, "classes")
-        assertEmpty(symbolTable.unboundConstructors, "constructors")
-        assertEmpty(symbolTable.unboundEnumEntries, "enum entries")
-        assertEmpty(symbolTable.unboundFields, "fields")
-        assertEmpty(symbolTable.unboundSimpleFunctions, "simple functions")
-        assertEmpty(symbolTable.unboundProperties, "properties")
-        assertEmpty(symbolTable.unboundTypeParameters, "type parameters")
-        assertEmpty(symbolTable.unboundTypeAliases, "type aliases")
+        assertEmpty(symbolTable.unboundClasses.filter { !it.isBound }, "classes")
+        assertEmpty(symbolTable.unboundConstructors.filter { !it.isBound }, "constructors")
+        assertEmpty(symbolTable.unboundEnumEntries.filter { !it.isBound }, "enum entries")
+        assertEmpty(symbolTable.unboundFields.filter { !it.isBound }, "fields")
+        assertEmpty(symbolTable.unboundSimpleFunctions.filter { !it.isBound }, "simple functions")
+        assertEmpty(symbolTable.unboundProperties.filter { !it.isBound }, "properties")
+        assertEmpty(symbolTable.unboundTypeParameters.filter { !it.isBound }, "type parameters")
+        assertEmpty(symbolTable.unboundTypeAliases.filter { !it.isBound }, "type aliases")
     }
 
-    private fun assertEmpty(s: Set<IrSymbol>, marker: String) {
+    private fun assertEmpty(s: Collection<IrSymbol>, marker: String) {
         assert(s.isEmpty()) {
             "$marker: ${s.size} unbound:\n" +
                     s.toList().subList(0, min(10, s.size)).joinToString(separator = "\n") { it.descriptor.toString() }
