@@ -112,7 +112,7 @@ public class IndexInfrastructure {
   }
 
   public abstract static class DataInitialization<T> implements Callable<T> {
-    private final List<ThrowableRunnable> myNestedInitializationTasks = new ArrayList<>();
+    private final List<ThrowableRunnable<?>> myNestedInitializationTasks = new ArrayList<>();
 
     @Override
     public final T call() throws Exception {
@@ -134,7 +134,7 @@ public class IndexInfrastructure {
     protected void prepare() {}
     protected abstract void onThrowable(@NotNull Throwable t);
 
-    protected void addNestedInitializationTask(ThrowableRunnable nestedInitializationTask) {
+    protected void addNestedInitializationTask(@NotNull ThrowableRunnable<?> nestedInitializationTask) {
       myNestedInitializationTasks.add(nestedInitializationTask);
     }
 
@@ -149,7 +149,7 @@ public class IndexInfrastructure {
           "IndexInfrastructure.DataInitialization.RunParallelNestedInitializationTasks", PooledThreadExecutor.INSTANCE,
           CacheUpdateRunner.indexingThreadCount());
 
-        for (ThrowableRunnable callable : myNestedInitializationTasks) {
+        for (ThrowableRunnable<?> callable : myNestedInitializationTasks) {
           taskExecutor.execute(() -> executeNestedInitializationTask(callable, proceedLatch));
         }
 
@@ -157,13 +157,13 @@ public class IndexInfrastructure {
         taskExecutor.shutdown();
       }
       else {
-        for (ThrowableRunnable callable : myNestedInitializationTasks) {
+        for (ThrowableRunnable<?> callable : myNestedInitializationTasks) {
           executeNestedInitializationTask(callable, proceedLatch);
         }
       }
     }
 
-    private void executeNestedInitializationTask(ThrowableRunnable callable, CountDownLatch proceedLatch) {
+    private void executeNestedInitializationTask(@NotNull ThrowableRunnable<?> callable, CountDownLatch proceedLatch) {
       Application app = ApplicationManager.getApplication();
       try {
         // To correctly apply file removals in indices's shutdown hook we should process all initialization tasks
