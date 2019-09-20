@@ -3,7 +3,7 @@ plugins {
 }
 
 val clionUnscrambledJarDir: File by rootProject.extra
-val clionCocoaCommonPluginDir: File by rootProject.extra
+val clionVersion: String by rootProject.extra
 
 val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -18,11 +18,13 @@ if (!isStandaloneBuild) {
 }
 repositories {
     maven("https://maven.google.com")
+    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
 }
 
 dependencies {
     compile(project(":kotlin-ultimate:ide:cidr-native"))
-    compile(fileTree(File(clionCocoaCommonPluginDir, "lib")) { include("*.jar") })
+    compile("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
+    compile("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
     compile("com.android.tools.ddms:ddmlib:26.0.0")
 

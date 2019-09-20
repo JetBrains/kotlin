@@ -2,6 +2,6 @@
 
 include(":prepare-deps:kotlin-native-platform-deps",
         ":prepare-deps:cidr",
-        ":prepare-deps:cocoa-common-plugin",
+        ":prepare-deps:cocoa-common-binaries",
         ":prepare-deps:idea-plugin"
 )

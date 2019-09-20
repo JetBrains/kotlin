@@ -1,3 +1,4 @@
+
 import org.gradle.jvm.tasks.Jar
 import java.net.URL
 
@@ -21,19 +22,24 @@ val mobilePluginVersionFull: String by rootProject.extra
 val mobilePluginZipPath: File by rootProject.extra
 val mobileCustomPluginRepoUrl: URL by rootProject.extra
 val clionJavaPluginDownloadUrl: URL? by rootProject.extra
-val clionCocoaCommonPluginDir: File by rootProject.extra
+val clionCocoaCommonBinariesDir: File by rootProject.extra
+
+val ultimateTools: Map<String, Any> by rootProject.extensions
+val handleSymlink: (FileCopyDetails, File) -> Boolean by ultimateTools
 
 val cidrPlugin: Configuration by configurations.creating
 
 repositories {
     maven("https://maven.google.com")
+    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
 }
 
 dependencies {
     cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
-    embedded(fileTree(File(clionCocoaCommonPluginDir, "lib")) { include("*.jar") })
+    runtime("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
+    runtime("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
     runtime("com.android.tools.ddms:ddmlib:26.0.0")
 }
 
@@ -49,9 +55,12 @@ val preparePluginXmlTask: Task = preparePluginXml(
 val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
 
 val copyNativeDeps: Task by tasks.creating(Copy::class) {
-    from(clionCocoaCommonPluginDir)
-    into(mobilePluginDir)
-    include("native/**")
+    from(clionCocoaCommonBinariesDir)
+    val targetDir = File(mobilePluginDir, "native/mac")
+    into(targetDir)
+    eachFile {
+        handleSymlink(this, targetDir)
+    }
 }
 
 val copyRuntimeDeps: Task by tasks.creating(Copy::class) {
