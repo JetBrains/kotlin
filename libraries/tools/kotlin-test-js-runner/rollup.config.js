@@ -67,19 +67,6 @@ function plugins() {
                            BIN: Object.keys(pckg.bin)[0],
                            DESCRIPTION: pckg.description
                        }
-                   },
-                   mangle: {
-                       properties: {
-                           keep_quoted: true,
-                           reserved: [
-                               "kotlin",
-                               "suite", "test",
-                               "setAdapter", "setAssertHook_4duqou$", "detectAdapter_8be2vx$",
-                               // TODO: Find why window.__karma__.config.args mangled
-                               "args"
-                           ]
-                       },
-                       toplevel: true,
                    }
                })
     ]
