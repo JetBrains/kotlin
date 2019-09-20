@@ -4698,6 +4698,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("backticks.kt")
+                public void testBackticks() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/backticks.kt");
+                }
+
                 @TestMetadata("classNoExplication.kt")
                 public void testClassNoExplication() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration/classNoExplication.kt");
