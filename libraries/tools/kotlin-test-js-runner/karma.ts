@@ -13,9 +13,7 @@ process.exit = (exitCode) => {
     throw new Error(`Exit with ${exitCode}`)
 };
 
-
 const processArgs = window.__karma__.config.args;
-
 const cliDescription = getDefaultCliDescription();
 cliDescription.freeArgsTitle = null;
 const parser = new CliArgsParser(cliDescription);
