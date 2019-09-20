@@ -31,12 +31,7 @@ class CompletionFactorsInitializer : LookupTracker() {
                                  lookupStorage: MutableLookupStorage) {
     if (!shouldUseUserFactors()) return
 
-    val userFactors = UserFactorsManager.getInstance().getAllFactors()
-    val userFactorValues = mutableMapOf<String, String?>()
-    userFactors.associateTo(userFactorValues) { "${it.id}:App" to it.compute(UserFactorStorage.getInstance()) }
-    userFactors.associateTo(userFactorValues) { "${it.id}:Project" to it.compute(UserFactorStorage.getInstance(lookup.project)) }
-
-    lookupStorage.userFactors = userFactorValues
+    lookupStorage.initUserFactors(lookup.project)
 
     UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_USAGE) {
       it.fireCompletionUsed()

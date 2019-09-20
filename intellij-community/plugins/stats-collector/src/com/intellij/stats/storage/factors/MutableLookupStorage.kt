@@ -6,8 +6,13 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.completion.sorting.RankingModelWrapper
 import com.intellij.completion.sorting.RankingSupport
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.stats.completion.idString
+import com.intellij.stats.personalization.UserFactorStorage
+import com.intellij.stats.personalization.UserFactorsManager
 import com.intellij.stats.personalization.session.LookupSessionFactorsStorage
 
 class MutableLookupStorage(
@@ -15,12 +20,15 @@ class MutableLookupStorage(
   override val language: Language,
   override val model: RankingModelWrapper)
   : LookupStorage {
-  override var userFactors: Map<String, String?> = emptyMap()
+  private var _userFactors: Map<String, String?>? = null
+  override val userFactors: Map<String, String?> = _userFactors ?: emptyMap()
 
   @Volatile
-  override var contextFactors: Map<String, String>? = null
+  private var _contextFactors: Map<String, String>? = null
+  override val contextFactors: Map<String, String>? = _contextFactors ?: emptyMap()
 
   companion object {
+    private val LOG = logger<MutableLookupStorage>()
     private val LOOKUP_STORAGE = Key.create<MutableLookupStorage>("completion.ml.lookup.storage")
 
     fun get(lookup: LookupImpl): MutableLookupStorage? {
@@ -44,5 +52,29 @@ class MutableLookupStorage(
 
   fun fireElementScored(element: LookupElement, factors: MutableMap<String, Any>, mlScore: Double?) {
     getItemStorage(element.idString()).fireElementScored(factors, mlScore)
+  }
+
+  fun initUserFactors(project: Project) {
+    ApplicationManager.getApplication().assertIsDispatchThread()
+    if (_userFactors != null) {
+      LOG.error("User factors should be initialized only once")
+    }
+    else {
+      val userFactors = UserFactorsManager.getInstance().getAllFactors()
+      val userFactorValues = mutableMapOf<String, String?>()
+      userFactors.associateTo(userFactorValues) { "${it.id}:App" to it.compute(UserFactorStorage.getInstance()) }
+      userFactors.associateTo(userFactorValues) { "${it.id}:Project" to it.compute(UserFactorStorage.getInstance(project)) }
+
+      _userFactors = userFactorValues
+    }
+  }
+
+  fun initContextFactors(contextFactors: Map<String, String>) {
+    if (_contextFactors != null) {
+      LOG.error("Context factors should be initialized only once")
+    }
+    else {
+      _contextFactors = contextFactors
+    }
   }
 }

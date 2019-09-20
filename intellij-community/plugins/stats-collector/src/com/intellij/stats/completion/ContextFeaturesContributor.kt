@@ -46,7 +46,7 @@ class ContextFeaturesContributor : CompletionContributor() {
 
       ContextFeaturesStorage.setContextFeatures(file, contextFeatures, context)
       Disposer.register(lookup, Disposable { ContextFeaturesStorage.clear(file) })
-      storage.contextFactors = contextFeatures.mapValuesTo(ConcurrentHashMap()) { it.value.toString() }
+      storage.initContextFactors(contextFeatures.mapValuesTo(ConcurrentHashMap()) { it.value.toString() })
     }
   }
 
