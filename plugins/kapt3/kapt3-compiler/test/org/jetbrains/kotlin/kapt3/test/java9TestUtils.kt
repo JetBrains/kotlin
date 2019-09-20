@@ -36,7 +36,7 @@ interface CustomJdkTestLauncher {
 
     fun doTestWithJdk11(mainClass: Class<*>, arg: String) {
         if (isJava9OrLater()) return
-        doTestCustomJdk(mainClass, arg, KotlinTestUtils.getJdk11Home())
+        KotlinTestUtils.getJdk11Home()?.let { doTestCustomJdk(mainClass, arg, it) }
     }
 
     private fun doTestCustomJdk(mainClass: Class<*>, arg: String, javaHome: File) {
