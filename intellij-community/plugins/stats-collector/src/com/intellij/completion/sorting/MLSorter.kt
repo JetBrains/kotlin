@@ -113,7 +113,7 @@ class MLSorter : CompletionFinalSorter() {
     val rankingModel = lookupStorage.model
 
     val commonSessionFactors = SessionFactorsUtils.updateSessionFactors(lookupStorage, items)
-    val contextFactors = lookupStorage.contextFactors ?: emptyMap()
+    val contextFactors = lookupStorage.contextFactors
     val features = RankingFeatures(lookupStorage.userFactors, contextFactors, commonSessionFactors)
     for (element in items) {
       val position = positionsBefore.getValue(element)

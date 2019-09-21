@@ -21,11 +21,13 @@ class MutableLookupStorage(
   override val model: RankingModelWrapper)
   : LookupStorage {
   private var _userFactors: Map<String, String?>? = null
-  override val userFactors: Map<String, String?> = _userFactors ?: emptyMap()
+  override val userFactors: Map<String, String?>
+    get() = _userFactors ?: emptyMap()
 
   @Volatile
   private var _contextFactors: Map<String, String>? = null
-  override val contextFactors: Map<String, String>? = _contextFactors ?: emptyMap()
+  override val contextFactors: Map<String, String>
+    get() = _contextFactors ?: emptyMap()
 
   companion object {
     private val LOG = logger<MutableLookupStorage>()
@@ -49,6 +51,8 @@ class MutableLookupStorage(
   override fun getItemStorage(id: String): MutableElementStorage = item2storage.computeIfAbsent(id) {
     MutableElementStorage()
   }
+
+  fun isContextFactorsInitialized(): Boolean = _contextFactors != null
 
   fun fireElementScored(element: LookupElement, factors: MutableMap<String, Any>, mlScore: Double?) {
     getItemStorage(element.idString()).fireElementScored(factors, mlScore)
