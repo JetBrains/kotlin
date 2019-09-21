@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 
 private val BODILESS_BUILTIN_CLASSES = listOf(
@@ -42,7 +44,7 @@ private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.Function"
 ).map { FqName(it) }.toSet()
 
-private class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol {
+private class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol, IrExternalPackageFragment {
     override val descriptor: PackageFragmentDescriptor
         get() = error("Operation is unsupported")
 
@@ -54,9 +56,21 @@ private class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFra
     override fun bind(owner: IrExternalPackageFragment) {
         _owner = owner
     }
+
+    override val symbol get() = this
+    override val startOffset get() = owner.startOffset
+    override val endOffset get() = owner.endOffset
+    override val packageFragmentDescriptor get() = owner.packageFragmentDescriptor
+    override val fqName get() = owner.fqName
+    override val declarations get() = owner.declarations
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R = owner.accept(visitor, data)
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D) = owner.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) = owner.acceptChildren(visitor, data)
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) = owner.transformChildren(transformer, data)
 }
 
-private class DescriptorlessIrFileSymbol : IrFileSymbol {
+private class DescriptorlessIrFileSymbol : IrFileSymbol, IrFile {
     override fun bind(owner: IrFile) {
         _owner = owner
     }
@@ -69,6 +83,20 @@ private class DescriptorlessIrFileSymbol : IrFileSymbol {
 
     override val isBound get() = _owner != null
 
+    override val symbol get() = this
+    override val startOffset get() = owner.startOffset
+    override val endOffset get() = owner.endOffset
+    override val packageFragmentDescriptor get() = owner.packageFragmentDescriptor
+    override val fqName get() = owner.fqName
+    override val fileEntry get() = owner.fileEntry
+    override val metadata get() = owner.metadata
+    override val declarations get() = owner.declarations
+    override val annotations get() = owner.annotations
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R = owner.accept(visitor, data)
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D) = owner.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) = owner.acceptChildren(visitor, data)
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) = owner.transformChildren(transformer, data)
 }
 
 

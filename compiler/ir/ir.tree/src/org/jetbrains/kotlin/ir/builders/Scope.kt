@@ -126,7 +126,7 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     }
 }
 
-private fun createSymbolForScopeOwner(descriptor: DeclarationDescriptor) =
+private fun createSymbolForScopeOwner(descriptor: DeclarationDescriptor): IrSymbol =
     when (descriptor) {
         is ClassDescriptor -> IrClassSymbolImpl(descriptor)
         is ClassConstructorDescriptor -> IrConstructorSymbolImpl(descriptor.original)

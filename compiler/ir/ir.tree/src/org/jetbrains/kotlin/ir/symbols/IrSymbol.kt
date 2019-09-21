@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.IrSymbolVisitor
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
-interface IrSymbol {
+interface IrSymbol : IrSymbolOwner {
     val owner: IrSymbolOwner
     val descriptor: DeclarationDescriptor
     val isBound: Boolean
@@ -38,7 +38,7 @@ interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : I
     fun bind(owner: B)
 }
 
-interface IrPackageFragmentSymbol : IrSymbol {
+interface IrPackageFragmentSymbol : IrSymbol, IrPackageFragment {
     override val descriptor: PackageFragmentDescriptor
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
@@ -46,35 +46,40 @@ interface IrPackageFragmentSymbol : IrSymbol {
 }
 
 interface IrFileSymbol :
-    IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrFile> {
+    IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrFile>,
+    IrFile {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitFileSymbol(this, data)
 }
 
 interface IrExternalPackageFragmentSymbol :
-    IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrExternalPackageFragment> {
+    IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrExternalPackageFragment>,
+    IrExternalPackageFragment {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragmentSymbol(this, data)
 }
 
 interface IrAnonymousInitializerSymbol :
-    IrBindableSymbol<ClassDescriptor, IrAnonymousInitializer> {
+    IrBindableSymbol<ClassDescriptor, IrAnonymousInitializer>,
+    IrAnonymousInitializer {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitAnonymousInitializerSymbol(this, data)
 }
 
 interface IrEnumEntrySymbol :
-    IrBindableSymbol<ClassDescriptor, IrEnumEntry> {
+    IrBindableSymbol<ClassDescriptor, IrEnumEntry>,
+    IrEnumEntry {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitEnumEntrySymbol(this, data)
 }
 
 interface IrFieldSymbol :
-    IrBindableSymbol<PropertyDescriptor, IrField> {
+    IrBindableSymbol<PropertyDescriptor, IrField>,
+    IrField {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitFieldSymbol(this, data)
@@ -90,14 +95,16 @@ interface IrClassifierSymbol :
 }
 
 interface IrClassSymbol :
-    IrClassifierSymbol, IrBindableSymbol<ClassDescriptor, IrClass> {
+    IrClassifierSymbol, IrBindableSymbol<ClassDescriptor, IrClass>,
+    IrClass {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitClassSymbol(this, data)
 }
 
 interface IrTypeParameterSymbol :
-    IrClassifierSymbol, IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>, TypeParameterMarker {
+    IrClassifierSymbol, IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>, TypeParameterMarker,
+    IrTypeParameter {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitTypeParameterSymbol(this, data)
@@ -114,21 +121,23 @@ interface IrValueSymbol :
 }
 
 interface IrValueParameterSymbol :
-    IrValueSymbol, IrBindableSymbol<ParameterDescriptor, IrValueParameter> {
+    IrValueSymbol, IrBindableSymbol<ParameterDescriptor, IrValueParameter>,
+    IrValueParameter {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitValueParameterSymbol(this, data)
 }
 
 interface IrVariableSymbol :
-    IrValueSymbol, IrBindableSymbol<VariableDescriptor, IrVariable> {
+    IrValueSymbol, IrBindableSymbol<VariableDescriptor, IrVariable>,
+    IrVariable {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitVariableSymbol(this, data)
 }
 
 interface IrReturnTargetSymbol :
-    IrSymbol {
+    IrSymbol, IrReturnTarget {
 
     override val descriptor: FunctionDescriptor
     override val owner: IrReturnTarget
@@ -138,7 +147,7 @@ interface IrReturnTargetSymbol :
 }
 
 interface IrFunctionSymbol :
-    IrReturnTargetSymbol {
+    IrReturnTargetSymbol, IrFunction {
 
     override val owner: IrFunction
 
@@ -147,41 +156,46 @@ interface IrFunctionSymbol :
 }
 
 interface IrConstructorSymbol :
-    IrFunctionSymbol, IrBindableSymbol<ClassConstructorDescriptor, IrConstructor> {
+    IrFunctionSymbol, IrBindableSymbol<ClassConstructorDescriptor, IrConstructor>,
+    IrConstructor {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitConstructorSymbol(this, data)
 }
 interface IrSimpleFunctionSymbol :
-    IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrSimpleFunction> {
+    IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>,
+    IrSimpleFunction {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitSimpleFunctionSymbol(this, data)
 }
 
 interface IrReturnableBlockSymbol :
-    IrReturnTargetSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock> {
+    IrReturnTargetSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>,
+    IrReturnableBlock {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitReturnableBlockSymbol(this, data)
 }
 
 interface IrPropertySymbol :
-    IrBindableSymbol<PropertyDescriptor, IrProperty> {
+    IrBindableSymbol<PropertyDescriptor, IrProperty>,
+    IrProperty {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitPropertySymbol(this, data)
 }
 
 interface IrLocalDelegatedPropertySymbol :
-    IrBindableSymbol<VariableDescriptorWithAccessors, IrLocalDelegatedProperty> {
+    IrBindableSymbol<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>,
+    IrLocalDelegatedProperty {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertySymbol(this, data)
 }
 
 interface IrTypeAliasSymbol :
-    IrBindableSymbol<TypeAliasDescriptor, IrTypeAlias> {
+    IrBindableSymbol<TypeAliasDescriptor, IrTypeAlias>, IrTypeAlias {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitTypeAliasSymbol(this, data)

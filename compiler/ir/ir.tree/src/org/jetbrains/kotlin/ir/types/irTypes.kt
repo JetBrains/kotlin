@@ -104,16 +104,16 @@ val IrTypeParameter.defaultType: IrType
         annotations = emptyList()
     )
 
-fun IrClassifierSymbol.typeWith(vararg arguments: IrType): IrSimpleType = typeWith(arguments.toList())
+fun IrClass.typeWith(vararg arguments: IrType): IrSimpleType = typeWith(arguments.toList())
 
-fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
+fun IrClass.typeWith(arguments: List<IrType>): IrSimpleType =
     IrSimpleTypeImpl(
-        this,
+        this.symbol,
         false,
         arguments.map { makeTypeProjection(it, Variance.INVARIANT) },
         emptyList()
     )
 
-fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
+//fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
 
-fun IrClass.typeWith(vararg arguments: IrType) = this.symbol.typeWith(arguments.toList())
+//fun IrClass.typeWith(vararg arguments: IrType) = this.symbol.typeWith(arguments.toList())

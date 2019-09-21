@@ -198,10 +198,6 @@ private fun translateCallArguments(expression: IrCall, context: JsGenerationCont
     return translateCallArguments(expression, context, IrElementToJsExpressionTransformer())
 }
 
-private fun MutableMap<IrSymbol, IrCallTransformer>.add(functionSymbol: IrSymbol, t: IrCallTransformer) {
-    put(functionSymbol, t)
-}
-
 private fun MutableMap<IrSymbol, IrCallTransformer>.add(function: IrSimpleFunction, t: IrCallTransformer) {
     put(function.symbol, t)
 }

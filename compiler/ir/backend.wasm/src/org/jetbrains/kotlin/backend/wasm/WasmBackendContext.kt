@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 
 class WasmBackendContext(
@@ -73,7 +75,7 @@ class WasmBackendContext(
     }
 }
 
-class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol {
+class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol, IrExternalPackageFragment {
     override val descriptor: PackageFragmentDescriptor
         get() = error("Operation is unsupported")
 
@@ -85,6 +87,18 @@ class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSym
     override fun bind(owner: IrExternalPackageFragment) {
         _owner = owner
     }
+
+    override val symbol get() = this
+    override val startOffset get() = owner.startOffset
+    override val endOffset get() = owner.endOffset
+    override val packageFragmentDescriptor get() = owner.packageFragmentDescriptor
+    override val fqName get() = owner.fqName
+    override val declarations get() = owner.declarations
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R = owner.accept(visitor, data)
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D) = owner.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) = owner.acceptChildren(visitor, data)
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) = owner.transformChildren(transformer, data)
 }
 
 

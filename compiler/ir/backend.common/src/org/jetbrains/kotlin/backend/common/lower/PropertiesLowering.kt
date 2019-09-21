@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
@@ -88,7 +89,8 @@ class PropertiesLowering(
             val extensionReceiver = declaration.getter?.extensionReceiverParameter
             if (extensionReceiver != null) {
                 // Use raw type of extension receiver to avoid generic signature, which would be useless for this method.
-                extensionReceiverParameter = extensionReceiver.copyTo(this, type = extensionReceiver.type.classifierOrFail.typeWith())
+                extensionReceiverParameter = extensionReceiver.copyTo(this, type =
+                    extensionReceiver.type.removeArguments())
             }
 
             body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
@@ -132,5 +134,14 @@ class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), FileLowerin
         )
 
         return declaration.delegate
+    }
+}
+
+private fun IrType.removeArguments(): IrType {
+    val classifier = classifierOrFail
+    return when (classifier) {
+        is IrClass -> classifier.typeWith()
+        is IrTypeParameter -> this
+        else -> error("Unexpected classifier $classifier")
     }
 }
