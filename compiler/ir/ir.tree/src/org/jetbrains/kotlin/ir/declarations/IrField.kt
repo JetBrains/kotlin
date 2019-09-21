@@ -24,9 +24,9 @@ interface IrField :
 
     var initializer: IrExpressionBody?
 
-    @Deprecated("Use correspondingPropertySymbol")
     var correspondingProperty: IrProperty?
 
+    @Deprecated("Use correspondingProperty")
     var correspondingPropertySymbol: IrPropertySymbol?
 
     override val metadata: MetadataSource.Property?

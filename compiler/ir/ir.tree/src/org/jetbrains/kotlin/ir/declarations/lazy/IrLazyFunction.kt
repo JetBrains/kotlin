@@ -85,14 +85,14 @@ class IrLazyFunction(
         }
     }
 
-    @Suppress("OverridingDeprecatedMember")
-    override var correspondingProperty: IrProperty?
-        get() = correspondingPropertySymbol?.owner
-        set(value) {
-            correspondingPropertySymbol = value?.symbol
-        }
+    override var correspondingProperty: IrProperty? = null
 
-    override var correspondingPropertySymbol: IrPropertySymbol? = null
+    @Suppress("OverridingDeprecatedMember")
+    override var correspondingPropertySymbol: IrPropertySymbol?
+        get() = correspondingProperty?.symbol
+        set(value) {
+            correspondingProperty = value?.owner
+        }
 
     init {
         symbol.bind(this)

@@ -83,16 +83,16 @@ class IrLazyField(
         }
     }
 
-    @Suppress("OverridingDeprecatedMember")
-    override var correspondingProperty: IrProperty?
-        get() = correspondingPropertySymbol?.owner
-        set(value) {
-            correspondingPropertySymbol = value?.symbol
-        }
-
-    override var correspondingPropertySymbol: IrPropertySymbol? by lazyVar {
-        stubGenerator.generatePropertyStub(descriptor).symbol
+    override var correspondingProperty: IrProperty? by lazyVar {
+        stubGenerator.generatePropertyStub(descriptor)
     }
+
+    @Suppress("OverridingDeprecatedMember")
+    override var correspondingPropertySymbol: IrPropertySymbol?
+        get() = correspondingProperty?.symbol
+        set(value) {
+            correspondingProperty = value?.owner
+        }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitField(this, data)
