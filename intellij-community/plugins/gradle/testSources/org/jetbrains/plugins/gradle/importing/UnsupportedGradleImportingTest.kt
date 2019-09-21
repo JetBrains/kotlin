@@ -1,51 +1,36 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
-import com.intellij.build.BuildTreeConsoleView
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.lang.JavaVersion
-import org.assertj.core.api.Assertions.assertThat
 import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest
 import org.junit.Test
 import org.junit.runners.Parameterized
 
-class UnsupportedGradleImportingTest : SyncViewMessagesImportingTestCase() {
+class UnsupportedGradleImportingTest : BuildViewMessagesImportingTestCase() {
 
   @Test
   fun testSyncMessages() {
     importProject("")
-    assertThat(syncViewManager.buildsMap).hasSize(1)
-
-    val buildView = syncViewManager.buildsMap.values.first()
-    val eventView = buildView.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
-    eventView!!.addFilter { true }
-
-    edt {
-      val tree = eventView.tree
-      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
-      PlatformTestUtil.waitWhileBusy(tree)
-
-      val executionTreeText: String
-      when {
-        currentGradleVersion < GradleVersion.version("1.0") -> executionTreeText =
-          "-\n" +
-          " -failed\n" +
-          "  Support for builds using Gradle versions older than 2.6 was removed"
-        currentGradleVersion < GradleVersion.version("2.6") -> executionTreeText =
-          "-\n" +
-          " -failed\n" +
-          "  Support for builds using Gradle versions older than 2.6 was removed in tooling API version 5.0"
-        JavaVersion.current().feature > 8 && currentGradleVersion < GradleVersion.version("3.0") -> executionTreeText =
-          "-\n" +
-          " -failed\n" +
-          "  Cannot determine classpath for resource 'java/sql/SQLException.class' from location 'jrt:/java.sql/java/sql/SQLException.class'"
-        else -> executionTreeText = "-\n" +
-                                    " successful"
-      }
-
-      PlatformTestUtil.assertTreeEqual(tree, executionTreeText)
+    val expectedExecutionTree: String
+    when {
+      currentGradleVersion < GradleVersion.version("1.0") -> expectedExecutionTree =
+        "-\n" +
+        " -failed\n" +
+        "  Support for builds using Gradle versions older than 2.6 was removed"
+      currentGradleVersion < GradleVersion.version("2.6") -> expectedExecutionTree =
+        "-\n" +
+        " -failed\n" +
+        "  Support for builds using Gradle versions older than 2.6 was removed in tooling API version 5.0"
+      JavaVersion.current().feature > 8 && currentGradleVersion < GradleVersion.version("3.0") -> expectedExecutionTree =
+        "-\n" +
+        " -failed\n" +
+        "  Cannot determine classpath for resource 'java/sql/SQLException.class' from location 'jrt:/java.sql/java/sql/SQLException.class'"
+      else -> expectedExecutionTree = "-\n" +
+                                      " successful"
     }
+
+    assertSyncViewTreeEquals(expectedExecutionTree)
   }
 
   override fun assumeTestJavaRuntime(javaRuntimeVersion: JavaVersion) {
