@@ -48,7 +48,10 @@ fun KtWhenExpression.getSubjectToIntroduce(): KtExpression? {
             if (condition !is KtWhenConditionWithExpression) return null
 
             val candidate = condition.expression?.getWhenConditionSubjectCandidate() ?: return null
-            if (candidate !is KtNameReferenceExpression && candidate !is KtThisExpression) return null
+            if (candidate !is KtNameReferenceExpression
+                && (candidate as? KtQualifiedExpression)?.selectorExpression !is KtNameReferenceExpression
+                && candidate !is KtThisExpression
+            ) return null
 
             if (lastCandidate == null) {
                 lastCandidate = candidate
@@ -68,7 +71,11 @@ private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? = wh
         val lhs = left
         when (operationToken) {
             KtTokens.IN_KEYWORD, KtTokens.NOT_IN -> lhs
-            KtTokens.EQEQ -> lhs as? KtNameReferenceExpression ?: right
+            KtTokens.EQEQ -> {
+                lhs as? KtNameReferenceExpression
+                    ?: (lhs as? KtQualifiedExpression)?.takeIf { it.selectorExpression is KtNameReferenceExpression }
+                    ?: right
+            }
             KtTokens.OROR -> {
                 val leftCandidate = lhs.getWhenConditionSubjectCandidate()
                 val rightCandidate = right.getWhenConditionSubjectCandidate()
