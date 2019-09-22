@@ -87,10 +87,6 @@ public class CopyReferencePopup extends DumbAwareAction {
               qualifiedName = ((CopyPathProvider)action).getQualifiedName(getProject(), elements, editor);
             }
 
-            if (action instanceof CopyReferencePopupAction) {
-              qualifiedName = CopyReferencePopupAction.doElementsCopy(elements, editor);
-            }
-
             if (qualifiedName != null) {
               myInfoLabel.setText(qualifiedName);
             }
