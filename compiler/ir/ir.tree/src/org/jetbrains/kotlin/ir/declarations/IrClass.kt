@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrClass :
-    IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
+    IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility, IrClassifier,
     IrDeclarationContainer, IrTypeParametersContainer, IrAttributeContainer {
 
     override val descriptor: ClassDescriptor

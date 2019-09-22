@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -39,9 +38,9 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
     override fun mapClass(classifier: ClassifierDescriptor): Type =
         when (classifier) {
             is ClassDescriptor ->
-                mapClass(context.referenceClass(classifier).owner)
+                mapClass(context.referenceClass(classifier))
             is TypeParameterDescriptor ->
-                mapType(context.referenceTypeParameter(classifier).owner.defaultType)
+                mapType(context.referenceTypeParameter(classifier).defaultType)
             else ->
                 error("Unknown descriptor: $classifier")
         }
@@ -54,7 +53,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         if (sw.skipGenericSignature()) return
         with(KotlinTypeMapper) {
             for (typeParameter in irParameters) {
-                typeSystem.writeFormalTypeParameter(typeParameter.symbol, sw) { type, mode ->
+                typeSystem.writeFormalTypeParameter(typeParameter, sw) { type, mode ->
                     mapType(type as IrType, mode, sw)
                 }
             }
@@ -243,7 +242,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
     private fun writeGenericArguments(
         sw: JvmSignatureWriter,
         arguments: List<IrTypeArgument>,
-        parameters: List<IrTypeParameterSymbol>,
+        parameters: List<IrTypeParameter>,
         mode: TypeMappingMode
     ) = with(KotlinTypeMapper) {
         typeSystem.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->

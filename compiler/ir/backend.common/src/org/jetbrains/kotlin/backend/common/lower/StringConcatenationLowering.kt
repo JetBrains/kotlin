@@ -58,7 +58,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     private val nameToString = Name.identifier("toString")
     private val nameAppend = Name.identifier("append")
 
-    private val stringBuilder = context.ir.symbols.stringBuilder.owner
+    private val stringBuilder = context.ir.symbols.stringBuilder
 
     //TODO: calculate and pass string length to the constructor.
     private val constructor = stringBuilder.constructors.single {
@@ -113,7 +113,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
 
         with(declaration) {
             buildersStack.add(
-                context.createIrBuilder(declaration.symbol, startOffset, endOffset)
+                context.createIrBuilder(declaration, startOffset, endOffset)
             )
             transformChildrenVoid(this@StringConcatenationTransformer)
             buildersStack.removeAt(buildersStack.lastIndex)

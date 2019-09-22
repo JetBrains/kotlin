@@ -46,7 +46,7 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
+        val simpleFunction = (expression.target as? IrSimpleFunction) ?: return super.visitCall(expression)
         val property = simpleFunction.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
 
         if (shouldSubstituteAccessorWithField(property, simpleFunction)) {
@@ -79,12 +79,12 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
         val setExpr = IrSetFieldImpl(
             expression.startOffset,
             expression.endOffset,
-            backingField.symbol,
+            backingField,
             receiver,
             expression.getValueArgument(expression.valueArgumentsCount - 1)!!.transform(this, null),
             expression.type,
             expression.origin,
-            expression.superQualifierSymbol
+            expression.irSuperQualifier
         )
         return buildSubstitution(backingField.isStatic, setExpr, receiver)
     }
@@ -95,11 +95,11 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
         val getExpr = IrGetFieldImpl(
             expression.startOffset,
             expression.endOffset,
-            backingField.symbol,
+            backingField,
             expression.type,
             receiver,
             expression.origin,
-            expression.superQualifierSymbol
+            expression.irSuperQualifier
         )
         return buildSubstitution(backingField.isStatic, getExpr, receiver)
     }
@@ -107,7 +107,7 @@ class PropertiesToFieldsLowering(val context: CommonBackendContext) : IrElementT
     private fun buildSubstitution(needBlock: Boolean, setOrGetExpr: IrFieldAccessExpression, receiver: IrExpression?): IrExpression {
         if (receiver != null && needBlock) {
             // Evaluate `dispatchReceiver` for the sake of its side effects, then return `setOrGetExpr`.
-            return context.createIrBuilder(setOrGetExpr.symbol, setOrGetExpr.startOffset, setOrGetExpr.endOffset).irBlock(setOrGetExpr) {
+            return context.createIrBuilder(setOrGetExpr.target, setOrGetExpr.startOffset, setOrGetExpr.endOffset).irBlock(setOrGetExpr) {
                 // `coerceToUnit()` is private in InsertImplicitCasts, have to reproduce it here
                 val receiverVoid = IrTypeOperatorCallImpl(
                     receiver.startOffset, receiver.endOffset,

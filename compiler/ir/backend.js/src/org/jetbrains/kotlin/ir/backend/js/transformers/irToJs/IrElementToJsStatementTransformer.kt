@@ -65,14 +65,14 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {
-        if (expression.symbol.owner.constructedClassType.isAny()) {
+        if (expression.target.constructedClassType.isAny()) {
             return JsEmpty
         }
         return expression.accept(IrElementToJsExpressionTransformer(), context).makeStmt()
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
-        if (data.checkIfJsCode(expression.symbol)) {
+        if (data.checkIfJsCode(expression.target)) {
             val statements = translateJsCodeIntoStatementList(expression.getValueArgument(0) ?: error("JsCode is expected"))
             return when (statements.size) {
                 0 -> JsEmpty

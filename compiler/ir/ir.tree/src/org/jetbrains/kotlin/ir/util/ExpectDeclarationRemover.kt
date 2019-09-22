@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -98,42 +96,41 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 expression.transformChildrenVoid()
-                val newValue = remapExpectValue(expression.symbol)
+                val newValue = remapExpectValue(expression.target)
                     ?: return expression
 
                 return IrGetValueImpl(
                     expression.startOffset,
                     expression.endOffset,
                     newValue.type,
-                    newValue.symbol,
+                    newValue,
                     expression.origin
                 )
             }
         }, data = null)
     }
 
-    private fun remapExpectValue(symbol: IrValueSymbol): IrValueParameter? {
-        if (symbol !is IrValueParameterSymbol) {
+    private fun remapExpectValue(declaration: IrValueDeclaration): IrValueParameter? {
+        if (declaration !is IrValueParameter) {
             return null
         }
 
-        val parameter = symbol.owner
-        val parent = parameter.parent
+        val parent = declaration.parent
 
         return when (parent) {
             is IrClass -> {
-                assert(parameter == parent.thisReceiver)
+                assert(declaration == parent.thisReceiver)
                 parent.findActualForExpected().thisReceiver!!
             }
 
-            is IrFunction -> when (parameter) {
+            is IrFunction -> when (declaration) {
                 parent.dispatchReceiverParameter ->
                     parent.findActualForExpected().dispatchReceiverParameter!!
                 parent.extensionReceiverParameter ->
                     parent.findActualForExpected().extensionReceiverParameter!!
                 else -> {
-                    assert(parent.valueParameters[parameter.index] == parameter)
-                    parent.findActualForExpected().valueParameters[parameter.index]
+                    assert(parent.valueParameters[declaration.index] == declaration)
+                    parent.findActualForExpected().valueParameters[declaration.index]
                 }
             }
 

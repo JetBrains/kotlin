@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -53,14 +52,14 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
     }
 
     val oldBody = irFunction.body as IrBlockBody
-    val builder = context.createIrBuilder(irFunction.symbol).at(oldBody)
+    val builder = context.createIrBuilder(irFunction).at(oldBody)
 
     val parameters = irFunction.explicitParameters
 
     irFunction.body = builder.irBlockBody {
         // Define variables containing current values of parameters:
         val parameterToVariable = parameters.associate {
-            it to createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
+            it to createTmpVariable(irGet(it), nameHint = it.suggestVariableName(), isMutable = true)
         }
         // (these variables are to be updated on any tail call).
 
@@ -72,7 +71,7 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
                 // Read variables containing current values of parameters:
                 val parameterToNew = parameters.associate {
                     val variable = parameterToVariable[it]!!
-                    it to createTmpVariable(irGet(variable), nameHint = it.symbol.suggestVariableName())
+                    it to createTmpVariable(irGet(variable), nameHint = it.suggestVariableName())
                 }
 
                 val transformer = BodyTransformer(
@@ -103,7 +102,7 @@ private class BodyTransformer(
 
     override fun visitGetValue(expression: IrGetValue): IrExpression {
         expression.transformChildrenVoid(this)
-        val value = parameterToNew[expression.symbol.owner] ?: return expression
+        val value = parameterToNew[expression.target] ?: return expression
         return builder.at(expression).irGet(value)
     }
 
@@ -127,7 +126,7 @@ private class BodyTransformer(
             at(argument)
             // Note that argument can use values of parameters, so it is important that
             // references to parameters are mapped using `parameterToNew`, not `parameterToVariable`.
-            +irSetVar(parameterToVariable[parameter]!!.symbol, argument)
+            +irSetVar(parameterToVariable[parameter]!!, argument)
         }
 
         val specifiedParameters = parameterToArgument.map { (parameter, _) -> parameter }.toSet()
@@ -145,15 +144,15 @@ private class BodyTransformer(
                     override fun visitGetValue(expression: IrGetValue): IrExpression {
                         expression.transformChildrenVoid(this)
 
-                        val variable = parameterToVariable[expression.symbol.owner] ?: return expression
+                        val variable = parameterToVariable[expression.target] ?: return expression
                         return IrGetValueImpl(
                             expression.startOffset, expression.endOffset, variable.type,
-                            variable.symbol, expression.origin
+                            variable, expression.origin
                         )
                     }
                 }, data = null)
 
-            +irSetVar(parameterToVariable[parameter]!!.symbol, defaultValue)
+            +irSetVar(parameterToVariable[parameter]!!, defaultValue)
         }
 
         // Jump to the entry:
@@ -161,10 +160,10 @@ private class BodyTransformer(
     }
 }
 
-private fun IrValueParameterSymbol.suggestVariableName(): String =
-    if (owner.name.isSpecial) {
-        val oldNameStr = owner.name.asString()
+private fun IrValueParameter.suggestVariableName(): String =
+    if (name.isSpecial) {
+        val oldNameStr = name.asString()
         "$" + oldNameStr.substring(1, oldNameStr.length - 1)
     } else {
-        owner.name.identifier
+        name.identifier
     }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.deepCopyWithWrappedDescriptors
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.SetDeclarationsParentVisitor
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -100,12 +99,12 @@ class InitializersLowering(
             if (!declaration.isStatic) // TODO isStaticField
                 IrGetValueImpl(
                     irFieldInitializer.startOffset, irFieldInitializer.endOffset,
-                    irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol
+                    irClass.thisReceiver!!.type, irClass.thisReceiver!!
                 )
             else null
         return IrSetFieldImpl(
             irFieldInitializer.startOffset, irFieldInitializer.endOffset,
-            declaration.symbol,
+            declaration,
             receiver,
             irFieldInitializer,
             context.irBuiltIns.unitType,

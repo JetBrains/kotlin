@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -70,7 +68,7 @@ class IrReturnableBlockImpl(
         type: IrType,
         override val symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin? = null,
-        override val inlineFunctionSymbol: IrFunctionSymbol? = null
+        override val inlineFunction: IrFunction? = null
 ) :
     IrContainerExpressionBase(startOffset, endOffset, type, origin),
     IrReturnableBlock {
@@ -84,8 +82,8 @@ class IrReturnableBlockImpl(
         symbol: IrReturnableBlockSymbol,
         origin: IrStatementOrigin?,
         statements: List<IrStatement>,
-        inlineFunctionSymbol: IrFunctionSymbol? = null
-    ) : this(startOffset, endOffset, type, symbol, origin, inlineFunctionSymbol) {
+        inlineFunction: IrFunction? = null
+    ) : this(startOffset, endOffset, type, symbol, origin, inlineFunction) {
         this.statements.addAll(statements)
     }
 

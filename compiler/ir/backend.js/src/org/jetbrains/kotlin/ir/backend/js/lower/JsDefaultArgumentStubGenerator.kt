@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true) {
@@ -50,7 +49,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
 
     private fun resolveInvoke(paramCount: Int): IrSimpleFunction {
         assert(paramCount > 0)
-        val functionKlass = context.ir.symbols.functionN(paramCount).owner
+        val functionKlass = context.ir.symbols.functionN(paramCount)
         return functionKlass.declarations.filterIsInstance<IrSimpleFunction>().first { it.name == Name.identifier("invoke") }
     }
 }
@@ -62,7 +61,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 super.visitCall(expression)
-                if (expression.origin != DEFAULT_DISPATCH_CALL || expression.superQualifierSymbol == null) return expression
+                if (expression.origin != DEFAULT_DISPATCH_CALL || expression.irSuperQualifier == null) return expression
 
                 val binding = buildBoundSuperCall(expression)
 
@@ -75,7 +74,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
 
     private fun buildBoundSuperCall(irCall: IrCall): IrExpression {
 
-        val originalFunction = context.ir.defaultParameterDeclarationsCache.entries.first { it.value == irCall.symbol.owner }.key
+        val originalFunction = context.ir.defaultParameterDeclarationsCache.entries.first { it.value == irCall.target }.key
 
         val reference = irCall.run {
             IrFunctionReferenceImpl(
@@ -97,7 +96,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 context.intrinsics.jsBind.symbol,
                 context.intrinsics.jsBind.descriptor,
                 BIND_CALL,
-                superQualifierSymbol
+                irSuperQualifier
             )
         }.apply {
             putValueArgument(0, irCall.dispatchReceiver?.deepCopyWithSymbols())

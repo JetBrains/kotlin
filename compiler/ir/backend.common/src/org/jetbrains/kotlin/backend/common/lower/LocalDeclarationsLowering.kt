@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -105,7 +104,7 @@ class LocalDeclarationsLowering(
         override fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression? {
             val parameter = capturedValueToParameter[valueDeclaration] ?: return null
 
-            return IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol)
+            return IrGetValueImpl(startOffset, endOffset, parameter.type, parameter)
         }
     }
 
@@ -137,8 +136,8 @@ class LocalDeclarationsLowering(
 
             val receiver = declaration.thisReceiver!!
             return IrGetFieldImpl(
-                startOffset, endOffset, field.symbol, field.type,
-                receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
+                startOffset, endOffset, field, field.type,
+                receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver)
             )
         }
     }
@@ -149,8 +148,8 @@ class LocalDeclarationsLowering(
 
             val receiver = member.dispatchReceiverParameter!!
             return IrGetFieldImpl(
-                startOffset, endOffset, field.symbol, field.type,
-                receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
+                startOffset, endOffset, field, field.type,
+                receiver = IrGetValueImpl(startOffset, endOffset, receiver.type, receiver)
             )
         }
 
@@ -168,7 +167,7 @@ class LocalDeclarationsLowering(
 
         val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
         val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
-        val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf()
+        val newParameterToCaptured: MutableMap<IrValueParameter, IrValueDeclaration> = mutableMapOf()
 
         fun lowerLocalDeclarations() {
             collectLocalDeclarations()
@@ -242,14 +241,14 @@ class LocalDeclarationsLowering(
             }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                val declaration = expression.symbol.owner
+                val declaration = expression.target
 
                 localContext?.irGet(expression.startOffset, expression.endOffset, declaration)?.let {
                     return it
                 }
 
                 oldParameterToNew[declaration]?.let {
-                    return IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol)
+                    return IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it)
                 }
 
                 return expression
@@ -258,7 +257,7 @@ class LocalDeclarationsLowering(
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val oldCallee = expression.symbol.owner
+                val oldCallee = expression.target
                 val newCallee = (oldCallee.transformed ?: return expression) as IrSimpleFunction
 
                 return createNewCall(expression, newCallee).fillArguments2(expression, newCallee)
@@ -267,7 +266,7 @@ class LocalDeclarationsLowering(
             override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val oldCallee = expression.symbol.owner
+                val oldCallee = expression.target
                 val newCallee = (oldCallee.transformed ?: return expression) as IrConstructor
 
                 return createNewCall(expression, newCallee).fillArguments2(expression, newCallee)
@@ -276,13 +275,13 @@ class LocalDeclarationsLowering(
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val oldCallee = expression.symbol.owner
+                val oldCallee = expression.target
                 val newCallee = transformedDeclarations[oldCallee] as IrConstructor? ?: return expression
 
                 return IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset,
                     context.irBuiltIns.unitType,
-                    newCallee.symbol,
+                    newCallee,
                     newCallee.descriptor,
                     expression.typeArgumentsCount
                 ).also {
@@ -310,16 +309,14 @@ class LocalDeclarationsLowering(
                         oldExpression.getValueArgument(oldParameter.index)
                     } else {
                         // The callee expects captured value as argument.
-                        val capturedValueSymbol =
+                        val capturedValue =
                             newParameterToCaptured[newValueParameterDeclaration]
                                 ?: throw AssertionError("Non-mapped parameter $newValueParameterDeclaration")
-
-                        val capturedValue = capturedValueSymbol.owner
 
                         localContext?.irGet(oldExpression.startOffset, oldExpression.endOffset, capturedValue) ?: run {
                             // Captured value is directly available for the caller.
                             val value = oldParameterToNew[capturedValue] ?: capturedValue
-                            IrGetValueImpl(oldExpression.startOffset, oldExpression.endOffset, value.symbol)
+                            IrGetValueImpl(oldExpression.startOffset, oldExpression.endOffset, value)
                         }
                     }
 
@@ -334,13 +331,13 @@ class LocalDeclarationsLowering(
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val oldCallee = expression.symbol.owner
+                val oldCallee = expression.target
                 val newCallee = oldCallee.transformed ?: return expression
 
                 return IrFunctionReferenceImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type, // TODO functional type for transformed descriptor
-                    newCallee.symbol,
+                    newCallee,
                     newCallee.descriptor,
                     expression.typeArgumentsCount,
                     expression.origin
@@ -354,18 +351,18 @@ class LocalDeclarationsLowering(
             override fun visitReturn(expression: IrReturn): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val oldReturnTarget = expression.returnTargetSymbol.owner as? IrFunction ?: return expression
+                val oldReturnTarget = expression.irReturnTarget as? IrFunction ?: return expression
                 val newReturnTarget = oldReturnTarget.transformed ?: return expression
 
                 return IrReturnImpl(
                     expression.startOffset, expression.endOffset,
                     context.irBuiltIns.nothingType,
-                    newReturnTarget.symbol, expression.value
+                    newReturnTarget, expression.value
                 )
             }
 
             override fun visitDeclarationReference(expression: IrDeclarationReference): IrExpression {
-                if (expression.symbol.owner in transformedDeclarations) {
+                if (expression.target in transformedDeclarations) {
                     TODO()
                 }
                 return super.visitDeclarationReference(expression)
@@ -408,8 +405,8 @@ class LocalDeclarationsLowering(
                     0,
                     localClassContext.capturedValueToField.map { (capturedValue, field) ->
                         IrSetFieldImpl(
-                            irClass.startOffset, irClass.endOffset, field.symbol,
-                            IrGetValueImpl(irClass.startOffset, irClass.endOffset, irClass.thisReceiver!!.symbol),
+                            irClass.startOffset, irClass.endOffset, field,
+                            IrGetValueImpl(irClass.startOffset, irClass.endOffset, irClass.thisReceiver!!),
                             constructorContext.irGet(irClass.startOffset, irClass.endOffset, capturedValue)!!,
                             context.irBuiltIns.unitType,
                             STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
@@ -439,10 +436,10 @@ class LocalDeclarationsLowering(
             IrCallImpl(
                 oldCall.startOffset, oldCall.endOffset,
                 newCallee.returnType,
-                newCallee.symbol,
+                newCallee,
                 newCallee.descriptor,
                 oldCall.typeArgumentsCount,
-                oldCall.origin, oldCall.superQualifierSymbol
+                oldCall.origin, oldCall.irSuperQualifier
             ).also {
                 it.copyTypeArgumentsFrom(oldCall)
             }
@@ -451,7 +448,7 @@ class LocalDeclarationsLowering(
             IrConstructorCallImpl.fromSymbolOwner(
                 oldCall.startOffset, oldCall.endOffset,
                 newCallee.returnType,
-                newCallee.symbol,
+                newCallee,
                 oldCall.origin
             ).also {
                 it.copyTypeArgumentsFrom(oldCall)
@@ -545,13 +542,12 @@ class LocalDeclarationsLowering(
         }
 
         private fun createTransformedValueParameters(
-            capturedValues: List<IrValueSymbol>,
+            capturedValues: List<IrValueDeclaration>,
             oldDeclaration: IrFunction,
             newDeclaration: IrFunction
         ) = ArrayList<IrValueParameter>(capturedValues.size + oldDeclaration.valueParameters.size).apply {
-            capturedValues.mapIndexedTo(this) { i, capturedValue ->
+            capturedValues.mapIndexedTo(this) { i, p ->
                 val parameterDescriptor = WrappedValueParameterDescriptor()
-                val p = capturedValue.owner
                 IrValueParameterImpl(
                     p.startOffset,
                     p.endOffset,
@@ -567,7 +563,7 @@ class LocalDeclarationsLowering(
                 ).also {
                     parameterDescriptor.bind(it)
                     it.parent = newDeclaration
-                    newParameterToCaptured[it] = capturedValue
+                    newParameterToCaptured[it] = p
                 }
             }
 
@@ -583,7 +579,7 @@ class LocalDeclarationsLowering(
             valueParameters.forEach {
                 val capturedValue = newParameterToCaptured[it]
                 if (capturedValue != null) {
-                    localContext.capturedValueToParameter[capturedValue.owner] = it
+                    localContext.capturedValueToParameter[capturedValue] = it
                 }
             }
 
@@ -671,13 +667,13 @@ class LocalDeclarationsLowering(
                 val irField = createFieldForCapturedValue(
                     classDeclaration.startOffset,
                     classDeclaration.endOffset,
-                    suggestNameForCapturedValue(capturedValue.owner),
+                    suggestNameForCapturedValue(capturedValue),
                     Visibilities.PRIVATE,
                     classDeclaration,
-                    capturedValue.owner.type
+                    capturedValue.type
                 )
 
-                localClassContext.capturedValueToField[capturedValue.owner] = irField
+                localClassContext.capturedValueToField[capturedValue] = irField
             }
         }
 
@@ -723,7 +719,7 @@ class LocalDeclarationsLowering(
                 }
 
                 override fun createScope(declaration: IrSymbolOwner): ScopeWithIr {
-                    return ScopeWithCounter(Scope(declaration.symbol), declaration)
+                    return ScopeWithCounter(Scope(declaration), declaration)
                 }
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction) {

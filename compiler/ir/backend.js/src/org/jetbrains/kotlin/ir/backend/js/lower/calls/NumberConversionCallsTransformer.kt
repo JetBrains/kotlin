@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 
@@ -76,7 +75,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
     }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
-        val function = call.symbol.owner
+        val function = call.target
         function.dispatchReceiverParameter?.also {
             val key = SimpleMemberKey(it.type, function.name)
             memberToTransformer[key]?.also {

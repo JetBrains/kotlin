@@ -67,10 +67,10 @@ object JvmBackendFacade {
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, firMode
         )
         state.irBasedMapAsmMethod = { descriptor ->
-            context.methodSignatureMapper.mapAsmMethod(context.referenceFunction(descriptor).owner)
+            context.methodSignatureMapper.mapAsmMethod(context.referenceFunction(descriptor))
         }
         state.mapInlineClass = { descriptor ->
-            context.typeMapper.mapType(context.referenceClass(descriptor).owner.defaultType)
+            context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
         }
         //TODO
         ExternalDependenciesGenerator(

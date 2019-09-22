@@ -37,7 +37,7 @@ private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBacke
 
             override fun visitFunctionReference(expression: IrFunctionReference) {
                 assert(expression.origin == IrStatementOrigin.LAMBDA || expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
-                loweredLambdasToDelete.add(expression.symbol.owner)
+                loweredLambdasToDelete.add(expression.target)
                 expression.acceptChildrenVoid(this)
             }
         })

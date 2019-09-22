@@ -39,7 +39,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             }
 
             put(Name.identifier("hashCode")) { call ->
-                if (call.symbol.owner.isFakeOverriddenFromAny()) {
+                if (call.target.isFakeOverriddenFromAny()) {
                     if ((call as IrCall).isSuperToAny()) {
                         irCall(call, intrinsics.jsGetObjectHashCode, receiversAsArguments = true)
                     } else {
@@ -54,8 +54,8 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
 
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
-        val symbol = call.symbol
-        nameToTransformer[symbol.owner.name]?.let {
+        val target = call.target
+        nameToTransformer[target.name]?.let {
             return it(call)
         }
 
@@ -63,7 +63,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
     }
 
     private fun shouldReplaceToStringWithRuntimeCall(call: IrFunctionAccessExpression): Boolean {
-        val function = call.symbol.owner
+        val function = call.target
         if (function.valueParameters.size != 0 && function.name.asString() != "toString" )
             return false
 

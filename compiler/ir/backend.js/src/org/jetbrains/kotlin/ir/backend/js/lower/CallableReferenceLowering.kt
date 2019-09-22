@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -64,7 +63,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
     inner class CallableReferenceLowerTransformer : IrElementTransformerVoid() {
         override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
             expression.transformChildrenVoid(this)
-            val declaration = expression.symbol.owner
+            val declaration = expression.target
             if (declaration.origin == JsIrBackendContext.callableClosureOrigin) return expression
             val key = makeCallableKey(declaration, expression)
             val factory = callableToFactoryFunction.getOrPut(key) { lowerKFunctionReference(declaration, expression) }
@@ -73,7 +72,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
             expression.transformChildrenVoid(this)
-            val declaration = expression.getter!!.owner
+            val declaration = expression.getter!!
             val key = makeCallableKey(declaration, expression)
             val factory = callableToFactoryFunction.getOrPut(key) { lowerKPropertyReference(declaration, expression) }
             return redirectToFunction(expression, factory)
@@ -81,7 +80,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
             expression.transformChildrenVoid(this)
-            val key = makeCallableKey(expression.getter.owner, expression)
+            val key = makeCallableKey(expression.getter, expression)
             val factory = callableToFactoryFunction.getOrPut(key) { lowerLocalKPropertyReference(expression) }
             return redirectToFunction(expression, factory)
         }
@@ -159,7 +158,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         val closureFunction = buildClosureFunction(declaration, factoryFunction, functionReference, functionReference.type.arity)
 
         val additionalDeclarations = generateFactoryBodyWithGuard(factoryFunction) {
-            val irClosureReference = JsIrBuilder.buildFunctionReference(functionReference.type, closureFunction.symbol)
+            val irClosureReference = JsIrBuilder.buildFunctionReference(functionReference.type, closureFunction)
 
             val irVar = JsIrBuilder.buildVar(irClosureReference.type, factoryFunction, initializer = irClosureReference)
 
@@ -168,7 +167,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
                 JsIrBuilder.buildString(context.irBuiltIns.stringType, getReferenceName(declaration))
             }
 
-            Pair(listOf(closureFunction, irVar, irSetName), irVar.symbol)
+            Pair(listOf(closureFunction, irVar, irSetName), irVar)
         }
 
         newDeclarations += additionalDeclarations + factoryFunction
@@ -198,31 +197,31 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         val arity = propertyReference.type.arity
         val factoryName = createPropertyFactoryName(getterDeclaration.correspondingPropertySymbol!!.owner)
-        val factoryFunction = buildFactoryFunction(propertyReference.getter!!.owner, propertyReference, factoryName)
+        val factoryFunction = buildFactoryFunction(propertyReference.getter!!, propertyReference, factoryName)
 
-        val getterFunction = propertyReference.getter?.let { buildClosureFunction(it.owner, factoryFunction, propertyReference, arity) }!!
-        val setterFunction = propertyReference.setter?.let { buildClosureFunction(it.owner, factoryFunction, propertyReference, arity + 1) }
+        val getterFunction = propertyReference.getter?.let { buildClosureFunction(it, factoryFunction, propertyReference, arity) }!!
+        val setterFunction = propertyReference.setter?.let { buildClosureFunction(it, factoryFunction, propertyReference, arity + 1) }
 
         val additionalDeclarations = generateFactoryBodyWithGuard(factoryFunction) {
             val statements = mutableListOf<IrStatement>(getterFunction)
 
-            val getterFunctionTypeSymbol = context.ir.symbols.functionN(getterFunction.valueParameters.size + 1)
+            val getterFunctionClass = context.ir.symbols.functionN(getterFunction.valueParameters.size + 1)
 
-            val getterFunctionIrType = IrSimpleTypeImpl(getterFunctionTypeSymbol, false, emptyList(), emptyList())
-            val irGetReference = JsIrBuilder.buildFunctionReference(getterFunctionIrType, getterFunction.symbol)
+            val getterFunctionIrType = IrSimpleTypeImpl(getterFunctionClass.symbol, false, emptyList(), emptyList())
+            val irGetReference = JsIrBuilder.buildFunctionReference(getterFunctionIrType, getterFunction)
             val irVar = JsIrBuilder.buildVar(getterFunctionIrType, factoryFunction, initializer = irGetReference)
 
             statements += irVar
 
             statements += setDynamicProperty(irVar.symbol, Namer.KPROPERTY_GET) {
-                JsIrBuilder.buildGetValue(irVar.symbol)
+                JsIrBuilder.buildGetValue(irVar)
             }
 
             if (setterFunction != null) {
                 statements += setterFunction
-                val setterFunctionTypeSymbol = context.ir.symbols.functionN(setterFunction.valueParameters.size + 1)
-                val setterFunctionIrType = IrSimpleTypeImpl(setterFunctionTypeSymbol, false, emptyList(), emptyList())
-                val irSetReference = JsIrBuilder.buildFunctionReference(setterFunctionIrType, setterFunction.symbol)
+                val setterFunctionClass = context.ir.symbols.functionN(setterFunction.valueParameters.size + 1)
+                val setterFunctionIrType = IrSimpleTypeImpl(setterFunctionClass.symbol, false, emptyList(), emptyList())
+                val irSetReference = JsIrBuilder.buildFunctionReference(setterFunctionIrType, setterFunction)
                 statements += setDynamicProperty(irVar.symbol, Namer.KPROPERTY_SET) { irSetReference }
             }
 
@@ -234,7 +233,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
                 )
             }
 
-            Pair(statements, irVar.symbol)
+            Pair(statements, irVar)
         }
 
         newDeclarations += additionalDeclarations + factoryFunction
@@ -258,31 +257,30 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         // }
 
         val arity = propertyReference.type.arity
-        val declaration = propertyReference.delegate.owner
+        val declaration = propertyReference.delegate
         val factoryName = createPropertyFactoryName(declaration)
-        val factoryFunction = buildFactoryFunction(propertyReference.getter.owner, propertyReference, factoryName)
+        val factoryFunction = buildFactoryFunction(propertyReference.getter, propertyReference, factoryName)
         val closureFunction = buildClosureFunction(context.irBuiltIns.throwIseSymbol.owner, factoryFunction, propertyReference, arity)
 
         val additionalDeclarations = generateFactoryBodyWithGuard(factoryFunction) {
             val statements = mutableListOf<IrStatement>(closureFunction)
 
-            val getterFunctionTypeSymbol = context.ir.symbols.functionN(closureFunction.valueParameters.size + 1)
-            val getterFunctionIrType = IrSimpleTypeImpl(getterFunctionTypeSymbol, false, emptyList(), emptyList())
-            val irGetReference = JsIrBuilder.buildFunctionReference(getterFunctionIrType, closureFunction.symbol)
+            val getterFunctionClass = context.ir.symbols.functionN(closureFunction.valueParameters.size + 1)
+            val getterFunctionIrType = IrSimpleTypeImpl(getterFunctionClass.symbol, false, emptyList(), emptyList())
+            val irGetReference = JsIrBuilder.buildFunctionReference(getterFunctionIrType, closureFunction)
             val irVar = JsIrBuilder.buildVar(getterFunctionIrType, factoryFunction, initializer = irGetReference)
-            val irVarSymbol = irVar.symbol
 
             statements += irVar
 
-            statements += setDynamicProperty(irVarSymbol, Namer.KPROPERTY_GET) {
-                JsIrBuilder.buildGetValue(irVarSymbol)
+            statements += setDynamicProperty(irVar, Namer.KPROPERTY_GET) {
+                JsIrBuilder.buildGetValue(irVar)
             }
 
-            statements += setDynamicProperty(irVarSymbol, Namer.KCALLABLE_NAME) {
+            statements += setDynamicProperty(irVar, Namer.KCALLABLE_NAME) {
                 JsIrBuilder.buildString(context.irBuiltIns.stringType, getReferenceName(declaration))
             }
 
-            Pair(statements, irVarSymbol)
+            Pair(statements, irVar)
         }
 
         newDeclarations += additionalDeclarations + factoryFunction
@@ -292,10 +290,10 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
     private fun generateFactoryBodyWithGuard(
         factoryFunction: IrSimpleFunction,
-        builder: () -> Pair<List<IrStatement>, IrValueSymbol>
+        builder: () -> Pair<List<IrStatement>, IrValueDeclaration>
     ): List<IrDeclaration> {
 
-        val (bodyStatements, varSymbol) = builder()
+        val (bodyStatements, variable) = builder()
         val statements = mutableListOf<IrStatement>()
         val returnValue: IrExpression
         val returnStatements: List<IrDeclaration>
@@ -310,13 +308,13 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             val irNull = { JsIrBuilder.buildNull(context.irBuiltIns.nothingNType) }
             val cacheVar = JsIrBuilder.buildVar(type, factoryFunction.parent, cacheName, true, initializer = irNull())
 
-            val irCacheValue = { JsIrBuilder.buildGetValue(cacheVar.symbol) }
+            val irCacheValue = { JsIrBuilder.buildGetValue(cacheVar) }
             val irIfCondition = JsIrBuilder.buildCall(context.irBuiltIns.eqeqSymbol).apply {
                 putValueArgument(0, irCacheValue())
                 putValueArgument(1, irNull())
             }
             val irSetCache =
-                JsIrBuilder.buildSetVariable(cacheVar.symbol, JsIrBuilder.buildGetValue(varSymbol), context.irBuiltIns.unitType)
+                JsIrBuilder.buildSetVariable(cacheVar, JsIrBuilder.buildGetValue(variable), context.irBuiltIns.unitType)
             val thenStatements = mutableListOf<IrStatement>().apply {
                 addAll(bodyStatements)
                 add(irSetCache)
@@ -328,11 +326,11 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             returnStatements = listOf(cacheVar)
         } else {
             statements += bodyStatements
-            returnValue = JsIrBuilder.buildGetValue(varSymbol)
+            returnValue = JsIrBuilder.buildGetValue(variable)
             returnStatements = emptyList()
         }
 
-        statements += JsIrBuilder.buildReturn(factoryFunction.symbol, returnValue, context.irBuiltIns.nothingType)
+        statements += JsIrBuilder.buildReturn(factoryFunction, returnValue, context.irBuiltIns.nothingType)
 
         factoryFunction.body = JsIrBuilder.buildBlockBody(statements)
         return returnStatements
@@ -491,9 +489,8 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             )
 
         // the params which are passed to closure
-        val boundParamSymbols = factoryFunction.valueParameters.map { it.symbol }
+        val boundParamDeclarations = factoryFunction.valueParameters
         val unboundParamDeclarations = generateSignatureForClosure(declaration, factoryFunction, closureFunction, reference, arity)
-        val unboundParamSymbols = unboundParamDeclarations.map { it.symbol }
 
         closureFunction.valueParameters += unboundParamDeclarations
 
@@ -503,7 +500,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         val irCall =
             if (target is IrConstructorSymbol) IrConstructorCallImpl.fromSymbolOwner(returnType, target) else JsIrBuilder.buildCall(
-                callTarget.symbol,
+                callTarget,
                 type = returnType
             )
 
@@ -512,31 +509,31 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         if (callTarget.dispatchReceiverParameter != null) {
             val dispatchReceiverDeclaration =
-                if (reference.dispatchReceiver != null) boundParamSymbols[gp++] else unboundParamSymbols[cp++]
+                if (reference.dispatchReceiver != null) boundParamDeclarations[gp++] else unboundParamDeclarations[cp++]
             irCall.dispatchReceiver = JsIrBuilder.buildGetValue(dispatchReceiverDeclaration)
         }
 
         if (callTarget.extensionReceiverParameter != null) {
             val extensionReceiverDeclaration =
-                if (reference.extensionReceiver != null) boundParamSymbols[gp++] else unboundParamSymbols[cp++]
+                if (reference.extensionReceiver != null) boundParamDeclarations[gp++] else unboundParamDeclarations[cp++]
             irCall.extensionReceiver = JsIrBuilder.buildGetValue(extensionReceiverDeclaration)
         }
 
         var j = 0
 
-        for (i in gp until boundParamSymbols.size) {
-            irCall.putValueArgument(j++, JsIrBuilder.buildGetValue(boundParamSymbols[i]))
+        for (i in gp until boundParamDeclarations.size) {
+            irCall.putValueArgument(j++, JsIrBuilder.buildGetValue(boundParamDeclarations[i]))
         }
 
-        for (i in cp until unboundParamSymbols.size) {
-            val closureParam = unboundParamSymbols[i].owner
-            val value = JsIrBuilder.buildGetValue(unboundParamSymbols[i])
+        for (i in cp until unboundParamDeclarations.size) {
+            val closureParam = unboundParamDeclarations[i]
+            val value = JsIrBuilder.buildGetValue(unboundParamDeclarations[i])
             val parameter = callTarget.valueParameters[j]
             val argument =
                 if (parameter.varargElementType == closureParam.type) {
                     // fun foo(x: X, vararg y: Y): Z
                     // val r: (X, Y) -> Z = ::foo
-                    val tailValues = unboundParamSymbols.drop(i)
+                    val tailValues = unboundParamDeclarations.drop(i)
                     IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type, parameter.varargElementType!!, tailValues.map {
                         JsIrBuilder.buildGetValue(it)
                     })
@@ -545,14 +542,14 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             if (j == callTarget.valueParameters.size) break
         }
 
-        val irClosureReturn = JsIrBuilder.buildReturn(closureFunction.symbol, irCall, context.irBuiltIns.nothingType)
+        val irClosureReturn = JsIrBuilder.buildReturn(closureFunction, irCall, context.irBuiltIns.nothingType)
 
         closureFunction.body = JsIrBuilder.buildBlockBody(listOf(irClosureReturn))
 
         return closureFunction
     }
 
-    private inline fun setDynamicProperty(r: IrValueSymbol, property: String, value: () -> IrExpression): IrStatement {
+    private inline fun setDynamicProperty(r: IrValueDeclaration, property: String, value: () -> IrExpression): IrStatement {
         return IrDynamicOperatorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, IrDynamicOperator.EQ).apply {
             receiver = IrDynamicMemberExpressionImpl(startOffset, endOffset, context.dynamicType, property, JsIrBuilder.buildGetValue(r))
             arguments += value()

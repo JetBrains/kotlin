@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -31,12 +31,12 @@ class IrCallImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val symbol: IrFunctionSymbol,
+    override val target: IrFunction,
     override val descriptor: FunctionDescriptor,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
-    override val superQualifierSymbol: IrClassSymbol? = null
+    override val irSuperQualifier: IrClass? = null
 ) :
     IrCallWithIndexedArgumentsBase(
         startOffset, endOffset, type,
@@ -56,34 +56,34 @@ class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrFunctionSymbol,
+        target: IrFunction,
         descriptor: FunctionDescriptor,
         origin: IrStatementOrigin? = null,
-        superQualifierSymbol: IrClassSymbol? = null
+        irSuperQualifier: IrClass? = null
     ) : this(
-        startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount,
-        descriptor.valueParameters.size, origin, superQualifierSymbol
+        startOffset, endOffset, type, target, descriptor, descriptor.typeParametersCount,
+        descriptor.valueParameters.size, origin, irSuperQualifier
     )
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrFunctionSymbol,
+        target: IrFunction,
         descriptor: FunctionDescriptor,
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null,
-        superQualifierSymbol: IrClassSymbol? = null
+        irSuperQualifier: IrClass? = null
     ) : this(
-        startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount,
-        descriptor.valueParameters.size, origin, superQualifierSymbol
+        startOffset, endOffset, type, target, descriptor, typeArgumentsCount,
+        descriptor.valueParameters.size, origin, irSuperQualifier
     )
 
-    constructor(startOffset: Int, endOffset: Int, type: IrType, symbol: IrFunctionSymbol) :
-            this(startOffset, endOffset, type, symbol, symbol.descriptor)
+    constructor(startOffset: Int, endOffset: Int, type: IrType, target: IrFunction) :
+            this(startOffset, endOffset, type, target, target.descriptor)
 
 
-    override val superQualifier: ClassDescriptor? = superQualifierSymbol?.descriptor
+    override val superQualifier: ClassDescriptor? = irSuperQualifier?.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitCall(this, data)

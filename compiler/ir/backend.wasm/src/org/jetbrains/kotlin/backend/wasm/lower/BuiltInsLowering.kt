@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.render
@@ -21,7 +20,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val symbols = context.wasmSymbols
 
     fun transformCall(call: IrCall): IrExpression {
-        when (val symbol = call.symbol) {
+        when (val symbol = call.target) {
             irBuiltins.eqeqSymbol, irBuiltins.eqeqeqSymbol, in irBuiltins.ieee754equalsFunByOperandType.values -> {
                 val type = call.getValueArgument(0)!!.type
                 val newSymbol = symbols.equalityFunctions[type]

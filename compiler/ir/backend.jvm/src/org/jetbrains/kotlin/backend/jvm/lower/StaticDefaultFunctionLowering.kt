@@ -73,10 +73,10 @@ private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : Ir
 
     override fun visitReturn(expression: IrReturn): IrExpression {
         return super.visitReturn(
-            if (context.staticDefaultStubs.containsKey(expression.returnTargetSymbol)) {
+            if (context.staticDefaultStubs.containsKey(expression.irReturnTarget)) {
                 with(expression) {
-                    val irFunction = context.staticDefaultStubs[expression.returnTargetSymbol]!!
-                    IrReturnImpl(startOffset, endOffset, expression.type, irFunction.symbol, expression.value)
+                    val irFunction = context.staticDefaultStubs[expression.irReturnTarget]!!
+                    IrReturnImpl(startOffset, endOffset, expression.type, irFunction, expression.value)
                 }
             } else {
                 expression
@@ -93,7 +93,7 @@ private class StaticDefaultCallLowering(
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val callee = expression.symbol.owner
+        val callee = expression.target
         if (callee.origin !== IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || callee.dispatchReceiverParameter == null) {
             return super.visitCall(expression)
         }
@@ -106,7 +106,7 @@ private class StaticDefaultCallLowering(
 }
 
 private fun JvmBackendContext.getStaticFunctionWithReceivers(function: IrFunction) =
-    staticDefaultStubs.getOrPut(function.symbol) {
+    staticDefaultStubs.getOrPut(function) {
         createStaticFunctionWithReceivers(function.parent, function.name, function, copyBody = false)
     }
 

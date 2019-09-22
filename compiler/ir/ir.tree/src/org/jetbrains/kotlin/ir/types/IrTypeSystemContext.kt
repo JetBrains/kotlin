@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -97,37 +96,37 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     private fun getTypeParameters(typeConstructor: TypeConstructorMarker): List<IrTypeParameter> {
         return when (typeConstructor) {
-            is IrTypeParameterSymbol -> emptyList()
-            is IrClassSymbol -> typeConstructor.owner.typeParameters
+            is IrTypeParameter -> emptyList()
+            is IrClass -> typeConstructor.typeParameters
             else -> error("unsupported type constructor")
         }
     }
 
     override fun TypeConstructorMarker.parametersCount() = getTypeParameters(this).size
 
-    override fun TypeConstructorMarker.getParameter(index: Int) = getTypeParameters(this)[index].symbol
+    override fun TypeConstructorMarker.getParameter(index: Int) = getTypeParameters(this)[index]
 
     override fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker> {
         return when (this) {
-            is IrClassSymbol -> owner.superTypes
-            is IrTypeParameterSymbol -> owner.superTypes
+            is IrClass -> superTypes
+            is IrTypeParameter -> superTypes
             else -> error("unsupported type constructor")
         }
     }
 
     override fun TypeConstructorMarker.isIntersection() = false
 
-    override fun TypeConstructorMarker.isClassTypeConstructor() = this is IrClassSymbol
+    override fun TypeConstructorMarker.isClassTypeConstructor() = this is IrClass
 
-    override fun TypeParameterMarker.getVariance() = (this as IrTypeParameterSymbol).owner.variance.convertVariance()
+    override fun TypeParameterMarker.getVariance() = (this as IrTypeParameter).variance.convertVariance()
 
-    private fun getSuperTypes(typeParameterMarker: TypeParameterMarker) = (typeParameterMarker as IrTypeParameterSymbol).owner.superTypes
+    private fun getSuperTypes(typeParameterMarker: TypeParameterMarker) = (typeParameterMarker as IrTypeParameter).superTypes
 
     override fun TypeParameterMarker.upperBoundCount() = getSuperTypes(this).size
 
     override fun TypeParameterMarker.getUpperBound(index: Int) = getSuperTypes(this)[index] as KotlinTypeMarker
 
-    override fun TypeParameterMarker.getTypeConstructor() = this as IrTypeParameterSymbol
+    override fun TypeParameterMarker.getTypeConstructor() = this as IrTypeParameter
 
     override fun isEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker) = FqNameEqualityChecker.areEqual(
         c1 as IrClassifierSymbol, c2 as IrClassifierSymbol
@@ -136,8 +135,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.isDenotable() = true
 
     override fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean {
-        val classSymbol = this as? IrClassSymbol ?: return false
-        return classSymbol.owner.run { modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS && kind != ClassKind.ANNOTATION_CLASS }
+        return this is IrClass && modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS && kind != ClassKind.ANNOTATION_CLASS
     }
 
     /*
@@ -191,10 +189,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun SimpleTypeMarker.asArgumentList() = this as IrSimpleType
 
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(KotlinBuiltIns.FQ_NAMES.any)
+        this is IrClass && isClassWithFqName(KotlinBuiltIns.FQ_NAMES.any)
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(KotlinBuiltIns.FQ_NAMES.nothing)
+        this is IrClass && isClassWithFqName(KotlinBuiltIns.FQ_NAMES.nothing)
 
     override fun SimpleTypeMarker.isSingleClassifierType() = true
 
@@ -214,7 +212,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean
-    ): SimpleTypeMarker = IrSimpleTypeImpl(constructor as IrClassifierSymbol, nullable, arguments.map { it as IrTypeArgument }, emptyList())
+    ): SimpleTypeMarker = IrSimpleTypeImpl((constructor as IrClassifier).symbol, nullable, arguments.map { it as IrTypeArgument }, emptyList())
 
     private fun TypeVariance.convertVariance(): Variance {
         return when (this) {
@@ -277,10 +275,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         (this as IrType).isArray() || isNullableArray()
 
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
-        val symbol = this as IrClassifierSymbol
-        return symbol is IrClassSymbol && symbol.owner.let {
-            it.modality == Modality.FINAL && !it.isEnumClass
-        }
+        return this is IrClass && modality == Modality.FINAL && !isEnumClass
     }
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean =
@@ -290,22 +285,22 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? IrType)?.annotations?.firstOrNull { annotation ->
-            annotation.symbol.owner.parentAsClass.descriptor.fqNameSafe == fqName
+            annotation.target.parentAsClass.descriptor.fqNameSafe == fqName
         }?.run {
             if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value else null
         }
 
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
-        this as? IrTypeParameterSymbol
+        this as? IrTypeParameter
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isInline == true
+        (this as? IrClass)?.isInline == true
 
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker =
-        (this as IrTypeParameterSymbol).owner.superTypes.firstOrNull {
+        (this as IrTypeParameter).superTypes.firstOrNull {
             val irClass = it.classOrNull?.owner ?: return@firstOrNull false
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
-        } ?: owner.superTypes.first()
+        } ?: superTypes.first()
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
         // Code in inlineClassesUtils.kt loads the property with the same name from the scope of the substituted type and takes its type.
@@ -324,16 +319,16 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
         // TODO: get rid of descriptor
-        return KotlinBuiltIns.getPrimitiveType((this as IrClassifierSymbol).descriptor as ClassDescriptor)
+        return KotlinBuiltIns.getPrimitiveType((this as IrClass).descriptor)
     }
 
     override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
         // TODO: get rid of descriptor
-        return KotlinBuiltIns.getPrimitiveArrayType((this as IrClassifierSymbol).descriptor as ClassDescriptor)
+        return KotlinBuiltIns.getPrimitiveArrayType((this as IrClass).descriptor)
     }
 
     override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean {
-        var declaration: IrDeclaration = (this as? IrClassifierSymbol)?.owner as? IrClass ?: return false
+        var declaration: IrDeclaration = this as? IrClass ?: return false
         while (true) {
             val parent = declaration.parent
             if (parent is IrPackageFragment) {
@@ -344,13 +339,13 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? =
-        (this as IrClassSymbol).owner.fqNameWhenAvailable?.toUnsafe()
+        (this as IrClass).fqNameWhenAvailable?.toUnsafe()
 
     override fun TypeParameterMarker.getName(): Name =
-        (this as IrTypeParameterSymbol).owner.name
+        (this as IrTypeParameter).name
 
     override fun TypeParameterMarker.isReified(): Boolean =
-        (this as IrTypeParameterSymbol).owner.isReified
+        (this as IrTypeParameter).isReified
 
     override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
         val irClass = (this as IrType).classOrNull?.owner

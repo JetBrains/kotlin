@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 
 val varargPhase = makeIrFilePhase(
@@ -36,7 +35,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
 
     // Ignore annotations
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val constructor = expression.symbol.owner
+        val constructor = expression.target
         if (constructor.constructedClass.isAnnotationClass)
             return expression
         return super.visitConstructorCall(expression)
@@ -44,14 +43,14 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid()
-        val function = expression.symbol
+        val function = expression.target
 
         // Replace empty varargs with empty arrays
         for (i in 0 until expression.valueArgumentsCount) {
             if (expression.getValueArgument(i) != null)
                 continue
 
-            val parameter = function.owner.valueParameters[i]
+            val parameter = function.valueParameters[i]
             if (parameter.varargElementType != null && !parameter.hasDefaultValue()) {
                 // Compute the correct type for the array argument.
                 val arrayType = parameter.type.substitute(expression.typeSubstitutionMap)
@@ -73,7 +72,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
                 is IrExpression -> +element.transform(this@VarargLowering, null)
                 is IrSpreadElement -> {
                     val spread = element.expression
-                    if (spread is IrFunctionAccessExpression && spread.symbol.isArrayOf) {
+                    if (spread is IrFunctionAccessExpression && spread.target.isArrayOf) {
                         // Skip empty arrays and don't copy immediately created arrays
                         val argument = spread.getValueArgument(0) ?: continue@loop
                         if (argument is IrVararg) {
@@ -89,10 +88,10 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
     }
 
     private fun createBuilder(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET) =
-        context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
+        context.createJvmIrBuilder(currentScope!!.scope.irScopeOwner, startOffset, endOffset)
 
-    private val IrFunctionSymbol.isArrayOf
-        get() = this == context.ir.symbols.arrayOf || owner.isPrimitiveArrayOf
+    private val IrFunction.isArrayOf
+        get() = this == context.ir.symbols.arrayOf || isPrimitiveArrayOf
 
     companion object {
         private val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =

@@ -56,7 +56,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
     // Mark function references appearing as inlined arguments to inline functions.
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        val function = expression.symbol.owner
+        val function = expression.target
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.valueParameters) {
                 if (!parameter.isInlineParameter())
@@ -120,7 +120,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
     private inner class FunctionReferenceBuilder(val irFunctionReference: IrFunctionReference, val samSuperType: IrType? = null) {
         private val isLambda = irFunctionReference.origin.isLambda
 
-        private val callee = irFunctionReference.symbol.owner
+        private val callee = irFunctionReference.target
 
         // Only function references can bind a receiver and even then we can only bind either an extension or a dispatch receiver.
         // However, when we bind a value of an inline class type as a receiver, the receiver will turn into an argument of
@@ -137,9 +137,9 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         private val functionSuperClass =
             samSuperType?.classOrNull ?: context.ir.symbols.getJvmFunctionClass(argumentTypes.size)
         private val superMethod =
-            functionSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }
+            functionSuperClass.functions.single { it.modality == Modality.ABSTRACT }
         private val superType =
-            samSuperType ?: (if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference).owner.typeWith()
+            samSuperType ?: (if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference).typeWith()
 
         private val functionReferenceClass = buildClass {
             setSourceRange(irFunctionReference)
@@ -157,7 +157,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             copyAttributes(irFunctionReference)
         }
 
-        fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+        fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.irScopeOwner).run {
             irBlock {
                 val constructor = createConstructor()
                 createInvokeMethod(
@@ -167,13 +167,13 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                 )
 
                 if (!isLambda && samSuperType == null) {
-                    createGetSignatureMethod(this@run.irSymbols.functionReferenceGetSignature.owner)
-                    createGetNameMethod(this@run.irSymbols.functionReferenceGetName.owner)
-                    createGetOwnerMethod(this@run.irSymbols.functionReferenceGetOwner.owner)
+                    createGetSignatureMethod(this@run.irSymbols.functionReferenceGetSignature)
+                    createGetNameMethod(this@run.irSymbols.functionReferenceGetName)
+                    createGetOwnerMethod(this@run.irSymbols.functionReferenceGetOwner)
                 }
 
                 +functionReferenceClass
-                +irCall(constructor.symbol).apply {
+                +irCall(constructor).apply {
                     if (valueArgumentsCount > 0) putValueArgument(0, boundReceiver!!.second)
                 }
             }
@@ -217,17 +217,17 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                                 putValueArgument(1, irGet(valueParameters.first()))
                         }
                     }
-                    +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
+                    +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass, context.irBuiltIns.unitType)
                 }
             }
 
         private fun createInvokeMethod(receiverVar: IrValueDeclaration?): IrSimpleFunction =
             functionReferenceClass.addFunction {
-                name = superMethod.owner.name
+                name = superMethod.name
                 returnType = callee.returnType
                 isSuspend = callee.isSuspend
             }.apply {
-                overriddenSymbols += superMethod
+                overridden += superMethod
                 dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod(receiverVar)
             }
@@ -244,7 +244,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                 callee.body?.statements?.forEach { statement ->
                     +statement.transform(object : IrElementTransformerVoid() {
                         override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            val replacement = valueParameterMap[expression.symbol.owner]
+                            val replacement = valueParameterMap[expression.target]
                                 ?: return super.visitGetValue(expression)
 
                             at(expression.startOffset, expression.endOffset)
@@ -252,7 +252,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                         }
 
                         override fun visitReturn(expression: IrReturn): IrExpression =
-                            if (expression.returnTargetSymbol != callee.symbol) {
+                            if (expression.irReturnTarget != callee) {
                                 super.visitReturn(expression)
                             } else {
                                 at(expression.startOffset, expression.endOffset)
@@ -281,7 +281,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                 var unboundIndex = 0
                 irExprBody(irCall(callee).apply {
                     for ((typeParameter, typeArgument) in typeArgumentsMap) {
-                        putTypeArgument(typeParameter.owner.index, typeArgument)
+                        putTypeArgument(typeParameter.index, typeArgument)
                     }
 
                     for (parameter in callee.explicitParameters) {
@@ -292,7 +292,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                                 // will put it into a field.
                                 if (samSuperType == null)
                                     irImplicitCast(
-                                        irGetField(irGet(dispatchReceiverParameter!!), irSymbols.functionReferenceReceiverField.owner),
+                                        irGetField(irGet(dispatchReceiverParameter!!), irSymbols.functionReferenceReceiverField),
                                         boundReceiver.second.type
                                     )
                                 else
@@ -339,7 +339,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                 visibility = superFunction.visibility
                 isSuspend = superFunction.isSuspend
             }.apply {
-                overriddenSymbols += superFunction.symbol
+                overridden += superFunction
                 dispatchReceiverParameter = functionReferenceClass.thisReceiver?.copyTo(this)
             }
 
@@ -351,8 +351,8 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             body = context.createIrBuilder(symbol, startOffset, endOffset).run {
                 // TODO do not use descriptors
                 val declaration = codegenContext.referenceFunction(
-                    DescriptorUtils.unwrapFakeOverride(irFunctionReference.symbol.descriptor).original
-                ).owner
+                    DescriptorUtils.unwrapFakeOverride(irFunctionReference.target.descriptor).original
+                )
                 val method = codegenContext.methodSignatureMapper.mapAsmMethod(declaration)
                 irExprBody(irString(method.name + method.descriptor))
             }
@@ -378,7 +378,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             )
 
         private fun IrBuilderWithScope.kClassToJavaClass(kClassReference: IrExpression, context: JvmBackendContext) =
-            irGet(context.ir.symbols.javaLangClass.typeWith(), null, context.ir.symbols.kClassJava.owner.getter!!.symbol).apply {
+            irGet(context.ir.symbols.javaLangClass.typeWith(), null, context.ir.symbols.kClassJava.getter!!).apply {
                 extensionReceiver = kClassReference
             }
 

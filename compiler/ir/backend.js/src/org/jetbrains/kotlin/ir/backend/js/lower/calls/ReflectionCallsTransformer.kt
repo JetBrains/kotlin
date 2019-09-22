@@ -34,7 +34,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
             addWithPredicate(
                 Name.special(Namer.KCALLABLE_GET_NAME),
                 { call ->
-                    call.symbol.owner.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kCallableClass) } ?: false
+                    call.target.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kCallableClass) } ?: false
                 },
                 { call ->
                     IrDynamicMemberExpressionImpl(
@@ -49,7 +49,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
             addWithPredicate(
                 Name.identifier(Namer.KPROPERTY_GET),
                 { call ->
-                    call.symbol.owner.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kPropertyClass) } ?: false
+                    call.target.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kPropertyClass) } ?: false
                 },
                 { call -> buildDynamicCall(Namer.KPROPERTY_GET, call) }
             )
@@ -57,7 +57,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
             addWithPredicate(
                 Name.identifier(Namer.KPROPERTY_SET),
                 { call ->
-                    call.symbol.owner.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kPropertyClass) } ?: false
+                    call.target.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kPropertyClass) } ?: false
                 },
                 { call -> buildDynamicCall(Namer.KPROPERTY_SET, call) }
             )
@@ -65,8 +65,8 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
     }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
-        val symbol = call.symbol
-        nameToTransformer[symbol.owner.name]?.let {
+        val symbol = call.target
+        nameToTransformer[symbol.name]?.let {
             return it(call)
         }
 

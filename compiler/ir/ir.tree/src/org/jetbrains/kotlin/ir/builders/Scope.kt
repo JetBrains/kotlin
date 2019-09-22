@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
@@ -34,16 +31,15 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-class Scope(val scopeOwnerSymbol: IrSymbol) {
-    val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
+class Scope(val irScopeOwner: IrSymbolOwner) {
+    val scopeOwner: DeclarationDescriptor get() = irScopeOwner.symbol.descriptor
 
     fun getLocalDeclarationParent(): IrDeclarationParent {
-        if (!scopeOwnerSymbol.isBound) throw AssertionError("Unbound symbol: $scopeOwner")
-        val scopeOwnerElement = scopeOwnerSymbol.owner
-        return when (scopeOwnerElement) {
-            is IrDeclarationParent -> scopeOwnerElement
-            !is IrDeclaration -> throw AssertionError("Not a declaration: $scopeOwnerElement")
-            else -> scopeOwnerElement.parent
+        if (!irScopeOwner.symbol.isBound) throw AssertionError("Unbound symbol: $scopeOwner")
+        return when (irScopeOwner) {
+            is IrDeclarationParent -> irScopeOwner
+            !is IrDeclaration -> throw AssertionError("Not a declaration: $irScopeOwner")
+            else -> irScopeOwner.parent
         }
     }
 

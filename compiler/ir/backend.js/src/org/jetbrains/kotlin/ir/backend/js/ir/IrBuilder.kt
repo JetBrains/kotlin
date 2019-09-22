@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -26,11 +25,11 @@ object JsIrBuilder {
     object SYNTHESIZED_STATEMENT : IrStatementOriginImpl("SYNTHESIZED_STATEMENT")
     object SYNTHESIZED_DECLARATION : IrDeclarationOriginImpl("SYNTHESIZED_DECLARATION")
 
-    fun buildCall(target: IrFunctionSymbol, type: IrType? = null, typeArguments: List<IrType>? = null): IrCall =
+    fun buildCall(target: IrFunction, type: IrType? = null, typeArguments: List<IrType>? = null): IrCall =
         IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            type ?: target.owner.returnType,
+            type ?: target.returnType,
             target,
             target.descriptor,
             target.descriptor.typeParametersCount,
@@ -42,8 +41,8 @@ object JsIrBuilder {
             }
         }
 
-    fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression, type: IrType) =
-        IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol, value)
+    fun buildReturn(target: IrFunction, value: IrExpression, type: IrType) =
+        IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, target, value)
 
     fun buildThrow(type: IrType, value: IrExpression) = IrThrowImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, value)
 
@@ -142,34 +141,34 @@ object JsIrBuilder {
     fun buildAnonymousInitializer() =
         IrAnonymousInitializerImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, IrAnonymousInitializerSymbolImpl(WrappedClassDescriptor()))
 
-    fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
-        IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
+    fun buildGetObjectValue(type: IrType, irClass: IrClass) =
+        IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, irClass)
 
-    fun buildGetValue(symbol: IrValueSymbol) =
-        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, SYNTHESIZED_STATEMENT)
+    fun buildGetValue(target: IrValueDeclaration) =
+        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.type, target, SYNTHESIZED_STATEMENT)
 
-    fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
-        IrSetVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, SYNTHESIZED_STATEMENT)
+    fun buildSetVariable(target: IrVariable, value: IrExpression, type: IrType) =
+        IrSetVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, target, value, SYNTHESIZED_STATEMENT)
 
-    fun buildGetField(symbol: IrFieldSymbol, receiver: IrExpression?, superQualifierSymbol: IrClassSymbol? = null, type: IrType? = null) =
+    fun buildGetField(target: IrField, receiver: IrExpression?, irSuperQualifier: IrClass? = null, type: IrType? = null) =
         IrGetFieldImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            symbol,
-            type ?: symbol.owner.type,
+            target,
+            type ?: target.type,
             receiver,
             SYNTHESIZED_STATEMENT,
-            superQualifierSymbol
+            irSuperQualifier
         )
 
     fun buildSetField(
-        symbol: IrFieldSymbol,
+        target: IrField,
         receiver: IrExpression?,
         value: IrExpression,
         type: IrType,
-        superQualifierSymbol: IrClassSymbol? = null
+        irSuperQualifier: IrClass? = null
     ) =
-        IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, receiver, value, type, SYNTHESIZED_STATEMENT, superQualifierSymbol)
+        IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target, receiver, value, type, SYNTHESIZED_STATEMENT, irSuperQualifier)
 
     fun buildBlockBody(statements: List<IrStatement>) = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, statements)
 
@@ -180,8 +179,8 @@ object JsIrBuilder {
     fun buildComposite(type: IrType, statements: List<IrStatement> = emptyList()) =
         IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, SYNTHESIZED_STATEMENT, statements)
 
-    fun buildFunctionReference(type: IrType, symbol: IrFunctionSymbol) =
-        IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, symbol.descriptor, 0, null)
+    fun buildFunctionReference(type: IrType, target: IrFunction) =
+        IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, target, target.descriptor, 0, null)
 
     fun buildVar(
         type: IrType,

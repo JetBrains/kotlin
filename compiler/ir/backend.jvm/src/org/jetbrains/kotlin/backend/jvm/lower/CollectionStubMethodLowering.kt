@@ -17,13 +17,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -58,7 +53,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
             if (existingMethod != null) {
                 // In the case that we find a defined method that matches the stub signature, we add the overridden symbols to that
                 // defined method, so that bridge lowering can still generate correct bridge for that method
-                existingMethod.overriddenSymbols.addAll(member.overriddenSymbols)
+                existingMethod.overridden.addAll(member.overridden)
             } else {
                 irClass.declarations.add(member)
             }
@@ -68,7 +63,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
     private fun IrSimpleFunction.toSignature(): String = methodSignatureMapper.mapAsmMethod(this).toString()
 
     private fun createStubMethod(
-        function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameterSymbol, IrType>
+        function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameter, IrType>
     ): IrSimpleFunction {
         return buildFun {
             name = function.name
@@ -79,7 +74,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         }.apply {
             // Replace Function metadata with the data from class
             // Add the abstract function symbol to stub function for bridge lowering
-            overriddenSymbols.add(function.symbol)
+            overridden.add(function)
             parent = irClass
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyWithSubstitution(this, substitutionMap)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyWithSubstitution(this, substitutionMap)
@@ -88,10 +83,10 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
             }
             val exception = context.getTopLevelClass(FqName("java.lang.UnsupportedOperationException"))
             // Function body consist only of throwing UnsupportedOperationException statement
-            body = context.createIrBuilder(function.symbol).irBlockBody {
+            body = context.createIrBuilder(function).irBlockBody {
                 +irThrow(
                     irCall(
-                        exception.owner.constructors.single {
+                        exception.constructors.single {
                             it.valueParameters.size == 1 && it.valueParameters.single().type.isNullableString()
                         }
                     ).apply {
@@ -103,7 +98,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
     }
 
     // Copy value parameter with type substitution
-    private fun IrValueParameter.copyWithSubstitution(target: IrSimpleFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>)
+    private fun IrValueParameter.copyWithSubstitution(target: IrSimpleFunction, substitutionMap: Map<IrTypeParameter, IrType>)
             : IrValueParameter {
         val descriptor = WrappedValueParameterDescriptor(this.descriptor.annotations)
         return IrValueParameterImpl(
@@ -125,11 +120,11 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
     // Compute a substitution map for type parameters between source class (Mutable Collection classes) to
     // target class (class currently in lowering phase), this map is later used for substituting type parameters in generated functions
     private fun computeSubstitutionMap(readOnlyClass: IrClass, mutableClass: IrClass, targetClass: IrClass)
-            : Map<IrTypeParameterSymbol, IrType> {
+            : Map<IrTypeParameter, IrType> {
         // We find the most specific type for the immutable collection class from the inheritance chain of target class
         // Perform type substitution along searching, then use the type arguments obtained from the most specific type
         // for type substitution.
-        val readOnlyClassType = getAllSupertypes(targetClass).findMostSpecificTypeForClass(readOnlyClass.symbol)
+        val readOnlyClassType = getAllSupertypes(targetClass).findMostSpecificTypeForClass(readOnlyClass)
         val readOnlyClassTypeArguments = (readOnlyClassType as IrSimpleType).arguments.mapNotNull { (it as? IrTypeProjection)?.type }
 
         if (readOnlyClassTypeArguments.isEmpty() || readOnlyClassTypeArguments.size != mutableClass.typeParameters.size) {
@@ -139,17 +134,16 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
                         "class ${targetClass.fqNameWhenAvailable}"
             )
         }
-        return mutableClass.typeParameters.map { it.symbol }.zip(readOnlyClassTypeArguments).toMap()
+        return mutableClass.typeParameters.zip(readOnlyClassTypeArguments).toMap()
     }
 
     private inner class StubsForCollectionClass(
-        val readOnlyClass: IrClassSymbol,
-        val mutableClass: IrClassSymbol
+        val readOnlyClass: IrClass,
+        val mutableClass: IrClass
     ) {
         val mutableOnlyMethods: Collection<IrSimpleFunction> by lazy {
-            val readOnlyMethodSignatures = readOnlyClass.functions.map { it.owner.toSignature() }.toHashSet()
+            val readOnlyMethodSignatures = readOnlyClass.functions.map { it.toSignature() }.toHashSet()
             mutableClass.functions
-                .map { it.owner }
                 .filter { it.toSignature() !in readOnlyMethodSignatures }
                 .toHashSet()
         }
@@ -179,14 +173,14 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
     // Compute stubs that should be generated, compare based on signature
     private fun generateRelevantStubMethods(irClass: IrClass): Set<IrSimpleFunction> {
         val ourStubsForCollectionClasses = preComputedStubs.filter { (readOnlyClass, mutableClass) ->
-            irClass.superTypes.any { supertypeSymbol ->
-                val supertype = supertypeSymbol.classOrNull?.owner
+            irClass.superTypes.any { supertype ->
+                val supertypeCLass = supertype.classOrNull?.owner
                 // We need to generate stub methods for following 2 cases:
                 // current class's direct super type is a java class or kotlin interface, and is an subtype of an immutable collection
-                supertype != null
-                        && (supertype.comesFromJava() || supertype.isInterface)
-                        && supertypeSymbol.isSubtypeOfClass(readOnlyClass)
-                        && !irClass.symbol.isSubtypeOfClass(mutableClass)
+                supertypeCLass != null
+                        && (supertypeCLass.comesFromJava() || supertypeCLass.isInterface)
+                        && supertype.isSubtypeOfClass(readOnlyClass)
+                        && !irClass.isSubtypeOfClass(mutableClass)
             }
         }
 
@@ -199,7 +193,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         return ourStubsForCollectionClasses.filter { (readOnlyClass) ->
             readOnlyClass !in redundantClasses
         }.flatMap { (readOnlyClass, mutableClass, mutableOnlyMethods) ->
-            val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, irClass)
+            val substitutionMap = computeSubstitutionMap(readOnlyClass, mutableClass, irClass)
             mutableOnlyMethods.map { function ->
                 createStubMethod(function, irClass, substitutionMap)
             }
@@ -208,9 +202,9 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
 
     fun IrClass.comesFromJava() = origin in ORIGINS_FROM_JAVA
 
-    private fun Collection<IrType>.findMostSpecificTypeForClass(classifier: IrClassSymbol): IrType {
-        val types = this.filter { it.classifierOrNull == classifier }
-        if (types.isEmpty()) error("No supertype of $classifier in $this")
+    private fun Collection<IrType>.findMostSpecificTypeForClass(clazz: IrClass): IrType {
+        val types = this.filter { it.classifierOrNull == clazz.symbol }
+        if (types.isEmpty()) error("No supertype of $clazz in $this")
         if (types.size == 1) return types.first()
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->

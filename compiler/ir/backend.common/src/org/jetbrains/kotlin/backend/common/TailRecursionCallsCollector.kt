@@ -62,7 +62,7 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
         }
 
         override fun visitReturn(expression: IrReturn, data: ElementKind) {
-            val valueKind = if (expression.returnTargetSymbol == irFunction.symbol) {
+            val valueKind = if (expression.irReturnTarget == irFunction) {
                 ElementKind.TAIL_STATEMENT
             } else {
                 ElementKind.NOT_SURE
@@ -98,18 +98,18 @@ fun collectTailRecursionCalls(irFunction: IrFunction): Set<IrCall> {
             }
 
             // Is it a recursive call?
-            if (expression.symbol != irFunction.symbol) {
+            if (expression.target != irFunction) {
                 return
             }
             // TODO: check type arguments
 
-            if (irFunction.overriddenSymbols.isNotEmpty() && expression.usesDefaultArguments()) {
+            if (irFunction.overridden.isNotEmpty() && expression.usesDefaultArguments()) {
                 // Overridden functions using default arguments at tail call are not included: KT-4285
                 return
             }
 
             expression.dispatchReceiver?.let {
-                if (it !is IrGetValue || it.symbol.owner != irFunction.dispatchReceiverParameter) {
+                if (it !is IrGetValue || it.target != irFunction.dispatchReceiverParameter) {
                     // A tail call is not allowed to change dispatch receiver
                     //   class C {
                     //       fun foo(other: C) {

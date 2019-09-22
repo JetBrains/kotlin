@@ -292,7 +292,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
     fun mapToCallableMethod(expression: IrFunctionAccessExpression): IrCallableMethod {
-        val callee = expression.symbol.owner.getOrCreateSuspendFunctionViewIfNeeded(context)
+        val callee = expression.target.getOrCreateSuspendFunctionViewIfNeeded(context)
         val calleeParent = callee.parent
         if (calleeParent !is IrClass) {
             // Non-class parent is only possible for intrinsics created in IrBuiltIns, such as dataClassArrayMemberHashCode. In that case,
@@ -331,7 +331,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
     private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         val overriddenSpecialBuiltinFunction = callee.descriptor.original.getOverriddenBuiltinReflectingJvmDescriptor()
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
-            return mapSignatureSkipGeneric(context.referenceFunction(overriddenSpecialBuiltinFunction.original).owner)
+            return mapSignatureSkipGeneric(context.referenceFunction(overriddenSpecialBuiltinFunction.original))
         }
 
         return null
@@ -342,7 +342,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         var current = function
         while (current.isFakeOverride) {
             // TODO: probably isJvmInterface instead of isInterface, here and in KotlinTypeMapper
-            val classCallable = current.overriddenSymbols.firstOrNull { !it.owner.parentAsClass.isInterface }?.owner
+            val classCallable = current.overridden.firstOrNull { !it.parentAsClass.isInterface }
             if (classCallable != null) {
                 current = classCallable
                 continue
@@ -351,7 +351,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 return current
             }
 
-            current = current.overriddenSymbols.firstOrNull()?.owner
+            current = current.overridden.firstOrNull()
                 ?: error("Fake override should have at least one overridden descriptor: ${current.render()}")
         }
         return current

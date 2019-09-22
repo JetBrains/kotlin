@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForIn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -32,7 +30,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class IrReplacementFunction(
     val function: IrFunction,
-    val valueParameterMap: Map<IrValueParameterSymbol, IrValueParameter>
+    val valueParameterMap: Map<IrValueParameter, IrValueParameter>
 )
 
 /**
@@ -136,17 +134,17 @@ class MemoizedInlineClassReplacements {
 
     private fun createMethodReplacement(function: IrFunction): IrReplacementFunction? {
         require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
-        val overrides = function.overriddenSymbols.mapNotNull {
-            getReplacementFunction(it.owner)?.function?.symbol as? IrSimpleFunctionSymbol
+        val overrides = function.overridden.mapNotNull {
+            getReplacementFunction(it)?.function as? IrSimpleFunction
         }
         if (function.origin == IrDeclarationOrigin.FAKE_OVERRIDE && overrides.isEmpty())
             return null
 
-        val parameterMap = mutableMapOf<IrValueParameterSymbol, IrValueParameter>()
+        val parameterMap = mutableMapOf<IrValueParameter, IrValueParameter>()
         val replacement = buildReplacement(function) {
             annotations += function.annotations
             metadata = function.metadata
-            overriddenSymbols.addAll(overrides)
+            overridden.addAll(overrides)
 
             for ((index, parameter) in function.explicitParameters.withIndex()) {
                 val name = if (parameter == function.extensionReceiverParameter) Name.identifier("\$receiver") else parameter.name
@@ -158,16 +156,16 @@ class MemoizedInlineClassReplacements {
                     newParameter = parameter.copyTo(this, index = index - 1, name = name)
                     valueParameters.add(newParameter)
                 }
-                parameterMap[parameter.symbol] = newParameter
+                parameterMap[parameter] = newParameter
             }
         }
         return IrReplacementFunction(replacement, parameterMap)
     }
 
     private fun createStaticReplacement(function: IrFunction): IrReplacementFunction {
-        val parameterMap = mutableMapOf<IrValueParameterSymbol, IrValueParameter>()
+        val parameterMap = mutableMapOf<IrValueParameter, IrValueParameter>()
         val replacement = buildReplacement(function) {
-            if (function !is IrSimpleFunction || function.overriddenSymbols.isEmpty())
+            if (function !is IrSimpleFunction || function.overridden.isEmpty())
                 metadata = function.metadata
 
             for ((index, parameter) in function.explicitParameters.withIndex()) {
@@ -179,7 +177,7 @@ class MemoizedInlineClassReplacements {
 
                 val newParameter = parameter.copyTo(this, index = index, name = name)
                 valueParameters.add(newParameter)
-                parameterMap[parameter.symbol] = newParameter
+                parameterMap[parameter] = newParameter
             }
         }
         return IrReplacementFunction(replacement, parameterMap)

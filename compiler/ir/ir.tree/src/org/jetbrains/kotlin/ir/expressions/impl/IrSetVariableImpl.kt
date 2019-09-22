@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -29,7 +29,7 @@ class IrSetVariableImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val symbol: IrVariableSymbol,
+    override val target: IrVariable,
     override val origin: IrStatementOrigin?
 ) :
     IrExpressionBase(startOffset, endOffset, type),
@@ -39,14 +39,14 @@ class IrSetVariableImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrVariableSymbol,
+        target: IrVariable,
         value: IrExpression,
         origin: IrStatementOrigin?
-    ) : this(startOffset, endOffset, type, symbol, origin) {
+    ) : this(startOffset, endOffset, type, target, origin) {
         this.value = value
     }
 
-    override val descriptor: VariableDescriptor get() = symbol.descriptor
+    override val descriptor: VariableDescriptor get() = target.descriptor
 
     override lateinit var value: IrExpression
 

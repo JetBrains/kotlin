@@ -1059,7 +1059,7 @@ abstract class IrFileDeserializer(
                     proto.isSuspend
                 )
             }.apply {
-                proto.overriddenList.mapTo(overriddenSymbols) { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
+                proto.overriddenList.mapTo(overridden) { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
 
                 (descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
             }

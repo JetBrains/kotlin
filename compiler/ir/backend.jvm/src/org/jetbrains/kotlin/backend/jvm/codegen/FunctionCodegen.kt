@@ -78,8 +78,8 @@ open class FunctionCodegen(
         } else {
             val frameMap = createFrameMapWithReceivers(signature)
             val irClass = context.suspendFunctionContinuations[irFunction]
-            val element = (irFunction.symbol.descriptor.psiElement
-                ?: context.suspendLambdaToOriginalFunctionMap[irFunction.parent]?.symbol?.descriptor?.psiElement) as? KtElement
+            val element = (irFunction.descriptor.psiElement
+                ?: context.suspendLambdaToOriginalFunctionMap[irFunction.parent]?.descriptor?.psiElement) as? KtElement
             val continuationClassBuilder = context.continuationClassBuilders[irClass]
             methodVisitor = when {
                 irFunction.isSuspend &&
@@ -179,7 +179,7 @@ open class FunctionCodegen(
             ?.backingField
             ?.initializer.safeAs<IrExpressionBody>()
             ?.expression?.safeAs<IrGetValue>()
-            ?.symbol?.owner?.safeAs<IrValueParameter>()
+            ?.target?.safeAs<IrValueParameter>()
             ?.defaultValue?.safeAs<IrExpressionBody>()
             ?.expression
     }

@@ -94,8 +94,8 @@ class DumpIrTreeVisitor(
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
-            declaration.overriddenSymbols.dumpItems<IrSymbol>("overridden") {
-                it.dump()
+            declaration.overridden.dumpItems("overridden") {
+                it.symbol.dump()
             }
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
@@ -140,8 +140,8 @@ class DumpIrTreeVisitor(
     override fun visitField(declaration: IrField, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.overriddenSymbols.dumpItems("overridden") {
-                it.dump()
+            declaration.overridden.dumpItems("overridden") {
+                it.symbol.dump()
             }
             declaration.initializer?.accept(this, "")
         }
@@ -214,8 +214,8 @@ class DumpIrTreeVisitor(
     }
 
     private fun IrMemberAccessExpression.getTypeParameterNames(expectedCount: Int): List<String> =
-        if (this is IrDeclarationReference && symbol.isBound)
-            symbol.owner.getTypeParameterNames(expectedCount)
+        if (this is IrDeclarationReference && target.symbol.isBound)
+            target.getTypeParameterNames(expectedCount)
         else
             getPlaceholderParameterNames(expectedCount)
 
@@ -371,8 +371,8 @@ class DumpTreeFromSourceLineVisitor(
 
 internal fun IrMemberAccessExpression.getValueParameterNamesForDebug(): List<String> {
     val expectedCount = valueArgumentsCount
-    return if (this is IrDeclarationReference && symbol.isBound) {
-        val owner = symbol.owner
+    return if (this is IrDeclarationReference && target.symbol.isBound) {
+        val owner = target
         if (owner is IrFunction) {
             (0 until expectedCount).map {
                 if (it < owner.valueParameters.size)

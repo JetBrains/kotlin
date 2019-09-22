@@ -23,10 +23,10 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     private val intrinsics = context.intrinsics
     private val irBuiltIns = context.irBuiltIns
 
-    private val symbolToTransformer: SymbolToTransformer = mutableMapOf()
+    private val functionToTransformer: FunctionToTransformer = mutableMapOf()
 
     init {
-        symbolToTransformer.run {
+        functionToTransformer.run {
             add(irBuiltIns.eqeqeqSymbol, intrinsics.jsEqeqeq)
             add(irBuiltIns.eqeqSymbol, ::transformEqeqOperator)
             // ieee754equals can only be applied in between statically known Floats, Doubles, null or undefined
@@ -59,12 +59,12 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
-        val symbol = call.symbol
-        symbolToTransformer[symbol]?.let {
+        val target = call.target
+        functionToTransformer[target]?.let {
             return it(call)
         }
 
-        return when (symbol.owner.name) {
+        return when (target.name) {
             Name.identifier("compareTo") -> transformCompareToMethodCall(call)
             Name.identifier("equals") -> transformEqualsMethodCall(call as IrCall)
             else -> call
@@ -113,14 +113,14 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         (0 until valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable() }
 
     private fun transformCompareToMethodCall(call: IrFunctionAccessExpression): IrExpression {
-        val function = call.symbol.owner as IrSimpleFunction
+        val function = call.target as IrSimpleFunction
         if (function.parent !is IrClass) return call
 
         fun IrSimpleFunction.isFakeOverriddenFromComparable(): Boolean = when {
             origin != IrDeclarationOrigin.FAKE_OVERRIDE ->
                 !isStaticMethodOfClass && parentAsClass.thisReceiver!!.type.isComparable()
 
-            else -> overriddenSymbols.all { it.owner.isFakeOverriddenFromComparable() }
+            else -> overridden.all { it.isFakeOverriddenFromComparable() }
         }
 
         return when {
@@ -137,7 +137,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
 
     private fun transformEqualsMethodCall(call: IrCall): IrExpression {
-        val function = call.symbol.owner
+        val function = call.target
         return when {
             // Nothing special
             !function.isEqualsInheritedFromAny() -> call

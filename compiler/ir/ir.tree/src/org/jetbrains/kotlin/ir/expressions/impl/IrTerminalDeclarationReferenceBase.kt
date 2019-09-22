@@ -17,20 +17,20 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrTerminalDeclarationReferenceBase<out S : IrSymbol, out D : DeclarationDescriptor>(
+abstract class IrTerminalDeclarationReferenceBase<out S : IrSymbolOwner, out D : DeclarationDescriptor>(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    symbol: S,
+    target: S,
     descriptor: D
 ) :
-    IrDeclarationReferenceBase<S, D>(startOffset, endOffset, type, symbol, descriptor),
+    IrDeclarationReferenceBase<S, D>(startOffset, endOffset, type, target, descriptor),
     IrDeclarationReference {
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

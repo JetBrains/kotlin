@@ -79,9 +79,9 @@ class IrLazyFunction(
     }
 
 
-    override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> by lazy {
+    override val overridden: MutableList<IrSimpleFunction> by lazy {
         descriptor.overriddenDescriptors.mapTo(arrayListOf()) {
-            stubGenerator.generateFunctionStub(it.original).symbol
+            stubGenerator.generateFunctionStub(it.original)
         }
     }
 

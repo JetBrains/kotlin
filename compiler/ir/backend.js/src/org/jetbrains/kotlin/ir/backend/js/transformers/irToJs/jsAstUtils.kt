@@ -62,7 +62,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 }
 
 private fun isNativeInvoke(call: IrCall): Boolean {
-    val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
+    val simpleFunction = call.target as? IrSimpleFunction ?: return false
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
 
     if (simpleFunction.isSuspend) return false
@@ -75,7 +75,7 @@ fun translateCall(
     context: JsGenerationContext,
     transformer: IrElementToJsExpressionTransformer
 ): JsExpression {
-    val function = expression.symbol.owner.realOverrideTarget
+    val function = expression.target.realOverrideTarget
     require(function is IrSimpleFunction) { "Only IrSimpleFunction could be called via IrCall" } // TODO: fix it in IrCall
 
     val symbol = function.symbol
@@ -106,12 +106,12 @@ fun translateCall(
         return JsInvocation(jsDispatchReceiver!!, arguments)
     }
 
-    expression.superQualifierSymbol?.let { superQualifier ->
-        val (target, klass) = if (superQualifier.owner.isInterface) {
+    expression.irSuperQualifier?.let { superQualifier ->
+        val (target, klass) = if (superQualifier.isInterface) {
             val impl = function.resolveFakeOverride()!!
             Pair(impl, impl.parentAsClass)
         } else {
-            Pair(function, superQualifier.owner)
+            Pair(function, superQualifier)
         }
 
         val qualifierName = context.getNameForClass(klass).makeRef()
@@ -206,7 +206,7 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
         val argument = expression.getValueArgument(index)
         val result = argument?.accept(transformer, context)
         if (result == null) {
-            assert(expression is IrFunctionAccessExpression && expression.symbol.owner.isExternalOrInheritedFromExternal())
+            assert(expression is IrFunctionAccessExpression && expression.target.isExternalOrInheritedFromExternal())
             JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
         } else
             result

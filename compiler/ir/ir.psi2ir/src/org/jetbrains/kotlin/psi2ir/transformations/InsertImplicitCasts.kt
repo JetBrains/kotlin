@@ -105,7 +105,7 @@ open class InsertImplicitCasts(
 
     override fun visitReturn(expression: IrReturn): IrExpression =
         expression.transformPostfix {
-            value = if (expression.returnTargetSymbol is IrConstructorSymbol) {
+            value = if (expression.irReturnTarget is IrConstructorSymbol) {
                 value.coerceToUnit()
             } else {
                 value.cast(expression.returnTarget.returnType)

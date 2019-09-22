@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -117,11 +116,11 @@ private class RangeLoopTransformer(
 ) : IrElementTransformerVoidWithContext() {
 
     private val symbols = context.ir.symbols
-    private val iteratorToLoopHeader = mutableMapOf<IrVariableSymbol, ForLoopHeader>()
-    private val headerInfoBuilder = HeaderInfoBuilder(context, this::getScopeOwnerSymbol)
-    private val headerProcessor = HeaderProcessor(context, headerInfoBuilder, this::getScopeOwnerSymbol)
+    private val iteratorToLoopHeader = mutableMapOf<IrVariable, ForLoopHeader>()
+    private val headerInfoBuilder = HeaderInfoBuilder(context, this::getScopeOwner)
+    private val headerProcessor = HeaderProcessor(context, headerInfoBuilder, this::getScopeOwner)
 
-    fun getScopeOwnerSymbol() = currentScope!!.scope.scopeOwnerSymbol
+    fun getScopeOwner() = currentScope!!.scope.irScopeOwner
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
         val initializer = declaration.initializer
@@ -145,10 +144,10 @@ private class RangeLoopTransformer(
      * Returns null if the for-loop cannot be lowered.
      */
     private fun processHeader(variable: IrVariable): IrStatement? {
-        assert(variable.symbol !in iteratorToLoopHeader)
+        assert(variable !in iteratorToLoopHeader)
         val forLoopInfo = headerProcessor.processHeader(variable)
             ?: return null  // If the for-loop cannot be lowered.
-        iteratorToLoopHeader[variable.symbol] = forLoopInfo
+        iteratorToLoopHeader[variable] = forLoopInfo
 
         // Lower into a composite with additional declarations (e.g., induction variable)
         // used in the loop condition and body.
@@ -166,7 +165,7 @@ private class RangeLoopTransformer(
             return super.visitWhileLoop(loop)
         }
 
-        with(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset)) {
+        with(context.createIrBuilder(getScopeOwner(), loop.startOffset, loop.endOffset)) {
             // Visit the loop body to process the "next" statement and lower nested loops.
             // Processing the "next" statement is necessary for building loops that need to
             // reference the loop variable in the loop condition.
@@ -199,7 +198,7 @@ private class RangeLoopTransformer(
         val iterator = expression.dispatchReceiver as IrGetValue
 
         // Return null if we didn't lower the corresponding header.
-        return iteratorToLoopHeader[iterator.symbol]
+        return iteratorToLoopHeader[iterator.target]
     }
 
     /**
@@ -224,7 +223,7 @@ private class RangeLoopTransformer(
         //   val i = initializeLoopVariable() // `inductionVariable` for progressions
         //                                    // `array[inductionVariable]` for arrays
         //   inductionVariable = inductionVariable + step
-        return with(context.createIrBuilder(getScopeOwnerSymbol(), initializer.startOffset, initializer.endOffset)) {
+        return with(context.createIrBuilder(getScopeOwner(), initializer.startOffset, initializer.endOffset)) {
             variable.initializer = forLoopInfo.initializeLoopVariable(symbols, this)
             val increment = forLoopInfo.incrementInductionVariable(this)
             IrCompositeImpl(

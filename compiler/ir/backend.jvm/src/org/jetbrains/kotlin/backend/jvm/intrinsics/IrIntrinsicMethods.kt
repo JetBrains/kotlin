@@ -21,10 +21,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -138,7 +134,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val PrimitiveType.symbol
         get() = irBuiltIns.primitiveTypeToIrType[this]!!.classOrNull!!
 
-    fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? = intrinsicsMap[symbol.toKey()]
+    fun getIntrinsic(target: IrFunction): IntrinsicMethod? = intrinsicsMap[target.toKey()]
 
     private fun unaryFunForPrimitives(name: String, intrinsic: IntrinsicMethod): List<Pair<Key, IntrinsicMethod>> =
         PrimitiveType.values().map { type ->
@@ -154,12 +150,12 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private fun binaryFunForPrimitives(
         name: String,
         intrinsic: IntrinsicMethod,
-        parameter: IrClassifierSymbol
+        parameter: IrClassifier
     ): List<Pair<Key, IntrinsicMethod>> =
         PrimitiveType.values().map { type ->
             createKeyMapping(
                 intrinsic,
-                type.symbol,
+                type.symbol.owner,
                 name,
                 parameter
             )
@@ -175,12 +171,12 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
         symbols.primitiveArrays.flatMap { (key, value) ->
             arrayMethods(
-                key.symbol,
+                key.symbol.owner,
                 value
             )
         } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
 
-    private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
+    private fun arrayMethods(elementClass: IrClassifier, arrayClass: IrClass) =
         listOf(
             createKeyMapping(ArraySize, arrayClass, "<get-size>"),
             createKeyMapping(NewArray, arrayClass, "<init>", irBuiltIns.intClass),
@@ -200,8 +196,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         private val DEC = Increment(-1)
         private val EQUALS = Equals(KtTokens.EQEQ)
 
-        private fun IrFunctionSymbol.toKey(): Key? {
-            val parent = owner.parent
+        private fun IrFunction.toKey(): Key? {
+            val parent = this.parent
             val ownerFqName = when {
                 parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS ->
                     (parent.parent as IrPackageFragment).fqName
@@ -211,17 +207,17 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             }
             return Key(
                 ownerFqName,
-                getParameterFqName(owner.extensionReceiverParameter),
-                owner.name.asString(),
-                owner.valueParameters.map(::getParameterFqName)
+                getParameterFqName(extensionReceiverParameter),
+                name.asString(),
+                valueParameters.map(::getParameterFqName)
             )
         }
 
         private fun getParameterFqName(parameter: IrValueParameter?): FqName? =
             getParameterFqName(parameter?.type?.classifierOrNull)
 
-        private fun getParameterFqName(parameter: IrClassifierSymbol?): FqName? =
-            parameter?.owner?.let {
+        private fun getParameterFqName(parameter: IrClassifier?): FqName? =
+            parameter?.let {
                 when (it) {
                     is IrClass -> it.fqNameWhenAvailable
                     is IrTypeParameter -> FqName(it.name.asString())
@@ -231,26 +227,26 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
         private fun createKeyMapping(
             intrinsic: IntrinsicMethod,
-            klass: IrClassSymbol,
+            klass: IrClass,
             name: String,
-            vararg args: IrClassifierSymbol
+            vararg args: IrClassifier
         ): Pair<Key, IntrinsicMethod> =
-            Key(klass.owner.fqNameWhenAvailable!!, null, name, args.map {
+            Key(klass.fqNameWhenAvailable!!, null, name, args.map {
                 getParameterFqName(it)
             }) to intrinsic
 
-        private fun numberConversionMethods(numberClass: IrClassSymbol) =
+        private fun numberConversionMethods(numberClass: IrClass) =
             OperatorConventions.NUMBER_CONVERSIONS.map { method ->
                 createKeyMapping(NumberCast, numberClass, method.asString())
             }
 
 
         private fun primitiveComparisonIntrinsics(
-            typeToIrFun: Map<SimpleType, IrSimpleFunctionSymbol>,
+            typeToIrFun: Map<SimpleType, IrSimpleFunction>,
             operator: KtSingleValueToken
         ): List<Pair<Key, PrimitiveComparison>> =
-            typeToIrFun.map { (type, irFunSymbol) ->
-                irFunSymbol.toKey()!! to PrimitiveComparison(type, operator)
+            typeToIrFun.map { (type, irFun) ->
+                irFun.toKey()!! to PrimitiveComparison(type, operator)
             }
     }
 }

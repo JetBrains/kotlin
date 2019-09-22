@@ -29,7 +29,7 @@ object ArrayIterator : IntrinsicMethod() {
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction {
-        val owner = context.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
+        val owner = context.typeMapper.mapClass(expression.target.parentAsClass)
         return IrIntrinsicFunction.create(expression, signature, context, owner) {
             val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
             val intrinsicOwner =

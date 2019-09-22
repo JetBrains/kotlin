@@ -18,25 +18,25 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 abstract class IrFieldExpressionBase(
     startOffset: Int, endOffset: Int,
-    override val symbol: IrFieldSymbol,
+    override val target: IrField,
     type: IrType,
     override val origin: IrStatementOrigin? = null,
-    override val superQualifierSymbol: IrClassSymbol?
+    override val irSuperQualifier: IrClass?
 ) :
     IrExpressionBase(startOffset, endOffset, type),
     IrFieldAccessExpression {
 
-    override val descriptor: PropertyDescriptor get() = symbol.descriptor
-    override val superQualifier: ClassDescriptor? get() = superQualifierSymbol?.descriptor
+    override val descriptor: PropertyDescriptor get() = target.descriptor
+    override val superQualifier: ClassDescriptor? get() = irSuperQualifier?.descriptor
 
     final override var receiver: IrExpression? = null
 }

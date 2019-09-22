@@ -543,11 +543,11 @@ open class IrFileSerializer(
 
     private fun serializeCall(call: IrCall): ProtoCall {
         val proto = ProtoCall.newBuilder()
-        proto.symbol = serializeIrSymbol(call.symbol)
+        proto.symbol = serializeIrSymbol(call.target.symbol)
         call.origin?.let { proto.origin = serializeIrStatementOrigin(it) }
 
-        call.superQualifierSymbol?.let {
-            proto.`super` = serializeIrSymbol(it)
+        call.irSuperQualifier?.let {
+            proto.`super` = serializeIrSymbol(it.symbol)
         }
         proto.memberAccess = serializeMemberAccessCommon(call)
 
@@ -556,7 +556,7 @@ open class IrFileSerializer(
 
     private fun serializeConstructorCall(call: IrConstructorCall): ProtoConstructorCall =
         ProtoConstructorCall.newBuilder().apply {
-            symbol = serializeIrSymbol(call.symbol)
+            symbol = serializeIrSymbol(call.target.symbol)
             constructorTypeArgumentsCount = call.constructorTypeArgumentsCount
             memberAccess = serializeMemberAccessCommon(call)
         }.build()
@@ -569,7 +569,7 @@ open class IrFileSerializer(
 
     private fun serializeFunctionReference(callable: IrFunctionReference): ProtoFunctionReference {
         val proto = ProtoFunctionReference.newBuilder()
-            .setSymbol(serializeIrSymbol(callable.symbol))
+            .setSymbol(serializeIrSymbol(callable.target.symbol))
             .setMemberAccess(serializeMemberAccessCommon(callable))
 
         callable.origin?.let { proto.setOrigin(serializeIrStatementOrigin(it)) }
@@ -580,12 +580,12 @@ open class IrFileSerializer(
         callable: IrLocalDelegatedPropertyReference
     ): ProtoLocalDelegatedPropertyReference {
         val proto = ProtoLocalDelegatedPropertyReference.newBuilder()
-            .setDelegate(serializeIrSymbol(callable.delegate))
-            .setGetter(serializeIrSymbol(callable.getter))
-            .setSymbol(serializeIrSymbol(callable.symbol))
+            .setDelegate(serializeIrSymbol(callable.delegate.symbol))
+            .setGetter(serializeIrSymbol(callable.getter.symbol))
+            .setSymbol(serializeIrSymbol(callable.target.symbol))
 
         callable.origin?.let { proto.setOrigin(serializeIrStatementOrigin(it)) }
-        callable.setter?.let { proto.setSetter(serializeIrSymbol(it)) }
+        callable.setter?.let { proto.setSetter(serializeIrSymbol(it.symbol)) }
 
         return proto.build()
     }
@@ -593,18 +593,18 @@ open class IrFileSerializer(
     private fun serializePropertyReference(callable: IrPropertyReference): ProtoPropertyReference {
         val proto = ProtoPropertyReference.newBuilder()
             .setMemberAccess(serializeMemberAccessCommon(callable))
-            .setSymbol(serializeIrSymbol(callable.symbol))
+            .setSymbol(serializeIrSymbol(callable.target.symbol))
         callable.origin?.let { proto.origin = serializeIrStatementOrigin(it) }
-        callable.field?.let { proto.field = serializeIrSymbol(it) }
-        callable.getter?.let { proto.getter = serializeIrSymbol(it) }
-        callable.setter?.let { proto.setter = serializeIrSymbol(it) }
+        callable.field?.let { proto.field = serializeIrSymbol(it.symbol) }
+        callable.getter?.let { proto.getter = serializeIrSymbol(it.symbol) }
+        callable.setter?.let { proto.setter = serializeIrSymbol(it.symbol) }
 
         return proto.build()
     }
 
     private fun serializeClassReference(expression: IrClassReference): ProtoClassReference {
         val proto = ProtoClassReference.newBuilder()
-            .setClassSymbol(serializeIrSymbol(expression.symbol))
+            .setClassSymbol(serializeIrSymbol(expression.target.symbol))
             .setClassType(serializeIrType(expression.classType))
         return proto.build()
     }
@@ -628,7 +628,7 @@ open class IrFileSerializer(
 
     private fun serializeDelegatingConstructorCall(call: IrDelegatingConstructorCall): ProtoDelegatingConstructorCall {
         val proto = ProtoDelegatingConstructorCall.newBuilder()
-            .setSymbol(serializeIrSymbol(call.symbol))
+            .setSymbol(serializeIrSymbol(call.target.symbol))
             .setMemberAccess(serializeMemberAccessCommon(call))
         return proto.build()
     }
@@ -640,7 +640,7 @@ open class IrFileSerializer(
 
     private fun serializeEnumConstructorCall(call: IrEnumConstructorCall): ProtoEnumConstructorCall {
         val proto = ProtoEnumConstructorCall.newBuilder()
-            .setSymbol(serializeIrSymbol(call.symbol))
+            .setSymbol(serializeIrSymbol(call.target.symbol))
             .setMemberAccess(serializeMemberAccessCommon(call))
         return proto.build()
     }
@@ -653,14 +653,14 @@ open class IrFileSerializer(
 
     private fun serializeGetEnumValue(expression: IrGetEnumValue): ProtoGetEnumValue {
         val proto = ProtoGetEnumValue.newBuilder()
-            .setSymbol(serializeIrSymbol(expression.symbol))
+            .setSymbol(serializeIrSymbol(expression.target.symbol))
         return proto.build()
     }
 
     private fun serializeFieldAccessCommon(expression: IrFieldAccessExpression): ProtoFieldAccessCommon {
         val proto = ProtoFieldAccessCommon.newBuilder()
-            .setSymbol(serializeIrSymbol(expression.symbol))
-        expression.superQualifierSymbol?.let { proto.`super` = serializeIrSymbol(it) }
+            .setSymbol(serializeIrSymbol(expression.target.symbol))
+        expression.irSuperQualifier?.let { proto.`super` = serializeIrSymbol(it.symbol) }
         expression.receiver?.let { proto.receiver = serializeExpression(it) }
         return proto.build()
     }
@@ -674,28 +674,28 @@ open class IrFileSerializer(
 
     private fun serializeGetValue(expression: IrGetValue): ProtoGetValue =
         ProtoGetValue.newBuilder()
-            .setSymbol(serializeIrSymbol(expression.symbol)).apply {
+            .setSymbol(serializeIrSymbol(expression.target.symbol)).apply {
                 expression.origin?.let { origin = serializeIrStatementOrigin(it) }
             }
             .build()
 
     private fun serializeGetObject(expression: IrGetObjectValue): ProtoGetObject {
         val proto = ProtoGetObject.newBuilder()
-            .setSymbol(serializeIrSymbol(expression.symbol))
+            .setSymbol(serializeIrSymbol(expression.target.symbol))
         return proto.build()
     }
 
     private fun serializeInstanceInitializerCall(call: IrInstanceInitializerCall): ProtoInstanceInitializerCall {
         val proto = ProtoInstanceInitializerCall.newBuilder()
 
-        proto.symbol = serializeIrSymbol(call.classSymbol)
+        proto.symbol = serializeIrSymbol(call.irClass.symbol)
 
         return proto.build()
     }
 
     private fun serializeReturn(expression: IrReturn): ProtoReturn {
         val proto = ProtoReturn.newBuilder()
-            .setReturnTarget(serializeIrSymbol(expression.returnTargetSymbol))
+            .setReturnTarget(serializeIrSymbol(expression.irReturnTarget.symbol))
             .setValue(serializeExpression(expression.value))
         return proto.build()
     }
@@ -710,7 +710,7 @@ open class IrFileSerializer(
 
     private fun serializeSetVariable(expression: IrSetVariable): ProtoSetVariable =
         ProtoSetVariable.newBuilder()
-            .setSymbol(serializeIrSymbol(expression.symbol))
+            .setSymbol(serializeIrSymbol(expression.target.symbol))
             .setValue(serializeExpression(expression.value)).apply {
                 expression.origin?.let { origin = serializeIrStatementOrigin(it) }
             }
@@ -1103,8 +1103,8 @@ open class IrFileSerializer(
             .setIsTailrec(declaration.isTailrec)
             .setIsSuspend(declaration.isSuspend)
 
-        declaration.overriddenSymbols.forEach {
-            proto.addOverridden(serializeIrSymbol(it))
+        declaration.overridden.forEach {
+            proto.addOverridden(serializeIrSymbol(it.symbol))
         }
 
         return proto.build()

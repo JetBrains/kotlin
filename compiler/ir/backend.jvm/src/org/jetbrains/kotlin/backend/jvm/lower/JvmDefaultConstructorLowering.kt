@@ -42,7 +42,7 @@ private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : Cl
             return
 
         irClass.addConstructor().apply {
-            val irBuilder = context.createIrBuilder(this.symbol, startOffset, endOffset)
+            val irBuilder = context.createIrBuilder(this, startOffset, endOffset)
             body = irBuilder.irBlockBody {
                 +irDelegatingConstructorCall(primaryConstructor).apply {
                     passTypeArgumentsFrom(irClass)

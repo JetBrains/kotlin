@@ -73,12 +73,12 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         if (irFunction.isMethodOfAny()) return
 
         if (irFunction.origin === IrDeclarationOrigin.FAKE_OVERRIDE &&
-            irFunction.overriddenSymbols.all {
-                !it.owner.comesFromJava() &&
-                        if ((it.owner.parent as? IrClass)?.isInterface == true)
-                            it.owner.hasJvmDefault() // TODO: Remove this after modality is corrected in InterfaceLowering.
+            irFunction.overridden.all {
+                !it.comesFromJava() &&
+                        if ((it.parent as? IrClass)?.isInterface == true)
+                            it.hasJvmDefault() // TODO: Remove this after modality is corrected in InterfaceLowering.
                         else
-                            it.owner.modality !== Modality.ABSTRACT
+                            it.modality !== Modality.ABSTRACT
             }
         ) {
             // All needed bridges will be generated where functions are implemented.
@@ -118,7 +118,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             }
         } else if (irFunction.origin == IrDeclarationOrigin.FAKE_OVERRIDE &&
             irFunction.modality == Modality.ABSTRACT &&
-            irFunction.overriddenSymbols.all { it.owner.getJvmName() != ourMethodName }
+            irFunction.overridden.all { it.getJvmName() != ourMethodName }
         ) {
             // Bridges for abstract fake overrides whose JVM names differ from overridden functions.
             val bridge = irFunction.orphanedCopy()
@@ -191,8 +191,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         // For lambda classes, we move override from the `invoke` function to its bridge. This will allow us to avoid boxing
         // the return type of `invoke` in codegen, in case lambda's return type is primitive.
         if (method.name == OperatorNameConventions.INVOKE && irClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
-            target.overriddenSymbols.remove(method.symbol)
-            bridge.overriddenSymbols.add(method.symbol)
+            target.overridden.remove(method)
+            bridge.overridden.add(method)
         }
 
         signaturesToSkip.add(signature)
@@ -281,9 +281,9 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                         IrCallImpl(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                             maybeOrphanedTarget.returnType,
-                            maybeOrphanedTarget.symbol, maybeOrphanedTarget.descriptor,
+                            maybeOrphanedTarget, maybeOrphanedTarget.descriptor,
                             origin = IrStatementOrigin.BRIDGE_DELEGATION,
-                            superQualifierSymbol = if (invokeStatically) maybeOrphanedTarget.parentAsClass.symbol else null
+                            irSuperQualifier = if (invokeStatically) maybeOrphanedTarget.parentAsClass else null
                         ).apply {
                             passTypeArgumentsFrom(this@createBridgeBody)
                             dispatchReceiver = irGet(dispatchReceiverParameter!!)
@@ -303,7 +303,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
 
     /* A hacky way to make sure the code generator calls the right function, and not some standard interface it implements. */
     private fun IrSimpleFunction.orphanedCopy() =
-        if (overriddenSymbols.size == 0)
+        if (overridden.size == 0)
             this
         else
             WrappedSimpleFunctionDescriptor(descriptor.annotations).let { wrappedDescriptor ->
@@ -373,7 +373,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         override val isAbstract get() = irFunction.modality == Modality.ABSTRACT
         override val mayBeUsedAsSuperImplementation get() = !irFunction.parentAsClass.isInterface || irFunction.hasJvmDefault()
 
-        override fun getOverridden() = irFunction.overriddenSymbols.map { FunctionHandleForIrFunction(it.owner) }
+        override fun getOverridden() = irFunction.overridden.map { FunctionHandleForIrFunction(it) }
 
         override fun hashCode(): Int =
             irFunction.parent.safeAs<IrClass>()?.fqNameWhenAvailable.hashCode() + 31 * irFunction.getJvmSignature().hashCode()

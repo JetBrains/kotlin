@@ -37,7 +37,7 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
         }
 
     protected open fun mapRuntimeEnumEntry(builder: IrBuilderWithScope, subject: IrExpression): IrExpression =
-        builder.irCall(subject.type.getClass()!!.symbol.getPropertyGetter("ordinal")!!).apply { dispatchReceiver = subject }
+        builder.irCall(subject.type.getClass()!!.getPropertyGetter("ordinal")!!).apply { dispatchReceiver = subject }
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile)
@@ -59,7 +59,7 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
         // Will be initialized only when we found a branch that compares
         // subject with compile-time known enum entry.
         val subjectOrdinalProvider = lazy {
-            context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, subject.startOffset, subject.endOffset).run {
+            context.createIrBuilder(currentScope!!.scope.irScopeOwner, subject.startOffset, subject.endOffset).run {
                 val integer = if (subject.type.isNullable())
                     irIfNull(context.irBuiltIns.intType, irGet(subject), irInt(-1), mapRuntimeEnumEntry(this, irGet(subject)))
                 else
@@ -81,7 +81,7 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
 
     override fun visitCall(expression: IrCall): IrExpression {
         // We are looking for branch that is a comparison of the subject and another enum entry.
-        if (expression.symbol != context.irBuiltIns.eqeqSymbol) {
+        if (expression.target != context.irBuiltIns.eqeqSymbol.owner) {
             return super.visitCall(expression)
         }
         val lhs = expression.getValueArgument(0)!!
@@ -90,20 +90,20 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
         val (topmostSubject, topmostOrdinalProvider) = subjectWithOrdinalStack.peek()
             ?: return super.visitCall(expression)
         val other = when {
-            lhs is IrGetValue && lhs.symbol.owner == topmostSubject -> rhs
-            rhs is IrGetValue && rhs.symbol.owner == topmostSubject -> lhs
+            lhs is IrGetValue && lhs.target == topmostSubject -> rhs
+            rhs is IrGetValue && rhs.target == topmostSubject -> lhs
             else -> return super.visitCall(expression)
         }
         val entryOrdinal = when {
-            other is IrGetEnumValue && topmostSubject.type.classifierOrNull?.owner == other.symbol.owner.parent ->
-                mapConstEnumEntry(other.symbol.owner)
+            other is IrGetEnumValue && topmostSubject.type.classifierOrNull?.owner == other.target.parent ->
+                mapConstEnumEntry(other.target)
             other.isNullConst() ->
                 -1
             else -> return super.visitCall(expression)
         }
         val subjectOrdinal = topmostOrdinalProvider.value
-        return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, expression.symbol).apply {
-            putValueArgument(0, IrGetValueImpl(lhs.startOffset, lhs.endOffset, subjectOrdinal.type, subjectOrdinal.symbol))
+        return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, expression.target).apply {
+            putValueArgument(0, IrGetValueImpl(lhs.startOffset, lhs.endOffset, subjectOrdinal.type, subjectOrdinal))
             putValueArgument(1, IrConstImpl.int(rhs.startOffset, rhs.endOffset, context.irBuiltIns.intType, entryOrdinal))
         }
     }

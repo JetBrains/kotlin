@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -44,7 +42,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
 
     private inner class NameInventor : IrElementVisitor<Unit, Data> {
         private val anonymousClassesCount = mutableMapOf<String, Int>()
-        private val localFunctionNames = mutableMapOf<IrFunctionSymbol, String>()
+        private val localFunctionNames = mutableMapOf<IrFunction, String>()
 
         override fun visitClass(declaration: IrClass, data: Data) {
             if (!data.isLocal) {
@@ -104,7 +102,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                 declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> {
                     inventName(null, data).also { name ->
                         // We save the name of the lambda to reuse it in the reference to it (produced by the closure conversion) later.
-                        localFunctionNames[(declaration as IrFunction).symbol] = name
+                        localFunctionNames[declaration as IrFunction] = name
                     }
                 }
                 declaration is IrFunction && declaration.parent !is IrClass -> {
@@ -129,7 +127,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: Data) {
-            val internalName = localFunctionNames[expression.symbol] ?: inventName(null, data)
+            val internalName = localFunctionNames[expression.target] ?: inventName(null, data)
             context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName))
 
             expression.acceptChildren(this, data)

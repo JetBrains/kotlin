@@ -27,7 +27,7 @@ fun generateOverriddenFunctionSymbols(
     declaration: IrSimpleFunction,
     symbolTable: SymbolTable
 ) {
-    declaration.descriptor.overriddenDescriptors.mapTo(declaration.overriddenSymbols) {
+    declaration.descriptor.overriddenDescriptors.mapTo(declaration.overridden) {
         symbolTable.referenceSimpleFunction(it.original)
     }
 }
@@ -49,7 +49,7 @@ fun generateOverriddenFieldSymbols(
     symbolTable: SymbolTable,
     hasBackingField: (PropertyDescriptor) -> Boolean
 ) {
-    declaration.descriptor.overriddenDescriptors.mapNotNullTo(declaration.overriddenSymbols) {
+    declaration.descriptor.overriddenDescriptors.mapNotNullTo(declaration.overridden) {
         if (hasBackingField(it)) {
             symbolTable.referenceField(it.original)
         } else null

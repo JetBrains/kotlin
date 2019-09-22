@@ -172,7 +172,7 @@ class AnnotationCodegen(
 
     private fun genAnnotationArguments(annotation: IrConstructorCall, annotationVisitor: AnnotationVisitor) {
         val annotationClass = annotation.annotationClass
-        for (param in annotation.symbol.owner.valueParameters) {
+        for (param in annotation.target.valueParameters) {
             val value = annotation.getValueArgument(param.index)
             if (value == null) {
                 if (param.defaultValue != null) continue // Default value will be supplied by JVM at runtime.
@@ -200,7 +200,7 @@ class AnnotationCodegen(
         when (value) {
             is IrConst<*> -> annotationVisitor.visit(name, value.value)
             is IrConstructorCall -> {
-                val callee = value.symbol.owner
+                val callee = value.target
                 when {
                     callee.parentAsClass.isAnnotationClass -> {
                         val internalAnnName = typeMapper.mapType(callee.returnType).descriptor
@@ -212,8 +212,8 @@ class AnnotationCodegen(
                 }
             }
             is IrGetEnumValue -> {
-                val enumClassInternalName = typeMapper.mapClass(value.symbol.owner.parentAsClass).descriptor
-                val enumEntryName = value.symbol.owner.name
+                val enumClassInternalName = typeMapper.mapClass(value.target.parentAsClass).descriptor
+                val enumEntryName = value.target.name
                 annotationVisitor.visitEnum(name, enumClassInternalName, enumEntryName.asString())
             }
             is IrVararg -> { // array constructor
@@ -270,7 +270,7 @@ class AnnotationCodegen(
         fun IrConstructorCall.applicableTargetSet() =
             annotationClass.applicableTargetSet() ?: KotlinTarget.DEFAULT_TARGET_SET
 
-        val IrConstructorCall.annotationClass get() = symbol.owner.parentAsClass
+        val IrConstructorCall.annotationClass get() = target.parentAsClass
     }
 }
 
@@ -288,13 +288,13 @@ private fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgument =
         getAnnotation(KotlinBuiltIns.FQ_NAMES.retention)?.getValueArgument(RETENTION_PARAMETER_NAME)
                 as? IrGetEnumValue?: return null
-    val retentionArgumentValue = retentionArgument.symbol.owner
+    val retentionArgumentValue = retentionArgument.target
     return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
 }
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
 private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
+    val index = target.valueParameters.find { it.name == name }?.index ?: return null
     return getValueArgument(index)
 }
 
@@ -311,6 +311,6 @@ private fun loadAnnotationTargets(targetEntry: IrConstructorCall): Set<KotlinTar
     val valueArgument = targetEntry.getValueArgument(TARGET_ALLOWED_TARGETS)
             as? IrVararg ?: return null
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
-        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
+        KotlinTarget.valueOrNull(it.target.name.asString())
     }.toSet()
 }

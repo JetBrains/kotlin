@@ -69,7 +69,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
             override fun visitCall(expression: IrCall): IrExpression {
                 super.visitCall(expression)
 
-                return memberMap[expression.symbol]?.let {
+                return memberMap[expression.target]?.let {
                     transformPrivateToStaticCall(expression, it)
                 } ?: expression
             }
@@ -77,7 +77,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 super.visitFunctionReference(expression)
 
-                return memberMap[expression.symbol]?.let {
+                return memberMap[expression.target]?.let {
                     transformPrivateToStaticReference(expression) {
                         IrFunctionReferenceImpl(
                             expression.startOffset, expression.endOffset,
@@ -98,7 +98,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                         IrPropertyReferenceImpl(
                             expression.startOffset, expression.endOffset,
                             expression.type,
-                            expression.symbol, // TODO remap property symbol based on remapped getter/setter?
+                            expression.target, // TODO remap property symbol based on remapped getter/setter?
                             expression.typeArgumentsCount,
                             expression.field,
                             memberMap[expression.getter]?.symbol ?: expression.getter,
@@ -116,7 +116,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                     staticTarget.symbol, staticTarget.descriptor,
                     expression.typeArgumentsCount,
                     expression.origin,
-                    expression.superQualifierSymbol
+                    expression.irSuperQualifier
                 )
 
                 newExpression.extensionReceiver = expression.extensionReceiver
@@ -213,7 +213,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
         staticFunction.body = function.body?.deepCopyWithSymbols(staticFunction)
 
         staticFunction.transform(object : IrElementTransformerVoid() {
-            override fun visitGetValue(expression: IrGetValue) = parameterMapping[expression.symbol.owner]?.let {
+            override fun visitGetValue(expression: IrGetValue) = parameterMapping[expression.target]?.let {
                 expression.run { IrGetValueImpl(startOffset, endOffset, type, it.symbol, origin) }
             } ?: expression
         }, null)

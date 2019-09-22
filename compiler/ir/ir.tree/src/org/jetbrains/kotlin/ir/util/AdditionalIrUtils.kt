@@ -68,8 +68,8 @@ val IrFunction.isReal get() = this.origin != IrDeclarationOrigin.FAKE_OVERRIDE
 fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
     if (this == other) return true
 
-    this.overriddenSymbols.forEach {
-        if (it.owner.overrides(other)) {
+    this.overridden.forEach {
+        if (it.overrides(other)) {
             return true
         }
     }
@@ -78,7 +78,7 @@ fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
 }
 
 private val IrConstructorCall.annotationClass
-    get() = this.symbol.owner.constructedClass
+    get() = this.target.constructedClass
 
 fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
     any { it.annotationClass.fqNameWhenAvailable == fqName }

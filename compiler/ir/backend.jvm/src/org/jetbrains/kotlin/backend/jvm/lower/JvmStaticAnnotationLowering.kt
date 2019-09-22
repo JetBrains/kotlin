@@ -126,8 +126,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
 
     private fun createProxyBody(target: IrFunction, proxy: IrFunction, companion: IrClass): IrBody {
         val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
-        val companionInstanceFieldSymbol = companionInstanceField.symbol
-        val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
+        val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target)
 
         call.passTypeArgumentsFrom(proxy)
 
@@ -135,7 +134,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             call.dispatchReceiver = IrGetFieldImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                companionInstanceFieldSymbol,
+                companionInstanceField,
                 companion.defaultType
             )
         }
@@ -143,7 +142,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             call.extensionReceiver = IrGetValueImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                extensionReceiver.symbol
+                extensionReceiver
             )
         }
         proxy.valueParameters.mapIndexed { i, valueParameter ->
@@ -152,7 +151,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
                 IrGetValueImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
-                    valueParameter.symbol
+                    valueParameter
                 )
             )
         }
@@ -191,8 +190,8 @@ private class MakeCallsStatic(
     val context: JvmBackendContext
 ) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.symbol.owner.isJvmStaticInSingleton() && expression.dispatchReceiver != null) {
-            return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
+        if (expression.target.isJvmStaticInSingleton() && expression.dispatchReceiver != null) {
+            return context.createIrBuilder(expression.target, expression.startOffset, expression.endOffset).irBlock(expression) {
                 // OldReceiver has to be evaluated for its side effects.
                 val oldReceiver = super.visitExpression(expression.dispatchReceiver!!)
                 // `coerceToUnit()` is private in InsertImplicitCasts, have to reproduce it here

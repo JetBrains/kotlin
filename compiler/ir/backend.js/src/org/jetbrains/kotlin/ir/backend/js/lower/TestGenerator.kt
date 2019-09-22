@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -42,7 +41,7 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
 
     private data class FunctionWithBody(val function: IrSimpleFunction, val body: IrBlockBody)
 
-    private fun IrSimpleFunctionSymbol.createInvocation(
+    private fun IrSimpleFunction.createInvocation(
         name: String,
         parentBody: IrBlockBody,
         ignored: Boolean = false
@@ -62,8 +61,8 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
             putValueArgument(0, JsIrBuilder.buildString(context.irBuiltIns.stringType, name))
             putValueArgument(1, JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, ignored))
 
-            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
-            putValueArgument(2, JsIrBuilder.buildFunctionReference(refType, function.symbol))
+            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0).symbol, false, emptyList(), emptyList())
+            putValueArgument(2, JsIrBuilder.buildFunctionReference(refType, function))
         }
 
         return FunctionWithBody(function, body)
@@ -102,15 +101,15 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
         body.statements += classVal
 
         body.statements += beforeFuns.map {
-            JsIrBuilder.buildCall(it.symbol).apply {
-                dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+            JsIrBuilder.buildCall(it).apply {
+                dispatchReceiver = JsIrBuilder.buildGetValue(classVal)
             }
         }
 
         val returnStatement = JsIrBuilder.buildReturn(
-            fn.symbol,
-            JsIrBuilder.buildCall(testFun.symbol).apply {
-                dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+            fn,
+            JsIrBuilder.buildCall(testFun).apply {
+                dispatchReceiver = JsIrBuilder.buildGetValue(classVal)
             },
             context.irBuiltIns.unitType
         )
@@ -122,8 +121,8 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
                 tryResult = returnStatement
                 finallyExpression = JsIrBuilder.buildComposite(context.irBuiltIns.unitType).apply {
                     statements += afterFuns.map {
-                        JsIrBuilder.buildCall(it.symbol).apply {
-                            dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+                        JsIrBuilder.buildCall(it).apply {
+                            dispatchReceiver = JsIrBuilder.buildGetValue(classVal)
                         }
                     }
                 }
@@ -133,10 +132,10 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
 
     private fun IrClass.instance(): IrExpression {
         return if (kind == ClassKind.OBJECT) {
-            JsIrBuilder.buildGetObjectValue(defaultType, symbol)
+            JsIrBuilder.buildGetObjectValue(defaultType, this)
         } else {
             declarations.asSequence().filterIsInstance<IrConstructor>().single { it.isPrimary }.let { constructor ->
-                IrConstructorCallImpl.fromSymbolOwner(defaultType, constructor.symbol).also {
+                IrConstructorCallImpl.fromSymbolOwner(defaultType, constructor).also {
                     if (isInner) {
                         it.dispatchReceiver = (parent as IrClass).instance()
                     }
@@ -158,5 +157,5 @@ class TestGenerator(val context: JsIrBackendContext) : FileLoweringPass {
         get() = hasAnnotation("kotlin.test.AfterTest")
 
     private fun IrAnnotationContainer.hasAnnotation(fqName: String) =
-        annotations.any { it.symbol.owner.fqNameWhenAvailable?.parent()?.asString() == fqName }
+        annotations.any { it.target.fqNameWhenAvailable?.parent()?.asString() == fqName }
 }

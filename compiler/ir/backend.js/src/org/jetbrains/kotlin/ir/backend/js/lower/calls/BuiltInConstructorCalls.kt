@@ -19,7 +19,7 @@ class BuiltInConstructorCalls(val context: JsIrBackendContext) : CallsTransforme
     override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression =
         if (call is IrConstructorCall) {
             // Do not transform Delegation calls
-            when (call.symbol) {
+            when (call.target) {
                 intrinsics.stringConstructorSymbol -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "")
                 intrinsics.anyConstructorSymbol -> irConstructorCall(call, intrinsics.jsObjectConstructorSymbol)
                 else -> call

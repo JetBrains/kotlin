@@ -74,7 +74,7 @@ open class IrIntrinsicFunction(
         var offset = 0
         expression.dispatchReceiver?.let { genArg(it, codegen, offset++, data) }
         expression.extensionReceiver?.let { genArg(it, codegen, offset++, data) }
-        for ((i, valueParameter) in expression.symbol.owner.valueParameters.withIndex()) {
+        for ((i, valueParameter) in expression.target.valueParameters.withIndex()) {
             val argument = expression.getValueArgument(i)
             when {
                 argument != null ->
@@ -82,7 +82,7 @@ open class IrIntrinsicFunction(
                 valueParameter.isVararg -> {
                     // TODO: is there an easier way to get the substituted type of an empty vararg argument?
                     val arrayType = codegen.typeMapper.mapType(
-                        valueParameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments)
+                        valueParameter.type.substitute(expression.target.typeParameters, expression.typeArguments)
                     )
                     StackValue.operation(arrayType) {
                         it.aconst(0)
@@ -140,11 +140,10 @@ open class IrIntrinsicFunction(
 }
 
 fun IrFunctionAccessExpression.argTypes(context: JvmBackendContext): ArrayList<Type> {
-    val callee = symbol.owner
-    val signature = context.methodSignatureMapper.mapSignatureSkipGeneric(callee)
+    val signature = context.methodSignatureMapper.mapSignatureSkipGeneric(target)
     return arrayListOf<Type>().apply {
         if (dispatchReceiver != null) {
-            add(context.typeMapper.mapClass(callee.parentAsClass))
+            add(context.typeMapper.mapClass(target.parentAsClass))
         }
         addAll(signature.asmMethod.argumentTypes)
     }
@@ -152,5 +151,5 @@ fun IrFunctionAccessExpression.argTypes(context: JvmBackendContext): ArrayList<T
 
 fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
     return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
-            symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
+            target.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
 }

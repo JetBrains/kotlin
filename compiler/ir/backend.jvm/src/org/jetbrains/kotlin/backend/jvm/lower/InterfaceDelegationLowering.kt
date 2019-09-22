@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -48,12 +47,12 @@ internal val interfaceDelegationPhase = makeIrFilePhase(
 )
 
 private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
-    val replacementMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    val replacementMap = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(this)
         // TODO: Replacer should be run on whole module, not on a single file.
-        irFile.acceptVoid(OverriddenSymbolsReplacer(replacementMap))
+        irFile.acceptVoid(OverriddenReplacer(replacementMap))
     }
 
     override fun visitElement(element: IrElement) {
@@ -81,9 +80,9 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             // In classes, only generate interface delegation for functions immediately inherited from am interface.
             // (Otherwise, delegation will be present in the parent class)
             if (!isDefaultImplsGeneration &&
-                function.overriddenSymbols.any {
-                    (!it.owner.parentAsClass.isInterface || it.owner.hasJvmDefault()) &&
-                            it.owner.modality != Modality.ABSTRACT
+                function.overridden.any {
+                    (!it.parentAsClass.isInterface || it.hasJvmDefault()) &&
+                            it.modality != Modality.ABSTRACT
                 }
             ) {
                 continue
@@ -100,7 +99,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             val delegation = generateDelegationToDefaultImpl(irClass, implementation, function, isDefaultImplsGeneration)
             if (!isDefaultImplsGeneration) {
                 toRemove.add(function)
-                replacementMap[function.symbol] = delegation.symbol
+                replacementMap[function] = delegation
             }
         }
         irClass.declarations.removeAll(toRemove)
@@ -134,7 +133,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
                 ).apply {
                     descriptor.bind(this)
                     parent = irClass
-                    overriddenSymbols.addAll(inheritedFun.overriddenSymbols)
+                    overridden.addAll(inheritedFun.overridden)
                     copyParameterDeclarationsFrom(inheritedFun)
                     annotations.addAll(inheritedFun.annotations)
 
@@ -155,10 +154,10 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
 
         irClass.declarations.add(irFunction)
 
-        context.createIrBuilder(irFunction.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+        context.createIrBuilder(irFunction, UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
             irFunction.body = irBlockBody {
                 +irReturn(
-                    irCall(defaultImplFun.symbol, irFunction.returnType).apply {
+                    irCall(defaultImplFun, irFunction.returnType).apply {
                         var offset = 0
                         passTypeArgumentsFrom(irFunction)
                         irFunction.dispatchReceiverParameter?.let { putValueArgument(offset++, irGet(it)) }
@@ -172,7 +171,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
         return irFunction
     }
 
-    private class OverriddenSymbolsReplacer(val replacementMap: Map<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>) :
+    private class OverriddenReplacer(val replacementMap: Map<IrSimpleFunction, IrSimpleFunction>) :
         IrElementVisitorVoid {
 
         override fun visitElement(element: IrElement) {
@@ -180,7 +179,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            declaration.overriddenSymbols.replaceAll(UnaryOperator { symbol -> replacementMap[symbol] ?: symbol })
+            declaration.overridden.replaceAll(UnaryOperator { function -> replacementMap[function] ?: function })
             super.visitSimpleFunction(declaration)
         }
     }
@@ -202,10 +201,10 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.superQualifierSymbol?.owner?.isInterface != true) {
+        if (expression.irSuperQualifier?.isInterface != true) {
             return super.visitCall(expression)
         }
-        val superCallee = (expression.symbol.owner as IrSimpleFunction).resolveFakeOverride()!!
+        val superCallee = (expression.target as IrSimpleFunction).resolveFakeOverride()!!
         if (superCallee.isDefinitelyNotDefaultImplsMethod()) return super.visitCall(expression)
 
         val redirectTarget = context.declarationFactory.getDefaultImplsFunction(superCallee)
@@ -228,7 +227,7 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val callee = expression.symbol.owner
+        val callee = expression.target
 
         if (callee.parent.safeAs<IrClass>()?.isInterface != true ||
             callee.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER

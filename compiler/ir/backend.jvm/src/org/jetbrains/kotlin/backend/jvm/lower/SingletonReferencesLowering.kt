@@ -36,14 +36,14 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : Clas
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
-        constructingEnums.push(expression.symbol.owner.parent)
+        constructingEnums.push(expression.target.parent)
         val call = super.visitEnumConstructorCall(expression)
         constructingEnums.pop()
         return call
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
-        val candidate = expression.symbol.owner.correspondingClass
+        val candidate = expression.target.correspondingClass
 
         return if (candidate != null && isInScope(candidate) && !isVisitingSuperConstructor(candidate)) {
             // Replace `SomeEnumClass.SomeEnumEntry` with `this`, if possible.
@@ -51,16 +51,16 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : Clas
             // SomeEnumEntry is a singleton, which is assigned (SETFIELD) to SomeEnumClass after the construction of the singleton is done.
             // Therefore, during the construction of SomeEnumEntry, SomeEnumClass.SomeEnumEntry isn't available yet. All references to it
             // must be replaced with `SomeEnumEntry.this`.
-            IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, candidate.thisReceiver!!.symbol)
+            IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, candidate.thisReceiver!!)
         } else {
-            val entrySymbol = context.declarationFactory.getFieldForEnumEntry(expression.symbol.owner, expression.type)
-            IrGetFieldImpl(expression.startOffset, expression.endOffset, entrySymbol.symbol, expression.type)
+            val entry = context.declarationFactory.getFieldForEnumEntry(expression.target, expression.type)
+            IrGetFieldImpl(expression.startOffset, expression.endOffset, entry, expression.type)
         }
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-        val instanceField = context.declarationFactory.getFieldForObjectInstance(expression.symbol.owner)
-        return IrGetFieldImpl(expression.startOffset, expression.endOffset, instanceField.symbol, expression.type)
+        val instanceField = context.declarationFactory.getFieldForObjectInstance(expression.target)
+        return IrGetFieldImpl(expression.startOffset, expression.endOffset, instanceField, expression.type)
     }
 
     // `this` is generally available while the reference is within the lexical scope of the containing enum entry.

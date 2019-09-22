@@ -62,7 +62,7 @@ interface IrBuilderExtension {
     private fun IrClass.declareSimpleFunctionWithExternalOverrides(descriptor: FunctionDescriptor): IrSimpleFunction {
         return compilerContext.localSymbolTable.declareSimpleFunction(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, descriptor)
             .also { f ->
-                descriptor.overriddenDescriptors.mapTo(f.overriddenSymbols) {
+                descriptor.overriddenDescriptors.mapTo(f.overridden) {
                     compilerContext.externalSymbols.referenceSimpleFunction(it.original)
                 }
             }
@@ -79,7 +79,7 @@ interface IrBuilderExtension {
         f.parent = this
         f.returnType = descriptor.returnType!!.toIrType()
         if (!fromStubs) f.createParameterDeclarations(this.thisReceiver!!)
-        f.body = compilerContext.createIrBuilder(f.symbol).at(this).irBlockBody(this.startOffset, this.endOffset) { bodyGen(f) }
+        f.body = compilerContext.createIrBuilder(f).at(this).irBlockBody(this.startOffset, this.endOffset) { bodyGen(f) }
         this.addMember(f)
     }
 
@@ -102,13 +102,13 @@ interface IrBuilderExtension {
             overwriteValueParameters = overwriteValueParameters,
             copyTypeParameters = false
         )
-        c.body = compilerContext.createIrBuilder(c.symbol).at(this).irBlockBody(this.startOffset, this.endOffset) { bodyGen(c) }
+        c.body = compilerContext.createIrBuilder(c).at(this).irBlockBody(this.startOffset, this.endOffset) { bodyGen(c) }
         this.addMember(c)
     }
 
     fun IrBuilderWithScope.irInvoke(
         dispatchReceiver: IrExpression? = null,
-        callee: IrFunctionSymbol,
+        callee: IrFunction,
         vararg args: IrExpression,
         typeHint: IrType? = null
     ): IrMemberAccessExpression {
@@ -120,7 +120,7 @@ interface IrBuilderExtension {
 
     fun IrBuilderWithScope.irInvoke(
         dispatchReceiver: IrExpression? = null,
-        callee: IrFunctionSymbol,
+        callee: IrFunction,
         typeArguments: List<IrType?>,
         valueArguments: List<IrExpression>,
         returnTypeHint: IrType? = null
@@ -147,12 +147,12 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
-        val symbol = compilerContext.ir.symbols.getBinaryOperator(
+        val function = compilerContext.ir.symbols.getBinaryOperator(
             name,
             lhs.type.toKotlinType(),
             rhs.type.toKotlinType()
         )
-        return irInvoke(lhs, symbol, rhs)
+        return irInvoke(lhs, function, rhs)
     }
 
     fun IrBuilderWithScope.irGetObject(classDescriptor: ClassDescriptor) =
@@ -168,7 +168,7 @@ interface IrBuilderExtension {
             startOffset,
             endOffset,
             irObject.defaultType,
-            irObject.symbol
+            irObject
         )
 
     fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
@@ -239,7 +239,7 @@ interface IrBuilderExtension {
     }
 
     fun generateSimplePropertyWithBackingField(
-        ownerSymbol: IrValueSymbol,
+        owner: IrValueDeclaration,
         propertyDescriptor: PropertyDescriptor,
         propertyParent: IrClass
     ): IrProperty {
@@ -253,10 +253,10 @@ interface IrBuilderExtension {
             parent = propertyParent
             correspondingPropertySymbol = irProperty.symbol
         }
-        val fieldSymbol = irProperty.backingField!!.symbol
-        irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(it, fieldSymbol) }
+        val field = irProperty.backingField!!
+        irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(it, field) }
             ?.apply { parent = propertyParent }
-        irProperty.setter = propertyDescriptor.setter?.let { generatePropertyAccessor(it, fieldSymbol) }
+        irProperty.setter = propertyDescriptor.setter?.let { generatePropertyAccessor(it, field) }
             ?.apply { parent = propertyParent }
         return irProperty
     }
@@ -276,7 +276,7 @@ interface IrBuilderExtension {
 
     fun generatePropertyAccessor(
         descriptor: PropertyAccessorDescriptor,
-        fieldSymbol: IrFieldSymbol
+        field: IrField
     ): IrSimpleFunction {
         // Declaration can also be called from user code. Since we lookup descriptor getter in externalSymbols
         // (see generateSave/generateLoad), seems it is correct approach to declare getter lazily there.
@@ -302,12 +302,12 @@ interface IrBuilderExtension {
         val endOffset = irAccessor.endOffset
         val irBody = IrBlockBodyImpl(startOffset, endOffset)
 
-        val receiver = generateReceiverExpressionForFieldAccess(irAccessor.dispatchReceiverParameter!!.symbol, property)
+        val receiver = generateReceiverExpressionForFieldAccess(irAccessor.dispatchReceiverParameter!!, property)
 
         irBody.statements.add(
             IrReturnImpl(
                 startOffset, endOffset, compilerContext.irBuiltIns.nothingType,
-                irAccessor.symbol,
+                irAccessor,
                 IrGetFieldImpl(
                     startOffset, endOffset,
                     compilerContext.localSymbolTable.referenceField(property),
@@ -329,7 +329,7 @@ interface IrBuilderExtension {
         val endOffset = irAccessor.endOffset
         val irBody = IrBlockBodyImpl(startOffset, endOffset)
 
-        val receiver = generateReceiverExpressionForFieldAccess(irAccessor.dispatchReceiverParameter!!.symbol, property)
+        val receiver = generateReceiverExpressionForFieldAccess(irAccessor.dispatchReceiverParameter!!, property)
 
         val irValueParameter = irAccessor.valueParameters.single()
         irBody.statements.add(
@@ -337,7 +337,7 @@ interface IrBuilderExtension {
                 startOffset, endOffset,
                 compilerContext.localSymbolTable.referenceField(property),
                 receiver,
-                IrGetValueImpl(startOffset, endOffset, irValueParameter.type, irValueParameter.symbol),
+                IrGetValueImpl(startOffset, endOffset, irValueParameter.type, irValueParameter),
                 compilerContext.irBuiltIns.unitType
             )
         )
@@ -345,16 +345,16 @@ interface IrBuilderExtension {
     }
 
     fun generateReceiverExpressionForFieldAccess(
-        ownerSymbol: IrValueSymbol,
+        owner: IrValueDeclaration,
         property: PropertyDescriptor
     ): IrExpression {
         val containingDeclaration = property.containingDeclaration
         return when (containingDeclaration) {
             is ClassDescriptor ->
                 IrGetValueImpl(
-                    ownerSymbol.owner.startOffset, ownerSymbol.owner.endOffset,
+                    owner.startOffset, owner.endOffset,
 //                symbolTable.referenceValue(containingDeclaration.thisAsReceiverParameter)
-                    ownerSymbol
+                    owner
                 )
             else -> throw AssertionError("Property must be in class")
         }
@@ -409,7 +409,7 @@ interface IrBuilderExtension {
             startOffset,
             endOffset,
             returnType.toIrType(),
-            compilerContext.externalSymbols.referenceClassifier(clazz),
+            (compilerContext.externalSymbols.referenceClassifier(clazz) as IrClassSymbol).owner,
             classType.toIrType()
         )
     }
@@ -481,7 +481,7 @@ interface IrBuilderExtension {
         module: ModuleDescriptor,
         type: KotlinType,
         expression: IrExpression,
-        nullableSerializerClass: IrClassSymbol
+        nullableSerializerClass: IrClass
     ): IrExpression {
         return if (type.isMarkedNullable)
             irInvoke(
@@ -591,6 +591,6 @@ interface IrBuilderExtension {
         }
     }
 
-    fun ReferenceSymbolTable.serializableSyntheticConstructor(forClass: ClassDescriptor): IrConstructorSymbol =
+    fun ReferenceSymbolTable.serializableSyntheticConstructor(forClass: ClassDescriptor): IrConstructor =
         referenceConstructor(forClass.constructors.single { it.isSerializationCtor() })
 }

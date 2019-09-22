@@ -26,13 +26,12 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import kotlin.collections.set
 
-class Closure(val capturedValues: List<IrValueSymbol> = emptyList())
+class Closure(val capturedValues: List<IrValueDeclaration> = emptyList())
 
 class ClosureAnnotator(irFile: IrFile) {
     private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
@@ -53,7 +52,7 @@ class ClosureAnnotator(irFile: IrFile) {
     }
 
     private class ClosureBuilder(val owner: IrDeclaration) {
-        val capturedValues = mutableSetOf<IrValueSymbol>()
+        val capturedValues = mutableSetOf<IrValueDeclaration>()
         private val declaredValues = mutableSetOf<IrValueDeclaration>()
         private val includes = mutableSetOf<ClosureBuilder>()
 
@@ -65,11 +64,11 @@ class ClosureAnnotator(irFile: IrFile) {
          *                  variables declared in the node.
          */
         fun buildClosure(): Closure {
-            val result = mutableSetOf<IrValueSymbol>().apply { addAll(capturedValues) }
+            val result = mutableSetOf<IrValueDeclaration>().apply { addAll(capturedValues) }
             includes.forEach { builder ->
                 if (!builder.processed) {
                     builder.processed = true
-                    builder.buildClosure().capturedValues.filterTo(result) { isExternal(it.owner) }
+                    builder.buildClosure().capturedValues.filterTo(result) { isExternal(it) }
                 }
             }
             // TODO: We can save the closure and reuse it.
@@ -86,8 +85,8 @@ class ClosureAnnotator(irFile: IrFile) {
                 declaredValues.add(valueDeclaration)
         }
 
-        fun seeVariable(value: IrValueSymbol) {
-            if (isExternal(value.owner))
+        fun seeVariable(value: IrValueDeclaration) {
+            if (isExternal(value))
                 capturedValues.add(value)
         }
 
@@ -162,7 +161,7 @@ class ClosureAnnotator(irFile: IrFile) {
         }
 
         override fun visitVariableAccess(expression: IrValueAccessExpression) {
-            closuresStack.peek()?.seeVariable(expression.symbol)
+            closuresStack.peek()?.seeVariable(expression.target)
             super.visitVariableAccess(expression)
         }
 
@@ -173,18 +172,18 @@ class ClosureAnnotator(irFile: IrFile) {
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
             super.visitFunctionAccess(expression)
-            processMemberAccess(expression.symbol.owner)
+            processMemberAccess(expression.target)
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference) {
             super.visitFunctionReference(expression)
-            processMemberAccess(expression.symbol.owner)
+            processMemberAccess(expression.target)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference) {
             super.visitPropertyReference(expression)
-            expression.getter?.let { processMemberAccess(it.owner) }
-            expression.setter?.let { processMemberAccess(it.owner) }
+            expression.getter?.let { processMemberAccess(it) }
+            expression.setter?.let { processMemberAccess(it) }
         }
 
         private fun processMemberAccess(declaration: IrDeclaration) {

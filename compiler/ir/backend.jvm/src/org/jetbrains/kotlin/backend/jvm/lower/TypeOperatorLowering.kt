@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.render
@@ -64,8 +64,8 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             argument.type.isNullable() && type.isNullable() -> {
                 irLetS(argument) { valueSymbol ->
                     context.oror(
-                        irEqualsNull(irGet(valueSymbol.owner)),
-                        irIs(irGet(valueSymbol.owner), type.makeNotNull())
+                        irEqualsNull(irGet(valueSymbol)),
+                        irIs(irGet(valueSymbol), type.makeNotNull())
                     )
                 }
             }
@@ -81,15 +81,15 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 irLetS(argument) { valueSymbol ->
                     irIfNull(
                         type,
-                        irGet(valueSymbol.owner),
+                        irGet(valueSymbol),
                         irThrow(irCall(typeCastException).apply {
                             putValueArgument(0, irString("null cannot be cast to non-null type ${type.render()}"))
                         }),
-                        lowerCast(irGet(valueSymbol.owner), type.makeNullable())
+                        lowerCast(irGet(valueSymbol), type.makeNullable())
                     )
                 }
             }
-        argument.type.isSubtypeOfClass(type.erasedUpperBound.symbol) ->
+        argument.type.isSubtypeOfClass(type.erasedUpperBound) ->
             argument
         else ->
             builder.irAs(argument, type)
@@ -123,8 +123,8 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                     irLetS(expression.argument.transformVoid(), IrStatementOrigin.SAFE_CALL) { valueSymbol ->
                         irIfThenElse(
                             expression.type,
-                            lowerInstanceOf(irGet(valueSymbol.owner), expression.typeOperand.makeNotNull()),
-                            irGet(valueSymbol.owner),
+                            lowerInstanceOf(irGet(valueSymbol), expression.typeOperand.makeNotNull()),
+                            irGet(valueSymbol),
                             irNull(expression.type)
                         )
                     }
@@ -143,10 +143,10 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 irLetS(expression.argument.transformVoid()) { valueSymbol ->
                     irComposite(resultType = expression.type) {
                         +irCall(checkExpressionValueIsNotNull).apply {
-                            putValueArgument(0, irGet(valueSymbol.owner))
+                            putValueArgument(0, irGet(valueSymbol))
                             putValueArgument(1, irString(source))
                         }
-                        +irGet(valueSymbol.owner)
+                        +irGet(valueSymbol)
                     }
                 }
             }
@@ -180,13 +180,13 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
     private val useNullPointerExceptions: Boolean
         get() = context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
 
-    private val typeCastException: IrFunctionSymbol =
+    private val typeCastException: IrFunction =
         if (useNullPointerExceptions)
             context.ir.symbols.ThrowNullPointerException
         else
             context.ir.symbols.ThrowTypeCastException
 
-    private val checkExpressionValueIsNotNull: IrFunctionSymbol =
+    private val checkExpressionValueIsNotNull: IrFunction =
         if (useNullPointerExceptions)
             context.ir.symbols.checkNotNullExpressionValue
         else

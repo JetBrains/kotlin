@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val unit = context.irBuiltIns.unitType
-    private val unitValue get() = JsIrBuilder.buildGetObjectValue(unit, unit.classifierOrFail as IrClassSymbol)
+    private val unitValue get() = JsIrBuilder.buildGetObjectValue(unit, unit.classifierOrFail as IrClass)
 
     private val lit24 get() = JsIrBuilder.buildInt(context.irBuiltIns.intType, 24)
     private val lit16 get() = JsIrBuilder.buildInt(context.irBuiltIns.intType, 16)
@@ -184,7 +184,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
             ): () -> IrExpressionWithCopy {
                 val varDeclaration = JsIrBuilder.buildVar(value.type, declaration, initializer = value)
                 newStatements += varDeclaration
-                return { JsIrBuilder.buildGetValue(varDeclaration.symbol) }
+                return { JsIrBuilder.buildGetValue(varDeclaration) }
             }
 
             private fun generateTypeCheck(argument: () -> IrExpressionWithCopy, toType: IrType): IrExpression {

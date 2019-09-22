@@ -96,7 +96,7 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
                 assert(!type.isPrimitiveType()) { "'lateinit' modifier is not allowed on primitive types" }
                 val startOffset = getter.startOffset
                 val endOffset = getter.endOffset
-                val irBuilder = context.createIrBuilder(getter.symbol, startOffset, endOffset)
+                val irBuilder = context.createIrBuilder(getter, startOffset, endOffset)
                 irBuilder.run {
                     val body = IrBlockBodyImpl(startOffset, endOffset)
                     val resultVar = scope.createTemporaryVariable(
@@ -119,10 +119,10 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
         // Transform usages
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                val irVar = nullableVariables[expression.symbol.owner] ?: return expression
+                val irVar = nullableVariables[expression.target] ?: return expression
 
                 val parent = irVar.parent as IrSymbolOwner
-                val irBuilder = context.createIrBuilder(parent.symbol, expression.startOffset, expression.endOffset)
+                val irBuilder = context.createIrBuilder(parent, expression.startOffset, expression.endOffset)
 
                 return irBuilder.run {
                     irIfThenElse(
@@ -135,38 +135,38 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
 
             override fun visitSetVariable(expression: IrSetVariable): IrExpression {
                 expression.transformChildrenVoid(this)
-                val newVar = nullableVariables[expression.symbol.owner] ?: return expression
+                val newVar = nullableVariables[expression.target] ?: return expression
                 return with(expression) {
-                    IrSetVariableImpl(startOffset, endOffset, type, newVar.symbol, value, origin)
+                    IrSetVariableImpl(startOffset, endOffset, type, newVar, value, origin)
                 }
             }
 
             override fun visitGetField(expression: IrGetField): IrExpression {
                 expression.transformChildrenVoid(this)
-                val newField = nullableFields[expression.symbol.owner] ?: return expression
+                val newField = nullableFields[expression.target] ?: return expression
                 return with(expression) {
-                    IrGetFieldImpl(startOffset, endOffset, newField.symbol, newField.type, receiver, origin, superQualifierSymbol)
+                    IrGetFieldImpl(startOffset, endOffset, newField, newField.type, receiver, origin, irSuperQualifier)
                 }
             }
 
             override fun visitSetField(expression: IrSetField): IrExpression {
                 expression.transformChildrenVoid(this)
-                val newField = nullableFields[expression.symbol.owner] ?: return expression
+                val newField = nullableFields[expression.target] ?: return expression
                 return with(expression) {
-                    IrSetFieldImpl(startOffset, endOffset, newField.symbol, receiver, value, type, origin, superQualifierSymbol)
+                    IrSetFieldImpl(startOffset, endOffset, newField, receiver, value, type, origin, irSuperQualifier)
                 }
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                if (!Symbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
+                if (!Symbols.isLateinitIsInitializedPropertyGetter(expression.target)) return expression
 
                 val receiver = expression.extensionReceiver as IrPropertyReference
 
-                val property = receiver.getter?.owner?.resolveFakeOverride()?.correspondingProperty!!.also { assert(it.isLateinit) }
+                val property = receiver.getter?.resolveFakeOverride()?.correspondingProperty!!.also { assert(it.isLateinit) }
 
-                return expression.run { context.createIrBuilder(symbol, startOffset, endOffset) }.run {
+                return expression.run { context.createIrBuilder(target, startOffset, endOffset) }.run {
                     irNotEquals(irGetField(receiver.dispatchReceiver, property.backingField!!), irNull())
                 }
             }
@@ -186,5 +186,5 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
             )
         }
 
-    private val throwErrorFunction by lazy { context.ir.symbols.ThrowUninitializedPropertyAccessException.owner }
+    private val throwErrorFunction by lazy { context.ir.symbols.ThrowUninitializedPropertyAccessException }
 }

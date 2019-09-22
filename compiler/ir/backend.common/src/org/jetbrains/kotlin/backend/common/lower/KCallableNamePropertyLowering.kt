@@ -51,7 +51,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
         val callableReference = expression.dispatchReceiver as? IrCallableReference ?: return expression
 
         //TODO rewrite checking
-        val directMember = expression.symbol.owner.let {
+        val directMember = expression.target.let {
             (it as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: it
         }
         val irClass = directMember.parent as? IrClass ?: return expression

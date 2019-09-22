@@ -53,7 +53,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : FileLowering
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-                val irClass = expression.symbol.owner
+                val irClass = expression.target
                 val actualCompanion = getActualPrimitiveCompanion(irClass) ?: return expression
                 return IrGetObjectValueImpl(
                     expression.startOffset,
@@ -66,7 +66,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : FileLowering
             override fun visitCall(expression: IrCall): IrExpression {
                 val newCall = super.visitCall(expression) as IrCall
 
-                val function = expression.symbol.owner as IrSimpleFunction
+                val function = expression.target as IrSimpleFunction
 
                 val actualFunction = getActualPrimitiveCompanionPropertyAccessor(function)
                     ?: return newCall

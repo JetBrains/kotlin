@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -18,7 +18,7 @@ class IrConstructorCallImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val symbol: IrConstructorSymbol,
+    override val target: IrConstructor,
     override val descriptor: ClassConstructorDescriptor,
     typeArgumentsCount: Int,
     override val constructorTypeArgumentsCount: Int,
@@ -36,7 +36,7 @@ class IrConstructorCallImpl(
             startOffset: Int,
             endOffset: Int,
             type: IrType,
-            constructorSymbol: IrConstructorSymbol,
+            target: IrConstructor,
             constructorDescriptor: ClassConstructorDescriptor,
             origin: IrStatementOrigin? = null
         ): IrConstructorCallImpl {
@@ -47,7 +47,7 @@ class IrConstructorCallImpl(
             return IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
-                constructorSymbol,
+                target,
                 constructorDescriptor,
                 totalTypeParametersCount,
                 totalTypeParametersCount - classTypeParametersCount,
@@ -60,30 +60,29 @@ class IrConstructorCallImpl(
             startOffset: Int,
             endOffset: Int,
             type: IrType,
-            constructorSymbol: IrConstructorSymbol,
+            target: IrConstructor,
             origin: IrStatementOrigin? = null
         ): IrConstructorCallImpl =
-            fromSubstitutedDescriptor(startOffset, endOffset, type, constructorSymbol, constructorSymbol.descriptor, origin)
+            fromSubstitutedDescriptor(startOffset, endOffset, type, target, target.descriptor, origin)
 
         fun fromSymbolOwner(
             startOffset: Int,
             endOffset: Int,
             type: IrType,
-            constructorSymbol: IrConstructorSymbol,
+            target: IrConstructor,
             origin: IrStatementOrigin? = null
         ): IrConstructorCallImpl {
-            val constructor = constructorSymbol.owner
-            val constructedClass = constructor.parentAsClass
+            val constructedClass = target.parentAsClass
             val classTypeParametersCount = constructedClass.typeParameters.size
-            val constructorTypeParametersCount = constructor.typeParameters.size
+            val constructorTypeParametersCount = target.typeParameters.size
             val totalTypeParametersCount = classTypeParametersCount + constructorTypeParametersCount
-            val valueParametersCount = constructor.valueParameters.size
+            val valueParametersCount = target.valueParameters.size
 
             return IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
-                constructorSymbol,
-                constructorSymbol.descriptor,
+                target,
+                target.descriptor,
                 totalTypeParametersCount,
                 constructorTypeParametersCount,
                 valueParametersCount,
@@ -93,10 +92,10 @@ class IrConstructorCallImpl(
 
         fun fromSymbolOwner(
             type: IrType,
-            constructorSymbol: IrConstructorSymbol,
+            target: IrConstructor,
             origin: IrStatementOrigin? = null
         ) =
-            fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, origin)
+            fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, target, origin)
     }
 }
 

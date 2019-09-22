@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.functionSignature
@@ -140,7 +139,7 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
             annotations += bridge.annotations
-            overriddenSymbols.addAll(delegateTo.overriddenSymbols)
+            overridden.addAll(delegateTo.overridden)
         }
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
@@ -190,7 +189,7 @@ data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandl
         !function.parentAsClass.isInterface
 
     override fun getOverridden() =
-        function.overriddenSymbols.map { IrBasedFunctionHandle(it.owner) }
+        function.overridden.map { IrBasedFunctionHandle(it) }
 }
 
 // Wrapper around function that compares and hashCodes it based on signature

@@ -27,7 +27,7 @@ class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : Calls
         if (!enum.isEnumClass) return call
         val staticMethod = enum.findDeclaration(staticMethodPredicate)
         if (staticMethod == null || !staticMethod.isStaticMethodOfClass)
-            throw IllegalStateException("Enum class should have static method for ${call.symbol.owner.name}")
+            throw IllegalStateException("Enum class should have static method for ${call.target.name}")
 
         return irCall(call, staticMethod.symbol)
     }
@@ -42,7 +42,7 @@ class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : Calls
         it.name == Name.identifier("values") && it.valueParameters.count() == 0
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression) = when (call.symbol) {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression) = when (call.target) {
         context.intrinsics.enumValueOfIntrinsic -> transformEnumValueOfIntrinsic(call)
         context.intrinsics.enumValuesIntrinsic -> transformEnumValuesIntrinsic(call)
         else -> call

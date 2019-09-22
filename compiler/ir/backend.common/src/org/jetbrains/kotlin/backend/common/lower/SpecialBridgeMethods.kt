@@ -46,7 +46,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         IrConstImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, IrConstKind.Int, -1)
 
     private fun getSecondArg(bridge: IrSimpleFunction) =
-        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.valueParameters[1].symbol)
+        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.valueParameters[1])
 
     private val SPECIAL_METHODS_WITH_DEFAULTS_MAP = mapOf<SpecialMethodDescription, (IrSimpleFunction) -> IrExpression>(
         makeDescription("kotlin.collections.Collection", "contains", 1) to ::constFalse,
@@ -80,7 +80,7 @@ fun IrSimpleFunction.allOverridden(): Sequence<IrSimpleFunction> {
         return sequence {
             yield(this@search)
             visited.add(this@search)
-            overriddenSymbols.forEach { yieldAll(it.owner.search()) }
+            overridden.forEach { yieldAll(it.search()) }
         }
     }
 

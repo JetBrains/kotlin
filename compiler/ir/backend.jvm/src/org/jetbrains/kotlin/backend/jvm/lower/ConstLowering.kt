@@ -39,7 +39,7 @@ class ConstLowering(val context: CommonBackendContext) : IrElementTransformerVoi
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val function = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
+        val function = (expression.target as? IrSimpleFunction) ?: return super.visitCall(expression)
         val property = function.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
         if (function != property.getter)
             return super.visitCall(expression)
@@ -47,5 +47,5 @@ class ConstLowering(val context: CommonBackendContext) : IrElementTransformerVoi
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression =
-        expression.symbol.owner.constantValue() ?: super.visitGetField(expression)
+        expression.target.constantValue() ?: super.visitGetField(expression)
 }

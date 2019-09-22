@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -162,8 +160,8 @@ class JvmSharedVariablesManager(
         else
             objectRefProvider
 
-    private fun getElementFieldSymbol(valueType: IrType): IrFieldSymbol {
-        return getProvider(valueType).elementField.symbol
+    private fun getElementField(valueType: IrType): IrField {
+        return getProvider(valueType).elementField
     }
 
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
@@ -174,7 +172,7 @@ class JvmSharedVariablesManager(
 
         val refConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
             refType,
-            refConstructor.symbol,
+            refConstructor,
             SHARED_VARIABLE_CONSTRUCTOR_CALL_ORIGIN
         ).apply {
             List(refConstructor.parentAsClass.typeParameters.size) { i ->
@@ -207,8 +205,8 @@ class JvmSharedVariablesManager(
 
         val sharedVariableInitialization = IrSetFieldImpl(
             initializer.startOffset, initializer.endOffset,
-            getElementFieldSymbol(valueType),
-            IrGetValueImpl(initializer.startOffset, initializer.endOffset, sharedVariableDeclaration.symbol),
+            getElementField(valueType),
+            IrGetValueImpl(initializer.startOffset, initializer.endOffset, sharedVariableDeclaration),
             initializer,
             valueType
         )
@@ -219,7 +217,7 @@ class JvmSharedVariablesManager(
         )
     }
 
-    override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue): IrExpression =
+    override fun getSharedValue(sharedVariable: IrVariable, originalGet: IrGetValue): IrExpression =
         IrTypeOperatorCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             originalGet.type,
@@ -227,18 +225,18 @@ class JvmSharedVariablesManager(
             originalGet.type,
             IrGetFieldImpl(
                 originalGet.startOffset, originalGet.endOffset,
-                getElementFieldSymbol(originalGet.symbol.owner.type),
+                getElementField(originalGet.target.type),
                 originalGet.type,
-                IrGetValueImpl(originalGet.startOffset, originalGet.endOffset, sharedVariableSymbol),
+                IrGetValueImpl(originalGet.startOffset, originalGet.endOffset, sharedVariable),
                 originalGet.origin
             )
         )
 
-    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable): IrExpression =
+    override fun setSharedValue(sharedVariable: IrVariable, originalSet: IrSetVariable): IrExpression =
         IrSetFieldImpl(
             originalSet.startOffset, originalSet.endOffset,
-            getElementFieldSymbol(originalSet.symbol.owner.type),
-            IrGetValueImpl(originalSet.startOffset, originalSet.endOffset, sharedVariableSymbol),
+            getElementField(originalSet.target.type),
+            IrGetValueImpl(originalSet.startOffset, originalSet.endOffset, sharedVariable),
             originalSet.value,
             originalSet.type,
             originalSet.origin

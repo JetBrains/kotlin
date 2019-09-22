@@ -20,10 +20,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
@@ -34,7 +30,7 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
     protected open fun createScope(declaration: IrSymbolOwner): ScopeWithIr =
-        ScopeWithIr(Scope(declaration.symbol), declaration)
+        ScopeWithIr(Scope(declaration), declaration)
 
     final override fun visitFile(declaration: IrFile): IrFile {
         scopeStack.push(createScope(declaration))
@@ -72,9 +68,9 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     }
 
     protected val currentFile get() = scopeStack.lastOrNull { it.irElement is IrFile }!!.irElement as IrFile
-    protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }
-    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFunctionSymbol }
-    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrPropertySymbol }
+    protected val currentClass get() = scopeStack.lastOrNull { it.scope.irScopeOwner is IrClass }
+    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.irScopeOwner is IrFunction }
+    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.irScopeOwner is IrProperty }
     protected val currentScope get() = scopeStack.peek()
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack
@@ -109,7 +105,7 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     private val scopeStack = mutableListOf<ScopeWithIr>()
 
     protected open fun createScope(declaration: IrSymbolOwner): ScopeWithIr =
-        ScopeWithIr(Scope(declaration.symbol), declaration)
+        ScopeWithIr(Scope(declaration), declaration)
 
     final override fun visitFile(declaration: IrFile) {
         scopeStack.push(createScope(declaration))
@@ -142,10 +138,10 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
         scopeStack.pop()
     }
 
-    protected val currentFile get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFileSymbol }
-    protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }
-    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFunctionSymbol }
-    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrPropertySymbol }
+    protected val currentFile get() = scopeStack.lastOrNull { it.scope.irScopeOwner is IrFile }
+    protected val currentClass get() = scopeStack.lastOrNull { it.scope.irScopeOwner is IrClass }
+    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.irScopeOwner is IrFunction }
+    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.irScopeOwner is IrProperty }
     protected val currentScope get() = scopeStack.peek()
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack

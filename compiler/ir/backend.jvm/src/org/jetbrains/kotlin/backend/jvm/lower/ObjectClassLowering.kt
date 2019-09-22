@@ -71,7 +71,7 @@ private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTra
             ).apply {
                 privateFieldDescriptor.bind(this)
                 parent = irClass
-                with(context.createIrBuilder(symbol)) {
+                with(context.createIrBuilder(this)) {
                     initializer = irExprBody(
                         irCall(constructor)
                     )
@@ -79,12 +79,12 @@ private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTra
                 pendingTransformations.add { parentAsClass.declarations.add(this) }
             }
 
-            with(context.createIrBuilder(publicInstanceField.symbol)) {
+            with(context.createIrBuilder(publicInstanceField)) {
                 publicInstanceField.initializer = irExprBody(irGetField(null, privateField))
             }
         } else {
-            with(context.createIrBuilder(publicInstanceField.symbol)) {
-                publicInstanceField.initializer = irExprBody(irCall(constructor.symbol))
+            with(context.createIrBuilder(publicInstanceField)) {
+                publicInstanceField.initializer = irExprBody(irCall(constructor))
             }
         }
 

@@ -45,7 +45,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     private fun StringBuilder.renderAsAnnotation(irAnnotation: IrConstructorCall) {
         val annotationClassName = try {
-            irAnnotation.symbol.owner.parentAsClass.name.asString()
+            irAnnotation.target.parentAsClass.name.asString()
         } catch (e: Exception) {
             "<unbound>"
         }
@@ -545,44 +545,44 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitReturn(expression: IrReturn, data: Nothing?): String =
-        "RETURN type=${expression.type.render()} from='${expression.returnTargetSymbol.renderReference()}'"
+        "RETURN type=${expression.type.render()} from='${expression.irReturnTarget.symbol.renderReference()}'"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
-        "CALL '${expression.symbol.renderReference()}' ${expression.renderSuperQualifier()}" +
+        "CALL '${expression.target.symbol.renderReference()}' ${expression.renderSuperQualifier()}" +
                 "type=${expression.type.render()} origin=${expression.origin}"
 
     private fun IrCall.renderSuperQualifier(): String =
-        superQualifierSymbol?.let { "superQualifier='${it.renderReference()}' " } ?: ""
+        irSuperQualifier?.let { "superQualifier='${it.symbol.renderReference()}' " } ?: ""
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =
-        "CONSTRUCTOR_CALL '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "CONSTRUCTOR_CALL '${expression.target.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
-        "DELEGATING_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
+        "DELEGATING_CONSTRUCTOR_CALL '${expression.target.symbol.renderReference()}'"
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String =
-        "ENUM_CONSTRUCTOR_CALL '${expression.symbol.renderReference()}'"
+        "ENUM_CONSTRUCTOR_CALL '${expression.target.symbol.renderReference()}'"
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
-        "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classSymbol.renderReference()}'"
+        "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.irClass.symbol.renderReference()}'"
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
-        "GET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "GET_VAR '${expression.target.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
-        "SET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "SET_VAR '${expression.target.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String =
-        "GET_FIELD '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "GET_FIELD '${expression.target.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): String =
-        "SET_FIELD '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "SET_FIELD '${expression.target.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
-        "GET_OBJECT '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+        "GET_OBJECT '${expression.target.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
-        "GET_ENUM '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+        "GET_ENUM '${expression.target.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
         "STRING_CONCATENATION type=${expression.type.render()}"
@@ -612,15 +612,15 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "THROW type=${expression.type.render()}"
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): String =
-        "FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+        "FUNCTION_REFERENCE '${expression.target.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String =
         buildTrimEnd {
             append("PROPERTY_REFERENCE ")
-            append("'${expression.symbol.renderReference()}' ")
-            appendNullableAttribute("field=", expression.field) { "'${it.renderReference()}'" }
-            appendNullableAttribute("getter=", expression.getter) { "'${it.renderReference()}'" }
-            appendNullableAttribute("setter=", expression.setter) { "'${it.renderReference()}'" }
+            append("'${expression.target.symbol.renderReference()}' ")
+            appendNullableAttribute("field=", expression.field) { "'${it.symbol.renderReference()}'" }
+            appendNullableAttribute("getter=", expression.getter) { "'${it.symbol.renderReference()}'" }
+            appendNullableAttribute("setter=", expression.setter) { "'${it.symbol.renderReference()}'" }
             append("type=${expression.type.render()} ")
             append("origin=${expression.origin}")
         }
@@ -638,10 +638,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String =
         buildTrimEnd {
             append("LOCAL_DELEGATED_PROPERTY_REFERENCE ")
-            append("'${expression.symbol.renderReference()}' ")
-            append("delegate='${expression.delegate.renderReference()}' ")
-            append("getter='${expression.getter.renderReference()}' ")
-            appendNullableAttribute("setter=", expression.setter) { "'${it.renderReference()}'" }
+            append("'${expression.target.symbol.renderReference()}' ")
+            append("delegate='${expression.delegate.symbol.renderReference()}' ")
+            append("getter='${expression.getter.symbol.renderReference()}' ")
+            appendNullableAttribute("setter=", expression.setter) { "'${it.symbol.renderReference()}'" }
             append("type=${expression.type.render()} ")
             append("origin=${expression.origin}")
         }
@@ -652,7 +652,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
-        "CLASS_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+        "CLASS_REFERENCE '${expression.target.symbol.renderReference()}' type=${expression.type.render()}"
 
     override fun visitGetClass(expression: IrGetClass, data: Nothing?): String =
         "GET_CLASS type=${expression.type.render()}"

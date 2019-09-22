@@ -80,12 +80,12 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
     private fun areConstComparisons(conditions: List<IrCall>): Boolean {
         // All branches must be CALL 'EQEQ(Any?, Any?)': Boolean
-        if (conditions.any { it.symbol != codegen.classCodegen.context.irBuiltIns.eqeqSymbol })
+        if (conditions.any { it.target != codegen.classCodegen.context.irBuiltIns.eqeqSymbol.owner })
             return false
 
         // All LHS refer to the same tmp variable.
         val lhs = conditions.map { it.getValueArgument(0) as? IrGetValue }
-        if (lhs.any { it == null || it.symbol != lhs[0]!!.symbol })
+        if (lhs.any { it == null || it.target != lhs[0]!!.target })
             return false
 
         // All RHS are constants

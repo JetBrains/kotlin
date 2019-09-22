@@ -26,10 +26,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -70,11 +66,11 @@ class JvmBackendContext(
         localClassInfo[container.attributeOwnerId] = value
     }
 
-    internal val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
+    internal val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedProperty>>()
 
     internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     internal val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
-    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrFunction, IrFunction>()
 
     override var inVerbosePhase: Boolean = false
 
@@ -88,26 +84,26 @@ class JvmBackendContext(
     val suspendFunctionViews = mutableMapOf<IrFunction, IrFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)
 
-    val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
+    val staticDefaultStubs = mutableMapOf<IrFunction, IrFunction>()
 
-    internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
+    internal fun getTopLevelClass(fqName: FqName): IrClass {
         val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
             fqName.shortName(), NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor? ?: error("Class is not found: $fqName")
         return referenceClass(descriptor)
     }
 
-    internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
-        symbolTable.referenceClass(descriptor)
+    internal fun referenceClass(descriptor: ClassDescriptor): IrClass =
+        symbolTable.referenceClass(descriptor).owner
 
-    internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
-        symbolTable.referenceTypeParameter(descriptor)
+    internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameter =
+        symbolTable.referenceTypeParameter(descriptor).owner
 
-    internal fun referenceFunction(descriptor: FunctionDescriptor): IrFunctionSymbol =
+    internal fun referenceFunction(descriptor: FunctionDescriptor): IrFunction =
         if (descriptor is ClassConstructorDescriptor)
-            symbolTable.referenceConstructor(descriptor)
+            symbolTable.referenceConstructor(descriptor).owner
         else
-            symbolTable.referenceSimpleFunction(descriptor)
+            symbolTable.referenceSimpleFunction(descriptor).owner
 
     override fun log(message: () -> String) {
         /*TODO*/

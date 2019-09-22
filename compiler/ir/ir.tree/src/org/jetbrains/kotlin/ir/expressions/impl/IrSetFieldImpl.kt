@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -28,29 +28,29 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 class IrSetFieldImpl(
     startOffset: Int,
     endOffset: Int,
-    symbol: IrFieldSymbol,
+    target: IrField,
     type: IrType,
     origin: IrStatementOrigin? = null,
-    superQualifierSymbol: IrClassSymbol? = null
+    irSuperQualifier: IrClass? = null
 ) :
     IrFieldExpressionBase(
         startOffset, endOffset,
-        symbol,
+        target,
         type,
         origin,
-        superQualifierSymbol
+        irSuperQualifier
     ),
     IrSetField {
 
     constructor(
         startOffset: Int, endOffset: Int,
-        symbol: IrFieldSymbol,
+        target: IrField,
         receiver: IrExpression?,
         value: IrExpression,
         type: IrType,
         origin: IrStatementOrigin? = null,
-        superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, symbol, type, origin, superQualifierSymbol) {
+        irSuperQualifier: IrClass? = null
+    ) : this(startOffset, endOffset, target, type, origin, irSuperQualifier) {
         this.receiver = receiver
         this.value = value
     }

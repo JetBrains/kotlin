@@ -152,7 +152,7 @@ class SerializableIrGenerator(
             endOffset,
             compilerContext.irBuiltIns.unitType,
             superCtorRef,
-            superCtorRef.owner.descriptor
+            superCtorRef.descriptor
         )
         arguments.forEachIndexed { index, parameter -> call.putValueArgument(index, irGet(parameter)) }
         call.insertTypeArgumentsForSuperClass(superClass)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.types
 
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -22,12 +23,14 @@ fun IrClassifierSymbol.superTypes() = when (this) {
     else -> emptyList<IrType>()
 }
 
-fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean {
-    if (FqNameEqualityChecker.areEqual(this, superClass)) return true
+fun IrClass.isSubtypeOfClass(superClass: IrClass): Boolean = (symbol as IrClassifierSymbol).isSubtypeOfClass(superClass)
+
+fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClass): Boolean {
+    if (FqNameEqualityChecker.areEqual(this, superClass.symbol)) return true
     return superTypes().any { it.isSubtypeOfClass(superClass) }
 }
 
-fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean {
+fun IrType.isSubtypeOfClass(superClass: IrClass): Boolean {
     if (this !is IrSimpleType) return false
     return classifier.isSubtypeOfClass(superClass)
 }

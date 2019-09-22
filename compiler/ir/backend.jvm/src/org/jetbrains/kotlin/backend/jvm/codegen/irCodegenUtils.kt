@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -48,31 +46,31 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
-class IrFrameMap : FrameMapBase<IrSymbol>() {
-    private val typeMap = mutableMapOf<IrSymbol, Type>()
+class IrFrameMap : FrameMapBase<IrSymbolOwner>() {
+    private val typeMap = mutableMapOf<IrSymbolOwner, Type>()
 
-    override fun enter(descriptor: IrSymbol, type: Type): Int {
+    override fun enter(descriptor: IrSymbolOwner, type: Type): Int {
         typeMap[descriptor] = type
         return super.enter(descriptor, type)
     }
 
-    override fun leave(descriptor: IrSymbol): Int {
+    override fun leave(descriptor: IrSymbolOwner): Int {
         typeMap.remove(descriptor)
         return super.leave(descriptor)
     }
 
-    fun typeOf(descriptor: IrSymbol): Type = typeMap.getValue(descriptor)
+    fun typeOf(descriptor: IrSymbolOwner): Type = typeMap.getValue(descriptor)
 }
 
 internal val IrFunction.isStatic
     get() = (this.dispatchReceiverParameter == null && this !is IrConstructor)
 
 fun IrFrameMap.enter(irDeclaration: IrSymbolOwner, type: Type): Int {
-    return enter(irDeclaration.symbol, type)
+    return enter(irDeclaration, type)
 }
 
 fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
-    return leave(irDeclaration.symbol)
+    return leave(irDeclaration)
 }
 
 val IrClass.isJvmInterface get() = isAnnotationClass || isInterface
@@ -375,7 +373,7 @@ internal fun getSignature(
     val kotlinMarkerInterfaces = LinkedHashSet<String>()
 
     for (superType in irClass.superTypes) {
-        val superClass = superType.safeAs<IrSimpleType>()?.classifier?.safeAs<IrClassSymbol>()?.owner ?: continue
+        val superClass = superType.safeAs<IrSimpleType>()?.classifier?.safeAs<IrClass>() ?: continue
         if (superClass.isJvmInterface) {
             val kotlinInterfaceName = superClass.fqNameWhenAvailable!!
 
@@ -548,7 +546,7 @@ fun getLabeledThisName(callableName: String, prefix: String, defaultName: String
 val IrAnnotationContainer.deprecationFlags: Int
     get() {
         val annotation = annotations.findAnnotation(FQ_NAMES.deprecated) ?: return 0
-        val isHidden = (annotation.getValueArgument(2) as? IrGetEnumValue)?.symbol?.owner
+        val isHidden = (annotation.getValueArgument(2) as? IrGetEnumValue)?.target
             ?.name?.asString() == DeprecationLevel.HIDDEN.name
         return Opcodes.ACC_DEPRECATED or if (isHidden) Opcodes.ACC_SYNTHETIC else 0
     }

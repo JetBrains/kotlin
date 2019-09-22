@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -60,9 +59,9 @@ internal val enumWhenPhase = makeIrFilePhase(
 //
 private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLowering(context) {
     private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
-    private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }
-    private val intArrayGet = intArray.functions.single { it.owner.name == OperatorNameConventions.GET }
-    private val intArraySet = intArray.functions.single { it.owner.name == OperatorNameConventions.SET }
+    private val intArrayConstructor = intArray.constructors.single { it.valueParameters.size == 1 }
+    private val intArrayGet = intArray.functions.single { it.name == OperatorNameConventions.GET }
+    private val intArraySet = intArray.functions.single { it.name == OperatorNameConventions.SET }
     private val refArraySize = context.irBuiltIns.arrayClass.owner.properties.single { it.name.toString() == "size" }.getter!!
 
     // To avoid visibility-related issues, classes containing the mappings are direct children
@@ -110,13 +109,13 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
 
         for ((enum, mappingAndField) in state!!.mappings) {
             val (mapping, field) = mappingAndField
-            val builder = context.createIrBuilder(state!!.mappingsClass.symbol)
+            val builder = context.createIrBuilder(state!!.mappingsClass)
             val enumValues = enum.functions.single { it.name.toString() == "values" }
             field.initializer = builder.irExprBody(builder.irBlock {
                 val enumSize = irCall(refArraySize).apply { dispatchReceiver = irCall(enumValues) }
                 val result = irTemporary(irCall(intArrayConstructor).apply { putValueArgument(0, enumSize) })
                 for ((entry, index) in mapping) {
-                    val runtimeEntry = IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, enum.defaultType, entry.symbol)
+                    val runtimeEntry = IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, enum.defaultType, entry)
                     +irCall(intArraySet).apply {
                         dispatchReceiver = irGet(result)
                         putValueArgument(0, super.mapRuntimeEnumEntry(builder, runtimeEntry)) // <entry>.ordinal()

@@ -110,7 +110,7 @@ class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTr
     private fun tryFoldingUnaryOps(call: IrCall): IrExpression {
         val operand = call.dispatchReceiver as? IrConst<*> ?: return call
         val evaluated = evaluateUnary(
-            call.symbol.owner.name.toString(),
+            call.target.name.toString(),
             operand.kind.toString(),
             operand.value!!
         ) ?: return call
@@ -124,14 +124,14 @@ class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTr
         val evaluated = try {
             fun String.toNonNullable() = if (this.endsWith('?')) this.dropLast(1) else this
             evaluateBinary(
-                call.symbol.owner.name.toString(),
+                call.target.name.toString(),
                 lhs.kind.toString(),
                 lhs.value!!,
                 // 1. Although some operators have nullable parameters, evaluators deals with non-nullable types only.
                 //    The passed parameters are guaranteed to be non-null, since they are from IrConst.
                 // 2. The operators are registered with prototype as if virtual member functions. They are identified by
                 //    actual_receiver_type.operator_name(parameter_type_in_prototype).
-                call.symbol.owner.valueParameters[0].type.toKotlinType().toString().toNonNullable(),
+                call.target.valueParameters[0].type.toKotlinType().toString().toNonNullable(),
                 rhs.value!!
             ) ?: return call
         } catch (e: Exception) {
@@ -144,7 +144,7 @@ class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTr
 
     private fun tryFoldingBuiltinBinaryOps(call: IrCall): IrExpression {
         // Make sure that this is a IrBuiltIn
-        if (call.symbol.owner.fqNameWhenAvailable?.parent() != IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)
+        if (call.target.fqNameWhenAvailable?.parent() != IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)
             return call
 
         val lhs = call.getValueArgument(0) as? IrConst<*> ?: return call
@@ -152,7 +152,7 @@ class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTr
 
         val evaluated = try {
             val evaluator =
-                BINARY_OP_TO_EVALUATOR[BinaryOp(lhs.kind.toString(), rhs.kind.toString(), call.symbol.owner.name.toString())] ?: return call
+                BINARY_OP_TO_EVALUATOR[BinaryOp(lhs.kind.toString(), rhs.kind.toString(), call.target.name.toString())] ?: return call
             evaluator(lhs.value!!, rhs.value!!)
         } catch (e: Exception) {
             return call

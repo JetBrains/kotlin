@@ -73,9 +73,9 @@ fun IrType.toKotlinType(): KotlinType {
 fun IrType.getClass(): IrClass? =
     classOrNull?.owner
 
-fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArgument>): IrSimpleType =
+fun IrClass.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArgument>): IrSimpleType =
     IrSimpleTypeImpl(
-        this,
+        this.symbol,
         hasQuestionMark,
         arguments,
         emptyList()

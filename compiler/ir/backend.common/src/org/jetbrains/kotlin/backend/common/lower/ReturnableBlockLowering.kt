@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
-import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 
 /**
  * Replaces returnable blocks and `return`'s with loops and `break`'s correspondingly.
@@ -77,17 +76,17 @@ class ReturnableBlockLowering(val context: CommonBackendContext) : FileLoweringP
 
 private class ReturnableBlockTransformer(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
     private var labelCnt = 0
-    private val returnMap = mutableMapOf<IrReturnableBlockSymbol, (IrReturn) -> IrExpression>()
+    private val returnMap = mutableMapOf<IrReturnableBlock, (IrReturn) -> IrExpression>()
 
     override fun visitReturn(expression: IrReturn): IrExpression {
         expression.transformChildrenVoid()
-        return returnMap[expression.returnTargetSymbol]?.invoke(expression) ?: expression
+        return returnMap[expression.irReturnTarget]?.invoke(expression) ?: expression
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
         if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression)
 
-        val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol)
+        val builder = context.createIrBuilder(currentScope!!.scope.irScopeOwner)
         val variable by lazy {
             builder.scope.createTemporaryVariableDeclaration(expression.type, "tmp\$ret\$${labelCnt++}", true)
         }
@@ -106,26 +105,26 @@ private class ReturnableBlockTransformer(val context: CommonBackendContext) : Ir
 
         var hasReturned = false
 
-        returnMap[expression.symbol] = { returnExpression ->
+        returnMap[expression] = { returnExpression ->
             hasReturned = true
             builder.irComposite(returnExpression) {
-                +irSetVar(variable.symbol, returnExpression.value)
+                +irSetVar(variable, returnExpression.value)
                 +irBreak(loop)
             }
         }
 
         val newStatements = expression.statements.mapIndexed { i, s ->
-            if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
+            if (i == expression.statements.lastIndex && s is IrReturn && s.irReturnTarget == expression) {
                 s.transformChildrenVoid()
                 if (!hasReturned) s.value else {
-                    builder.irSetVar(variable.symbol, s.value)
+                    builder.irSetVar(variable, s.value)
                 }
             } else {
                 s.transform(this, null)
             }
         }
 
-        returnMap.remove(expression.symbol)
+        returnMap.remove(expression)
 
         if (!hasReturned) {
             return IrCompositeImpl(

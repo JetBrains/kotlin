@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -27,7 +27,7 @@ class IrDelegatingConstructorCallImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val symbol: IrConstructorSymbol,
+    override val target: IrConstructor,
     override val descriptor: ClassConstructorDescriptor,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int
@@ -45,25 +45,25 @@ class IrDelegatingConstructorCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrConstructorSymbol,
+        target: IrConstructor,
         descriptor: ClassConstructorDescriptor
-    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount, descriptor.valueParameters.size)
+    ) : this(startOffset, endOffset, type, target, descriptor, descriptor.typeParametersCount, descriptor.valueParameters.size)
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrConstructorSymbol
-    ) : this(startOffset, endOffset, type, symbol, symbol.descriptor)
+        target: IrConstructor
+    ) : this(startOffset, endOffset, type, target, target.descriptor)
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrConstructorSymbol,
+        target: IrConstructor,
         descriptor: ClassConstructorDescriptor,
         typeArgumentsCount: Int
-    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size)
+    ) : this(startOffset, endOffset, type, target, descriptor, typeArgumentsCount, descriptor.valueParameters.size)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitDelegatingConstructorCall(this, data)

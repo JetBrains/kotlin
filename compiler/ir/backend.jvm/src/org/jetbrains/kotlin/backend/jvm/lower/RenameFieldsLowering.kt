@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -74,7 +73,7 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
         val renamer = FieldRenamer(newNames)
         irFile.transform(renamer, null)
 
-        irFile.transform(FieldAccessTransformer(renamer.newSymbols), null)
+        irFile.transform(FieldAccessTransformer(renamer.newFields), null)
     }
 
     private val IrField.isJvmField: Boolean
@@ -94,7 +93,7 @@ private class FieldNameCollector : IrElementVisitorVoid {
 }
 
 private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElementTransformerVoid() {
-    val newSymbols = mutableMapOf<IrField, IrFieldSymbol>()
+    val newFields = mutableMapOf<IrField, IrField>()
 
     override fun visitField(declaration: IrField): IrStatement {
         val newName = newNames[declaration] ?: return super.visitField(declaration)
@@ -112,31 +111,31 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
                 ?.patchDeclarationParents(it)
             it.metadata = declaration.metadata
 
-            newSymbols[declaration] = symbol
+            newFields[declaration] = it
         }
     }
 }
 
-private class FieldAccessTransformer(private val oldToNew: Map<IrField, IrFieldSymbol>) : IrElementTransformerVoid() {
+private class FieldAccessTransformer(private val oldToNew: Map<IrField, IrField>) : IrElementTransformerVoid() {
     override fun visitGetField(expression: IrGetField): IrExpression {
-        val newSymbol = oldToNew[expression.symbol.owner] ?: return super.visitGetField(expression)
+        val newField = oldToNew[expression.target] ?: return super.visitGetField(expression)
 
         return IrGetFieldImpl(
-            expression.startOffset, expression.endOffset, newSymbol, expression.type,
+            expression.startOffset, expression.endOffset, newField, expression.type,
             expression.receiver?.transform(this, null),
-            expression.origin, expression.superQualifierSymbol
+            expression.origin, expression.irSuperQualifier
         )
     }
 
     override fun visitSetField(expression: IrSetField): IrExpression {
-        val newSymbol = oldToNew[expression.symbol.owner] ?: return super.visitSetField(expression)
+        val newField = oldToNew[expression.target] ?: return super.visitSetField(expression)
 
         return IrSetFieldImpl(
-            expression.startOffset, expression.endOffset, newSymbol,
+            expression.startOffset, expression.endOffset, newField,
             expression.receiver?.transform(this, null),
             expression.value.transform(this, null),
             expression.type,
-            expression.origin, expression.superQualifierSymbol
+            expression.origin, expression.irSuperQualifier
         )
     }
 }

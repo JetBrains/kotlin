@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -213,7 +212,7 @@ class ExpressionCodegen(
     private fun generateNonNullAssertion(param: IrValueParameter) {
         val asmType = param.type.asmType
         if (!param.type.unboxInlineClass().isNullable() && !isPrimitive(asmType)) {
-            mv.load(findLocalIndex(param.symbol), asmType)
+            mv.load(findLocalIndex(param), asmType)
             mv.aconst(param.name.asString())
             val methodName =
                 if (state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) "checkNotNullParameter"
@@ -255,7 +254,7 @@ class ExpressionCodegen(
         val type = typeMapper.mapType(param)
         // NOTE: we expect all value parameters to be present in the frame.
         mv.visitLocalVariable(
-            name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol)
+            name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param)
         )
     }
 
@@ -286,7 +285,7 @@ class ExpressionCodegen(
         }
 
         info.variables.reversed().forEach {
-            frameMap.leave(it.declaration.symbol)
+            frameMap.leave(it.declaration)
         }
     }
 
@@ -307,17 +306,17 @@ class ExpressionCodegen(
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
-        classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
+        classCodegen.context.irIntrinsics.getIntrinsic(expression.target)
             ?.invoke(expression, this, data)?.let { return it.coerce(expression.type) }
 
         val callable = methodSignatureMapper.mapToCallableMethod(expression)
-        val callee = expression.symbol.owner
+        val callee = expression.target
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
         val asmType = if (expression is IrConstructorCall) typeMapper.mapTypeAsDeclaration(expression.type) else expression.asmType
 
         when {
             expression is IrConstructorCall -> {
-                closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
+                closureReifiedMarkers[expression.target.parentAsClass]?.let {
                     if (it.wereUsedReifiedParameters()) {
                         putNeedClassReificationMarker(v)
                         propagateChildReifiedTypeParametersUsages(it)
@@ -335,7 +334,7 @@ class ExpressionCodegen(
 
                 for (argumentIndex in 0 until expression.typeArgumentsCount) {
                     val classifier = expression.getTypeArgument(argumentIndex)?.classifierOrNull
-                    if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
+                    if (classifier is IrTypeParameter && classifier.isReified) {
                         consumeReifiedOperationMarker(classifier)
                     }
                 }
@@ -358,7 +357,7 @@ class ExpressionCodegen(
         }
 
         callGenerator.beforeValueParametersStart()
-        expression.symbol.owner.valueParameters.forEachIndexed { i, irParameter ->
+        expression.target.valueParameters.forEachIndexed { i, irParameter ->
             val arg = expression.getValueArgument(i)
             val parameterType = callable.valueParameterTypes[i]
             require(arg != null) { "Null argument in ExpressionCodegen for parameter ${irParameter.render()}" }
@@ -400,7 +399,7 @@ class ExpressionCodegen(
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration)
-        val index = frameMap.enter(declaration.symbol, varType)
+        val index = frameMap.enter(declaration, varType)
 
         declaration.markLineNumber(startOffset = true)
 
@@ -417,15 +416,15 @@ class ExpressionCodegen(
     override fun visitGetValue(expression: IrGetValue, data: BlockInfo): PromisedValue {
         // Do not generate line number information for loads from compiler-generated
         // temporary variables. They do not correspond to variable loads in user code.
-        if (expression.symbol.owner.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE)
+        if (expression.target.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE)
             expression.markLineNumber(startOffset = true)
-        val type = frameMap.typeOf(expression.symbol)
-        mv.load(findLocalIndex(expression.symbol), type)
+        val type = frameMap.typeOf(expression.target)
+        mv.load(findLocalIndex(expression.target), type)
         return MaterialValue(this, type, expression.type)
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
-        val callee = expression.symbol.owner
+        val callee = expression.target
         callee.constantValue()?.let {
             // Handling const reads before codegen is important for constant folding.
             assert(expression is IrSetField) { "read of const val ${callee.name} not inlined by ConstLowering" }
@@ -466,7 +465,7 @@ class ExpressionCodegen(
         // i.e., not in an initializer block or constructor body.
         val isFieldInitializer = expression.origin == null
         val skip = (inPrimaryConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst<*> &&
-                isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
+                isDefaultValueForType(expression.target.type.asmType, expressionValue.value)
         return if (skip) defaultValue(expression.type) else super.visitSetField(expression, data)
     }
 
@@ -485,19 +484,19 @@ class ExpressionCodegen(
             else -> !isPrimitive(type) && value == null
         }
 
-    private fun findLocalIndex(irSymbol: IrSymbol): Int {
-        val index = frameMap.getIndex(irSymbol)
+    private fun findLocalIndex(declaration: IrSymbolOwner): Int {
+        val index = frameMap.getIndex(declaration)
         if (index >= 0)
             return index
-        val dump = if (irSymbol.isBound) irSymbol.owner.dump() else irSymbol.descriptor.toString()
+        val dump = if (declaration.symbol.isBound) declaration.dump() else declaration.symbol.descriptor.toString()
         throw AssertionError("Non-mapped local declaration: $dump\n in ${irFunction.dump()}")
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         expression.value.markLineNumber(startOffset = true)
-        expression.value.accept(this, data).coerce(expression.symbol.owner.type).materialize()
-        mv.store(findLocalIndex(expression.symbol), expression.symbol.owner.asmType)
+        expression.value.accept(this, data).coerce(expression.target.type).materialize()
+        mv.store(findLocalIndex(expression.target), expression.target.asmType)
         return defaultValue(expression.type)
     }
 
@@ -536,10 +535,10 @@ class ExpressionCodegen(
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
-        val returnTarget = expression.returnTargetSymbol.owner
+        val returnTarget = expression.irReturnTarget
         val owner =
             (returnTarget as? IrFunction
-                ?: (returnTarget as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
+                ?: (returnTarget as? IrReturnableBlock)?.inlineFunction
                 ?: error("Unsupported IrReturnTarget: $returnTarget")).getOrCreateSuspendFunctionViewIfNeeded(context)
         //TODO: should be owner != irFunction
         val isNonLocalReturn =
@@ -946,13 +945,13 @@ class ExpressionCodegen(
     private fun getOrCreateCallGenerator(
         element: IrFunctionAccessExpression, data: BlockInfo, signature: JvmMethodSignature
     ): IrCallGenerator {
-        if (!element.symbol.owner.isInlineFunctionCall(context) ||
+        if (!element.target.isInlineFunctionCall(context) ||
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry
         ) {
             return IrCallGenerator.DefaultCallGenerator
         }
 
-        val callee = element.symbol.owner
+        val callee = element.target
         val typeArgumentContainer = if (callee is IrConstructor) callee.parentAsClass else callee
         val typeArguments =
             if (element.typeArgumentsCount == 0) {
@@ -998,9 +997,9 @@ class ExpressionCodegen(
     }
 
     override fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
-        require(typeParameter is IrTypeParameterSymbol)
-        if (typeParameter.owner.parent != irFunction) {
-            classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
+        require(typeParameter is IrTypeParameter)
+        if (typeParameter.parent != irFunction) {
+            classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.name.asString())
         }
     }
 

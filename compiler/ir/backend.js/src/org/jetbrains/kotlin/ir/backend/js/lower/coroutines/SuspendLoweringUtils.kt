@@ -6,18 +6,15 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -64,7 +61,7 @@ class SuspendedTerminatorsCollector(suspendableNodes: MutableSet<IrElement>) : S
     override fun visitReturn(expression: IrReturn) {
         super.visitReturn(expression)
 
-        if (expression.returnTargetSymbol is IrReturnableBlockSymbol && isSuspendableNode(expression.returnTargetSymbol.owner)) {
+        if (expression.irReturnTarget is IrReturnableBlock && isSuspendableNode(expression.irReturnTarget)) {
             markNode(expression)
         }
     }
@@ -82,19 +79,19 @@ fun collectSuspendableNodes(function: IrBlock): MutableSet<IrElement> {
 }
 
 class LiveLocalsTransformer(
-    private val localMap: Map<IrValueSymbol, IrFieldSymbol>,
+    private val localMap: Map<IrValueDeclaration, IrField>,
     private val receiver: () -> IrExpression,
     private val unitType: IrType
 ) :
     IrElementTransformerVoid() {
     override fun visitGetValue(expression: IrGetValue): IrExpression {
-        val field = localMap[expression.symbol] ?: return expression
+        val field = localMap[expression.target] ?: return expression
         return expression.run { IrGetFieldImpl(startOffset, endOffset, field, type, receiver(), origin) }
     }
 
     override fun visitSetVariable(expression: IrSetVariable): IrExpression {
         expression.transformChildrenVoid(this)
-        val field = localMap[expression.symbol] ?: return expression
+        val field = localMap[expression.target] ?: return expression
         return expression.run { IrSetFieldImpl(startOffset, endOffset, field, receiver(), value, unitType, origin) }
     }
 

@@ -180,7 +180,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }!!
 
     val charClassSymbol = getInternalClassWithoutPackage("kotlin.Char")
-    val charConstructor = charClassSymbol.constructors.single().owner
+    val charConstructor = charClassSymbol.constructors.single()
 
     val stringClassSymbol = getInternalClassWithoutPackage("kotlin.String")
     val stringConstructorSymbol = stringClassSymbol.constructors.single()

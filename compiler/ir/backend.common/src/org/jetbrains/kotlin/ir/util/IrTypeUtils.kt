@@ -82,12 +82,12 @@ fun IrType.getPrimitiveArrayElementType() = (this as? IrSimpleType)?.let {
 }
 
 fun IrType.substitute(params: List<IrTypeParameter>, arguments: List<IrType>): IrType =
-    substitute(params.map { it.symbol }.zip(arguments).toMap())
+    substitute(params.zip(arguments).toMap())
 
-fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrType {
+fun IrType.substitute(substitutionMap: Map<IrTypeParameter, IrType>): IrType {
     if (this !is IrSimpleType) return this
 
-    substitutionMap[classifier]?.let { return it }
+    substitutionMap[classifier.owner]?.let { return it }
 
     val newArguments = arguments.map {
         if (it is IrTypeProjection) {

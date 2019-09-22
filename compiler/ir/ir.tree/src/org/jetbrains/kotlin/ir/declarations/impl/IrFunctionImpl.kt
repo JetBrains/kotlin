@@ -58,7 +58,7 @@ class IrFunctionImpl(
 
     override val descriptor: FunctionDescriptor = symbol.descriptor
 
-    override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
+    override val overridden: MutableList<IrSimpleFunction> = SmartList()
 
     override var correspondingProperty: IrProperty? = null
 

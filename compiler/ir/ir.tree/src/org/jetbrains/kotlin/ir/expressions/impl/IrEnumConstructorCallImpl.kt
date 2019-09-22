@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -27,7 +27,7 @@ class IrEnumConstructorCallImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val symbol: IrConstructorSymbol,
+    override val target: IrConstructor,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int
 ) :
@@ -44,18 +44,18 @@ class IrEnumConstructorCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrConstructorSymbol
-    ) : this(startOffset, endOffset, type, symbol, symbol.descriptor.typeParametersCount, symbol.descriptor.valueParameters.size)
+        target: IrConstructor
+    ) : this(startOffset, endOffset, type, target, target.descriptor.typeParametersCount, target.descriptor.valueParameters.size)
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrConstructorSymbol,
+        target: IrConstructor,
         typeArgumentsCount: Int
-    ) : this(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
+    ) : this(startOffset, endOffset, type, target, typeArgumentsCount, target.descriptor.valueParameters.size)
 
-    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
+    override val descriptor: ClassConstructorDescriptor get() = target.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitEnumConstructorCall(this, data)

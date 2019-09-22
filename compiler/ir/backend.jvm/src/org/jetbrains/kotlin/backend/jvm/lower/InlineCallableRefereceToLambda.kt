@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.codegen.AsmUtil.BOUND_REFERENCE_RECEIVER
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.*
@@ -55,7 +55,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
 
             override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-                val callee = expression.symbol.owner
+                val callee = expression.target
                 if (callee.isInlineFunctionCall(context)) {
                     for (valueParameter in callee.valueParameters) {
                         if (valueParameter.isInlineParameter()) {
@@ -79,11 +79,11 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
                 //Use getter if field is absent...
                 val field =
-                    expression.field?.owner ?: return functionReferenceToLambda(currentScope!!, expression, expression.getter!!.owner)
+                    expression.field ?: return functionReferenceToLambda(currentScope!!, expression, expression.getter!!)
 
                 //..else use field itself
                 val irBuilder =
-                    context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+                    context.createIrBuilder(currentScope!!.scope.irScopeOwner, expression.startOffset, expression.endOffset)
                 val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
                 return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
                     lateinit var variableForBoundReceiver: IrVariable
@@ -107,7 +107,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                                 else -> addValueParameter("receiver", field.parentAsClass.defaultType)
                             }
 
-                        val lambdaBodyBuilder = this@InlineCallableReferenceToLambdaPhase.context.createIrBuilder(this.symbol)
+                        val lambdaBodyBuilder = this@InlineCallableReferenceToLambdaPhase.context.createIrBuilder(this)
                         body = lambdaBodyBuilder.irBlockBody(startOffset, endOffset) {
                             +irReturn(irGetField(if (receiver != null) irGet(receiver) else null, field))
                         }
@@ -116,7 +116,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
                     +IrFunctionReferenceImpl(
                         expression.startOffset, expression.endOffset, field.type,
-                        newLambda.symbol, newLambda.symbol.descriptor, 0,
+                        newLambda, newLambda.descriptor, 0,
                         IrStatementOrigin.LAMBDA
                     )
                 }
@@ -124,7 +124,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 if (inlinableCR.contains(expression)) {
-                    val referencedFunction = expression.symbol.owner
+                    val referencedFunction = expression.target
                     return functionReferenceToLambda(currentScope!!, expression, referencedFunction)
                 }
 
@@ -139,7 +139,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         referencedFunction: IrFunction
     ): IrExpression {
         val irBuilder =
-            context.createIrBuilder(scope.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+            context.createIrBuilder(scope.scope.irScopeOwner, expression.startOffset, expression.endOffset)
 
         val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
@@ -173,13 +173,13 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                         )
                     }
                 }
-                val lambdaBodyBuilder = this@InlineCallableReferenceToLambdaPhase.context.createIrBuilder(this.symbol)
+                val lambdaBodyBuilder = this@InlineCallableReferenceToLambdaPhase.context.createIrBuilder(this)
                 body = lambdaBodyBuilder.irBlockBody(startOffset, endOffset) {
                     var shift = 0
                     val irCall =
                         if (expression is IrPropertyReference)
-                            irGet(referencedFunction.returnType, null, referencedFunction.symbol)
-                        else irCall(referencedFunction.symbol)
+                            irGet(referencedFunction.returnType, null, referencedFunction)
+                        else irCall(referencedFunction)
 
                     +irReturn(
                         irCall.also { call ->
@@ -207,7 +207,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
             +IrFunctionReferenceImpl(
                 expression.startOffset, expression.endOffset, referencedFunction.returnType,
-                newLambda.symbol, newLambda.symbol.descriptor, referencedFunction.typeParameters.size,
+                newLambda, newLambda.descriptor, referencedFunction.typeParameters.size,
                 IrStatementOrigin.LAMBDA
             )
         }

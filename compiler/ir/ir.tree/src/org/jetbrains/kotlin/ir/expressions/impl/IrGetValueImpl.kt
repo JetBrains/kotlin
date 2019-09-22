@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -16,28 +16,28 @@ class IrGetValueImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    symbol: IrValueSymbol,
+    target: IrValueDeclaration,
     override val origin: IrStatementOrigin? = null
 ) :
-    IrTerminalDeclarationReferenceBase<IrValueSymbol, ValueDescriptor>(
+    IrTerminalDeclarationReferenceBase<IrValueDeclaration, ValueDescriptor>(
         startOffset,
         endOffset,
         type,
-        symbol,
-        symbol.descriptor
+        target,
+        target.descriptor
     ),
     IrGetValue {
 
     constructor(
         startOffset: Int,
         endOffset: Int,
-        symbol: IrValueSymbol,
+        target: IrValueDeclaration,
         origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, symbol.owner.type, symbol, origin)
+    ) : this(startOffset, endOffset, target.type, target, origin)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetValue(this, data)
 
     override fun copy(): IrGetValue =
-        IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
+        IrGetValueImpl(startOffset, endOffset, type, target, origin)
 }

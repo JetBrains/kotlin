@@ -32,7 +32,7 @@ class JsonIntrinsics(val context: JsIrBackendContext) : CallsTransformer {
             }
         }
 
-        when (call.symbol.owner.fqNameWhenAvailable) {
+        when (call.target.fqNameWhenAvailable) {
             FqName("kotlin.js.Json.get") ->
                 return generateMemberAccess()
 

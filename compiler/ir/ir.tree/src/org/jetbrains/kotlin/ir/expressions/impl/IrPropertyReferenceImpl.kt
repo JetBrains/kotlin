@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -30,12 +30,12 @@ class IrPropertyReferenceImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val symbol: IrPropertySymbol,
+    override val target: IrProperty,
     override val descriptor: PropertyDescriptor,
     typeArgumentsCount: Int,
-    override val field: IrFieldSymbol?,
-    override val getter: IrSimpleFunctionSymbol?,
-    override val setter: IrSimpleFunctionSymbol?,
+    override val field: IrField?,
+    override val getter: IrSimpleFunction?,
+    override val setter: IrSimpleFunction?,
     origin: IrStatementOrigin? = null
 ) :
     IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),
@@ -45,15 +45,15 @@ class IrPropertyReferenceImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrPropertySymbol,
+        target: IrProperty,
         typeArgumentsCount: Int,
-        field: IrFieldSymbol?,
-        getter: IrSimpleFunctionSymbol?,
-        setter: IrSimpleFunctionSymbol?,
+        field: IrField?,
+        getter: IrSimpleFunction?,
+        setter: IrSimpleFunction?,
         origin: IrStatementOrigin? = null
     ) : this(
         startOffset, endOffset, type,
-        symbol, symbol.descriptor,
+        target, target.descriptor,
         typeArgumentsCount, field, getter, setter, origin
     )
 
@@ -64,9 +64,9 @@ class IrPropertyReferenceImpl(
         type: IrType,
         descriptor: PropertyDescriptor,
         typeArgumentsCount: Int,
-        field: IrFieldSymbol?,
-        getter: IrSimpleFunctionSymbol?,
-        setter: IrSimpleFunctionSymbol?,
+        field: IrField?,
+        getter: IrSimpleFunction?,
+        setter: IrSimpleFunction?,
         origin: IrStatementOrigin? = null
     ) : this(
         startOffset, endOffset, type,

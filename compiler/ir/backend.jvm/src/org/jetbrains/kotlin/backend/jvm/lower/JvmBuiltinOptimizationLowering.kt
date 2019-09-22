@@ -38,7 +38,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
     companion object {
         fun isNegation(expression: IrExpression, context: JvmBackendContext): Boolean =
             expression is IrCall &&
-                    context.state.intrinsics.getIntrinsic(expression.symbol.descriptor) is Not
+                    context.state.intrinsics.getIntrinsic(expression.target.descriptor) is Not
     }
 
     private fun hasNoSideEffectsForNullCompare(expression: IrExpression): Boolean {
@@ -54,11 +54,11 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
 
 
     private fun getOperandsIfCallToEqeqOrEquals(call: IrCall): Pair<IrExpression, IrExpression>? {
-        if (call.symbol == context.irBuiltIns.eqeqSymbol) {
+        if (call.target == context.irBuiltIns.eqeqSymbol.owner) {
             val left = call.getValueArgument(0)!!
             val right = call.getValueArgument(1)!!
             return left to right
-        } else if (call.symbol.owner.isObjectEquals) {
+        } else if (call.target.isObjectEquals) {
             val left = call.dispatchReceiver!!
             val right = call.getValueArgument(0)!!
             return left to right
@@ -134,7 +134,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                         expression.startOffset,
                         expression.endOffset,
                         context.irBuiltIns.booleanType,
-                        context.irBuiltIns.andandSymbol
+                        context.irBuiltIns.andandSymbol.owner
                     ).apply {
                         putValueArgument(0, expression.branches[0].condition)
                         putValueArgument(1, expression.branches[0].result)
@@ -155,7 +155,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                         expression.startOffset,
                         expression.endOffset,
                         context.irBuiltIns.booleanType,
-                        context.irBuiltIns.ororSymbol
+                        context.irBuiltIns.ororSymbol.owner
                     ).apply {
                         putValueArgument(0, expression.branches[0].condition)
                         putValueArgument(1, expression.branches[1].result)
@@ -248,7 +248,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                     if (first is IrVariable
                         && first.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
                         && second is IrGetValue
-                        && first.symbol == second.symbol) {
+                        && first == second.target) {
                         statements.clear()
                         first.initializer?.let { statements.add(it) }
                     }
@@ -270,7 +270,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 // Replace IrGetValue of an immutable temporary variable with a constant
                 // initializer with the constant initializer.
-                val variable = expression.symbol.owner
+                val variable = expression.target
                 return if (isImmutableTemporaryVariableWithConstantValue(variable))
                     (variable as IrVariable).initializer!!
                 else

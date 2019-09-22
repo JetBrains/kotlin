@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -38,7 +36,7 @@ internal val interfacePhase = makeIrFilePhase(
 private class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
 
     val state = context.state
-    val removedFunctions = hashMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    val removedFunctions = hashMapOf<IrFunction, IrFunction>()
 
     override fun lower(irClass: IrClass) {
         if (!irClass.isInterface) return
@@ -53,7 +51,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
             if (function.modality != Modality.ABSTRACT && function.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
                 val element = context.declarationFactory.getDefaultImplsFunction(function).also {
                     if (shouldRemoveFunction(function))
-                        removedFunctions[function.symbol] = it.symbol
+                        removedFunctions[function] = it
                 }
                 members.add(element)
                 element.body = function.body?.patchDeclarationParents(element)
@@ -73,14 +71,14 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
         irClass.transformChildrenVoid(this)
 
         irClass.declarations.removeAll {
-            it is IrFunction && removedFunctions.containsKey(it.symbol)
+            it is IrFunction && removedFunctions.containsKey(it)
         }
 
         // Move metadata for local delegated properties from the interface to DefaultImpls, since this is where kotlin-reflect looks for it.
         val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId as IrClass]
         if (localDelegatedProperties != null) {
             context.localDelegatedProperties[defaultImplsIrClass.attributeOwnerId as IrClass] = localDelegatedProperties
-            context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] = emptyList<IrLocalDelegatedPropertySymbol>()
+            context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] = emptyList<IrLocalDelegatedProperty>()
         }
 
         // Move $$delegatedProperties array
@@ -103,28 +101,28 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
         val startOffset = interfaceMethod.startOffset
         val endOffset = interfaceMethod.endOffset
 
-        return IrCallImpl(startOffset, endOffset, interfaceMethod.returnType, defaultImpls.symbol).apply {
+        return IrCallImpl(startOffset, endOffset, interfaceMethod.returnType, defaultImpls).apply {
             passTypeArgumentsFrom(interfaceMethod)
 
             var offset = 0
             interfaceMethod.dispatchReceiverParameter?.let {
-                putValueArgument(offset++, IrGetValueImpl(startOffset, endOffset, it.symbol))
+                putValueArgument(offset++, IrGetValueImpl(startOffset, endOffset, it))
             }
             interfaceMethod.extensionReceiverParameter?.let {
-                putValueArgument(offset++, IrGetValueImpl(startOffset, endOffset, it.symbol))
+                putValueArgument(offset++, IrGetValueImpl(startOffset, endOffset, it))
             }
             interfaceMethod.valueParameters.forEachIndexed { i, it ->
-                putValueArgument(i + offset, IrGetValueImpl(startOffset, endOffset, it.symbol))
+                putValueArgument(i + offset, IrGetValueImpl(startOffset, endOffset, it))
             }
         }
     }
 
     override fun visitReturn(expression: IrReturn): IrExpression {
-        val newFunction = removedFunctions[expression.returnTargetSymbol]?.owner
+        val newFunction = removedFunctions[expression.irReturnTarget]
         return super.visitReturn(
             if (newFunction != null) {
                 with(expression) {
-                    IrReturnImpl(startOffset, endOffset, type, newFunction.symbol, value)
+                    IrReturnImpl(startOffset, endOffset, type, newFunction, value)
                 }
             } else {
                 expression
@@ -133,7 +131,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val newFunction = removedFunctions[expression.symbol]?.owner
+        val newFunction = removedFunctions[expression.target]
         return super.visitCall(
             if (newFunction != null) {
                 irCall(expression, newFunction, receiversAsArguments = true)
@@ -144,7 +142,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        val newFunction = removedFunctions[expression.symbol]?.owner
+        val newFunction = removedFunctions[expression.target]
         return super.visitFunctionReference(
             if (newFunction != null) {
                 with(expression) {
@@ -152,7 +150,7 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
                         startOffset,
                         endOffset,
                         type,
-                        newFunction.symbol,
+                        newFunction,
                         newFunction.descriptor,
                         typeArgumentsCount,
                         origin

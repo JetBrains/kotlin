@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrClassifier
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -21,11 +21,12 @@ private fun IrType.isNullableClassType(fqName: FqNameUnsafe) = isClassType(fqNam
 private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
     if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
-    return classifier.isClassWithFqName(fqName)
+    return classifier.owner.isClassWithFqName(fqName)
 }
 
-fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
-    this is IrClassSymbol && classFqNameEquals(this, fqName)
+fun IrClassifier.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
+    this is IrClass && isClassWithFqName(fqName)
+fun IrClass.isClassWithFqName(fqName: FqNameUnsafe): Boolean = classFqNameEquals(this, fqName)
 
 private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Boolean =
     if (symbol.isBound) classFqNameEquals(symbol.owner, fqName) else classFqNameEquals(symbol.descriptor, fqName)

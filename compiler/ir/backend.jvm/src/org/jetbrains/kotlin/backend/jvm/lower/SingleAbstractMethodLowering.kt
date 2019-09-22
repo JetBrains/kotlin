@@ -74,7 +74,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
             return super.visitTypeOperator(expression)
         val superType = expression.typeOperand
         val invokable = expression.argument.transform(this, null)
-        context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).apply {
+        context.createIrBuilder(currentScope!!.scope.irScopeOwner).apply {
             // Do not generate a wrapper class for null, it has no invoke() anyway.
             if (invokable.isNullConst())
                 return invokable
@@ -142,7 +142,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
             body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
                 +irSetField(irGet(subclass.thisReceiver!!), field, irGet(parameter))
-                +IrInstanceInitializerCallImpl(startOffset, endOffset, subclass.symbol, context.irBuiltIns.unitType)
+                +IrInstanceInitializerCallImpl(startOffset, endOffset, subclass, context.irBuiltIns.unitType)
             }
         }
 
@@ -153,7 +153,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
             visibility = superMethod.visibility
             origin = subclass.origin
         }.apply {
-            overriddenSymbols += superMethod.symbol
+            overridden += superMethod
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
             superMethod.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
             val invokableClass = invokableType.classifierOrFail.owner as IrClass

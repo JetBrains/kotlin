@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -43,11 +42,11 @@ class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContextBase
 
 class DeclarationIrBuilder(
     backendContext: BackendContext,
-    symbol: IrSymbol,
+    target: IrSymbolOwner,
     startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
 ) : IrBuilderWithScope(
     IrLoweringContext(backendContext),
-    Scope(symbol),
+    Scope(target),
     startOffset,
     endOffset
 )
@@ -56,8 +55,8 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
     protected abstract fun remapVariable(value: IrValueDeclaration): IrValueDeclaration?
 
     override fun visitGetValue(expression: IrGetValue): IrExpression =
-        remapVariable(expression.symbol.owner)?.let {
-            IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
+        remapVariable(expression.target)?.let {
+            IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it, expression.origin)
         } ?: expression
 }
 
@@ -72,11 +71,11 @@ class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) 
 }
 
 fun BackendContext.createIrBuilder(
-    symbol: IrSymbol,
+    target: IrSymbolOwner,
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
 ) =
-    DeclarationIrBuilder(this, symbol, startOffset, endOffset)
+    DeclarationIrBuilder(this, target, startOffset, endOffset)
 
 
 fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, element.endOffset)
@@ -131,9 +130,9 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
     protected val builder: IrBuilderWithScope
         get() = currentBuilder!!
 
-    private inline fun <T> withBuilder(symbol: IrSymbol, block: () -> T): T {
+    private inline fun <T> withBuilder(owner: IrSymbolOwner, block: () -> T): T {
         val oldBuilder = currentBuilder
-        currentBuilder = context.createIrBuilder(symbol)
+        currentBuilder = context.createIrBuilder(owner)
         return try {
             block()
         } finally {
@@ -142,20 +141,20 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        withBuilder(declaration.symbol) {
+        withBuilder(declaration) {
             return super.visitFunction(declaration)
         }
     }
 
     override fun visitField(declaration: IrField): IrStatement {
-        withBuilder(declaration.symbol) {
+        withBuilder(declaration) {
             // Transforms initializer:
             return super.visitField(declaration)
         }
     }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement {
-        withBuilder(declaration.symbol) {
+        withBuilder(declaration) {
             return super.visitAnonymousInitializer(declaration)
         }
     }
@@ -180,7 +179,7 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
             assert(++numberOfCalls == 1) { "More than one delegating constructor call: ${symbol.owner}" }
-            val delegatingClass = expression.symbol.owner.parent as IrClass
+            val delegatingClass = expression.target.parent as IrClass
             // TODO: figure out why Lazy IR multiplies Declarations for descriptors and fix it
             // It happens because of IrBuiltIns whose IrDeclarations are different for runtime and test
             if (delegatingClass.descriptor == superClass.classifierOrFail.descriptor)
@@ -228,12 +227,12 @@ private class ReplaceThisByStaticReference(
 ) : IrElementTransformer<Nothing?> {
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression {
         val irGetValue = expression
-        if (irGetValue.symbol == oldThisReceiverParameter.symbol) {
+        if (irGetValue.target == oldThisReceiverParameter) {
             val instanceField = context.declarationFactory.getFieldForObjectInstance(irClass)
             return IrGetFieldImpl(
                 expression.startOffset,
                 expression.endOffset,
-                instanceField.symbol,
+                instanceField,
                 irClass.defaultType
             )
         }

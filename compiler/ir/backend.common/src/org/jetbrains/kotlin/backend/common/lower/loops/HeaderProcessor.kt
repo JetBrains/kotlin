@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPackageFragment
@@ -66,8 +66,8 @@ internal sealed class ForLoopHeader(
                     it.valueParameters[0].type == step.type
         }
         irSetVar(
-            inductionVariable.symbol, irCallOp(
-                plusFun.symbol, plusFun.returnType,
+            inductionVariable, irCallOp(
+                plusFun, plusFun.returnType,
                 irGet(inductionVariable),
                 irGet(step)
             )
@@ -245,7 +245,7 @@ internal class IndexedGetLoopHeader(
 internal class HeaderProcessor(
     private val context: CommonBackendContext,
     private val headerInfoBuilder: HeaderInfoBuilder,
-    private val scopeOwnerSymbol: () -> IrSymbol
+    private val scopeOwner: () -> IrSymbolOwner
 ) {
 
     private val symbols = context.ir.symbols
@@ -274,7 +274,7 @@ internal class HeaderProcessor(
         val iterable = (variable.initializer as? IrCall)?.let {
             val extensionReceiver = it.extensionReceiver
             if (extensionReceiver != null) {
-                val function = it.symbol.owner
+                val function = it.target
                 if (it.valueArgumentsCount == 0
                     && function.isTopLevel
                     && function.getPackageFragment()?.fqName == FqName("kotlin.text")
@@ -292,7 +292,7 @@ internal class HeaderProcessor(
         val headerInfo = iterable?.accept(headerInfoBuilder, null)
             ?: return null  // If the iterable is not supported.
 
-        val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)
+        val builder = context.createIrBuilder(scopeOwner(), variable.startOffset, variable.endOffset)
         with(builder) builder@{
             with(headerInfo) {
                 // For this loop:

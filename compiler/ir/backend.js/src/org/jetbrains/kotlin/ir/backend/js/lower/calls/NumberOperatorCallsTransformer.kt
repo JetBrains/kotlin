@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -73,7 +74,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
-        val function = call.symbol.owner
+        val function = call.target
         function.dispatchReceiverParameter?.also {
             val key = SimpleMemberKey(it.type, function.name)
             memberToTransformer[key]?.also {
@@ -85,7 +86,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
     private fun transformRangeTo(call: IrFunctionAccessExpression): IrExpression {
         if (call.valueArgumentsCount != 1) return call
-        return with(call.symbol.owner.valueParameters[0].type) {
+        return with(call.target.valueParameters[0].type) {
             when {
                 isByte() || isShort() || isInt() ->
                     irCall(call, intrinsics.jsNumberRangeToNumber, receiversAsArguments = true)
@@ -108,7 +109,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     }
 
     class BinaryOp(call: IrFunctionAccessExpression) {
-        val function = call.symbol.owner
+        val function = call.target
         val name = function.name
         val lhs = function.dispatchReceiverParameter!!.type
         val rhs = function.valueParameters[0].type
@@ -224,8 +225,8 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    fun IrFunctionSymbol.call(vararg arguments: IrExpression) =
-        JsIrBuilder.buildCall(this, owner.returnType).apply {
+    fun IrFunction.call(vararg arguments: IrExpression) =
+        JsIrBuilder.buildCall(this, returnType).apply {
             for ((idx, arg) in arguments.withIndex()) {
                 putValueArgument(idx, arg)
             }

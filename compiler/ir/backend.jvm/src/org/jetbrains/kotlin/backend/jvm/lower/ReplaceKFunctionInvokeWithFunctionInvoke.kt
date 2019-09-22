@@ -39,14 +39,14 @@ private class ReplaceKFunctionInvokeWithFunctionInvoke : FileLoweringPass, IrEle
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val callee = expression.symbol.owner
+        val callee = expression.target
         if (callee !is IrSimpleFunction || callee.name != OperatorNameConventions.INVOKE) return super.visitCall(expression)
 
         val parentClass = callee.parent as? IrClass ?: return super.visitCall(expression)
         if (!parentClass.defaultType.isKFunction() && !parentClass.defaultType.isKSuspendFunction()) return super.visitCall(expression)
 
         // The single overridden function of KFunction{n}.invoke must be Function{n}.invoke.
-        val newCallee = callee.overriddenSymbols.single()
+        val newCallee = callee.overridden.single()
         return expression.run {
             IrCallImpl(startOffset, endOffset, type, newCallee).apply {
                 copyTypeArgumentsFrom(expression)

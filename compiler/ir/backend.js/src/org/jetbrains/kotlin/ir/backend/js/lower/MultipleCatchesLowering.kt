@@ -63,7 +63,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : FileLow
                 if (aTry.catches.isEmpty()) return aTry.also { assert(it.finallyExpression != null) }
 
                 val pendingExceptionDeclaration = JsIrBuilder.buildVar(context.dynamicType, data, "\$p")
-                val pendingException = { JsIrBuilder.buildGetValue(pendingExceptionDeclaration.symbol) }
+                val pendingException = { JsIrBuilder.buildGetValue(pendingExceptionDeclaration) }
 
                 val branches = mutableListOf<IrBranch>()
                 var isCaughtDynamic = false
@@ -81,7 +81,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : FileLow
 
                     val catchBody = catch.result.transform(object : IrElementTransformer<IrValueSymbol> {
                         override fun visitGetValue(expression: IrGetValue, data: IrValueSymbol) =
-                            if (expression.symbol == data)
+                            if (expression.target == data)
                                 castedPendingException()
                             else
                                 expression

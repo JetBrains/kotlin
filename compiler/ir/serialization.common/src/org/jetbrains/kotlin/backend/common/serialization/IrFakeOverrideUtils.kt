@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.original
 
 // We may get several real supers here (e.g. see the code snippet from KT-33034).
 // TODO: Consider reworking the resolution algorithm to get a determined super declaration.
-private fun <S: IrBindableSymbol<*, D>, D: IrOverridableDeclaration<S>> D.getRealSupers(): Set<D> {
+private fun <D: IrOverridableDeclaration<D>> D.getRealSupers(): Set<D> {
     if (this.isReal) {
         return setOf(this)
     }
@@ -27,7 +26,7 @@ private fun <S: IrBindableSymbol<*, D>, D: IrOverridableDeclaration<S>> D.getRea
         if (declaration.isReal) {
             realSupers += declaration
         } else {
-            declaration.overriddenSymbols.forEach { findRealSupers(it.owner) }
+            declaration.overridden.forEach { findRealSupers(it) }
         }
     }
 
@@ -39,9 +38,9 @@ private fun <S: IrBindableSymbol<*, D>, D: IrOverridableDeclaration<S>> D.getRea
         fun excludeOverridden(declaration: D) {
             if (declaration in visited) return
             visited += declaration
-            declaration.overriddenSymbols.forEach {
-                realSupers.remove(it.owner)
-                excludeOverridden(it.owner)
+            declaration.overridden.forEach {
+                realSupers.remove(it)
+                excludeOverridden(it)
             }
         }
 
@@ -85,11 +84,11 @@ internal fun IrProperty.resolveFakeOverrideMaybeAbstract(): IrProperty =
  */
 internal fun IrField.resolveFakeOverride(): IrField = getRealSupers().first()
 
-val IrSimpleFunction.target: IrSimpleFunction
-    get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
+val IrSimpleFunction.resolved: IrSimpleFunction
+    get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride())
 
-val IrFunction.target: IrFunction get() = when (this) {
-    is IrSimpleFunction -> this.target
+val IrFunction.resolved: IrFunction get() = when (this) {
+    is IrSimpleFunction -> this.resolved
     is IrConstructor -> this
     else -> error(this)
 }

@@ -18,14 +18,13 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 
 interface IrDeclarationReference : IrExpression {
     val descriptor: DeclarationDescriptor
-    val symbol: IrSymbol
+    val target: IrSymbolOwner
 }
 
 interface IrGetSingletonValue : IrDeclarationReference {
@@ -33,10 +32,10 @@ interface IrGetSingletonValue : IrDeclarationReference {
 }
 
 interface IrGetObjectValue : IrGetSingletonValue {
-    override val symbol: IrClassSymbol
+    override val target: IrClass
 }
 
 interface IrGetEnumValue : IrGetSingletonValue {
-    override val symbol: IrEnumEntrySymbol
+    override val target: IrEnumEntry
 }
 

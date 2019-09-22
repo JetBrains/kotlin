@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -355,7 +354,7 @@ class Fir2IrVisitor(
             if (firOverriddenSymbol != null && this is IrSimpleFunction && firFunctionSymbol != null) {
                 val overriddenSymbol = declarationStorage.getIrFunctionSymbol(firOverriddenSymbol)
                 if (overriddenSymbol is IrSimpleFunctionSymbol) {
-                    overriddenSymbols += overriddenSymbol
+                    overridden += overriddenSymbol
                 }
             }
             body = firFunction?.body?.convertToIrBlockBody()
@@ -547,7 +546,7 @@ class Fir2IrVisitor(
             if (firOverriddenSymbol != null && backingField != null) {
                 val overriddenSymbol = declarationStorage.getIrPropertyOrFieldSymbol(firOverriddenSymbol.fir.backingFieldSymbol)
                 if (overriddenSymbol is IrFieldSymbol) {
-                    backingField.overriddenSymbols += overriddenSymbol
+                    backingField.overridden += overriddenSymbol
                 }
             }
         }
@@ -556,14 +555,14 @@ class Fir2IrVisitor(
             property.getter, this, propertyType, property.getter is FirDefaultPropertyGetter, property.getter == null
         )
         getter?.apply {
-            overriddenProperty?.owner?.getter?.symbol?.let { overriddenSymbols += it }
+            overriddenProperty?.owner?.getter?.symbol?.let { overridden += it }
         }
         if (property.isVar) {
             setter?.setPropertyAccessorContent(
                 property.setter, this, propertyType, property.setter is FirDefaultPropertySetter, property.setter == null
             )
             setter?.apply {
-                overriddenProperty?.owner?.setter?.symbol?.let { overriddenSymbols += it }
+                overriddenProperty?.owner?.setter?.symbol?.let { overridden += it }
             }
         }
         property.annotations.forEach {
@@ -739,7 +738,7 @@ class Fir2IrVisitor(
                         }
                     }
                 } else {
-                    val name = if (this is IrCallImpl) symbol.owner.name else "???"
+                    val name = if (this is IrCallImpl) target.name else "???"
                     IrErrorCallExpressionImpl(
                         startOffset, endOffset, type,
                         "Cannot bind $argumentsCount arguments to $name call with $valueArgumentsCount parameters"
@@ -762,14 +761,13 @@ class Fir2IrVisitor(
     private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess): IrExpression {
         return when (this) {
             is IrCallImpl -> {
-                val ownerFunction = symbol.owner
-                if (ownerFunction.dispatchReceiverParameter != null) {
+                if (target.dispatchReceiverParameter != null) {
                     dispatchReceiver = qualifiedAccess.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
                         ?: qualifiedAccess.explicitReceiver?.toIrExpression() // NB: this applies to the situation when call is unresolved
                     if (dispatchReceiver == null) {
                         throw AssertionError()
                     }
-                } else if (ownerFunction.extensionReceiverParameter != null) {
+                } else if (target.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.extensionReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
                         ?: qualifiedAccess.explicitReceiver?.toIrExpression()
                     if (extensionReceiver == null) {
@@ -779,8 +777,7 @@ class Fir2IrVisitor(
                 this
             }
             is IrFieldExpressionBase -> {
-                val ownerField = symbol.owner
-                if (!ownerField.isStatic) {
+                if (!target.isStatic) {
                     receiver = qualifiedAccess.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
                         ?: qualifiedAccess.explicitReceiver?.toIrExpression()
                 }

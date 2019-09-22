@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -42,7 +41,7 @@ internal val moveOrCopyCompanionObjectFieldsPhase = makeIrFilePhase(
 
 private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        val fieldReplacementMap = mutableMapOf<IrFieldSymbol, IrFieldSymbol>()
+        val fieldReplacementMap = mutableMapOf<IrField, IrField>()
         if (irClass.isObject && !irClass.isCompanion && irClass.visibility != Visibilities.LOCAL) {
             handleObject(irClass, fieldReplacementMap)
         } else {
@@ -53,7 +52,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         irClass.replaceFieldReferences(fieldReplacementMap)
     }
 
-    private fun handleObject(irObject: IrClass, fieldReplacementMap: MutableMap<IrFieldSymbol, IrFieldSymbol>) {
+    private fun handleObject(irObject: IrClass, fieldReplacementMap: MutableMap<IrField, IrField>) {
         irObject.declarations.replaceAll {
             when (it) {
                 is IrProperty -> {
@@ -67,7 +66,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         }
     }
 
-    private fun handleClass(irClass: IrClass, fieldReplacementMap: MutableMap<IrFieldSymbol, IrFieldSymbol>) {
+    private fun handleClass(irClass: IrClass, fieldReplacementMap: MutableMap<IrField, IrField>) {
         val companion = irClass.declarations.find {
             it is IrClass && it.isCompanion
         } as IrClass? ?: return
@@ -114,7 +113,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         irProperty: IrProperty,
         propertyParent: IrClass,
         fieldParent: IrClass,
-        fieldReplacementMap: MutableMap<IrFieldSymbol, IrFieldSymbol>? = null
+        fieldReplacementMap: MutableMap<IrField, IrField>? = null
     ): IrField? {
         if (irProperty.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return null
         val oldField = irProperty.backingField ?: return null
@@ -123,7 +122,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         fieldReplacementMap?.run {
             irProperty.backingField = newField
             newField.correspondingPropertySymbol = irProperty.symbol
-            put(oldField.symbol, newField.symbol)
+            put(oldField, newField)
         }
 
         return newField
@@ -133,7 +132,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         irProperty: IrProperty,
         propertyParent: IrClass,
         fieldParent: IrClass,
-        fieldReplacementMap: MutableMap<IrFieldSymbol, IrFieldSymbol>? = null
+        fieldReplacementMap: MutableMap<IrField, IrField>? = null
     ): IrField? = moveOrCopyPropertyFieldToStaticParent(irProperty, propertyParent, fieldParent, fieldReplacementMap)
 
     private fun copyPropertyFieldToStaticParent(
@@ -149,7 +148,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
     ): IrAnonymousInitializer =
         with(oldInitializer) {
             IrAnonymousInitializerImpl(
-                startOffset, endOffset, origin, IrAnonymousInitializerSymbolImpl(newParent.symbol),
+                startOffset, endOffset, origin, IrAnonymousInitializerSymbolImpl(newParent),
                 isStatic = true
             ).apply {
                 parent = newParent
@@ -184,18 +183,18 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
                 }
 
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
-                    if (expression.symbol.owner == oldParent.thisReceiver) {
+                    if (expression.target == oldParent.thisReceiver) {
                         return IrGetFieldImpl(
                             expression.startOffset, expression.endOffset,
-                            objectInstanceField.symbol,
+                            objectInstanceField,
                             expression.type
                         )
                     }
-                    variableMap[expression.symbol.owner]?.let { newVariable ->
+                    variableMap[expression.target]?.let { newVariable ->
                         return IrGetValueImpl(
                             expression.startOffset, expression.endOffset,
                             expression.type,
-                            newVariable.symbol,
+                            newVariable,
                             expression.origin
                         )
                     }
@@ -231,33 +230,33 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
     }
 }
 
-private fun IrElement.replaceFieldReferences(replacementMap: Map<IrFieldSymbol, IrFieldSymbol>) {
+private fun IrElement.replaceFieldReferences(replacementMap: Map<IrField, IrField>) {
     transformChildrenVoid(FieldReplacer(replacementMap))
 }
 
-private class FieldReplacer(val replacementMap: Map<IrFieldSymbol, IrFieldSymbol>) : IrElementTransformerVoid() {
+private class FieldReplacer(val replacementMap: Map<IrField, IrField>) : IrElementTransformerVoid() {
     override fun visitGetField(expression: IrGetField): IrExpression =
-        replacementMap[expression.symbol]?.let { newSymbol ->
+        replacementMap[expression.target]?.let { newSymbol ->
             IrGetFieldImpl(
                 expression.startOffset, expression.endOffset,
                 newSymbol,
                 expression.type,
                 /* receiver = */ null,
                 expression.origin,
-                expression.superQualifierSymbol
+                expression.irSuperQualifier
             )
         } ?: super.visitGetField(expression)
 
     override fun visitSetField(expression: IrSetField): IrExpression =
-        replacementMap[expression.symbol]?.let { _ ->
+        replacementMap[expression.target]?.let { _ ->
             IrSetFieldImpl(
                 expression.startOffset, expression.endOffset,
-                replacementMap.getValue(expression.symbol),
+                replacementMap.getValue(expression.target),
                 /* receiver = */ null,
                 visitExpression(expression.value),
                 expression.type,
                 expression.origin,
-                expression.superQualifierSymbol
+                expression.irSuperQualifier
             )
         } ?: super.visitSetField(expression)
 }

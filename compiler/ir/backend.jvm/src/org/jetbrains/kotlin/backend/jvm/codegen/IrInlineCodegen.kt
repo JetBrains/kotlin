@@ -112,7 +112,7 @@ class IrInlineCodegen(
         // TODO port inlining cycle detection to IrFunctionAccessExpression & pass it
         state.globalInlineContext.enterIntoInlining(null)
         try {
-            performInline(expression.symbol.owner.typeParameters.map { it.symbol }, false, codegen.typeMapper.typeSystem, codegen)
+            performInline(expression.target.typeParameters, false, codegen.typeMapper.typeSystem, codegen)
         } finally {
             state.globalInlineContext.exitFromInliningOf(null)
         }
@@ -124,7 +124,7 @@ class IrInlineCodegen(
         parameter: IrValueParameter,
         boundReceiver: IrVariable?
     ): LambdaInfo {
-        val referencedFunction = irReference.symbol.owner
+        val referencedFunction = irReference.target
         return IrExpressionLambdaImpl(
             irReference, referencedFunction, codegen.typeMapper, codegen.methodSignatureMapper, codegen.context, parameter.isCrossinline,
             boundReceiver != null, parameter.type.isExtensionFunctionType

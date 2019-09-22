@@ -14,12 +14,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -60,16 +55,16 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
         name: Name,
         vararg packageNameSegments: String = arrayOf("kotlin"),
         condition: (SimpleFunctionDescriptor) -> Boolean
-    ): IrSimpleFunctionSymbol =
+    ): IrSimpleFunction =
         symbolTable.referenceSimpleFunction(
             builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
                 .first(condition)
-        )
+        ).owner
 
-    private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
+    private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClass =
         symbolTable.referenceClass(
             builtInsPackage(*packageNameSegments).getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-        )
+        ).owner
 
     /**
      * Use this table to reference external dependencies.
@@ -77,15 +72,15 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     open val externalSymbolTable: ReferenceSymbolTable
         get() = symbolTable
 
-    abstract val ThrowNullPointerException: IrFunctionSymbol
-    abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
-    abstract val ThrowTypeCastException: IrFunctionSymbol
+    abstract val ThrowNullPointerException: IrFunction
+    abstract val ThrowNoWhenBranchMatchedException: IrFunction
+    abstract val ThrowTypeCastException: IrFunction
 
-    abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol
+    abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunction
 
-    abstract val stringBuilder: IrClassSymbol
+    abstract val stringBuilder: IrClass
 
-    abstract val defaultConstructorMarker: IrClassSymbol
+    abstract val defaultConstructorMarker: IrClass
 
     val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
 
@@ -142,11 +137,11 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val array = symbolTable.referenceClass(builtIns.array)
 
     private fun primitiveArrayClass(type: PrimitiveType) =
-        symbolTable.referenceClass(builtIns.getPrimitiveArrayClassDescriptor(type))
+        symbolTable.referenceClass(builtIns.getPrimitiveArrayClassDescriptor(type)).owner
 
     private fun unsignedArrayClass(unsignedType: UnsignedType) =
         builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.arrayClassId)
-            ?.let { symbolTable.referenceClass(it) }
+            ?.let { symbolTable.referenceClass(it).owner }
 
     val byteArray = primitiveArrayClass(PrimitiveType.BYTE)
     val charArray = primitiveArrayClass(PrimitiveType.CHAR)
@@ -182,51 +177,51 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val mutableIterator = symbolTable.referenceClass(builtIns.mutableIterator)
     val mutableListIterator = symbolTable.referenceClass(builtIns.mutableListIterator)
 
-    abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
+    abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunction>
 
-    abstract val coroutineImpl: IrClassSymbol
+    abstract val coroutineImpl: IrClass
 
-    abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
+    abstract val coroutineSuspendedGetter: IrSimpleFunction
 
-    abstract val getContinuation: IrSimpleFunctionSymbol
+    abstract val getContinuation: IrSimpleFunction
 
-    abstract val coroutineContextGetter: IrSimpleFunctionSymbol
+    abstract val coroutineContextGetter: IrSimpleFunction
 
-    abstract val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
+    abstract val suspendCoroutineUninterceptedOrReturn: IrSimpleFunction
 
-    abstract val coroutineGetContext: IrSimpleFunctionSymbol
+    abstract val coroutineGetContext: IrSimpleFunction
 
-    abstract val returnIfSuspended: IrSimpleFunctionSymbol
+    abstract val returnIfSuspended: IrSimpleFunction
 
-    private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrSimpleFunctionSymbol>()
+    private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrSimpleFunction>()
 
-    fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrSimpleFunctionSymbol {
+    fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrSimpleFunction {
         val key = Triple(name, lhsType, rhsType)
         return binaryOperatorCache.getOrPut(key) {
             symbolTable.referenceSimpleFunction(
                 lhsType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
                     .first { it.valueParameters.size == 1 && it.valueParameters[0].type == rhsType }
-            )
+            ).owner
         }
     }
 
-    private val unaryOperatorCache = mutableMapOf<Pair<Name, KotlinType>, IrSimpleFunctionSymbol>()
+    private val unaryOperatorCache = mutableMapOf<Pair<Name, KotlinType>, IrSimpleFunction>()
 
-    fun getUnaryOperator(name: Name, receiverType: KotlinType): IrSimpleFunctionSymbol {
+    fun getUnaryOperator(name: Name, receiverType: KotlinType): IrSimpleFunction {
         val key = name to receiverType
         return unaryOperatorCache.getOrPut(key) {
             symbolTable.referenceSimpleFunction(
                 receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
                     .first { it.valueParameters.isEmpty() }
-            )
+            ).owner
         }
     }
 
     val intAnd = getBinaryOperator(OperatorNameConventions.AND, builtIns.intType, builtIns.intType)
     val intPlusInt = getBinaryOperator(OperatorNameConventions.PLUS, builtIns.intType, builtIns.intType)
 
-    open fun functionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getFunction(n))
-    open fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getSuspendFunction(n))
+    open fun functionN(n: Int): IrClass = symbolTable.referenceClass(builtIns.getFunction(n))
+    open fun suspendFunctionN(n: Int): IrClass = symbolTable.referenceClass(builtIns.getSuspendFunction(n))
 
     val extensionToString = getSimpleFunction(Name.identifier("toString")) {
         it.dispatchReceiverParameter == null && it.extensionReceiverParameter != null &&
@@ -240,22 +235,20 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     }
 
     companion object {
-        fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
-            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.name.asString() == "<get-isInitialized>" &&
-                        function.isTopLevel &&
-                        function.getPackageFragment()!!.fqName.asString() == "kotlin" &&
-                        function.valueParameters.isEmpty() &&
-                        symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
-                            receiverClass?.fqNameWhenAvailable?.toUnsafe() == KotlinBuiltIns.FQ_NAMES.kProperty0
-                        }
-            }
+        fun isLateinitIsInitializedPropertyGetter(function: IrFunction): Boolean =
+            function is IrSimpleFunction &&
+                    function.name.asString() == "<get-isInitialized>" &&
+                    function.isTopLevel &&
+                    function.getPackageFragment()!!.fqName.asString() == "kotlin" &&
+                    function.valueParameters.isEmpty() &&
+                    function.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
+                        receiverClass?.fqNameWhenAvailable?.toUnsafe() == KotlinBuiltIns.FQ_NAMES.kProperty0
+                    }
 
-        fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
-            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.name.asString() == "typeOf" &&
-                        function.valueParameters.isEmpty() &&
-                        (function.parent as? IrPackageFragment)?.fqName == KOTLIN_REFLECT_FQ_NAME
-            }
+        fun isTypeOfIntrinsic(function: IrFunction): Boolean =
+            function is IrSimpleFunction &&
+                    function.name.asString() == "typeOf" &&
+                    function.valueParameters.isEmpty() &&
+                    (function.parent as? IrPackageFragment)?.fqName == KOTLIN_REFLECT_FQ_NAME
     }
 }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -44,16 +43,16 @@ internal val propertyReferencePhase = makeIrFilePhase(
 internal class PropertyReferenceLowering(val context: JvmBackendContext) : ClassLoweringPass {
     // Reflection metadata for local properties is serialized under the signature "<v#$N>" attached to the containing class.
     // This maps properties to values of N.
-    private val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
+    private val localPropertyIndices = mutableMapOf<IrSymbolOwner, Int>()
 
     // TODO: join IrLocalDelegatedPropertyReference and IrPropertyReference via the class hierarchy?
-    private val IrMemberAccessExpression.getter: IrSimpleFunctionSymbol?
+    private val IrMemberAccessExpression.getter: IrSimpleFunction?
         get() = (this as? IrPropertyReference)?.getter ?: (this as? IrLocalDelegatedPropertyReference)?.getter
 
-    private val IrMemberAccessExpression.setter: IrSimpleFunctionSymbol?
+    private val IrMemberAccessExpression.setter: IrSimpleFunction?
         get() = (this as? IrPropertyReference)?.setter ?: (this as? IrLocalDelegatedPropertyReference)?.setter
 
-    private val IrMemberAccessExpression.field: IrFieldSymbol?
+    private val IrMemberAccessExpression.field: IrField?
         get() = (this as? IrPropertyReference)?.field
 
     private val IrSimpleFunction.signature: String
@@ -67,7 +66,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val IrMemberAccessExpression.signature: String
         get() = getter?.let { getter ->
             localPropertyIndices[getter]?.let { "<v#$it>" }
-        } ?: getter?.owner?.signature ?: field!!.owner.signature
+        } ?: getter?.signature ?: field!!.signature
 
     private val arrayItemGetter =
         context.ir.symbols.array.owner.functions.single { it.name.asString() == "get" }
@@ -84,7 +83,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
     private val IrMemberAccessExpression.propertyContainer: IrDeclarationParent
         get() {
-            var current: IrDeclaration = getter?.owner ?: field?.owner ?: error("Property without getter or field: ${dump()}")
+            var current: IrDeclaration = getter ?: field ?: error("Property without getter or field: ${dump()}")
             while (current.parent is IrFunction)
                 current = current.parent as IrFunction // Local delegated property.
             return current.parent
@@ -103,7 +102,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             visibility = method.visibility
             origin = this@addOverride.origin
         }.apply {
-            overriddenSymbols.add(method.symbol)
+            overridden.add(method)
             dispatchReceiverParameter = thisReceiver!!.copyTo(this)
             for (parameter in method.valueParameters)
                 valueParameters.add(parameter.copyTo(this))
@@ -113,19 +112,19 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
         }
 
     private class PropertyReferenceKind(
-        val interfaceSymbol: IrClassSymbol,
-        val reflectedSymbol: IrClassSymbol,
+        val interfaceClass: IrClass,
+        val reflected: IrClass,
         val wrapper: IrFunction
     )
 
     private fun propertyReferenceKind(mutable: Boolean, i: Int) = PropertyReferenceKind(
         context.ir.symbols.getPropertyReferenceClass(mutable, i, false),
         context.ir.symbols.getPropertyReferenceClass(mutable, i, true),
-        context.ir.symbols.reflection.owner.functions.single { it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i") }
+        context.ir.symbols.reflection.functions.single { it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i") }
     )
 
     private fun propertyReferenceKindFor(expression: IrMemberAccessExpression): PropertyReferenceKind =
-        expression.getter?.owner?.let {
+        expression.getter?.let {
             val boundReceivers = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver).size
             val needReceivers = listOfNotNull(it.dispatchReceiverParameter, it.extensionReceiverParameter).size
             // PropertyReference1 will swap the receivers if bound with the extension one, and PropertyReference0
@@ -133,14 +132,14 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             if (boundReceivers == 2 || (expression.extensionReceiver != null && needReceivers == 2))
                 TODO("property reference with 2 receivers")
             propertyReferenceKind(expression.setter != null, needReceivers - boundReceivers)
-        } ?: expression.field?.owner?.let {
+        } ?: expression.field?.let {
             propertyReferenceKind(!it.isFinal, if (it.isStatic || expression.dispatchReceiver != null) 0 else 1)
         } ?: throw AssertionError("property has no getter and no field: ${expression.dump()}")
 
     private data class PropertyInstance(val initializer: IrExpression, val index: Int)
 
     override fun lower(irClass: IrClass) {
-        val kProperties = mutableMapOf<IrSymbol, PropertyInstance>()
+        val kProperties = mutableMapOf<IrSymbolOwner, PropertyInstance>()
         val kPropertiesField = buildField {
             name = Name.identifier(JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME)
             type = kPropertiesFieldType
@@ -153,7 +152,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
         irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-                localPropertyIndices[declaration.getter.symbol] = localPropertiesInClass++
+                localPropertyIndices[declaration.getter] = localPropertiesInClass++
                 return super.visitLocalDelegatedProperty(declaration)
             }
 
@@ -169,8 +168,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
                 // For delegated properties, the getter and setter contain a reference each as the second argument to getValue
                 // and setValue. Since it's highly unlikely that anyone will call get/set on these, optimize for space.
-                return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
-                    val (_, index) = kProperties.getOrPut(expression.symbol) {
+                return context.createIrBuilder(currentScope!!.scope.irScopeOwner, expression.startOffset, expression.endOffset).run {
+                    val (_, index) = kProperties.getOrPut(expression.target) {
                         PropertyInstance(createReflectedKProperty(expression), kProperties.size)
                     }
                     irCall(arrayItemGetter).apply {
@@ -185,9 +184,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             // Example: `C::property` -> `Reflection.property1(PropertyReference1Impl(C::class, "property", "getProperty()LType;"))`.
             private fun createReflectedKProperty(expression: IrCallableReference): IrExpression {
                 val referenceKind = propertyReferenceKindFor(expression)
-                return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
+                return context.createIrBuilder(currentScope!!.scope.irScopeOwner, expression.startOffset, expression.endOffset).run {
                     irCall(referenceKind.wrapper).apply {
-                        putValueArgument(0, irCall(referenceKind.reflectedSymbol.constructors.single()).apply {
+                        putValueArgument(0, irCall(referenceKind.reflected.constructors.single()).apply {
                             putValueArgument(0, buildReflectedContainerReference(expression))
                             putValueArgument(1, irString(expression.descriptor.name.asString()))
                             putValueArgument(2, irString(expression.signature))
@@ -212,7 +211,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             //
             private fun createSpecializedKProperty(expression: IrCallableReference): IrExpression {
                 val referenceClass = createKPropertySubclass(expression)
-                return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+                return context.createIrBuilder(currentScope!!.scope.irScopeOwner, expression.startOffset, expression.endOffset)
                     .irBlock {
                         +referenceClass
                         +irCall(referenceClass.constructors.single()).apply {
@@ -224,10 +223,10 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             }
 
             private fun createKPropertySubclass(expression: IrCallableReference): IrClass {
-                val superClass = propertyReferenceKindFor(expression).interfaceSymbol.owner
+                val superClass = propertyReferenceKindFor(expression).interfaceClass
                 val referenceClass = buildClass {
                     setSourceRange(expression)
-                    name = Name.special("<property reference to ${(expression.symbol.owner as IrDeclarationWithName).fqNameWhenAvailable}>")
+                    name = Name.special("<property reference to ${(expression.target as IrDeclarationWithName).fqNameWhenAvailable}>")
                     origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
                     visibility = Visibilities.LOCAL
                 }.apply {
@@ -251,18 +250,18 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 referenceClass.addOverride(getOwner) { buildReflectedContainerReference(expression) }
                 referenceClass.addOverride(getSignature) { irString(expression.signature) }
 
-                val field = expression.field?.owner
+                val field = expression.field
                 if (field == null) {
                     fun IrBuilderWithScope.setCallArguments(call: IrCall, arguments: List<IrValueParameter>) {
                         var index = 1
                         call.copyTypeArgumentsFrom(expression)
-                        call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
+                        call.dispatchReceiver = call.target.dispatchReceiverParameter?.let {
                             if (expression.dispatchReceiver != null)
                                 irImplicitCast(irGetField(irGet(arguments[0]), receiverField), it.type)
                             else
                                 irImplicitCast(irGet(arguments[index++]), it.type)
                         }
-                        call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
+                        call.extensionReceiver = call.target.extensionReceiverParameter?.let {
                             if (expression.extensionReceiver != null)
                                 irImplicitCast(irGetField(irGet(arguments[0]), receiverField), it.type)
                             else
@@ -270,17 +269,17 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                         }
                     }
 
-                    expression.getter?.owner?.let { getter ->
+                    expression.getter?.let { getter ->
                         referenceClass.addOverride(get!!) { arguments ->
-                            irGet(getter.returnType, null, getter.symbol).apply {
+                            irGet(getter.returnType, null, getter).apply {
                                 setCallArguments(this, arguments)
                             }
                         }
                     }
 
-                    expression.setter?.owner?.let { setter ->
+                    expression.setter?.let { setter ->
                         referenceClass.addOverride(set!!) { arguments ->
-                            irSet(setter.returnType, null, setter.symbol, irGet(arguments.last())).apply {
+                            irSet(setter.returnType, null, setter, irGet(arguments.last())).apply {
                                 setCallArguments(this, arguments)
                             }
                         }
@@ -314,14 +313,14 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
         if (kProperties.isNotEmpty()) {
             irClass.declarations.add(0, kPropertiesField.apply {
                 parent = irClass
-                initializer = context.createJvmIrBuilder(irClass.symbol).run {
+                initializer = context.createJvmIrBuilder(irClass).run {
                     val initializers = kProperties.values.sortedBy { it.index }.map { it.initializer }
                     irExprBody(irArrayOf(kPropertiesFieldType, initializers))
                 }
             })
 
             context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] =
-                kProperties.keys.filterIsInstance<IrLocalDelegatedPropertySymbol>()
+                kProperties.keys.filterIsInstance<IrLocalDelegatedProperty>()
         }
     }
 }

@@ -12,12 +12,11 @@ import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -35,7 +34,7 @@ internal class RangeToHandler(private val context: CommonBackendContext, private
         parameter(0) { it.type in progressionElementTypes }
     }
 
-    override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
+    override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbolOwner) =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             ProgressionHeaderInfo(
                 data,
@@ -57,7 +56,7 @@ internal class DownToHandler(private val context: CommonBackendContext, private 
         parameter(0) { it.type in progressionElementTypes }
     }
 
-    override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
+    override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbolOwner): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             ProgressionHeaderInfo(
                 data,
@@ -79,7 +78,7 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
         parameter(0) { it.type in progressionElementTypes }
     }
 
-    override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
+    override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbolOwner): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // `A until B` is essentially the same as `A .. (B-1)`. However, B could be MIN_VALUE and hence `(B-1)` could underflow.
             // If B is MIN_VALUE, then `A until B` is an empty range. We handle this special case be adding an additional "not empty"
@@ -222,7 +221,7 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
 /** Builds a [HeaderInfo] for progressions built using the `indices` extension property. */
 internal abstract class IndicesHandler(protected val context: CommonBackendContext) : ProgressionHandler {
 
-    override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
+    override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbolOwner): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // `last = array.size - 1` (last is inclusive) for the loop `for (i in array.indices)`.
             val receiver = expression.extensionReceiver!!
@@ -268,7 +267,7 @@ internal class CharSequenceIndicesHandler(context: CommonBackendContext) : Indic
     override val IrType.sizePropertyGetter
         get() = getClass()?.properties?.first { it.name.asString() == "length" }?.let {
             it.getter!!
-        } ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+        } ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!
 }
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
@@ -290,7 +289,7 @@ internal class ReversedHandler(context: CommonBackendContext, private val visito
     }
 
     // Reverse the HeaderInfo from the underlying progression or array (if any).
-    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
+    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbolOwner) =
         expression.extensionReceiver!!.accept(visitor, null)?.asReversed()
 }
 
@@ -301,7 +300,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
 
     override fun match(expression: IrExpression) = ProgressionType.fromIrType(expression.type, symbols) != null
 
-    override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
+    override fun build(expression: IrExpression, scopeOwner: IrSymbolOwner): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
             val progression = scope.createTemporaryVariable(expression, nameHint = "progression")
@@ -331,7 +330,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
 }
 
 internal abstract class IndexedGetIterationHandler(protected val context: CommonBackendContext) : ExpressionHandler {
-    override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
+    override fun build(expression: IrExpression, scopeOwner: IrSymbolOwner): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Consider the case like:
             //
@@ -391,9 +390,9 @@ internal class CharSequenceIterationHandler(context: CommonBackendContext) : Ind
     override val IrType.sizePropertyGetter
         get() = getClass()?.properties?.first { it.name.asString() == "length" }?.let {
             it.getter!!
-        } ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
+        } ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!
 
     override val IrType.getFunction
         get() = getClass()?.functions?.first { it.name.asString() == "get" }
-            ?: context.ir.symbols.charSequence.getSimpleFunction("get")!!.owner
+            ?: context.ir.symbols.charSequence.getSimpleFunction("get")!!
 }

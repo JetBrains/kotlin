@@ -77,7 +77,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
     }
 
     override fun visitCall(expression: IrCall, data: ClassInfo?): IrElement {
-        val function = expression.symbol.owner
+        val function = expression.target
         if (!function.isAssert)
             return super.visitCall(expression, data)
 
@@ -85,7 +85,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
         if (mode == JVMAssertionsMode.ALWAYS_DISABLE)
             return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
 
-        context.createIrBuilder(expression.symbol).run {
+        context.createIrBuilder(expression.target).run {
             at(expression)
             val assertCondition = expression.getValueArgument(0)!!
             val lambdaArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
@@ -116,7 +116,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
                         lambdaArgument != null -> {
                             val invoke =
                                 lambdaArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
-                            irCallOp(invoke.symbol, invoke.returnType, irGet(invokeVar!!))
+                            irCallOp(invoke, invoke.returnType, irGet(invokeVar!!))
                         }
                         else -> irString("Assertion failed")
                     }
@@ -140,7 +140,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
             isStatic = true
         }.apply {
             parent = irClass
-            initializer = context.createIrBuilder(irClass.symbol).run {
+            initializer = context.createIrBuilder(irClass).run {
                 at(this@apply)
                 irExprBody(irNot(irCall(this@AssertionLowering.context.ir.symbols.desiredAssertionStatus).apply {
                     dispatchReceiver = getJavaClass(topLevelClass)

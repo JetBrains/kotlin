@@ -5,5 +5,22 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-class Desymbolize {
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.desymbolize
+
+val desymbolizePhase = makeIrModulePhase(
+    ::Desymbolize,
+    name = "Desymbolize",
+    description = "Replace symbols by their owners in IR structures"
+)
+
+class Desymbolize() : FileLoweringPass {
+    constructor (context: CommonBackendContext) : this()
+
+    override fun lower(irFile: IrFile) {
+        irFile.desymbolize()
+    }
 }

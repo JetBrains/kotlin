@@ -9,12 +9,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrMemberAccessExpression : IrExpression {
@@ -44,6 +40,14 @@ fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpressi
     for (i in 0 until typeArgumentsCount) {
         putTypeArgument(i, other.getTypeArgument(i))
     }
+    if (this is IrConstructorCall && other is IrConstructorCall) {
+        assert(constructorTypeArgumentsCount == other.constructorTypeArgumentsCount) {
+            "Mismatching constructor type arguments: $constructorTypeArgumentsCount vs ${other.constructorTypeArgumentsCount} "
+        }
+        for (i in 0 until constructorTypeArgumentsCount) {
+            putConstructorTypeArgument(i, other.getConstructorTypeArgument(i))
+        }
+    }
 }
 
 inline fun IrMemberAccessExpression.putTypeArguments(
@@ -68,7 +72,7 @@ fun IrMemberAccessExpression.getTypeArgumentOrDefault(irTypeParameter: IrTypePar
 
 interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
     override val descriptor: FunctionDescriptor
-    override val symbol: IrFunctionSymbol
+    override val target: IrFunction
 }
 
 fun IrMemberAccessExpression.getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =
@@ -111,4 +115,4 @@ fun IrMemberAccessExpression.putArgument(callee: IrFunction, parameter: IrValueP
     }
 
 fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression) =
-    putArgument(symbol.owner, parameter, argument)
+    putArgument(target, parameter, argument)

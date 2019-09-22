@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -428,7 +427,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         // todo: set properties in external deserialization
         var args: List<IrExpression> = localProps.map { it.get() }
         val typeArgs = (loadFunc.returnType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
-        val ctor: IrConstructorSymbol = if (serializableDescriptor.isInternalSerializable) {
+        val ctor: IrConstructor = if (serializableDescriptor.isInternalSerializable) {
             args = bitMasks.map { irGet(it) } + args + irNull()
             compilerContext.externalSymbols.serializableSyntheticConstructor(serializableDescriptor)
         } else {

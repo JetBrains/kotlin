@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.*
 import java.util.*
@@ -108,7 +106,7 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
                 override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclarationParent?) {
                     expression.acceptChildren(this, data)
 
-                    val value = expression.symbol.owner
+                    val value = expression.target
                     if (value in relevantVars && (value as IrVariable).parent != data) {
                         sharedVariables.add(value)
                     }
@@ -117,7 +115,7 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
         }
 
         private fun rewriteSharedVariables() {
-            val transformedSymbols = HashMap<IrValueSymbol, IrVariableSymbol>()
+            val transformed = HashMap<IrValueDeclaration, IrVariable>()
 
             irDeclaration.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitVariable(declaration: IrVariable): IrStatement {
@@ -127,7 +125,7 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
 
                     val newDeclaration = context.sharedVariablesManager.declareSharedVariable(declaration)
                     newDeclaration.parent = declaration.parent
-                    transformedSymbols[declaration.symbol] = newDeclaration.symbol
+                    transformed[declaration] = newDeclaration
 
                     return context.sharedVariablesManager.defineSharedValue(declaration, newDeclaration)
                 }
@@ -137,7 +135,7 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid(this)
 
-                    val newDeclaration = getTransformedSymbol(expression.symbol) ?: return expression
+                    val newDeclaration = getTransformedSymbol(expression.target) ?: return expression
 
                     return context.sharedVariablesManager.getSharedValue(newDeclaration, expression)
                 }
@@ -145,15 +143,15 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
                 override fun visitSetVariable(expression: IrSetVariable): IrExpression {
                     expression.transformChildrenVoid(this)
 
-                    val newDeclaration = getTransformedSymbol(expression.symbol) ?: return expression
+                    val newDeclaration = getTransformedSymbol(expression.target) ?: return expression
 
                     return context.sharedVariablesManager.setSharedValue(newDeclaration, expression)
                 }
 
-                private fun getTransformedSymbol(oldSymbol: IrValueSymbol): IrVariableSymbol? =
-                    transformedSymbols.getOrElse(oldSymbol) {
-                        assert(oldSymbol.owner !in sharedVariables) {
-                            "Shared variable is not transformed: ${oldSymbol.owner.dump()}"
+                private fun getTransformedSymbol(old: IrValueDeclaration): IrVariable? =
+                    transformed.getOrElse(old) {
+                        assert(old !in sharedVariables) {
+                            "Shared variable is not transformed: ${old.dump()}"
                         }
                         null
                     }

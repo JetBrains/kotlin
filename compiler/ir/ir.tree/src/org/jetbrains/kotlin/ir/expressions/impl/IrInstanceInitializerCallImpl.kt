@@ -17,21 +17,21 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrInstanceInitializerCallImpl(
     startOffset: Int,
     endOffset: Int,
-    override val classSymbol: IrClassSymbol,
+    override val irClass: IrClass,
     type: IrType
 ) :
     IrTerminalExpressionBase(startOffset, endOffset, type),
     IrInstanceInitializerCall {
 
-    override val classDescriptor: ClassDescriptor get() = classSymbol.descriptor
+    override val classDescriptor: ClassDescriptor get() = irClass.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitInstanceInitializerCall(this, data)

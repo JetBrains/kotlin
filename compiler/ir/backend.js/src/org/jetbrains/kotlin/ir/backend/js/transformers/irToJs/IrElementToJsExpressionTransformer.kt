@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
@@ -29,7 +27,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         body.expression.accept(this, context)
 
     override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
-        val irFunction = expression.symbol.owner
+        val irFunction = expression.target
         return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
     }
 
@@ -63,9 +61,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitGetField(expression: IrGetField, context: JsGenerationContext): JsExpression {
-        val symbol = expression.symbol
-        val field = symbol.owner
-
+        val field = expression.target
         val fieldParent = field.parent
 
         if (fieldParent is IrClass && field.isEffectivelyExternal()) {
@@ -85,37 +81,37 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression =
-        context.getNameForValueDeclaration(expression.symbol.owner).makeRef()
+        context.getNameForValueDeclaration(expression.target).makeRef()
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext): JsExpression {
-        val obj = expression.symbol.owner
+        val obj = expression.target
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
         return context.getRefForExternalClass(obj)
     }
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
-        val fieldName = context.getNameForField(expression.symbol.owner)
+        val fieldName = context.getNameForField(expression.target)
         val dest = JsNameRef(fieldName, expression.receiver?.accept(this, context))
         val source = expression.value.accept(this, context)
         return jsAssignment(dest, source)
     }
 
     override fun visitSetVariable(expression: IrSetVariable, context: JsGenerationContext): JsExpression {
-        val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
+        val ref = JsNameRef(context.getNameForValueDeclaration(expression.target))
         val value = expression.value.accept(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
-        val classNameRef = context.getNameForConstructor(expression.symbol.owner).makeRef()
+        val classNameRef = context.getNameForConstructor(expression.target).makeRef()
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
         val fromPrimary = context.currentFunction is IrConstructor
         val thisRef =
             if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.valueParameters.last()).makeRef()
         val arguments = translateCallArguments(expression, context, this)
 
-        val constructor = expression.symbol.owner
+        val constructor = expression.target
         if (constructor.parentAsClass.isInline) {
             assert(constructor.isPrimary) {
                 "Delegation to secondary inline constructors must be lowered into simple function calls"
@@ -127,7 +123,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
-        val function = expression.symbol.owner
+        val function = expression.target
         val arguments = translateCallArguments(expression, context, this)
         val klass = function.parentAsClass
         return if (klass.isInline) {
@@ -149,7 +145,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
-        if (context.checkIfJsCode(expression.symbol)) {
+        if (context.checkIfJsCode(expression.target)) {
             val statements = translateJsCodeIntoStatementList(expression.getValueArgument(0) ?: error("JsCode is expected"))
             if (statements.isEmpty()) return JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)) // TODO: report warning or even error
 

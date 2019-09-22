@@ -27,7 +27,7 @@ fun IrExpression.asSimpleLambda(): IrSimpleFunction? {
     if (this !is IrBlock || statements.size != 2)
         return null
     val (function, reference) = statements
-    if (function !is IrSimpleFunction || reference !is IrFunctionReference || function.symbol != reference.symbol)
+    if (function !is IrSimpleFunction || reference !is IrFunctionReference || function != reference.target)
         return null
     if ((0 until reference.valueArgumentsCount).any { reference.getValueArgument(it) != null })
         return null
@@ -42,11 +42,11 @@ fun IrFunction.inline(arguments: List<IrValueDeclaration> = listOf()): IrReturna
     require(body != null)
     val argumentMap = valueParameters.zip(arguments).toMap()
     val blockSymbol = IrReturnableBlockSymbolImpl(descriptor)
-    val block = IrReturnableBlockImpl(startOffset, endOffset, returnType, blockSymbol, null, symbol)
+    val block = IrReturnableBlockImpl(startOffset, endOffset, returnType, blockSymbol, null, this)
     val remapper = object : VariableRemapper(argumentMap) {
         override fun visitReturn(expression: IrReturn): IrExpression = super.visitReturn(
-            if (expression.returnTargetSymbol == symbol)
-                IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, blockSymbol, expression.value)
+            if (expression.irReturnTarget == this@inline)
+                IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, block, expression.value)
             else
                 expression
         )

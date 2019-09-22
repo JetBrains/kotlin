@@ -45,7 +45,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
-                val enumEntry = expression.symbol.owner
+                val enumEntry = expression.target
                 val klass = enumEntry.parent as IrClass
                 return if (klass.isExternal) lowerExternalEnumEntry(enumEntry, klass) else lowerEnumEntry(enumEntry, klass)
             }
@@ -54,7 +54,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private fun lowerExternalEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
         context.enumEntryExternalToInstanceField.getOrPut(enumEntry.symbol) { createFieldForEntry(enumEntry, klass) }.let {
-            JsIrBuilder.buildGetField(it.symbol, classAsReceiver(klass), null, klass.defaultType)
+            JsIrBuilder.buildGetField(it, classAsReceiver(klass), null, klass.defaultType)
         }
 
     private fun classAsReceiver(irClass: IrClass): IrExpression {
@@ -75,13 +75,13 @@ class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
     }
 
     private fun lowerEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
-        context.enumEntryToGetInstanceFunction.getOrPut(enumEntry.symbol) {
+        context.enumEntryToGetInstanceFunction.getOrPut(enumEntry) {
             JsIrBuilder.buildFunction(
                 createEntryAccessorName(klass.name.identifier, enumEntry),
                 returnType = enumEntry.getType(klass),
                 parent = klass
             )
-        }.run { JsIrBuilder.buildCall(symbol) }
+        }.run { JsIrBuilder.buildCall(this) }
 }
 
 class EnumClassLowering(val context: JsIrBackendContext) : DeclarationContainerLoweringPass {
@@ -222,14 +222,14 @@ class EnumClassConstructorTransformer(val context: CommonBackendContext, private
         }
 
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) =
-            builder.irDelegatingConstructorCall(expression.symbol.owner).apply {
+            builder.irDelegatingConstructorCall(expression.target).apply {
                 for (i in 0..1) {
                     putValueArgument(i, builder.irGet(constructor.valueParameters[i]))
                 }
             }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-            var delegatingConstructor = expression.symbol.owner
+            var delegatingConstructor = expression.target
             val constructorWasTransformed = delegatingConstructor.symbol in loweredEnumConstructors
 
             if (constructorWasTransformed)
@@ -261,7 +261,7 @@ class EnumClassConstructorTransformer(val context: CommonBackendContext, private
 
         irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                fromOldToNewParameter[expression.symbol]?.let {
+                fromOldToNewParameter[expression.target]?.let {
                     return builder.irGet(it)
                 }
 
@@ -289,7 +289,7 @@ class EnumClassConstructorTransformer(val context: CommonBackendContext, private
                 builder.irCall(constructor)
 
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
-            var constructor = expression.symbol.owner
+            var constructor = expression.target
             val constructorWasTransformed = constructor.symbol in loweredEnumConstructors
 
             // Enum entry class constructors are not transformed
@@ -457,7 +457,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         initEntryInstancesFun: IrSimpleFunction,
         entryInstances: List<IrField>
     ) = enumEntries.mapIndexed { index, enumEntry ->
-        context.enumEntryToGetInstanceFunction.getOrPut(enumEntry.symbol) {
+        context.enumEntryToGetInstanceFunction.getOrPut(enumEntry) {
             buildFunction(createEntryAccessorName(enumName, enumEntry), enumEntry.getType(irClass))
         }.apply {
             body = context.createIrBuilder(symbol).irBlockBody(this) {

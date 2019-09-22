@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
@@ -65,8 +63,8 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             stateMachineFunction,
             "suspendResult",
             true,
-            initializer = JsIrBuilder.buildCall(coroutineImplResultSymbolGetter.symbol).apply {
-                dispatchReceiver = JsIrBuilder.buildGetValue(stateMachineFunction.dispatchReceiverParameter!!.symbol)
+            initializer = JsIrBuilder.buildCall(coroutineImplResultSymbolGetter).apply {
+                dispatchReceiver = JsIrBuilder.buildGetValue(stateMachineFunction.dispatchReceiverParameter!!)
             }
         )
 
@@ -88,7 +86,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         }
 
         val suspendableNodes = collectSuspendableNodes(body)
-        val thisReceiver = (stateMachineFunction.dispatchReceiverParameter as IrValueParameter).symbol
+        val thisReceiver = stateMachineFunction.dispatchReceiverParameter as IrValueParameter
 
         val stateMachineBuilder = StateMachineBuilder(
             suspendableNodes,
@@ -126,36 +124,35 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             override fun visitReturn(expression: IrReturn): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                return if (expression.returnTargetSymbol != simplifiedFunction.symbol)
+                return if (expression.irReturnTarget != simplifiedFunction.symbol)
                     expression
                 else
-                    JsIrBuilder.buildReturn(stateMachineFunction.symbol, expression.value, expression.type)
+                    JsIrBuilder.buildReturn(stateMachineFunction, expression.value, expression.type)
             }
         })
 
         val liveLocals = computeLivenessAtSuspensionPoints(functionBody).values.flatten().toSet()
 
-        val localToPropertyMap = mutableMapOf<IrValueSymbol, IrFieldSymbol>()
+        val localToPropertyMap = mutableMapOf<IrValueDeclaration, IrField>()
         var localCounter = 0
         // TODO: optimize by using the same property for different locals.
         liveLocals.forEach {
             if (it != suspendState && it != suspendResult) {
-                localToPropertyMap.getOrPut(it.symbol) {
+                localToPropertyMap.getOrPut(it) {
                     coroutineClass.addField(Name.identifier("${it.name}${localCounter++}"), it.type, (it as? IrVariable)?.isVar ?: false)
-                        .symbol
                 }
             }
         }
         simplifiedFunction.explicitParameters.forEach {
-            localToPropertyMap.getOrPut(it.symbol) {
-                argumentToPropertiesMap.getValue(it).symbol
+            localToPropertyMap.getOrPut(it) {
+                argumentToPropertiesMap.getValue(it)
             }
         }
 
         stateMachineFunction.transform(LiveLocalsTransformer(localToPropertyMap, { JsIrBuilder.buildGetValue(thisReceiver) }, unit), null)
     }
 
-    private fun assignStateIds(entryState: SuspendState, thisReceiver: IrValueParameterSymbol, switch: IrWhen, rootLoop: IrLoop) {
+    private fun assignStateIds(entryState: SuspendState, thisReceiver: IrValueParameter, switch: IrWhen, rootLoop: IrLoop) {
         val visited = mutableSetOf<SuspendState>()
 
         val sortedStates = DFS.topologicalOrder(listOf(entryState), { it.successors }, { visited.add(it) })
@@ -165,7 +162,7 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
 
         for (state in sortedStates) {
             val condition = JsIrBuilder.buildCall(eqeqeqInt).apply {
-                putValueArgument(0, JsIrBuilder.buildCall(coroutineImplLabelPropertyGetter.symbol).also {
+                putValueArgument(0, JsIrBuilder.buildCall(coroutineImplLabelPropertyGetter).also {
                     it.dispatchReceiver = JsIrBuilder.buildGetValue(thisReceiver)
                 })
                 putValueArgument(1, JsIrBuilder.buildInt(context.irBuiltIns.intType, state.id))
@@ -204,10 +201,10 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
     override fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
         for (it in coroutineConstructors) {
             (it.body as? IrBlockBody)?.run {
-                val receiver = JsIrBuilder.buildGetValue(coroutineClassThis.symbol)
+                val receiver = JsIrBuilder.buildGetValue(coroutineClassThis)
                 assert(exceptionTrapId >= 0)
                 val id = JsIrBuilder.buildInt(context.irBuiltIns.intType, exceptionTrapId)
-                statements += JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter.symbol).also { call ->
+                statements += JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter).also { call ->
                     call.dispatchReceiver = receiver
                     call.putValueArgument(0, id)
                 }

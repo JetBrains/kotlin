@@ -54,7 +54,7 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
     }
 
     override fun visitGetField(expression: IrGetField, data: WasmCodegenContext): WasmInstruction {
-        val fieldName = data.getGlobalName(expression.symbol.owner)
+        val fieldName = data.getGlobalName(expression.target)
         if (expression.receiver != null)
             TODO("Support member fields")
 
@@ -62,14 +62,14 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
     }
 
     override fun visitGetValue(expression: IrGetValue, data: WasmCodegenContext): WasmInstruction =
-        WasmGetLocal(data.getLocalName(expression.symbol.owner))
+        WasmGetLocal(data.getLocalName(expression.target))
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: WasmCodegenContext): WasmInstruction {
         TODO("IrGetObjectValue")
     }
 
     override fun visitSetField(expression: IrSetField, data: WasmCodegenContext): WasmInstruction {
-        val fieldName = data.getGlobalName(expression.symbol.owner)
+        val fieldName = data.getGlobalName(expression.target)
         if (expression.receiver != null)
             TODO("Support member fields")
 
@@ -78,7 +78,7 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: WasmCodegenContext): WasmInstruction {
-        val fieldName = data.getLocalName(expression.symbol.owner)
+        val fieldName = data.getLocalName(expression.target)
         val value = expression.value.accept(this, data)
         return WasmSetLocal(fieldName, value)
     }
@@ -88,7 +88,7 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
     }
 
     override fun visitCall(expression: IrCall, data: WasmCodegenContext): WasmInstruction {
-        val function = expression.symbol.owner.realOverrideTarget
+        val function = expression.target.realOverrideTarget
         require(function is IrSimpleFunction) { "Only IrSimpleFunction could be called via IrCall" }
         val valueArgs = (0 until expression.valueArgumentsCount).mapNotNull { expression.getValueArgument(it) }
         val irArguments = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver) + valueArgs

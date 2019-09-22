@@ -141,7 +141,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
         irClass.annotations.add(
             IrConstructorCallImpl.fromSymbolOwner(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, documentedConstructor.returnType, documentedConstructor.symbol
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, documentedConstructor.returnType, documentedConstructor
             )
         )
     }
@@ -156,18 +156,18 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         if (irClass.hasAnnotation(FqName("java.lang.annotation.Retention"))) return
         val kotlinRetentionPolicyCall = irClass.getAnnotation(FqName("kotlin.annotation.Retention"))
         val kotlinRetentionPolicyName =
-            kotlinRetentionPolicyCall?.getValueArgument(0)?.safeAs<IrGetEnumValue>()?.symbol?.owner?.name?.asString()
+            kotlinRetentionPolicyCall?.getValueArgument(0)?.safeAs<IrGetEnumValue>()?.target?.name?.asString()
         val kotlinRetentionPolicy = kotlinRetentionPolicyName?.let { KotlinRetention.valueOf(it) }
         val javaRetentionPolicy = kotlinRetentionPolicy?.let { annotationRetentionMap[it] } ?: rpRuntime
 
         irClass.annotations.add(
             IrConstructorCallImpl.fromSymbolOwner(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, retentionConstructor.returnType, retentionConstructor.symbol
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, retentionConstructor.returnType, retentionConstructor
             ).apply {
                 putValueArgument(
                     0,
                     IrGetEnumValueImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, retentionPolicyEnum.defaultType, javaRetentionPolicy.symbol
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, retentionPolicyEnum.defaultType, javaRetentionPolicy
                     )
                 )
             }
@@ -223,14 +223,14 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         for (target in javaTargets) {
             vararg.elements.add(
                 IrGetEnumValueImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, elementTypeEnum.defaultType, target.symbol
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, elementTypeEnum.defaultType, target
                 )
             )
         }
 
         irClass.annotations.add(
             IrConstructorCallImpl.fromSymbolOwner(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, targetConstructor.returnType, targetConstructor.symbol
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, targetConstructor.returnType, targetConstructor
             ).apply {
                 putValueArgument(0, vararg)
             }
@@ -241,7 +241,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
 private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
+    val index = target.valueParameters.find { it.name == name }?.index ?: return null
     return getValueArgument(index)
 }
 
@@ -258,6 +258,6 @@ private fun loadAnnotationTargets(targetEntry: IrConstructorCall): Set<KotlinTar
     val valueArgument = targetEntry.getValueArgument(TARGET_ALLOWED_TARGETS)
             as? IrVararg ?: return null
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().mapNotNull {
-        KotlinTarget.valueOrNull(it.symbol.owner.name.asString())
+        KotlinTarget.valueOrNull(it.target.name.asString())
     }.toSet()
 }

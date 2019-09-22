@@ -420,7 +420,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             context.symbolTable.referenceFunction(functionDescriptor.original),
             functionDescriptor,
             origin = null, // TODO origin for widening conversions?
-            superQualifierSymbol = null
+            irSuperQualifier = null
         ).apply {
             dispatchReceiver = receiver
         }

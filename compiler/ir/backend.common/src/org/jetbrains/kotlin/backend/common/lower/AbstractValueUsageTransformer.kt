@@ -10,10 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
-import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -49,10 +45,10 @@ abstract class AbstractValueUsageTransformer(
         this.useAsValue(parameter)
 
     protected open fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression =
-        this.useAsArgument(expression.symbol.owner.dispatchReceiverParameter!!)
+        this.useAsArgument(expression.target.dispatchReceiverParameter!!)
 
     protected open fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression =
-        this.useAsArgument(expression.symbol.owner.extensionReceiverParameter!!)
+        this.useAsArgument(expression.target.extensionReceiverParameter!!)
 
     protected open fun IrExpression.useAsValueArgument(
         expression: IrFunctionAccessExpression,
@@ -66,11 +62,11 @@ abstract class AbstractValueUsageTransformer(
     private fun IrExpression.useForField(field: IrField): IrExpression =
         this.useAs(field.type)
 
-    protected open fun IrExpression.useAsReturnValue(returnTarget: IrReturnTargetSymbol): IrExpression =
+    protected open fun IrExpression.useAsReturnValue(returnTarget: IrReturnTarget): IrExpression =
         when (returnTarget) {
-            is IrSimpleFunctionSymbol -> this.useAs(returnTarget.owner.returnType)
-            is IrConstructorSymbol -> this.useAs(irBuiltIns.unitType)
-            is IrReturnableBlockSymbol -> this.useAs(returnTarget.owner.type)
+            is IrSimpleFunction -> this.useAs(returnTarget.returnType)
+            is IrConstructor -> this.useAs(irBuiltIns.unitType)
+            is IrReturnableBlock -> this.useAs(returnTarget.type)
             else -> error(returnTarget)
         }
 
@@ -99,7 +95,7 @@ abstract class AbstractValueUsageTransformer(
             extensionReceiver = extensionReceiver?.useAsExtensionReceiver(expression)
             for (index in descriptor.valueParameters.indices) {
                 val argument = getValueArgument(index) ?: continue
-                val parameter = symbol.owner.valueParameters[index]
+                val parameter = target.valueParameters[index]
                 putValueArgument(index, argument.useAsValueArgument(expression, parameter))
             }
         }
@@ -143,7 +139,7 @@ abstract class AbstractValueUsageTransformer(
     override fun visitReturn(expression: IrReturn): IrExpression {
         expression.transformChildrenVoid(this)
 
-        expression.value = expression.value.useAsReturnValue(expression.returnTargetSymbol)
+        expression.value = expression.value.useAsReturnValue(expression.irReturnTarget)
 
         return expression
     }
@@ -151,7 +147,7 @@ abstract class AbstractValueUsageTransformer(
     override fun visitSetVariable(expression: IrSetVariable): IrExpression {
         expression.transformChildrenVoid(this)
 
-        expression.value = expression.value.useForVariable(expression.symbol.owner)
+        expression.value = expression.value.useForVariable(expression.target)
 
         return expression
     }
@@ -159,7 +155,7 @@ abstract class AbstractValueUsageTransformer(
     override fun visitSetField(expression: IrSetField): IrExpression {
         expression.transformChildrenVoid(this)
 
-        expression.value = expression.value.useForField(expression.symbol.owner)
+        expression.value = expression.value.useForField(expression.target)
 
         return expression
     }
@@ -261,7 +257,7 @@ abstract class AbstractValueUsageTransformer(
 
         declaration.body?.let {
             if (it is IrExpressionBody) {
-                it.expression = it.expression.useAsReturnValue(declaration.symbol)
+                it.expression = it.expression.useAsReturnValue(declaration)
             }
         }
 

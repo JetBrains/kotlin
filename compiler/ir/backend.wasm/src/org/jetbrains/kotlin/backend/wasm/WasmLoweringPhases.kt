@@ -323,7 +323,8 @@ private val objectUsageLoweringPhase = makeCustomWasmModulePhase(
 val wasmPhases = namedIrModulePhase<WasmBackendContext>(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = validateIrBeforeLowering then
+    lower = desymbolizePhase then
+            validateIrBeforeLowering then
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
             provisionalFunctionExpressionPhase then

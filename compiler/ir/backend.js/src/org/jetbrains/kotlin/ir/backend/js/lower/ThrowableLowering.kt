@@ -6,23 +6,16 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.callsSuper
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.isNullableString
-import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isThrowable
-import org.jetbrains.kotlin.ir.util.isThrowableTypeOrSubtype
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 
@@ -53,7 +46,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
             )
             else -> {
                 val arg = getValueArgument(0)!!
-                val parameter = symbol.owner.valueParameters[0]
+                val parameter = target.valueParameters[0]
                 when {
                     parameter.type.isNullableString() -> ThrowableArguments(message = arg, cause = nullValue())
                     else -> {
@@ -69,7 +62,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
         override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
-            if (expression.symbol !in throwableConstructors) return expression
+            if (expression.target !in throwableConstructors) return expression
 
             val (messageArg, causeArg) = expression.extractThrowableArguments()
 
@@ -83,7 +76,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
-            if (expression.symbol !in throwableConstructors) return expression
+            if (expression.target !in throwableConstructors) return expression
 
             val (messageArg, causeArg) = expression.extractThrowableArguments()
 

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.IrSymbolVisitor
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
 interface IrSymbol : IrSymbolOwner {
     val owner: IrSymbolOwner
@@ -86,9 +85,11 @@ interface IrFieldSymbol :
 }
 
 interface IrClassifierSymbol :
-    IrSymbol, TypeConstructorMarker {
+    IrSymbol, TypeConstructorMarker,
+    IrClassifier {
 
     override val descriptor: ClassifierDescriptor
+    override val owner: IrClassifier
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitClassifierSymbol(this, data)
@@ -103,7 +104,7 @@ interface IrClassSymbol :
 }
 
 interface IrTypeParameterSymbol :
-    IrClassifierSymbol, IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>, TypeParameterMarker,
+    IrClassifierSymbol, IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>,
     IrTypeParameter {
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
@@ -111,7 +112,7 @@ interface IrTypeParameterSymbol :
 }
 
 interface IrValueSymbol :
-    IrSymbol {
+    IrSymbol, IrValueDeclaration {
 
     override val descriptor: ValueDescriptor
     override val owner: IrValueDeclaration

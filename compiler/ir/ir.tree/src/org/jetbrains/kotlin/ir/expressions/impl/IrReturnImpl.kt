@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -28,13 +28,13 @@ class IrReturnImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val returnTargetSymbol: IrReturnTargetSymbol,
+    override val irReturnTarget: IrReturnTarget,
     override var value: IrExpression
 ) :
     IrExpressionBase(startOffset, endOffset, type),
     IrReturn {
 
-    override val returnTarget: FunctionDescriptor get() = returnTargetSymbol.descriptor
+    override val returnTarget: FunctionDescriptor get() = irReturnTarget.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitReturn(this, data)

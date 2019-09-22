@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 interface IrSimpleFunction :
     IrFunction,
     IrSymbolDeclaration<IrSimpleFunctionSymbol>,
-    IrOverridableDeclaration<IrSimpleFunctionSymbol> {
+    IrOverridableDeclaration<IrSimpleFunction> {
 
     val modality: Modality
     val isTailrec: Boolean

@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -29,17 +29,17 @@ class IrLocalDelegatedPropertyReferenceImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override val symbol: IrLocalDelegatedPropertySymbol,
-    override val delegate: IrVariableSymbol,
-    override val getter: IrSimpleFunctionSymbol,
-    override val setter: IrSimpleFunctionSymbol?,
+    override val target: IrLocalDelegatedProperty,
+    override val delegate: IrVariable,
+    override val getter: IrSimpleFunction,
+    override val setter: IrSimpleFunction?,
     origin: IrStatementOrigin? = null
 ) :
     IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, 0, origin),
     IrLocalDelegatedPropertyReference {
 
     override val descriptor: VariableDescriptorWithAccessors
-        get() = symbol.descriptor
+        get() = target.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertyReference(this, data)

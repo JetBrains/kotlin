@@ -97,7 +97,7 @@ class IrExternalPackageFragmentSymbolImpl(descriptor: PackageFragmentDescriptor)
 class IrAnonymousInitializerSymbolImpl(descriptor: ClassDescriptor) :
     IrBindableSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor),
     IrAnonymousInitializerSymbol, IrAnonymousInitializer {
-    constructor(irClassSymbol: IrClassSymbol) : this(irClassSymbol.descriptor) {}
+    constructor(irClass: IrClass) : this(irClass.descriptor) {}
     override val symbol get() = this
     override val startOffset get() = owner.startOffset
     override val endOffset get() = owner.endOffset
@@ -181,7 +181,7 @@ class IrFieldSymbolImpl(descriptor: PropertyDescriptor) :
     override val isFinal get() = owner.isFinal
     override val isExternal get() = owner.isExternal
     override val isStatic get() = owner.isStatic
-    override val overriddenSymbols get() = owner.overriddenSymbols
+    override val overridden get() = owner.overridden
     override val visibility get() = owner.visibility
 
     override var parent get() = owner.parent; set(value) { owner.parent = value }
@@ -281,7 +281,7 @@ class IrSimpleFunctionSymbolImpl(descriptor: FunctionDescriptor) :
     override val visibility get() = owner.visibility
     override val typeParameters get() = owner.typeParameters
     override val valueParameters get() = owner.valueParameters
-    override val overriddenSymbols get() = owner.overriddenSymbols
+    override val overridden get() = owner.overridden
     override val isTailrec get() = owner.isTailrec
     override val isSuspend get() = owner.isSuspend
     override val isInline get() = owner.isInline
@@ -338,7 +338,7 @@ class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
     override val startOffset get() = owner.startOffset
     override val endOffset get() = owner.endOffset
     override val type get() = owner.type
-    override val inlineFunctionSymbol get() = owner.inlineFunctionSymbol
+    override val inlineFunction get() = owner.inlineFunction
     override val statements get() = owner.statements
     override val origin get() = owner.origin
 

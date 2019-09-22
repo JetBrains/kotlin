@@ -7,23 +7,20 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 
 class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
 
-    private val symbolToTransformer: SymbolToTransformer = mutableMapOf()
+    private val functionToTransformer: FunctionToTransformer = mutableMapOf()
 
     init {
-        symbolToTransformer.run {
+        functionToTransformer.run {
             // Arrays
             add(context.intrinsics.array.sizeProperty, context.intrinsics.jsArrayLength, true)
             add(context.intrinsics.array.getFunction, context.intrinsics.jsArrayGet, true)
@@ -60,8 +57,8 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
     }
 
     override fun transformFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        val symbol = expression.symbol
-        symbolToTransformer[symbol]?.let {
+        val symbol = expression.target
+        functionToTransformer[symbol]?.let {
             return it(expression)
         }
 

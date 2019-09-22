@@ -146,8 +146,8 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
         it.body = body?.deepCopyWithSymbols(this)
         it.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrGetValue =
-                valueParametersMapping[expression.symbol.owner]?.let { newParam ->
-                    expression.run { IrGetValueImpl(startOffset, endOffset, type, newParam.symbol, origin) }
+                valueParametersMapping[expression.target]?.let { newParam ->
+                    expression.run { IrGetValueImpl(startOffset, endOffset, type, newParam, origin) }
                 } ?: expression
 
             override fun visitCall(expression: IrCall): IrExpression {
@@ -164,9 +164,9 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
     callerIsInlineLambda: Boolean
 ): IrCall {
     if (!isSuspend) return this
-    val view = (symbol.owner as IrSimpleFunction).getOrCreateSuspendFunctionViewIfNeeded(context)
-    if (view == symbol.owner) return this
-    return IrCallImpl(startOffset, endOffset, view.returnType, view.symbol).also {
+    val view = (target as IrSimpleFunction).getOrCreateSuspendFunctionViewIfNeeded(context)
+    if (view == target) return this
+    return IrCallImpl(startOffset, endOffset, view.returnType, view).also {
         it.copyTypeArgumentsFrom(this)
         it.dispatchReceiver = dispatchReceiver
         it.extensionReceiver = extensionReceiver
@@ -176,9 +176,9 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
         val continuationParameter =
             when {
                 caller.isInvokeSuspendOfLambda(context) || caller.isInvokeSuspendOfContinuation(context) ->
-                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.dispatchReceiverParameter!!.symbol)
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.dispatchReceiverParameter!!)
                 callerIsInlineLambda -> context.fakeContinuation
-                else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters.last().symbol)
+                else -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.valueParameters.last())
             }
         it.putValueArgument(valueArgumentsCount, continuationParameter)
     }

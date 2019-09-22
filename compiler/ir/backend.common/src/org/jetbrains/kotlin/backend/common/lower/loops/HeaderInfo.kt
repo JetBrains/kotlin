@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -175,9 +175,9 @@ internal interface HeaderInfoHandler<E : IrExpression, D> {
     fun match(expression: E): Boolean
 
     /** Builds a [HeaderInfo] from the expression. */
-    fun build(expression: E, data: D, scopeOwner: IrSymbol): HeaderInfo?
+    fun build(expression: E, data: D, scopeOwner: IrSymbolOwner): HeaderInfo?
 
-    fun handle(expression: E, data: D, scopeOwner: IrSymbol) = if (match(expression)) {
+    fun handle(expression: E, data: D, scopeOwner: IrSymbolOwner) = if (match(expression)) {
         build(expression, data, scopeOwner)
     } else {
         null
@@ -185,8 +185,8 @@ internal interface HeaderInfoHandler<E : IrExpression, D> {
 }
 
 internal interface ExpressionHandler : HeaderInfoHandler<IrExpression, Nothing?> {
-    fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo?
-    override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol) = build(expression, scopeOwner)
+    fun build(expression: IrExpression, scopeOwner: IrSymbolOwner): HeaderInfo?
+    override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbolOwner) = build(expression, scopeOwner)
 }
 
 /** Matches a call to build an iterable and builds a [HeaderInfo] from the call's context. */
@@ -198,7 +198,7 @@ internal interface HeaderInfoFromCallHandler<D> : HeaderInfoHandler<IrCall, D> {
 
 internal typealias ProgressionHandler = HeaderInfoFromCallHandler<ProgressionType>
 
-internal class HeaderInfoBuilder(context: CommonBackendContext, private val scopeOwnerSymbol: () -> IrSymbol) :
+internal class HeaderInfoBuilder(context: CommonBackendContext, private val scopeOwner: () -> IrSymbolOwner) :
     IrElementVisitor<HeaderInfo?, Nothing?> {
 
     private val symbols = context.ir.symbols
@@ -233,21 +233,21 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
     /** Builds a [HeaderInfo] for iterable expressions that are calls (e.g., `.reversed()`, `.indices`. */
     override fun visitCall(expression: IrCall, data: Nothing?): HeaderInfo? {
         // Return the HeaderInfo from the first successful match. First, try to match a `reversed()` call.
-        val reversedHeaderInfo = reversedHandler.handle(expression, null, scopeOwnerSymbol())
+        val reversedHeaderInfo = reversedHandler.handle(expression, null, scopeOwner())
         if (reversedHeaderInfo != null)
             return reversedHeaderInfo
 
         // Try to match a call to build a progression (e.g., `.indices`, `downTo`).
         val progressionType = ProgressionType.fromIrType(expression.type, symbols)
         val progressionHeaderInfo =
-            progressionType?.run { progressionHandlers.firstNotNullResult { it.handle(expression, this, scopeOwnerSymbol()) } }
+            progressionType?.run { progressionHandlers.firstNotNullResult { it.handle(expression, this, scopeOwner()) } }
 
         return progressionHeaderInfo ?: super.visitCall(expression, data)
     }
 
     /** Builds a [HeaderInfo] for iterable expressions not handled in [visitCall]. */
     override fun visitExpression(expression: IrExpression, data: Nothing?): HeaderInfo? {
-        return expressionHandlers.firstNotNullResult { it.handle(expression, null, scopeOwnerSymbol()) }
+        return expressionHandlers.firstNotNullResult { it.handle(expression, null, scopeOwner()) }
             ?: super.visitExpression(expression, data)
     }
 }

@@ -22,7 +22,7 @@ internal fun IrExpression.castIfNecessary(targetType: IrType, numberCastFunction
         this
     } else {
         val function = type.getClass()!!.functions.first { it.name == numberCastFunctionName }
-        IrCallImpl(startOffset, endOffset, function.returnType, function.symbol)
+        IrCallImpl(startOffset, endOffset, function.returnType, function)
             .apply { dispatchReceiver = this@castIfNecessary }
     }
 }
@@ -35,7 +35,7 @@ internal fun IrExpression.negate(): IrExpression {
         is Long -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, -value)
         else -> {
             val unaryMinusFun = type.getClass()!!.functions.first { it.name == OperatorNameConventions.UNARY_MINUS }
-            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol, unaryMinusFun.descriptor).apply {
+            IrCallImpl(startOffset, endOffset, type, unaryMinusFun, unaryMinusFun.descriptor).apply {
                 dispatchReceiver = this@negate
             }
         }
@@ -51,7 +51,7 @@ internal fun IrExpression.decrement(): IrExpression {
         is Char -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, thisValue - 1)
         else -> {
             val decFun = type.getClass()!!.functions.first { it.name == OperatorNameConventions.DEC }
-            IrCallImpl(startOffset, endOffset, type, decFun.symbol, decFun.descriptor).apply {
+            IrCallImpl(startOffset, endOffset, type, decFun, decFun.descriptor).apply {
                 dispatchReceiver = this@decrement
             }
         }

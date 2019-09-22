@@ -123,14 +123,14 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 }
             )
 
-            irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
+            irFunction.body = context.createIrBuilder(irFunction).irBlockBody {
                 +irReturn(
-                    irCall(symbols.genericToArray, symbols.genericToArray.owner.returnType).apply {
+                    irCall(symbols.genericToArray, symbols.genericToArray.returnType).apply {
                         putValueArgument(
                             0,
-                            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.dispatchReceiverParameter!!.symbol)
+                            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.dispatchReceiverParameter!!)
                         )
-                        putValueArgument(1, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.valueParameters[0].symbol))
+                        putValueArgument(1, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.valueParameters[0]))
                     })
             }
 
@@ -172,12 +172,12 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 parent = irFunction
             }
 
-            irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
+            irFunction.body = context.createIrBuilder(irFunction).irBlockBody {
                 +irReturn(
-                    irCall(symbols.nonGenericToArray, symbols.nonGenericToArray.owner.returnType).apply {
+                    irCall(symbols.nonGenericToArray, symbols.nonGenericToArray.returnType).apply {
                         putValueArgument(
                             0,
-                            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.dispatchReceiverParameter!!.symbol)
+                            IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.dispatchReceiverParameter!!)
                         )
                     })
             }

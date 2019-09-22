@@ -78,7 +78,7 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
     }
 
     private fun getPrimitiveClass(target: IrSimpleFunction, returnType: IrType) =
-        JsIrBuilder.buildCall(target.symbol, returnType).apply {
+        JsIrBuilder.buildCall(target, returnType).apply {
             dispatchReceiver = JsIrBuilder.buildGetObjectValue(primitiveClassesObject.owner.defaultType, primitiveClassesObject)
         }
 

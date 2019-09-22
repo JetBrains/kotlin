@@ -223,11 +223,11 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         }
 
         override fun visitDeclarationReference(expression: IrDeclarationReference) {
-            expression.symbol.checkBinding("ref", expression)
+            expression.target.checkBinding("ref", expression)
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference) {
-            expression.symbol.checkBinding("ref", expression)
+            expression.target.checkBinding("ref", expression)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference) {
@@ -242,11 +242,11 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             expression.setter?.checkBinding("setter", expression)
         }
 
-        private fun IrSymbol.checkBinding(kind: String, irElement: IrElement) {
-            if (!isBound) {
-                error("${javaClass.simpleName} $descriptor is unbound @$kind ${irElement.render()}")
+        private fun IrSymbolOwner.checkBinding(kind: String, irElement: IrElement) {
+            if (!symbol.isBound) {
+                error("${javaClass.simpleName} ${symbol.descriptor} is unbound @$kind ${irElement.render()}")
             } else {
-                val irDeclaration = owner as? IrDeclaration
+                val irDeclaration = this as? IrDeclaration
                 if (irDeclaration != null) {
                     try {
                         irDeclaration.parent
@@ -256,9 +256,9 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
                 }
             }
 
-            val otherSymbol = symbolForDeclaration.getOrPut(owner) { this }
+            val otherSymbol = symbolForDeclaration.getOrPut(this) { symbol }
             if (this != otherSymbol) {
-                error("Multiple symbols for $descriptor @$kind ${irElement.render()}")
+                error("Multiple symbols for ${symbol.descriptor} @$kind ${irElement.render()}")
             }
         }
 

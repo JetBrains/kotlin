@@ -83,26 +83,26 @@ fun IrClass.addSimpleDelegatingConstructor(
             listOf(
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset, irBuiltIns.unitType,
-                    superConstructor.symbol, superConstructor.descriptor,
+                    superConstructor, superConstructor.descriptor,
                     0, superConstructor.valueParameters.size
                 ).apply {
                     constructor.valueParameters.forEachIndexed { idx, parameter ->
-                        putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol))
+                        putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.type, parameter))
                     }
                 },
-                IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol, irBuiltIns.unitType)
+                IrInstanceInitializerCallImpl(startOffset, endOffset, this, irBuiltIns.unitType)
             )
         )
     }
 }
 
-val IrCall.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
-val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
+val IrCall.isSuspend get() = (target as? IrSimpleFunction)?.isSuspend == true
+val IrFunctionReference.isSuspend get() = (target as? IrSimpleFunction)?.isSuspend == true
 
 val IrSimpleFunction.isOverridable: Boolean
     get() = visibility != Visibilities.PRIVATE && modality != Modality.FINAL && (parent as? IrClass)?.isFinalClass != true
 
-val IrSimpleFunction.isOverridableOrOverrides: Boolean get() = isOverridable || overriddenSymbols.isNotEmpty()
+val IrSimpleFunction.isOverridableOrOverrides: Boolean get() = isOverridable || overridden.isNotEmpty()
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
     when (this) {
@@ -117,9 +117,8 @@ val IrClass.isFinalClass: Boolean
 
 // For an annotation, get the annotation class.
 fun IrCall.getAnnotationClass(): IrClass {
-    val callable = symbol.owner
-    assert(callable is IrConstructor) { "Constructor call expected, got ${ir2string(this)}" }
-    val annotationClass =  callable.parentAsClass
+    assert(target is IrConstructor) { "Constructor call expected, got ${ir2string(this)}" }
+    val annotationClass =  target.parentAsClass
     assert(annotationClass.isAnnotationClass) { "Annotation class expected, got ${ir2string(annotationClass)}" }
     return annotationClass
 }
@@ -365,7 +364,7 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
         IrValueParameterSymbolImpl(thisReceiverDescriptor),
         Name.identifier("<this>"),
         index = -1,
-        type = this.symbol.typeWith(this.typeParameters.map { it.defaultType }),
+        type = this.typeWith(this.typeParameters.map { it.defaultType }),
         varargElementType = null,
         isCrossinline = false,
         isNoinline = false
@@ -450,7 +449,7 @@ fun IrClass.addFakeOverrides() {
 
     val overriddenFunctions = declarations
         .flatMap { it.toList() }
-        .flatMap { it.overriddenSymbols.map { it.owner } }
+        .flatMap { it.overridden }
         .toSet()
 
     val unoverriddenSuperFunctions = superTypes
@@ -485,7 +484,7 @@ fun IrClass.addFakeOverrides() {
             ).apply {
                 descriptor.bind(this)
                 parent = this@addFakeOverrides
-                overriddenSymbols += overriddenFunctions.map { it.symbol }
+                overridden += overriddenFunctions
                 copyParameterDeclarationsFrom(irFunction)
             }
         }

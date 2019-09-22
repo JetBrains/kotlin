@@ -35,7 +35,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
                 }
 
             is IrGetObjectValue ->
-                this.symbol == irBuiltIns.unitClass
+                this.target == irBuiltIns.unitClass
 
             else -> false
         }
@@ -43,16 +43,16 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
     override fun IrExpression.useAs(type: IrType): IrExpression {
 
         val actualType = when (this) {
-            is IrConstructorCall -> symbol.owner.returnType
+            is IrConstructorCall -> target.returnType
             is IrCall -> {
-                val function = this.symbol.owner
+                val function = this.target
                 if (function.let { it is IrSimpleFunction && it.isSuspend }) {
                     irBuiltIns.anyNType
                 } else {
                     function.realOverrideTarget.returnType
                 }
             }
-            is IrGetField -> this.symbol.owner.type
+            is IrGetField -> this.target.type
 
             is IrTypeOperatorCall -> when (this.operator) {
                 IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
@@ -65,7 +65,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             }
 
             is IrGetValue -> {
-                val value = this.symbol.owner
+                val value = this.target
                 if (value is IrValueParameter && value.isDispatchReceiver) {
                     irBuiltIns.anyNType
                 } else {
@@ -132,11 +132,11 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             val nullCheck = buildIfElse(
                 type = resultType,
                 cond = buildCall(irBuiltIns.eqeqSymbol).apply {
-                    putValueArgument(0, buildGetValue(tmp.symbol))
+                    putValueArgument(0, buildGetValue(tmp))
                     putValueArgument(1, buildNull(irBuiltIns.nothingNType))
                 },
                 thenBranch = buildNull(irBuiltIns.nothingNType),
-                elseBranch = call(buildGetValue(tmp.symbol))
+                elseBranch = call(buildGetValue(tmp))
             )
             buildBlock(
                 type = resultType,
@@ -148,24 +148,21 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         }
     }
 
-    private val IrFunctionAccessExpression.target: IrFunction
+    private val IrFunctionAccessExpression.callTarget: IrFunction
         get() = when (this) {
-            is IrConstructorCall -> this.symbol.owner
-            is IrDelegatingConstructorCall -> this.symbol.owner
-            is IrCall -> this.callTarget
+            is IrConstructorCall -> this.target
+            is IrDelegatingConstructorCall -> this.target
+            is IrCall -> this.target.realOverrideTarget
             else -> TODO(this.render())
         }
 
-    private val IrCall.callTarget: IrFunction
-        get() = symbol.owner.realOverrideTarget
-
 
     override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
-        return this.useAsArgument(expression.target.dispatchReceiverParameter!!)
+        return this.useAsArgument(expression.callTarget.dispatchReceiverParameter!!)
     }
 
     override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
-        return this.useAsArgument(expression.target.extensionReceiverParameter!!)
+        return this.useAsArgument(expression.callTarget.extensionReceiverParameter!!)
     }
 
     override fun IrExpression.useAsValueArgument(
@@ -173,7 +170,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         parameter: IrValueParameter
     ): IrExpression {
 
-        return this.useAsArgument(expression.target.valueParameters[parameter.index])
+        return this.useAsArgument(expression.callTarget.valueParameters[parameter.index])
     }
 
 

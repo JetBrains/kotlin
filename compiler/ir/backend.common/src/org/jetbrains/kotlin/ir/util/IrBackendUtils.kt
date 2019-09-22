@@ -17,25 +17,24 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
-fun IrClassSymbol.getPropertyDeclaration(name: String) =
-    this.owner.declarations.filterIsInstance<IrProperty>()
+fun IrClass.getPropertyDeclaration(name: String) =
+    this.declarations.filterIsInstance<IrProperty>()
         .atMostOne { it.descriptor.name == Name.identifier(name) }
 
-fun IrClassSymbol.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
-        owner.findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
+fun IrClass.getSimpleFunction(name: String): IrSimpleFunction? =
+        findDeclaration<IrSimpleFunction> { it.name.asString() == name }
 
-fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =
-    this.getPropertyDeclaration(name)?.getter?.symbol ?: this.getSimpleFunction("<get-$name>")
+fun IrClass.getPropertyGetter(name: String): IrSimpleFunction? =
+    this.getPropertyDeclaration(name)?.getter ?: this.getSimpleFunction("<get-$name>")
 
-fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? =
-    this.getPropertyDeclaration(name)?.setter?.symbol ?: this.getSimpleFunction("<set-$name>")
+fun IrClass.getPropertySetter(name: String): IrSimpleFunction? =
+    this.getPropertyDeclaration(name)?.setter ?: this.getSimpleFunction("<set-$name>")
 
-fun IrClassSymbol.getPropertyField(name: String): IrFieldSymbol? =
-    this.getPropertyDeclaration(name)?.backingField?.symbol
+fun IrClass.getPropertyField(name: String): IrField? =
+    this.getPropertyDeclaration(name)?.backingField

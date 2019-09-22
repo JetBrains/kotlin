@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -83,9 +82,9 @@ class ObjectUsageLowering(
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-                val obj: IrClass = expression.symbol.owner
+                val obj: IrClass = expression.target
                 if (obj.isEffectivelyExternal()) return expression
-                return JsIrBuilder.buildCall(getOrCreateGetInstanceFunction(objectToGetInstanceFunction, obj).symbol)
+                return JsIrBuilder.buildCall(getOrCreateGetInstanceFunction(objectToGetInstanceFunction, obj))
             }
         })
     }

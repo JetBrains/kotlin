@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.constructedClass
@@ -33,12 +33,12 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
     }
 
     // Array(size, init) -> Array(size)
-    private fun arrayInlineToSizeConstructor(irConstructor: IrConstructor): IrFunctionSymbol? {
-        val clazz = irConstructor.constructedClass.symbol
+    private fun arrayInlineToSizeConstructor(irConstructor: IrConstructor): IrFunction? {
+        val clazz = irConstructor.constructedClass
         return when {
             irConstructor.valueParameters.size != 2 -> null
-            clazz == context.irBuiltIns.arrayClass -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
-            context.irBuiltIns.primitiveArrays.contains(clazz) -> clazz.constructors.single { it.owner.valueParameters.size == 1 }
+            clazz == context.irBuiltIns.arrayClass.owner -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
+            context.irBuiltIns.primitiveArrays.contains(clazz.symbol) -> clazz.constructors.single { it.valueParameters.size == 1 }
             else -> null
         }
     }
@@ -53,7 +53,7 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val sizeConstructor = arrayInlineToSizeConstructor(expression.symbol.owner)
+        val sizeConstructor = arrayInlineToSizeConstructor(expression.target)
             ?: return super.visitConstructorCall(expression)
         // inline fun <reified T> Array(size: Int, invokable: (Int) -> T): Array<T> {
         //     val result = arrayOfNulls<T>(size)
@@ -66,7 +66,7 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
         val size = expression.getValueArgument(0)!!.transform(this, null)
         val invokable = expression.getValueArgument(1)!!.transform(this, null)
         val scope = currentScope!!.scope
-        return context.createIrBuilder(scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
+        return context.createIrBuilder(scope.irScopeOwner).irBlock(expression.startOffset, expression.endOffset) {
             val index = irTemporaryVar(irInt(0))
             val sizeVar = irTemporary(size)
             val result = irTemporary(irCall(sizeConstructor, expression.type).apply {
@@ -85,7 +85,7 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
                 body = irBlock {
                     val tempIndex = irTemporary(irGet(index))
                     val value = lambda?.inline(listOf(tempIndex)) ?: irCallOp(
-                        invoke.symbol,
+                        invoke,
                         invoke.returnType,
                         irGet(invokableVar!!),
                         irGet(tempIndex)
@@ -96,7 +96,7 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
                         putValueArgument(1, value)
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
-                    +irSetVar(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
+                    +irSetVar(index, irCallOp(inc, index.type, irGet(index)))
                 }
             }
             +irGet(result)

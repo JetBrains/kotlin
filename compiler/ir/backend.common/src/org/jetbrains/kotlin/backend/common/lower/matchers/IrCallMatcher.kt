@@ -20,7 +20,7 @@ internal class SimpleCalleeMatcher(
 
     private val calleeRestriction: IrFunctionMatcher = createIrFunctionRestrictions(restrictions)
 
-    override fun invoke(call: IrCall) = calleeRestriction(call.symbol.owner)
+    override fun invoke(call: IrCall) = calleeRestriction(call.target)
 }
 
 internal class IrCallExtensionReceiverMatcher(

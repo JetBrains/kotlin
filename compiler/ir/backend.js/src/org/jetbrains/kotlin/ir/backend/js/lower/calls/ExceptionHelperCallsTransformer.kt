@@ -27,5 +27,5 @@ class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) :
     )
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression) =
-        helperMapping[call.symbol]?.let { irCall(call, it) } ?: call
+        helperMapping[call.target]?.let { irCall(call, it) } ?: call
 }

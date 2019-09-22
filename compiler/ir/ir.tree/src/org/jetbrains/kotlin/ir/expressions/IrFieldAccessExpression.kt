@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 
 interface IrFieldAccessExpression : IrDeclarationReference {
     override val descriptor: PropertyDescriptor
-    override val symbol: IrFieldSymbol
+    override val target: IrField
 
     val superQualifier: ClassDescriptor?
-    val superQualifierSymbol: IrClassSymbol?
+    val irSuperQualifier: IrClass?
 
     var receiver: IrExpression?
     val origin: IrStatementOrigin?

@@ -174,11 +174,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsBind) { call, context: JsGenerationContext ->
                 val receiver = call.getValueArgument(0)!!
                 val reference = call.getValueArgument(1) as IrFunctionReference
-                val superClass = call.superQualifierSymbol!!
+                val superClass = call.irSuperQualifier!!
 
                 val jsReceiver = receiver.accept(IrElementToJsExpressionTransformer(), context)
-                val functionName = context.getNameForMemberFunction(reference.symbol.owner as IrSimpleFunction)
-                val superName = context.getNameForClass(superClass.owner).makeRef()
+                val functionName = context.getNameForMemberFunction(reference.target as IrSimpleFunction)
+                val superName = context.getNameForClass(superClass).makeRef()
                 val qPrototype = JsNameRef(functionName, prototypeOf(superName))
                 val bindRef = JsNameRef(Namer.BIND_FUNCTION, qPrototype)
 

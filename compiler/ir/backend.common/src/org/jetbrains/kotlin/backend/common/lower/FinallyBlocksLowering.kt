@@ -31,7 +31,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         fun toIr(context: CommonBackendContext, startOffset: Int, endOffset: Int, value: IrExpression): IrExpression
     }
 
-    private data class Return(val target: IrReturnTargetSymbol): HighLevelJump {
+    private data class Return(val target: IrReturnTarget): HighLevelJump {
         override fun toIr(context: CommonBackendContext, startOffset: Int, endOffset: Int, value: IrExpression)
                 =
             IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, target, value)
@@ -111,7 +111,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
     override fun visitBreak(jump: IrBreak): IrExpression {
         val startOffset = jump.startOffset
         val endOffset = jump.endOffset
-        val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
+        val irBuilder = context.createIrBuilder(currentScope!!.scope.irScopeOwner, startOffset, endOffset)
         return performHighLevelJump(
             targetScopePredicate = { it is LoopScope && it.loop == jump.loop },
             jump                 = Break(jump.loop),
@@ -124,7 +124,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
     override fun visitContinue(jump: IrContinue): IrExpression {
         val startOffset = jump.startOffset
         val endOffset = jump.endOffset
-        val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
+        val irBuilder = context.createIrBuilder(currentScope!!.scope.irScopeOwner, startOffset, endOffset)
         return performHighLevelJump(
             targetScopePredicate = { it is LoopScope && it.loop == jump.loop },
             jump                 = Continue(jump.loop),
@@ -138,8 +138,8 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         expression.transformChildrenVoid(this)
 
         return performHighLevelJump(
-            targetScopePredicate = { it is ReturnableScope && it.symbol == expression.returnTargetSymbol },
-            jump                 = Return(expression.returnTargetSymbol),
+            targetScopePredicate = { it is ReturnableScope && it.symbol == expression.irReturnTarget },
+            jump                 = Return(expression.irReturnTarget),
             startOffset          = expression.startOffset,
             endOffset            = expression.endOffset,
             value                = expression.value
@@ -173,7 +173,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
 
         val currentTryScope = tryScopes[index]
         currentTryScope.jumps.getOrPut(jump) {
-            val type = (jump as? Return)?.target?.owner?.returnType(context) ?: value.type
+            val type = (jump as? Return)?.target?.returnType(context) ?: value.type
             jump.toString()
             val symbol = IrReturnableBlockSymbolImpl(WrappedSimpleFunctionDescriptor())
             with(currentTryScope) {
@@ -194,7 +194,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                 startOffset = startOffset,
                 endOffset = endOffset,
                 type = context.irBuiltIns.nothingType,
-                returnTargetSymbol = it,
+                irReturnTarget = it,
                 value = value
             )
         }
@@ -206,7 +206,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
 
         val startOffset = aTry.startOffset
         val endOffset = aTry.endOffset
-        val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
+        val irBuilder = context.createIrBuilder(currentScope!!.scope.irScopeOwner, startOffset, endOffset)
         val transformer = this
         irBuilder.run {
             val transformedFinallyExpression = finallyExpression.transform(transformer, null)

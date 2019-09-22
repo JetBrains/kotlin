@@ -46,12 +46,12 @@ abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Anno
     }
 
     private fun IrConstructorCall.toAnnotationDescriptor(): AnnotationDescriptor {
-        assert(symbol.owner.parentAsClass.isAnnotationClass) {
+        assert(target.parentAsClass.isAnnotationClass) {
             "Expected call to constructor of annotation class but was: ${this.dump()}"
         }
         return AnnotationDescriptorImpl(
-            symbol.owner.parentAsClass.defaultType.toKotlinType(),
-            symbol.owner.valueParameters.map { it.name to getValueArgument(it.index) }
+            target.parentAsClass.defaultType.toKotlinType(),
+            target.valueParameters.map { it.name to getValueArgument(it.index) }
                 .filter { it.second != null }
                 .associate { it.first to it.second!!.toConstantValue() },
             /*TODO*/ SourceElement.NO_SOURCE
@@ -81,7 +81,7 @@ abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Anno
                 }
             }
 
-            this is IrGetEnumValue -> EnumValue(symbol.owner.parentAsClass.descriptor.classId!!, symbol.owner.name)
+            this is IrGetEnumValue -> EnumValue(target.parentAsClass.descriptor.classId!!, target.name)
 
             this is IrClassReference -> KClassValue(classType.classifierOrFail.descriptor.classId!!, /*TODO*/0)
 
@@ -381,7 +381,7 @@ open class WrappedSimpleFunctionDescriptor(
 
     var originalDescriptor: FunctionDescriptor? = null
 
-    override fun getOverriddenDescriptors() = owner.overriddenSymbols.map { it.descriptor }
+    override fun getOverriddenDescriptors() = owner.overridden.map { it.descriptor }
 
     override fun getContainingDeclaration(): DeclarationDescriptor = getContainingDeclaration(owner)
 
@@ -965,7 +965,7 @@ open class WrappedFieldDescriptor(
     override fun hasSynthesizedParameterNames() = false
 
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> =
-        owner.overriddenSymbols.map { it.descriptor }.toMutableList()
+        owner.overridden.map { it.descriptor }.toMutableList()
 
     override fun copy(
         newOwner: DeclarationDescriptor?,

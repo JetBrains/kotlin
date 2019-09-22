@@ -48,11 +48,11 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     // Change calls to big arity invoke functions to vararg calls.
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         if (expression.valueArgumentsCount < FunctionInvokeDescriptor.BIG_ARITY ||
-            !expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
-            expression.symbol.owner.name.asString() != "invoke")
+            !expression.target.parentAsClass.defaultType.isFunctionOrKFunction() ||
+            expression.target.name.asString() != "invoke")
             return super.visitFunctionAccess(expression)
 
-        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+        return context.createJvmIrBuilder(currentScope!!.scope.irScopeOwner).run {
             at(expression)
             irCall(functionNInvokeFun).apply {
                 dispatchReceiver = expression.dispatchReceiver
@@ -90,8 +90,8 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
         val invokeFunction = declaration.functions.single {
             it.name.asString() == "invoke" && it.valueParameters.size == superType.arguments.size - 1
         }
-        invokeFunction.overriddenSymbols.clear()
-        declaration.addBridge(invokeFunction, functionNInvokeFun.owner)
+        invokeFunction.overridden.clear()
+        declaration.addBridge(invokeFunction, functionNInvokeFun)
 
         return declaration
     }
@@ -104,7 +104,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             visibility = Visibilities.PUBLIC
             origin = IrDeclarationOrigin.BRIDGE
         }.apply {
-            overriddenSymbols += superFunction.symbol
+            overridden += superFunction
             dispatchReceiverParameter = thisReceiver!!.copyTo(this)
             valueParameters += superFunction.valueParameters.single().copyTo(this)
 
@@ -154,14 +154,14 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
         }
 
     private val functionNInvokeFun =
-        context.ir.symbols.functionN.functions.single { it.owner.name.toString() == "invoke" }
+        context.ir.symbols.functionN.functions.single { it.name.toString() == "invoke" }
 
     private val arraySizePropertyGetter by lazy {
         context.irBuiltIns.arrayClass.owner.properties.single { it.name.toString() == "size" }.getter!!
     }
 
     private val arrayGetFun by lazy {
-        context.irBuiltIns.arrayClass.functions.single { it.owner.name.toString() == "get" }
+        context.irBuiltIns.arrayClass.functions.single { it.name.toString() == "get" }
     }
 
     private val FUNCTIONS_PACKAGE_FQ_NAME =
