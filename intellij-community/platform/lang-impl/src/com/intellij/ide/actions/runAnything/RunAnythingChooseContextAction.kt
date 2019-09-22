@@ -41,6 +41,7 @@ abstract class RunAnythingChooseContextAction(private val containingPanel: JPane
   abstract var availableContexts: List<RunAnythingContext>
 
   override fun createCustomComponent(presentation: Presentation, place: String): JComponent {
+    presentation.description = IdeBundle.message("run.anything.context.tooltip")
     return ActionButtonWithText(this, presentation, place, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE)
   }
 
