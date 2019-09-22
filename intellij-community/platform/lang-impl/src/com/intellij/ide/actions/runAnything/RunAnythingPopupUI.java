@@ -241,6 +241,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
     }
     RunAnythingUtil.executeMatched(dataContext, pattern);
 
+    mySearchField.setText("");
     searchFinishedHandler.run();
     triggerUsed();
   }

@@ -110,10 +110,7 @@ public class RunAnythingManager {
       return;
     }
 
-    String searchText = myRunAnythingUI.getSearchField().getText();
-    if (!searchText.isEmpty()) {
-      mySelectedText = searchText;
-    }
+    mySelectedText = myRunAnythingUI.getSearchField().getText();
   }
 
   private void calcPositionAndShow(Project project, JBPopup balloon) {
