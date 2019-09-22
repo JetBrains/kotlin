@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Introduction
@@ -152,16 +153,11 @@ public interface RunAnythingProvider<V> {
    * - project, {@link RunAnythingContext.ProjectContext}
    * - module, {@link RunAnythingContext.ModuleContext}
    * - working directory, {@link RunAnythingContext.RecentDirectoryContext}
+   * <p>
+   * The first context will be chosen as default context.
    */
   @NotNull
-  Class<? extends RunAnythingContext>[] getAvailableExecutionContexts();
-
-  /**
-   * Provides execution context that will be used as initial context for "execution context" dropdown
-   * when one of {@code getValues()} is selected in the list.
-   */
-  @Nullable
-  RunAnythingContext getPreferableContext(@NotNull DataContext dataContext);
+  List<RunAnythingContext> getExecutionContexts(@NotNull DataContext dataContext);
 
   /**
    * Finds provider that matches {@code pattern}

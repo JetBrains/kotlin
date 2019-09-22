@@ -102,8 +102,8 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private Project myProject;
   private Module myModule;
 
-  private RunAnythingContext myExecutingContext;
-  private Class<RunAnythingContext>[] myAvailableContexts = ContainerUtil.ar();
+  private RunAnythingContext mySelectedExecutingContext;
+  private final List<RunAnythingContext> myAvailableExecutingContexts = new ArrayList<>();
   private RunAnythingChooseContextAction myChooseContextAction;
 
   private void onMouseClicked(@NotNull MouseEvent event) {
@@ -235,7 +235,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
                                                                         SHIFT_IS_PRESSED.get(), ALT_IS_PRESSED.get());
     }
     DataContext dataContext = createDataContext(myDataContext, ALT_IS_PRESSED.get());
-    RunAnythingContext executingContext = myChooseContextAction.getExecutionContext();
+    RunAnythingContext executingContext = myChooseContextAction.getSelectedContext();
     if (executingContext != null) {
       dataContext = SimpleDataContext.getSimpleContext(RunAnythingProvider.EXECUTING_CONTEXT.getName(), executingContext, dataContext);
     }
@@ -394,10 +394,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
     String text = value instanceof RunAnythingItem ? ((RunAnythingItem)value).getCommand() : getSearchPattern();
     RunAnythingProvider provider = RunAnythingProvider.findMatchedProvider(dataContext, text);
     if (provider != null) {
-      myChooseContextAction.setAvailableContexts(provider.getAvailableExecutionContexts());
-      if (myChooseContextAction.getExecutionContext() == null) {
-        myChooseContextAction.setExecutionContext(provider.getPreferableContext(myDataContext));
-      }
+      myChooseContextAction.setAvailableContexts(provider.getExecutionContexts(dataContext));
     }
 
     AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
@@ -939,25 +936,26 @@ public class RunAnythingPopupUI extends BigPopupUI {
     DefaultActionGroup actionGroup = new DefaultActionGroup();
     myChooseContextAction = new RunAnythingChooseContextAction(res) {
       @Override
-      public void setAvailableContexts(@NotNull Class<RunAnythingContext>[] availableContexts) {
-        myAvailableContexts = availableContexts;
+      public void setAvailableContexts(@NotNull List<? extends RunAnythingContext> executionContexts) {
+        myAvailableExecutingContexts.clear();
+        myAvailableExecutingContexts.addAll(executionContexts);
       }
 
       @NotNull
       @Override
-      public Class<RunAnythingContext>[] getAvailableContexts() {
-        return myAvailableContexts;
+      public List<RunAnythingContext> getAvailableContexts() {
+        return myAvailableExecutingContexts;
       }
 
       @Override
-      public void setExecutionContext(@Nullable RunAnythingContext context) {
-        myExecutingContext = context;
+      public void setSelectedContext(@Nullable RunAnythingContext context) {
+        mySelectedExecutingContext = context;
       }
 
       @Nullable
       @Override
-      public RunAnythingContext getExecutionContext() {
-        return myExecutingContext;
+      public RunAnythingContext getSelectedContext() {
+        return mySelectedExecutingContext;
       }
     };
     actionGroup.addAction(myChooseContextAction);

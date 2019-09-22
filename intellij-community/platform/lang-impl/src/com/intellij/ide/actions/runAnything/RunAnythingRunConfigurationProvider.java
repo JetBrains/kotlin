@@ -5,6 +5,7 @@ import com.intellij.execution.actions.ChooseRunConfigurationPopup;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +41,7 @@ public class RunAnythingRunConfigurationProvider extends com.intellij.ide.action
 
   @NotNull
   @Override
-  public Class<? extends RunAnythingContext>[] getAvailableExecutionContexts() {
-    return RunAnythingChooseContextAction.Companion.noneContext();
+  public List<RunAnythingContext> getExecutionContexts(@NotNull DataContext dataContext) {
+    return ContainerUtil.emptyList();
   }
 }

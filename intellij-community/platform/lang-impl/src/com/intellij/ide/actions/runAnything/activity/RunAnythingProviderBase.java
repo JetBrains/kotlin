@@ -3,7 +3,7 @@ package com.intellij.ide.actions.runAnything.activity;
 
 import com.intellij.ide.actions.runAnything.RunAnythingChooseContextAction;
 import com.intellij.ide.actions.runAnything.RunAnythingContext;
-import com.intellij.ide.actions.runAnything.RunAnythingContext.ProjectContext;
+import com.intellij.ide.actions.runAnything.RunAnythingUtil;
 import com.intellij.ide.actions.runAnything.items.RunAnythingHelpItem;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItemBase;
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This class provides ability to run an arbitrary activity for matched 'Run Anything' input text
@@ -77,14 +78,8 @@ public abstract class RunAnythingProviderBase<V> implements RunAnythingProvider<
 
   @NotNull
   @Override
-  public Class<? extends RunAnythingContext>[] getAvailableExecutionContexts() {
-    return RunAnythingChooseContextAction.Companion.allContexts();
-  }
-
-  @Nullable
-  @Override
-  public RunAnythingContext getPreferableContext(@NotNull DataContext dataContext) {
-    return ProjectContext.INSTANCE;
+  public List<RunAnythingContext> getExecutionContexts(@NotNull DataContext dataContext) {
+    return RunAnythingChooseContextAction.Companion.allContexts(RunAnythingUtil.fetchProject(dataContext));
   }
 
   @Nullable
