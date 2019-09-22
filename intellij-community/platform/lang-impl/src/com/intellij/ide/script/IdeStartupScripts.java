@@ -4,9 +4,9 @@ package com.intellij.ide.script;
 import com.intellij.ide.ApplicationInitializedListener;
 import com.intellij.ide.extensionResources.ExtensionsRootType;
 import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -36,11 +36,15 @@ final class IdeStartupScripts implements ApplicationInitializedListener {
 
   private static final String SCRIPT_DIR = "startup";
 
+  IdeStartupScripts() {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      throw ExtensionNotApplicableException.INSTANCE;
+    }
+  }
+
   @Override
   public void componentsInitialized() {
-    Application application = ApplicationManager.getApplication();
-    if (application.isUnitTestMode()) return;
-    MessageBusConnection connection = application.getMessageBus().connect();
+    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
     connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       Future<List<Pair<File, IdeScriptEngine>>> future;
       @Override
