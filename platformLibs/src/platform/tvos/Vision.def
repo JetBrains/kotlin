@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreML CoreVideo EAGL Foundation IOSurface ImageIO Metal OpenGLESCommon Security darwin posix
+language = Objective-C
+package = platform.Vision
+modules = Vision
+
+compilerOpts = -framework Vision
+linkerOpts = -framework Vision

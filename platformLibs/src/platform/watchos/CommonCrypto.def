@@ -1,0 +1,6 @@
+depends = darwin posix
+language = Objective-C
+package = platform.CoreCrypto
+modules = CommonCrypto
+
+compilerOpts = -D_XOPEN_SOURCE

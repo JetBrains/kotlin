@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.IOSurface
+modules = IOSurface
+
+compilerOpts = -framework IOSurface
+linkerOpts = -framework IOSurface

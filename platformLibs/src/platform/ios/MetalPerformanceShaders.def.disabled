@@ -1,8 +1,0 @@
-language = Objective-C
-package = platform.MetalPerformanceShaders
-headers = MetalPerformanceShaders/MetalPerformanceShaders.h
-
-headerFilter = MetalPerformanceShaders/**
-
-compilerOpts = -framework MetalPerformanceShaders
-linkerOpts = -framework MetalPerformanceShaders

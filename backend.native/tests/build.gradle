@@ -209,10 +209,11 @@ task sanity {
             update_external_tests()
         }
     }
-    dependsOn(tasksOf(KonanTest.class) {
-        (it instanceof KonanLocalTest || it instanceof KonanStandaloneTest) &&
-        !it.getDependsOn().contains(':distPlatformLibs') && 
-        it.name != "library_mismatch" // This test requires the wasm32 stdlib which is unavailable during a sanity run.
+    def platformLibsTasks = targetList.collect { "${it}PlatformLibs" } + ["distPlatformLibs"]
+    dependsOn(tasksOf(KonanTest.class) { task ->
+        (task instanceof KonanLocalTest || task instanceof KonanStandaloneTest) &&
+        task.getDependsOn().every { !platformLibsTasks.contains(it) } &&
+        task.name != "library_mismatch" // This test requires the wasm32 stdlib which is unavailable during a sanity run.
     })
     dependsOn(tasksOf(KonanTest.class, { it instanceof KonanGTest }))
 }
@@ -287,10 +288,11 @@ def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfigurati
 
 void dependsOnPlatformLibs(Task t) {
     if (!useCustomDist) {
-        t.dependsOn(':distPlatformLibs')
         def testTarget = project.testTarget
         if (testTarget != null && testTarget != project.hostName) {
             t.dependsOn(":${testTarget}PlatformLibs")
+        } else {
+            t.dependsOn(':distPlatformLibs')
         }
     }
 }

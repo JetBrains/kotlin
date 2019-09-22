@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security darwin posix
+language = Objective-C
+package = platform.UIKit
+modules = UIKit
+
+compilerOpts = -framework UIKit
+linkerOpts = -framework UIKit
