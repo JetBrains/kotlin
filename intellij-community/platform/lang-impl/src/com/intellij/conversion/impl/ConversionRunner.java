@@ -54,9 +54,9 @@ public class ConversionRunner {
 
     myModulesFilesToProcess.clear();
     if (myModuleFileConverter != null) {
-      for (File moduleFile : myContext.getModuleFiles()) {
-        if (moduleFile.exists() && myModuleFileConverter.isConversionNeeded(myContext.getModuleSettings(moduleFile))) {
-          myModulesFilesToProcess.add(moduleFile.toPath());
+      for (Path moduleFile : myContext.getModulePaths()) {
+        if (Files.exists(moduleFile) && myModuleFileConverter.isConversionNeeded(myContext.getModuleSettings(moduleFile))) {
+          myModulesFilesToProcess.add(moduleFile);
         }
       }
     }

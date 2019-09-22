@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
-import com.intellij.concurrency.JobScheduler
+import com.intellij.conversion.ConversionService
 import com.intellij.ide.FrameStateListener
 import com.intellij.ide.GeneralSettings
 import com.intellij.ide.IdeEventQueue
@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.openapi.vfs.newvfs.RefreshQueue
+import com.intellij.project.isDirectoryBased
 import com.intellij.util.SingleAlarm
 import com.intellij.util.concurrency.EdtScheduledExecutorService
 import com.intellij.util.pooledThreadSingleAlarm
@@ -36,6 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.annotations.CalledInAwt
 import java.beans.PropertyChangeListener
+import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -223,6 +225,17 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
             isSavedSuccessfully = saveSettings(componentManager, forceSavingAllSettings = true)
             if (isSaveAppAlso && componentManager !is Application) {
               saveSettings(ApplicationManager.getApplication(), forceSavingAllSettings = true)
+            }
+          }
+
+          if (project != null && !ApplicationManager.getApplication().isUnitTestMode) {
+            val path = if (project.isDirectoryBased) project.basePath else project.projectFilePath
+            if (path == null) {
+              LOG.info("Cannot save conversion result: filePath == null")
+            }
+            else {
+              // update last modified for all project files that were modified between project open and close
+              ConversionService.getInstance().saveConversionResult(Paths.get(path))
             }
           }
         }

@@ -12,7 +12,7 @@ public class XmlBasedSettingsImpl implements XmlBasedSettings {
   protected final SettingsXmlFile mySettingsFile;
   protected final ConversionContextImpl myContext;
 
-  public XmlBasedSettingsImpl(Path file, ConversionContextImpl context) throws CannotConvertException {
+  public XmlBasedSettingsImpl(@NotNull Path file, @NotNull ConversionContextImpl context) throws CannotConvertException {
     myContext = context;
     mySettingsFile = context.getOrCreateFile(file);
   }

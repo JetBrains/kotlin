@@ -14,7 +14,7 @@ import java.nio.file.Path;
  * @author nik
  */
 public class ComponentManagerSettingsImpl extends XmlBasedSettingsImpl implements ComponentManagerSettings {
-  protected ComponentManagerSettingsImpl(Path file, ConversionContextImpl context) throws CannotConvertException {
+  protected ComponentManagerSettingsImpl(@NotNull Path file, @NotNull ConversionContextImpl context) throws CannotConvertException {
     super(file, context);
   }
 

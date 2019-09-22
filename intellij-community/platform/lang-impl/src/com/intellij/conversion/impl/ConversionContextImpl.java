@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.conversion.impl;
 
 import com.intellij.application.options.PathMacrosImpl;
@@ -8,7 +7,6 @@ import com.intellij.conversion.*;
 import com.intellij.ide.highlighter.ProjectFileType;
 import com.intellij.ide.highlighter.WorkspaceFileType;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
-import com.intellij.ide.impl.convert.ProjectFileVersionImpl;
 import com.intellij.ide.impl.convert.ProjectFileVersionState;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ExpandMacroToPathMap;
@@ -19,18 +17,21 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.ObjectLongHashMap;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
@@ -38,26 +39,32 @@ import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 /**
  * @author nik
  */
-public class ConversionContextImpl implements ConversionContext {
+public final class ConversionContextImpl implements ConversionContext {
   private static final Logger LOG = Logger.getInstance("#com.intellij.conversion.impl.ConversionContextImpl");
+  private static final String PROJECT_FILE_VERSION_COMPONENT_NAME = "ProjectFileVersion";
+
   private final Map<Path, SettingsXmlFile> mySettingsFiles = new HashMap<>();
   private final StorageScheme myStorageScheme;
   private final Path myProjectBaseDir;
   private final Path myProjectFile;
   private final Path myWorkspaceFile;
-  private final File[] myModuleFiles;
+  private List<Path> myModuleFiles;
   private ProjectSettingsImpl myProjectSettings;
   private WorkspaceSettingsImpl myWorkspaceSettings;
   private final List<Path> myNonExistingModuleFiles = new ArrayList<>();
-  private final Map<File, ModuleSettingsImpl> myFile2ModuleSettings = new HashMap<>();
+  private final Map<Path, ModuleSettingsImpl> myFile2ModuleSettings = new HashMap<>();
   private final Map<String, ModuleSettingsImpl> myName2ModuleSettings = new HashMap<>();
   private RunManagerSettingsImpl myRunManagerSettings;
   private Path mySettingsBaseDir;
@@ -68,51 +75,130 @@ public class ConversionContextImpl implements ConversionContext {
   private ArtifactsSettingsImpl myArtifactsSettings;
   private ComponentManagerSettings myProjectFileVersionSettings;
   private final Set<String> myPerformedConversionIds;
+  private final Path myModuleListFile;
 
-  public ConversionContextImpl(@NotNull Path projectPath) throws CannotConvertException {
+  public ConversionContextImpl(@NotNull Path projectPath) {
     myProjectFile = projectPath;
 
-    Path modulesFile;
     if (Files.isDirectory(myProjectFile)) {
       myStorageScheme = StorageScheme.DIRECTORY_BASED;
       myProjectBaseDir = myProjectFile;
       mySettingsBaseDir = myProjectBaseDir.toAbsolutePath().resolve(Project.DIRECTORY_STORE_FOLDER);
-      modulesFile = mySettingsBaseDir.resolve("modules.xml");
+      myModuleListFile = mySettingsBaseDir.resolve("modules.xml");
       myWorkspaceFile = mySettingsBaseDir.resolve("workspace.xml");
     }
     else {
       myStorageScheme = StorageScheme.DEFAULT;
       myProjectBaseDir = myProjectFile.getParent();
-      modulesFile = myProjectFile;
+      myModuleListFile = myProjectFile;
       myWorkspaceFile = Paths.get(StringUtil.trimEnd(projectPath.toString(), ProjectFileType.DOT_DEFAULT_EXTENSION) + WorkspaceFileType.DOT_DEFAULT_EXTENSION);
     }
 
-    myModuleFiles = Files.exists(modulesFile) ? findModuleFiles(JDomConvertingUtil.load(modulesFile)) : new File[0];
     myPerformedConversionIds = loadPerformedConversionIds();
   }
 
-  public Set<File> getAllProjectFiles() {
-    Set<File> files = new HashSet<>(Arrays.asList(myModuleFiles));
+  @NotNull
+  public ObjectLongHashMap<String> getAllProjectFiles() throws CannotConvertException {
     if (myStorageScheme == StorageScheme.DEFAULT) {
-      files.add(myProjectFile.toFile());
-      files.add(myWorkspaceFile.toFile());
+      List<Path> moduleFiles = getModulePaths();
+      ObjectLongHashMap<String> totalResult = new ObjectLongHashMap<>(moduleFiles.size() + 2);
+      addLastModifiedTme(myProjectFile, totalResult);
+      addLastModifiedTme(myWorkspaceFile, totalResult);
+      for (Path file : moduleFiles) {
+        addLastModifiedTme(file, totalResult);
+      }
+      return totalResult;
     }
-    else {
-      File dotIdeaDirectory = mySettingsBaseDir.toFile();
-      addXmlFilesFromDirectory(dotIdeaDirectory, files);
-      for (String subdirectoryName : new String[]{"libraries", "artifacts", "runConfigurations"}) {
-        addXmlFilesFromDirectory(new File(dotIdeaDirectory, subdirectoryName), files);
+
+    Path dotIdeaDirectory = mySettingsBaseDir;
+    List<Path> dirs = Arrays.asList(dotIdeaDirectory,
+      dotIdeaDirectory.resolve("libraries"),
+      dotIdeaDirectory.resolve("artifacts"),
+      dotIdeaDirectory.resolve("runConfigurations"));
+
+    Executor executor = AppExecutorUtil.createBoundedApplicationPoolExecutor("Conversion: Project Files Collecting", 2, false);
+    List<CompletableFuture<ObjectLongHashMap<String>>> futures = new ArrayList<>(dirs.size() + 1);
+    futures.add(CompletableFuture.supplyAsync(this::computeModuleFilesTimestamps, executor));
+
+    for (Path subDirName : dirs) {
+      futures.add(CompletableFuture.supplyAsync(() -> {
+        ObjectLongHashMap<String> result = new ObjectLongHashMap<>();
+        addXmlFilesFromDirectory(subDirName, result);
+        return result;
+      }, executor));
+    }
+
+    ObjectLongHashMap<String> totalResult = new ObjectLongHashMap<>();
+    try {
+      for (CompletableFuture<ObjectLongHashMap<String>> future : futures) {
+        totalResult.putAll(future.get());
       }
     }
-    return files;
+    catch (ExecutionException | InterruptedException e) {
+      throw new CannotConvertException(e.getMessage(), e);
+    }
+    return totalResult;
   }
 
-  private static void addXmlFilesFromDirectory(File dir, Set<? super File> result) {
-    File[] children = dir.listFiles(
-      child -> child.isFile() && FileUtilRt.extensionEquals(child.getPath(), "xml") && !dir.getName().startsWith(".")
-    );
-    if (children != null) {
-      Collections.addAll(result, children);
+  @NotNull
+  private ObjectLongHashMap<String> computeModuleFilesTimestamps() {
+    List<Path> moduleFiles = myModuleFiles;
+    if (moduleFiles == null) {
+      try {
+        moduleFiles = Files.exists(myModuleListFile) ? findModuleFiles(JDOMUtil.load(myModuleListFile)) : Collections.emptyList();
+      }
+      catch (JDOMException | IOException e) {
+        throw new CompletionException(e);
+      }
+
+      myModuleFiles = moduleFiles;
+    }
+
+    ObjectLongHashMap<String> result = new ObjectLongHashMap<>();
+    for (Path file : moduleFiles) {
+      addLastModifiedTme(file, result);
+    }
+    return result;
+  }
+
+  private static void addLastModifiedTme(@NotNull Path file, @NotNull ObjectLongHashMap<String> files) {
+    FileTime time;
+    try {
+      time = Files.getLastModifiedTime(file);
+    }
+    catch (IOException ignore) {
+      return;
+    }
+
+    files.put(file.toString(), time.toMillis());
+  }
+
+  private static void addXmlFilesFromDirectory(@NotNull Path dir, @NotNull ObjectLongHashMap<String> result) {
+    try (DirectoryStream<Path> children = Files.newDirectoryStream(dir)) {
+      for (Path child : children) {
+        String childPath = child.toString();
+        if (!childPath.endsWith(".xml") || child.getFileName().toString().startsWith(".")) {
+          continue;
+        }
+
+        BasicFileAttributes attributes;
+        try {
+          attributes = Files.readAttributes(child, BasicFileAttributes.class);
+          if (attributes.isDirectory()) {
+            continue;
+          }
+        }
+        catch (IOException ignore) {
+          continue;
+        }
+
+        result.put(childPath, attributes.lastModifiedTime().toMillis());
+      }
+    }
+    catch (NotDirectoryException | NoSuchFileException ignore) {
+    }
+    catch (IOException e) {
+      LOG.warn(e);
     }
   }
 
@@ -128,27 +214,44 @@ public class ConversionContextImpl implements ConversionContext {
 
   @Override
   public File[] getModuleFiles() {
-    return myModuleFiles;
+    try {
+      return ContainerUtil.map2Array(getModulePaths(), File.class, path -> path.toFile());
+    }
+    catch (CannotConvertException e) {
+      // should never happen - this method is deprecated and when called, myModuleFiles should be already computed
+      throw new RuntimeException(e);
+    }
   }
 
-  private File[] findModuleFiles(final Element root) {
-    final Element modulesManager = JDomSerializationUtil.findComponent(root, ModuleManagerImpl.COMPONENT_NAME);
-    if (modulesManager == null) return new File[0];
+  @NotNull
+  @Override
+  public List<Path> getModulePaths() throws CannotConvertException {
+    List<Path> result = myModuleFiles;
+    if (result == null) {
+      result = Files.exists(myModuleListFile) ? findModuleFiles(JDomConvertingUtil.load(myModuleListFile)) : Collections.emptyList();
+      myModuleFiles = result;
+    }
+    return result;
+  }
 
-    final Element modules = modulesManager.getChild(ModuleManagerImpl.ELEMENT_MODULES);
-    if (modules == null) return new File[0];
+  @NotNull
+  private List<Path> findModuleFiles(@NotNull Element root) {
+    Element modulesManager = JDomSerializationUtil.findComponent(root, ModuleManagerImpl.COMPONENT_NAME);
+    Element modules = modulesManager == null ? null : modulesManager.getChild(ModuleManagerImpl.ELEMENT_MODULES);
+    if (modules == null) {
+      return Collections.emptyList();
+    }
 
-    final ExpandMacroToPathMap macros = createExpandMacroMap();
-
-    List<File> files = new ArrayList<>();
+    ExpandMacroToPathMap macros = createExpandMacroMap();
+    List<Path> files = new ArrayList<>();
     for (Element module : modules.getChildren(ModuleManagerImpl.ELEMENT_MODULE)) {
       String filePath = module.getAttributeValue(ModuleManagerImpl.ATTRIBUTE_FILEPATH);
       if (filePath != null) {
         filePath = macros.substitute(filePath, true);
-        files.add(new File(FileUtil.toSystemDependentName(filePath)));
+        files.add(Paths.get(filePath));
       }
     }
-    return files.toArray(new File[0]);
+    return files;
   }
 
   @NotNull
@@ -362,10 +465,10 @@ public class ConversionContextImpl implements ConversionContext {
 
 
   @Override
-  public ModuleSettings getModuleSettings(File moduleFile) throws CannotConvertException {
+  public ModuleSettings getModuleSettings(@NotNull Path moduleFile) throws CannotConvertException {
     ModuleSettingsImpl settings = myFile2ModuleSettings.get(moduleFile);
     if (settings == null) {
-      settings = new ModuleSettingsImpl(moduleFile.toPath(), this);
+      settings = new ModuleSettingsImpl(moduleFile, this);
       myFile2ModuleSettings.put(moduleFile, settings);
       myName2ModuleSettings.put(settings.getModuleName(), settings);
     }
@@ -375,7 +478,7 @@ public class ConversionContextImpl implements ConversionContext {
   @Override
   public ModuleSettings getModuleSettings(@NotNull String moduleName) {
     if (!myName2ModuleSettings.containsKey(moduleName)) {
-      for (File moduleFile : myModuleFiles) {
+      for (Path moduleFile : myModuleFiles) {
         try {
           getModuleSettings(moduleFile);
         }
@@ -410,15 +513,12 @@ public class ConversionContextImpl implements ConversionContext {
     }
     if (!performedConversions.isEmpty()) {
       performedConversions.addAll(myPerformedConversionIds);
-      final ProjectFileVersionState state = new ProjectFileVersionState();
-      final List<String> performedConversionsList = new ArrayList<>(performedConversions);
-      Collections.sort(performedConversionsList, String.CASE_INSENSITIVE_ORDER);
-      state.setPerformedConversionIds(performedConversionsList);
-      final ComponentManagerSettings settings = getProjectFileVersionSettings();
+      ComponentManagerSettings settings = getProjectFileVersionSettings();
       if (settings != null) {
-        final Element element =
-          JDomSerializationUtil.findOrCreateComponentElement(settings.getRootElement(), ProjectFileVersionImpl.COMPONENT_NAME);
-        XmlSerializer.serializeInto(state, element);
+        List<String> performedConversionsList = new ArrayList<>(performedConversions);
+        Collections.sort(performedConversionsList, String.CASE_INSENSITIVE_ORDER);
+        Element element = JDomSerializationUtil.findOrCreateComponentElement(settings.getRootElement(), PROJECT_FILE_VERSION_COMPONENT_NAME);
+        XmlSerializer.serializeInto(new ProjectFileVersionState(performedConversionsList), element);
       }
     }
 
@@ -430,10 +530,11 @@ public class ConversionContextImpl implements ConversionContext {
     }
   }
 
+  @NotNull
   private Set<String> loadPerformedConversionIds() {
     final ComponentManagerSettings component = getProjectFileVersionSettings();
     if (component != null) {
-      final Element componentElement = component.getComponentElement(ProjectFileVersionImpl.COMPONENT_NAME);
+      final Element componentElement = component.getComponentElement(PROJECT_FILE_VERSION_COMPONENT_NAME);
       if (componentElement != null) {
         final ProjectFileVersionState state = XmlSerializer.deserialize(componentElement, ProjectFileVersionState.class);
         return new HashSet<>(state.getPerformedConversionIds());
@@ -442,7 +543,8 @@ public class ConversionContextImpl implements ConversionContext {
     return Collections.emptySet();
   }
 
-  public SettingsXmlFile getOrCreateFile(Path file) throws CannotConvertException {
+  @NotNull
+  public SettingsXmlFile getOrCreateFile(@NotNull Path file) throws CannotConvertException {
     SettingsXmlFile settingsFile = mySettingsFiles.get(file);
     if (settingsFile == null) {
       settingsFile = new SettingsXmlFile(file);
