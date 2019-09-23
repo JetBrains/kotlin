@@ -148,6 +148,7 @@ private val returnableBlocksPhase = makeIrFilePhase(
 
 @Suppress("Reformat")
 private val jvmFilePhases =
+        typeAliasAnnotationMethodsPhase then
         stripTypeAliasDeclarationsPhase then
         provisionalFunctionExpressionPhase then
         inventNamesForLocalClassesPhase then
