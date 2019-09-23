@@ -134,7 +134,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
       }
     }
     catch (RuntimeException e) {
-      LOG.error(e);
+      LOG.info(e);
     }
     try {
       if (myKeyHashToVirtualFileMapping != null) IOUtil.deleteAllFilesStartingWith(getProjectFile());
