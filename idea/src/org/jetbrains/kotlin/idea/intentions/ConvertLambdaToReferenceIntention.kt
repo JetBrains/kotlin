@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.inspections.RemoveRedundantBackticksInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -248,7 +248,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
                     val selector = singleStatement.selectorExpression
                     val selectorReferenceName = when (selector) {
                         is KtCallExpression -> selector.getCallReferencedName() ?: return null
-                        is KtNameReferenceExpression -> selector.getSafeReferencedName()
+                        is KtNameReferenceExpression -> selector.getReferencedName()
                         else -> return null
                     }
                     val receiver = singleStatement.receiverExpression
@@ -279,12 +279,8 @@ open class ConvertLambdaToReferenceIntention(text: String) :
             }
         }
 
-        private fun KtCallExpression.getCallReferencedName() = (calleeExpression as? KtNameReferenceExpression)?.getSafeReferencedName()
-        
-        private fun KtNameReferenceExpression.getSafeReferencedName(): String {
-            val name = getReferencedName()
-            return if (RemoveRedundantBackticksInspection.isKeyword(name)) "`$name`" else name
-        }
+        private fun KtCallExpression.getCallReferencedName() =
+            (calleeExpression as? KtNameReferenceExpression)?.getReferencedNameAsName()?.render()
 
         private fun KtLambdaExpression.singleStatementOrNull() = bodyExpression?.statements?.singleOrNull()
     }
