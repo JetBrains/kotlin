@@ -2,6 +2,8 @@
 
 package com.intellij.psi.impl.source.tree.injected;
 
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -13,10 +15,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
-import com.intellij.openapi.fileTypes.FileTypeEvent;
-import com.intellij.openapi.fileTypes.FileTypeListener;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -81,20 +79,14 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
       }
     }, this);
 
-    project.getMessageBus().connect(this).subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
+    project.getMessageBus().connect(this).subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
-      public void fileTypesChanged(@NotNull FileTypeEvent event) {
-        if (event.getRemovedFileType() instanceof LanguageFileType) {
-          // When a language plugin is unloaded, make sure we don't have references to any injection host PSI from this language
-          // in the injector cache
-          clearInjectorCache();
-        }
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+        // When a language plugin is unloaded, make sure we don't have references to any injection host PSI from this language
+        // in the injector cache
+        clearInjectorCache();
       }
     });
-  }
-
-  PsiDocumentManager getDocManager() {
-    return myDocManager;
   }
 
   @Override
