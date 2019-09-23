@@ -23,6 +23,7 @@ val CompilerOutputKind.isFinalBinary: Boolean get() = when (this) {
     CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
     CompilerOutputKind.STATIC, CompilerOutputKind.FRAMEWORK -> true
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
+    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE -> TODO("$this unsupported")
 }
 
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
@@ -36,6 +37,7 @@ val CompilerOutputKind.involvesLinkStage: Boolean
         CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.STATIC, CompilerOutputKind.FRAMEWORK -> true
         CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
+        CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE -> TODO("$this unsupported")
     }
 
 internal fun produceCStubs(context: Context) {
