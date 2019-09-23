@@ -2448,6 +2448,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/checkOuterInlineFunctionCall.kt");
         }
 
+        @TestMetadata("constructorBridge.kt")
+        public void testConstructorBridge() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/constructorBridge.kt");
+        }
+
         @TestMetadata("defaultParametersDontBox.kt")
         public void testDefaultParametersDontBox() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/defaultParametersDontBox.kt");
