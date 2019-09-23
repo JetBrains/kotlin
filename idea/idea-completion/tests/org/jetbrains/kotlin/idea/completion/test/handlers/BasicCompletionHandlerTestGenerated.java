@@ -164,6 +164,16 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/handlers/basic/PreferMatchingKeyword.kt");
     }
 
+    @TestMetadata("ReceiverParam.kt")
+    public void testReceiverParam() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/ReceiverParam.kt");
+    }
+
+    @TestMetadata("ReceiverParam2.kt")
+    public void testReceiverParam2() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/ReceiverParam2.kt");
+    }
+
     @TestMetadata("ReplaceFunctionCallByProperty.kt")
     public void testReplaceFunctionCallByProperty() throws Exception {
         runTest("idea/idea-completion/testData/handlers/basic/ReplaceFunctionCallByProperty.kt");
