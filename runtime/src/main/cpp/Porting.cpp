@@ -143,6 +143,7 @@ static void onThreadExitCallback(void* value) {
     free(record);
     record = next;
   }
+  pthread_setspecific(terminationKey, nullptr);
 }
 
 static void onThreadExitInit() {

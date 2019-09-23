@@ -102,6 +102,8 @@ FrameOverlay exportFrameOverlay;
 volatile int allocCount = 0;
 volatile int aliveMemoryStatesCount = 0;
 
+KBoolean g_checkLeaks = KonanNeedDebugInfo;
+
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
 THREAD_LOCAL_VARIABLE FrameOverlay* currentFrame = nullptr;
@@ -1724,10 +1726,16 @@ void deinitMemory(MemoryState* memoryState) {
   }
 #else
 #if USE_GC
-  if (IsStrictMemoryModel && lastMemoryState)
-    RuntimeAssert(allocCount == 0, "Memory leaks found");
-#endif
-#endif
+  if (IsStrictMemoryModel && lastMemoryState && allocCount > 0 && g_checkLeaks) {
+    char buf[1024];
+    konan::snprintf(buf, sizeof(buf),
+        "Memory leaks detected, %d objects leaked!\n"
+        "Use `Platform.isMemoryLeakCheckerActive = false` to avoid this check.\n", allocCount);
+    konan::consoleErrorUtf8(buf, konan::strnlen(buf, sizeof(buf)));
+    konan::abort();
+  }
+#endif  // USE_GC
+#endif  // TRACE_MEMORY
 
   PRINT_EVENT(memoryState)
   DEINIT_EVENT(memoryState)
@@ -2940,5 +2948,14 @@ KBoolean Konan_ensureAcyclicAndSet(ObjHeader* where, KInt index, ObjHeader* what
 void Kotlin_Any_share(ObjHeader* obj) {
   shareAny(obj);
 }
+
+KBoolean Konan_Platform_getMemoryLeakChecker() {
+  return g_checkLeaks;
+}
+
+void Konan_Platform_setMemoryLeakChecker(KBoolean value) {
+  g_checkLeaks = value;
+}
+
 
 } // extern "C"
