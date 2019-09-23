@@ -225,8 +225,6 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
             sourceFiles
         )
 
-    // TODO: consider removing, it is probably redundant: the actual index update is performed with environment.updateClasspath
-    context.environment.configuration.addJvmClasspathRoots(classpath)
     context.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
 
     sourceFiles.addAll(newSources)
