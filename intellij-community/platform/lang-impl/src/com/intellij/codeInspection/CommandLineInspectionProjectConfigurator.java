@@ -14,12 +14,21 @@ import java.nio.file.Path;
 public interface CommandLineInspectionProjectConfigurator {
   ExtensionPointName<CommandLineInspectionProjectConfigurator> EP_NAME = ExtensionPointName.create("com.intellij.commandLineInspectionProjectConfigurator");
 
-  boolean isApplicable(Path projectPath);
+  /**
+   * Returns true if any additional configuration is required to inspect the project at the given path.
+   */
+  boolean isApplicable(@NotNull Path projectPath, @NotNull CommandLineInspectionLogger logger);
 
   /**
    * Invoked before a project is imported.
    */
-  void configureEnvironment();
+  default void configureEnvironment(@NotNull CommandLineInspectionLogger logger) {
+  }
 
-  void configureProject(@NotNull Project project, AnalysisScope scope);
+  /**
+   * Invoked after the project has been imported and before the analysis on the specified scope
+   * is started.
+   */
+  default void configureProject(@NotNull Project project, @NotNull AnalysisScope scope, @NotNull CommandLineInspectionLogger logger) {
+  }
 }

@@ -55,7 +55,7 @@ import java.util.concurrent.ForkJoinPool;
  * @author max
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class InspectionApplication {
+public class InspectionApplication implements CommandLineInspectionLogger {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.InspectionApplication");
 
   public InspectionToolCmdlineOptionHelpProvider myHelpProvider;
@@ -143,8 +143,8 @@ public class InspectionApplication {
     }
 
     for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getExtensionList()) {
-      if (configurator.isApplicable(projectPath)) {
-        configurator.configureEnvironment();
+      if (configurator.isApplicable(projectPath, this)) {
+        configurator.configureEnvironment(this);
       }
     }
 
@@ -252,7 +252,7 @@ public class InspectionApplication {
                                 @NotNull List<? super Path> inspectionsResults) {
     ProgressManager.getInstance().runProcess(() -> {
       for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
-        configurator.configureProject(project, scope);
+        configurator.configureProject(project, scope, this);
       }
 
       if (!GlobalInspectionContextUtil.canRunInspections(project, false)) {
@@ -447,17 +447,20 @@ public class InspectionApplication {
     myVerboseLevel = verboseLevel;
   }
 
-  private void logMessage(int minVerboseLevel, String message) {
+  @Override
+  public void logMessage(int minVerboseLevel, String message) {
     if (myVerboseLevel >= minVerboseLevel) {
       System.out.print(message);
     }
   }
 
-  private static void logError(String message) {
+  @Override
+  public void logError(String message) {
     System.err.println(message);
   }
 
-  private void logMessageLn(int minVerboseLevel, String message) {
+  @Override
+  public void logMessageLn(int minVerboseLevel, String message) {
     if (myVerboseLevel >= minVerboseLevel) {
       System.out.println(message);
     }
