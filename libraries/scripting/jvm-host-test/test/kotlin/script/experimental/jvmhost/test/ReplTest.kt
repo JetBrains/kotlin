@@ -15,7 +15,7 @@ import org.junit.Test
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.jvm.*import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 
 class ReplTest : TestCase() {
@@ -167,16 +167,5 @@ class ReplTest : TestCase() {
         }
     }
 }
-
-@KotlinScript(fileExtension = "simplescript.kts")
-abstract class SimpleScript
-
-val simpleScriptompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScript> {
-    jvm {
-        dependenciesFromCurrentContext(wholeClasspath = true)
-    }
-}
-
-val simpleScriptEvaluationConfiguration = ScriptEvaluationConfiguration()
 
 class TestReceiver(val prop1: Int = 3)

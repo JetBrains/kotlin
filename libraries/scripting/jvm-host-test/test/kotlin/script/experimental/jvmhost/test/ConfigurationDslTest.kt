@@ -13,8 +13,8 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
-import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.updateClasspath
+import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvmhost.createJvmEvaluationConfigurationFromTemplate
@@ -24,9 +24,7 @@ class ConfigurationDslTest : TestCase() {
     @Test
     fun testComposableRefinementHandlers() {
         val baseConfig = createJvmCompilationConfigurationFromTemplate<SimpleScript> {
-            jvm {
-                dependenciesFromCurrentContext(wholeClasspath = true)
-            }
+            updateClasspath(classpathFromClass<SimpleScript>())
             defaultImports(MyTestAnnotation1::class, MyTestAnnotation2::class)
             refineConfiguration {
                 beforeParsing { (_, config, _) ->

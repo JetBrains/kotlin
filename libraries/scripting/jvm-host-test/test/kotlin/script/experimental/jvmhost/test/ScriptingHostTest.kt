@@ -64,9 +64,7 @@ class ScriptingHostTest : TestCase() {
             basicJvmScriptingHost.eval(
                 "println(\"$greeting\")".toScriptSource("name"),
                 createJvmCompilationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration) {
-                    jvm {
-                        dependenciesFromCurrentContext(wholeClasspath = true)
-                    }
+                    updateClasspath(classpathFromClass<SimpleScript>())
                 },
                 createJvmEvaluationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration)
             ).throwOnFailure()
