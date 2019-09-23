@@ -76,8 +76,9 @@ class MoveDeclarationsProcessor(
             if (sourceContainer == sourcePsiFile && sourcePsiFile.packageFqName == targetPsiFile.packageFqName) return null
 
             // check that declarations were cut (not copied)
-            val filteredDeclarations = sourceContainer.declarations.filter { it in data.declarations }
-            if (filteredDeclarations.isNotEmpty()) return null
+            if (sourceContainer.declarations.any { declaration -> declaration.text in data.declarationTexts }) {
+                return null
+            }
 
             return MoveDeclarationsProcessor(
                 project,
@@ -85,7 +86,7 @@ class MoveDeclarationsProcessor(
                 targetPsiFile,
                 declarations,
                 data.imports,
-                data.declarations.map { it.text }
+                data.declarationTexts
             )
         }
     }

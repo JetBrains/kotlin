@@ -75,7 +75,14 @@ class MoveDeclarationsCopyPasteProcessor : CopyPastePostProcessor<MoveDeclaratio
 
         val imports = file.importDirectives.map { it.text }
 
-        return listOf(MoveDeclarationsTransferableData(file.virtualFile.url, sourceObjectFqName, declarations, imports))
+        return listOf(
+            MoveDeclarationsTransferableData(
+                file.virtualFile.url,
+                sourceObjectFqName,
+                declarations.map { it.text },
+                imports
+            )
+        )
     }
 
     override fun extractTransferableData(content: Transferable): List<MoveDeclarationsTransferableData> {
