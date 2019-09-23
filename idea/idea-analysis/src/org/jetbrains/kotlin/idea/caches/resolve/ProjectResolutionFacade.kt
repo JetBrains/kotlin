@@ -23,14 +23,11 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
-import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
-import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
@@ -46,7 +43,6 @@ internal class ProjectResolutionFacade(
     val moduleFilter: (IdeaModuleInfo) -> Boolean,
     dependencies: List<Any>,
     private val invalidateOnOOCB: Boolean,
-    val builtInsCache: BuiltInsCache,
     val syntheticFiles: Collection<KtFile> = listOf(),
     val allModules: Collection<IdeaModuleInfo>? = null // null means create resolvers for modules from idea model
 ) {
@@ -88,7 +84,6 @@ internal class ProjectResolutionFacade(
         } else {
             delegateResolverForProject = EmptyResolverForProject()
         }
-        val projectContext = globalContext.withProject(project)
 
         val allModuleInfos = (allModules ?: getModuleInfosFromIdeaModel(project, (settings as? PlatformAnalysisSettingsImpl)?.platform))
             .toMutableSet()
@@ -101,37 +96,14 @@ internal class ProjectResolutionFacade(
 
         val resolverForProject = IdeaResolverForProject(
             resolverDebugName,
-            projectContext,
+            globalContext.withProject(project),
             modulesToCreateResolversFor,
             syntheticFilesByModule,
             delegateResolverForProject,
-            builtInsCache,
             if (invalidateOnOOCB) KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker else null,
             settings.isReleaseCoroutines,
             constantSdkDependencyIfAny = if (settings is PlatformAnalysisSettingsImpl) settings.sdk?.let { SdkInfo(project, it) } else null
         )
-
-        // Fill builtInsCache
-        modulesToCreateResolversFor.forEach {
-            val key = it.platform.idePlatformKind.resolution.getKeyForBuiltIns(it)
-            val cachedBuiltIns = builtInsCache[key]
-            if (cachedBuiltIns == null) {
-                // Note that we can't use .getOrPut, because we have to put builtIns into map *before*
-                // initialization
-                val builtIns = it.platform.idePlatformKind.resolution.createBuiltIns(it, projectContext)
-                builtInsCache[key] = builtIns
-
-                if (builtIns is JvmBuiltIns) {
-                    // SDK should be present, otherwise we wouldn't have created JvmBuiltIns in createBuiltIns
-                    val sdk = it.findSdkAcrossDependencies()!!
-                    val sdkDescriptor = resolverForProject.descriptorForModule(sdk)
-
-                    val isAdditionalBuiltInsFeaturesSupported = it.supportsAdditionalBuiltInsMembers(project)
-
-                    builtIns.initialize(sdkDescriptor, isAdditionalBuiltInsFeaturesSupported)
-                }
-            }
-        }
 
         return resolverForProject
     }

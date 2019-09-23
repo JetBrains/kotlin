@@ -177,8 +177,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             //TODO: provide correct trackers
             dependencies = dependenciesForScriptDependencies,
             moduleFilter = { it == dependenciesModuleInfo },
-            invalidateOnOOCB = true,
-            builtInsCache = globalFacade.builtInsCache
+            invalidateOnOOCB = true
         )
     }
 
@@ -194,8 +193,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 ProjectRootModificationTracker.getInstance(project)
             ),
             invalidateOnOOCB = false,
-            reuseDataFrom = null,
-            builtInsCache = BuiltInsCache(project)
+            reuseDataFrom = null
         )
 
         private val librariesContext = sdkContext.contextWithCompositeExceptionTracker(project, resolverForLibrariesName)
@@ -208,8 +206,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             dependencies = listOf(
                 LibraryModificationTracker.getInstance(project),
                 ProjectRootModificationTracker.getInstance(project)
-            ),
-            builtInsCache = facadeForSdk.builtInsCache
+            )
         )
 
         private val modulesContext = librariesContext.contextWithCompositeExceptionTracker(project, resolverForModulesName)
@@ -222,8 +219,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 LibraryModificationTracker.getInstance(project),
                 ProjectRootModificationTracker.getInstance(project)
             ),
-            invalidateOnOOCB = true,
-            builtInsCache = facadeForLibraries.builtInsCache
+            invalidateOnOOCB = true
         )
     }
 
@@ -294,8 +290,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 moduleFilter = moduleFilter,
                 dependencies = dependenciesForSyntheticFileCache,
                 invalidateOnOOCB = true,
-                allModules = allModules,
-                builtInsCache = reuseDataFrom?.builtInsCache ?: BuiltInsCache(project)
+                allModules = allModules
             )
         }
 
@@ -536,35 +531,6 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private companion object {
         private val SUPPRESS_ANNOTATION_SHORT_NAME = KotlinBuiltIns.FQ_NAMES.suppress.shortName().identifier
     }
-}
-
-class BuiltInsCache(private val project: Project) {
-    private val innerCache
-        get() = project.cacheByClass(
-            BuiltInsCache::class.java,
-            ProjectRootModificationTracker.getInstance(project),
-            LibraryModificationTracker.getInstance(project)
-        ) { ConcurrentHashMap<BuiltInsCacheKey, KotlinBuiltIns>() }
-
-    init {
-        innerCache[BuiltInsCacheKey.DefaultBuiltInsKey] = DefaultBuiltIns.Instance
-    }
-
-    fun getOrPut(key: BuiltInsCacheKey, ifAbsent: (BuiltInsCacheKey) -> KotlinBuiltIns): KotlinBuiltIns {
-        return innerCache.computeIfAbsent(key, ifAbsent)
-    }
-
-    operator fun get(key: BuiltInsCacheKey): KotlinBuiltIns? {
-        return innerCache[key]
-    }
-
-    operator fun set(key: BuiltInsCacheKey, value: KotlinBuiltIns) {
-        innerCache[key] = value
-    }
-}
-
-interface BuiltInsCacheKey {
-    object DefaultBuiltInsKey : BuiltInsCacheKey
 }
 
 fun IdeaModuleInfo.supportsAdditionalBuiltInsMembers(project: Project): Boolean {
