@@ -31,6 +31,7 @@ import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.KeyedExtensionCollector;
 import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
@@ -55,7 +56,7 @@ public class TypedHandler extends TypedActionHandlerBase {
 
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.editorActions.TypedHandler");
 
-  private static final Map<FileType,QuoteHandler> quoteHandlers = new HashMap<>();
+  private static final KeyedExtensionCollector<QuoteHandler, String> quoteHandlers = new KeyedExtensionCollector<>(QuoteHandlerEP.EP_NAME);
 
   private static final Map<Class<? extends Language>, QuoteHandler> ourBaseLanguageQuoteHandlers = new HashMap<>();
 
@@ -104,17 +105,7 @@ public class TypedHandler extends TypedActionHandlerBase {
   }
 
   public static QuoteHandler getQuoteHandlerForType(@NotNull FileType fileType) {
-    if (!quoteHandlers.containsKey(fileType)) {
-      QuoteHandler handler = null;
-      for(QuoteHandlerEP ep: QuoteHandlerEP.EP_NAME.getExtensionList()) {
-        if (ep.fileType.equals(fileType.getName())) {
-          handler = ep.getHandler();
-          break;
-        }
-      }
-      quoteHandlers.put(fileType, handler);
-    }
-    return quoteHandlers.get(fileType);
+    return ContainerUtil.getFirstItem(quoteHandlers.forKey(fileType.getName()));
   }
 
   /**
@@ -122,7 +113,7 @@ public class TypedHandler extends TypedActionHandlerBase {
    */
   @Deprecated
   public static void registerQuoteHandler(@NotNull FileType fileType, @NotNull QuoteHandler quoteHandler) {
-    quoteHandlers.put(fileType, quoteHandler);
+    quoteHandlers.addExplicitExtension(fileType.getName(), quoteHandler);
   }
 
   @Override
