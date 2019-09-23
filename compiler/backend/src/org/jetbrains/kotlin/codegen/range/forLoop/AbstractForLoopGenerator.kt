@@ -101,13 +101,17 @@ abstract class AbstractForLoopGenerator(
             })
         }
 
-        v.visitLabel(destructuringStartLabel)
-
         codegen.initializeDestructuringDeclarationVariables(
             destructuringDeclaration,
             TransientReceiver(elementType),
             StackValue.local(loopParameterVar, asmElementType)
         )
+
+        // Start the scope for the destructuring variables only after a values
+        // has been written to their locals slot. Otherwise, we can generate
+        // type-incorrect locals information because the local could have previously
+        // been used for a value of incompatible type.
+        v.visitLabel(destructuringStartLabel)
     }
 
     protected abstract fun assignToLoopParameter()
