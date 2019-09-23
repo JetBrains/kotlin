@@ -66,6 +66,7 @@ internal class DebugInfo internal constructor(override val context: Context):Con
     val inlinedSubprograms = mutableMapOf<IrFunction, DISubprogramRef>()
     var builder: DIBuilderRef? = null
     var module: DIModuleRef? = null
+    var objHeaderPointerType: DITypeOpaqueRef? = null
     var types = mutableMapOf<IrType, DITypeOpaqueRef>()
 
     val llvmTypes = mapOf<IrType, LLVMTypeRef>(
@@ -158,6 +159,21 @@ internal fun generateDebugInfoHeader(context: Context) {
         val llvmModuleFlags = "llvm.module.flags"
         LLVMAddNamedMetadataOperand(context.llvmModule, llvmModuleFlags, dwarfVersion)
         LLVMAddNamedMetadataOperand(context.llvmModule, llvmModuleFlags, nodeDebugInfoVersion)
+        val objHeaderType = DICreateStructType(
+                refBuilder    = context.debugInfo.builder,
+                // TODO: here should be DIFile as scope.
+                scope         = null,
+                name          = "ObjHeader",
+                file          = null,
+                lineNumber    = 0,
+                sizeInBits    = 0,
+                alignInBits   = 0,
+                flags         = DWARF.flagsForwardDeclaration,
+                derivedFrom   = null,
+                elements      = null,
+                elementsCount = 0,
+                refPlace      = null)!! as DITypeOpaqueRef
+        context.debugInfo.objHeaderPointerType = dwarfPointerType(context, objHeaderType)
     }
 }
 
@@ -167,25 +183,7 @@ internal fun IrType.dwarfType(context: Context, targetData: LLVMTargetDataRef): 
         this.computePrimitiveBinaryTypeOrNull() != null -> return debugInfoBaseType(context, targetData, this.render(), llvmType(context), encoding(context).value.toInt())
         else -> {
             return when {
-                classOrNull != null -> {
-                    val type = DICreateStructType(
-                            refBuilder    = context.debugInfo.builder,
-                            // TODO: here should be DIFile as scope.
-                            scope         = null,
-                            name          = "ObjHeader",
-                            file          = null,
-                            lineNumber    = 0,
-                            sizeInBits    = 0,
-                            alignInBits   = 0,
-                            flags         = DWARF.flagsForwardDeclaration,
-                            derivedFrom   = null,
-                            elements      = null,
-                            elementsCount = 0,
-                            refPlace      = null)!! as DITypeOpaqueRef
-                    dwarfPointerType(context, type)
-                }
-                this.isTypeParameter() -> //TODO: Type parameter,  how to deal with if?
-                    debugInfoBaseType(context, targetData, this.toString(), llvmType(context), encoding(context).value.toInt())
+                classOrNull != null || this.isTypeParameter() -> context.debugInfo.objHeaderPointerType!!
                 else -> TODO("$this: Does this case really exist?")
             }
         }
