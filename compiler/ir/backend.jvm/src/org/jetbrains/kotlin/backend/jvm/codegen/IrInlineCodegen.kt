@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.codegen.IrExpressionLambda
@@ -178,7 +179,9 @@ class IrExpressionLambdaImpl(
         )
     }
 
-    override val invokeMethodDescriptor: FunctionDescriptor = function.descriptor
+    override val invokeMethodDescriptor: FunctionDescriptor =
+        // Need the descriptor without captured parameters here.
+        (function.descriptor as? WrappedSimpleFunctionDescriptor)?.originalDescriptor ?: function.descriptor
 
     override val hasDispatchReceiver: Boolean = false
 
