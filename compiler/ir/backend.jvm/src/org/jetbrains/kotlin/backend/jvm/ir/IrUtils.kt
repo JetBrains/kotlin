@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -95,6 +98,9 @@ fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
         ((this as IrSimpleType).arguments.single() as IrTypeProjection).type
     else
         irBuiltIns.primitiveArrayElementTypes.getValue(this.classOrNull!!)
+
+val IrConstructor.shouldBeHidden: Boolean
+    get() = !Visibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters
 
 // An IR builder with a reference to the JvmBackendContext
 class JvmIrBuilder(

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
+import org.jetbrains.kotlin.backend.jvm.ir.shouldBeHidden
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.org.objectweb.asm.Type
 
 internal val callableReferencePhase = makeIrFilePhase(
     ::CallableReferenceLowering,
@@ -383,7 +385,17 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                     DescriptorUtils.unwrapFakeOverride(irFunctionReference.symbol.descriptor).original
                 ).owner
                 val method = codegenContext.methodSignatureMapper.mapAsmMethod(declaration)
-                irExprBody(irString(method.name + method.descriptor))
+                // HACK: When referencing a constructor taking inline class parameters, we will actually
+                //       end up calling a public bridge method with an additional argument.
+                // TODO: Don't compute signatures in CallableReferenceLowering
+                val descriptor = if (declaration is IrConstructor && declaration.shouldBeHidden) {
+                    val marker =
+                        codegenContext.typeMapper.mapType(codegenContext.ir.symbols.defaultConstructorMarker.owner.defaultType)
+                    Type.getMethodDescriptor(method.returnType, *method.argumentTypes, marker)
+                } else {
+                    method.descriptor
+                }
+                irExprBody(irString(method.name + descriptor))
             }
         }
 

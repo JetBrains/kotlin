@@ -188,18 +188,6 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
         return Opcodes.ACC_PRIVATE
     }
 
-//    if (kind !== OwnerKind.ERASED_INLINE_CLASS &&
-//        memberDescriptor is ConstructorDescriptor &&
-//        memberDescriptor !is AccessorForConstructorDescriptor &&
-//        shouldHideConstructorDueToInlineClassTypeValueParameters(memberDescriptor)
-//    ) {
-    if (kind !== OwnerKind.ERASED_INLINE_CLASS &&
-        this is IrConstructor &&
-        shouldHideDueToInlineClassTypeValueParameters()
-    ) {
-        return Opcodes.ACC_PRIVATE
-    }
-
 //    if (memberDescriptor.isEffectivelyInlineOnly()) {
     if (isEffectivelyInlineOnly()) {
         return Opcodes.ACC_PRIVATE
@@ -285,30 +273,6 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
 
     return null
 }
-
-/* From inlineClassManglingRules.kt */
-fun IrConstructor.shouldHideDueToInlineClassTypeValueParameters() =
-    !Visibilities.isPrivate(visibility) &&
-            !parentAsClass.isInline &&
-            parentAsClass.modality !== Modality.SEALED &&
-            valueParameters.any { it.type.requiresFunctionNameMangling() }
-
-fun IrType.requiresFunctionNameMangling(): Boolean =
-    isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
-
-fun IrType.isInlineClassThatRequiresMangling() =
-    safeAs<IrSimpleType>()?.classifier?.owner?.safeAs<IrClass>()?.let {
-        it.isInline && !it.isDontMangleClass()
-    } ?: false
-
-fun IrClass.isDontMangleClass() =
-    fqNameWhenAvailable != DescriptorUtils.RESULT_FQ_NAME
-
-fun IrType.isTypeParameterWithUpperBoundThatRequiresMangling() =
-    safeAs<IrSimpleType>()?.classifier?.owner.safeAs<IrTypeParameter>()?.let { param ->
-        param.superTypes.any { it.requiresFunctionNameMangling() }
-    } ?: false
-
 
 /* Borrowed from InlineUtil. */
 private tailrec fun isInlineOrContainedInInline(declaration: IrDeclaration?): Boolean = when {

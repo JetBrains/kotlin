@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
+import org.jetbrains.kotlin.backend.jvm.ir.shouldBeHidden
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -32,10 +33,13 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
@@ -43,6 +47,44 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     override fun lower(irFile: IrFile) {
         inlineLambdaToCallSite.putAll(InlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
+
+        // Unconditionally add bridges for hidden constructors
+        irFile.acceptChildrenVoid(object: IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+
+            private fun handleConstructor(declaration: IrConstructor) {
+                if (!declaration.shouldBeHidden)
+                    return
+
+                declaration.visibility = Visibilities.PRIVATE
+
+                functionMap.computeIfAbsent(declaration.symbol) {
+                    declaration.makeConstructorAccessor().also { accessor ->
+                        // There's a special case in the JVM backend for serializing the metadata of hidden
+                        // constructors - we serialize the descriptor of the original constructor, but the
+                        // signature of the bridge. We implement this special case in the JVM IR backend by
+                        // attaching the metadata directly to the bridge. We also have to move all annotations
+                        // to the bridge method. Parameter annotations are already moved by the copyTo method.
+                        accessor.metadata = declaration.metadata
+                        declaration.safeAs<IrConstructorImpl>()?.metadata = null
+                        accessor.annotations += declaration.annotations
+                        declaration.annotations.clear()
+                        declaration.valueParameters.forEach { it.annotations.clear() }
+                    }.symbol
+                }
+            }
+
+            override fun visitConstructor(declaration: IrConstructor) {
+                handleConstructor(declaration)
+                super.visitConstructor(declaration)
+            }
+
+            override fun visitConstructorCall(expression: IrConstructorCall) {
+                handleConstructor(expression.symbol.owner)
+                super.visitConstructorCall(expression)
+            }
+        })
+
         irFile.transformChildrenVoid(this)
         pendingTransformations.forEach { it() }
     }
@@ -108,7 +150,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             classes.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
         } else parent
 
-    private fun IrConstructor.makeConstructorAccessor(): IrConstructor {
+    private fun IrConstructor.makeConstructorAccessor(): IrConstructorImpl {
         val source = this
 
         return buildConstructor {
