@@ -10,7 +10,6 @@ import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
-import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
@@ -19,7 +18,7 @@ import org.junit.Before
 import org.junit.Test
 
 class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-    //TODO support testing multiple gradle plugins versions
+    private fun kotlinVersion() = if (gradleKotlinPluginVersion == MINIMAL_SUPPORTED_VERSION) "1.3.50" else gradleKotlinPluginVersion
 
     override fun isApplicableTest(): Boolean {
         return !gradleVersion.startsWith("3.")
@@ -64,7 +63,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.commonMain") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16, KonanPlatforms.defaultKonanPlatform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
                 sourceFolder("src/commonMain/kotlin", SourceKotlinRootType)
                 sourceFolder("src/commonMain/resources", ResourceKotlinRootType)
             }
@@ -72,9 +71,9 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.commonTest") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16, KonanPlatforms.defaultKonanPlatform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:1.3.50-dev-1383", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
                 sourceFolder("src/commonTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("src/commonTest/resources", TestResourceKotlinRootType)
@@ -83,8 +82,8 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.jsMain") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:1.3.50-dev-1383", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:${kotlinVersion()}", DependencyScope.COMPILE)
                 moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
                 moduleDependency("project.my-app.jvmAndJsMain", DependencyScope.COMPILE)
                 moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.COMPILE)
@@ -95,11 +94,11 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.jsTest") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-js:1.3.50-dev-1383", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-js:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
                 moduleDependency("project.my-app.jsMain", DependencyScope.TEST)
@@ -114,7 +113,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.jvmAndJsMain") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
                 moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
                 sourceFolder("src/jvmAndJsMain/kotlin", SourceKotlinRootType)
                 sourceFolder("src/jvmAndJsMain/resources", ResourceKotlinRootType)
@@ -123,9 +122,9 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.jvmAndJsTest") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:1.3.50-dev-1383", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
                 moduleDependency("project.my-app.jvmAndJsMain", DependencyScope.TEST)
@@ -136,8 +135,8 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.jvmMain") {
                 isHMPP(true)
                 targetPlatform(JvmPlatforms.jvm16)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.50-dev-1383", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion()}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
                 moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
                 moduleDependency("project.my-app.jvmAndJsMain", DependencyScope.COMPILE)
@@ -150,12 +149,12 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 targetPlatform(JvmPlatforms.jvm16)
                 libraryDependency("Gradle: junit:junit:4.12", DependencyScope.TEST)
                 libraryDependency("Gradle: org.hamcrest:hamcrest-core:1.3", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-junit:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test:1.3.50-dev-1383", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-junit:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test:${kotlinVersion()}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
@@ -169,7 +168,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.linuxAndJsMain") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform, KonanPlatforms.defaultKonanPlatform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
                 moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
                 sourceFolder("src/linuxAndJsMain/kotlin", SourceKotlinRootType)
                 sourceFolder("src/linuxAndJsMain/resources", ResourceKotlinRootType)
@@ -180,9 +179,9 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 targetPlatform(JsPlatforms.defaultJsPlatform, KonanPlatforms.defaultKonanPlatform)
                 sourceFolder("src/linuxAndJsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("src/linuxAndJsTest/resources", TestResourceKotlinRootType)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:1.3.50-dev-1383", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${kotlinVersion()}", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
                 moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.TEST)
@@ -191,13 +190,13 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.linuxX64Main") {
                 isHMPP(true)
                 targetPlatform(KonanPlatforms.defaultKonanPlatform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.COMPILE)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - builtin [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - iconv [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - linux [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - posix [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - stdlib", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - zlib [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - builtin [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - iconv [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - linux [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - posix [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - stdlib", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - zlib [linux_x64]", DependencyScope.PROVIDED)
                 moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
                 moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.COMPILE)
                 sourceFolder("src/linuxX64Main/kotlin", SourceKotlinRootType)
@@ -207,15 +206,15 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("project.my-app.linuxX64Test") {
                 isHMPP(true)
                 targetPlatform(KonanPlatforms.defaultKonanPlatform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:1.3.50-dev-1383", DependencyScope.TEST)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - builtin [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - iconv [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - linux [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - posix [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - stdlib", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - zlib [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${kotlinVersion()}", DependencyScope.TEST)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - builtin [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - iconv [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - linux [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - posix [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - stdlib", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - zlib [linux_x64]", DependencyScope.PROVIDED)
                 moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
                 moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
                 moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.TEST)
@@ -311,12 +310,12 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("jvm-on-mpp.hmpp-mod-a.linuxX64Main") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.COMPILE)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - builtin [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - iconv [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - linux [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - posix [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - stdlib", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - zlib [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - builtin [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - iconv [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - linux [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - posix [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - stdlib", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - zlib [linux_x64]", DependencyScope.PROVIDED)
             }
             module("jvm-on-mpp.hmpp-mod-a.linuxX64Test") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
@@ -324,12 +323,12 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsTest", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxX64Main", DependencyScope.TEST)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - builtin [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - iconv [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - linux [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - posix [linux_x64]", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - stdlib", DependencyScope.PROVIDED)
-                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - zlib [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - builtin [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - iconv [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - linux [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - posix [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - stdlib", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native ${kotlinVersion()} - zlib [linux_x64]", DependencyScope.PROVIDED)
             }
             module("jvm-on-mpp.hmpp-mod-a.main") {}
             module("jvm-on-mpp.hmpp-mod-a.test") {}
