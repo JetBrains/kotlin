@@ -131,9 +131,9 @@ message DocCommentTag {
 message BinaryOperation {
     required Expression left = 1;
     required Expression right = 2;
-    required Type type = 3;
+    required BinaryOperationType type = 3;
 
-    enum Type {
+    enum BinaryOperationType {
         MUL = 1;
         DIV = 2;
         MOD = 3;
@@ -175,10 +175,10 @@ message BinaryOperation {
 
 message UnaryOperation {
     required Expression operand = 1;
-    required Type type = 2;
+    required UnaryOperationType type = 2;
     required bool postfix = 3;
 
-    enum Type {
+    enum UnaryOperationType {
         BIT_NOT = 1;
         DEC = 2;
         DELETE = 3;

@@ -137,12 +137,3 @@ open class ProtoReader(
         }
     }
 }
-
-enum class MessageType {
-    VARINT,
-    FIXED64,
-    LENGTH_DELIMITED,
-    START_GROUP,
-    END_GROUP,
-    FIXED_32
-}
