@@ -481,6 +481,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             public void testTopLevelObject() throws Exception {
                 runTest("compiler/testData/writeFlags/function/constructors/topLevelObject.kt");
             }
+
+            @TestMetadata("withMangledArguments.kt")
+            public void testWithMangledArguments() throws Exception {
+                runTest("compiler/testData/writeFlags/function/constructors/withMangledArguments.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/writeFlags/function/deprecatedFlag")
