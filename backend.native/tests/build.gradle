@@ -2431,6 +2431,11 @@ standaloneTest("devirtualization_anonymousObject") {
     source = "codegen/devirtualization/anonymousObject.kt"
 }
 
+task interfaceCallsNCasts_conservativeItable(type: KonanLocalTest) {
+    goldValue = "539\n5050\n26551140\n"
+    source = "codegen/interfaceCallsNCasts/conservativeItable.kt"
+}
+
 standaloneTest("multiargs") {
     arguments = ["AAA", "BB", "C"]
     multiRuns = true
