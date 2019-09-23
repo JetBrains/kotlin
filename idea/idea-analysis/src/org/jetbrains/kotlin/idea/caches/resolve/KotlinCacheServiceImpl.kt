@@ -34,13 +34,9 @@ import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForMod
 import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForScriptDependenciesName
 import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForSdkName
 import org.jetbrains.kotlin.analyzer.ResolverForProject.Companion.resolverForSpecialInfoName
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.caches.project.cacheByClass
-import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.isTypeRefinementEnabled
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -65,7 +61,6 @@ import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
-import java.util.concurrent.ConcurrentHashMap
 
 internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 
@@ -162,7 +157,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val relatedModules = scriptFile?.let { ScriptAdditionalIdeaDependenciesProvider.getRelatedModules(it, project) }
         val globalFacade =
             if (relatedModules?.isNotEmpty() == true) {
-                globalFacade(settings)
+                facadeForModules(settings)
             } else {
                 getOrBuildGlobalFacade(settings).facadeForSdk
             }
@@ -235,7 +230,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             .supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
 
-    private fun globalFacade(settings: PlatformAnalysisSettings) =
+    private fun facadeForModules(settings: PlatformAnalysisSettings) =
         getOrBuildGlobalFacade(settings).facadeForModules
 
     private fun librariesFacade(settings: PlatformAnalysisSettings) =
@@ -297,7 +292,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         return when {
             specialModuleInfo is ModuleSourceInfo -> {
                 val dependentModules = specialModuleInfo.getDependentModules()
-                val modulesFacade = globalFacade(settings)
+                val modulesFacade = facadeForModules(settings)
                 val globalContext =
                     modulesFacade.globalContext.contextWithCompositeExceptionTracker(
                         project,
@@ -499,7 +494,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             is ScriptDependenciesInfo.ForProject,
             is ScriptDependenciesSourceInfo.ForProject -> facadeForScriptDependenciesForProject
             is ScriptDependenciesInfo.ForFile -> createFacadeForScriptDependencies(moduleInfo)
-            else -> globalFacade(settings)
+            else -> facadeForModules(settings)
         }
         return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
     }
