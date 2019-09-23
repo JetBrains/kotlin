@@ -39,10 +39,8 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
 
   private static List<ExternalTestSourceMapping> getMapping(Project project) {
     def taskToClassesDirs = new LinkedHashMap<Test, Set<String>>()
-    for (task in project.tasks) {
-      if (task instanceof Test) {
-        taskToClassesDirs.put(task as Test, getClassesDirs(task))
-      }
+    for (task in project.tasks.withType(Test.class)) {
+      taskToClassesDirs.put(task, getClassesDirs(task))
     }
 
     def sourceSetContainer = JavaPluginUtil.getSourceSetContainer(project)
