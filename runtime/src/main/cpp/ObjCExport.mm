@@ -22,6 +22,8 @@
 
 #if KONAN_OBJC_INTEROP
 
+#define OBJC_OLD_DISPATCH_PROTOTYPES 1
+
 #import <Foundation/NSObject.h>
 #import <Foundation/NSValue.h>
 #import <Foundation/NSString.h>
