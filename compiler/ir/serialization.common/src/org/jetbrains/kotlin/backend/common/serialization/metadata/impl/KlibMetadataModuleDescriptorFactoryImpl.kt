@@ -31,22 +31,7 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
 ): KlibMetadataModuleDescriptorFactory {
-/*
-    override fun createDescriptor(
-        library: KotlinLibrary,
-        languageVersionSettings: LanguageVersionSettings,
-        storageManager: StorageManager,
-        builtIns: KotlinBuiltIns,
-        packageAccessedHandler: PackageAccessedHandler?
-    ) = createDescriptorOptionalBuiltIns(library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler)
 
-    override fun createDescriptorAndNewBuiltIns(
-        library: KotlinLibrary,
-        languageVersionSettings: LanguageVersionSettings,
-        storageManager: StorageManager,
-        packageAccessedHandler: PackageAccessedHandler?
-    ) = createDescriptorOptionalBuiltIns(library, languageVersionSettings, storageManager, null, packageAccessedHandler)
-*/
     override fun createDescriptorOptionalBuiltIns(
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
@@ -61,6 +46,8 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
         val moduleName = Name.special(libraryProto.moduleName)
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
 
+        println("createDescriptorOptionalBuiltIns: $moduleName, builtIns = $builtIns")
+
         val moduleDescriptor = if (builtIns != null )
             descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
         else
@@ -68,9 +55,12 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
 
         val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
-        val compositePackageFragmentAddend = if (builtIns == null) {
+        // TODO: don't push me. Commonize for JS.
+        val compositePackageFragmentAddend = if (moduleDescriptor.name == Name.special("<stdlib>")) {
             functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
         } else null
+
+        println("got compositePackageFragmentAddend: $compositePackageFragmentAddend")
 
         val provider = createPackageFragmentProvider(
             library,
@@ -96,6 +86,10 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
         configuration: DeserializationConfiguration,
         compositePackageFragmentAddend: PackageFragmentProvider?
     ): PackageFragmentProvider {
+
+
+        println("createPackageFragmentProvider(${library.libraryName}, compositePackageFragmentAddend=$compositePackageFragmentAddend ")
+        println("\t$packageFragmentNames")
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
             library, packageFragmentNames, moduleDescriptor, packageAccessedHandler, storageManager)

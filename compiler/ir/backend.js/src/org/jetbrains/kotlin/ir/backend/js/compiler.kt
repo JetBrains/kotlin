@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.Kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -28,13 +29,14 @@ fun compile(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
+    resolvedLibraries: KotlinLibraryResolveResult,
     allDependencies: List<KotlinLibrary>,
     friendDependencies: List<KotlinLibrary>,
     mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet()
 ): CompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, files, configuration, allDependencies, friendDependencies)
+        loadIr(project, files, configuration, resolvedLibraries, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
 

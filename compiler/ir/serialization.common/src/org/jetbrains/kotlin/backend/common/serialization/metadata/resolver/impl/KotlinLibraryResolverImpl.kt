@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.konan.util.WithLogger
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 
-fun <L: KotlinLibrary> SearchPathResolver<L>.libraryResolver() = KotlinLibraryResolverImpl<L>(this)
+fun <L: KotlinLibrary> SearchPathResolver<L>.libraryResolver()
+        = KotlinLibraryResolverImpl<L>(this)
 
 class KotlinLibraryResolverImpl<L: KotlinLibrary>(
-        override val searchPathResolver: SearchPathResolverWithAttributes<L>
+        override val searchPathResolver: SearchPathResolver<L>
 ): KotlinLibraryResolver<L>, WithLogger by searchPathResolver {
 
     override fun resolveWithDependencies(
@@ -120,7 +121,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
     }
 }
 
-internal class KotlinLibraryResolverResultImpl(
+class KotlinLibraryResolverResultImpl(
         private val roots: List<KotlinResolvedLibrary>
 ): KotlinLibraryResolveResult {
 

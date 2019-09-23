@@ -124,6 +124,7 @@ message Classes {
   repeated int32 class_name = 1 [packed = true];
 }
 */
+/*
 message Library {
   repeated org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;
 }
@@ -134,3 +135,4 @@ message LinkDataLibrary {
   repeated string empty_package = 3;
   //repeated string file = 4;
 }
+*/

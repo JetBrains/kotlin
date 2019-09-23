@@ -49,6 +49,8 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         this.capabilities = capabilities.toMutableMap()
         @UseExperimental(TypeRefinement::class)
         this.capabilities[REFINER_CAPABILITY] = Ref(null)
+
+        println("ModuleDescriptorImpl($moduleName, $builtIns}) = $this")
     }
 
     private var dependencies: ModuleDependencies? = null

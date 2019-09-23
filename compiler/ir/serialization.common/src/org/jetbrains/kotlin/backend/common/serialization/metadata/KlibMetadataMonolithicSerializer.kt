@@ -113,7 +113,7 @@ abstract class KlibMetadataSerializer(
     }
 
     private fun serializeClass(packageName: FqName,
-                               classDescriptor: ClassDescriptor): Pair<ProtoBuf.Class, Int> {
+                               classDescriptor: ClassDescriptor): List<Pair<ProtoBuf.Class, Int>> {
         with(serializerContext) {
             val previousSerializer = classSerializer
 
@@ -124,12 +124,12 @@ abstract class KlibMetadataSerializer(
             val index = classSerializer.stringTable.getFqNameIndex(classDescriptor)
             //builder.addExtension(KlibMetadataProtoBuf.className, index)
 
-            serializeClasses(packageName/*, builder*/,
+            val classes = serializeClasses(packageName/*, builder*/,
                 classDescriptor.unsubstitutedInnerClassesScope
                     .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
             classSerializer = previousSerializer
-            return Pair(classProto, index)
+            return classes + Pair(classProto, index)
         }
     }
 
@@ -137,7 +137,7 @@ abstract class KlibMetadataSerializer(
                                  //builder: ProtoBuf.PackageFragment.Builder,
                                  descriptors: Collection<DeclarationDescriptor>): List<Pair<ProtoBuf.Class, Int>> {
 
-        return descriptors.filterIsInstance<ClassDescriptor>().map {
+        return descriptors.filterIsInstance<ClassDescriptor>().flatMap {
             serializeClass(packageName, /*builder, */it)
         }
     }

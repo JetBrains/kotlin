@@ -189,6 +189,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 project = config.project,
                 files = sourcesFiles,
                 configuration = config.configuration,
+                resolvedLibraries = resolvedLibraries,
                 allDependencies = dependencies,
                 friendDependencies = friendDependencies,
                 outputKlibPath = outputKlibPath,
@@ -204,6 +205,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourcesFiles,
                 configuration,
                 phaseConfig,
+                resolvedLibraries,
                 allDependencies = dependencies,
                 friendDependencies = friendDependencies,
                 mainArguments = mainCallArguments

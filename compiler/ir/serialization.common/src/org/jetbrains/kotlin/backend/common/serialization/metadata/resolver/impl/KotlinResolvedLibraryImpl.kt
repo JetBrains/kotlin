@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.parseModuleHea
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 
-internal class KotlinResolvedLibraryImpl(override val library: KotlinLibrary): KotlinResolvedLibrary {
+class KotlinResolvedLibraryImpl(override val library: KotlinLibrary): KotlinResolvedLibrary {
 
     private val _resolvedDependencies = mutableListOf<KotlinResolvedLibrary>()
     private val _emptyPackages by lazy { parseModuleHeader(library.moduleHeaderData).emptyPackageList }

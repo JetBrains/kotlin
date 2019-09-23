@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.Kotlin.library.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.Kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.JsKlibMetadataParts
@@ -90,6 +92,7 @@ fun generateKLib(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
+    resolvedLibraries: KotlinLibraryResolveResult,
     allDependencies: List<KotlinLibrary>,
     friendDependencies: List<KotlinLibrary>,
     outputKlibPath: String,
@@ -124,7 +127,7 @@ fun generateKLib(
         icData = emptyList()
     }
 
-    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, files, configuration, resolvedLibraries, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -168,10 +171,11 @@ fun loadIr(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
+    resolvedLibraries: KotlinLibraryResolveResult,
     allDependencies: List<KotlinLibrary>,
     friendDependencies: List<KotlinLibrary>
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, files, configuration, resolvedLibraries, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -206,12 +210,13 @@ private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): Gene
 private fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: JsIrLinker? = null) =
     Psi2IrTranslator(languageVersionSettings, configuration).generateModuleFragment(this, files, deserializer)
 
-
+/*
 private fun loadKlibMetadataParts(
     moduleId: KotlinLibrary
 ): JsKlibMetadataParts {
     return KlibMetadataIncrementalSerializer.readModuleAsProto(moduleId.moduleHeaderData, moduleId.unresolvedDependencies)
 }
+*/
 
 val ModuleDescriptor.kotlinLibrary get() = this.getCapability(JS_KLIBRARY_CAPABILITY)!!
 
@@ -229,38 +234,6 @@ private fun loadKlibMetadata(
     dependencies: List<ModuleDescriptorImpl>
 ): ModuleDescriptorImpl {
     assert(isBuiltIn == (builtinsModule === null))
-/*
-    val parts = loadKlibMetadataParts(klib)
-
-    val builtIns = builtinsModule?.builtIns ?: createBuiltIns(storageManager)
-
-    val md = JsFactories.DefaultDescriptorFactory.createDescriptor(
-        Name.special("<${klib.moduleName}>"),
-        storageManager,
-        builtIns,
-        DeserializedKlibModuleOrigin(klib)
-
-    )
-
-    if (isBuiltIn) builtIns.builtInsModule = md
-    val currentModuleFragmentProvider =
-        createJsKlibMetadataPackageFragmentProvider(
-            storageManager,
-            md,
-            parts.header,
-            parts.body,
-            metadataVersion,
-            CompilerDeserializationConfiguration(languageVersionSettings),
-            lookupTracker
-        )
-
-    val packageFragmentProvider = if (isBuiltIn) {
-        val functionFragmentProvider = functionInterfacePackageFragmentProvider(storageManager, md)
-        CompositePackageFragmentProvider(listOf(functionFragmentProvider, currentModuleFragmentProvider))
-    } else currentModuleFragmentProvider
-
-    md.initialize(packageFragmentProvider)
-    */
 
     val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
         klib,
@@ -281,6 +254,7 @@ private class ModulesStructure(
     private val project: Project,
     private val files: List<KtFile>,
     val compilerConfiguration: CompilerConfiguration,
+    val resolvedLibraries: KotlinLibraryResolveResult,
     private val allDependencies: List<KotlinLibrary>,
     private val friendDependencies: List<KotlinLibrary>
 ) {
@@ -291,10 +265,22 @@ private class ModulesStructure(
     fun findModuleByName(name: String): KotlinLibrary =
         allDependencies.find { it.moduleName == name } ?: error("Module is not found: $name")
 */
-    val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> =
-        deserializedModuleParts.mapValues { (klib, _) ->
-            klib.unresolvedDependencies.map { findModuleByName(it.path) }
+    //val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> =
+    //    deserializedModuleParts.mapValues { (klib, _) ->
+    //        klib.unresolvedDependencies.map { findModuleByName(it.path) }
+    //    }
+
+    val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> = {
+        val result = mutableMapOf<KotlinLibrary, List<KotlinLibrary>>()
+
+        resolvedLibraries.forEach { klib, _ ->
+            val dependencies = resolvedLibraries.filterRoots {
+                it.library == klib
+            }.getFullList(TopologicalLibraryOrder)
+            result.put(klib, dependencies)
         }
+        result
+    }()
 
     val builtInsDep = allDependencies.find { it.isBuiltIns }
 
@@ -325,6 +311,7 @@ private class ModulesStructure(
 
     // TODO: these are roughly equivalent to KlibResolvedModuleDescriptorsFactoryImpl. Refactor me.
     val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
+
     fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl = descriptors.getOrPut(current) {
         val isBuiltIns = current.unresolvedDependencies.isEmpty()
 
@@ -348,6 +335,7 @@ private class ModulesStructure(
             getModuleDescriptor(builtInsDep)
         else
             null // null in case compiling builtInModule itself
+
 }
 
 private fun getDescriptorForElement(

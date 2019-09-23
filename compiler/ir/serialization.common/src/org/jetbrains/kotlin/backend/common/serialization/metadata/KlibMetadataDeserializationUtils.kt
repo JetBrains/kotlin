@@ -12,5 +12,5 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 fun parsePackageFragment(packageMetadata: ByteArray): ProtoBuf.PackageFragment =
     ProtoBuf.PackageFragment.parseFrom(packageMetadata, KlibMetadataSerializerProtocol.extensionRegistry)
 
-fun parseModuleHeader(libraryMetadata: ByteArray): KlibMetadataProtoBuf.LinkDataLibrary =
-    KlibMetadataProtoBuf.LinkDataLibrary.parseFrom(libraryMetadata, KlibMetadataSerializerProtocol.extensionRegistry)
+fun parseModuleHeader(libraryMetadata: ByteArray): KlibMetadataProtoBuf.Header =
+    KlibMetadataProtoBuf.Header.parseFrom(libraryMetadata, KlibMetadataSerializerProtocol.extensionRegistry)

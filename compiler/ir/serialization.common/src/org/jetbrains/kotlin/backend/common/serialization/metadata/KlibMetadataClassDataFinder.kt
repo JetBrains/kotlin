@@ -17,9 +17,9 @@ class KlibMetadataClassDataFinder(
     private val fragment: org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver
 ) : ClassDataFinder {
+    val nameList = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()
 
     override fun findClassData(classId: ClassId): ClassData? {
-        val nameList = fragment.getExtension(KlibMetadataProtoBuf.className).orEmpty()
 
         val index = nameList.indexOfFirst { nameResolver.getClassId(it) == classId }
         if (index == -1) {

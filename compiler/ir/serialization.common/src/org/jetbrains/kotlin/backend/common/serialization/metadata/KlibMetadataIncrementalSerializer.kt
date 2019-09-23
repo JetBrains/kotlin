@@ -88,17 +88,17 @@ class KlibMetadataIncrementalSerializer(
         val stream = ByteArrayOutputStream()
 
         serializeHeader(module, fragmentNames).writeDelimitedTo(stream)
-        asLibrary().writeTo(stream)
-        stream.appendPackageFragments(fragments)
+        //asLibrary().writeTo(stream)
+        //stream.appendPackageFragments(fragments)
 
         val moduleLibrary = stream.toByteArray()
 
         return SerializedMetadata(moduleLibrary, fragmentParts, fragmentNames)
     }
 
-    private fun asLibrary(): KlibMetadataProtoBuf.Library {
-        return KlibMetadataProtoBuf.Library.newBuilder().build()
-    }
+    //private fun asLibrary(): KlibMetadataProtoBuf.Library {
+    //    return KlibMetadataProtoBuf.Library.newBuilder().build()
+    //}
 
     private fun OutputStream.writeProto(fieldNumber: Int, content: ByteArray) {
         // Message header
@@ -113,7 +113,7 @@ class KlibMetadataIncrementalSerializer(
         // Fragment itself
         write(content)
     }
-
+/*
     private fun OutputStream.appendPackageFragments(serializedFragments: Map<String, List<ByteArray>>) {
         for ((_, fragments) in serializedFragments.entries.sortedBy { it.key }) {
             for (fragment in fragments) {
@@ -121,15 +121,15 @@ class KlibMetadataIncrementalSerializer(
             }
         }
     }
-
+*/
+    /*
     fun readModuleAsProto(metadata: ByteArray, importedModuleList: List<String>): JsKlibMetadataParts {
-        val header =
         val inputStream = ByteArrayInputStream(metadata)
         val header = KlibMetadataProtoBuf.Header.parseDelimitedFrom(inputStream, KlibMetadataSerializerProtocol.extensionRegistry)
         val content = KlibMetadataProtoBuf.Library.parseFrom(inputStream, KlibMetadataSerializerProtocol.extensionRegistry)
         return JsKlibMetadataParts(header, content.packageFragmentList, importedModuleList)
     }
-
+*/
     // TODO: For now, in the incremental serializer, we assume
     // there is only a single package fragment per file.
     // This is no always the case, actually.

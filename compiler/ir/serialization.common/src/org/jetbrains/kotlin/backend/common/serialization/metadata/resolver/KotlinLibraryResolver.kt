@@ -1,14 +1,11 @@
 package org.jetbrains.kotlin.Kotlin.library.resolver
 
-import org.jetbrains.kotlin.library.SearchPathResolverWithAttributes
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.PackageAccessedHandler
-import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 
 interface KotlinLibraryResolver<L: KotlinLibrary> {
 
-    val searchPathResolver: SearchPathResolverWithAttributes<L>
+    val searchPathResolver: SearchPathResolver<L>
 
     /**
      * Given the list of Kotlin/Native library names, ABI version and other parameters
@@ -29,6 +26,7 @@ interface KotlinLibraryResolveResult {
 
     fun forEach(action: (KotlinLibrary, PackageAccessedHandler) -> Unit)
 }
+
 
 typealias LibraryOrder = (Iterable<KotlinResolvedLibrary>) -> List<KotlinResolvedLibrary>
 

@@ -4,7 +4,7 @@
  */
 
 package org.jetbrains.kotlin.serialization.konan.impl
-
+/*
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.library.*
-import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -279,3 +278,5 @@ private class ForwardDeclarationsPackageFragmentDescriptor(
 
     override fun getMemberScope(): MemberScope = memberScope
 }
+
+ */
