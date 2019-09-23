@@ -46,18 +46,16 @@ fun createResolveSessionForFiles(
         packagePartProviderFactory = { PackagePartProvider.Empty },
         moduleByJavaClass = { testModule }
     )
-    val resolverForProject = ResolverForProjectImpl(
+
+    val resolverForProject = ResolverForSingleModuleProject(
         "test",
-        projectContext, listOf(testModule),
-        { ModuleContent(it, syntheticFiles, GlobalSearchScope.allScope(project)) },
-        invalidateOnOOCB = false,
-        moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-        resolverForModuleFactoryByPlatform = {
-            JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, JvmPlatforms.defaultJvmPlatform)
-        },
-        builtInsProvider = { DefaultBuiltIns.Instance },
-        sdkDependency = { null }
+        projectContext,
+        testModule,
+        JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, JvmPlatforms.defaultJvmPlatform),
+        GlobalSearchScope.allScope(project),
+        syntheticFiles = syntheticFiles
     )
+
     return resolverForProject.resolverForModule(testModule).componentProvider.get<ResolveSession>()
 }
 

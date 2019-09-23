@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -24,36 +23,18 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
-import org.jetbrains.kotlin.caches.resolve.CompositeAnalyzerServices
-import org.jetbrains.kotlin.caches.resolve.CompositeResolverForModuleFactory
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.context.GlobalContextImpl
-import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
-import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
-import org.jetbrains.kotlin.idea.project.IdeaEnvironment
-import org.jetbrains.kotlin.idea.project.findAnalyzerServices
-import org.jetbrains.kotlin.idea.project.useCompositeAnalysis
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
-import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.toTargetPlatform
 
 internal class ProjectResolutionFacade(
     private val debugString: String,
@@ -101,7 +82,6 @@ internal class ProjectResolutionFacade(
 
     private fun computeModuleResolverProvider(): ResolverForProject<IdeaModuleInfo> {
         val delegateResolverForProject: ResolverForProject<IdeaModuleInfo>
-        val delegateBuiltIns: KotlinBuiltIns?
 
         if (reuseDataFrom != null) {
             delegateResolverForProject = reuseDataFrom.cachedResolverForProject
@@ -119,61 +99,16 @@ internal class ProjectResolutionFacade(
 
         val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
 
-        val modulesContentFactory = { module: IdeaModuleInfo ->
-            ModuleContent(module, syntheticFilesByModule[module] ?: listOf(), module.contentScope())
-        }
-
-        val jvmPlatformParameters = JvmPlatformParameters(
-            packagePartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) },
-            moduleByJavaClass = { javaClass: JavaClass ->
-                val psiClass = (javaClass as JavaClassImpl).psi
-                psiClass.getPlatformModuleInfo(JvmPlatforms.unspecifiedJvmPlatform)?.platformModule ?: psiClass.getNullableModuleInfo()
-            }
-        )
-
-        val commonPlatformParameters = CommonAnalysisParameters(
-            metadataPartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) }
-        )
-
-        val resolverForProject = ResolverForProjectImpl(
+        val resolverForProject = IdeaResolverForProject(
             resolverDebugName,
             projectContext,
             modulesToCreateResolversFor,
-            modulesContentFactory,
-            moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
-            resolverForModuleFactoryByPlatform = { modulePlatform ->
-                val platform = modulePlatform ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform
-                val parameters = when {
-                    platform.isJvm() -> jvmPlatformParameters
-                    platform.isCommon() -> commonPlatformParameters
-                    else -> PlatformAnalysisParameters.Empty
-                }
-
-                if (!project.useCompositeAnalysis)
-                    platform.idePlatformKind.resolution.createResolverForModuleFactory(parameters, IdeaEnvironment, platform)
-                else
-                    CompositeResolverForModuleFactory(
-                        commonPlatformParameters,
-                        jvmPlatformParameters,
-                        modulePlatform!!,
-                        CompositeAnalyzerServices(modulePlatform.componentPlatforms.map { it.toTargetPlatform().findAnalyzerServices })
-                    )
-            },
-            builtInsProvider = { module ->
-                require(module in modulesToCreateResolversFor)
-                val key = module.platform.idePlatformKind.resolution.getKeyForBuiltIns(module)
-                builtInsCache.getOrPut(key) { throw IllegalStateException("Can't find builtIns by key $key for module $module") }
-            },
-            delegateResolver = delegateResolverForProject,
-            sdkDependency = { module ->
-                if (settings is PlatformAnalysisSettingsImpl)
-                    settings.sdk?.let { SdkInfo(project, it) }
-                else
-                    module.findSdkAcrossDependencies()
-            },
-            packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
-            invalidateOnOOCB = invalidateOnOOCB,
-            isReleaseCoroutines = settings.isReleaseCoroutines
+            syntheticFilesByModule,
+            delegateResolverForProject,
+            builtInsCache,
+            if (invalidateOnOOCB) KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker else null,
+            settings.isReleaseCoroutines,
+            constantSdkDependencyIfAny = if (settings is PlatformAnalysisSettingsImpl) settings.sdk?.let { SdkInfo(project, it) } else null
         )
 
         // Fill builtInsCache

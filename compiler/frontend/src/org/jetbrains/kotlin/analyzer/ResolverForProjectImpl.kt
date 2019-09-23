@@ -16,20 +16,15 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtFile
 
-class ResolverForProjectImpl<M : ModuleInfo>(
+abstract class AbstractResolverForProject<M : ModuleInfo>(
     private val debugName: String,
-    private val projectContext: ProjectContext,
+    protected val projectContext: ProjectContext,
     modules: Collection<M>,
-    private val modulesContent: (M) -> ModuleContent<M>,
-    private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
-    private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
-    private val invalidateOnOOCB: Boolean,
-    override val builtInsProvider: (M) -> KotlinBuiltIns,
+    private val fallbackModificationTracker: ModificationTracker? = null,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val sdkDependency: (M) -> M?,
-    private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val isReleaseCoroutines: Boolean? = null
+    private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
 ) : ResolverForProject<M>() {
 
     private class ModuleData(
@@ -57,6 +52,11 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     init {
         assert(moduleInfoToResolvableInfo.values.toSet() == modules.toSet())
     }
+
+    abstract fun sdkDependency(module: M): M?
+    abstract fun modulesContent(module: M): ModuleContent<M>
+    abstract fun builtInsForModule(module: M): KotlinBuiltIns
+    abstract fun createResolverForModule(descriptor: ModuleDescriptor, moduleInfo: M): ResolverForModule
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -108,25 +108,9 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             resolverByModuleDescriptor.getOrPut(descriptor) {
                 checkModuleIsCorrect(module)
 
-                ResolverForModuleComputationTracker.getInstance(projectContext.project)
-                    ?.onResolverComputed(module)
+                ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
-                val moduleContent = modulesContent(module)
-
-                val languageVersionSettings =
-                    moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
-
-                // FIXME(dsavvinov): make sure that module.platform returns platform with the same JvmTarget as this one
-                val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module, projectContext.project)
-
-                val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
-                resolverForModuleFactory.createResolverForModule(
-                    descriptor as ModuleDescriptorImpl,
-                    projectContext.withModule(descriptor),
-                    moduleContent,
-                    this@ResolverForProjectImpl,
-                    languageVersionSettings
-                )
+                createResolverForModule(descriptor, module)
             }
         }
     }
@@ -153,7 +137,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
 
     private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
         val moduleFromThisResolver = moduleInfoToResolvableInfo[module]
-                ?: return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
+            ?: return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
 
         return projectContext.storageManager.compute {
             var moduleData = descriptorByModule.getOrPut(moduleFromThisResolver) {
@@ -183,24 +167,20 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         val moduleDescriptor = ModuleDescriptorImpl(
             module.name,
             projectContext.storageManager,
-            builtInsProvider(module),
+            builtInsForModule(module),
             module.platform,
             module.capabilities,
             module.stableName
         )
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)
-        val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker() ?: if (invalidateOnOOCB) {
-            KotlinModificationTrackerService.getInstance(projectContext.project).outOfBlockModificationTracker
-        } else {
-            null
-        }
+        val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker() ?: fallbackModificationTracker
         return ModuleData(moduleDescriptor, modificationTracker)
     }
 }
 
 private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
-    private val resolverForProject: ResolverForProjectImpl<M>,
+    private val resolverForProject: AbstractResolverForProject<M>,
     private val module: ModuleDescriptor,
     moduleContent: ModuleContent<M>,
     private val packageOracle: PackageOracle

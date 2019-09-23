@@ -54,7 +54,6 @@ abstract class ResolverForProject<M : ModuleInfo> {
 
     abstract val name: String
     abstract val allModules: Collection<M>
-    abstract val builtInsProvider: (M) -> KotlinBuiltIns
 
     override fun toString() = name
 
@@ -79,7 +78,6 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override fun descriptorForModule(moduleInfo: M) = diagnoseUnknownModuleInfo(listOf(moduleInfo))
     override val allModules: Collection<M> = listOf()
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) = throw IllegalStateException("Should not be called for $infos")
-    override val builtInsProvider: (M) -> KotlinBuiltIns = { DefaultBuiltIns.Instance }
 }
 
 data class ModuleContent<out M : ModuleInfo>(
@@ -128,7 +126,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
     storageManager: StorageManager,
     private val module: M,
     firstDependency: M? = null,
-    private val resolverForProject: ResolverForProjectImpl<M>
+    private val resolverForProject: AbstractResolverForProject<M>
 ) : ModuleDependencies {
     private val dependencies = storageManager.createLazyValue {
         val moduleDescriptor = resolverForProject.descriptorForModule(module)

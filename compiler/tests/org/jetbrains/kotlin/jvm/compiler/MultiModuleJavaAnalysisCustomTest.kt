@@ -28,9 +28,12 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
@@ -87,24 +90,39 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                 modules.first { it._name == moduleName }
             }
         )
-        val resolverForProject = ResolverForProjectImpl(
+
+        val resolverForProject = object : AbstractResolverForProject<TestModule>(
             "test",
-            projectContext, modules,
-            invalidateOnOOCB = false,
-            modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
-            moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-            resolverForModuleFactoryByPlatform = {
-                JvmResolverForModuleFactory(platformParameters, CompilerEnvironment, JvmPlatforms.defaultJvmPlatform)
-            },
-            sdkDependency = { null },
-            builtInsProvider = { builtIns }
-        )
+            projectContext,
+            modules
+        ) {
+            override fun sdkDependency(module: TestModule): TestModule? = null
+
+            override fun modulesContent(module: TestModule): ModuleContent<TestModule> =
+                ModuleContent(module, module.kotlinFiles, module.javaFilesScope)
+
+            override fun builtInsForModule(module: TestModule): KotlinBuiltIns = builtIns
+
+            override fun createResolverForModule(descriptor: ModuleDescriptor, moduleInfo: TestModule): ResolverForModule =
+                JvmResolverForModuleFactory(
+                    platformParameters,
+                    CompilerEnvironment,
+                    JvmPlatforms.defaultJvmPlatform
+                ).createResolverForModule(
+                    descriptor as ModuleDescriptorImpl,
+                    projectContext.withModule(descriptor),
+                    modulesContent(moduleInfo),
+                    this,
+                    LanguageVersionSettingsImpl.DEFAULT
+                )
+        }
 
         builtIns.initialize(
-                resolverForProject.descriptorForModule(resolverForProject.allModules.first()),
-                resolverForProject.resolverForModule(resolverForProject.allModules.first())
-                        .componentProvider.get<LanguageVersionSettings>()
-                        .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
+            resolverForProject.descriptorForModule(resolverForProject.allModules.first()),
+            resolverForProject.resolverForModule(resolverForProject.allModules.first())
+                .componentProvider.get<LanguageVersionSettings>()
+                .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
+        )
 
         performChecks(resolverForProject, modules)
     }
