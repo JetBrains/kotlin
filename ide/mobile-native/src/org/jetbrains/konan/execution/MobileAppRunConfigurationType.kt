@@ -12,7 +12,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import org.jetbrains.konan.MobileBundle
 
-class MobileRunConfigurationType : ConfigurationTypeBase(
+class MobileAppRunConfigurationType : ConfigurationTypeBase(
     "KonanMobile",
     MobileBundle.message("run.configuration.name"),
     MobileBundle.message("run.configuration.description"),
@@ -21,7 +21,7 @@ class MobileRunConfigurationType : ConfigurationTypeBase(
     init {
         addFactory(object : ConfigurationFactory(this) {
             override fun createTemplateConfiguration(project: Project): RunConfiguration =
-                MobileRunConfiguration(project, this, name)
+                MobileAppRunConfiguration(project, this, name)
         })
     }
 }

@@ -15,11 +15,16 @@ import com.jetbrains.cidr.execution.deviceSupport.AMDevice
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceUtil
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.execution.testing.CidrLauncher
+import com.jetbrains.cidr.execution.testing.CidrTestCommandLineState
+import org.jetbrains.konan.execution.testing.MobileTestRunConfiguration
 import java.io.File
 
 abstract class AppleDevice(id: String, name: String, osVersion: String) : Device(id, name, "iOS", osVersion) {
-    override fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): CidrCommandLineState =
+    override fun createState(configuration: MobileAppRunConfiguration, environment: ExecutionEnvironment): CidrCommandLineState =
         CidrCommandLineState(environment, createLauncher(configuration))
+
+    override fun createState(configuration: MobileTestRunConfiguration, environment: ExecutionEnvironment): CidrTestCommandLineState<*> =
+        TODO()
 
     protected abstract fun createLauncher(configuration: MobileRunConfiguration): CidrLauncher
 

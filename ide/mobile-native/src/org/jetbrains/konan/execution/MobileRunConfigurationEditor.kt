@@ -13,7 +13,7 @@ import com.jetbrains.cidr.execution.CidrRunConfigurationSettingsEditor
 import com.jetbrains.cidr.ui.SelectExecutableActionComboItem
 import javax.swing.JPanel
 
-class MobileRunConfigurationEditor(project: Project, helper: MobileBuildConfigurationHelper) :
+open class MobileRunConfigurationEditor(project: Project, helper: MobileBuildConfigurationHelper) :
     CidrRunConfigurationSettingsEditor<
             MobileBuildConfiguration,
             MobileBuildTarget,
@@ -26,7 +26,7 @@ class MobileRunConfigurationEditor(project: Project, helper: MobileBuildConfigur
             MobileRunConfiguration,
             MobileBuildConfigurationHelper>
 
-    override fun createAdditionalControls(panel: JPanel?, g: GridBag?) {
+    override fun createAdditionalControls(panel: JPanel, g: GridBag) {
         super.createAdditionalControls(panel, g)
 
         executableEditor = CidrRunConfigurationExecutableEditor(

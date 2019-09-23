@@ -9,17 +9,16 @@ import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.EmulatorConsole
 import com.android.ddmlib.IDevice
+import com.android.ddmlib.testrunner.RemoteAndroidTestRunner
 import com.android.sdklib.AndroidVersion
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.OSProcessHandler
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
-import com.intellij.execution.process.ProcessOutputType
+import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
@@ -28,6 +27,8 @@ import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import org.jetbrains.konan.AndroidToolkit
 import org.jetbrains.konan.MobileBundle
+import org.jetbrains.konan.execution.testing.AndroidTestCommandLineState
+import org.jetbrains.konan.execution.testing.MobileTestRunConfiguration
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -39,43 +40,31 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
     "Android",
     osVersion?.apiString ?: "unknown"
 ) {
-    override fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): AndroidCommandLineState =
-        AndroidCommandLineState(configuration, environment)
+    override fun createState(configuration: MobileAppRunConfiguration, environment: ExecutionEnvironment): AndroidAppCommandLineState =
+        AndroidAppCommandLineState(configuration, environment)
 
-    fun installAndLaunch(apk: File, project: Project, waitForDebugger: Boolean = false): AndroidProcessHandler {
+    override fun createState(configuration: MobileTestRunConfiguration, environment: ExecutionEnvironment): AndroidTestCommandLineState =
+        AndroidTestCommandLineState(configuration, environment)
+
+    private inline fun execute(
+        project: Project, isDebug: Boolean,
+        crossinline block: (AndroidProcessHandler, ProgressIndicator) -> Unit
+    ): AndroidProcessHandler {
         val handler = AndroidProcessHandler()
         runBackgroundableTask(MobileBundle.message("run.waiting"), project, cancellable = false) { indicator ->
             try {
-                val raw = prepareDevice()
+                handler.raw = prepareDevice()
 
                 indicator.isIndeterminate = false
                 indicator.fraction = 0.1
                 indicator.text = MobileBundle.message("run.preparing")
 
-                val (appId, activity) = getAppMetadata(apk)
-                handler.appId = appId
-                handler.raw = raw
-
-                indicator.fraction = 0.3
-                indicator.text = MobileBundle.message("run.installing")
-
-                raw.installPackage(apk.absolutePath, true)
-                handler.prepareForLaunch()
-
-                indicator.fraction = 0.8
-                indicator.text = MobileBundle.message("run.starting")
-
-                val receiver = CollectingOutputReceiver()
-                val options = if (waitForDebugger) "-D" else ""
-                raw.executeShellCommand(
-                    "am start $options -n \"$appId/$activity\" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER", receiver
-                )
-                log.info("Launched app with output: ${receiver.output.trimEnd()}")
+                block(handler, indicator)
             } catch (e: Throwable) {
                 handler.destroyProcess()
                 if (e is ExecutionException) {
                     val message = e.message ?: e.toString()
-                    val window = if (waitForDebugger) ToolWindowId.DEBUG else ToolWindowId.RUN
+                    val window = if (isDebug) ToolWindowId.DEBUG else ToolWindowId.RUN
                     runInEdt {
                         ToolWindowManager.getInstance(project).notifyByBalloon(window, MessageType.ERROR, message)
                     }
@@ -87,6 +76,62 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
         }
         return handler
     }
+
+    fun installAndLaunch(apk: File, project: Project, waitForDebugger: Boolean = false): AndroidProcessHandler =
+        execute(project, waitForDebugger) { handler, indicator ->
+            val (appId, activity) = getAppMetadata(apk)
+            handler.appId = appId
+
+            indicator.fraction = 0.3
+            indicator.text = MobileBundle.message("run.installing")
+
+            handler.raw.installPackage(apk.absolutePath, true)
+            handler.prepareForLaunch()
+
+            indicator.fraction = 0.8
+            indicator.text = MobileBundle.message("run.starting")
+
+            val receiver = CollectingOutputReceiver()
+            val options = if (waitForDebugger) "-D" else ""
+            handler.raw.executeShellCommand(
+                "am start $options -n \"$appId/$activity\" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER", receiver
+            )
+            log.info("Launched app with output: ${receiver.output.trimEnd()}")
+        }
+
+    fun installAndRunTests(
+        appApk: File, testApk: File, project: Project,
+        waitForDebugger: Boolean = false,
+        runTests: (RemoteAndroidTestRunner, AndroidProcessHandler) -> Unit
+    ): AndroidProcessHandler =
+        execute(project, waitForDebugger) { handler, indicator ->
+            val appId = getAppId(testApk)
+            handler.appId = appId
+
+            indicator.fraction = 0.3
+            indicator.text = MobileBundle.message("run.installing")
+            handler.raw.installPackage(appApk.absolutePath, true)
+
+            indicator.fraction = 0.5
+            indicator.text = MobileBundle.message("run.installing.tests")
+            handler.raw.installPackage(testApk.absolutePath, true)
+
+            handler.prepareForLaunch()
+
+            indicator.fraction = 0.8
+            indicator.text = MobileBundle.message("run.starting.tests")
+
+            val testRunner = RemoteAndroidTestRunner(appId, "androidx.test.runner.AndroidJUnitRunner", handler.raw)
+            log.info("Running tests: ${testRunner.amInstrumentCommand}")
+
+            ProcessIOExecutorService.INSTANCE.execute {
+                try {
+                    runTests(testRunner, handler)
+                } catch (e: Throwable) {
+                    log.error(e)
+                }
+            }
+        }
 
     protected abstract fun prepareDevice(): IDevice
 }
@@ -145,13 +190,23 @@ class AndroidEmulator(avdName: String, osVersion: AndroidVersion?) : AndroidDevi
 private val log = logger<AndroidDevice>()
 
 // TODO use gradle project data for this
-private fun getAppMetadata(apk: File): Pair<String, String> {
+private fun aapt(apk: File): List<String> {
     val output = ExecUtil.execAndGetOutput(GeneralCommandLine(AndroidToolkit.aapt!!.path, "dump", "badging", apk.path))
     val lines = output.stdoutLines
     if (lines.isEmpty()) throw ExecutionException("aapt returned empty data for '$apk'")
-    if (!lines[0].startsWith("package: name")) throw ExecutionException("aapt returned no package name for '$apk'")
+    return lines
+}
 
-    val appId = lines[0].removePrefix("package: name='").substringBefore('\'')
+private fun getAppId(aaptOutput: List<String>): String {
+    if (!aaptOutput[0].startsWith("package: name")) throw ExecutionException("aapt returned no package name")
+    return aaptOutput[0].removePrefix("package: name='").substringBefore('\'')
+}
+
+private fun getAppId(apk: File): String = getAppId(aapt(apk))
+
+private fun getAppMetadata(apk: File): Pair<String, String> {
+    val lines = aapt(apk)
+    val appId = getAppId(lines)
     val activityLine = lines.find { it.startsWith("launchable-activity: name") }
         ?: throw ExecutionException("aapt returned no main activity name for '$apk'")
     val mainActivity = activityLine

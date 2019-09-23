@@ -9,10 +9,10 @@ import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.cidr.execution.CidrExecutableDataHolder
 import com.jetbrains.cidr.execution.CidrRunConfiguration
 import com.jetbrains.cidr.execution.ExecutableData
@@ -20,31 +20,25 @@ import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import org.jdom.Element
 import java.io.File
 
-class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
+abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
     CidrRunConfiguration<MobileBuildConfiguration, MobileBuildTarget>(project, factory, name),
     CidrExecutableDataHolder {
-
-    private val helper = MobileBuildConfigurationHelper(project)
-    override fun getHelper(): MobileBuildConfigurationHelper = helper
-
-    override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
-
-    override fun getConfigurationEditor(): SettingsEditor<MobileRunConfiguration> =
-        MobileRunConfigurationEditor(project, helper)
 
     override fun canRunOn(target: ExecutionTarget): Boolean =
         target is Device &&
                 (canRunOnApple && target is AppleDevice) ||
                 (canRunOnAndroid && target is AndroidDevice)
 
-    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
-        (environment.executionTarget as? Device)?.createState(this, environment)
-
-    fun getProductBundle(environment: ExecutionEnvironment): File {
+    open fun getProductBundle(environment: ExecutionEnvironment): File {
         // TODO decide if we want to allow custom executable selection
         //  and retrieve info from gradle when executable not selected explicitly
         return File(_executableData!!.path!!)
     }
+
+    private val helper = MobileBuildConfigurationHelper(project)
+    override fun getHelper(): MobileBuildConfigurationHelper = helper
+
+    override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
 
     val canRunOnAndroid: Boolean get() = _executableData!!.path!!.endsWith(".apk")
     val canRunOnApple: Boolean get() = _executableData!!.path!!.endsWith(".app")
@@ -67,3 +61,12 @@ class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, na
     }
 }
 
+class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
+    MobileRunConfiguration(project, factory, name) {
+
+    override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
+        MobileRunConfigurationEditor(project, helper)
+
+    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
+        (environment.executionTarget as? Device)?.createState(this, environment)
+}

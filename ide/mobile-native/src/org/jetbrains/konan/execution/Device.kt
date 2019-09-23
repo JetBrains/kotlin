@@ -9,6 +9,7 @@ import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
+import org.jetbrains.konan.execution.testing.MobileTestRunConfiguration
 import javax.swing.Icon
 
 abstract class Device(
@@ -24,5 +25,6 @@ abstract class Device(
     override fun canRun(configuration: RunConfiguration): Boolean =
         configuration is MobileRunConfiguration
 
-    abstract fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): CommandLineState
+    abstract fun createState(configuration: MobileAppRunConfiguration, environment: ExecutionEnvironment): CommandLineState
+    abstract fun createState(configuration: MobileTestRunConfiguration, environment: ExecutionEnvironment): CommandLineState
 }

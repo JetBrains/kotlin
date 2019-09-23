@@ -22,24 +22,26 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.project.Project
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.impl.XDebugSessionImpl
-import com.jetbrains.cidr.execution.CidrCommandLineState
-import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
-import com.jetbrains.cidr.execution.testing.CidrLauncher
 import java.io.OutputStream
 
-class AndroidCommandLineState(
+abstract class AndroidCommandLineState(
     configuration: MobileRunConfiguration,
     environment: ExecutionEnvironment
 ) : CommandLineState(environment) {
-    private val project = configuration.project
-    private val device = environment.executionTarget as AndroidDevice
-    private val apk = configuration.getProductBundle(environment)
+    protected val project = configuration.project
+    protected val device = environment.executionTarget as AndroidDevice
+    protected val apk = configuration.getProductBundle(environment)
+}
+
+open class AndroidAppCommandLineState(
+    configuration: MobileRunConfiguration,
+    environment: ExecutionEnvironment
+) : AndroidCommandLineState(configuration, environment) {
 
     override fun startProcess(): ProcessHandler {
         return device.installAndLaunch(apk, project)
@@ -101,6 +103,6 @@ class AndroidCommandLineState(
     }
 
     companion object {
-        private val log = logger<AndroidCommandLineState>()
+        private val log = logger<AndroidAppCommandLineState>()
     }
 }

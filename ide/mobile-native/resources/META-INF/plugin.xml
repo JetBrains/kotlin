@@ -29,7 +29,8 @@
 <!--    <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>-->
     <projectTaskRunner implementation="org.jetbrains.konan.gradle.execution.GradleKonanProjectTaskRunner"/>
 
-    <configurationType implementation="org.jetbrains.konan.execution.MobileRunConfigurationType"/>
+    <configurationType implementation="org.jetbrains.konan.execution.MobileAppRunConfigurationType"/>
+    <configurationType implementation="org.jetbrains.konan.execution.testing.MobileTestRunConfigurationType"/>
     <runLineMarkerContributor language="ObjectiveC"
                               implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
 
