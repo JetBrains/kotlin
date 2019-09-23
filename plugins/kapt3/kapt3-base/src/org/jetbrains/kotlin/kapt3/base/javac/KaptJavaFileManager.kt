@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt3.base.javac
 
-import com.sun.tools.javac.file.BaseFileObject
 import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.util.Context
@@ -66,8 +65,7 @@ class KaptJavaFileManager(context: Context) : JavacFileManager(context, true, nu
         return when (fileObject.toUri().scheme) {
             "jar", "zip" -> false
             else -> {
-                if (fileObject !is BaseFileObject) return false
-                val typeName = packageName?.let { "$it." } + fileObject.shortName.dropLast(".class".length)
+                val typeName = packageName?.let { "$it." } + File(fileObject.toUri()).name.dropLast(".class".length)
 
                 return typeToIgnore.contains(typeName)
             }
