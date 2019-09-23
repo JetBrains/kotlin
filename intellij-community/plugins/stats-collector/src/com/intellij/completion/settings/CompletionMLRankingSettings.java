@@ -6,6 +6,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,8 @@ import java.util.*;
 
 @State(name = "CompletionMLRankingSettings", storages = @Storage("completionMLRanking.xml"))
 public class CompletionMLRankingSettings implements PersistentStateComponent<CompletionMLRankingSettings.State> {
+  private static final Logger LOG = Logger.getInstance("#com.intellij.completion.settings.CompletionMLRankingSettings");
+
   private static final Collection<String> ENABLE_RANKING_BY_DEFAULT = Collections.singletonList("kotlin");
   private final State myState = new State();
 
@@ -47,6 +50,7 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
     else {
       myState.enabledLanguages.remove(lowerCase);
     }
+    logCompletionState(languageName, isEnabled);
   }
 
   @Nullable
@@ -60,6 +64,15 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
     myState.rankingEnabled = state.rankingEnabled;
     myState.enabledLanguages.clear();
     myState.enabledLanguages.addAll(state.enabledLanguages);
+
+    for (String language : state.enabledLanguages) {
+      logCompletionState(language, true);
+    }
+  }
+
+  private void logCompletionState(@NotNull String languageName, boolean isEnabled) {
+    final boolean enabled = myState.rankingEnabled && isEnabled;
+    LOG.info("ML Completion " + (enabled ? "enabled" : "disabled") + " for: " + languageName);
   }
 
   public static class State {

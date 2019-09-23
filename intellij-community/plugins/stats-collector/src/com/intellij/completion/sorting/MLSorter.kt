@@ -9,6 +9,8 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.lang.Language
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.stats.completion.CompletionUtil
@@ -27,6 +29,7 @@ class MLSorterFactory : CompletionFinalSorter.Factory {
 
 
 class MLSorter : CompletionFinalSorter() {
+  private val LOG = Logger.getInstance("#com.intellij.completion.sorting.MLSorter")
   private val cachedScore: MutableMap<LookupElement, ItemRankInfo> = IdentityHashMap()
 
   override fun getRelevanceObjects(items: MutableIterable<LookupElement>): Map<LookupElement, List<Pair<String, Any>>> {
@@ -76,7 +79,7 @@ class MLSorter : CompletionFinalSorter() {
     fillCachedScores(element2score, elements, prefixLength)
     calculateScores(element2score, elements.filter { it !in element2score }, positionsBefore,
                     prefixLength, lookup, lookupStorage, parameters)
-    val finalRanking = sortByMlScores(elements, element2score, positionsBefore)
+    val finalRanking = sortByMlScores(elements, element2score, positionsBefore, lookupStorage.language)
 
     val timeSpent = System.currentTimeMillis() - startedTimestamp
     val totalTime = timeSpent + (lookup.getUserData(CompletionUtil.ML_SORTING_CONTRIBUTION_KEY) ?: 0)
@@ -126,8 +129,14 @@ class MLSorter : CompletionFinalSorter() {
 
   private fun sortByMlScores(items: List<LookupElement>,
                              element2score: Map<LookupElement, Double?>,
-                             positionsBefore: Map<LookupElement, Int>): Iterable<LookupElement> {
-    if (element2score.values.none { it == null }) {
+                             positionsBefore: Map<LookupElement, Int>,
+                             language: Language): Iterable<LookupElement> {
+    val mlScoresUsed = element2score.values.none { it == null }
+    if (LOG.isDebugEnabled) {
+      LOG.debug("ML sorting in completion used=$mlScoresUsed for language=${language.id}" )
+    }
+
+    if (mlScoresUsed) {
       return items.sortedByDescending { element2score.getValue(it) }.addDiagnosticsIfNeeded(positionsBefore)
     }
 
