@@ -112,3 +112,12 @@ object X {
 expect class Expected
 
 actual class Actual
+
+// KT-33060
+interface AA {
+    fun foo(key: Any)
+}
+
+class A1 : AA {
+    override fun foo(key: Any) {}
+}
