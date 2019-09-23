@@ -66,7 +66,7 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
     return panel {
       row {
         val separator = TitledSeparator(runtime.getRuntimeType().configurableDescription)
-        separator(CCFlags.growX)
+        separator(CCFlags.growX, CCFlags.pushX)
         gearButton(DuplicateRuntimeAction(runtime), RemoveRuntimeAction(runtime))
       }
       row {
