@@ -145,7 +145,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
                 shouldCreateTask = true
             }
             if (shouldCreateTask) {
-                project.createOrRegisterTask(expectedClassesTaskName, IDEClassesTask::class.java) {
+                project.registerTask(expectedClassesTaskName, IDEClassesTask::class.java) {
                     it.dependsOn(getByName(kotlinCompilation.compileAllTaskName))
                 }
             }
@@ -428,11 +428,12 @@ internal abstract class AbstractKotlinPlugin(
                 )
                 return
             }
-            val inspectTask = registerTask(project, "inspectClassesForKotlinIC", InspectClassesForMultiModuleIC::class.java) {
-                it.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
-                it.jarTask = jarTask
-                it.dependsOn(classesTask)
-            }
+            val inspectTask =
+                registerTask(project, "inspectClassesForKotlinIC", InspectClassesForMultiModuleIC::class.java) {
+                    it.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
+                    it.jarTask = jarTask
+                    it.dependsOn(classesTask)
+                }
             jarTask.dependsOn(inspectTask)
         }
 

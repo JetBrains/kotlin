@@ -14,9 +14,6 @@ class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
 open class Kapt3Android32IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_2_0
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.None
 }
 
 open class Kapt3Android33IT : Kapt3AndroidIT() {

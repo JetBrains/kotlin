@@ -11,7 +11,7 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
 /**
@@ -29,7 +29,6 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         }
 
     fun registerTestTask(
-        project: Project,
         taskHolder: TaskProvider<out AbstractTestTask>,
         aggregate: TaskProvider<KotlinTestReport> = allTestsTask
     ) {
@@ -37,7 +36,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         project.cleanAllTestTask.dependsOn(cleanTaskName(taskHolder.name))
         aggregate.configure {
             it.dependsOn(taskHolder.name)
-            it.registerTestTask(taskHolder)
+            it.registerTestTask(taskHolder.get())
         }
 
         taskHolder.configure { task ->
@@ -66,7 +65,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
 
         val reportName = name
 
-        val aggregate: TaskProvider<KotlinTestReport> = project.createOrRegisterTask(name) { aggregate ->
+        val aggregate: TaskProvider<KotlinTestReport> = project.registerTask(name) { aggregate ->
             aggregate.description = description
             aggregate.group = JavaBasePlugin.VERIFICATION_GROUP
 

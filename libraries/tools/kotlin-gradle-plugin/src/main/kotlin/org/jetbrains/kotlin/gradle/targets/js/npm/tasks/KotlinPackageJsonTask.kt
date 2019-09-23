@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
 open class KotlinPackageJsonTask : DefaultTask() {
@@ -54,7 +54,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
             val rootClean = project.rootProject.tasks.getByName(BasePlugin.CLEAN_TASK_NAME)
             val npmInstallTask = nodeJs.npmInstallTask
             val packageJsonTaskName = npmProject.packageJsonTaskName
-            val packageJsonTask = project.createOrRegisterTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
+            val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.nodeJs = nodeJs
                 task.compilation = compilation
                 task.description = "Create package.json file for $compilation"

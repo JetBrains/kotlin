@@ -17,7 +17,6 @@ import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
@@ -389,8 +388,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
     }
 }
 
-class KotlinNativeTargetWithTestsConfigurator(kotlinPluginVersion: String)
-    : KotlinNativeTargetConfigurator<KotlinNativeTargetWithTests>(kotlinPluginVersion),
+class KotlinNativeTargetWithTestsConfigurator(kotlinPluginVersion: String) :
+    KotlinNativeTargetConfigurator<KotlinNativeTargetWithTests>(kotlinPluginVersion),
     KotlinTargetWithTestsConfigurator<KotlinNativeBinaryTestRun, KotlinNativeTargetWithTests> {
 
     override val testRunClass: Class<KotlinNativeBinaryTestRun>
@@ -400,7 +399,7 @@ class KotlinNativeTargetWithTestsConfigurator(kotlinPluginVersion: String)
         DefaultKotlinNativeTestRun(name, target).apply {
             val project = target.project
 
-            val testTaskOrProvider = project.createOrRegisterTask<KotlinNativeTest>(testTaskName) { testTask ->
+            val testTaskOrProvider = project.registerTask<KotlinNativeTest>(testTaskName) { testTask ->
                 testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
                 testTask.description = "Executes Kotlin/Native unit tests for target ${target.name}."
                 testTask.targetName = target.name
@@ -416,6 +415,6 @@ class KotlinNativeTargetWithTestsConfigurator(kotlinPluginVersion: String)
 
             setExecutionSourceFrom(target.binaries.getTest(NativeBuildType.DEBUG))
 
-            project.kotlinTestRegistry.registerTestTask(project, testTaskOrProvider)
+            project.kotlinTestRegistry.registerTestTask(testTaskOrProvider)
         }
 }

@@ -232,8 +232,8 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     private val _associateWith: MutableSet<AbstractKotlinCompilation<*>> = mutableSetOf()
 
-    override val associateWith: Set<KotlinCompilation<*>>
-        get() = Collections.unmodifiableSet(_associateWith)
+    override val associateWith: List<KotlinCompilation<*>>
+        get() = Collections.unmodifiableList(_associateWith.toList())
 }
 
  internal val KotlinCompilation<*>.ownModuleName: String

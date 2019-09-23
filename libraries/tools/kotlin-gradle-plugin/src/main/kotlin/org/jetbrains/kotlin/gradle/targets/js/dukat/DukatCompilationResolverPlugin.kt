@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal class DukatCompilationResolverPlugin(
     private val resolver: KotlinCompilationNpmResolver
@@ -25,7 +25,7 @@ internal class DukatCompilationResolverPlugin(
     init {
         compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
 
-        val task = project.createOrRegisterTask<PackageJsonDukatTask>(taskName) {
+        val task = project.registerTask<PackageJsonDukatTask>(taskName) {
             it.compilation = compilation
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Generate Kotlin/JS external declarations for .d.ts files in ${compilation}"

@@ -19,13 +19,13 @@ fun getSourceSetsFromAssociatedCompilations(fromCompilation: KotlinCompilation<*
 fun getVisibleSourceSetsFromAssociateCompilations(
     project: Project,
     sourceSet: KotlinSourceSet
-) = getVisibleSourceSetsFromAssociateCompilations(
+): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(
     CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(sourceSet)
 )
 
 internal fun getVisibleSourceSetsFromAssociateCompilations(
     participatesInCompilations: Set<KotlinCompilation<*>>
-): Set<KotlinSourceSet> {
+): List<KotlinSourceSet> {
     val visibleInCompilations = participatesInCompilations.map {
         val sourceSetsInAssociatedCompilations = getSourceSetsFromAssociatedCompilations(it)
         when (sourceSetsInAssociatedCompilations.size) {
@@ -46,13 +46,13 @@ internal fun getVisibleSourceSetsFromAssociateCompilations(
         else -> visibleInCompilations.first().toMutableSet().apply {
             visibleInCompilations.subList(1, visibleInCompilations.size).forEach { retainAll(it) }
         }
-    }
+    }.toList()
 }
 
 class UnsatisfiedSourceSetVisibilityException(
     val sourceSet: KotlinSourceSet,
     val compilations: Set<KotlinCompilation<*>>,
-    val visibleSourceSets: Set<KotlinSourceSet>,
+    val visibleSourceSets: List<KotlinSourceSet>,
     val requiredButNotVisible: Set<KotlinSourceSet>
 ) : GradleException() {
 

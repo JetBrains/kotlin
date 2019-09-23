@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
     @get:Internal
@@ -58,7 +58,7 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
             val project = target.project
             val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-            return project.createOrRegisterTask(name) {
+            return project.registerTask(name) {
                 it.nodeJs = nodeJs
                 it.compilation = compilation
                 it.executable = nodeJs.environment.nodeExecutable

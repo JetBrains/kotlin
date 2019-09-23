@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -199,7 +199,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             spec.into(metadataCompilation.defaultSourceSet.name)
         }
 
-        project.createOrRegisterTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(sourceSet), listOf(sourceSet)) { }
+        project.registerTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(sourceSet), listOf(sourceSet)) { }
 
         return metadataCompilation
     }
@@ -348,7 +348,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     }
 
     private fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
-        project.createOrRegisterTask("generateProjectStructureMetadata") { task ->
+        project.registerTask("generateProjectStructureMetadata") { task ->
             task.lazyKotlinProjectStructureMetadata = lazy { checkNotNull(buildKotlinProjectStructureMetadata(project)) }
         }
 }

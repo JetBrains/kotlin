@@ -69,7 +69,7 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     fun associateWith(other: KotlinCompilation<*>)
 
-    val associateWith: Set<KotlinCompilation<*>>
+    val associateWith: List<KotlinCompilation<*>>
 
     override fun getName(): String = compilationName
 

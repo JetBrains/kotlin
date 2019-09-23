@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.jvm
 
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 
@@ -28,7 +27,7 @@ class KotlinJvmTargetConfigurator(kotlinPluginVersion: String) :
         name: String,
         target: KotlinJvmTarget
     ): KotlinJvmTestRun = KotlinJvmTestRun(name, target).apply {
-        val testTaskOrProvider = target.project.createOrRegisterTask<KotlinJvmTest>(testTaskName) { testTask ->
+        val testTaskOrProvider = target.project.registerTask<KotlinJvmTest>(testTaskName) { testTask ->
             testTask.targetName = target.disambiguationClassifier
             testTask.project.tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(testTask)
         }
@@ -47,7 +46,7 @@ class KotlinJvmTargetConfigurator(kotlinPluginVersion: String) :
             }
         }
 
-        target.project.kotlinTestRegistry.registerTestTask(target.project, testTaskOrProvider)
+        target.project.kotlinTestRegistry.registerTestTask(testTaskOrProvider)
     }
 
     override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {

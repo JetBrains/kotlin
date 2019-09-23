@@ -20,9 +20,6 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_2_0
 
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.None
-
     @Test
     fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {

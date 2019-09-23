@@ -42,7 +42,7 @@ import java.net.URI
  */
 open class KotlinTestReport : TestReport() {
     @Internal
-    val testTasks = mutableListOf<TaskProvider<out AbstractTestTask>>()
+    val testTasks = mutableListOf<AbstractTestTask>()
 
     private var parent: KotlinTestReport? = null
 
@@ -62,7 +62,7 @@ open class KotlinTestReport : TestReport() {
 
     private var hasOwnFailedTests = false
     private val hasFailedTests: Boolean
-        get() = hasOwnFailedTests || children.map { it.get() }.any { it.hasFailedTests }
+        get() = hasOwnFailedTests || children.any { it.get().hasFailedTests }
 
     private val ownSuppressedRunningFailures = mutableListOf<Pair<KotlinTest, Error>>()
 
@@ -104,10 +104,8 @@ open class KotlinTestReport : TestReport() {
         }
     }
 
-    fun registerTestTask(taskProvider: TaskProvider<out AbstractTestTask>) {
-        testTasks.add(taskProvider)
-
-        val task = taskProvider.get()
+    fun registerTestTask(task: AbstractTestTask) {
+        testTasks.add(task)
 
         task.addTestListener(failedTestsListener)
         if (task is KotlinTest) task.addRunListener(object : KotlinTestRunnerListener {
@@ -243,9 +241,7 @@ open class KotlinTestReport : TestReport() {
         }
     }
 
-    private fun disableTestReporting(taskProvider: TaskProvider<out AbstractTestTask>) {
-        val task = taskProvider.get()
-
+    private fun disableTestReporting(task: AbstractTestTask) {
         task.ignoreFailures = true
         if (task is KotlinTest) {
             task.ignoreRunFailures = true

@@ -20,12 +20,9 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 /**
  * Registers the task with [name] and [type] and initialization script [body]
@@ -33,16 +30,16 @@ import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 @JvmName("registerTaskOld")
 @Deprecated("please use Project.createOrRegisterTask", ReplaceWith("project.createOrRegisterTask(name, body)"))
 internal fun <T : Task> registerTask(project: Project, name: String, type: Class<T>, body: (T) -> (Unit)): TaskProvider<T> =
-    project.createOrRegisterTask(name, type, emptyList(), body)
+    project.registerTask(name, type, emptyList(), body)
 
-internal inline fun <reified T : Task> Project.createOrRegisterTask(
+internal inline fun <reified T : Task> Project.registerTask(
     name: String,
     args: List<Any> = emptyList(),
     noinline body: (T) -> (Unit)
 ): TaskProvider<T> =
-    createOrRegisterTask(name, T::class.java, args, body)
+    this@registerTask.registerTask(name, T::class.java, args, body)
 
-internal fun <T : Task> Project.createOrRegisterTask(
+internal fun <T : Task> Project.registerTask(
     name: String,
     type: Class<T>,
     constructorArgs: List<Any> = emptyList(),
@@ -94,7 +91,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     ): TaskProvider<out Kotlin2JsCompile> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<Kotlin2JsCompile, Kotlin2JsCompileWithWorkers>(properties)
-        val result = project.createOrRegisterTask(name, taskClass) {
+        val result = project.registerTask(name, taskClass) {
             configureAction(it)
         }
         configure(result, project, properties, compilation)
@@ -109,7 +106,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     ): TaskProvider<out KotlinCompileCommon> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompileCommon, KotlinCompileCommonWithWorkers>(properties)
-        val result = project.createOrRegisterTask(name, taskClass) {
+        val result = project.registerTask(name, taskClass) {
             configureAction(it)
         }
         configure(result, project, properties, compilation)

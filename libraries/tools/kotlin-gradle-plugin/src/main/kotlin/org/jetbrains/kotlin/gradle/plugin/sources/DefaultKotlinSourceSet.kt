@@ -150,7 +150,7 @@ class DefaultKotlinSourceSet(
     }
 
     @Suppress("unused") // Used in IDE import
-    fun getAdditionalVisibleSourceSets(): Set<KotlinSourceSet> =
+    fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> =
         getVisibleSourceSetsFromAssociateCompilations(project, this)
 
     internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {

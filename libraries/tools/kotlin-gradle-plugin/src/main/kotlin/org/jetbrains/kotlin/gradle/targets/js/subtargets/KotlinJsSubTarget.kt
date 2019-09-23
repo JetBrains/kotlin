@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -19,8 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
-import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -78,7 +76,7 @@ abstract class KotlinJsSubTarget(
             )
         )
 
-        val testJs = project.createOrRegisterTask<KotlinJsTest>(testRun.subtargetTestTaskName()) { testJs ->
+        val testJs = project.registerTask<KotlinJsTest>(testRun.subtargetTestTaskName()) { testJs ->
             val compileTask = compilation.compileKotlinTask
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
@@ -102,7 +100,6 @@ abstract class KotlinJsSubTarget(
 
         target.testRuns.matching { it.name == testRun.name }.all { parentTestRun ->
             target.project.kotlinTestRegistry.registerTestTask(
-                project,
                 testJs,
                 parentTestRun.executionTask
             )
@@ -130,6 +127,6 @@ abstract class KotlinJsSubTarget(
     protected abstract fun configureRun(compilation: KotlinJsCompilation)
 
     override fun testTask(body: KotlinJsTest.() -> Unit) {
-        project.locateTask<KotlinJsTest>(testTaskName)!!.configure(body)
+        testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 }

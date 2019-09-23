@@ -59,7 +59,7 @@ class SourceSetVisibilityTest {
             checkSourceSetVisibilityRequirements(setOf(jvmTest), compilationsBySourceSets)
         }.apply {
             assertEquals(jvmTest, sourceSet)
-            assertEquals(emptySet(), visibleSourceSets)
+            assertEquals(emptyList(), visibleSourceSets)
             assertEquals(setOf(jvmMain), requiredButNotVisible)
             assertEquals(setOf(jvmTestCompilation), compilations)
         }
@@ -68,7 +68,7 @@ class SourceSetVisibilityTest {
             checkSourceSetVisibilityRequirements(setOf(commonTest), compilationsBySourceSets)
         }.apply {
             assertEquals(commonTest, sourceSet)
-            assertEquals(emptySet(), visibleSourceSets)
+            assertEquals(emptyList(), visibleSourceSets)
             assertEquals(setOf(commonMain), requiredButNotVisible)
             assertEquals(setOf(jvmTestCompilation), compilations)
         }
@@ -185,7 +185,7 @@ class SourceSetVisibilityTest {
             checkSourceSetVisibilityRequirements(setOf(commonTest), compilationsBySourceSets)
         }.apply {
             assertEquals(commonTest, this.sourceSet)
-            assertEquals(setOf(commonMain), visibleSourceSets)
+            assertEquals(listOf(commonMain), visibleSourceSets)
             assertEquals(setOf(jvmMain), requiredButNotVisible)
             assertEquals(setOf(jvmTestCompilation, jsTestCompilation), compilations)
         }
@@ -288,7 +288,7 @@ class MockKotlinCompilation(
         associateWith += other
     }
 
-    override val associateWith: MutableSet<KotlinCompilation<*>> = mutableSetOf()
+    override val associateWith: MutableList<KotlinCompilation<*>> = mutableListOf()
 
     override fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit) = defaultSourceSet.run(configure)
 
