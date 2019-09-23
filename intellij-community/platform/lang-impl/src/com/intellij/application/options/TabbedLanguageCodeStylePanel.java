@@ -313,7 +313,7 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
   }
 
   protected void addPredefinedCodeStyleListener(@NotNull PredefinedCodeStyleListener listener) {
-    myPredefinedCodeStyleEventDispatcher.addListener(listener);
+    myPredefinedCodeStyleEventDispatcher.addListener(listener, this);
   }
 
   private PredefinedCodeStyle[] getPredefinedStyles() {
