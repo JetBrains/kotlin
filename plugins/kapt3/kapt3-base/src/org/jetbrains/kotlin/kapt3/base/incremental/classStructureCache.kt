@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.kapt3.base.incremental
 
-import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.net.URI
+import java.util.regex.Pattern
 
 class JavaClassCache() : Serializable {
     private var sourceCache = mutableMapOf<URI, SourceFileStructure>()
@@ -130,7 +130,18 @@ class JavaClassCache() : Serializable {
      * annotation processor. This search is not transitive.
      */
     fun invalidateEntriesAnnotatedWith(annotations: Set<String>): Set<File> {
-        val patterns = annotations.map { JavacProcessingEnvironment.validImportStringToPattern(it) }
+        val patterns: List<Pattern> = if ("*" in annotations) {
+            // optimize this case - create only one pattern
+            listOf(Pattern.compile(".*"))
+        } else {
+            annotations.map {
+                Pattern.compile(
+                    // These are already valid import statements, otherwise run fails when loading the annotation processor.
+                    // Handles structure; TypeName [.*] e.g. org.jetbrains.annotations.NotNull and org.jetbrains.annotations.*
+                    it.replace(".", "\\.").replace("*", ".+")
+                )
+            }
+        }
         val matchesAnyPattern = { name: String -> patterns.any { it.matcher(name).matches() } }
 
         val toReprocess = mutableSetOf<URI>()
