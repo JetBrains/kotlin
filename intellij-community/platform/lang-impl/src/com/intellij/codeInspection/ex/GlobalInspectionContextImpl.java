@@ -384,8 +384,9 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
 
     InspectionResultsView newView = myView == null ? new InspectionResultsView(this, new InspectionRVContentProviderImpl()) : null;
     if (!(myView == null ? newView : myView).hasProblems()) {
+      int totalFiles = getStdJobDescriptors().BUILD_GRAPH.getTotalAmount(); // do not use invalidated scope
       NOTIFICATION_GROUP.createNotification(InspectionsBundle.message("inspection.no.problems.message",
-                                                                      scope.getFileCount(),
+                                                                      totalFiles,
                                                                       scope.getShortenName()),
                                             MessageType.INFO).notify(getProject());
       close(true);
