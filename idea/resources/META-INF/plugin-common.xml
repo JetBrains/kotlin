@@ -778,6 +778,7 @@
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"
                         serviceImplementation="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"/>
+
     <editorSmartKeysConfigurable instance="org.jetbrains.kotlin.idea.editor.KotlinEditorOptionsConfigurable"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"
@@ -3447,7 +3448,10 @@
                      language="kotlin"
     />
 
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"
+                        serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
+    <autoImportOptionsProvider instance="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettingsProvider"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
     <filetype.stubBuilder filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>

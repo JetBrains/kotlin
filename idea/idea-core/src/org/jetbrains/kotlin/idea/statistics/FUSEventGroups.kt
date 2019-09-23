@@ -22,7 +22,8 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf
     NPWizards("ide.npwizards", NPWizardsEvents),
     Debug("ide.debugger"),
     J2K("ide.j2k"),
-    Editor("ide.editor");
+    Editor("ide.editor"),
+    Settings("ide.settings");
 
     val GROUP_ID: String = "kotlin.$groupIdSuffix"
 }
