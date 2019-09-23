@@ -50,8 +50,10 @@ abstract class BasicIrBoxTest(
     private val compilationCache = mutableMapOf<String, String>()
 
     override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
+        val start = System.currentTimeMillis()
         compilationCache.clear()
         super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
+        println("$filePath: ${System.currentTimeMillis() - start}ms")
     }
 
     override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
@@ -76,7 +78,7 @@ abstract class BasicIrBoxTest(
             // TODO: split input files to some parts (global common, local common, test)
             .filterNot { it.virtualFilePath.contains(COMMON_FILES_DIR_PATH) }
 
-        val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
+        val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(fullRuntimeKlib)
 
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 

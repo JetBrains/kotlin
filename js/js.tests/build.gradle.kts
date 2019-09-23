@@ -113,7 +113,7 @@ projectTest("jsTest", true) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
 }
 
-projectTest("jsIrTest", true) {
+projectTest("jsIrTest", false) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true)
 }
 
