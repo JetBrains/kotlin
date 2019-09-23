@@ -127,7 +127,7 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
     }
 }
 
-fun IrFunctionBuilder.buildConstructor(): IrConstructor {
+fun IrFunctionBuilder.buildConstructor(): IrConstructorImpl {
     val wrappedDescriptor = WrappedClassConstructorDescriptor()
     return IrConstructorImpl(
         startOffset, endOffset, origin,
@@ -179,13 +179,13 @@ fun IrDeclarationContainer.addFunction(
         }
     }
 
-inline fun buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructor =
+inline fun buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructorImpl =
     IrFunctionBuilder().run {
         builder()
         buildConstructor()
     }
 
-inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructor =
+inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructorImpl =
     buildConstructor {
         builder()
         returnType = defaultType

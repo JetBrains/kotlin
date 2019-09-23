@@ -91,14 +91,19 @@ object InlineClassAbi {
     }
 }
 
-internal val IrType.requiresMangling: Boolean
+private val IrType.requiresMangling: Boolean
     get() {
         val irClass = erasedUpperBound
         return irClass.isInline && irClass.fqNameWhenAvailable != DescriptorUtils.RESULT_FQ_NAME
     }
 
-internal val IrFunction.fullValueParameterList: List<IrValueParameter>
+private val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
+
+internal val IrFunction.hasMangledParameters: Boolean
+    get() = dispatchReceiverParameter?.type?.getClass()?.isInline == true ||
+            fullValueParameterList.any { it.type.requiresMangling } ||
+            (this is IrConstructor && constructedClass.isInline)
 
 internal val IrClass.inlineClassFieldName: Name
     get() = primaryConstructor!!.valueParameters.single().name
