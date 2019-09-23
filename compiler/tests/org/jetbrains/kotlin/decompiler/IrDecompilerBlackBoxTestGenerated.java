@@ -29,33 +29,92 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
-    @TestMetadata("classes.kt")
-    public void testClasses() throws Exception {
-        runTest("compiler/testData/decompiler/box/classes.kt");
-    }
-
     @TestMetadata("dummy.kt")
     public void testDummy() throws Exception {
         runTest("compiler/testData/decompiler/box/dummy.kt");
     }
 
-    @TestMetadata("loops.kt")
-    public void testLoops() throws Exception {
-        runTest("compiler/testData/decompiler/box/loops.kt");
+    @TestMetadata("compiler/testData/decompiler/box/classes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Classes extends AbstractIrDecompilerBlackBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("classes_instance_ctor.kt")
+        public void testClasses_instance_ctor() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_instance_ctor.kt");
+        }
+
+        @TestMetadata("classes_instance_property.kt")
+        public void testClasses_instance_property() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_instance_property.kt");
+        }
+
+        @TestMetadata("classes_simple.kt")
+        public void testClasses_simple() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_simple.kt");
+        }
     }
 
-    @TestMetadata("paramWhen.kt")
-    public void testParamWhen() throws Exception {
-        runTest("compiler/testData/decompiler/box/paramWhen.kt");
+    @TestMetadata("compiler/testData/decompiler/box/functions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Functions extends AbstractIrDecompilerBlackBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunctions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/functions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("fibonacci.kt")
+        public void testFibonacci() throws Exception {
+            runTest("compiler/testData/decompiler/box/functions/fibonacci.kt");
+        }
+
+        @TestMetadata("fun_invokation.kt")
+        public void testFun_invokation() throws Exception {
+            runTest("compiler/testData/decompiler/box/functions/fun_invokation.kt");
+        }
+
+        @TestMetadata("fun_recursion.kt")
+        public void testFun_recursion() throws Exception {
+            runTest("compiler/testData/decompiler/box/functions/fun_recursion.kt");
+        }
+
+        @TestMetadata("simpleOperators.kt")
+        public void testSimpleOperators() throws Exception {
+            runTest("compiler/testData/decompiler/box/functions/simpleOperators.kt");
+        }
     }
 
-    @TestMetadata("simpleOperators.kt")
-    public void testSimpleOperators() throws Exception {
-        runTest("compiler/testData/decompiler/box/simpleOperators.kt");
-    }
+    @TestMetadata("compiler/testData/decompiler/box/loops_conditions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Loops_conditions extends AbstractIrDecompilerBlackBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
 
-    @TestMetadata("simpleWhen.kt")
-    public void testSimpleWhen() throws Exception {
-        runTest("compiler/testData/decompiler/box/simpleWhen.kt");
+        public void testAllFilesPresentInLoops_conditions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/loops_conditions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("loops.kt")
+        public void testLoops() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/loops.kt");
+        }
+
+        @TestMetadata("when_is.kt")
+        public void testWhen_is() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/when_is.kt");
+        }
     }
 }

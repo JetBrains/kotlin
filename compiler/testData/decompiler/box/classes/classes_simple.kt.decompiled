@@ -1,10 +1,12 @@
-class TestClass(){
-    fun foo(): Unit
-    {
+class TestClass{
+    constructor(){
     }
-    fun bar(): Unit
-    {
+    fun foo(): Unit {
     }
+
+    fun bar(): Unit {
+    }
+
 }
 interface TestInterface{
     abstract fun foo(): Unit
@@ -13,7 +15,6 @@ object TestObject{
 }
 annotation class TestAnnotationClass{
 }
-fun box(): String
-{
+fun box(): String {
     return "OK"
 }

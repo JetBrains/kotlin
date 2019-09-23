@@ -1,37 +1,36 @@
-fun test1(a: Int, b: Int): Int
-{
+fun test1(a: Int, b: Int): Int {
     return a + b
 }
-fun test1x(a: Int, b: Int): Int
-{
+
+fun test1x(a: Int, b: Int): Int {
     return a.plus(b)
 }
-fun test2(a: Int, b: Int): Int
-{
+
+fun test2(a: Int, b: Int): Int {
     return a - b
 }
-fun test2x(a: Int, b: Int): Int
-{
+
+fun test2x(a: Int, b: Int): Int {
     return a.minus(b)
 }
-fun test3(a: Int, b: Int): Int
-{
+
+fun test3(a: Int, b: Int): Int {
     return a * b
 }
-fun test3x(a: Int, b: Int): Int
-{
+
+fun test3x(a: Int, b: Int): Int {
     return a.times(b)
 }
-fun test4(a: Int, b: Int): Int
-{
+
+fun test4(a: Int, b: Int): Int {
     return a / b
 }
-fun test4x(a: Int, b: Int): Int
-{
+
+fun test4x(a: Int, b: Int): Int {
     return a.div(b)
 }
-fun box(): String
-{
+
+fun box(): String {
     val t1: Int = test1(2, 1)
     val t1x: Int = test1x(2, 1)
     val t2: Int = test2(2, 1)
@@ -41,9 +40,12 @@ fun box(): String
     val t4: Int = test4(2, 1)
     val t4x: Int = test4x(2, 1)
     val tmp0_subject: Int = t1
-    when
-    {
-        tmp0_subject == 3 ->         return "OK"
-        else ->         return "FAIL"
+    when {
+        tmp0_subject == 3 -> {
+            return "OK"
+        }
+        else -> {
+            return "FAIL"
+        }
     }
 }

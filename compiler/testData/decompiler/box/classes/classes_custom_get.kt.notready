@@ -1,0 +1,16 @@
+class CustomGetPropClass(val idx: Int) {
+    val simple_prop = 42
+    val customGetProp: Int
+        get() = 666
+}
+
+fun box(): String {
+    val customGetPropClass = CustomGetPropClass(10)
+    if (customGetPropClass.simple_prop != 42) {
+        return "FAIL"
+    }
+    if (customGetPropClass.customGetProp != 55) {
+        return "FAIL"
+    }
+    return "OK"
+}
