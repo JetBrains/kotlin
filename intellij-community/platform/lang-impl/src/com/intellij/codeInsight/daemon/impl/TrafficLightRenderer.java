@@ -67,21 +67,21 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   protected int[] errorCount;
 
   /**
-   * @deprecated Please use the constructor not taking PsiFile parameter
+   * @deprecated Please use the constructor not taking PsiFile parameter: {@link #TrafficLightRenderer(Project, Document)}
    */
   @Deprecated
   public TrafficLightRenderer(@Nullable Project project, Document document, PsiFile psiFile) {
     this(project, document);
   }
 
-  public TrafficLightRenderer(@Nullable Project project, Document document) {
+  public TrafficLightRenderer(@Nullable Project project, @Nullable Document document) {
     myProject = project;
     myDaemonCodeAnalyzer = project == null ? null : (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
     myDocument = document;
     mySeverityRegistrar = SeverityRegistrar.getSeverityRegistrar(myProject);
     refresh(null);
 
-    if (project != null) {
+    if (project != null && document != null) {
       final MarkupModelEx model = (MarkupModelEx)DocumentMarkupModel.forDocument(document, project, true);
       model.addMarkupModelListener(this, new MarkupModelListener() {
         @Override
@@ -133,8 +133,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   public boolean isValid() {
-    PsiFile file = getPsiFile();
-    return file == null || file.isValid();
+    return myProject == null || myDocument == null || getPsiFile() != null;
   }
 
   protected static class DaemonCodeAnalyzerStatus {
