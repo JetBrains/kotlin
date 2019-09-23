@@ -369,7 +369,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
 
   private void doInitBooleanField(@NonNls String fieldName, String title, String groupName) {
     try {
-      Class styleSettingsClass = CommonCodeStyleSettings.class;
+      Class<?> styleSettingsClass = CommonCodeStyleSettings.class;
       Field field = styleSettingsClass.getField(fieldName);
       String actualGroupName = getRemappedGroup(fieldName, groupName);
 
@@ -411,10 +411,10 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     private final SpeedSearchHelper      mySearchStringProvider;
 
     public MyTreeCellRenderer() {
-      this(null);
+      this(new SpeedSearchHelper());
     }
 
-    public MyTreeCellRenderer(@Nullable SpeedSearchHelper searchStringProvider) {
+    public MyTreeCellRenderer(@NotNull SpeedSearchHelper searchStringProvider) {
       myCheckBox = new JCheckBox();
       myCheckBox.setMargin(JBUI.emptyInsets());
       myLabel = new SimpleColoredComponent();

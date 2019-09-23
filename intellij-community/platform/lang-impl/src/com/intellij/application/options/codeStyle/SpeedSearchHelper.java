@@ -12,22 +12,28 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 class SpeedSearchHelper {
-  private final     SpeedSearchSupply mySpeedSearch;
-  private @Nullable String            mySearchString;
+  private final @Nullable SpeedSearchSupply mySpeedSearch;
+  private @Nullable       String            mySearchString;
 
-  SpeedSearchHelper(@NotNull SpeedSearchSupply search) {
+  SpeedSearchHelper() {
+    this(null);
+  }
+
+  SpeedSearchHelper(@Nullable SpeedSearchSupply search) {
     mySpeedSearch = search;
   }
 
   private String getSearchString() {
-    String speedSearch = mySpeedSearch.getEnteredPrefix();
+    String speedSearch = mySpeedSearch != null ? mySpeedSearch.getEnteredPrefix() : null;
     if (StringUtil.isNotEmpty(speedSearch)) return speedSearch;
     return ObjectUtils.notNull(mySearchString, "");
   }
 
   void find(@NotNull String searchString) {
     mySearchString = searchString;
-    mySpeedSearch.findAndSelectElement(searchString);
+    if (mySpeedSearch != null) {
+      mySpeedSearch.findAndSelectElement(searchString);
+    }
   }
 
   void setLabelText(@NotNull SimpleColoredComponent label,
