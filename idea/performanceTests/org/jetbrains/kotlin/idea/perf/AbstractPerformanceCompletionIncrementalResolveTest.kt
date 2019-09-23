@@ -11,6 +11,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
@@ -56,7 +57,7 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
     }
 
     private fun doWarmUpPerfTest() {
-        innerPerfTest("warm-up") {
+        innerPerfTest(WARM_UP) {
             myFixture.configureByText(
                 KotlinFileType.INSTANCE,
                 "class Foo {\n    private val value: String? = n<caret>\n}"

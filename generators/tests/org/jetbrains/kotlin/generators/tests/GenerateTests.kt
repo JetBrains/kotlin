@@ -1281,6 +1281,10 @@ fun main(args: Array<String>) {
             model("copyPaste/conversion", testMethod = "doPerfTest", pattern = """^([^\.]+)\.java$""")
         }
 
+        testClass<AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest> {
+            model("copyPaste/literal", testMethod = "doPerfTest", pattern = """^([^\.]+)\.kt$""")
+        }
+
         testClass<AbstractPerformanceHighlightingTest> {
             model("highlighter", testMethod = "doPerfTest")
         }
