@@ -24,7 +24,7 @@ class RangesAssert {
 
     final StringBuilder messageBuffer =  new StringBuilder();
     messageBuffer.append(message);
-    Class problematicLanguageClass;
+    Class<?> problematicLanguageClass;
     if (model instanceof FormattingDocumentModelImpl) {
       Language language = ((FormattingDocumentModelImpl)model).getFile().getLanguage();
       messageBuffer.append(" in #").append(language.getDisplayName());
@@ -36,9 +36,9 @@ class RangesAssert {
 
     messageBuffer.append(" #formatter");
     messageBuffer.append("\nRange: [").append(startOffset).append(",").append(newEndOffset).append("], ")
-                 .append("text fragment: [").append(minOffset).append(",").append(maxOffset).append("] - '")
-                 .append(model.getText(new TextRange(minOffset, maxOffset))).append("'\n");
+                 .append("text fragment: [").append(minOffset).append(",").append(maxOffset).append("]\n");
 
+    buffer.append("Fragment text: '").append(model.getText(new TextRange(minOffset, maxOffset))).append("'\n");
     buffer.append("File text:(").append(model.getTextLength()).append(")\n'");
     buffer.append(model.getText(new TextRange(0, model.getTextLength())).toString());
     buffer.append("'\n");
