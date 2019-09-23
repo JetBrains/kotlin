@@ -3,18 +3,18 @@ package org.jetbrains.plugins.gradle.execution
 
 import com.intellij.openapi.externalSystem.model.task.TaskData
 import org.jetbrains.plugins.gradle.execution.TaskOption.ArgumentType.CLASS
+import org.jetbrains.plugins.gradle.execution.TaskOption.ArgumentType.NOTHING
 
 class GradleCommandLineTaskOptionsProvider {
-  private val testTaskOptions = listOf(TaskOption("--tests", CLASS))
-
   fun getTaskOptions(task: TaskData) = when {
-    task.isTest -> testTaskOptions
+    task.isTest -> listOf(TaskOption("--tests", CLASS))
+    task.name == "tasks" -> listOf(TaskOption("--all", NOTHING))
     else -> emptyList()
   }
 }
 
 class TaskOption(val name: String, val argumentTypes: Set<ArgumentType>) {
-  enum class ArgumentType { CLASS }
+  enum class ArgumentType { NOTHING, CLASS }
 
   constructor(name: String, vararg argumentTypes: ArgumentType) : this(name, argumentTypes.toSet())
 }

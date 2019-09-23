@@ -264,6 +264,12 @@ public class GradleUtil {
     String projectPath = ExternalSystemApiUtil.getExternalProjectPath(module);
     if (projectPath == null) return null;
     Project project = module.getProject();
+    return findGradleModuleData(project, projectPath);
+  }
+
+  @ApiStatus.Experimental
+  @Nullable
+  public static DataNode<ModuleData> findGradleModuleData(@NotNull Project project, @NotNull String projectPath) {
     DataNode<ProjectData> projectNode = ExternalSystemApiUtil.findProjectData(project, GradleConstants.SYSTEM_ID, projectPath);
     if (projectNode == null) return null;
     BooleanFunction<DataNode<ModuleData>> predicate = node -> projectPath.equals(node.getData().getLinkedExternalProjectPath());

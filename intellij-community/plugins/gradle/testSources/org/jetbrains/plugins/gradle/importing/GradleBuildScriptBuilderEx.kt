@@ -15,7 +15,7 @@ class GradleBuildScriptBuilderEx : GradleBuildScriptBuilder() {
     if (!localDirWithJar.exists()) throw RuntimeException("Directory $localDirWithJar not found")
     if (!localDirWithJar.isDirectory) throw RuntimeException("File $localDirWithJar is not directory")
     val template = "gradle-idea-ext-.+-SNAPSHOT\\.jar".toRegex()
-    val jarFile = localDirWithJar.listFiles().find { it.name.matches(template) }
+    val jarFile = localDirWithJar.listFiles()?.find { it.name.matches(template) }
     if (jarFile == null) throw RuntimeException("Jar with gradle-idea-ext plugin not found")
     if (!jarFile.isFile) throw RuntimeException("Invalid jar file $jarFile")
     withLocalGradleIdeaExtPlugin(jarFile)
@@ -32,6 +32,14 @@ class GradleBuildScriptBuilderEx : GradleBuildScriptBuilder() {
 
   fun withGradleIdeaExtPlugin(version: String) = apply {
     addPlugin("id 'org.jetbrains.gradle.plugin.idea-ext' version '$version'")
+  }
+
+  fun withTask(name: String, vararg types: String, content: String = "") = apply {
+    addPostfix("""
+      tasks.register("$name"${types.joinToString("") { ", $it" }}) {
+        $content
+      }
+    """.trimIndent())
   }
 
   fun withJavaPlugin() = apply {
