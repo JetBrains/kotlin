@@ -136,6 +136,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         createFileAndSyncDependencies(mainScriptFile)
     }
 
+    private val oldScripClasspath: String? = System.getProperty("kotlin.script.classpath")
+
     override fun setUp() {
         super.setUp()
         ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = true
@@ -143,6 +145,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     override fun tearDown() {
         ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = false
+
+        System.setProperty("kotlin.script.classpath", oldScripClasspath ?: "")
+
         super.tearDown()
     }
 
@@ -215,6 +220,10 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             compileLibToDir(it, *scriptClasspath())
         } ?: File("idea/testData/script/definition/defaultTemplate").takeIf { it.isDirectory }?.let {
             compileLibToDir(it, *scriptClasspath())
+        }
+
+        if (templateOutDir != null) {
+            System.setProperty("kotlin.script.classpath", templateOutDir.path)
         }
 
         val libSrcDir = File("${path}lib").takeIf { it.isDirectory }

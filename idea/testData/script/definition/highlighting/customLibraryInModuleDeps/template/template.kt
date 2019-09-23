@@ -1,24 +1,37 @@
 package custom.scriptDefinition
 
 import java.io.File
-import kotlin.script.dependencies.*
-import kotlin.script.experimental.dependencies.*
-import kotlin.script.templates.ScriptTemplateDefinition
-import kotlin.script.experimental.location.*
+import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
+import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.util.PropertiesCollection
 
-class TestDependenciesResolver : DependenciesResolver {
-    override fun resolve(
-            scriptContents: ScriptContents,
-            environment: Environment
-    ): DependenciesResolver.ResolveResult {
-        return DependenciesResolver.ResolveResult.Success(
-            ScriptDependencies(
-                classpath = listOf(environment["template-classes"] as File)
-            )
-        )
+@KotlinScript(
+    fileExtension = "kts",
+    compilationConfiguration = TemplateDefinition::class
+)
+open class Template(val args: Array<String>)
+
+val ScriptingHostConfigurationKeys.getEnvironment by PropertiesCollection.key<() -> Map<String, Any?>?>()
+
+object TemplateDefinition : ScriptCompilationConfiguration(
+    {
+        refineConfiguration {
+            beforeCompiling { context ->
+                val environment =
+                    context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
+                        it[ScriptingHostConfiguration.getEnvironment]?.invoke()
+                    }.orEmpty()
+
+                context.compilationConfiguration.with {
+                    dependencies(JvmDependency(environment["template-classes"] as File))
+                }.asSuccess()
+            }
+        }
+        ide {
+            acceptedLocations(ScriptAcceptedLocation.Everywhere)
+        }
     }
-}
-
-@ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])
-@ScriptTemplateDefinition(TestDependenciesResolver::class, scriptFilePattern = "script.kts")
-open class Template
+)
