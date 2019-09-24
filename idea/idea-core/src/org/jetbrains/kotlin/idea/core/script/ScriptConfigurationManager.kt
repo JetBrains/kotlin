@@ -38,10 +38,7 @@ import kotlin.script.experimental.api.makeFailureResult
 
 // NOTE: this service exists exclusively because ScriptDependencyManager
 // cannot be registered as implementing two services (state would be duplicated)
-class IdeScriptDependenciesProvider(
-    private val scriptConfigurationManager: ScriptConfigurationManager,
-    project: Project
-) : ScriptDependenciesProvider(project) {
+class IdeScriptDependenciesProvider(project: Project) : ScriptDependenciesProvider(project) {
     override fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? {
         val configuration = getScriptConfiguration(file)
         val reports = IdeScriptReportSink.getReports(file)
@@ -52,7 +49,7 @@ class IdeScriptDependenciesProvider(
     }
 
     override fun getScriptConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper? {
-        return scriptConfigurationManager.getConfiguration(file)
+        return ScriptConfigurationManager.getInstance(project).getConfiguration(file)
     }
 
 }

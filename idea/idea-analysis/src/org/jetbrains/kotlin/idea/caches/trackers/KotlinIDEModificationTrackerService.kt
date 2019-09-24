@@ -11,10 +11,10 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.psi.KtFile
 
-class KotlinIDEModificationTrackerService(project: Project, psiModificationTracker: PsiModificationTracker) :
+class KotlinIDEModificationTrackerService(project: Project) :
     KotlinModificationTrackerService() {
 
-    override val modificationTracker: ModificationTracker = psiModificationTracker
+    override val modificationTracker: ModificationTracker = PsiModificationTracker.SERVICE.getInstance(project)
 
     override val outOfBlockModificationTracker: ModificationTracker =
         KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
