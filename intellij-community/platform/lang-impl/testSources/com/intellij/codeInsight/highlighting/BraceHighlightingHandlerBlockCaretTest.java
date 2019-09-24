@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait;
 
 @RunWith(com.intellij.testFramework.Parameterized.class)
-@TestDataPath("/testData/../../../platform/lang-impl/testData/editor/braceHighlighter/blockCaret/")
+@TestDataPath("/testData/../../../platform/lang-impl/testData/editor/braceHighlighterBlock/")
 public class BraceHighlightingHandlerBlockCaretTest extends LightPlatformCodeInsightTestCase implements FileBasedTestCaseHelper {
   @Test
   public void testAction() {
