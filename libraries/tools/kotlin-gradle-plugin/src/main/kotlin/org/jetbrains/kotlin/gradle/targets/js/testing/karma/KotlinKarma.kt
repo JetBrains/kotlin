@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Devtool
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
 import java.io.File
@@ -252,6 +253,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         val webpackConfigWriter = KotlinWebpackConfig(
             configDirectory = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory },
             sourceMaps = true,
+            devtool = Devtool.INLINE_SOURCE_MAP,
             export = false,
             progressReporter = true,
             progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
