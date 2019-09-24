@@ -139,8 +139,15 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
         val jvmTarget = getDefaultJvmTarget(rootModel.sdk, bundledRuntimeVersion())
         if (jvmTarget != null) {
             buildScriptData
-                .addImport("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
-                .addOther("tasks.withType<KotlinCompile> {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n")
+                .addOther(
+                    "tasks {\n" +
+                            "    compileKotlin {\n" +
+                            "        kotlinOptions {\n" +
+                            "            jvmTarget = \"8\"\n" +
+                            "        }\n" +
+                            "    }\n" +
+                            "}"
+                )
         }
 
         val artifactId = getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion())
