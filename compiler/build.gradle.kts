@@ -85,10 +85,10 @@ dependencies {
 
     }
     testRuntime(androidDxJar())
-    testRuntime(files(toolsJar()))
+    testRuntime(toolsJar())
 
     antLauncherJar(commonDep("org.apache.ant", "ant"))
-    antLauncherJar(files(toolsJar()))
+    antLauncherJar(toolsJar())
 }
 
 sourceSets {

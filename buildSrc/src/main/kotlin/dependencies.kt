@@ -8,6 +8,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.AbstractCopyTask
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
@@ -128,7 +129,9 @@ fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = Fi
             logger.warn("Cannot find file by paths: ${paths.toList()} in $jdkHome")
     }
 
-fun Project.toolsJar(jdkHome: File = File(this.property("JDK_18") as String)): File? =
+fun Project.toolsJar(): FileCollection = files(toolsJarFile() ?: error("tools.jar is not found!"))
+
+fun Project.toolsJarFile(jdkHome: File = File(this.property("JDK_18") as String)): File? =
     firstFromJavaHomeThatExists("lib/tools.jar", jdkHome = jdkHome)
 
 val compilerManifestClassPath

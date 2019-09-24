@@ -60,7 +60,7 @@ dependencies {
     }
     
     antLauncherJar(commonDep("org.apache.ant", "ant"))
-    antLauncherJar(files(toolsJar()))
+    antLauncherJar(toolsJar())
 }
 
 sourceSets {

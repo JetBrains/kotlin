@@ -24,7 +24,7 @@ dependencies {
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:fir2ir"))
-    compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    compile(toolsJar())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
