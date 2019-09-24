@@ -24,6 +24,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationInitializedListener implementation="com.intellij.stats.completion.CompletionTrackerInitializer"/>
     <applicationService serviceImplementation="com.intellij.completion.settings.CompletionMLRankingSettings"/>
 
     <applicationService serviceInterface="com.intellij.stats.completion.CompletionLoggerProvider"
@@ -82,11 +83,4 @@
 
     <completion.ml.contextFeatures language="" implementationClass="com.intellij.completion.ml.common.CommonLocationFeatures"/>
   </extensions>
-
-  <application-components>
-    <component>
-      <implementation-class>com.intellij.stats.completion.CompletionTrackerInitializer</implementation-class>
-    </component>
-  </application-components>
-
 </idea-plugin>

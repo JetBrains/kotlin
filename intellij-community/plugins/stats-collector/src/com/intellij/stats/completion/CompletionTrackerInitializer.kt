@@ -1,13 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.completion
 
+import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
+import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
 import com.intellij.completion.ml.ContextFeaturesStorage
-import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.completion.tracker.PositionTrackingListener
+import com.intellij.ide.ApplicationInitializedListener
 import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
@@ -29,9 +30,9 @@ import com.intellij.stats.storage.factors.MutableLookupStorage
 import java.beans.PropertyChangeListener
 import kotlin.random.Random
 
-class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
+class CompletionTrackerInitializer : ApplicationInitializedListener {
   companion object {
-    var isEnabledInTests: Boolean = false
+    var isEnabledInTests = false
     private val LOGGED_SESSIONS_RATIO: Map<String, Double> = mapOf(
       "python" to 0.5,
       "scala" to 0.3,
@@ -57,6 +58,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
       processUserFactors(lookup, lookupStorage)
       processSessionFactors(lookup, lookupStorage)
 
+      val experimentHelper = WebServiceStatus.getInstance()
       if (sessionShouldBeLogged(experimentHelper, lookup.language())) {
         val tracker = actionsTracker(lookup, experimentHelper)
         actionListener.listener = tracker
@@ -64,10 +66,6 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
         lookup.setPrefixChangeListener(tracker)
       }
     }
-  }
-
-  init {
-    initComponent()
   }
 
   private fun actionsTracker(lookup: LookupImpl, experimentHelper: WebServiceStatus): CompletionActionsTracker {
@@ -114,8 +112,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
     }
   }
 
-  private fun processUserFactors(lookup: LookupImpl,
-                                 lookupStorage: MutableLookupStorage) {
+  private fun processUserFactors(lookup: LookupImpl, lookupStorage: MutableLookupStorage) {
     if (!shouldUseUserFactors()) return
 
     val userFactors = UserFactorsManager.getInstance().getAllFactors()
@@ -145,7 +142,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
     lookup.setPrefixChangeListener(shownTimesTracker)
   }
 
-  private fun initComponent() {
+  override fun componentsInitialized() {
     if (!shouldInitialize()) {
       return
     }
