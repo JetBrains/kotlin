@@ -304,8 +304,11 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
                                                    Set<? extends LookupElement> items,
                                                    Iterable<? extends LookupElement> sortedElements,
                                                    @Nullable LookupElement relevantSelection) {
+    final CompletionParameters completionParams = myProcess.getParameters();
     Iterator<? extends LookupElement> byRelevance =
-      myFinalSorter.sort(sortedElements, Objects.requireNonNull(myProcess.getParameters())).iterator();
+      completionParams != null
+      ? myFinalSorter.sort(sortedElements, completionParams).iterator()
+      : sortedElements.iterator();
 
     final LinkedHashSet<LookupElement> model = new LinkedHashSet<>();
 
