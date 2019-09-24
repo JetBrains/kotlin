@@ -4,7 +4,6 @@ package com.intellij.openapi.compiler;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -36,8 +35,8 @@ public abstract class CompilerManager {
    * @param project the project for which the manager is requested.
    * @return the manager instance.
    */
-  public static CompilerManager getInstance(Project project) {
-    return ServiceManager.getService(project, CompilerManager.class);
+  public static CompilerManager getInstance(@NotNull Project project) {
+    return project.getService(CompilerManager.class);
   }
 
   public abstract boolean isCompilationActive();

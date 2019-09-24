@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiManager;
+import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
@@ -64,16 +65,23 @@ public class CompilerManagerImpl extends CompilerManager {
   private final Set<FileType> myCompilableTypes = new HashSet<>();
   private final CompilationStatusListener myEventPublisher;
   private final Semaphore myCompilationSemaphore = new Semaphore(1, true);
-  private final Set<ModuleType> myValidationDisabledModuleTypes = new HashSet<>();
+  private final Set<ModuleType<?>> myValidationDisabledModuleTypes = new HashSet<>();
   private final Set<LocalFileSystem.WatchRequest> myWatchRoots;
   private volatile ExternalJavacManager myExternalJavacManager;
 
-  public CompilerManagerImpl(final Project project, MessageBus messageBus) {
+  @SuppressWarnings("MissingDeprecatedAnnotation")
+  @NonInjectable
+  @Deprecated
+  public CompilerManagerImpl(@NotNull Project project, @NotNull MessageBus messageBus) {
+    this(project);
+  }
+
+  public CompilerManagerImpl(@NotNull Project project) {
     myProject = project;
-    myEventPublisher = messageBus.syncPublisher(CompilerTopics.COMPILATION_STATUS);
+    myEventPublisher = project.getMessageBus().syncPublisher(CompilerTopics.COMPILATION_STATUS);
 
     // predefined compilers
-    for(Compiler compiler: Compiler.EP_NAME.getExtensions(myProject)) {
+    for (Compiler compiler : Compiler.EP_NAME.getExtensions(myProject)) {
       addCompiler(compiler);
     }
     for (CompilerFactory factory : CompilerFactory.EP_NAME.getExtensionList(project)) {
