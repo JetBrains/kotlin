@@ -2,6 +2,7 @@
 package com.intellij.execution.remote
 
 import com.intellij.openapi.components.*
+import com.intellij.util.text.UniqueNameGenerator
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.XCollection
@@ -21,6 +22,25 @@ class RemoteTargetsManager : PersistentStateComponent<RemoteTargetsManager.Targe
 
   override fun loadState(state: TargetsListState) {
     targets.loadState(state.targets)
+  }
+
+  fun addTarget(target: RemoteTargetConfiguration) {
+    if (!targets.resolvedConfigs().contains(target)) {
+      ensureUniqueName(target)
+      targets.addConfig(target)
+    }
+  }
+
+  fun removeTarget(target: RemoteTargetConfiguration) {
+    targets.removeConfig(target)
+  }
+
+  internal fun ensureUniqueName(target: RemoteTargetConfiguration) {
+    if (!targets.resolvedConfigs().contains(target)) {
+      val existingNames = targets.resolvedConfigs().map { it.displayName }.toSet() + targets.unresolvedNames()
+      val uniqueName = UniqueNameGenerator.generateUniqueName(target.displayName, existingNames)
+      target.displayName = uniqueName
+    }
   }
 
   companion object {

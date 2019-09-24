@@ -65,7 +65,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
     super.apply()
 
     val addedConfigs = getConfiguredTargets() - RemoteTargetsManager.instance.targets.resolvedConfigs()
-    addedConfigs.forEach { RemoteTargetsManager.instance.targets.addConfig(it) }
+    addedConfigs.forEach { RemoteTargetsManager.instance.addTarget(it) }
   }
 
   private fun allTargets() = RemoteTargetsManager.instance.targets.resolvedConfigs()
@@ -84,18 +84,16 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
       .filterNotNull()
       .toList()
 
-  private fun applyUniqueName(config: RemoteTargetConfiguration) {
-    config.displayName = UniqueNameGenerator.generateUniqueName(config.getTargetType().displayName) { curName ->
-      getConfiguredTargets().none { it.displayName == curName }
-    }
-  }
-
   private inner class CreateNewTargetAction(private val type: RemoteTargetType<*>)
     : DumbAwareAction(type.displayName, null, type.icon) {
 
     override fun actionPerformed(e: AnActionEvent) {
       val newConfig = type.createDefaultConfig()
-      applyUniqueName(newConfig)
+      // there may be not yet stored names
+      newConfig.displayName = UniqueNameGenerator.generateUniqueName(type.displayName) { curName ->
+        getConfiguredTargets().none { it.displayName == curName }
+      }
+      RemoteTargetsManager.instance.ensureUniqueName(newConfig)
       val newNode = addTargetNode(newConfig)
       selectNodeInTree(newNode, true, true)
     }
@@ -125,8 +123,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
 
     override fun actionPerformed(e: AnActionEvent) {
       duplicateSelected()?.let { copy ->
-        applyUniqueName(copy)
-        RemoteTargetsManager.instance.targets.addConfig(copy)
+        RemoteTargetsManager.instance.addTarget(copy)
         val newNode = addTargetNode(copy)
         selectNodeInTree(newNode, true, true)
       }

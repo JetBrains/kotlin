@@ -11,8 +11,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SeparatorWithText;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.text.UniqueNameGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +19,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
   public static final Logger LOGGER = Logger.getInstance(RunOnTargetComboBox.class);
@@ -156,11 +153,7 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
           RemoteTargetConfiguration newTarget = wizardData.first;
           RemoteTargetWizard wizard = new RemoteTargetWizard(myProject, "New Target", newTarget, wizardData.second);
           if (wizard.showAndGet()) {
-            BaseExtendableList<RemoteTargetConfiguration, RemoteTargetType<?>> targets = RemoteTargetsManager.getInstance().getTargets();
-            Set<String> existingNames = ContainerUtil.map2Set(targets.resolvedConfigs(), t -> t.getDisplayName());
-            String defaultName = ((Type<?>)anObject).type.getDisplayName();
-            newTarget.setDisplayName(UniqueNameGenerator.generateUniqueName(defaultName, existingNames));
-            targets.addConfig(newTarget);
+            RemoteTargetsManager.getInstance().addTarget(newTarget);
             addTarget(newTarget, 1);
             setSelectedIndex(1);
           }
