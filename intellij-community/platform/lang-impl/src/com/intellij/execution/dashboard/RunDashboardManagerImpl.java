@@ -3,7 +3,6 @@ package com.intellij.execution.dashboard;
 
 import com.google.common.collect.Sets;
 import com.intellij.execution.*;
-import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.tree.RunConfigurationNode;
 import com.intellij.execution.dashboard.tree.RunDashboardGrouper;
@@ -63,8 +62,10 @@ import java.util.stream.Collectors;
   storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
 )
 public class RunDashboardManagerImpl implements RunDashboardManager, PersistentStateComponent<RunDashboardManagerImpl.State> {
-  private static final ExtensionPointName<RunDashboardCustomizer> EP_NAME =
+  private static final ExtensionPointName<RunDashboardCustomizer> CUSTOMIZER_EP_NAME =
     ExtensionPointName.create("com.intellij.runDashboardCustomizer");
+  private static final ExtensionPointName<RunDashboardDefaultTypesProvider> DEFAULT_TYPES_PROVIDER_EP_NAME =
+    ExtensionPointName.create("com.intellij.runDashboardDefaultTypesProvider");
   private static final float DEFAULT_CONTENT_PROPORTION = 0.3f;
   @NonNls private static final String HELP_ID = "run-dashboard.reference";
 
@@ -314,7 +315,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
       initToolWindowContentListeners();
     }
 
-    List<String> enableByDefaultTypes = getEnableByDefaultTypes();
+    Set<String> enableByDefaultTypes = getEnableByDefaultTypes();
     myState.configurationTypes.clear();
     myState.configurationTypes.addAll(myTypes);
     myState.configurationTypes.removeAll(enableByDefaultTypes);
@@ -373,7 +374,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   public List<RunDashboardCustomizer> getCustomizers(@NotNull RunnerAndConfigurationSettings settings,
                                                      @Nullable RunContentDescriptor descriptor) {
     List<RunDashboardCustomizer> customizers = ContainerUtil.newSmartList();
-    for (RunDashboardCustomizer customizer : EP_NAME.getExtensions()) {
+    for (RunDashboardCustomizer customizer : CUSTOMIZER_EP_NAME.getExtensions()) {
       if (customizer.isApplicable(settings, descriptor)) {
         customizers.add(customizer);
       }
@@ -788,17 +789,12 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     return null;
   }
 
-  private List<String> getEnableByDefaultTypes() {
-    Set<ConfigurationType> types = new THashSet<>();
-    for (ConfigurationType type : ConfigurationType.CONFIGURATION_TYPE_EP.getExtensions()) {
-      for (RunDashboardCustomizer customizer : EP_NAME.getExtensions()) {
-        if (customizer.isEnabledByDefault(myProject, type)) {
-          types.add(type);
-          break;
-        }
-      }
+  private Set<String> getEnableByDefaultTypes() {
+    Set<String> result = new THashSet<>();
+    for (RunDashboardDefaultTypesProvider provider : DEFAULT_TYPES_PROVIDER_EP_NAME.getExtensionList()) {
+      result.addAll(provider.getDefaultTypeIds(myProject));
     }
-    return ContainerUtil.map(types, ConfigurationType::getId);
+    return result;
   }
 
   @Nullable
@@ -822,11 +818,12 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     myState = state;
     myTypes.clear();
     myTypes.addAll(myState.configurationTypes);
-    List<String> enableByDefaultTypes = getEnableByDefaultTypes();
+    Set<String> enableByDefaultTypes = getEnableByDefaultTypes();
     enableByDefaultTypes.removeAll(myState.excludedTypes);
     myTypes.addAll(enableByDefaultTypes);
     if (!myTypes.isEmpty()) {
       initToolWindowContentListeners();
+      syncConfigurations();
     }
     for (RuleState ruleState : state.ruleStates) {
       for (RunDashboardGrouper grouper : myGroupers) {
@@ -836,7 +833,16 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
         }
       }
     }
-    syncConfigurations();
+  }
+
+  @Override
+  public void noStateLoaded() {
+    myTypes.clear();
+    myTypes.addAll(getEnableByDefaultTypes());
+    if (!myTypes.isEmpty()) {
+      initToolWindowContentListeners();
+      syncConfigurations();
+    }
   }
 
   static class State {
