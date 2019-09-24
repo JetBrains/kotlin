@@ -141,7 +141,7 @@ private val defaultArgumentInjectorPhase = makeIrFilePhase(
     ::JvmDefaultParameterInjector,
     name = "DefaultParameterInjector",
     description = "Transform calls with default arguments into calls to stubs",
-    prerequisite = setOf(defaultArgumentStubPhase, callableReferencePhase)
+    prerequisite = setOf(defaultArgumentStubPhase, callableReferencePhase, inlineCallableReferenceToLambdaPhase)
 )
 
 private val interfacePhase = makeIrFilePhase(

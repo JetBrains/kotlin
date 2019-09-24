@@ -231,7 +231,8 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter) {
 fun IrFunction.copyValueParametersToStatic(
     source: IrFunction,
     origin: IrDeclarationOrigin,
-    dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type
+    dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type,
+    numValueParametersToCopy: Int = source.valueParameters.size
 ) {
     val target = this
     assert(target.valueParameters.isEmpty())
@@ -266,6 +267,7 @@ fun IrFunction.copyValueParametersToStatic(
     }
 
     for (oldValueParameter in source.valueParameters) {
+        if (oldValueParameter.index >= numValueParametersToCopy) break
         target.valueParameters.add(
             oldValueParameter.copyTo(
                 target,

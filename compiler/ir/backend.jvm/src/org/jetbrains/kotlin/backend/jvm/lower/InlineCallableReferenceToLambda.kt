@@ -27,8 +27,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isSubtypeOf
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -141,7 +144,24 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         val irBuilder =
             context.createIrBuilder(scope.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
 
+
         val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
+
+        val expectedType = expression.type
+        var expectedNumValueParameters: Int
+        if (expectedType.isFunctionOrKFunction() || expectedType.isSuspendFunction() || expectedType.isKSuspendFunction()) { // TODO: handle subtypes
+            expectedNumValueParameters = (expectedType as IrSimpleType).arguments.size - 1  // In ...Function classes, the last argument is return type
+            referencedFunction.dispatchReceiverParameter?.let { expectedNumValueParameters-- }
+            referencedFunction.extensionReceiverParameter?.let { expectedNumValueParameters-- }
+            boundReceiver?.let { expectedNumValueParameters++ }
+            assert(referencedFunction.valueParameters.subList(expectedNumValueParameters, referencedFunction.valueParameters.size).all {
+                it.defaultValue != null
+            })
+        } else {
+            assert(expectedType.classOrNull?.isSubtypeOfClass(context.irBuiltIns.kPropertyClass) == true)
+            expectedNumValueParameters = 0
+        }
+
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
             lateinit var variableForBoundReceiver: IrVariable
             if (boundReceiver != null) {
@@ -161,9 +181,10 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 }
                 copyTypeParametersFrom(referencedFunction)
                 if (boundReceiver == null) {
-                    copyValueParametersToStatic(referencedFunction, origin)
+                    copyValueParametersToStatic(referencedFunction, origin, numValueParametersToCopy = expectedNumValueParameters)
                 } else {
                     for (oldValueParameter in referencedFunction.valueParameters) {
+                        if (oldValueParameter.index >= expectedNumValueParameters) break
                         valueParameters.add(
                             oldValueParameter.copyTo(
                                 this,
@@ -197,6 +218,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                             }
 
                             for (it in referencedFunction.valueParameters.indices) {
+                                if (it >= expectedNumValueParameters) break
                                 call.putValueArgument(it, irGet(valueParameters[shift++]))
                             }
                         }
