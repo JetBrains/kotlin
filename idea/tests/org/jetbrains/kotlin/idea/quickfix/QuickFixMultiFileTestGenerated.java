@@ -543,6 +543,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("idea/testData/quickfix/autoImports/delegateExtensionGet.test");
         }
 
+        @TestMetadata("delegateExtensionProvideDelegate.test")
+        public void testDelegateExtensionProvideDelegate() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/delegateExtensionProvideDelegate.test");
+        }
+
         @TestMetadata("delegateExtensionSet.test")
         public void testDelegateExtensionSet() throws Exception {
             runTest("idea/testData/quickfix/autoImports/delegateExtensionSet.test");
