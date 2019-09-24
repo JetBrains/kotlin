@@ -239,7 +239,6 @@ public final class DaemonListeners implements Disposable {
     ApplicationManager.getApplication().addApplicationListener(new MyApplicationListener(), this);
 
     connection.subscribe(TodoConfiguration.PROPERTY_CHANGE, new MyTodoListener());
-    TodoConfiguration.getInstance().colorSettingsChanged();
 
     connection.subscribe(AnActionListener.TOPIC, new MyAnActionListener());
     connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {

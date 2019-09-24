@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.navigation;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -88,16 +88,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CtrlMouseHandler {
+public final class CtrlMouseHandler {
   private static final Logger LOG = Logger.getInstance(CtrlMouseHandler.class);
 
   private final Project myProject;
-  private final EditorColorsManager myEditorColorsManager;
 
   private HighlightersSet myHighlighter;
   @JdkConstants.InputEventMask private int myStoredModifiers;
   private TooltipProvider myTooltipProvider;
-  private final DocumentationManager myDocumentationManager;
   @Nullable private Point myPrevMouseLocation;
   private LightweightHint myHint;
 
@@ -190,28 +188,20 @@ public class CtrlMouseHandler {
     }
   };
 
-  public CtrlMouseHandler(final Project project,
-                          StartupManager startupManager,
-                          EditorColorsManager colorsManager,
-                          @NotNull DocumentationManager documentationManager,
-                          @NotNull final EditorFactory editorFactory) {
+  public CtrlMouseHandler(@NotNull Project project) {
     myProject = project;
-    myEditorColorsManager = colorsManager;
-    startupManager.registerPostStartupActivity(new DumbAwareRunnable() {
-      @Override
-      public void run() {
-        EditorEventMulticaster eventMulticaster = editorFactory.getEventMulticaster();
-        eventMulticaster.addEditorMouseListener(myEditorMouseAdapter, project);
-        eventMulticaster.addEditorMouseMotionListener(myEditorMouseMotionListener, project);
-        eventMulticaster.addCaretListener(new CaretListener() {
-          @Override
-          public void caretPositionChanged(@NotNull CaretEvent e) {
-            if (myHint != null) {
-              myDocumentationManager.updateToolwindowContext();
-            }
+    StartupManager.getInstance(project).registerPostStartupActivity((DumbAwareRunnable)() -> {
+      EditorEventMulticaster eventMulticaster = EditorFactory.getInstance().getEventMulticaster();
+      eventMulticaster.addEditorMouseListener(myEditorMouseAdapter, project);
+      eventMulticaster.addEditorMouseMotionListener(myEditorMouseMotionListener, project);
+      eventMulticaster.addCaretListener(new CaretListener() {
+        @Override
+        public void caretPositionChanged(@NotNull CaretEvent e) {
+          if (myHint != null) {
+            DocumentationManager.getInstance(myProject).updateToolwindowContext();
           }
-        }, project);
-      }
+        }
+      }, project);
     });
     project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener(){
       @Override
@@ -220,7 +210,6 @@ public class CtrlMouseHandler {
         cancelPreviousTooltip();
       }
     });
-    myDocumentationManager = documentationManager;
   }
 
   private void cancelPreviousTooltip() {
@@ -643,13 +632,13 @@ public class CtrlMouseHandler {
   }
 
 
-  private class TooltipProvider {
+  private final class TooltipProvider {
     @NotNull private final EditorEx myHostEditor;
     private final int myHostOffset;
     private BrowseMode myBrowseMode;
     private boolean myDisposed;
     private final ProgressIndicator myProgress = new ProgressIndicatorBase();
-    private CompletableFuture myExecutionProgress;
+    private CompletableFuture<?> myExecutionProgress;
 
     TooltipProvider(@NotNull EditorEx hostEditor, @NotNull LogicalPosition hostPos) {
       myHostEditor = hostEditor;
@@ -901,7 +890,7 @@ public class CtrlMouseHandler {
 
     if (!highlighterOnly || info.isNavigatable()) {
       TextAttributes attributes = info.isNavigatable()
-                                  ? myEditorColorsManager.getGlobalScheme().getAttributes(EditorColors.REFERENCE_HYPERLINK_COLOR)
+                                  ? EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.REFERENCE_HYPERLINK_COLOR)
                                   : new TextAttributes(null, HintUtil.getInformationColor(), null, null, Font.PLAIN);
       for (TextRange range : info.getRanges()) {
         TextAttributes attr = NavigationUtil.patchAttributesColor(attributes, range, editor);
@@ -920,12 +909,12 @@ public class CtrlMouseHandler {
   public boolean isCalculationInProgress() {
     TooltipProvider provider = myTooltipProvider;
     if (provider == null) return false;
-    CompletableFuture progress = provider.myExecutionProgress;
+    CompletableFuture<?> progress = provider.myExecutionProgress;
     if (progress == null) return false;
     return !progress.isDone();
   }
 
-  private class HighlightersSet {
+  private final class HighlightersSet {
     @NotNull private final List<? extends RangeHighlighter> myHighlighters;
     @NotNull private final EditorEx myHighlighterView;
     @NotNull private final Info myStoredInfo;
@@ -954,7 +943,7 @@ public class CtrlMouseHandler {
     }
   }
 
-  public static class DocInfo {
+  public static final class DocInfo {
     public static final DocInfo EMPTY = new DocInfo(null, null);
 
     @Nullable public final String text;
@@ -966,7 +955,7 @@ public class CtrlMouseHandler {
     }
   }
 
-  private class QuickDocHyperlinkListener implements HyperlinkListener {
+  private final class QuickDocHyperlinkListener implements HyperlinkListener {
     @NotNull private final DocumentationProvider myProvider;
     @NotNull private final PsiElement myContext;
 
@@ -995,7 +984,7 @@ public class CtrlMouseHandler {
           if (hint != null) {
             hint.hide(true);
           }
-          myDocumentationManager.showJavaDocInfo(targetElement, myContext, null);
+          DocumentationManager.getInstance(myProject).showJavaDocInfo(targetElement, myContext, null);
         }
       });
     }
