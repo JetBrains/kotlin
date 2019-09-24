@@ -126,22 +126,25 @@ class JavacWrapper(
     private val fileObjects = javaFiles.mapTo(ListBuffer()) { fileManager.getRegularFile(it) }.toList()
     private val compilationUnits: JavacList<JCTree.JCCompilationUnit> = fileObjects.mapTo(ListBuffer(), javac::parse).toList()
 
-    private val treeBasedJavaClasses = compilationUnits.flatMap { unit ->
-        unit.typeDecls.map { classDeclaration ->
-            val packageName = unit.packageName?.toString() ?: ""
-            val className = (classDeclaration as JCTree.JCClassDecl).simpleName.toString()
-            val classId = classId(packageName, className)
-            classId to TreeBasedClass(classDeclaration, unit, this, classId, null)
-        }
-    }.toMap()
+    private val treeBasedJavaClasses: Map<ClassId, TreeBasedClass>
+    private val treeBasedJavaPackages: Map<FqName, TreeBasedPackage>
 
-    private val treeBasedJavaPackages = compilationUnits
-        .mapTo(hashSetOf<TreeBasedPackage>()) { unit ->
-            unit.packageName?.toString()?.let { packageName ->
-                TreeBasedPackage(packageName, this, unit)
-            } ?: TreeBasedPackage("<root>", this, unit)
+    init {
+        val javaClasses = mutableMapOf<ClassId, TreeBasedClass>()
+        val javaPackages = mutableMapOf<FqName, TreeBasedPackage>()
+        for (unit in compilationUnits) {
+            val packageName = unit.packageName?.toString()
+            val javaPackage = TreeBasedPackage(packageName ?: "<root>", this, unit)
+            javaPackages[javaPackage.fqName] = javaPackage
+            for (classDeclaration in unit.typeDecls) {
+                val className = (classDeclaration as JCTree.JCClassDecl).simpleName.toString()
+                val classId = classId(packageName ?: "", className)
+                javaClasses[classId] = TreeBasedClass(classDeclaration, unit, this, classId, null)
+            }
         }
-        .associateBy(TreeBasedPackage::fqName)
+        treeBasedJavaClasses = javaClasses
+        treeBasedJavaPackages = javaPackages
+    }
 
     private val packageSourceAnnotations = compilationUnits
         .filter {
