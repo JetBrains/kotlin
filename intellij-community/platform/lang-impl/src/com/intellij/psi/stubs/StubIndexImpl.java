@@ -352,32 +352,21 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
                                                                @Nullable IdFilter idFilter,
                                                                @NotNull final Class<Psi> requiredClass,
                                                                @NotNull final Processor<? super Psi> processor) {
-    return doProcessStubs(indexKey, key, project, scope, new StubIdListContainerAction(idFilter, project) {
-      final PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
-
-      @Override
-      protected boolean process(int id, @NotNull StubIdList value) {
-        final VirtualFile file = IndexInfrastructure.findFileByIdIfCached(fs, id);
-        LOG.assertTrue(file != null); // already checked in getContainingIds()
-        return myStubProcessingHelper.processStubsInFile(project, file, value, processor, scope, requiredClass);
-      }
-    });
-  }
-
-  private <Key> boolean doProcessStubs(@NotNull final StubIndexKey<Key, ?> indexKey,
-                                       @NotNull final Key key,
-                                       @NotNull final Project project,
-                                       @Nullable final GlobalSearchScope scope,
-                                       @NotNull StubIdListContainerAction action) {
-    IdIterator ids = getContainingIds(indexKey, key, project, scope);
+    IdIterator ids = getContainingIds(indexKey, key, project, idFilter, scope);
     final FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
     UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = fileBasedIndex.getIndex(StubUpdatingIndex.INDEX_ID);
     if (stubUpdatingIndex == null) return true;
-
+    PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
     // already ensured up-to-date in getContainingIds() method
     try {
       while (ids.hasNext()) {
         int id = ids.next();
+        ProgressManager.checkCanceled();
+        VirtualFile file = IndexInfrastructure.findFileByIdIfCached(fs, id);
+        if (file == null || (scope != null && !scope.contains(file))) {
+          continue;
+        }
+
         Map<Integer, SerializedStubTree> data = stubUpdatingIndex.getIndexedFileData(id);
         LOG.assertTrue(data.size() == 1);
         SerializedStubTree tree = data.values().iterator().next();
@@ -392,7 +381,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
           LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. Stub key is not present in forward index data");
           return true;
         }
-        if (!action.perform(id, list)) {
+        if (!myStubProcessingHelper.processStubsInFile(project, file, list, processor, scope, requiredClass)) {
           return false;
         }
       }
@@ -491,26 +480,38 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
                                            @NotNull Key dataKey,
                                            @NotNull final Project project,
                                            @Nullable final GlobalSearchScope scope) {
+    return getContainingIds(indexKey, dataKey, project, null, scope);
+  }
+
+  @NotNull
+  private <Key> IdIterator getContainingIds(@NotNull StubIndexKey<Key, ?> indexKey,
+                                           @NotNull Key dataKey,
+                                           @NotNull final Project project,
+                                           @Nullable IdFilter idFilter,
+                                           @Nullable final GlobalSearchScope scope) {
     final FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
     ID<Integer, SerializedStubTree> stubUpdatingIndexId = StubUpdatingIndex.INDEX_ID;
     final UpdatableIndex<Key, Void, FileContent> index = getIndex(indexKey);   // wait for initialization to finish
     if (index == null) return IdIterator.EMPTY;
 
+    if (idFilter == null) {
+      idFilter = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).projectIndexableFiles(project);
+    }
+
     fileBasedIndex.ensureUpToDate(stubUpdatingIndexId, project, scope);
 
     UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = fileBasedIndex.getIndex(stubUpdatingIndexId);
-    final PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
 
     try {
       final TIntArrayList result = new TIntArrayList();
+      IdFilter finalIdFilter = idFilter;
       myAccessValidator.validate(stubUpdatingIndexId, ()-> {
         try {
           // disable up-to-date check to avoid locks on attempt to acquire index write lock while holding at the same time the readLock for this index
           return FileBasedIndexImpl.disableUpToDateCheckIn(() ->
                                                              ConcurrencyUtil.withLock(stubUpdatingIndex.getReadLock(), () -> {
                                                                return index.getData(dataKey).forEach((id, value) -> {
-                                                                 VirtualFile fileById = IndexInfrastructure.findFileByIdIfCached(fs, id);
-                                                                 if (fileById != null && (scope == null || scope.contains(fileById))) {
+                                                                 if (finalIdFilter == null || finalIdFilter.containsFileId(id)) {
                                                                    result.add(id);
                                                                  }
                                                                  return true;
@@ -675,24 +676,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       LOG.info(e);
       requestRebuild();
     }
-  }
-
-  private abstract static class StubIdListContainerAction implements ValueContainer.ContainerAction<StubIdList> {
-    private final IdFilter myIdFilter;
-
-    StubIdListContainerAction(@Nullable IdFilter idFilter, @NotNull Project project) {
-      myIdFilter = idFilter != null ? idFilter : ((FileBasedIndexImpl)FileBasedIndex.getInstance()).projectIndexableFiles(project);
-    }
-
-    @Override
-    public boolean perform(final int id, @NotNull final StubIdList value) {
-      ProgressManager.checkCanceled();
-      if (myIdFilter != null && !myIdFilter.containsFileId(id)) return true;
-
-      return process(id, value);
-    }
-
-    protected abstract boolean process(int id, @NotNull StubIdList value);
   }
 
   private class StubIndexInitialization extends IndexInfrastructure.DataInitialization<AsyncState> {
