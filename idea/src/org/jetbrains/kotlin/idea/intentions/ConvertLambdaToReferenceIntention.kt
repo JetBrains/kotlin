@@ -230,8 +230,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
     companion object {
 
         private fun buildReferenceText(lambdaExpression: KtLambdaExpression, shortTypes: Boolean): String? {
-            val singleStatement = lambdaExpression.singleStatementOrNull()
-            return when (singleStatement) {
+            return when (val singleStatement = lambdaExpression.singleStatementOrNull()) {
                 is KtCallExpression -> {
                     val calleeReferenceExpression = singleStatement.calleeExpression as? KtNameReferenceExpression ?: return null
                     val resolvedCall = calleeReferenceExpression.resolveToCall() ?: return null
@@ -245,10 +244,9 @@ open class ConvertLambdaToReferenceIntention(text: String) :
                     "$receiverText::${singleStatement.getCallReferencedName()}"
                 }
                 is KtDotQualifiedExpression -> {
-                    val selector = singleStatement.selectorExpression
-                    val selectorReferenceName = when (selector) {
+                    val selectorReferenceName = when (val selector = singleStatement.selectorExpression) {
                         is KtCallExpression -> selector.getCallReferencedName() ?: return null
-                        is KtNameReferenceExpression -> selector.getReferencedName()
+                        is KtNameReferenceExpression -> selector.getSafeReferencedName()
                         else -> return null
                     }
                     val receiver = singleStatement.receiverExpression
@@ -279,8 +277,9 @@ open class ConvertLambdaToReferenceIntention(text: String) :
             }
         }
 
-        private fun KtCallExpression.getCallReferencedName() =
-            (calleeExpression as? KtNameReferenceExpression)?.getReferencedNameAsName()?.render()
+        private fun KtCallExpression.getCallReferencedName() = (calleeExpression as? KtNameReferenceExpression)?.getSafeReferencedName()
+
+        private fun KtNameReferenceExpression.getSafeReferencedName() = getReferencedNameAsName().render()
 
         private fun KtLambdaExpression.singleStatementOrNull() = bodyExpression?.statements?.singleOrNull()
     }

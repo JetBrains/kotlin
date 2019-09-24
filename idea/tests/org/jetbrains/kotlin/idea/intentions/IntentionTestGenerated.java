@@ -4705,6 +4705,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/backtickEscaped.kt");
         }
 
+        @TestMetadata("backtickEscaped2.kt")
+        public void testBacktickEscaped2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/backtickEscaped2.kt");
+        }
+
         @TestMetadata("classReference.kt")
         public void testClassReference() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/classReference.kt");
