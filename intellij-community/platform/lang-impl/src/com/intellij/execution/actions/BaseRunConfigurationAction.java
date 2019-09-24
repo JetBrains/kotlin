@@ -158,13 +158,25 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
       return;
     }
 
+    if (LOG.isDebugEnabled()) {
+      String configurationClass = existing.getConfiguration().getClass().getName();
+      LOG.debug(String.format("Use existing run configuration: %s", configurationClass));
+    }
     perform(context);
   }
 
   private void perform(final ConfigurationFromContext configurationFromContext, final ConfigurationContext context) {
     RunnerAndConfigurationSettings configurationSettings = configurationFromContext.getConfigurationSettings();
     context.setConfiguration(configurationSettings);
-    configurationFromContext.onFirstRun(context, () -> perform(context));
+    configurationFromContext.onFirstRun(context, () -> {
+      if (LOG.isDebugEnabled()) {
+        RunnerAndConfigurationSettings settings = context.getConfiguration();
+        RunConfiguration configuration = settings == null ? null : settings.getConfiguration();
+        String configurationClass = configuration == null ? null : configuration.getClass().getName();
+        LOG.debug(String.format("Create run configuration: %s", configurationClass));
+      }
+      perform(context);
+    });
   }
 
   protected abstract void perform(ConfigurationContext context);

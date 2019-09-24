@@ -54,6 +54,10 @@ public class RunContextAction extends BaseRunConfigurationAction {
       runManager.setSelectedConfiguration(configuration);
     }
 
+    if (LOG.isDebugEnabled()) {
+      String configurationClass = configuration.getConfiguration().getClass().getName();
+      LOG.debug(String.format("Execute run configuration: %s", configurationClass));
+    }
     ExecutionUtil.doRunConfiguration(configuration, myExecutor, null, null, context.getDataContext());
   }
 

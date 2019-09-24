@@ -245,7 +245,12 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
 
   private static TestRunner getTestRunner(@NotNull PsiElement sourceElement) {
     Module module = ModuleUtilCore.findModuleForPsiElement(sourceElement);
-    if (module == null) return PLATFORM;
+    if (module == null) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug(String.format("Cannot find module for %s", sourceElement.toString()), new Throwable());
+      }
+      return PLATFORM;
+    }
     return GradleProjectSettings.getTestRunner(module);
   }
 }
