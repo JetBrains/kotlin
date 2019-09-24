@@ -23,17 +23,16 @@ import com.intellij.openapi.ui.AbstractPainter;
 import com.intellij.openapi.ui.ShadowAction;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.ActiveRunnable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.IdeGlassPaneUtil;
-import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.*;
 import com.intellij.openapi.wm.impl.ToolWindowsPane;
 import com.intellij.openapi.wm.impl.content.SelectContentStep;
+import com.intellij.openapi.wm.impl.content.SelectContentTabStep;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.awt.RelativeRectangle;
@@ -96,6 +95,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
   @NotNull private final ActionManager myActionManager;
   private final String mySessionName;
+  private final String myRunnerId;
   private NonOpaquePanel myComponent;
 
   private final Wrapper myToolbar = new Wrapper();
@@ -160,17 +160,19 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
                          @NotNull ActionManager actionManager,
                          @NotNull IdeFocusManager focusManager,
                          @NotNull RunnerLayout settings,
-                         @NotNull String sessionName) {
+                         @NotNull String sessionName,
+                         @NotNull String runnerId) {
     myProject = project;
     myRunnerUi = ui;
     myLayoutSettings =  settings;
     myActionManager = actionManager;
     mySessionName = sessionName;
     myFocusManager = focusManager;
+    myRunnerId = runnerId;
   }
 
   public RunnerContentUi(@NotNull RunnerContentUi ui, @NotNull RunnerContentUi original, int window) {
-    this(ui.myProject, ui.myRunnerUi, ui.myActionManager, ui.myFocusManager, ui.myLayoutSettings, ui.mySessionName);
+    this(ui.myProject, ui.myRunnerUi, ui.myActionManager, ui.myFocusManager, ui.myLayoutSettings, ui.mySessionName, original.myRunnerId);
     myOriginal = original;
     original.myChildren.add(this);
     myWindow = window == 0 ? original.findFreeWindow() : window;
@@ -334,10 +336,12 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
     DefaultActionGroup group = new DefaultActionGroup(VIEW_POPUP, original.isPopup());
 
-    if (myShowDebugContentAction == null) {
+    if (myShowDebugContentAction == null && "Debug".equals(myRunnerId)) {
       myShowDebugContentAction = new ShowDebugContentAction(this, myTabs.getComponent(), this);
     }
-    group.add(myShowDebugContentAction);
+    if (myShowDebugContentAction != null) {
+      group.add(myShowDebugContentAction);
+    }
 
     final AnActionEvent event = new AnActionEvent(null, DataManager.getInstance().getDataContext(), place, new Presentation(),
                                                   ActionManager.getInstance(), 0);
@@ -612,7 +616,25 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
     List<Content> contents = getPopupContents();
     final Content selectedContent = myManager.getSelectedContent();
-    final SelectContentStep step = new SelectContentStep(contents);
+    final SelectContentStep step = new SelectContentStep(contents) {
+      @Nullable
+      @Override
+      public PopupStep<?> onChosen(@NotNull Content value, boolean finalChoice) {
+        boolean isMultiTabbed = value instanceof TabbedContent && ((TabbedContent)value).hasMultipleTabs();
+        if (!isMultiTabbed) {
+          ContentManager manager = value.getManager();
+          if (manager != null) {
+            ApplicationManager.getApplication().invokeLater(() -> {
+              manager.setSelectedContentCB(value, true, true);
+            });
+          }
+          return PopupStep.FINAL_CHOICE;
+        }
+        else {
+          return new SelectContentTabStep((TabbedContent)value);
+        }
+      }
+    };
     if (selectedContent != null) {
       step.setDefaultOptionIndex(myManager.getIndexOfContent(selectedContent));
     }
@@ -635,11 +657,21 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
     RunContentManager contentManager = RunContentManager.getInstance(myProject);
     RunContentDescriptor selectedDescriptor = contentManager.getSelectedContent();
+    Content selectedContent;
+    if (selectedDescriptor != null) {
+      selectedContent = selectedDescriptor.getAttachedContent();
+    } else {
+      selectedContent = null;
+    }
 
-    contentManager.getAllDescriptors().stream()
-      .filter(descriptor -> descriptor != selectedDescriptor)
-      .map(descriptor -> descriptor.getAttachedContent())
-      .forEachOrdered(contents::add);
+    Content[] debugTabs = ToolWindowManager.getInstance(myProject)
+      .getToolWindow(ToolWindowId.DEBUG)
+      .getContentManager().getContents();
+    for (Content content : debugTabs) {
+      if (content != selectedContent) {
+        contents.add(content);
+      }
+    }
     return contents;
   }
 
