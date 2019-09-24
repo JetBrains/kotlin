@@ -10,6 +10,7 @@ import com.intellij.codeInspection.InspectionsBundle;
 import com.intellij.configurationStore.BundledSchemeEP;
 import com.intellij.configurationStore.SchemeDataHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -25,6 +26,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.profile.codeInspection.*;
+import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.ObjectUtils;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -63,6 +65,7 @@ public class ApplicationInspectionProfileManager extends BaseInspectionProfileMa
   }
 
   @TestOnly
+  @NonInjectable
   public ApplicationInspectionProfileManager(@NotNull SchemeManagerFactory schemeManagerFactory) {
     super(ApplicationManager.getApplication().getMessageBus());
 
@@ -124,35 +127,29 @@ public class ApplicationInspectionProfileManager extends BaseInspectionProfileMa
   }
 
   private volatile boolean LOAD_PROFILES = !ApplicationManager.getApplication().isUnitTestMode();
+
   @TestOnly
   public void forceInitProfiles(boolean flag) {
     LOAD_PROFILES = flag;
     myProfilesAreInitialized.set(false);
   }
 
-  public void initProfiles() {
+  public final void initProfiles() {
     if (!myProfilesAreInitialized.compareAndSet(false, true) || !LOAD_PROFILES) {
       return;
     }
 
-    loadBundledSchemes();
+    Application app = ApplicationManager.getApplication();
+    if (!(app.isUnitTestMode() || app.isHeadlessEnvironment())) {
+      for (BundledSchemeEP ep : BUNDLED_EP_NAME.getExtensions()) {
+        mySchemeManager.loadBundledScheme(ep.getPath() + ".xml", ep);
+      }
+    }
     mySchemeManager.loadSchemes();
 
     if (mySchemeManager.isEmpty()) {
       mySchemeManager.addScheme(new InspectionProfileImpl(InspectionProfileKt.DEFAULT_PROFILE_NAME, InspectionToolRegistrar.getInstance(), this));
     }
-  }
-
-  private void loadBundledSchemes() {
-    if (!isUnitTestOrHeadlessMode()) {
-      for (BundledSchemeEP ep : BUNDLED_EP_NAME.getExtensions()) {
-        mySchemeManager.loadBundledScheme(ep.getPath() + ".xml", ep);
-      }
-    }
-  }
-
-  private static boolean isUnitTestOrHeadlessMode() {
-    return ApplicationManager.getApplication().isUnitTestMode() || ApplicationManager.getApplication().isHeadlessEnvironment();
   }
 
   public InspectionProfileImpl loadProfile(@NotNull String path) throws IOException, JDOMException {
