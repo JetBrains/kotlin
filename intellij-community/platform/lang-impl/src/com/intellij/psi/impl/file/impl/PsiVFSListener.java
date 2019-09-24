@@ -70,7 +70,7 @@ public class PsiVFSListener implements BulkFileListener {
       connection.subscribe(FileTypeManager.TOPIC, new FileTypeListener() {
         @Override
         public void fileTypesChanged(@NotNull FileTypeEvent e) {
-          myFileManager.processFileTypesChanged(e.getRemovedFileType() != null);
+          myFileManager.processFileTypesChanged(true);
         }
       });
       connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerAdapter());
