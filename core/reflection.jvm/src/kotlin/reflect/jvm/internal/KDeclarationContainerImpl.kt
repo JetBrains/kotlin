@@ -136,7 +136,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             }
 
             val allMembers = getProperties(Name.identifier(name)).joinToString("\n") { descriptor ->
-                DescriptorRenderer.DEBUG_TEXT.render(descriptor) + " | " + RuntimeTypeMapper.mapPropertySignature(descriptor)
+                DescriptorRenderer.DEBUG_TEXT.render(descriptor) + " | " + RuntimeTypeMapper.mapPropertySignature(descriptor).asString()
             }
             throw KotlinReflectionInternalError(
                 "Property '$name' (JVM signature: $signature) not resolved in $this:" +
@@ -155,7 +155,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
         if (functions.size != 1) {
             val allMembers = members.joinToString("\n") { descriptor ->
-                DescriptorRenderer.DEBUG_TEXT.render(descriptor) + " | " + RuntimeTypeMapper.mapSignature(descriptor)
+                DescriptorRenderer.DEBUG_TEXT.render(descriptor) + " | " + RuntimeTypeMapper.mapSignature(descriptor).asString()
             }
             throw KotlinReflectionInternalError(
                 "Function '$name' (JVM signature: $signature) not resolved in $this:" +
