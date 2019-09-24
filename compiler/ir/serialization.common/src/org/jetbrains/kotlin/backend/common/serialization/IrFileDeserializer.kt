@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeArgument.KindCase.STAR
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeArgument.KindCase.TYPE
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrConst.ValueCase.*
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDeclaration.DeclaratorCase.*
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrOperation.OperationCase.*
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrStatement.StatementCase
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrType.KindCase.*
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeArgument.KindCase.STAR
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeArgument.KindCase.TYPE
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -39,87 +39,87 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.backend.common.serialization.proto.Annotations as ProtoAnnotations
-import org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind as ProtoClassKind
-import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoBodyIndex
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrCall as ProtoCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrCatch as ProtoCatch
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference as ProtoClassReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite as ProtoComposite
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst as ProtoConst
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor as ProtoConstructor
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue as ProtoContinue
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrigin as ProtoDeclarationOrigin
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall as ProtoDelegatingConstructorCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile as ProtoDoWhile
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression as ProtoDynamicMemberExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression as ProtoDynamicOperatorExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as ProtoDynamicType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall as ProtoEnumConstructorCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType as ProtoErrorType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject as ProtoGetObject
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue as ProtoGetValue
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall as ProtoInstanceInitializerCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation as ProtoOperation
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn as ProtoReturn
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField as ProtoSetField
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable as ProtoSetVariable
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement as ProtoSpreadElement
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin as ProtoStatementOrigin
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat as ProtoStringConcat
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoSymbolIndex
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody as ProtoSyntheticBody
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKind as ProtoSyntheticBodyKind
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow as ProtoThrow
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTry as ProtoTry
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation as ProtoTypeAbbreviation
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as ProtoTypeAlias
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeArgument as ProtoTypeArgument
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoTypeIndex
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp as ProtoTypeOp
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOperator as ProtoTypeOperator
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance as ProtoTypeVariance
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg as ProtoVararg
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement as ProtoVarargElement
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoVariable
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWhen
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
-import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
-import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
-import org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind as ProtoModalityKind
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoStringIndex
-import org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments as ProtoTypeArguments
-import org.jetbrains.kotlin.backend.common.serialization.proto.Visibility as ProtoVisibility
-import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.Annotations as ProtoAnnotations
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.ClassKind as ProtoClassKind
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.DescriptorReference as ProtoDescriptorReference
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrAnonymousInit as ProtoAnonymousInit
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrBlock as ProtoBlock
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDataIndex as ProtoBodyIndex
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrBlockBody as ProtoBlockBody
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrBranch as ProtoBranch
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrBreak as ProtoBreak
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrCall as ProtoCall
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrCatch as ProtoCatch
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrClass as ProtoClass
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrClassReference as ProtoClassReference
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrComposite as ProtoComposite
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrConst as ProtoConst
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrConstructor as ProtoConstructor
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrConstructorCall as ProtoConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrContinue as ProtoContinue
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDeclaration as ProtoDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDeclarationBase as ProtoDeclarationBase
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDeclarationOrigin as ProtoDeclarationOrigin
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDelegatingConstructorCall as ProtoDelegatingConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDoWhile as ProtoDoWhile
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDynamicMemberExpression as ProtoDynamicMemberExpression
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDynamicOperatorExpression as ProtoDynamicOperatorExpression
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDynamicType as ProtoDynamicType
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrEnumConstructorCall as ProtoEnumConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrEnumEntry as ProtoEnumEntry
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrErrorType as ProtoErrorType
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrExpression as ProtoExpression
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrField as ProtoField
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrFunction as ProtoFunction
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrFunctionBase as ProtoFunctionBase
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrFunctionExpression as ProtoFunctionExpression
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrFunctionReference as ProtoFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrGetClass as ProtoGetClass
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrGetEnumValue as ProtoGetEnumValue
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrGetField as ProtoGetField
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrGetObject as ProtoGetObject
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrGetValue as ProtoGetValue
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrInstanceInitializerCall as ProtoInstanceInitializerCall
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrOperation as ProtoOperation
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrProperty as ProtoProperty
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrPropertyReference as ProtoPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrReturn as ProtoReturn
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrSetField as ProtoSetField
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrSetVariable as ProtoSetVariable
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrSimpleType as ProtoSimpleType
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrSpreadElement as ProtoSpreadElement
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrStatement as ProtoStatement
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrStatementOrigin as ProtoStatementOrigin
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrStringConcat as ProtoStringConcat
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDataIndex as ProtoSymbolIndex
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrSyntheticBody as ProtoSyntheticBody
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrSyntheticBodyKind as ProtoSyntheticBodyKind
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrThrow as ProtoThrow
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTry as ProtoTry
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrType as ProtoType
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeAbbreviation as ProtoTypeAbbreviation
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeAlias as ProtoTypeAlias
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeArgument as ProtoTypeArgument
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDataIndex as ProtoTypeIndex
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeOp as ProtoTypeOp
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeOperator as ProtoTypeOperator
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeParameter as ProtoTypeParameter
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrTypeVariance as ProtoTypeVariance
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrValueParameter as ProtoValueParameter
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrVararg as ProtoVararg
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrVarargElement as ProtoVarargElement
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrVariable as ProtoVariable
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrWhen as ProtoWhen
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrWhile as ProtoWhile
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.Loop as ProtoLoop
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.MemberAccessCommon as ProtoMemberAccessCommon
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.ModalityKind as ProtoModalityKind
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.IrDataIndex as ProtoStringIndex
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.TypeArguments as ProtoTypeArguments
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.Visibility as ProtoVisibility
+import org.jetbrains.kotlin.backend.common.serialization.protoMimic.FqName as ProtoFqName
 
 // TODO: This code still has some uses of descriptors:
 // 1. We use descriptors as keys for symbolTable -- probably symbol table related code should be refactored out from
@@ -631,7 +631,7 @@ abstract class IrFileDeserializer(
             catches.add(deserializeStatement(it) as IrCatch)
         }
         val finallyExpression =
-            if (proto.hasFinally()) deserializeExpression(proto.getFinally()) else null
+            if (proto.hasFinally()) deserializeExpression(proto.finally) else null
         return IrTryImpl(start, end, type, result, catches, finallyExpression)
     }
 
