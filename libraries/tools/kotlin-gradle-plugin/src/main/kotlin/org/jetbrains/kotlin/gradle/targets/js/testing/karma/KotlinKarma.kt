@@ -418,7 +418,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val args = nodeJsArgs +
                 nodeModules.map { npmProject.require(it) } +
-                listOf("start", karmaConfJs.absolutePath, "--debug")
+                listOf("start", karmaConfJs.absolutePath)
 
         return object : JSServiceMessagesTestExecutionSpec(
             forkOptions,
