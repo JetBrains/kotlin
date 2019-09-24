@@ -15,7 +15,6 @@ import com.intellij.testFramework.rules.InMemoryFsRule
 import com.intellij.util.io.delete
 import com.intellij.util.io.getDirectoryTree
 import com.intellij.util.isEmpty
-import com.intellij.util.loadElement
 import kotlinx.coroutines.runBlocking
 import org.jdom.Element
 import org.junit.ClassRule
@@ -105,7 +104,7 @@ internal class DefaultProjectStoreTest {
   @Test
   fun `new project from default - remove workspace component configuration`() {
     val testData = Paths.get(PathManagerEx.getCommunityHomePath(), "platform/configuration-store-impl/testData")
-    val element = loadElement(testData.resolve("testData1.xml"))
+    val element = JDOMUtil.load(testData.resolve("testData1.xml"))
 
     val tempDir = fsRule.fs.getPath("")
     normalizeDefaultProjectElement(ProjectManager.getInstance().defaultProject, element, tempDir)
@@ -118,7 +117,7 @@ internal class DefaultProjectStoreTest {
   @Test
   fun `new IPR project from default - remove workspace component configuration`() {
     val testData = Paths.get(PathManagerEx.getCommunityHomePath(), "platform/configuration-store-impl/testData")
-    val element = loadElement(testData.resolve("testData1.xml"))
+    val element = JDOMUtil.load(testData.resolve("testData1.xml"))
 
     val tempDir = fsRule.fs.getPath("")
     val projectFile = tempDir.resolve("test.ipr")

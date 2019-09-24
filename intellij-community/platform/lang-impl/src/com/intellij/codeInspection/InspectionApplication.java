@@ -361,7 +361,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   }
 
   @Nullable
-  private InspectionProfileImpl loadProfileByPath(final String profilePath) throws IOException, JDOMException {
+  private InspectionProfileImpl loadProfileByPath(@NotNull String profilePath) throws IOException, JDOMException {
     InspectionProfileImpl inspectionProfile = ApplicationInspectionProfileManager.getInstanceImpl().loadProfile(profilePath);
     if (inspectionProfile != null) {
       reportMessage(1, "Loaded profile '" + inspectionProfile.getName() + "' from file '" + profilePath + "'");

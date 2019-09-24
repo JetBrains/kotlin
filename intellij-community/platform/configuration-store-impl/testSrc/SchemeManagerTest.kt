@@ -7,6 +7,7 @@ import com.intellij.openapi.components.RoamingType
 import com.intellij.openapi.options.ExternalizableScheme
 import com.intellij.openapi.options.SchemeManagerFactory
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -15,7 +16,6 @@ import com.intellij.testFramework.*
 import com.intellij.testFramework.rules.InMemoryFsRule
 import com.intellij.util.PathUtil
 import com.intellij.util.io.*
-import com.intellij.util.loadElement
 import com.intellij.util.toByteArray
 import com.intellij.util.xmlb.annotations.Tag
 import gnu.trove.THashMap
@@ -657,7 +657,7 @@ private fun checkSchemes(baseDir: Path, expected: String, ignoreDeleted: Boolean
 
   baseDir.directoryStreamIfExists {
     for (file in it) {
-      val scheme = loadElement(file).deserialize(TestScheme::class.java)
+      val scheme = JDOMUtil.load(file).deserialize(TestScheme::class.java)
       assertThat(fileToSchemeMap.get(FileUtil.getNameWithoutExtension(file.fileName.toString()))).isEqualTo(scheme.name)
     }
   }
