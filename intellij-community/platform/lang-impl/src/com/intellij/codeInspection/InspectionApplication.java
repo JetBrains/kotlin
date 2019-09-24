@@ -144,7 +144,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
 
     for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getExtensionList()) {
       if (configurator.isApplicable(projectPath, this)) {
-        configurator.configureEnvironment(this);
+        configurator.configureEnvironment(projectPath, this);
       }
     }
 

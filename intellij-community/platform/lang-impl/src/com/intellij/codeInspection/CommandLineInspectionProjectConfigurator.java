@@ -22,7 +22,7 @@ public interface CommandLineInspectionProjectConfigurator {
   /**
    * Invoked before a project is imported.
    */
-  default void configureEnvironment(@NotNull CommandLineInspectionLogger logger) {
+  default void configureEnvironment(@NotNull Path projectPath, @NotNull CommandLineInspectionLogger logger) {
   }
 
   /**
