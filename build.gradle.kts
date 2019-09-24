@@ -6,13 +6,13 @@ import proguard.gradle.ProGuardTask
 
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
+    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.3.60-dev-770"))
+    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.3.60-dev-770", cacheRedirectorEnabled))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
 
-        val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
         } else {
