@@ -1,8 +1,8 @@
-// ERROR: Return type of 'iterator' is not a subtype of the return type of the overridden member 'public abstract operator fun iterator(): Iterator<String> defined in kotlin.collections.Iterable'
+// ERROR: Null can not be a value of a non-null type Iterator<String>
 package demo
 
 internal class Test : Iterable<String> {
-    override fun iterator(): Iterator<String>? {
+    override fun iterator(): Iterator<String> {
         return null
     }
 
