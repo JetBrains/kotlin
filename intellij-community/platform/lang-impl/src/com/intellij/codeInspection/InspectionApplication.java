@@ -15,6 +15,7 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
@@ -24,26 +25,28 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.ChangesUtil;
 import com.intellij.openapi.vcs.changes.ContentRevision;
 import com.intellij.openapi.vcs.ex.RangesBuilder;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.*;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
+import com.intellij.util.containers.ConcurrentMultiMap;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import one.util.streamex.StreamEx;
 import org.jdom.JDOMException;
@@ -60,7 +63,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
+
+import static com.intellij.codeInspection.InspectionApplicationUtilKt.runAnalysisAfterShelvingSync;
 
 /**
  * @author max
@@ -80,7 +86,8 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   public boolean myRunGlobalToolsOnly;
   public boolean myAnalyzeChanges;
   private int myVerboseLevel;
-  private Map<VirtualFile, List<Range>> diffMap = new HashMap<>();
+  private final Map<VirtualFile, List<Range>> diffMap = new ConcurrentHashMap<>();
+  private final MultiMap<Pair<VirtualFile, Integer>, String> originalWarnings = new ConcurrentMultiMap<>();
   public String myOutputFormat;
 
   public boolean myErrorCodeRequired = true;
@@ -246,8 +253,32 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       }
     }
 
+    for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
+      configurator.configureProject(project, scope, this);
+    }
+
+    runAnalysis(project, inspectionProfile, context, scope, reportConverter, resultsDataPath);
+  }
+
+  private void runAnalysis(Project project,
+                           InspectionProfileImpl inspectionProfile,
+                           GlobalInspectionContextImpl context,
+                           AnalysisScope scope, InspectionsReportConverter reportConverter, Path resultsDataPath) throws IOException {
     if (myAnalyzeChanges) {
-      setupAnalyzeChangesHandler(project, context);
+      VirtualFile[] changes = ChangesUtil.getFilesFromChanges(ChangeListManager.getInstance(project).getAllChanges());
+      setupFirstAnalysisHandler(context);
+      final List<Path> inspectionsResults = new ArrayList<>();
+      runAnalysisAfterShelvingSync(
+        project,
+        ChangeListManager.getInstance(project).getAffectedFiles(),
+        createProcessIndicator(),
+        () -> {
+          syncProject(project, changes);
+          runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
+        }
+      );
+      syncProject(project, changes);
+      setupSecondAnalysisHandler(project, context);
     }
 
     final List<Path> inspectionsResults = new ArrayList<>();
@@ -269,18 +300,50 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     }
   }
 
-  private void setupAnalyzeChangesHandler(Project project, GlobalInspectionContextImpl context) {
-    ChangeListManager changeListManager = ChangeListManager.getInstance(project);
+  private static void syncProject(Project project, VirtualFile[] changes) {
+    VfsUtil.markDirtyAndRefresh(false, false, false, changes);
+    WriteAction.runAndWait(() -> PsiDocumentManager.getInstance(project).commitAllDocuments());
+  }
+
+  private void setupFirstAnalysisHandler(GlobalInspectionContextImpl context) {
     context.setReportedProblemFilter(
       (element, descriptors) -> {
         Optional<ProblemDescriptorBase> any = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).findAny();
         if (any.isPresent()) {
           ProblemDescriptorBase problemDescriptor = any.get();
           VirtualFile file = problemDescriptor.getContainingFile();
+          if (file == null) return true;
+          int lineNumber = problemDescriptor.getLineNumber();
+          String text = problemDescriptor.toString();
+          originalWarnings.putValue(Pair.create(file, lineNumber), text);
+        }
+        return true;
+      }
+    );
+  }
+
+  private void setupSecondAnalysisHandler(Project project, GlobalInspectionContextImpl context) {
+    ChangeListManager changeListManager = ChangeListManager.getInstance(project);
+    context.setReportedProblemFilter(
+      (element, descriptors) -> {
+        Optional<ProblemDescriptorBase> any = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).findAny();
+        if (any.isPresent()) {
+          ProblemDescriptorBase problemDescriptor = any.get();
+          String text = problemDescriptor.toString();
+          VirtualFile file = problemDescriptor.getContainingFile();
           if (file == null) return false;
           List<Range> ranges = getOrComputeUnchangedRanges(file, changeListManager);
           int line = problemDescriptor.getLineNumber();
-          return StreamEx.of(ranges).anyMatch((it) -> it.start1 <= line && line < it.end1);
+          Optional<Range> first = StreamEx.of(ranges).findFirst((it) -> it.start1 <= line && line < it.end1);
+          if (!first.isPresent()) {
+            return false;
+          }
+          Range originRange = first.get();
+          int position = originRange.start2 + line - originRange.start1;
+          Collection<String> problems = originalWarnings.get(Pair.create(file, position));
+          if (problems.stream().anyMatch(it -> Objects.equals(it, text))) {
+            return true;
+          }
         }
         return false;
       }
@@ -306,7 +369,12 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       if (!myErrorCodeRequired) {
         closeProject(project);
       }
-    }, new ProgressIndicatorBase() {
+    }, createProcessIndicator());
+  }
+
+  @NotNull
+  private ProgressIndicatorBase createProcessIndicator() {
+    return new ProgressIndicatorBase() {
       private String lastPrefix = "";
       private int myLastPercent = -1;
 
@@ -341,7 +409,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
 
         reportMessage(2, text);
       }
-    });
+    };
   }
 
   private void gracefulExit() {
