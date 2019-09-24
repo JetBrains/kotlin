@@ -59,6 +59,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         config.autoWatch = false
     }
 
+    // This reporter extends karma-teamcity-reporter
+    //  It is necessary, because karma-teamcity-reporter can't write browser's log
+    //  And additionally it overrides flushLogs, because flushLogs adds redundant spaces after some messages
     private fun useLogReporter() {
         requiredDependencies.add(versions.karmaTeamcityReporter)
         config.reporters.add("karma-browser-log-reporter")
