@@ -11,13 +11,13 @@ import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.TestOnly
 
 /**
- * Temporary allow resolve in write action.
+ * Temporary allow resolve in dispatch thread.
  *
- * All resolve should be banned from write action. This method is needed for the transition period to document
+ * All resolve should be banned from the UI thread. This method is needed for the transition period to document
  * places that are not fixed yet.
  */
-fun <T> allowResolveInWriteAction(runnable: () -> T): T {
-    return ResolveInWriteActionManager.runWithResolveAllowedInWriteAction(runnable)
+fun <T> allowResolveInDispatchThread(runnable: () -> T): T {
+    return ResolveInDispatchThreadManager.runWithResolveAllowedInDispatchThread(runnable)
 }
 
 /**
@@ -28,31 +28,36 @@ fun <T> allowResolveInWriteAction(runnable: () -> T): T {
  *
  * (A better check is needed instead that would assert no resolve result are obtained outside of caches.)
  */
-fun <T> allowResolveExpectedToBeCached(runnable: () -> T): T {
-    return ResolveInWriteActionManager.runWithResolveAllowedInWriteAction(runnable)
+fun <T> allowCachedResolveInDispatchThread(runnable: () -> T): T {
+    return ResolveInDispatchThreadManager.runWithResolveAllowedInDispatchThread(runnable)
 }
 
 /**
- * Force resolve check in tests.
+ * Force resolve check in tests as it disabled by default.
  */
 @TestOnly
-fun <T> forceResolveInWriteActionCheckInTests(errorHandler: (() -> Unit)? = null, runnable: () -> T): T {
-    return ResolveInWriteActionManager.runWithForceResolveAllowedCheckInTests(errorHandler, runnable)
+fun <T> forceCheckForResolveInDispatchThreadInTests(errorHandler: (() -> Unit)? = null, runnable: () -> T): T {
+    return ResolveInDispatchThreadManager.runWithForceCheckForResolveInDispatchThreadInTests(errorHandler, runnable)
 }
 
-private const val RESOLVE_IN_WRITE_ACTION_ERROR_MESSAGE = "Resolve is not allowed under the write action!"
+private const val RESOLVE_IN_DISPATCH_THREAD_ERROR_MESSAGE = "Resolve is not allowed in dispatch thread!"
 
-class ResolveInWriteActionException(message: String? = null) : IllegalThreadStateException(message ?: RESOLVE_IN_WRITE_ACTION_ERROR_MESSAGE)
+class ResolveInDispatchThreadException(message: String? = null) :
+    IllegalThreadStateException(message ?: RESOLVE_IN_DISPATCH_THREAD_ERROR_MESSAGE)
 
-internal object ResolveInWriteActionManager {
-    private val LOG = Logger.getInstance(ResolveInWriteActionManager::class.java)
+internal object ResolveInDispatchThreadManager {
+    private val LOG = Logger.getInstance(ResolveInDispatchThreadManager::class.java)
 
-    // Should be accessed only from dispatch thread
+    // Guarded by isDispatchThread check
     private var isResolveAllowed: Boolean = false
+
+    // Guarded by isDispatchThread check
     private var isForceCheckInTests: Boolean = false
+
+    // Guarded by isDispatchThread check
     private var errorHandler: (() -> Unit)? = null
 
-    fun assertNoResolveUnderWriteAction() {
+    internal fun assertNoResolveInDispatchThread() {
         val application = ApplicationManager.getApplication() ?: return
         if (!application.isDispatchThread) {
             return
@@ -69,16 +74,16 @@ internal object ResolveInWriteActionManager {
                 return
             }
 
-            throw ResolveInWriteActionException()
+            throw ResolveInDispatchThreadException()
         } else {
             @Suppress("InvalidBundleOrProperty")
-            if (!Registry.`is`("kotlin.write.resolve.check", false)) return
+            if (!Registry.`is`("kotlin.dispatch.thread.resolve.check", false)) return
 
-            LOG.error(RESOLVE_IN_WRITE_ACTION_ERROR_MESSAGE)
+            LOG.error(RESOLVE_IN_DISPATCH_THREAD_ERROR_MESSAGE)
         }
     }
 
-    internal inline fun <T> runWithResolveAllowedInWriteAction(runnable: () -> T): T {
+    internal inline fun <T> runWithResolveAllowedInDispatchThread(runnable: () -> T): T {
         val wasSet =
             if (ApplicationManager.getApplication()?.isDispatchThread == true && !isResolveAllowed) {
                 isResolveAllowed = true
@@ -95,8 +100,8 @@ internal object ResolveInWriteActionManager {
         }
     }
 
-    internal fun <T> runWithForceResolveAllowedCheckInTests(errorHandler: (() -> Unit)?, runnable: () -> T): T {
-        ApplicationManager.getApplication()?.assertIsDispatchThread()
+    internal fun <T> runWithForceCheckForResolveInDispatchThreadInTests(errorHandler: (() -> Unit)?, runnable: () -> T): T {
+        ApplicationManager.getApplication()?.assertIsDispatchThread() ?: error("Application is not available")
 
         val wasSet = if (!isForceCheckInTests) {
             isForceCheckInTests = true

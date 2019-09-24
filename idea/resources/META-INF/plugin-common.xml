@@ -383,7 +383,7 @@
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <registryKey
-        key="kotlin.write.resolve.check"
+        key="kotlin.dispatch.thread.resolve.check"
         description="Whether to enable the check for resolve activated from the write action"
         defaultValue="false"
         restartRequired="false"/>

@@ -16,13 +16,12 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.rt.execution.junit.FileComparisonFailure
-import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.caches.resolve.ResolveInWriteActionException
-import org.jetbrains.kotlin.idea.caches.resolve.forceResolveInWriteActionCheckInTests
+import org.jetbrains.kotlin.idea.caches.resolve.ResolveInDispatchThreadException
+import org.jetbrains.kotlin.idea.caches.resolve.forceCheckForResolveInDispatchThreadInTests
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -179,12 +178,12 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
 
                 val intentionClassName = unwrappedIntention.javaClass.name
                 if (!quickFixesAllowedToResolveInWriteAction.isWriteActionAllowed(intentionClassName)) {
-                    throw ResolveInWriteActionException("Resolve is not allowed under the write action for `$intentionClassName`!")
+                    throw ResolveInDispatchThreadException("Resolve is not allowed under the write action for `$intentionClassName`!")
                 }
             }
 
             val stubComparisonFailure: ComparisonFailure? = try {
-                forceResolveInWriteActionCheckInTests(writeActionResolveHandler) {
+                forceCheckForResolveInDispatchThreadInTests(writeActionResolveHandler) {
                     myFixture.launchAction(intention)
                 }
                 null

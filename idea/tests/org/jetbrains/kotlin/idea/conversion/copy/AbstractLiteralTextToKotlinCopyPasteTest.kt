@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
-import org.jetbrains.kotlin.idea.caches.resolve.forceResolveInWriteActionCheckInTests
+import org.jetbrains.kotlin.idea.caches.resolve.forceCheckForResolveInDispatchThreadInTests
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -26,13 +26,13 @@ abstract class AbstractLiteralTextToKotlinCopyPasteTest : AbstractCopyPasteTest(
         if (!myFixture.editor.selectionModel.hasSelection())
             myFixture.editor.selectionModel.setSelection(0, fileText.length)
 
-        forceResolveInWriteActionCheckInTests {
+        forceCheckForResolveInDispatchThreadInTests {
             myFixture.performEditorAction(IdeActions.ACTION_COPY)
         }
 
         configureTargetFile(targetFileName)
 
-        forceResolveInWriteActionCheckInTests {
+        forceCheckForResolveInDispatchThreadInTests {
             myFixture.performEditorAction(IdeActions.ACTION_PASTE)
         }
 
