@@ -9,9 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -50,14 +48,19 @@ class KotlinNativeTargetPreset(
     }
 
     // We declare default K/N dependencies as files to avoid searching them in remote repos (see KT-28128).
-    private fun defaultLibs(target: KonanTarget? = null): List<Dependency> = with(project) {
+    private fun defaultLibs(target: KonanTarget? = null, stdlibOnly: Boolean = false): List<Dependency> = with(project) {
 
         val relPath = if (target != null) "platform/${target.name}" else "common"
 
-        file("$konanHome/klib/$relPath")
+        var filesList = file("$konanHome/klib/$relPath")
             .listFiles { file -> file.isDirectory }
             ?.sortedBy { dir -> dir.name.toLowerCase() }
-            ?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()
+
+        if (stdlibOnly) {
+            filesList = filesList?.filter { dir -> dir.name == "stdlib" }
+        }
+
+        filesList?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()
     }
 
     override fun createTarget(name: String): KotlinNativeTarget {
@@ -75,15 +78,18 @@ class KotlinNativeTargetPreset(
         KotlinNativeTargetConfigurator(kotlinPluginVersion).configureTarget(result)
 
         // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
+
         result.compilations.all { compilation ->
             val target = compilation.target.konanTarget
-            // First, put common libs:
-            defaultLibs().forEach {
-                project.dependencies.add(compilation.compileDependencyConfigurationName, it)
-            }
-            // Then, platform-specific libs:
-            defaultLibs(target).forEach {
-                project.dependencies.add(compilation.compileDependencyConfigurationName, it)
+            compilation.target.project.whenEvaluated {
+                // First, put common libs:
+                defaultLibs(stdlibOnly = !compilation.enableEndorsedLibs).forEach {
+                    project.dependencies.add(compilation.compileDependencyConfigurationName, it)
+                }
+                // Then, platform-specific libs:
+                defaultLibs(target).forEach {
+                    project.dependencies.add(compilation.compileDependencyConfigurationName, it)
+                }
             }
         }
 
