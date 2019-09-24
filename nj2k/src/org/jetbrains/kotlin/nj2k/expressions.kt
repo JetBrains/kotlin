@@ -10,6 +10,7 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.conversions.RecursiveApplicableConversionBase
 import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedMethod
 import org.jetbrains.kotlin.nj2k.tree.*
 
@@ -339,3 +340,16 @@ fun JKClass.isLocalClass(): Boolean =
 
 val JKClass.declarationList: List<JKDeclaration>
     get() = classBody.declarations
+
+val JKTreeElement.identifier: JKSymbol?
+    get() = when (this) {
+        is JKFieldAccessExpression -> identifier
+        is JKCallExpression -> identifier
+        is JKClassAccessExpression -> identifier
+        is JKPackageAccessExpression -> identifier
+        is JKNewExpression -> classSymbol
+        else -> null
+    }
+
+val JKClass.isObjectOrCompanionObject
+    get() = classKind == JKClass.ClassKind.OBJECT || classKind == JKClass.ClassKind.COMPANION

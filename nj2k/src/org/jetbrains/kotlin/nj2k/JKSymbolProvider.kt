@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.*
 class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElement) {
     private val symbolsByFqName = mutableMapOf<String, JKSymbol>()
     val symbolsByPsi = mutableMapOf<PsiElement, JKSymbol>()
-    val symbolsByJK = mutableMapOf<JKDeclaration, JKSymbol>()
+    private val symbolsByJK = mutableMapOf<JKDeclaration, JKSymbol>()
     private val resolver = JKResolver(project, module, contextElement)
 
     private val elementVisitor = ElementVisitor()
@@ -68,14 +68,15 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
         ) else JKUnresolvedMethod(reference, typeFactory)) as T
     }
 
-    fun provideUniverseSymbol(psi: PsiElement, jk: JKDeclaration): JKSymbol = provideUniverseSymbol(psi).also {
-        when (it) {
-            is JKUniverseClassSymbol -> it.target = jk as JKClass
-            is JKUniverseFieldSymbol -> it.target = jk as JKVariable
-            is JKUniverseMethodSymbol -> it.target = jk as JKMethod
-            is JKUniverseTypeParameterSymbol -> it.target = jk as JKTypeParameter
+    fun provideUniverseSymbol(psi: PsiElement, declaration: JKDeclaration): JKSymbol = provideUniverseSymbol(psi).also { symbol ->
+        when (symbol) {
+            is JKUniverseClassSymbol -> symbol.target = declaration as JKClass
+            is JKUniverseFieldSymbol -> symbol.target = declaration as JKVariable
+            is JKUniverseMethodSymbol -> symbol.target = declaration as JKMethod
+            is JKUniverseTypeParameterSymbol -> symbol.target = declaration as JKTypeParameter
+            is JKUniversePackageSymbol -> symbol.target = declaration as JKPackageDeclaration
         }
-        symbolsByJK[jk] = it
+        symbolsByJK[declaration] = symbol
     }
 
     fun provideUniverseSymbol(psi: PsiElement): JKSymbol =
@@ -85,6 +86,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
                 is PsiMethod -> JKUniverseMethodSymbol(typeFactory)
                 is PsiTypeParameter -> JKUniverseTypeParameterSymbol(typeFactory)
                 is PsiClass -> JKUniverseClassSymbol(typeFactory)
+                is PsiPackageStatement -> JKUniversePackageSymbol(typeFactory)
                 else -> TODO()
             }
         }
@@ -107,6 +109,22 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
     fun provideUniverseSymbol(jk: JKMethod): JKMethodSymbol = symbolsByJK.getOrPut(jk) {
         JKUniverseMethodSymbol(typeFactory).also { it.target = jk }
     } as JKMethodSymbol
+
+    fun provideUniverseSymbol(jk: JKTypeParameter): JKTypeParameterSymbol = symbolsByJK.getOrPut(jk) {
+        JKUniverseTypeParameterSymbol(typeFactory).also { it.target = jk }
+    } as JKTypeParameterSymbol
+
+    fun provideUniverseSymbol(jk: JKPackageDeclaration): JKPackageSymbol = symbolsByJK.getOrPut(jk) {
+        JKUniversePackageSymbol(typeFactory).also { it.target = jk }
+    } as JKPackageSymbol
+
+    fun provideUniverseSymbol(jk: JKDeclaration): JKUniverseSymbol<*>? = when (jk) {
+        is JKClass -> provideUniverseSymbol(jk)
+        is JKVariable -> provideUniverseSymbol(jk)
+        is JKMethod -> provideUniverseSymbol(jk)
+        is JKTypeParameter -> provideUniverseSymbol(jk)
+        else -> null
+    } as? JKUniverseSymbol<*>
 
 
     fun provideClassSymbol(fqName: FqName): JKClassSymbol =
@@ -173,6 +191,10 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
 
         override fun visitTypeParameter(classParameter: PsiTypeParameter) {
             provideUniverseSymbol(classParameter)
+        }
+
+        override fun visitPackageStatement(statement: PsiPackageStatement) {
+            provideUniverseSymbol(statement)
         }
 
         override fun visitFile(file: PsiFile) {

@@ -17,7 +17,10 @@ sealed class JKClassSymbol : JKSymbol
 class JKUniverseClassSymbol(override val typeFactory: JKTypeFactory) : JKClassSymbol(), JKUniverseSymbol<JKClass> {
     override lateinit var target: JKClass
     override val name: String
-        get() = target.name.value
+        get() = when {
+            target.classKind == JKClass.ClassKind.COMPANION -> "Companion"
+            else -> target.name.value
+        }
 }
 
 class JKMultiverseClassSymbol(

@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.nj2k.conversions.*
+import org.jetbrains.kotlin.nj2k.tree.JKLambdaExpression
+import org.jetbrains.kotlin.nj2k.tree.JKParameter
 import org.jetbrains.kotlin.nj2k.tree.JKTreeRoot
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object ConversionsRunner {
-
     private fun createConversions(context: NewJ2kConverterContext) = listOf(
         NonCodeElementsConversion(context),
         JavaModifiersConversion(context),
@@ -38,7 +40,6 @@ object ConversionsRunner {
         ArrayInitializerConversion(context),
         TryStatementConversion(context),
         EnumFieldAccessConversion(context),
-        StaticMemberAccessConversion(context),
         SynchronizedStatementConversion(context),
         JetbrainsNullableAnnotationsConverter(context),
         DefaultArgumentsConversion(context),
@@ -69,9 +70,14 @@ object ConversionsRunner {
         ClassToObjectPromotionConversion(context),
         RemoveWrongExtraModifiersForSingleFunctionsConversion(context),
         MethodReferenceToLambdaConversion(context),
+        TypeMappingConversion(context) { typeElement ->
+            typeElement.parent.safeAs<JKParameter>()?.parent is JKLambdaExpression
+        },
         BuiltinMembersConversion(context),
         ImplicitCastsConversion(context),
         LiteralConversion(context),
+        StaticMemberAccessConversion(context),
+        RemoveRedundantQualifiersForCallsConversion(context),
         FilterImportsConversion(context),
         MoveInitBlocksToTheEndConversion(context),
         AddElementsInfoConversion(context)

@@ -4475,6 +4475,21 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         public void testPrivateStaticMethods4() throws Exception {
             runTest("nj2k/testData/newJ2k/staticMembers/PrivateStaticMethods4.java");
         }
+
+        @TestMetadata("StaticImport.java")
+        public void testStaticImport() throws Exception {
+            runTest("nj2k/testData/newJ2k/staticMembers/StaticImport.java");
+        }
+
+        @TestMetadata("StaticMemmberAccessedViaInstance.java")
+        public void testStaticMemmberAccessedViaInstance() throws Exception {
+            runTest("nj2k/testData/newJ2k/staticMembers/StaticMemmberAccessedViaInstance.java");
+        }
+
+        @TestMetadata("StaticQualifiedByInheritor.java")
+        public void testStaticQualifiedByInheritor() throws Exception {
+            runTest("nj2k/testData/newJ2k/staticMembers/StaticQualifiedByInheritor.java");
+        }
     }
 
     @TestMetadata("nj2k/testData/newJ2k/strings")

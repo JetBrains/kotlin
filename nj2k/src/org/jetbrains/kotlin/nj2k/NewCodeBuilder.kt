@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
-import org.jetbrains.kotlin.nj2k.symbols.getDisplayName
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
 import org.jetbrains.kotlin.nj2k.types.*
@@ -160,7 +158,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         override fun visitClassAccessExpressionRaw(classAccessExpression: JKClassAccessExpression) {
-            printer.renderClassSymbol(classAccessExpression.identifier, classAccessExpression)
+            printer.renderSymbol(classAccessExpression.identifier, classAccessExpression)
         }
 
         override fun visitFileRaw(file: JKFile) {
@@ -522,7 +520,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         override fun visitCallExpressionRaw(callExpression: JKCallExpression) {
-            printer.printWithNoIndent(FqName(callExpression.identifier.fqName).shortName().asString().escaped())
+            printer.renderSymbol(callExpression.identifier, callExpression)
             callExpression.typeArgumentList.accept(this)
             printer.par {
                 callExpression.arguments.accept(this)
@@ -603,7 +601,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
             if (newExpression.isAnonymousClass) {
                 printer.printWithNoIndent("object : ")
             }
-            printer.renderClassSymbol(newExpression.classSymbol, newExpression)
+            printer.renderSymbol(newExpression.classSymbol, newExpression)
             newExpression.typeArgumentList.accept(this)
             if (!newExpression.classSymbol.isInterface() || newExpression.arguments.arguments.isNotEmpty()) {
                 printer.par(ParenthesisKind.ROUND) {
@@ -667,11 +665,11 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         override fun visitFieldAccessExpressionRaw(fieldAccessExpression: JKFieldAccessExpression) {
-            printer.printWithNoIndent(fieldAccessExpression.identifier.name.escaped())
+            printer.renderSymbol(fieldAccessExpression.identifier, fieldAccessExpression)
         }
 
         override fun visitPackageAccessExpressionRaw(packageAccessExpression: JKPackageAccessExpression) {
-            printer.printWithNoIndent(packageAccessExpression.identifier.name.escaped())
+            printer.renderSymbol(packageAccessExpression.identifier, packageAccessExpression)
         }
 
         override fun visitMethodReferenceExpressionRaw(methodReferenceExpression: JKMethodReferenceExpression) {
@@ -896,8 +894,10 @@ private class JKPrinter(
         printWithNoIndent(kind.close)
     }
 
-    private fun JKClassSymbol.needFqName(): Boolean =
-        fqName !in mappedToKotlinFqNames
+    private fun JKSymbol.needFqName(): Boolean {
+        if (this !is JKClassSymbol && !isStaticMember && !isEnumConstant) return false
+        return fqName !in mappedToKotlinFqNames
+    }
 
     private fun JKType.renderTypeInfo() {
         print(elementInfoStorage.getOrCreateInfoForElement(this).render())
@@ -920,7 +920,7 @@ private class JKPrinter(
         type.renderTypeInfo()
         when (type) {
             is JKClassType -> {
-                renderClassSymbol(type.classReference, owner)
+                renderSymbol(type.classReference, owner)
             }
             is JKContextType -> return
             is JKStarProjectionType ->
@@ -951,9 +951,9 @@ private class JKPrinter(
         }
     }
 
-    fun renderClassSymbol(classSymbol: JKClassSymbol, owner: JKTreeElement?) {
-        val needFqName = classSymbol.needFqName() && owner?.isSelectorOfQualifiedExpression() != true
-        val displayName = if (needFqName) classSymbol.getDisplayName() else classSymbol.name
+    fun renderSymbol(symbol: JKSymbol, owner: JKTreeElement?) {
+        val needFqName = symbol.needFqName() && owner?.isSelectorOfQualifiedExpression() != true
+        val displayName = if (needFqName) symbol.getDisplayName() else symbol.name
         printWithNoIndent(displayName.escapedAsQualifiedName())
     }
 

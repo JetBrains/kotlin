@@ -6,15 +6,25 @@
 package org.jetbrains.kotlin.nj2k.symbols
 
 import com.intellij.psi.PsiPackage
-import org.jetbrains.kotlin.nj2k.JKSymbolProvider
+import org.jetbrains.kotlin.nj2k.tree.JKPackageDeclaration
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 
 
-sealed class JKPackageSymbol : JKSymbol {
-    abstract override val target: PsiPackage
-}
+sealed class JKPackageSymbol : JKSymbol
 
 class JKMultiversePackageSymbol(
     override val target: PsiPackage,
     override val typeFactory: JKTypeFactory
-) : JKPackageSymbol(), JKMultiverseSymbol<PsiPackage>
+) : JKPackageSymbol(), JKMultiverseSymbol<PsiPackage> {
+    override val declaredIn: JKSymbol?
+        get() = null
+}
+
+class JKUniversePackageSymbol(
+    override val typeFactory: JKTypeFactory
+) : JKPackageSymbol(), JKUniverseSymbol<JKPackageDeclaration> {
+    override lateinit var target: JKPackageDeclaration
+
+    override val declaredIn: JKSymbol?
+        get() = null
+}

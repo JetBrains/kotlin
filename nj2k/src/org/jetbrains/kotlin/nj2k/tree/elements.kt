@@ -71,8 +71,8 @@ class JKInheritanceInfo(
     override fun accept(visitor: JKVisitor) = visitor.visitInheritanceInfo(this)
 }
 
-class JKPackageDeclaration(name: JKNameIdentifier) : JKTreeElement() {
-    var name: JKNameIdentifier by child(name)
+class JKPackageDeclaration(name: JKNameIdentifier) : JKDeclaration() {
+    override var name: JKNameIdentifier by child(name)
     override fun accept(visitor: JKVisitor) = visitor.visitPackageDeclaration(this)
 }
 

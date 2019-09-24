@@ -48,7 +48,10 @@ interface JKUniverseSymbol<T : JKDeclaration> : JKSymbol {
         get() = target.name.value
 
     override val declaredIn: JKSymbol?
-        get() = target.parentOfType<JKDeclaration>()?.let { symbolProvider.symbolsByJK[it] }
+        get() = target.parentOfType<JKDeclaration>()?.let { symbolProvider.provideUniverseSymbol(it) }
+            ?: target.parentOfType<JKFile>()?.packageDeclaration
+                ?.takeIf { it.name.value.isNotEmpty() }
+                ?.let { symbolProvider.provideUniverseSymbol(it) }
 }
 
 interface JKMultiverseSymbol<T> : JKSymbol where T : PsiNamedElement, T : PsiElement {
