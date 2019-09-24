@@ -60,7 +60,7 @@ public final class ConversionContextImpl implements ConversionContext {
   private final Path myProjectBaseDir;
   private final Path myProjectFile;
   private final Path myWorkspaceFile;
-  private List<Path> myModuleFiles;
+  private volatile List<Path> myModuleFiles;
   private ProjectSettingsImpl myProjectSettings;
   private WorkspaceSettingsImpl myWorkspaceSettings;
   private final List<Path> myNonExistingModuleFiles = new ArrayList<>();
@@ -104,9 +104,7 @@ public final class ConversionContextImpl implements ConversionContext {
       ObjectLongHashMap<String> totalResult = new ObjectLongHashMap<>(moduleFiles.size() + 2);
       addLastModifiedTme(myProjectFile, totalResult);
       addLastModifiedTme(myWorkspaceFile, totalResult);
-      for (Path file : moduleFiles) {
-        addLastModifiedTme(file, totalResult);
-      }
+      addLastModifiedTime(moduleFiles, totalResult);
       return totalResult;
     }
 
@@ -116,22 +114,40 @@ public final class ConversionContextImpl implements ConversionContext {
       dotIdeaDirectory.resolve("artifacts"),
       dotIdeaDirectory.resolve("runConfigurations"));
 
-    Executor executor = AppExecutorUtil.createBoundedApplicationPoolExecutor("Conversion: Project Files Collecting", 2, false);
-    List<CompletableFuture<ObjectLongHashMap<String>>> futures = new ArrayList<>(dirs.size() + 1);
-    futures.add(CompletableFuture.supplyAsync(this::computeModuleFilesTimestamps, executor));
+    Executor executor = AppExecutorUtil.createBoundedApplicationPoolExecutor("Conversion: Project Files Collecting", 3, false);
+    List<CompletableFuture<List<ObjectLongHashMap<String>>>> futures = new ArrayList<>(dirs.size() + 1);
+    futures.add(CompletableFuture.supplyAsync(() -> {
+      List<Path> moduleFiles = myModuleFiles;
+      if (moduleFiles == null) {
+        try {
+          moduleFiles = Files.exists(myModuleListFile) ? findModuleFiles(JDOMUtil.load(myModuleListFile)) : Collections.emptyList();
+        }
+        catch (JDOMException | IOException e) {
+          throw new CompletionException(e);
+        }
+
+        myModuleFiles = moduleFiles;
+      }
+      return moduleFiles;
+    }, executor)
+    .thenComposeAsync(moduleFiles -> {
+      return computeModuleFilesTimestamps(moduleFiles, executor);
+    }, executor));
 
     for (Path subDirName : dirs) {
       futures.add(CompletableFuture.supplyAsync(() -> {
         ObjectLongHashMap<String> result = new ObjectLongHashMap<>();
         addXmlFilesFromDirectory(subDirName, result);
-        return result;
+        return Collections.singletonList(result);
       }, executor));
     }
 
     ObjectLongHashMap<String> totalResult = new ObjectLongHashMap<>();
     try {
-      for (CompletableFuture<ObjectLongHashMap<String>> future : futures) {
-        totalResult.putAll(future.get());
+      for (CompletableFuture<List<ObjectLongHashMap<String>>> future : futures) {
+        for (ObjectLongHashMap<String> result : future.get()) {
+          totalResult.putAll(result);
+        }
       }
     }
     catch (ExecutionException | InterruptedException e) {
@@ -141,24 +157,30 @@ public final class ConversionContextImpl implements ConversionContext {
   }
 
   @NotNull
-  private ObjectLongHashMap<String> computeModuleFilesTimestamps() {
-    List<Path> moduleFiles = myModuleFiles;
-    if (moduleFiles == null) {
-      try {
-        moduleFiles = Files.exists(myModuleListFile) ? findModuleFiles(JDOMUtil.load(myModuleListFile)) : Collections.emptyList();
-      }
-      catch (JDOMException | IOException e) {
-        throw new CompletionException(e);
-      }
-
-      myModuleFiles = moduleFiles;
+  private static CompletableFuture<List<ObjectLongHashMap<String>>> computeModuleFilesTimestamps(@NotNull List<Path> moduleFiles, @NotNull Executor executor) {
+    int moduleCount = moduleFiles.size();
+    if (moduleCount < 50) {
+      return computeModuleFilesTimestamp(moduleFiles, executor);
     }
 
-    ObjectLongHashMap<String> result = new ObjectLongHashMap<>();
+    int secondOffset = moduleCount / 2;
+    return computeModuleFilesTimestamp(moduleFiles.subList(0, secondOffset), executor)
+      .thenCombine(computeModuleFilesTimestamp(moduleFiles.subList(secondOffset, moduleCount), executor), (v1, v2) -> ContainerUtil.concat(v1, v2));
+  }
+
+  @NotNull
+  private static CompletableFuture<List<ObjectLongHashMap<String>>> computeModuleFilesTimestamp(@NotNull List<Path> moduleFiles, @NotNull Executor executor) {
+    return CompletableFuture.supplyAsync(() -> {
+      ObjectLongHashMap<String> result = new ObjectLongHashMap<>();
+      addLastModifiedTime(moduleFiles, result);
+      return Collections.singletonList(result);
+    }, executor);
+  }
+
+  private static void addLastModifiedTime(@NotNull List<Path> moduleFiles, @NotNull ObjectLongHashMap<String> result) {
     for (Path file : moduleFiles) {
       addLastModifiedTme(file, result);
     }
-    return result;
   }
 
   private static void addLastModifiedTme(@NotNull Path file, @NotNull ObjectLongHashMap<String> files) {
