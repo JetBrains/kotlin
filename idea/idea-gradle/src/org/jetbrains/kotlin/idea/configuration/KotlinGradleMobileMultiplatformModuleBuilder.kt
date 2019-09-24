@@ -35,7 +35,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
         "Multiplatform Gradle project allowing reuse of the same Kotlin code between Android and iOS mobile platforms"
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
-        addBuildscriptDependencyNotation("classpath 'com.android.tools.build:gradle:3.2.0'")
+        addBuildscriptDependencyNotation("classpath 'com.android.tools.build:gradle:3.5.0'")
         addBuildscriptRepositoriesDefinition("google()")
         addBuildscriptRepositoriesDefinition("jcenter()")
         addRepositoriesDefinition("google()")
