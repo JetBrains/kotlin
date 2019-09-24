@@ -4,6 +4,7 @@ package com.intellij.configurationStore
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.components.PathMacroSubstitutor
 import com.intellij.openapi.components.RoamingType
+import com.intellij.openapi.components.StateStorage
 import com.intellij.openapi.components.impl.stores.FileStorageCoreUtil
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.runAndLogException
@@ -21,6 +22,7 @@ import com.intellij.util.io.safeOutputStream
 import gnu.trove.THashMap
 import org.jdom.Attribute
 import org.jdom.Element
+import org.jetbrains.annotations.ApiStatus
 import java.io.FileNotFoundException
 import java.io.OutputStream
 import java.io.Writer
@@ -439,4 +441,9 @@ internal fun createDataWriterForElement(element: Element, storageFilePathForDebu
       }
     }
   }
+}
+
+@ApiStatus.Internal
+interface ExternalStorageWithInternalPart {
+  val internalStorage: StateStorage
 }

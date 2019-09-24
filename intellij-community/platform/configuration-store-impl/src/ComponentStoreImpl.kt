@@ -398,12 +398,12 @@ abstract class ComponentStoreImpl : IComponentStore {
         val storage = storageManager.getStateStorage(storageSpec)
 
         // if storage marked as changed, it means that analyzeExternalChangesAndUpdateIfNeeded was called for it and storage is already reloaded
-        val isReloadDataForStorage = if (reloadData == ThreeState.UNSURE) changedStorages!!.contains(storage) else reloadData.toBoolean()
+        val isReloadDataForStorage = if (reloadData == ThreeState.UNSURE) isStorageChanged(changedStorages!!, storage) else reloadData.toBoolean()
 
         val stateGetter = doCreateStateGetter(isReloadDataForStorage, storage, info, name, stateClass)
         var state = stateGetter.getState(defaultState)
         if (state == null) {
-          if (changedStorages != null && changedStorages.contains(storage)) {
+          if (changedStorages != null && isStorageChanged(changedStorages, storage)) {
             // state will be null if file deleted
             // we must create empty (initial) state to reinit component
             state = deserializeState(Element("state"), stateClass, null)!!
@@ -432,6 +432,9 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
     return true
   }
+
+  private fun isStorageChanged(changedStorages: Set<StateStorage>, storage: StateStorage) =
+    changedStorages.contains(storage) || storage is ExternalStorageWithInternalPart && changedStorages.contains(storage.internalStorage)
 
   protected open fun doCreateStateGetter(reloadData: Boolean,
                                          storage: StateStorage,
