@@ -185,7 +185,9 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
     protected open fun buildCommonArgs(defaultsOnly: Boolean = false): List<String> = mutableListOf<String>().apply {
         add("-Xmulti-platform")
         // Endorsed libs are disabled in plugin.
-        add("-no-endorsed-libs")
+        if (!compilation.enableEndorsedLibs) {
+            add("-no-endorsed-libs")
+        }
 
         // Compiler plugins.
         compilerPluginClasspath?.let { pluginClasspath ->
