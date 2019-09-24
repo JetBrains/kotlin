@@ -18,7 +18,8 @@ var Project.bootstrapKotlinRepo: String?
     }
 
 val Project.internalKotlinRepo: String?
-    get() = bootstrapKotlinRepo?.replace("artifacts/content/maven/", "artifacts/content/internal/repo")
+    get() = "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$bootstrapKotlinVersion," +
+            "branch:default:any/artifacts/content/internal/repo"
 
 fun Project.kotlinBootstrapFrom(defaultSource: BootstrapOption) {
     val customVersion = project.findProperty("bootstrap.kotlin.version") as String?
