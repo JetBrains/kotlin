@@ -4,6 +4,8 @@ package com.intellij.codeInsight.problems;
 
 import com.intellij.codeInsight.daemon.impl.*;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ReadAction;
@@ -173,6 +175,17 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
         }
       });
     }
+
+    messageBus.connect(project).subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+      @Override
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+        // Ensure we don't have any leftover problems referring to classes from plugin being unloaded
+        Set<VirtualFile> allFiles = new HashSet<>(myProblems.keySet());
+        for (VirtualFile file : allFiles) {
+          doRemove(file);
+        }
+      }
+    });
   }
 
   private void clearInvalidFiles() {
