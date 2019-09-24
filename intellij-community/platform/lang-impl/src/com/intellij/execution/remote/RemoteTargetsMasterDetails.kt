@@ -135,6 +135,6 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
     private fun duplicateSelected(): RemoteTargetConfiguration? =
       getSelectedTarget()?.let { it.getTargetType().duplicateConfig(it) }
 
-    private fun getSelectedTarget() = selectedNode.configurable?.editableObject as? RemoteTargetConfiguration
+    private fun getSelectedTarget() = selectedNode?.configurable?.editableObject as? RemoteTargetConfiguration
   }
 }
