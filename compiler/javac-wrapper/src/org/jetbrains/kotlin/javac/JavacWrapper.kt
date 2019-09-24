@@ -33,10 +33,7 @@ import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.model.JavacTypes
 import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.util.Context
-import com.sun.tools.javac.util.Log
-import com.sun.tools.javac.util.Names
-import com.sun.tools.javac.util.Options
+import com.sun.tools.javac.util.*
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.javac.resolve.ClassifierResolver
 import org.jetbrains.kotlin.javac.resolve.IdentifierResolver
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.javac.wrappers.symbols.*
 import org.jetbrains.kotlin.javac.wrappers.trees.*
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.Closeable
 import java.io.File
@@ -125,8 +123,8 @@ class JavacWrapper(
     private val symbolTable = Symtab.instance(context)
     private val elements = JavacElements.instance(context)
     private val types = JavacTypes.instance(context)
-    private val fileObjects = fileManager.getJavaFileObjectsFromFiles(javaFiles).toJavacList()
-    private val compilationUnits: JavacList<JCTree.JCCompilationUnit> = fileObjects.map(javac::parse).toJavacList()
+    private val fileObjects = javaFiles.mapTo(ListBuffer()) { fileManager.getRegularFile(it) }.toList()
+    private val compilationUnits: JavacList<JCTree.JCCompilationUnit> = fileObjects.mapTo(ListBuffer(), javac::parse).toList()
 
     private val treeBasedJavaClasses = compilationUnits.flatMap { unit ->
         unit.typeDecls.map { classDeclaration ->
@@ -292,8 +290,6 @@ class JavacWrapper(
 
     fun isDeprecatedInJavaDoc(tree: JCTree, compilationUnit: CompilationUnitTree) =
         (compilationUnit as JCTree.JCCompilationUnit).docComments?.getCommentTree(tree)?.comment?.isDeprecated == true
-
-    private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 
     private fun findClassInSymbols(classId: ClassId): SymbolBasedClass? =
         elements.getTypeElement(classId.asSingleFqName().asString())?.let { symbol ->
