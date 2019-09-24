@@ -15,6 +15,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.GradleIdeManager;
@@ -25,6 +26,12 @@ public class GradleRunConfiguration extends ExternalSystemRunConfiguration imple
 
   public static final String DEBUG_FLAG_NAME = "GradleScriptDebugEnabled";
   public static final Key<Boolean> DEBUG_FLAG_KEY = Key.create("DEBUG_GRADLE_SCRIPT");
+
+  @ApiStatus.Internal
+  public static final Key<Integer> DEBUGGER_DISPATCH_PORT_KEY = Key.create("DEBUGGER_DISPATCH_PORT");
+  @ApiStatus.Internal
+  public static final Key<String> DEBUGGER_PARAMETERS_KEY = Key.create("DEBUGGER_PARAMETERS");
+
   private boolean isScriptDebugEnabled = true;
 
   public GradleRunConfiguration(Project project, ConfigurationFactory factory, String name) {

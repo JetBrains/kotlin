@@ -40,10 +40,7 @@ import org.jetbrains.plugins.gradle.GradleManager;
 import org.jetbrains.plugins.gradle.model.ModelsHolder;
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Allows to enhance {@link GradleProjectResolver} processing.
@@ -205,18 +202,30 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    */
   void enhanceTaskProcessing(@NotNull List<String> taskNames, @Nullable String jvmParametersSetup, @NotNull Consumer<String> initScriptConsumer);
 
+  // jvm configuration that will be applied to Gradle jvm
+  String JVM_PARAMETERS_SETUP_KEY = "JVM_PARAMETERS_SETUP";
+
+  // flag that shows if tasks will be treated as tests invocation by the IDE (e.g., test events are expected)
+  String TEST_EXECUTION_EXPECTED_KEY = "TEST_EXECUTION_EXPECTED";
+
+  // port for callbacks which Gradle tasks communicate to IDE
+  String DEBUG_DISPATCH_PORT_KEY = "DEBUG_DISPATCH_PORT";
+
+  // options passed from project to Gradle
+  String DEBUG_OPTIONS_KEY = "DEBUG_OPTIONS";
+
   /**
    * Allows extension to contribute to init script
    * @param taskNames gradle task names to be executed
    * @param jvmParametersSetup jvm configuration that will be applied to Gradle jvm
    * @param initScriptConsumer consumer of init script text. Must be called to add script txt
-   * @param testExecutionExpected flag that shows if tasks will be treated as tests invocation by the IDE (e.g., test events are expected)
+   * @param parameters storage for passing optional named parameters
    */
   @ApiStatus.Experimental
   default void enhanceTaskProcessing(@NotNull List<String> taskNames,
-                             @Nullable String jvmParametersSetup,
-                             @NotNull Consumer<String> initScriptConsumer,
-                             boolean testExecutionExpected) {
+                                     @NotNull Consumer<String> initScriptConsumer,
+                                     @NotNull Map<String, String> parameters) {
+    String jvmParametersSetup = parameters.get(JVM_PARAMETERS_SETUP_KEY);
     enhanceTaskProcessing(taskNames, jvmParametersSetup, initScriptConsumer);
   }
 }

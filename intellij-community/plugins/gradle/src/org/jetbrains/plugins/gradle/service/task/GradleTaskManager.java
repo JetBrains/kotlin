@@ -84,8 +84,11 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
       settings == null ? new GradleExecutionSettings(null, null, DistributionType.BUNDLED, false) : settings;
 
     ForkedDebuggerConfiguration forkedDebuggerSetup = ForkedDebuggerConfiguration.parse(jvmParametersSetup);
-    if (forkedDebuggerSetup != null && isGradleScriptDebug(settings)) {
-      effectiveSettings.withVmOption(forkedDebuggerSetup.getJvmAgentSetup(isJdk9orLater(effectiveSettings.getJavaHome())));
+    if (forkedDebuggerSetup != null) {
+      if (isGradleScriptDebug(settings)) {
+        effectiveSettings.withVmOption(forkedDebuggerSetup.getJvmAgentSetup(isJdk9orLater(effectiveSettings.getJavaHome())));
+      }
+      effectiveSettings.putUserData(GradleRunConfiguration.DEBUGGER_DISPATCH_PORT_KEY, forkedDebuggerSetup.getForkSocketPort());
     }
 
     CancellationTokenSource cancellationTokenSource = GradleConnector.newCancellationTokenSource();
@@ -180,8 +183,23 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
             "//");
         }
       };
-      boolean isTestExecution = Boolean.TRUE == effectiveSettings.getUserData(GradleConstants.RUN_TASK_AS_TEST);
-      resolverExtension.enhanceTaskProcessing(taskNames, jvmParametersSetup, initScriptConsumer, isTestExecution);
+
+      Map<String, String> enhancementParameters = new HashMap<>();
+      enhancementParameters.put(GradleProjectResolverExtension.JVM_PARAMETERS_SETUP_KEY, jvmParametersSetup);
+
+      String isTestExecution = String.valueOf(Boolean.TRUE == effectiveSettings.getUserData(GradleConstants.RUN_TASK_AS_TEST));
+      enhancementParameters.put(GradleProjectResolverExtension.TEST_EXECUTION_EXPECTED_KEY, isTestExecution);
+
+      Integer debugDispatchPort = effectiveSettings.getUserData(GradleRunConfiguration.DEBUGGER_DISPATCH_PORT_KEY);
+
+      if (debugDispatchPort != null) {
+        enhancementParameters.put(GradleProjectResolverExtension.DEBUG_DISPATCH_PORT_KEY, String.valueOf(debugDispatchPort));
+        String debugOptions = effectiveSettings.getUserData(GradleRunConfiguration.DEBUGGER_PARAMETERS_KEY);
+        enhancementParameters.put(GradleProjectResolverExtension.DEBUG_OPTIONS_KEY, debugOptions);
+      }
+
+
+      resolverExtension.enhanceTaskProcessing(taskNames, initScriptConsumer, enhancementParameters);
     }
 
     if (!initScripts.isEmpty()) {

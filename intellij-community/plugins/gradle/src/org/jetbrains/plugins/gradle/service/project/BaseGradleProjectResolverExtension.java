@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.externalSystem.debugger.DebuggerBackendExtension;
 import com.intellij.openapi.externalSystem.model.ConfigurationDataImpl;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
@@ -837,69 +838,30 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   public void enhanceTaskProcessing(@NotNull List<String> taskNames,
                                     @Nullable String jvmParametersSetup,
                                     @NotNull Consumer<String> initScriptConsumer) {
-    if (!StringUtil.isEmpty(jvmParametersSetup)) {
-      ForkedDebuggerConfiguration forkedDebuggerSetup = ForkedDebuggerConfiguration.parse(jvmParametersSetup);
-      if (forkedDebuggerSetup != null) {
-        setupDebugForAllJvmForkedTasks(initScriptConsumer, forkedDebuggerSetup.getForkSocketPort());
-      }
-      else {
-        final String names = "[\"" + StringUtil.join(taskNames, "\", \"") + "\"]";
-        final String jvmArgs = Arrays.stream(ParametersListUtil.parseToArray(jvmParametersSetup))
-          .map(s -> '\'' + s.trim().replace("\\", "\\\\") + '\'').collect(Collectors.joining(" << "));
-        final String[] lines = {
-          "gradle.taskGraph.beforeTask { Task task ->",
-          "    if (task instanceof JavaForkOptions && (" + names + ".contains(task.name) || " + names + ".contains(task.path))) {",
-          "        def jvmArgs = task.jvmArgs.findAll{!it?.startsWith('-agentlib:jdwp') && !it?.startsWith('-Xrunjdwp')}",
-          "        jvmArgs << " + jvmArgs,
-          "        task.jvmArgs = jvmArgs",
-          "    }" +
-          "}",
-        };
-        final String script = StringUtil.join(lines, SystemProperties.getLineSeparator());
-        initScriptConsumer.consume(script);
-      }
-    }
-
-    final String testEventListenerDefinition = loadTestEventListenerDefinition();
-    initScriptConsumer.consume(testEventListenerDefinition);
   }
 
-  private String loadTestEventListenerDefinition() {
-    try (InputStream stream = getClass().getResourceAsStream("/org/jetbrains/plugins/gradle/IJTestLogger.groovy")) {
-      return StreamUtil.readText(stream, StandardCharsets.UTF_8);
+  @Override
+  public void enhanceTaskProcessing(@NotNull List<String> taskNames,
+                                    @NotNull Consumer<String> initScriptConsumer,
+                                    @NotNull Map<String, String> parameters) {
+    String dispatchPort = parameters.get(GradleProjectResolverExtension.DEBUG_DISPATCH_PORT_KEY);
+    if (dispatchPort == null) {
+      return;
     }
-    catch (IOException e) {
-      LOG.info(e);
-    }
-    return "";
-  }
 
-  public void setupDebugForAllJvmForkedTasks(@NotNull Consumer<? super String> initScriptConsumer, int debugPort) {
-    // external-system-rt.jar
+    String debugOptions = parameters.get(GradleProjectResolverExtension.DEBUG_OPTIONS_KEY);
+    if (debugOptions == null) {
+      debugOptions = "";
+    }
+    List<String> lines = new ArrayList<>();
+
     String esRtJarPath = PathUtil.getCanonicalPath(PathManager.getJarPathForClass(ExternalSystemSourceType.class));
-    final String[] lines = {
-      "initscript {",
-      "  dependencies {",
-      "    classpath files(\"" + esRtJarPath + "\")",
-      "  }",
-      "}",
-      "gradle.taskGraph.beforeTask { Task task ->",
-      " if (task instanceof org.gradle.api.tasks.testing.Test) {",
-      "  task.maxParallelForks = 1",
-      "  task.forkEvery = 0",
-      " }",
-      " if (task instanceof JavaForkOptions) {",
-      "  def jvmArgs = task.jvmArgs.findAll{!it?.startsWith('-agentlib:jdwp') && !it?.startsWith('-Xrunjdwp')}",
-      "  jvmArgs << com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.setupDebugger(task.path, " + debugPort + ")",
-      "  task.jvmArgs = jvmArgs",
-      " }",
-      "}",
-      "gradle.taskGraph.afterTask { Task task ->",
-      "    if (task instanceof JavaForkOptions) {",
-      "        com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.processFinished(task.path, " + debugPort + ")",
-      "    }",
-      "}",
-    };
+    lines.add("initscript { dependencies { classpath files(\""+ esRtJarPath + "\") } }"); // bring external-system-rt.jar
+
+    for (DebuggerBackendExtension extension: DebuggerBackendExtension.EP_NAME.getExtensionList()) {
+      lines.addAll(extension.initializationCode(dispatchPort, debugOptions));
+    }
+
     final String script = StringUtil.join(lines, SystemProperties.getLineSeparator());
     initScriptConsumer.consume(script);
   }
