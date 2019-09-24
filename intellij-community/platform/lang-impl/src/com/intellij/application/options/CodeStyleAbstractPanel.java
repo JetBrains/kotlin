@@ -597,7 +597,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   }
 
   public final void applyPredefinedSettings(@NotNull PredefinedCodeStyle codeStyle) {
-    codeStyle.apply(mySettings);
+    codeStyle.apply(mySettings, myDefaultLanguage);
     ((CodeStyleSchemesModel.ModelSettings) mySettings).doWithLockedSettings(()->resetImpl(mySettings));
     if (myModel != null) {
       myModel.fireAfterCurrentSettingsChanged();
