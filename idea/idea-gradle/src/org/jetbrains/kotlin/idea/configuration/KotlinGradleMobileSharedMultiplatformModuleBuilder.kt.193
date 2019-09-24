@@ -6,33 +6,29 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.konan.target.presetName
 import java.io.BufferedWriter
 
-class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
+class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
 
     private val commonName: String = "common"
     private var jvmTargetName: String = "jvm"
-    private var jsTargetName: String = "js"
-    private var nativeTargetName: String = defaultNativeTarget.userTargetName
+    private var nativeTargetName: String = "ios"
 
     private val commonSourceName get() = "$commonName$productionSuffix"
     private val commonTestName get() = "$commonName$testSuffix"
     private val jvmSourceName get() = "$jvmTargetName$productionSuffix"
     private val jvmTestName get() = "$jvmTargetName$testSuffix"
-    private val jsSourceName get() = "$jsTargetName$productionSuffix"
-    private val jsTestName get() = "$jsTargetName$testSuffix"
     private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
     val nativeTestName get() = "$nativeTargetName$testSuffix"
 
     override val shouldEnableGradleMetadataPreview: Boolean = true
 
-    override fun getBuilderId() = "kotlin.gradle.multiplatform.shared"
+    override fun getBuilderId() = "kotlin.gradle.multiplatform.mobileshared"
 
-    override fun getPresentableName() = "Multiplatform Library | Gradle"
+    override fun getPresentableName() = "Mobile Shared Library | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms (JVM, JS, and Native)"
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between two mobile platforms (JVM/Android and Native)"
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
@@ -41,8 +37,6 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
         val commonTest = src.createKotlinSampleFileWriter(commonTestName, fileName = "SampleTests.kt")
         val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName, jvmTargetName)
         val jvmTest = src.createKotlinSampleFileWriter(jvmTestName, fileName = "SampleTestsJVM.kt")
-        val jsMain = src.createKotlinSampleFileWriter(jsSourceName, jsTargetName)
-        val jsTest = src.createKotlinSampleFileWriter(jsTestName, fileName = "SampleTestsJS.kt")
         val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName)
         val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsNative.kt")
 
@@ -56,10 +50,10 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 }
 
                 expect object Platform {
-                    val name: String
+                    fun name(): String
                 }
 
-                fun hello(): String = "Hello from ${"$"}{Platform.name}"
+                fun hello(): String = "Hello from ${"$"}{Platform.name()}"
             """.trimIndent()
             )
 
@@ -72,21 +66,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 }
 
                 actual object Platform {
-                    actual val name: String = "JVM"
-                }
-            """.trimIndent()
-            )
-
-            jsMain.write(
-                """
-                package sample
-
-                actual class Sample {
-                    actual fun checkMe() = 12
-                }
-
-                actual object Platform {
-                    actual val name: String = "JS"
+                    actual fun name(): String = "JVM"
                 }
             """.trimIndent()
             )
@@ -100,7 +80,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 }
 
                 actual object Platform {
-                    actual val name: String = "Native"
+                    actual fun name(): String = "iOS"
                 }
             """.trimIndent()
             )
@@ -137,22 +117,6 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
             """.trimIndent()
             )
 
-            jsTest.write(
-                """
-                package sample
-
-                import kotlin.test.Test
-                import kotlin.test.assertTrue
-
-                class SampleTestsJS {
-                    @Test
-                    fun testHello() {
-                        assertTrue("JS" in hello())
-                    }
-                }
-            """.trimIndent()
-            )
-
             nativeTest.write(
                 """
                 package sample
@@ -163,36 +127,32 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 class SampleTestsNative {
                     @Test
                     fun testHello() {
-                        assertTrue("Native" in hello())
+                        assertTrue("iOS" in hello())
                     }
                 }
             """.trimIndent()
             )
         } finally {
-            listOf(commonMain, commonTest, jvmMain, jvmTest, jsMain, jsTest, nativeMain, nativeTest).forEach(BufferedWriter::close)
+            listOf(commonMain, commonTest, jvmMain, jvmTest, nativeMain, nativeTest).forEach(BufferedWriter::close)
         }
     }
 
     override fun buildMultiPlatformPart(): String {
         return """
-            group 'com.example'
-            version '0.0.1'
+            group '${projectId.groupId ?: "com.example"}'
+            version '${projectId.version ?: "0.0.1"}'
 
             apply plugin: 'maven-publish'
 
             kotlin {
                 jvm()
-                js {
-                    browser {
-                    }
-                    nodejs {
+                // This is for iPhone emulator
+                // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+                iosX64("$nativeTargetName") {
+                    binaries {
+                        framework()
                     }
                 }
-                // For ARM, should be changed to iosArm32 or iosArm64
-                // For Linux, should be changed to e.g. linuxX64
-                // For MacOS, should be changed to e.g. macosX64
-                // For Windows, should be changed to e.g. mingwX64
-                ${defaultNativeTarget.presetName}("${defaultNativeTarget.userTargetName}")
                 sourceSets {
                     $commonSourceName {
                         dependencies {
@@ -207,7 +167,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                     }
                     $jvmSourceName {
                         dependencies {
-                            implementation kotlin('stdlib-jdk8')
+                            implementation kotlin('stdlib')
                         }
                     }
                     $jvmTestName {
@@ -216,21 +176,29 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                             implementation kotlin('test-junit')
                         }
                     }
-                    $jsSourceName {
-                        dependencies {
-                            implementation kotlin('stdlib-js')
-                        }
-                    }
-                    $jsTestName {
-                        dependencies {
-                            implementation kotlin('test-js')
-                        }
-                    }
                     $nativeSourceName {
                     }
                     $nativeTestName {
                     }
                 }
+            }
+
+            task $nativeTestName {
+                def device = project.findProperty("${nativeTargetName}Device")?.toString() ?: "iPhone 8"
+                dependsOn kotlin.targets.$nativeTargetName.binaries.getTest('DEBUG').linkTaskName
+                group = JavaBasePlugin.VERIFICATION_GROUP
+                description = "Runs tests for target '$nativeTargetName' on an iOS simulator"
+
+                doLast {
+                    def binary = kotlin.targets.$nativeTargetName.binaries.getTest('DEBUG').outputFile
+                    exec {
+                        commandLine 'xcrun', 'simctl', 'spawn', device, binary.absolutePath
+                    }
+                }
+            }
+
+            configurations {
+                compileClasspath
             }
         """.trimIndent()
     }

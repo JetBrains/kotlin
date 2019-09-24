@@ -139,8 +139,8 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
     override fun buildMultiPlatformPart(): String {
         return """
-            group '${projectId.groupId ?: "com.example"}'
-            version '${projectId.version ?: "0.0.1"}'
+            group 'com.example'
+            version '0.0.1'
 
             apply plugin: 'maven-publish'
 
