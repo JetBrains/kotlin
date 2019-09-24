@@ -9,6 +9,9 @@ import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesCollector;
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
+import com.intellij.openapi.editor.actions.CaretStopBoundary;
+import com.intellij.openapi.editor.actions.CaretStopOptions;
+import com.intellij.openapi.editor.actions.CaretStopOptionsTransposed;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.openapi.editor.richcopy.settings.RichCopySettings;
@@ -128,7 +131,23 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isSuppressWarnings(), "suppressWarnings");
     addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isImportHintEnabled(), "importHintEnabled");
     addBoolIfDiffers(set, dcas, dcasDefault, s -> s.SHOW_METHOD_SEPARATORS, "showMethodSeparators");
+
+    final CaretStopOptionsTransposed defaultCaretStop = CaretStopOptionsTransposed.fromCaretStopOptions(new CaretStopOptions());
+    final CaretStopOptionsTransposed caretStop = CaretStopOptionsTransposed.fromCaretStopOptions(es.getCaretStopOptions());
+    addIfDiffers(set, caretStop.getLineBoundary(), defaultCaretStop.getLineBoundary(), s -> toCaretStopValue(s), "caret.movement.line");
+    addIfDiffers(set, caretStop.getWordBoundary(), defaultCaretStop.getWordBoundary(), s -> toCaretStopValue(s), "caret.movement.word");
     return set;
+  }
+
+  @NotNull
+  private static String toCaretStopValue(@NotNull CaretStopBoundary boundary) {
+    if (boundary.equals(CaretStopBoundary.NONE)) return "NONE";
+    else if (boundary.equals(CaretStopBoundary.CURRENT)) return "CURRENT";
+    else if (boundary.equals(CaretStopBoundary.NEIGHBOR)) return "NEIGHBOR";
+    else if (boundary.equals(CaretStopBoundary.START)) return "START";
+    else if (boundary.equals(CaretStopBoundary.END)) return "END";
+    else if (boundary.equals(CaretStopBoundary.BOTH)) return "BOTH";
+    return "OTHER";
   }
 
   private static void addTooltipActionsMetricIfDiffers(@NotNull Set<MetricEvent> set) {
