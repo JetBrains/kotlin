@@ -301,9 +301,9 @@ public class BraceHighlightingHandler {
   }
 
   private void highlightScope(int offset) {
+    if (!myPsiFile.isValid()) return;
     if (myEditor.getFoldingModel().isOffsetCollapsed(offset)) return;
     if (myEditor.getDocument().getTextLength() <= offset) return;
-
     HighlighterIterator iterator = getEditorHighlighter().createIterator(offset);
     final CharSequence chars = myDocument.getCharsSequence();
 
