@@ -32,7 +32,9 @@ class MoveVariableDeclarationIntoWhenInspection : AbstractKotlinInspection(), Cl
             val subjectExpression = expression.subjectExpression ?: return
             val property = expression.findDeclarationNear() ?: return
             if (!property.isOneLiner()) return
-            if (property.hasReturnOrThrowExpression()) return
+            if (property.initializer?.anyDescendantOfType<KtExpression> {
+                    it is KtThrowExpression || it is KtReturnExpression || it is KtBreakExpression || it is KtContinueExpression
+                } == true) return
 
             val action = property.action(expression)
             if (action == Action.NOTHING) return
@@ -75,10 +77,6 @@ private fun KtWhenExpression.findDeclarationNear(): KtProperty? {
         ?: previousPropertyFromParent()
         ?: return null
     return previousProperty.takeIf { !it.isVar && it.hasInitializer() && it.nameIdentifier?.text == subjectExpression?.text }
-}
-
-private fun KtProperty.hasReturnOrThrowExpression(): Boolean {
-    return this.initializer?.anyDescendantOfType<KtExpression> { it is KtReturnExpression || it is KtThrowExpression } == true
 }
 
 private tailrec fun KtExpression.previousPropertyFromParent(): KtProperty? {
