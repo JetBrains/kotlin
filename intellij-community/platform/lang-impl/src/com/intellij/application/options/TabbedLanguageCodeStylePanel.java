@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.ui.GraphicsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -259,28 +260,42 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
   public void setupCopyFromMenu(JPopupMenu copyMenu) {
     super.setupCopyFromMenu(copyMenu);
     if (myPredefinedCodeStyles.length > 0) {
-      JMenu langs = new JMenu(ApplicationBundle.message("code.style.set.from.menu.language")) {
-        @Override
-        public void paint(Graphics g) {
-          GraphicsUtil.setupAntialiasing(g);
-          super.paint(g);
-        }
-      };
-      copyMenu.add(langs);
-      fillLanguages(langs);
-      JMenu predefined = new JMenu(ApplicationBundle.message("code.style.set.from.menu.predefined.style")) {
-        @Override
-        public void paint(Graphics g) {
-          GraphicsUtil.setupAntialiasing(g);
-          super.paint(g);
-        }
-      };
-      copyMenu.add(predefined);
-      fillPredefined(predefined);
+      if (PlatformUtils.isDataGrip()) fillFlat(copyMenu);
+      else fillWithSubmenu(copyMenu);
     }
     else {
       fillLanguages(copyMenu);
     }
+  }
+
+  private void fillFlat(JPopupMenu copyMenu) {
+    fillPredefined(copyMenu);
+    LanguageCodeStyleSettingsProvider provider = getProvider();
+    if (provider != null && provider.getApplicableLanguages().size() > 0) {
+      copyMenu.addSeparator();
+      fillLanguages(copyMenu);
+    }
+  }
+
+  private void fillWithSubmenu(JPopupMenu copyMenu) {
+    JMenu langs = new JMenu(ApplicationBundle.message("code.style.set.from.menu.language")) {
+      @Override
+      public void paint(Graphics g) {
+        GraphicsUtil.setupAntialiasing(g);
+        super.paint(g);
+      }
+    };
+    copyMenu.add(langs);
+    fillLanguages(langs);
+    JMenu predefined = new JMenu(ApplicationBundle.message("code.style.set.from.menu.predefined.style")) {
+      @Override
+      public void paint(Graphics g) {
+        GraphicsUtil.setupAntialiasing(g);
+        super.paint(g);
+      }
+    };
+    copyMenu.add(predefined);
+    fillPredefined(predefined);
   }
 
 
@@ -296,7 +311,7 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
     }
   }
 
-  private void fillPredefined(JMenuItem parentMenu) {
+  private void fillPredefined(JComponent parentMenu) {
     for (final PredefinedCodeStyle predefinedCodeStyle : myPredefinedCodeStyles) {
       JMenuItem predefinedItem = new JBMenuItem(predefinedCodeStyle.getName());
       parentMenu.add(predefinedItem);
