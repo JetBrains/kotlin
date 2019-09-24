@@ -338,7 +338,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     if (myProfilePath != null) {
       inspectionProfile = loadProfileByPath(myProfilePath);
       if (inspectionProfile == null) {
-        reportError("Failed to load profile from \'" + myProfilePath + "\'");
+        reportError("Failed to load profile from '" + myProfilePath + "'");
         gracefulExit();
         return null;
       }
@@ -364,7 +364,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   private InspectionProfileImpl loadProfileByPath(final String profilePath) throws IOException, JDOMException {
     InspectionProfileImpl inspectionProfile = ApplicationInspectionProfileManager.getInstanceImpl().loadProfile(profilePath);
     if (inspectionProfile != null) {
-      reportMessage(1, "Loaded profile \'" + inspectionProfile.getName() + "\' from file \'" + profilePath + "\'");
+      reportMessage(1, "Loaded profile '" + inspectionProfile.getName() + "' from file '" + profilePath + "'");
     }
     return inspectionProfile;
   }
@@ -374,14 +374,14 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     InspectionProjectProfileManager profileManager = InspectionProjectProfileManager.getInstance(project);
     InspectionProfileImpl inspectionProfile = profileManager.getProfile(profileName, false);
     if (inspectionProfile != null) {
-      reportMessage(1, "Loaded shared project profile \'" + profileName + "\'");
+      reportMessage(1, "Loaded shared project profile '" + profileName + "'");
     }
     else {
       //check if ide profile is used for project
       for (InspectionProfileImpl profile : profileManager.getProfiles()) {
         if (Comparing.strEqual(profile.getName(), profileName)) {
           inspectionProfile = profile;
-          reportMessage(1, "Loaded local profile \'" + profileName + "\'");
+          reportMessage(1, "Loaded local profile '" + profileName + "'");
           break;
         }
       }

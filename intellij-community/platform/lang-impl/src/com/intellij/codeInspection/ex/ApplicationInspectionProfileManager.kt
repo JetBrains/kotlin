@@ -1,239 +1,205 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.codeInspection.ex;
+package com.intellij.codeInspection.ex
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import com.intellij.codeInsight.daemon.InspectionProfileConvertor;
-import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
-import com.intellij.codeInsight.daemon.impl.SeveritiesProvider;
-import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
-import com.intellij.codeInspection.InspectionsBundle;
-import com.intellij.configurationStore.BundledSchemeEP;
-import com.intellij.configurationStore.SchemeDataHolder;
-import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.options.SchemeManager;
-import com.intellij.openapi.options.SchemeManagerFactory;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.IconLoader;
-import com.intellij.profile.codeInspection.*;
-import com.intellij.serviceContainer.NonInjectable;
-import com.intellij.util.ObjectUtils;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
+import com.intellij.codeHighlighting.HighlightDisplayLevel
+import com.intellij.codeInsight.daemon.InspectionProfileConvertor
+import com.intellij.codeInsight.daemon.impl.HighlightInfoType
+import com.intellij.codeInsight.daemon.impl.SeveritiesProvider
+import com.intellij.codeInsight.daemon.impl.SeverityRegistrar
+import com.intellij.codeInspection.InspectionsBundle
+import com.intellij.configurationStore.BundledSchemeEP
+import com.intellij.configurationStore.SchemeDataHolder
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.options.SchemeManagerFactory
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.IconLoader
+import com.intellij.profile.codeInspection.*
+import com.intellij.serviceContainer.NonInjectable
+import com.intellij.util.ObjectUtils
+import org.jdom.Element
+import org.jdom.JDOMException
+import org.jetbrains.annotations.TestOnly
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Function
+import javax.swing.Icon
 
-import javax.swing.*;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
+@State(name = "InspectionProfileManager", storages = [Storage("editor.xml")], additionalExportFile = InspectionProfileManager.INSPECTION_DIR)
+open class ApplicationInspectionProfileManager @TestOnly @NonInjectable constructor(schemeManagerFactory: SchemeManagerFactory) : BaseInspectionProfileManager(ApplicationManager.getApplication().messageBus),
+                                                                                                                                  InspectionProfileManager,
+                                                                                                                                  PersistentStateComponent<Element> {
+  override val schemeManager = schemeManagerFactory.create(InspectionProfileManager.INSPECTION_DIR, object : InspectionProfileProcessor() {
+    override fun getSchemeKey(attributeProvider: Function<String, String?>, fileNameWithoutExtension: String) = fileNameWithoutExtension
 
-@State(
-  name = "InspectionProfileManager",
-  storages = @Storage("editor.xml"),
-  additionalExportFile = InspectionProfileManager.INSPECTION_DIR
-)
-public class ApplicationInspectionProfileManager extends BaseInspectionProfileManager implements InspectionProfileManager, PersistentStateComponent<Element> {
-  private static final ExtensionPointName<BundledSchemeEP> BUNDLED_EP_NAME = ExtensionPointName.create("com.intellij.bundledInspectionProfile");
+    override fun createScheme(dataHolder: SchemeDataHolder<InspectionProfileImpl>,
+                              name: String,
+                              attributeProvider: Function<in String, String?>,
+                              isBundled: Boolean): InspectionProfileImpl {
+      return InspectionProfileImpl(name, InspectionToolRegistrar.getInstance(), this@ApplicationInspectionProfileManager, dataHolder)
+    }
 
-  private final SchemeManager<InspectionProfileImpl> mySchemeManager;
-  private final AtomicBoolean myProfilesAreInitialized = new AtomicBoolean(false);
+    override fun onSchemeAdded(scheme: InspectionProfileImpl) {
+      fireProfileChanged(scheme)
+    }
+  })
 
-  public static ApplicationInspectionProfileManager getInstanceImpl() {
-    return (ApplicationInspectionProfileManager)ServiceManager.getService(InspectionProfileManager.class);
-  }
+  private val myProfilesAreInitialized = AtomicBoolean(false)
 
-  public ApplicationInspectionProfileManager() {
-    //noinspection TestOnlyProblems
-    this(SchemeManagerFactory.getInstance());
-  }
+  @Volatile
+  private var LOAD_PROFILES = !ApplicationManager.getApplication().isUnitTestMode
 
-  @TestOnly
-  @NonInjectable
-  public ApplicationInspectionProfileManager(@NotNull SchemeManagerFactory schemeManagerFactory) {
-    super(ApplicationManager.getApplication().getMessageBus());
+  open val converter: InspectionProfileConvertor
+    get() = InspectionProfileConvertor(this)
 
-    registerProvidedSeverities();
+  val rootProfileName: String
+    get() = ObjectUtils.chooseNotNull(schemeManager.currentSchemeName, DEFAULT_PROFILE_NAME)
 
-    mySchemeManager = schemeManagerFactory.create(INSPECTION_DIR, new InspectionProfileProcessor() {
-      @NotNull
-      @Override
-      public String getSchemeKey(@NotNull Function<String, String> attributeProvider, @NotNull String fileNameWithoutExtension) {
-        return fileNameWithoutExtension;
-      }
+  constructor() : this(SchemeManagerFactory.getInstance())
 
-      @Override
-      @NotNull
-      public InspectionProfileImpl createScheme(@NotNull SchemeDataHolder<? super InspectionProfileImpl> dataHolder,
-                                                @NotNull String name,
-                                                @NotNull Function<? super String, String> attributeProvider,
-                                                boolean isBundled) {
-        return new InspectionProfileImpl(name, InspectionToolRegistrar.getInstance(), ApplicationInspectionProfileManager.this, dataHolder);
-      }
+  companion object {
+    private val BUNDLED_EP_NAME = ExtensionPointName.create<BundledSchemeEP>("com.intellij.bundledInspectionProfile")
 
-      @Override
-      public void onSchemeAdded(@NotNull InspectionProfileImpl scheme) {
-        fireProfileChanged(scheme);
-      }
-    });
-  }
+    @JvmStatic
+    fun getInstanceImpl() = service<InspectionProfileManager>() as ApplicationInspectionProfileManager
 
-  @NotNull
-  @Override
-  protected SchemeManager<InspectionProfileImpl> getSchemeManager() {
-    return mySchemeManager;
-  }
-
-  // It should be public to be available from Upsource
-  public static void registerProvidedSeverities() {
-    for (SeveritiesProvider provider : SeveritiesProvider.EP_NAME.getExtensionList()) {
-      for (HighlightInfoType t : provider.getSeveritiesHighlightInfoTypes()) {
-        HighlightSeverity highlightSeverity = t.getSeverity(null);
-        SeverityRegistrar.registerStandard(t, highlightSeverity);
-        TextAttributesKey attributesKey = t.getAttributesKey();
-        Icon icon = t instanceof HighlightInfoType.Iconable ? new IconLoader.LazyIcon() {
-          @NotNull
-          @Override
-          protected Icon compute() {
-            return ((HighlightInfoType.Iconable)t).getIcon();
+    // It should be public to be available from Upsource
+    fun registerProvidedSeverities() {
+      for (provider in SeveritiesProvider.EP_NAME.extensionList) {
+        for (t in provider.severitiesHighlightInfoTypes) {
+          val highlightSeverity = t.getSeverity(null)
+          SeverityRegistrar.registerStandard(t, highlightSeverity)
+          val attributesKey = t.attributesKey
+          val icon = when (t) {
+            is HighlightInfoType.Iconable -> {
+              object : IconLoader.LazyIcon() {
+                override fun compute(): Icon {
+                  return (t as HighlightInfoType.Iconable).icon
+                }
+              }
+            }
+            else -> null
           }
-        } : null;
-        HighlightDisplayLevel.registerSeverity(highlightSeverity, attributesKey, icon);
+          HighlightDisplayLevel.registerSeverity(highlightSeverity, attributesKey, icon)
+        }
       }
     }
   }
 
-  @Override
-  @NotNull
-  public Collection<InspectionProfileImpl> getProfiles() {
-    initProfiles();
-    return Collections.unmodifiableList(mySchemeManager.getAllSchemes());
+  init {
+    registerProvidedSeverities()
   }
 
-  private volatile boolean LOAD_PROFILES = !ApplicationManager.getApplication().isUnitTestMode();
+  override fun getProfiles(): Collection<InspectionProfileImpl> {
+    initProfiles()
+    return Collections.unmodifiableList(schemeManager.allSchemes)
+  }
 
   @TestOnly
-  public void forceInitProfiles(boolean flag) {
-    LOAD_PROFILES = flag;
-    myProfilesAreInitialized.set(false);
+  fun forceInitProfiles(flag: Boolean) {
+    LOAD_PROFILES = flag
+    myProfilesAreInitialized.set(false)
   }
 
-  public final void initProfiles() {
+  fun initProfiles() {
     if (!myProfilesAreInitialized.compareAndSet(false, true) || !LOAD_PROFILES) {
-      return;
+      return
     }
 
-    Application app = ApplicationManager.getApplication();
-    if (!(app.isUnitTestMode() || app.isHeadlessEnvironment())) {
-      for (BundledSchemeEP ep : BUNDLED_EP_NAME.getExtensions()) {
-        mySchemeManager.loadBundledScheme(ep.getPath() + ".xml", ep);
+    val app = ApplicationManager.getApplication()
+    if (!(app.isUnitTestMode || app.isHeadlessEnvironment)) {
+      for (ep in BUNDLED_EP_NAME.extensions) {
+        schemeManager.loadBundledScheme(ep.path!! + ".xml", ep)
       }
     }
-    mySchemeManager.loadSchemes();
+    schemeManager.loadSchemes()
 
-    if (mySchemeManager.isEmpty()) {
-      mySchemeManager.addScheme(new InspectionProfileImpl(InspectionProfileKt.DEFAULT_PROFILE_NAME, InspectionToolRegistrar.getInstance(), this));
+    if (schemeManager.isEmpty) {
+      schemeManager.addScheme(InspectionProfileImpl(DEFAULT_PROFILE_NAME, InspectionToolRegistrar.getInstance(), this))
     }
   }
 
-  public InspectionProfileImpl loadProfile(@NotNull String path) throws IOException, JDOMException {
-    final Path file = Paths.get(path);
+  @Throws(IOException::class, JDOMException::class)
+  fun loadProfile(path: String): InspectionProfileImpl? {
+    val file = Paths.get(path)
     if (Files.isRegularFile(file)) {
       try {
-        return InspectionProfileLoadUtil.load(file, InspectionToolRegistrar.getInstance(), this);
+        return InspectionProfileLoadUtil.load(file, InspectionToolRegistrar.getInstance(), this)
       }
-      catch (IOException | JDOMException e) {
-        throw e;
+      catch (e: IOException) {
+        throw e
       }
-      catch (Exception ignored) {
-        ApplicationManager.getApplication().invokeLater(() -> Messages
-          .showErrorDialog(InspectionsBundle.message("inspection.error.loading.message", 0, file),
-                           InspectionsBundle.message("inspection.errors.occurred.dialog.title")), ModalityState.NON_MODAL);
+      catch (e: JDOMException) {
+        throw e
       }
+      catch (ignored: Exception) {
+        ApplicationManager.getApplication().invokeLater({
+          Messages
+            .showErrorDialog(InspectionsBundle.message("inspection.error.loading.message", 0, file),
+              InspectionsBundle.message("inspection.errors.occurred.dialog.title"))
+        }, ModalityState.NON_MODAL)
+      }
+
     }
-    return getProfile(path, false);
+    return getProfile(path, false)
   }
 
-  @Nullable
-  @Override
-  public Element getState() {
-    Element state = new Element("state");
-    getSeverityRegistrar().writeExternal(state);
-    return state;
+  override fun getState(): Element? {
+    val state = Element("state")
+    severityRegistrar.writeExternal(state)
+    return state
   }
 
-  @Override
-  public void loadState(@NotNull Element state) {
-    getSeverityRegistrar().readExternal(state);
+  override fun loadState(state: Element) {
+    severityRegistrar.readExternal(state)
   }
 
-  public InspectionProfileConvertor getConverter() {
-    return new InspectionProfileConvertor(this);
+  override fun setRootProfile(profileName: String?) {
+    schemeManager.currentSchemeName = profileName
   }
 
-  @Override
-  public void setRootProfile(@Nullable String profileName) {
-    mySchemeManager.setCurrentSchemeName(profileName);
-  }
-
-  @Override
-  public InspectionProfileImpl getProfile(@NotNull final String name, boolean returnRootProfileIfNamedIsAbsent) {
-    InspectionProfileImpl found = mySchemeManager.findSchemeByName(name);
+  override fun getProfile(name: String, returnRootProfileIfNamedIsAbsent: Boolean): InspectionProfileImpl? {
+    val found = schemeManager.findSchemeByName(name)
     if (found != null) {
-      return found;
+      return found
     }
     //profile was deleted
-    if (returnRootProfileIfNamedIsAbsent) {
-      return getCurrentProfile();
+    return if (returnRootProfileIfNamedIsAbsent) {
+      currentProfile
     }
-    return null;
+    else null
   }
 
-  @NotNull
-  @Override
-  public InspectionProfileImpl getCurrentProfile() {
-    initProfiles();
+  override fun getCurrentProfile(): InspectionProfileImpl {
+    initProfiles()
 
-    InspectionProfileImpl current = mySchemeManager.getActiveScheme();
+    val current = schemeManager.activeScheme
     if (current != null) {
-      return current;
+      return current
     }
 
     // use default as base, not random custom profile
-    InspectionProfileImpl result = mySchemeManager.findSchemeByName(InspectionProfileKt.DEFAULT_PROFILE_NAME);
+    val result = schemeManager.findSchemeByName(DEFAULT_PROFILE_NAME)
     if (result == null) {
-      InspectionProfileImpl profile = new InspectionProfileImpl(InspectionProfileKt.DEFAULT_PROFILE_NAME);
-      addProfile(profile);
-      return profile;
+      val profile = InspectionProfileImpl(DEFAULT_PROFILE_NAME)
+      addProfile(profile)
+      return profile
     }
-    return result;
+    return result
   }
 
-  @NotNull
-  public String getRootProfileName() {
-    return ObjectUtils.chooseNotNull(mySchemeManager.getCurrentSchemeName(), InspectionProfileKt.DEFAULT_PROFILE_NAME);
-  }
-
-  @Override
-  public void fireProfileChanged(@NotNull InspectionProfileImpl profile) {
-    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-      ProjectInspectionProfileManager.getInstance(project).fireProfileChanged(profile);
+  override fun fireProfileChanged(profile: InspectionProfileImpl) {
+    for (project in ProjectManager.getInstance().openProjects) {
+      ProjectInspectionProfileManager.getInstance(project).fireProfileChanged(profile)
     }
   }
 }
