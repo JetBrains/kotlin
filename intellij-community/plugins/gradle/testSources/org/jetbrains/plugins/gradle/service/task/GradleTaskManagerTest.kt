@@ -62,7 +62,7 @@ class GradleTaskManagerTest: UsefulTestCase() {
 
     val listener = MyListener()
     runHelpTask(listener)
-    assertTrue("Gradle 4.8.1 should be started", listener.heard("Welcome to Gradle 4.8.1"))
+    assertTrue("Gradle 4.8.1 should be started", listener.anyLineContains("Welcome to Gradle 4.8.1"))
   }
 
   @Test
@@ -85,15 +85,15 @@ class GradleTaskManagerTest: UsefulTestCase() {
 
     writeBuildScript(
       """
-       | wrapper { gradleVersion = "4.8.1" }
+       | wrapper { gradleVersion = "4.9" }
       """.trimMargin())
 
     val listener = MyListener()
 
     runHelpTask(listener)
 
-    assertTrue("Gradle 4.8.1 should be started", listener.heard("Welcome to Gradle 4.8.1"))
-    assertFalse("Gradle 4.8 should never be started", listener.heard("Welcome to Gradle 4.8"))
+    assertTrue("Gradle 4.9 should execute 'help' task", listener.anyLineContains("Welcome to Gradle 4.9"))
+    assertFalse("Gradle 4.8 should not execute 'help' task", listener.anyLineContains("Welcome to Gradle 4.8"))
   }
 
 
@@ -118,5 +118,5 @@ class MyListener: ExternalSystemTaskNotificationListenerAdapter() {
     storage.add(text)
   }
 
-  fun heard(something: String): Boolean = storage.any { it.contains(something) }
+  fun anyLineContains(something: String): Boolean = storage.any { it.contains(something) }
 }
