@@ -350,7 +350,7 @@ public class CompilerManagerImpl extends CompilerManager {
   }
 
   @Override
-  public void setValidationEnabled(ModuleType moduleType, boolean enabled) {
+  public void setValidationEnabled(ModuleType<?> moduleType, boolean enabled) {
     if (enabled) {
       myValidationDisabledModuleTypes.remove(moduleType);
     }

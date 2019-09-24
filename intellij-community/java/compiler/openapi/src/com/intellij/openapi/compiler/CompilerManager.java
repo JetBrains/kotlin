@@ -111,9 +111,10 @@ public abstract class CompilerManager {
   public abstract void addBeforeTask(@NotNull CompileTask task);
 
   /**
-   * Registers a compiler task  that will be executed after the compilation. Consider using {@code compiler.task} extension point instead
-   * (see {@link CompileTask} for details), this way you won't need to call this method during project's initialization.
+   * Registers a compiler task  that will be executed after the compilation.
+   * @deprecated Use {@code compiler.task} extension point instead (see {@link CompileTask} for details).
    */
+  @Deprecated
   public abstract void addAfterTask(@NotNull CompileTask task);
 
   /**
@@ -273,7 +274,7 @@ public abstract class CompilerManager {
   @NotNull
   public abstract CompileScope createProjectCompileScope(@NotNull Project project);
 
-  public abstract void setValidationEnabled(ModuleType moduleType, boolean enabled);
+  public abstract void setValidationEnabled(ModuleType<?> moduleType, boolean enabled);
 
   public abstract boolean isValidationEnabled(Module moduleType);
 
