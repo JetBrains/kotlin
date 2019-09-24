@@ -39,7 +39,10 @@ class KotlinSourceSetInfo @PropertyMapping("kotlinModule") constructor(val kotli
     val platform: KotlinPlatform
         get() = actualPlatforms.getSinglePlatform()
 
+    @Transient
     var defaultCompilerArguments: CommonCompilerArguments? = null
+
+    @Transient
     var compilerArguments: CommonCompilerArguments? = null
     var dependencyClasspath: List<String> = emptyList()
     var isTestModule: Boolean = false

@@ -46,6 +46,7 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.ge
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
+import java.lang.reflect.Proxy
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -750,6 +751,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             resolverCtx: ProjectResolverContext
         ): KotlinSourceSetInfo? {
             if (compilation.platform.isNotSupported()) return null
+            if (Proxy.isProxyClass(compilation.javaClass)) {
+                return createSourceSetInfo(
+                    KotlinCompilationImpl(compilation, HashMap<Any, Any>()),
+                    gradleModule,
+                    resolverCtx
+                )
+            }
             return KotlinSourceSetInfo(compilation).also { sourceSetInfo ->
                 sourceSetInfo.moduleId = getKotlinModuleId(gradleModule, compilation, resolverCtx)
                 sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
