@@ -17,6 +17,8 @@ import com.intellij.ide.IdeTooltipManager;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.todo.TodoConfiguration;
+import com.intellij.lang.LanguageAnnotators;
+import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
@@ -37,6 +39,7 @@ import com.intellij.openapi.editor.ex.EditorEventMulticasterEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.extensions.ExtensionPointAdapter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -66,6 +69,7 @@ import com.intellij.openapi.wm.impl.status.TogglePopupHintsPanel;
 import com.intellij.profile.ProfileChangeAdapter;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
+import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
@@ -352,6 +356,14 @@ public final class DaemonListeners implements Disposable {
     });
 
     connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (__, ___) -> updateStatusBar());
+
+    LanguageAnnotators.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<KeyedLazyInstance<Annotator>>() {
+      @Override
+      public void extensionListChanged() {
+        CachedAnnotators.clearCache(project);
+        stopDaemonAndRestartAllFiles("annotators list changed");
+      }
+    }, this);
   }
 
   private boolean worthBothering(final Document document, Project project) {
