@@ -1,5 +1,3 @@
-import java.util.ArrayList
-
 internal class A {
     private val field1: List<String> = ArrayList()
     val field2: List<String> = ArrayList()

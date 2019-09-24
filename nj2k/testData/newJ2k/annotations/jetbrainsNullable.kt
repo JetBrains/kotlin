@@ -1,3 +1,4 @@
+// ERROR: Unresolved reference: Test
 // !specifyLocalVariableTypeByDefault: true
 package test
 
@@ -16,7 +17,7 @@ class Test(str: String?) {
         val test: String = "String2"
         sout(test)
         sout(dummy(test))
-        Test(test)
+        test.Test(test)
     }
 
     init {

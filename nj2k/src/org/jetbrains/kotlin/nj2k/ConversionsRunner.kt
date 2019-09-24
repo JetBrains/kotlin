@@ -72,7 +72,6 @@ object ConversionsRunner {
         BuiltinMembersConversion(context),
         ImplicitCastsConversion(context),
         LiteralConversion(context),
-        CollectImportsConversion(context),
         FilterImportsConversion(context),
         MoveInitBlocksToTheEndConversion(context),
         AddElementsInfoConversion(context)

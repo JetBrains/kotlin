@@ -1,7 +1,5 @@
 package demo
 
-import java.util.ArrayList
-
 internal class Test {
     fun main() {
         val common: List<String> = ArrayList()

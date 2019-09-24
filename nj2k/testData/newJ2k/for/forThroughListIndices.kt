@@ -1,5 +1,3 @@
-import java.util.ArrayList
-
 internal class C {
     fun foo1(list: MutableList<String?>) {
         for (i in list.indices) {

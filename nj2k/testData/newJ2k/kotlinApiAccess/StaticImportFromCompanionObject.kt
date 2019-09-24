@@ -1,7 +1,7 @@
-import kotlinApi.KotlinClass.Companion.CONST
+import kotlinApi.KotlinClass
 
 class C {
     internal fun bar() {
-        println(CONST)
+        println(KotlinClass.CONST)
     }
 }

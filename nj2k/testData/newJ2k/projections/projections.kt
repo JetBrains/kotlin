@@ -1,5 +1,3 @@
-import java.util.ArrayList
-
 internal class C<T> {
     fun foo1(src: Collection<T>) {
         val t = src.iterator().next()

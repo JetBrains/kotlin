@@ -1,7 +1,5 @@
 package demo
 
-import java.util.HashMap
-
 internal class Test {
     constructor() {}
     constructor(s: String?) {}

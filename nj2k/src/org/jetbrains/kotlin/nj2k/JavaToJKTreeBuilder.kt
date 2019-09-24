@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.nj2k.types.*
 
 
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -74,23 +75,39 @@ class JavaToJKTreeBuilder constructor(
     private fun PsiJavaFile.toJK(): JKFile =
         JKFile(
             packageStatement?.toJK() ?: JKPackageDeclaration(JKNameIdentifier("")),
-            importList.toJK(),
+            importList.toJK(saveImports = false),
             with(declarationMapper) { classes.map { it.toJK() } }
         )
 
-    private fun PsiImportList?.toJK(): JKImportList =
-        JKImportList(this?.allImportStatements?.mapNotNull { it.toJK() }.orEmpty())
+    private fun PsiImportList?.toJK(saveImports: Boolean): JKImportList =
+        JKImportList(this?.allImportStatements?.mapNotNull { it.toJK(saveImports) }.orEmpty()).also { importList ->
+            val innerComments = this?.collectDescendantsOfType<PsiComment>()?.map { comment ->
+                JKCommentElement(comment.text)
+            }.orEmpty()
+            importList.leftNonCodeElements += innerComments
+        }
 
     private fun PsiPackageStatement.toJK(): JKPackageDeclaration =
         JKPackageDeclaration(JKNameIdentifier(packageName))
             .also {
                 it.assignNonCodeElements(this)
+                symbolProvider.provideUniverseSymbol(this, it)
             }
 
-
-    private fun PsiImportStatementBase.toJK(): JKImportStatement? {
-        val target = resolve()
+    private fun PsiImportStatementBase.toJK(saveImports: Boolean): JKImportStatement? {
+        val target = when (this) {
+            is PsiImportStaticStatement -> resolveTargetClass()
+            else -> resolve()
+        }
         val rawName = (importReference?.canonicalText ?: return null) + if (isOnDemand) ".*" else ""
+
+        // We will save only unresolved imports and print all static calls with fqNames
+        // to avoid name clashes in future
+        if (!saveImports) {
+            return if (target == null)
+                JKImportStatement(JKNameIdentifier(rawName))
+            else null
+        }
         val name =
             target.safeAs<KtLightElement<*, *>>()?.kotlinOrigin?.getKotlinFqName()?.asString()
                 ?: target.safeAs<KtLightClass>()?.containingFile?.safeAs<KtFile>()?.packageFqName?.asString()?.let { "$it.*" }
@@ -944,7 +961,7 @@ class JavaToJKTreeBuilder constructor(
         }.last()
 
 
-    fun buildTree(psi: PsiElement): JKTreeRoot? =
+    fun buildTree(psi: PsiElement, saveImports: Boolean): JKTreeRoot? =
         when (psi) {
             is PsiJavaFile -> psi.toJK()
             is PsiExpression -> with(expressionTreeMapper) { psi.toJK() }
@@ -953,8 +970,8 @@ class JavaToJKTreeBuilder constructor(
             is PsiField -> with(declarationMapper) { psi.toJK() }
             is PsiMethod -> with(declarationMapper) { psi.toJK() }
             is PsiAnnotation -> with(declarationMapper) { psi.toJK() }
-            is PsiImportList -> psi.toJK()
-            is PsiImportStatementBase -> psi.toJK()
+            is PsiImportList -> psi.toJK(saveImports)
+            is PsiImportStatementBase -> psi.toJK(saveImports)
             is PsiJavaCodeReferenceElement ->
                 if (psi.parent is PsiReferenceList) {
                     val factory = JavaPsiFacade.getInstance(psi.project).elementFactory

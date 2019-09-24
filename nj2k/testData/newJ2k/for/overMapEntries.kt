@@ -1,5 +1,3 @@
-import java.util.HashMap
-
 internal object Test {
     @JvmStatic
     fun main(args: Array<String>) {

@@ -21,16 +21,12 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.PsiStatement
+import com.intellij.psi.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.core.util.EDT
@@ -108,9 +104,18 @@ class NewJavaToKotlinConverter(
         symbolProvider.preBuildTree(inputElements)
         val importStorage = ImportStorage()
         val treeBuilder = JavaToJKTreeBuilder(symbolProvider, typeFactory, converterServices, importStorage)
+
+
+        // we want to leave all imports as is in the case when user is converting only imports
+        val saveImports = inputElements.all { element ->
+            element is PsiComment || element is PsiWhiteSpace
+                    || element is PsiImportStatementBase || element is PsiImportList
+                    || element is PsiPackageStatement
+        }
+
         val asts = inputElements.mapIndexed { i, element ->
             processor.updateState(i, 1, phaseDescription)
-            element to treeBuilder.buildTree(element)
+            element to treeBuilder.buildTree(element, saveImports)
         }
 
         val context = NewJ2kConverterContext(

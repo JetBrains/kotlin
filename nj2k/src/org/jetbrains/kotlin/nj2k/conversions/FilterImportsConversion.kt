@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.JKImportList
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 
-class FilterImportsConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
+class FilterImportsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKImportList) return recurse(element)
         element.imports = element.imports.filter { import ->

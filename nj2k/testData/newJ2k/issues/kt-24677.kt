@@ -1,5 +1,3 @@
-import java.util.ArrayList
-
 internal interface FooInterface {
     fun foo(): ArrayList<out Foo.SomeClass?>?
 }

@@ -1,5 +1,3 @@
-import java.util.ArrayList
-
 internal class A {
     private val list1 = ArrayList<String>()
     private val list2: MutableList<String> = ArrayList()

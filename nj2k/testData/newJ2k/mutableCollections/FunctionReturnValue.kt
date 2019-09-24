@@ -1,5 +1,3 @@
-import java.util.ArrayList
-
 internal class A {
     fun createCollection(): MutableCollection<String> {
         return ArrayList()
