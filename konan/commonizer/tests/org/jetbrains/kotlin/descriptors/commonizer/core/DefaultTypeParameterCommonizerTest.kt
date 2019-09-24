@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
-@TypeRefinement
 class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<TypeParameter, TypeParameter>() {
     override fun createCommonizer() = TypeParameterCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
 

@@ -32,12 +32,12 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         }
 
         fun Collection<ModuleDescriptor>.eachModuleAsTarget() = mapIndexed { index, moduleDescriptor ->
-            "target_$index" to moduleDescriptor
+            InputTarget("target_$index") to moduleDescriptor
         }.toMap().toCommonizationParameters()
 
-        fun Map<String, ModuleDescriptor>.toCommonizationParameters() = CommonizationParameters().also {
-            forEach { (targetName, moduleDescriptor) ->
-                it.addTarget(targetName, listOf(moduleDescriptor))
+        fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters() = CommonizationParameters().also {
+            forEach { (target, moduleDescriptor) ->
+                it.addTarget(target, listOf(moduleDescriptor))
             }
         }
     }
@@ -71,7 +71,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
                 .also(::assertIsDirectory)
         }
 
-    protected val sourceModuleRoots: Pair<Set<File>, Set<File>>
+    protected val sourceModuleRoots: Triple<Set<File>, Set<File>, File>
         get() {
             val testDataDir = testDataDir
 
@@ -89,19 +89,21 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
                 ?.toSet()
                 ?.also { it.forEach(::assertIsDirectory) }
 
+            val commonRoot = commonizedRoots?.singleOrNull { it.name == "common" }
+
             check(
-                !originalRoots.isNullOrEmpty() && !commonizedRoots.isNullOrEmpty()
-                        && (originalRoots.map { it.name } + "common").toSet() == commonizedRoots.map { it.name }.toSet()
+                !originalRoots.isNullOrEmpty() && !commonizedRoots.isNullOrEmpty() && commonRoot != null
+                        && (originalRoots + commonRoot).map { it.name }.toSet() == commonizedRoots.map { it.name }.toSet()
             ) {
                 "Source module misconfiguration in $testDataDir"
             }
 
-            return originalRoots to commonizedRoots
+            return Triple(originalRoots, commonizedRoots - commonRoot, commonRoot)
         }
 
-    protected val sourceModuleDescriptors: Pair<Map<String, ModuleDescriptor>, Map<String, ModuleDescriptor>>
+    protected val sourceModuleDescriptors: Pair<Map<InputTarget, ModuleDescriptor>, Map<Target, ModuleDescriptor>>
         get() {
-            fun analyzeTarget(targetRoot: File): Pair<String, ModuleDescriptor> {
+            fun analyzeTarget(targetRoot: File): ModuleDescriptor {
                 val environment = createEnvironment(targetRoot.parentFile.parentFile.name)
                 val psiFactory = KtPsiFactory(environment.project)
 
@@ -110,7 +112,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
                     .map { psiFactory.createFile(it.name, doLoadFile(it)) }
                     .toList()
 
-                val moduleDescriptor = CommonResolverForModuleFactory.analyzeFiles(
+                return CommonResolverForModuleFactory.analyzeFiles(
                     files = psiFiles,
                     moduleName = environment.moduleName,
                     dependOnBuiltIns = true,
@@ -118,11 +120,19 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
                 ) { content ->
                     environment.createPackagePartProvider(content.moduleContentScope)
                 }.moduleDescriptor
-
-                return targetRoot.name to moduleDescriptor
             }
 
-            return sourceModuleRoots.first.map(::analyzeTarget).toMap() to sourceModuleRoots.second.map(::analyzeTarget).toMap()
+            val originalModules = sourceModuleRoots.first
+                .map { InputTarget(it.name) to analyzeTarget(it) }
+                .toMap()
+
+            val commonizedModules = sourceModuleRoots.second
+                .map { InputTarget(it.name) to analyzeTarget(it) }
+                .toMap()
+
+            val commonModule = OutputTarget(commonizedModules.keys) to analyzeTarget(sourceModuleRoots.third)
+
+            return originalModules to commonizedModules + commonModule
         }
 
     protected fun doTestSuccessfulCommonization() {
@@ -131,23 +141,26 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         val result = runCommonization(originalModules.toCommonizationParameters())
         assertCommonizationPerformed(result)
 
-        val commonModuleAsExpected = commonizedModules.getValue("common")
-        val commonModuleByCommonizer = result.commonModules.single()
+        val commonTarget = commonizedModules.keys.filterIsInstance<OutputTarget>().single()
+        assertEquals(commonTarget, result.commonTarget)
+
+        val commonModuleAsExpected = commonizedModules.getValue(commonTarget)
+        val commonModuleByCommonizer = result.modulesByTargets.getValue(commonTarget).single()
 
         assertValidModule(commonModuleAsExpected)
         assertValidModule(commonModuleByCommonizer)
-        assertModulesAreEqual(commonModuleAsExpected, commonModuleByCommonizer, "\"common\" target")
+        assertModulesAreEqual(commonModuleAsExpected, commonModuleByCommonizer, "\"$commonTarget\" target")
 
-        val concreteTargetNames = commonizedModules.keys - "common"
-        assertEquals(concreteTargetNames, result.modulesByTargets.keys)
+        val concreteTargets = commonizedModules.keys - commonTarget
+        assertEquals(concreteTargets, result.concreteTargets)
 
-        for (targetName in concreteTargetNames) {
-            val targetModuleAsExpected = commonizedModules.getValue(targetName)
-            val targetModuleByCommonizer = result.modulesByTargets.getValue(targetName).single()
+        for (target in concreteTargets) {
+            val targetModuleAsExpected = commonizedModules.getValue(target)
+            val targetModuleByCommonizer = result.modulesByTargets.getValue(target).single()
 
             assertValidModule(targetModuleAsExpected)
             assertValidModule(targetModuleByCommonizer)
-            assertModulesAreEqual(targetModuleAsExpected, targetModuleByCommonizer, "\"$targetName\" target")
+            assertModulesAreEqual(targetModuleAsExpected, targetModuleByCommonizer, "\"$target\" target")
         }
     }
 }

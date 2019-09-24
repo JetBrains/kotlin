@@ -12,39 +12,39 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.*
 import org.jetbrains.kotlin.descriptors.commonizer.firstNonNull
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun buildRootNode(
-    targets: List<ConcreteTargetId>
+    storageManager: StorageManager,
+    targets: List<InputTarget>
 ): RootNode = RootNode(
     target = targets.map { Root(it) },
-    common = LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
-        Root(CommonTargetId(targets.toSet()))
+    common = storageManager.createNullableLazyValue {
+        Root(OutputTarget(targets.toSet()))
     }
 )
 
 internal fun buildModuleNode(
-    moduleName: Name,
+    storageManager: StorageManager,
     modules: List<ModuleDescriptor?>
 ): ModuleNode = buildNode(
-    storageManager = LockBasedStorageManager.NO_LOCKS,
+    storageManager = storageManager,
     descriptors = modules,
-    targetDeclarationProducer = { Module(moduleName) },
-    commonValueProducer = { Module(moduleName) },
+    targetDeclarationProducer = ::Module,
+    commonValueProducer = { Module(it.firstNonNull().name) },
     recursionMarker = null,
     nodeProducer = ::ModuleNode
 )
 
 internal fun buildPackageNode(
+    storageManager: StorageManager,
     packageFqName: FqName,
     packageMemberScopes: List<MemberScope?>
 ): PackageNode = buildNode(
-    storageManager = LockBasedStorageManager.NO_LOCKS,
+    storageManager = storageManager,
     descriptors = packageMemberScopes,
     targetDeclarationProducer = { Package(packageFqName) },
     commonValueProducer = { Package(packageFqName) },

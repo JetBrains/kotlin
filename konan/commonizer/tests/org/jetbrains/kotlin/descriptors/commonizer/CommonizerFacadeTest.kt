@@ -37,7 +37,7 @@ class CommonizerFacadeTest {
     }
 
     @Test
-    fun nothingToCommonize2() {
+    fun commonized() {
         val modules = listOf(
             mockEmptyModule("<foo>"),
             mockEmptyModule("<foo>")
@@ -47,11 +47,11 @@ class CommonizerFacadeTest {
 
         assertCommonizationPerformed(result)
 
-        assertSingleModuleForTarget("<foo>", result.commonModules)
+        assertSingleModuleForTarget("<foo>", result.modulesByTargets.getValue(result.commonTarget))
 
-        assertEquals(2, result.modulesByTargets.size)
-        for (modulesSamePlatform in result.modulesByTargets.values) {
-            assertSingleModuleForTarget("<foo>", modulesSamePlatform)
+        assertEquals(2, result.concreteTargets.size)
+        for (target in result.concreteTargets) {
+            assertSingleModuleForTarget("<foo>", result.modulesByTargets.getValue(target))
         }
     }
 

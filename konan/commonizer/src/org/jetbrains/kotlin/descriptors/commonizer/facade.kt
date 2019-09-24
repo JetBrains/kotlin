@@ -13,26 +13,24 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.mergeRoots
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class CommonizationParameters {
-    private val modulesByTargets = LinkedHashMap<ConcreteTargetId, Collection<ModuleDescriptor>>()
+    // use linked hash map to preserve order
+    private val modulesByTargets = LinkedHashMap<InputTarget, Collection<ModuleDescriptor>>()
 
-    fun addTarget(targetName: String, modules: Collection<ModuleDescriptor>): CommonizationParameters {
-        val targetId = ConcreteTargetId(targetName)
-        require(targetId !in modulesByTargets) {
-            "Target $targetId is already added"
-        }
+    fun addTarget(target: InputTarget, modules: Collection<ModuleDescriptor>): CommonizationParameters {
+        require(target !in modulesByTargets) { "Target $target is already added" }
 
         val modulesWithUniqueNames = modules.groupingBy { it.name }.eachCount()
         require(modulesWithUniqueNames.size == modules.size) {
             "Modules with duplicated names found: ${modulesWithUniqueNames.filter { it.value > 1 }}"
         }
 
-        modulesByTargets[targetId] = modules
+        modulesByTargets[target] = modules
 
         return this
     }
 
     // get them as ordered immutable collection (List) for further processing
-    fun getModulesByTargets(): List<Pair<ConcreteTargetId, Collection<ModuleDescriptor>>> =
+    fun getModulesByTargets(): List<Pair<InputTarget, Collection<ModuleDescriptor>>> =
         modulesByTargets.map { it.key to it.value }
 
     fun hasIntersection(): Boolean {
@@ -51,9 +49,16 @@ sealed class CommonizationResult
 object NothingToCommonize : CommonizationResult()
 
 class CommonizationPerformed(
-    val commonModules: Collection<ModuleDescriptor>,
-    val modulesByTargets: Map<String, Collection<ModuleDescriptor>>
-) : CommonizationResult()
+    val modulesByTargets: Map<Target, Collection<ModuleDescriptor>>
+) : CommonizationResult() {
+    val commonTarget: OutputTarget by lazy {
+        modulesByTargets.keys.filterIsInstance<OutputTarget>().single()
+    }
+
+    val concreteTargets: Set<InputTarget> by lazy {
+        modulesByTargets.keys.filterIsInstance<InputTarget>().toSet()
+    }
+}
 
 fun runCommonization(parameters: CommonizationParameters): CommonizationResult {
     if (!parameters.hasIntersection())
@@ -66,24 +71,14 @@ fun runCommonization(parameters: CommonizationParameters): CommonizationResult {
     // commonize:
     mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
 
-    var commonModules: Collection<ModuleDescriptor>? = null
-    val otherModulesByTargets = LinkedHashMap<String, Collection<ModuleDescriptor>>()
+    val modulesByTargets = LinkedHashMap<Target, Collection<ModuleDescriptor>>() // use linked hash map to preserve order
 
     // build resulting descriptors:
-    val visitor = DeclarationsBuilderVisitor(storageManager, DefaultBuiltIns.Instance) { targetId, commonizedModules ->
-        when (targetId) {
-            is CommonTargetId -> {
-                check(commonModules == null)
-                commonModules = commonizedModules
-            }
-            is ConcreteTargetId -> {
-                val targetName = targetId.name
-                check(targetName !in otherModulesByTargets)
-                otherModulesByTargets[targetName] = commonizedModules
-            }
-        }
+    val visitor = DeclarationsBuilderVisitor(storageManager, DefaultBuiltIns.Instance) { target, commonizedModules ->
+        check(target !in modulesByTargets)
+        modulesByTargets[target] = commonizedModules
     }
     mergedTree.accept(visitor, DeclarationsBuilderVisitor.noContainingDeclarations())
 
-    return CommonizationPerformed(commonModules!!, otherModulesByTargets)
+    return CommonizationPerformed(modulesByTargets)
 }

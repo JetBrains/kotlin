@@ -24,7 +24,7 @@ internal fun mergePackages(
     packageFqName: FqName,
     packageMemberScopes: List<MemberScope?>
 ): PackageNode {
-    val node = buildPackageNode(packageFqName, packageMemberScopes)
+    val node = buildPackageNode(storageManager, packageFqName, packageMemberScopes)
 
     val propertiesMap = CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(packageMemberScopes.size)
     val functionsMap = CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(packageMemberScopes.size)

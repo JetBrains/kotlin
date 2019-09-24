@@ -22,10 +22,9 @@ import org.jetbrains.kotlin.utils.alwaysTrue
 internal fun mergeModules(
     storageManager: StorageManager,
     cacheRW: RootNode.ClassifiersCacheImpl,
-    moduleName: Name,
     modules: List<ModuleDescriptor?>
 ): ModuleNode {
-    val node = buildModuleNode(moduleName, modules)
+    val node = buildModuleNode(storageManager, modules)
 
     val packageMemberScopesMap = CommonizedGroupMap<FqName, MemberScope>(modules.size)
 

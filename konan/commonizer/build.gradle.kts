@@ -9,6 +9,8 @@ dependencies {
 
     compile(kotlinStdlib())
 
+    compile(project(":kotlin-native:kotlin-native-utils"))
+
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":compiler:tests-common"))
 

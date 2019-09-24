@@ -31,7 +31,8 @@ private class DefaultModalityCommonizer : ModalityCommonizer {
         return !error
     }
 
-    private fun getNext(current: Modality, next: Modality): Modality? = when {
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun getNext(current: Modality, next: Modality): Modality? = when {
         current == Modality.FINAL && next == Modality.OPEN -> Modality.FINAL
         current == Modality.OPEN && next == Modality.FINAL -> Modality.FINAL
         current == next -> current

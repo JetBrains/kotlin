@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
-@TypeRefinement
 class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<ExtensionReceiver?, UnwrappedType?>() {
 
     @Test
@@ -56,7 +54,6 @@ class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<ExtensionR
     override fun createCommonizer() = ExtensionReceiverCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
 }
 
-@TypeRefinement
 private fun mockExtensionReceiver(typeFqName: String) = ExtensionReceiver(
     annotations = Annotations.EMPTY,
     type = mockClassType(typeFqName).unwrap()

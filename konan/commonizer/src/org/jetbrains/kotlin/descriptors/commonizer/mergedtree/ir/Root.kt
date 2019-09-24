@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
-import org.jetbrains.kotlin.descriptors.commonizer.TargetId
+import org.jetbrains.kotlin.descriptors.commonizer.Target
 
-data class Root(val targetId: TargetId) : Declaration
+data class Root(val target: Target) : Declaration

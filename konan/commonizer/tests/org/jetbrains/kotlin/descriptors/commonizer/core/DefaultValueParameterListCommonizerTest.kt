@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.core.TestValueParameter.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
-@TypeRefinement
 class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<ValueParameter>, List<ValueParameter>>() {
 
     @Test
@@ -174,7 +172,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
         else if (a == null || b == null || a.size != b.size)
             return false
 
-        for (i in 0 until a.size) {
+        for (i in a.indices) {
             if (!areEqual(EMPTY_CLASSIFIERS_CACHE, a[i], b[i]))
                 return false
         }

@@ -7,6 +7,4 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.name.FqName
 
-data class Package(
-    val fqName: FqName
-) : Declaration
+data class Package(val fqName: FqName) : Declaration

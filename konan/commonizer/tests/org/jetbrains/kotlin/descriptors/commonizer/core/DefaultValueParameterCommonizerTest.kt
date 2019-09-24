@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
-@TypeRefinement
 class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<ValueParameter, ValueParameter>() {
 
     @Test

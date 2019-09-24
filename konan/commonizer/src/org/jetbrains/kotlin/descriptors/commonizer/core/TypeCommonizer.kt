@@ -106,7 +106,7 @@ private fun areAbbreviatedTypesEqual(
         return false
 
     // N.B. both lists of arguments are already known to be of the same size
-    for (i in 0 until a.arguments.size) {
+    for (i in a.arguments.indices) {
         val aArg = a.arguments[i]
         val bArg = b.arguments[i]
 

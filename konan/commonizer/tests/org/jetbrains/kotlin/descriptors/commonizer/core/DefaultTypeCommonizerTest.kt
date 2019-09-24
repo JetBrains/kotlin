@@ -19,11 +19,9 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.getAbbreviation
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Before
 import org.junit.Test
 
-@TypeRefinement
 class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedType>() {
 
     private lateinit var cache: ClassifiersCacheImpl

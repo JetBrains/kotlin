@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.junit.Test
 
-@TypeRefinement
 class DefaultTypeParameterListCommonizerTest : AbstractCommonizerTest<List<TypeParameter>, List<TypeParameter>>() {
 
     @Test

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 
-data class Module(
-    val name: Name
-) : Declaration
+data class Module(val name: Name) : Declaration {
+    constructor(descriptor: ModuleDescriptor) : this(descriptor.name)
+}

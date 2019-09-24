@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.TargetId
+import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedMemberScope.Companion.plusAssign
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedPackageFragmentProvider.Companion.plusAssign
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class DeclarationsBuilderVisitor(
     private val storageManager: StorageManager,
     private val builtIns: KotlinBuiltIns,
-    private val collector: (TargetId, Collection<ModuleDescriptor>) -> Unit
+    private val collector: (Target, Collection<ModuleDescriptor>) -> Unit
 ) : NodeVisitor<List<DeclarationDescriptor?>, List<DeclarationDescriptor?>> {
     override fun visitRootNode(node: RootNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val allTargets = (node.target + node.common()!!).map { it.targetId }
+        val allTargets = (node.target + node.common()!!).map { it.target }
 
-        val modulesByTargets = HashMap<TargetId, MutableList<ModuleDescriptorImpl>>()
+        val modulesByTargets = HashMap<Target, MutableList<ModuleDescriptorImpl>>()
 
         // collect module descriptors:
         for (moduleNode in node.modules) {
@@ -45,7 +45,7 @@ internal class DeclarationsBuilderVisitor(
 
         // return result (preserve platforms order):
         for (target in allTargets) {
-            collector(target, modulesByTargets[target]!!)
+            collector(target, modulesByTargets.getValue(target))
         }
 
         return noReturningDeclarations()

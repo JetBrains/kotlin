@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.konan.target.KonanTarget
+
 // N.B. TargetPlatform/SimplePlatform are non exhaustive enough to address both target platforms such as
 // JVM, JS and concrete Kotlin/Native targets, e.g. macos_x64, ios_x64, linux_x64.
-sealed class TargetId
+sealed class Target
 
-data class ConcreteTargetId(val name: String) : TargetId()
+data class InputTarget(val name: String, val konanTarget: KonanTarget? = null) : Target()
 
-data class CommonTargetId(val targets: Set<TargetId>) : TargetId() {
+data class OutputTarget(val targets: Set<Target>) : Target() {
     init {
         require(targets.isNotEmpty())
     }

@@ -35,7 +35,7 @@ private fun Module.buildDescriptor(
         moduleName = name,
         storageManager = storageManager,
         builtIns = builtIns,
-        capabilities = emptyMap() // TODO: specify capabilities
+        capabilities = emptyMap() // TODO: preserve capabilities from the original module descriptors, KT-33998
     )
 
     output[index] = moduleDescriptor

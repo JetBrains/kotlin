@@ -27,9 +27,6 @@ internal fun PropertyNode.buildDescriptors(
     val markAsExpectAndActual = commonProperty != null && commonProperty.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
 
     target.forEachIndexed { index, property ->
-        // target property is DELEGATION
-        // AND
-        // the property it overrides is actual
         property?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = markAsExpectAndActual)
     }
 
