@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.caches
 
 import com.intellij.ide.highlighter.JavaClassFileType
-import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Key
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 
-@Service
 class IDEKotlinBinaryClassCache {
     class KotlinBinaryClassHeaderData(
         val classId: ClassId,
@@ -138,5 +136,18 @@ class IDEKotlinBinaryClassCache {
 
     companion object {
         fun getInstance(): IDEKotlinBinaryClassCache = service()
+//        @JvmStatic @Volatile
+//        private var instance: IDEKotlinBinaryClassCache? = null
+//
+//        fun getInstance(): IDEKotlinBinaryClassCache {
+//            if (instance == null) {
+//                synchronized(IDEKotlinBinaryClassCache::class.java) {
+//                    if (instance == null) {
+//                        instance = IDEKotlinBinaryClassCache()
+//                    }
+//                }
+//            }
+//            return instance!!
+//        }
     }
 }

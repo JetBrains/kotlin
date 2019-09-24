@@ -251,11 +251,19 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinPluginUpdater"
                         serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
-                    serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
-
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
+
+    <!-- since 192 use light service @Service instead of this declaration -->
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"
+                        serviceImplementation="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"/>
+
+    <!-- since 192 use light service @Service instead of this declaration -->
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"
+                        serviceImplementation="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
+                    serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.trackers.KotlinIDEModificationTrackerService"/>

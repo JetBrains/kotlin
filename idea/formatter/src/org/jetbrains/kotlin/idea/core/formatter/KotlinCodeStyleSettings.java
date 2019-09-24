@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.core.formatter;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
@@ -185,8 +184,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         return ServiceManager.getService(KotlinCodeStyleSettingsHolder.class).defaultSettings;
     }
 
-    @Service
-    private static final class KotlinCodeStyleSettingsHolder {
+    public static final class KotlinCodeStyleSettingsHolder {
         private final KotlinCodeStyleSettings defaultSettings = new KotlinCodeStyleSettings(new CodeStyleSettings());
     }
 }
