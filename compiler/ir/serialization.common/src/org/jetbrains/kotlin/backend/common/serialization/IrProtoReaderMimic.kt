@@ -2215,13 +2215,6 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         return result
     }
 
-    private inline fun <T> readField(block: (fieldNumber: Int, type: Int) -> T): T {
-        val wire = readInt32()
-        val fieldNumber = wire ushr 3
-        val wireType = wire and 0x7
-        return block(fieldNumber, wireType)
-    }
-
     private fun skip(type: Int) {
         when (type) {
             0 -> readInt64()
@@ -2250,22 +2243,20 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var isEnumSpecial: Boolean = false
         var isTypeParameter: Boolean = false
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> packageFqName = readWithLength { readFqName() }
-                    2 -> classFqName = readWithLength { readFqName() }
-                    3 -> name = readWithLength { readIrDataIndex() }
-                    4 -> uniqId = readWithLength { readUniqId() }
-                    5 -> isGetter = readBool()
-                    6 -> isSetter = readBool()
-                    7 -> isBackingField = readBool()
-                    8 -> isFakeOverride = readBool()
-                    9 -> isDefaultConstructor = readBool()
-                    10 -> isEnumEntry = readBool()
-                    11 -> isEnumSpecial = readBool()
-                    12 -> isTypeParameter = readBool()
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> packageFqName = readWithLength { readFqName() }
+                18 -> classFqName = readWithLength { readFqName() }
+                26 -> name = readWithLength { readIrDataIndex() }
+                34 -> uniqId = readWithLength { readUniqId() }
+                40 -> isGetter = readBool()
+                48 -> isSetter = readBool()
+                56 -> isBackingField = readBool()
+                64 -> isFakeOverride = readBool()
+                72 -> isDefaultConstructor = readBool()
+                80 -> isEnumEntry = readBool()
+                88 -> isEnumSpecial = readBool()
+                96 -> isTypeParameter = readBool()
+                else -> skip(fieldHeader and 7)
             }
         }
         return DescriptorReference(packageFqName!!, classFqName!!, name!!, uniqId, isGetter, isSetter, isBackingField, isFakeOverride, isDefaultConstructor, isEnumEntry, isEnumSpecial, isTypeParameter)
@@ -2275,12 +2266,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var index: Long = 0L
         var isLocal: Boolean = false
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> index = readInt64()
-                    2 -> isLocal = readBool()
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> index = readInt64()
+                16 -> isLocal = readBool()
+                else -> skip(fieldHeader and 7)
             }
         }
         return UniqId(index, isLocal)
@@ -2290,12 +2279,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var startOffset: Int = 0
         var endOffset: Int = 0
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> startOffset = readInt32()
-                    2 -> endOffset = readInt32()
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> startOffset = readInt32()
+                16 -> endOffset = readInt32()
+                else -> skip(fieldHeader and 7)
             }
         }
         return Coordinates(startOffset, endOffset)
@@ -2304,11 +2291,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readVisibility(): Visibility {
         var name: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> name = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> name = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return Visibility(name!!)
@@ -2317,11 +2302,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrStatementOrigin(): IrStatementOrigin {
         var name: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> name = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> name = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrStatementOrigin(name!!)
@@ -2332,18 +2315,16 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var custom: IrDataIndex? = null
         var oneOfCase: IrDeclarationOrigin.EitherCase = IrDeclarationOrigin.EitherCase.EITHER_NOT_SET
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> {
-                        origin = KnownOrigin.fromIndex(readInt32())
-                        oneOfCase = IrDeclarationOrigin.EitherCase.ORIGIN
-                    }
-                    2 -> {
-                        custom = readWithLength { readIrDataIndex() }
-                        oneOfCase = IrDeclarationOrigin.EitherCase.CUSTOM
-                    }
-                    else -> skip(type_)
+            when (val fieldHeader = readInt32()) {
+                8 -> {
+                    origin = KnownOrigin.fromIndex(readInt32())
+                    oneOfCase = IrDeclarationOrigin.EitherCase.ORIGIN
                 }
+                18 -> {
+                    custom = readWithLength { readIrDataIndex() }
+                    oneOfCase = IrDeclarationOrigin.EitherCase.CUSTOM
+                }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDeclarationOrigin(oneOfCase!!, origin, custom)
@@ -2352,11 +2333,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrDataIndex(): IrDataIndex {
         var index: Int = 0
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> index = readInt32()
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> index = readInt32()
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDataIndex(index)
@@ -2365,11 +2344,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readFqName(): FqName {
         var segment: MutableList<IrDataIndex> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> segment.add(readWithLength { readIrDataIndex() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> segment.add(readWithLength { readIrDataIndex() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return FqName(segment)
@@ -2378,11 +2355,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrDeclarationContainer(): IrDeclarationContainer {
         var declaration: MutableList<IrDeclaration> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> declaration.add(readWithLength { readIrDeclaration() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> declaration.add(readWithLength { readIrDeclaration() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDeclarationContainer(declaration)
@@ -2392,12 +2367,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var name: String = ""
         var lineStartOffsets: MutableList<Int> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> name = readString()
-                    2 -> lineStartOffsets.add(readInt32())
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> name = readString()
+                16 -> lineStartOffsets.add(readInt32())
+                else -> skip(fieldHeader and 7)
             }
         }
         return FileEntry(name, lineStartOffsets)
@@ -2410,15 +2383,13 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var annotations: Annotations? = null
         var explicitlyExportedToCompiler: MutableList<IrDataIndex> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> declarationId.add(readWithLength { readUniqId() })
-                    2 -> fileEntry = readWithLength { readFileEntry() }
-                    3 -> fqName = readWithLength { readFqName() }
-                    4 -> annotations = readWithLength { readAnnotations() }
-                    5 -> explicitlyExportedToCompiler.add(readWithLength { readIrDataIndex() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> declarationId.add(readWithLength { readUniqId() })
+                18 -> fileEntry = readWithLength { readFileEntry() }
+                26 -> fqName = readWithLength { readFqName() }
+                34 -> annotations = readWithLength { readAnnotations() }
+                42 -> explicitlyExportedToCompiler.add(readWithLength { readIrDataIndex() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrFile(declarationId, fileEntry!!, fqName!!, annotations!!, explicitlyExportedToCompiler)
@@ -2427,11 +2398,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readStringTable(): StringTable {
         var strings: MutableList<String> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> strings.add(readString())
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> strings.add(readString())
+                else -> skip(fieldHeader and 7)
             }
         }
         return StringTable(strings)
@@ -2444,15 +2413,13 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var fqname: FqName? = null
         var descriptorReference: DescriptorReference? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> kind = IrSymbolKind.fromIndex(readInt32())
-                    2 -> uniqId = readWithLength { readUniqId() }
-                    3 -> topLevelUniqId = readWithLength { readUniqId() }
-                    4 -> fqname = readWithLength { readFqName() }
-                    5 -> descriptorReference = readWithLength { readDescriptorReference() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> kind = IrSymbolKind.fromIndex(readInt32())
+                18 -> uniqId = readWithLength { readUniqId() }
+                26 -> topLevelUniqId = readWithLength { readUniqId() }
+                34 -> fqname = readWithLength { readFqName() }
+                42 -> descriptorReference = readWithLength { readDescriptorReference() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrSymbolData(kind!!, uniqId!!, topLevelUniqId!!, fqname, descriptorReference)
@@ -2461,11 +2428,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrSymbolTable(): IrSymbolTable {
         var symbols: MutableList<IrSymbolData> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbols.add(readWithLength { readIrSymbolData() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbols.add(readWithLength { readIrSymbolData() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrSymbolTable(symbols)
@@ -2474,11 +2439,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readAnnotations(): Annotations {
         var annotation: MutableList<IrConstructorCall> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> annotation.add(readWithLength { readIrConstructorCall() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> annotation.add(readWithLength { readIrConstructorCall() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return Annotations(annotation)
@@ -2487,11 +2450,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readTypeArguments(): TypeArguments {
         var typeArgument: MutableList<IrDataIndex> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> typeArgument.add(readWithLength { readIrDataIndex() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> typeArgument.add(readWithLength { readIrDataIndex() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return TypeArguments(typeArgument)
@@ -2500,11 +2461,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrStarProjection(): IrStarProjection {
         var void: Boolean? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> void = readBool()
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> void = readBool()
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrStarProjection(void)
@@ -2514,12 +2473,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var variance: IrTypeVariance? = null
         var type: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> variance = IrTypeVariance.fromIndex(readInt32())
-                    2 -> type = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> variance = IrTypeVariance.fromIndex(readInt32())
+                18 -> type = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTypeProjection(variance!!, type!!)
@@ -2530,18 +2487,16 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var type: IrTypeProjection? = null
         var oneOfCase: IrTypeArgument.KindCase = IrTypeArgument.KindCase.KIND_NOT_SET
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> {
-                        star = readWithLength { readIrStarProjection() }
-                        oneOfCase = IrTypeArgument.KindCase.STAR
-                    }
-                    2 -> {
-                        type = readWithLength { readIrTypeProjection() }
-                        oneOfCase = IrTypeArgument.KindCase.TYPE
-                    }
-                    else -> skip(type_)
+            when (val fieldHeader = readInt32()) {
+                10 -> {
+                    star = readWithLength { readIrStarProjection() }
+                    oneOfCase = IrTypeArgument.KindCase.STAR
                 }
+                18 -> {
+                    type = readWithLength { readIrTypeProjection() }
+                    oneOfCase = IrTypeArgument.KindCase.TYPE
+                }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTypeArgument(oneOfCase!!, star, type)
@@ -2554,15 +2509,13 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var argument: MutableList<IrTypeArgument> = mutableListOf()
         var abbreviation: IrTypeAbbreviation? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> annotations = readWithLength { readAnnotations() }
-                    2 -> classifier = readWithLength { readIrDataIndex() }
-                    3 -> hasQuestionMark = readBool()
-                    4 -> argument.add(readWithLength { readIrTypeArgument() })
-                    5 -> abbreviation = readWithLength { readIrTypeAbbreviation() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> annotations = readWithLength { readAnnotations() }
+                18 -> classifier = readWithLength { readIrDataIndex() }
+                24 -> hasQuestionMark = readBool()
+                34 -> argument.add(readWithLength { readIrTypeArgument() })
+                42 -> abbreviation = readWithLength { readIrTypeAbbreviation() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrSimpleType(annotations!!, classifier!!, hasQuestionMark, argument, abbreviation)
@@ -2574,14 +2527,12 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var hasQuestionMark: Boolean = false
         var argument: MutableList<IrTypeArgument> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> annotations = readWithLength { readAnnotations() }
-                    2 -> typeAlias = readWithLength { readIrDataIndex() }
-                    3 -> hasQuestionMark = readBool()
-                    4 -> argument.add(readWithLength { readIrTypeArgument() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> annotations = readWithLength { readAnnotations() }
+                18 -> typeAlias = readWithLength { readIrDataIndex() }
+                24 -> hasQuestionMark = readBool()
+                34 -> argument.add(readWithLength { readIrTypeArgument() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTypeAbbreviation(annotations!!, typeAlias!!, hasQuestionMark, argument)
@@ -2590,11 +2541,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrDynamicType(): IrDynamicType {
         var annotations: Annotations? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> annotations = readWithLength { readAnnotations() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> annotations = readWithLength { readAnnotations() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDynamicType(annotations!!)
@@ -2603,11 +2552,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrErrorType(): IrErrorType {
         var annotations: Annotations? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> annotations = readWithLength { readAnnotations() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> annotations = readWithLength { readAnnotations() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrErrorType(annotations!!)
@@ -2619,22 +2566,20 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var error: IrErrorType? = null
         var oneOfCase: IrType.KindCase = IrType.KindCase.KIND_NOT_SET
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> {
-                        simple = readWithLength { readIrSimpleType() }
-                        oneOfCase = IrType.KindCase.SIMPLE
-                    }
-                    2 -> {
-                        dynamic = readWithLength { readIrDynamicType() }
-                        oneOfCase = IrType.KindCase.DYNAMIC
-                    }
-                    3 -> {
-                        error = readWithLength { readIrErrorType() }
-                        oneOfCase = IrType.KindCase.ERROR
-                    }
-                    else -> skip(type_)
+            when (val fieldHeader = readInt32()) {
+                10 -> {
+                    simple = readWithLength { readIrSimpleType() }
+                    oneOfCase = IrType.KindCase.SIMPLE
                 }
+                18 -> {
+                    dynamic = readWithLength { readIrDynamicType() }
+                    oneOfCase = IrType.KindCase.DYNAMIC
+                }
+                26 -> {
+                    error = readWithLength { readIrErrorType() }
+                    oneOfCase = IrType.KindCase.ERROR
+                }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrType(oneOfCase!!, simple, dynamic, error)
@@ -2643,11 +2588,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrTypeTable(): IrTypeTable {
         var types: MutableList<IrType> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> types.add(readWithLength { readIrType() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> types.add(readWithLength { readIrType() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTypeTable(types)
@@ -2657,12 +2600,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var loopId: Int = 0
         var label: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> loopId = readInt32()
-                    2 -> label = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> loopId = readInt32()
+                18 -> label = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrBreak(loopId, label)
@@ -2672,12 +2613,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var origin: IrStatementOrigin? = null
         var statement: MutableList<IrStatement> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> origin = readWithLength { readIrStatementOrigin() }
-                    2 -> statement.add(readWithLength { readIrStatement() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> origin = readWithLength { readIrStatementOrigin() }
+                18 -> statement.add(readWithLength { readIrStatement() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrBlock(origin, statement)
@@ -2689,14 +2628,12 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var valueArgument: MutableList<NullableIrExpression> = mutableListOf()
         var typeArguments: TypeArguments? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> dispatchReceiver = readWithLength { readIrExpression() }
-                    2 -> extensionReceiver = readWithLength { readIrExpression() }
-                    3 -> valueArgument.add(readWithLength { readNullableIrExpression() })
-                    4 -> typeArguments = readWithLength { readTypeArguments() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> dispatchReceiver = readWithLength { readIrExpression() }
+                18 -> extensionReceiver = readWithLength { readIrExpression() }
+                26 -> valueArgument.add(readWithLength { readNullableIrExpression() })
+                34 -> typeArguments = readWithLength { readTypeArguments() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return MemberAccessCommon(dispatchReceiver, extensionReceiver, valueArgument, typeArguments!!)
@@ -2708,14 +2645,12 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var super_: IrDataIndex? = null
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
-                    3 -> super_ = readWithLength { readIrDataIndex() }
-                    4 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                18 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                26 -> super_ = readWithLength { readIrDataIndex() }
+                34 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrCall(symbol!!, memberAccess!!, super_, origin)
@@ -2726,13 +2661,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var constructorTypeArgumentsCount: Int = 0
         var memberAccess: MemberAccessCommon? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> constructorTypeArgumentsCount = readInt32()
-                    3 -> memberAccess = readWithLength { readMemberAccessCommon() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                16 -> constructorTypeArgumentsCount = readInt32()
+                26 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrConstructorCall(symbol!!, constructorTypeArgumentsCount, memberAccess!!)
@@ -2743,13 +2676,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var origin: IrStatementOrigin? = null
         var memberAccess: MemberAccessCommon? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> origin = readWithLength { readIrStatementOrigin() }
-                    3 -> memberAccess = readWithLength { readMemberAccessCommon() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                18 -> origin = readWithLength { readIrStatementOrigin() }
+                26 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrFunctionReference(symbol!!, origin, memberAccess!!)
@@ -2762,15 +2693,13 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var symbol: IrDataIndex? = null
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> delegate = readWithLength { readIrDataIndex() }
-                    2 -> getter = readWithLength { readIrDataIndex() }
-                    3 -> setter = readWithLength { readIrDataIndex() }
-                    4 -> symbol = readWithLength { readIrDataIndex() }
-                    5 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> delegate = readWithLength { readIrDataIndex() }
+                18 -> getter = readWithLength { readIrDataIndex() }
+                26 -> setter = readWithLength { readIrDataIndex() }
+                34 -> symbol = readWithLength { readIrDataIndex() }
+                42 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrLocalDelegatedPropertyReference(delegate!!, getter, setter, symbol!!, origin)
@@ -2784,16 +2713,14 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var memberAccess: MemberAccessCommon? = null
         var symbol: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> field = readWithLength { readIrDataIndex() }
-                    2 -> getter = readWithLength { readIrDataIndex() }
-                    3 -> setter = readWithLength { readIrDataIndex() }
-                    4 -> origin = readWithLength { readIrStatementOrigin() }
-                    5 -> memberAccess = readWithLength { readMemberAccessCommon() }
-                    6 -> symbol = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> field = readWithLength { readIrDataIndex() }
+                18 -> getter = readWithLength { readIrDataIndex() }
+                26 -> setter = readWithLength { readIrDataIndex() }
+                34 -> origin = readWithLength { readIrStatementOrigin() }
+                42 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                50 -> symbol = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrPropertyReference(field, getter, setter, origin, memberAccess!!, symbol!!)
@@ -2803,12 +2730,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var statement: MutableList<IrStatement> = mutableListOf()
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> statement.add(readWithLength { readIrStatement() })
-                    2 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> statement.add(readWithLength { readIrStatement() })
+                18 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrComposite(statement, origin)
@@ -2818,12 +2743,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var classSymbol: IrDataIndex? = null
         var classType: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> classSymbol = readWithLength { readIrDataIndex() }
-                    2 -> classType = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> classSymbol = readWithLength { readIrDataIndex() }
+                18 -> classType = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrClassReference(classSymbol!!, classType!!)
@@ -2842,50 +2765,48 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var string: IrDataIndex? = null
         var oneOfCase: IrConst.ValueCase = IrConst.ValueCase.VALUE_NOT_SET
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> {
-                        null_ = readBool()
-                        oneOfCase = IrConst.ValueCase.NULL
-                    }
-                    2 -> {
-                        boolean = readBool()
-                        oneOfCase = IrConst.ValueCase.BOOLEAN
-                    }
-                    3 -> {
-                        char = readInt32()
-                        oneOfCase = IrConst.ValueCase.CHAR
-                    }
-                    4 -> {
-                        byte = readInt32()
-                        oneOfCase = IrConst.ValueCase.BYTE
-                    }
-                    5 -> {
-                        short = readInt32()
-                        oneOfCase = IrConst.ValueCase.SHORT
-                    }
-                    6 -> {
-                        int = readInt32()
-                        oneOfCase = IrConst.ValueCase.INT
-                    }
-                    7 -> {
-                        long = readInt64()
-                        oneOfCase = IrConst.ValueCase.LONG
-                    }
-                    8 -> {
-                        float = readFloat()
-                        oneOfCase = IrConst.ValueCase.FLOAT
-                    }
-                    9 -> {
-                        double = readDouble()
-                        oneOfCase = IrConst.ValueCase.DOUBLE
-                    }
-                    10 -> {
-                        string = readWithLength { readIrDataIndex() }
-                        oneOfCase = IrConst.ValueCase.STRING
-                    }
-                    else -> skip(type_)
+            when (val fieldHeader = readInt32()) {
+                8 -> {
+                    null_ = readBool()
+                    oneOfCase = IrConst.ValueCase.NULL
                 }
+                16 -> {
+                    boolean = readBool()
+                    oneOfCase = IrConst.ValueCase.BOOLEAN
+                }
+                24 -> {
+                    char = readInt32()
+                    oneOfCase = IrConst.ValueCase.CHAR
+                }
+                32 -> {
+                    byte = readInt32()
+                    oneOfCase = IrConst.ValueCase.BYTE
+                }
+                40 -> {
+                    short = readInt32()
+                    oneOfCase = IrConst.ValueCase.SHORT
+                }
+                48 -> {
+                    int = readInt32()
+                    oneOfCase = IrConst.ValueCase.INT
+                }
+                56 -> {
+                    long = readInt64()
+                    oneOfCase = IrConst.ValueCase.LONG
+                }
+                69 -> {
+                    float = readFloat()
+                    oneOfCase = IrConst.ValueCase.FLOAT
+                }
+                73 -> {
+                    double = readDouble()
+                    oneOfCase = IrConst.ValueCase.DOUBLE
+                }
+                82 -> {
+                    string = readWithLength { readIrDataIndex() }
+                    oneOfCase = IrConst.ValueCase.STRING
+                }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrConst(oneOfCase!!, null_, boolean, char, byte, short, int, long, float, double, string)
@@ -2895,12 +2816,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var loopId: Int = 0
         var label: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> loopId = readInt32()
-                    2 -> label = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> loopId = readInt32()
+                18 -> label = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrContinue(loopId, label)
@@ -2910,12 +2829,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var symbol: IrDataIndex? = null
         var memberAccess: MemberAccessCommon? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                18 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDelegatingConstructorCall(symbol!!, memberAccess!!)
@@ -2924,11 +2841,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrDoWhile(): IrDoWhile {
         var loop: Loop? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> loop = readWithLength { readLoop() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> loop = readWithLength { readLoop() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDoWhile(loop!!)
@@ -2938,12 +2853,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var symbol: IrDataIndex? = null
         var memberAccess: MemberAccessCommon? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> memberAccess = readWithLength { readMemberAccessCommon() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                18 -> memberAccess = readWithLength { readMemberAccessCommon() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrEnumConstructorCall(symbol!!, memberAccess!!)
@@ -2952,11 +2865,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrGetClass(): IrGetClass {
         var argument: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> argument = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> argument = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrGetClass(argument!!)
@@ -2965,11 +2876,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrGetEnumValue(): IrGetEnumValue {
         var symbol: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    2 -> symbol = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                18 -> symbol = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrGetEnumValue(symbol!!)
@@ -2980,13 +2889,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var super_: IrDataIndex? = null
         var receiver: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> super_ = readWithLength { readIrDataIndex() }
-                    3 -> receiver = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                18 -> super_ = readWithLength { readIrDataIndex() }
+                26 -> receiver = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return FieldAccessCommon(symbol!!, super_, receiver)
@@ -2996,12 +2903,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var fieldAccess: FieldAccessCommon? = null
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> fieldAccess = readWithLength { readFieldAccessCommon() }
-                    2 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> fieldAccess = readWithLength { readFieldAccessCommon() }
+                18 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrGetField(fieldAccess!!, origin)
@@ -3011,12 +2916,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var symbol: IrDataIndex? = null
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                18 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrGetValue(symbol!!, origin)
@@ -3025,11 +2928,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrGetObject(): IrGetObject {
         var symbol: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrGetObject(symbol!!)
@@ -3038,11 +2939,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrInstanceInitializerCall(): IrInstanceInitializerCall {
         var symbol: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrInstanceInitializerCall(symbol!!)
@@ -3055,15 +2954,13 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var body: IrExpression? = null
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> loopId = readInt32()
-                    2 -> condition = readWithLength { readIrExpression() }
-                    3 -> label = readWithLength { readIrDataIndex() }
-                    4 -> body = readWithLength { readIrExpression() }
-                    5 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> loopId = readInt32()
+                18 -> condition = readWithLength { readIrExpression() }
+                26 -> label = readWithLength { readIrDataIndex() }
+                34 -> body = readWithLength { readIrExpression() }
+                42 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return Loop(loopId, condition!!, label, body, origin)
@@ -3073,12 +2970,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var returnTarget: IrDataIndex? = null
         var value: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> returnTarget = readWithLength { readIrDataIndex() }
-                    2 -> value = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> returnTarget = readWithLength { readIrDataIndex() }
+                18 -> value = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrReturn(returnTarget!!, value!!)
@@ -3089,13 +2984,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var value: IrExpression? = null
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> fieldAccess = readWithLength { readFieldAccessCommon() }
-                    2 -> value = readWithLength { readIrExpression() }
-                    3 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> fieldAccess = readWithLength { readFieldAccessCommon() }
+                18 -> value = readWithLength { readIrExpression() }
+                26 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrSetField(fieldAccess!!, value!!, origin)
@@ -3106,13 +2999,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var value: IrExpression? = null
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> value = readWithLength { readIrExpression() }
-                    3 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                18 -> value = readWithLength { readIrExpression() }
+                26 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrSetVariable(symbol!!, value!!, origin)
@@ -3122,12 +3013,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var expression: IrExpression? = null
         var coordinates: Coordinates? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> expression = readWithLength { readIrExpression() }
-                    2 -> coordinates = readWithLength { readCoordinates() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> expression = readWithLength { readIrExpression() }
+                18 -> coordinates = readWithLength { readCoordinates() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrSpreadElement(expression!!, coordinates!!)
@@ -3136,11 +3025,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrStringConcat(): IrStringConcat {
         var argument: MutableList<IrExpression> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> argument.add(readWithLength { readIrExpression() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> argument.add(readWithLength { readIrExpression() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrStringConcat(argument)
@@ -3149,11 +3036,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrThrow(): IrThrow {
         var value: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> value = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> value = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrThrow(value!!)
@@ -3164,13 +3049,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var catch: MutableList<IrStatement> = mutableListOf()
         var finally: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> result = readWithLength { readIrExpression() }
-                    2 -> catch.add(readWithLength { readIrStatement() })
-                    3 -> finally = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> result = readWithLength { readIrExpression() }
+                18 -> catch.add(readWithLength { readIrStatement() })
+                26 -> finally = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTry(result!!, catch, finally)
@@ -3181,13 +3064,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var operand: IrDataIndex? = null
         var argument: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> operator = IrTypeOperator.fromIndex(readInt32())
-                    2 -> operand = readWithLength { readIrDataIndex() }
-                    3 -> argument = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> operator = IrTypeOperator.fromIndex(readInt32())
+                18 -> operand = readWithLength { readIrDataIndex() }
+                26 -> argument = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTypeOp(operator!!, operand!!, argument!!)
@@ -3197,12 +3078,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var elementType: IrDataIndex? = null
         var element: MutableList<IrVarargElement> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> elementType = readWithLength { readIrDataIndex() }
-                    2 -> element.add(readWithLength { readIrVarargElement() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> elementType = readWithLength { readIrDataIndex() }
+                18 -> element.add(readWithLength { readIrVarargElement() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrVararg(elementType!!, element)
@@ -3213,18 +3092,16 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var spreadElement: IrSpreadElement? = null
         var oneOfCase: IrVarargElement.VarargElementCase = IrVarargElement.VarargElementCase.VARARG_ELEMENT_NOT_SET
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> {
-                        expression = readWithLength { readIrExpression() }
-                        oneOfCase = IrVarargElement.VarargElementCase.EXPRESSION
-                    }
-                    2 -> {
-                        spreadElement = readWithLength { readIrSpreadElement() }
-                        oneOfCase = IrVarargElement.VarargElementCase.SPREAD_ELEMENT
-                    }
-                    else -> skip(type_)
+            when (val fieldHeader = readInt32()) {
+                10 -> {
+                    expression = readWithLength { readIrExpression() }
+                    oneOfCase = IrVarargElement.VarargElementCase.EXPRESSION
                 }
+                18 -> {
+                    spreadElement = readWithLength { readIrSpreadElement() }
+                    oneOfCase = IrVarargElement.VarargElementCase.SPREAD_ELEMENT
+                }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrVarargElement(oneOfCase!!, expression, spreadElement)
@@ -3234,12 +3111,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var branch: MutableList<IrStatement> = mutableListOf()
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> branch.add(readWithLength { readIrStatement() })
-                    2 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> branch.add(readWithLength { readIrStatement() })
+                18 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrWhen(branch, origin)
@@ -3248,11 +3123,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrWhile(): IrWhile {
         var loop: Loop? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> loop = readWithLength { readLoop() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> loop = readWithLength { readLoop() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrWhile(loop!!)
@@ -3262,12 +3135,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var function: IrFunction? = null
         var origin: IrStatementOrigin? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> function = readWithLength { readIrFunction() }
-                    2 -> origin = readWithLength { readIrStatementOrigin() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> function = readWithLength { readIrFunction() }
+                18 -> origin = readWithLength { readIrStatementOrigin() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrFunctionExpression(function!!, origin!!)
@@ -3277,12 +3148,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var memberName: IrDataIndex? = null
         var receiver: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> memberName = readWithLength { readIrDataIndex() }
-                    2 -> receiver = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> memberName = readWithLength { readIrDataIndex() }
+                18 -> receiver = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDynamicMemberExpression(memberName!!, receiver!!)
@@ -3293,13 +3162,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var receiver: IrExpression? = null
         var argument: MutableList<IrExpression> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> operator = IrDynamicOperatorExpression.IrDynamicOperator.fromIndex(readInt32())
-                    2 -> receiver = readWithLength { readIrExpression() }
-                    3 -> argument.add(readWithLength { readIrExpression() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> operator = IrDynamicOperatorExpression.IrDynamicOperator.fromIndex(readInt32())
+                18 -> receiver = readWithLength { readIrExpression() }
+                26 -> argument.add(readWithLength { readIrExpression() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDynamicOperatorExpression(operator!!, receiver!!, argument)
@@ -3341,142 +3208,140 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var functionExpression: IrFunctionExpression? = null
         var oneOfCase: IrOperation.OperationCase = IrOperation.OperationCase.OPERATION_NOT_SET
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> {
-                        block = readWithLength { readIrBlock() }
-                        oneOfCase = IrOperation.OperationCase.BLOCK
-                    }
-                    2 -> {
-                        break_ = readWithLength { readIrBreak() }
-                        oneOfCase = IrOperation.OperationCase.BREAK
-                    }
-                    3 -> {
-                        call = readWithLength { readIrCall() }
-                        oneOfCase = IrOperation.OperationCase.CALL
-                    }
-                    4 -> {
-                        classReference = readWithLength { readIrClassReference() }
-                        oneOfCase = IrOperation.OperationCase.CLASS_REFERENCE
-                    }
-                    5 -> {
-                        composite = readWithLength { readIrComposite() }
-                        oneOfCase = IrOperation.OperationCase.COMPOSITE
-                    }
-                    6 -> {
-                        const = readWithLength { readIrConst() }
-                        oneOfCase = IrOperation.OperationCase.CONST
-                    }
-                    7 -> {
-                        continue_ = readWithLength { readIrContinue() }
-                        oneOfCase = IrOperation.OperationCase.CONTINUE
-                    }
-                    8 -> {
-                        delegatingConstructorCall = readWithLength { readIrDelegatingConstructorCall() }
-                        oneOfCase = IrOperation.OperationCase.DELEGATING_CONSTRUCTOR_CALL
-                    }
-                    9 -> {
-                        doWhile = readWithLength { readIrDoWhile() }
-                        oneOfCase = IrOperation.OperationCase.DO_WHILE
-                    }
-                    10 -> {
-                        enumConstructorCall = readWithLength { readIrEnumConstructorCall() }
-                        oneOfCase = IrOperation.OperationCase.ENUM_CONSTRUCTOR_CALL
-                    }
-                    11 -> {
-                        functionReference = readWithLength { readIrFunctionReference() }
-                        oneOfCase = IrOperation.OperationCase.FUNCTION_REFERENCE
-                    }
-                    12 -> {
-                        getClass = readWithLength { readIrGetClass() }
-                        oneOfCase = IrOperation.OperationCase.GET_CLASS
-                    }
-                    13 -> {
-                        getEnumValue = readWithLength { readIrGetEnumValue() }
-                        oneOfCase = IrOperation.OperationCase.GET_ENUM_VALUE
-                    }
-                    14 -> {
-                        getField = readWithLength { readIrGetField() }
-                        oneOfCase = IrOperation.OperationCase.GET_FIELD
-                    }
-                    15 -> {
-                        getObject = readWithLength { readIrGetObject() }
-                        oneOfCase = IrOperation.OperationCase.GET_OBJECT
-                    }
-                    16 -> {
-                        getValue = readWithLength { readIrGetValue() }
-                        oneOfCase = IrOperation.OperationCase.GET_VALUE
-                    }
-                    17 -> {
-                        instanceInitializerCall = readWithLength { readIrInstanceInitializerCall() }
-                        oneOfCase = IrOperation.OperationCase.INSTANCE_INITIALIZER_CALL
-                    }
-                    18 -> {
-                        propertyReference = readWithLength { readIrPropertyReference() }
-                        oneOfCase = IrOperation.OperationCase.PROPERTY_REFERENCE
-                    }
-                    19 -> {
-                        return_ = readWithLength { readIrReturn() }
-                        oneOfCase = IrOperation.OperationCase.RETURN
-                    }
-                    20 -> {
-                        setField = readWithLength { readIrSetField() }
-                        oneOfCase = IrOperation.OperationCase.SET_FIELD
-                    }
-                    21 -> {
-                        setVariable = readWithLength { readIrSetVariable() }
-                        oneOfCase = IrOperation.OperationCase.SET_VARIABLE
-                    }
-                    22 -> {
-                        stringConcat = readWithLength { readIrStringConcat() }
-                        oneOfCase = IrOperation.OperationCase.STRING_CONCAT
-                    }
-                    23 -> {
-                        throw_ = readWithLength { readIrThrow() }
-                        oneOfCase = IrOperation.OperationCase.THROW
-                    }
-                    24 -> {
-                        try_ = readWithLength { readIrTry() }
-                        oneOfCase = IrOperation.OperationCase.TRY
-                    }
-                    25 -> {
-                        typeOp = readWithLength { readIrTypeOp() }
-                        oneOfCase = IrOperation.OperationCase.TYPE_OP
-                    }
-                    26 -> {
-                        vararg = readWithLength { readIrVararg() }
-                        oneOfCase = IrOperation.OperationCase.VARARG
-                    }
-                    27 -> {
-                        when_ = readWithLength { readIrWhen() }
-                        oneOfCase = IrOperation.OperationCase.WHEN
-                    }
-                    28 -> {
-                        while_ = readWithLength { readIrWhile() }
-                        oneOfCase = IrOperation.OperationCase.WHILE
-                    }
-                    29 -> {
-                        dynamicMember = readWithLength { readIrDynamicMemberExpression() }
-                        oneOfCase = IrOperation.OperationCase.DYNAMIC_MEMBER
-                    }
-                    30 -> {
-                        dynamicOperator = readWithLength { readIrDynamicOperatorExpression() }
-                        oneOfCase = IrOperation.OperationCase.DYNAMIC_OPERATOR
-                    }
-                    31 -> {
-                        localDelegatedPropertyReference = readWithLength { readIrLocalDelegatedPropertyReference() }
-                        oneOfCase = IrOperation.OperationCase.LOCAL_DELEGATED_PROPERTY_REFERENCE
-                    }
-                    32 -> {
-                        constructorCall = readWithLength { readIrConstructorCall() }
-                        oneOfCase = IrOperation.OperationCase.CONSTRUCTOR_CALL
-                    }
-                    33 -> {
-                        functionExpression = readWithLength { readIrFunctionExpression() }
-                        oneOfCase = IrOperation.OperationCase.FUNCTION_EXPRESSION
-                    }
-                    else -> skip(type_)
+            when (val fieldHeader = readInt32()) {
+                10 -> {
+                    block = readWithLength { readIrBlock() }
+                    oneOfCase = IrOperation.OperationCase.BLOCK
                 }
+                18 -> {
+                    break_ = readWithLength { readIrBreak() }
+                    oneOfCase = IrOperation.OperationCase.BREAK
+                }
+                26 -> {
+                    call = readWithLength { readIrCall() }
+                    oneOfCase = IrOperation.OperationCase.CALL
+                }
+                34 -> {
+                    classReference = readWithLength { readIrClassReference() }
+                    oneOfCase = IrOperation.OperationCase.CLASS_REFERENCE
+                }
+                42 -> {
+                    composite = readWithLength { readIrComposite() }
+                    oneOfCase = IrOperation.OperationCase.COMPOSITE
+                }
+                50 -> {
+                    const = readWithLength { readIrConst() }
+                    oneOfCase = IrOperation.OperationCase.CONST
+                }
+                58 -> {
+                    continue_ = readWithLength { readIrContinue() }
+                    oneOfCase = IrOperation.OperationCase.CONTINUE
+                }
+                66 -> {
+                    delegatingConstructorCall = readWithLength { readIrDelegatingConstructorCall() }
+                    oneOfCase = IrOperation.OperationCase.DELEGATING_CONSTRUCTOR_CALL
+                }
+                74 -> {
+                    doWhile = readWithLength { readIrDoWhile() }
+                    oneOfCase = IrOperation.OperationCase.DO_WHILE
+                }
+                82 -> {
+                    enumConstructorCall = readWithLength { readIrEnumConstructorCall() }
+                    oneOfCase = IrOperation.OperationCase.ENUM_CONSTRUCTOR_CALL
+                }
+                90 -> {
+                    functionReference = readWithLength { readIrFunctionReference() }
+                    oneOfCase = IrOperation.OperationCase.FUNCTION_REFERENCE
+                }
+                98 -> {
+                    getClass = readWithLength { readIrGetClass() }
+                    oneOfCase = IrOperation.OperationCase.GET_CLASS
+                }
+                106 -> {
+                    getEnumValue = readWithLength { readIrGetEnumValue() }
+                    oneOfCase = IrOperation.OperationCase.GET_ENUM_VALUE
+                }
+                114 -> {
+                    getField = readWithLength { readIrGetField() }
+                    oneOfCase = IrOperation.OperationCase.GET_FIELD
+                }
+                122 -> {
+                    getObject = readWithLength { readIrGetObject() }
+                    oneOfCase = IrOperation.OperationCase.GET_OBJECT
+                }
+                130 -> {
+                    getValue = readWithLength { readIrGetValue() }
+                    oneOfCase = IrOperation.OperationCase.GET_VALUE
+                }
+                138 -> {
+                    instanceInitializerCall = readWithLength { readIrInstanceInitializerCall() }
+                    oneOfCase = IrOperation.OperationCase.INSTANCE_INITIALIZER_CALL
+                }
+                146 -> {
+                    propertyReference = readWithLength { readIrPropertyReference() }
+                    oneOfCase = IrOperation.OperationCase.PROPERTY_REFERENCE
+                }
+                154 -> {
+                    return_ = readWithLength { readIrReturn() }
+                    oneOfCase = IrOperation.OperationCase.RETURN
+                }
+                162 -> {
+                    setField = readWithLength { readIrSetField() }
+                    oneOfCase = IrOperation.OperationCase.SET_FIELD
+                }
+                170 -> {
+                    setVariable = readWithLength { readIrSetVariable() }
+                    oneOfCase = IrOperation.OperationCase.SET_VARIABLE
+                }
+                178 -> {
+                    stringConcat = readWithLength { readIrStringConcat() }
+                    oneOfCase = IrOperation.OperationCase.STRING_CONCAT
+                }
+                186 -> {
+                    throw_ = readWithLength { readIrThrow() }
+                    oneOfCase = IrOperation.OperationCase.THROW
+                }
+                194 -> {
+                    try_ = readWithLength { readIrTry() }
+                    oneOfCase = IrOperation.OperationCase.TRY
+                }
+                202 -> {
+                    typeOp = readWithLength { readIrTypeOp() }
+                    oneOfCase = IrOperation.OperationCase.TYPE_OP
+                }
+                210 -> {
+                    vararg = readWithLength { readIrVararg() }
+                    oneOfCase = IrOperation.OperationCase.VARARG
+                }
+                218 -> {
+                    when_ = readWithLength { readIrWhen() }
+                    oneOfCase = IrOperation.OperationCase.WHEN
+                }
+                226 -> {
+                    while_ = readWithLength { readIrWhile() }
+                    oneOfCase = IrOperation.OperationCase.WHILE
+                }
+                234 -> {
+                    dynamicMember = readWithLength { readIrDynamicMemberExpression() }
+                    oneOfCase = IrOperation.OperationCase.DYNAMIC_MEMBER
+                }
+                242 -> {
+                    dynamicOperator = readWithLength { readIrDynamicOperatorExpression() }
+                    oneOfCase = IrOperation.OperationCase.DYNAMIC_OPERATOR
+                }
+                250 -> {
+                    localDelegatedPropertyReference = readWithLength { readIrLocalDelegatedPropertyReference() }
+                    oneOfCase = IrOperation.OperationCase.LOCAL_DELEGATED_PROPERTY_REFERENCE
+                }
+                258 -> {
+                    constructorCall = readWithLength { readIrConstructorCall() }
+                    oneOfCase = IrOperation.OperationCase.CONSTRUCTOR_CALL
+                }
+                266 -> {
+                    functionExpression = readWithLength { readIrFunctionExpression() }
+                    oneOfCase = IrOperation.OperationCase.FUNCTION_EXPRESSION
+                }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrOperation(oneOfCase!!, block, break_, call, classReference, composite, const, continue_, delegatingConstructorCall, doWhile, enumConstructorCall, functionReference, getClass, getEnumValue, getField, getObject, getValue, instanceInitializerCall, propertyReference, return_, setField, setVariable, stringConcat, throw_, try_, typeOp, vararg, when_, while_, dynamicMember, dynamicOperator, localDelegatedPropertyReference, constructorCall, functionExpression)
@@ -3487,13 +3352,11 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var type: IrDataIndex? = null
         var coordinates: Coordinates? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> operation = readWithLength { readIrOperation() }
-                    2 -> type = readWithLength { readIrDataIndex() }
-                    3 -> coordinates = readWithLength { readCoordinates() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> operation = readWithLength { readIrOperation() }
+                18 -> type = readWithLength { readIrDataIndex() }
+                26 -> coordinates = readWithLength { readCoordinates() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrExpression(operation!!, type!!, coordinates!!)
@@ -3502,11 +3365,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readNullableIrExpression(): NullableIrExpression {
         var expression: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> expression = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> expression = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return NullableIrExpression(expression)
@@ -3518,14 +3379,12 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var coordinates: Coordinates? = null
         var annotations: Annotations? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> symbol = readWithLength { readIrDataIndex() }
-                    2 -> origin = readWithLength { readIrDeclarationOrigin() }
-                    3 -> coordinates = readWithLength { readCoordinates() }
-                    4 -> annotations = readWithLength { readAnnotations() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> symbol = readWithLength { readIrDataIndex() }
+                18 -> origin = readWithLength { readIrDeclarationOrigin() }
+                26 -> coordinates = readWithLength { readCoordinates() }
+                34 -> annotations = readWithLength { readAnnotations() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDeclarationBase(symbol!!, origin!!, coordinates!!, annotations!!)
@@ -3544,21 +3403,19 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var body: IrDataIndex? = null
         var returnType: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> name = readWithLength { readIrDataIndex() }
-                    3 -> visibility = readWithLength { readVisibility() }
-                    4 -> isInline = readBool()
-                    5 -> isExternal = readBool()
-                    6 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
-                    7 -> dispatchReceiver = readWithLength { readIrValueParameter() }
-                    8 -> extensionReceiver = readWithLength { readIrValueParameter() }
-                    9 -> valueParameter.add(readWithLength { readIrValueParameter() })
-                    10 -> body = readWithLength { readIrDataIndex() }
-                    11 -> returnType = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> name = readWithLength { readIrDataIndex() }
+                26 -> visibility = readWithLength { readVisibility() }
+                32 -> isInline = readBool()
+                40 -> isExternal = readBool()
+                50 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                58 -> dispatchReceiver = readWithLength { readIrValueParameter() }
+                66 -> extensionReceiver = readWithLength { readIrValueParameter() }
+                74 -> valueParameter.add(readWithLength { readIrValueParameter() })
+                82 -> body = readWithLength { readIrDataIndex() }
+                90 -> returnType = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrFunctionBase(base!!, name!!, visibility!!, isInline, isExternal, typeParameters!!, dispatchReceiver, extensionReceiver, valueParameter, body, returnType!!)
@@ -3571,15 +3428,13 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var isSuspend: Boolean = false
         var overridden: MutableList<IrDataIndex> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrFunctionBase() }
-                    2 -> modality = ModalityKind.fromIndex(readInt32())
-                    3 -> isTailrec = readBool()
-                    4 -> isSuspend = readBool()
-                    5 -> overridden.add(readWithLength { readIrDataIndex() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrFunctionBase() }
+                16 -> modality = ModalityKind.fromIndex(readInt32())
+                24 -> isTailrec = readBool()
+                32 -> isSuspend = readBool()
+                42 -> overridden.add(readWithLength { readIrDataIndex() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrFunction(base!!, modality!!, isTailrec, isSuspend, overridden)
@@ -3589,12 +3444,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var base: IrFunctionBase? = null
         var isPrimary: Boolean = false
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrFunctionBase() }
-                    2 -> isPrimary = readBool()
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrFunctionBase() }
+                16 -> isPrimary = readBool()
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrConstructor(base!!, isPrimary)
@@ -3610,18 +3463,16 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var isStatic: Boolean = false
         var type: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> initializer = readWithLength { readIrDataIndex() }
-                    3 -> name = readWithLength { readIrDataIndex() }
-                    4 -> visibility = readWithLength { readVisibility() }
-                    5 -> isFinal = readBool()
-                    6 -> isExternal = readBool()
-                    7 -> isStatic = readBool()
-                    8 -> type = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> initializer = readWithLength { readIrDataIndex() }
+                26 -> name = readWithLength { readIrDataIndex() }
+                34 -> visibility = readWithLength { readVisibility() }
+                40 -> isFinal = readBool()
+                48 -> isExternal = readBool()
+                56 -> isStatic = readBool()
+                66 -> type = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrField(base!!, initializer, name!!, visibility!!, isFinal, isExternal, isStatic, type!!)
@@ -3636,17 +3487,15 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var getter: IrFunction? = null
         var setter: IrFunction? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> name = readWithLength { readIrDataIndex() }
-                    3 -> type = readWithLength { readIrDataIndex() }
-                    4 -> isVar = readBool()
-                    5 -> delegate = readWithLength { readIrVariable() }
-                    6 -> getter = readWithLength { readIrFunction() }
-                    7 -> setter = readWithLength { readIrFunction() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> name = readWithLength { readIrDataIndex() }
+                26 -> type = readWithLength { readIrDataIndex() }
+                32 -> isVar = readBool()
+                42 -> delegate = readWithLength { readIrVariable() }
+                50 -> getter = readWithLength { readIrFunction() }
+                58 -> setter = readWithLength { readIrFunction() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrLocalDelegatedProperty(base!!, name!!, type!!, isVar, delegate!!, getter, setter)
@@ -3666,22 +3515,20 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var getter: IrFunction? = null
         var setter: IrFunction? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> name = readWithLength { readIrDataIndex() }
-                    3 -> visibility = readWithLength { readVisibility() }
-                    4 -> modality = ModalityKind.fromIndex(readInt32())
-                    5 -> isVar = readBool()
-                    6 -> isConst = readBool()
-                    7 -> isLateinit = readBool()
-                    8 -> isDelegated = readBool()
-                    9 -> isExternal = readBool()
-                    10 -> backingField = readWithLength { readIrField() }
-                    11 -> getter = readWithLength { readIrFunction() }
-                    12 -> setter = readWithLength { readIrFunction() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> name = readWithLength { readIrDataIndex() }
+                26 -> visibility = readWithLength { readVisibility() }
+                32 -> modality = ModalityKind.fromIndex(readInt32())
+                40 -> isVar = readBool()
+                48 -> isConst = readBool()
+                56 -> isLateinit = readBool()
+                64 -> isDelegated = readBool()
+                72 -> isExternal = readBool()
+                82 -> backingField = readWithLength { readIrField() }
+                90 -> getter = readWithLength { readIrFunction() }
+                98 -> setter = readWithLength { readIrFunction() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrProperty(base!!, name!!, visibility!!, modality!!, isVar, isConst, isLateinit, isDelegated, isExternal, backingField, getter, setter)
@@ -3696,17 +3543,15 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var isLateinit: Boolean = false
         var initializer: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> name = readWithLength { readIrDataIndex() }
-                    3 -> type = readWithLength { readIrDataIndex() }
-                    4 -> isVar = readBool()
-                    5 -> isConst = readBool()
-                    6 -> isLateinit = readBool()
-                    7 -> initializer = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> name = readWithLength { readIrDataIndex() }
+                26 -> type = readWithLength { readIrDataIndex() }
+                32 -> isVar = readBool()
+                40 -> isConst = readBool()
+                48 -> isLateinit = readBool()
+                58 -> initializer = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrVariable(base!!, name!!, type!!, isVar, isConst, isLateinit, initializer)
@@ -3722,18 +3567,16 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var isNoinline: Boolean = false
         var defaultValue: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> name = readWithLength { readIrDataIndex() }
-                    3 -> index = readInt32()
-                    4 -> type = readWithLength { readIrDataIndex() }
-                    5 -> varargElementType = readWithLength { readIrDataIndex() }
-                    6 -> isCrossinline = readBool()
-                    7 -> isNoinline = readBool()
-                    8 -> defaultValue = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> name = readWithLength { readIrDataIndex() }
+                24 -> index = readInt32()
+                34 -> type = readWithLength { readIrDataIndex() }
+                42 -> varargElementType = readWithLength { readIrDataIndex() }
+                48 -> isCrossinline = readBool()
+                56 -> isNoinline = readBool()
+                66 -> defaultValue = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrValueParameter(base!!, name!!, index, type!!, varargElementType, isCrossinline, isNoinline, defaultValue)
@@ -3747,16 +3590,14 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var superType: MutableList<IrDataIndex> = mutableListOf()
         var isReified: Boolean = false
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> name = readWithLength { readIrDataIndex() }
-                    3 -> index = readInt32()
-                    4 -> variance = IrTypeVariance.fromIndex(readInt32())
-                    5 -> superType.add(readWithLength { readIrDataIndex() })
-                    6 -> isReified = readBool()
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> name = readWithLength { readIrDataIndex() }
+                24 -> index = readInt32()
+                32 -> variance = IrTypeVariance.fromIndex(readInt32())
+                42 -> superType.add(readWithLength { readIrDataIndex() })
+                48 -> isReified = readBool()
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTypeParameter(base!!, name!!, index, variance!!, superType, isReified)
@@ -3765,11 +3606,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrTypeParameterContainer(): IrTypeParameterContainer {
         var typeParameter: MutableList<IrTypeParameter> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> typeParameter.add(readWithLength { readIrTypeParameter() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> typeParameter.add(readWithLength { readIrTypeParameter() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTypeParameterContainer(typeParameter)
@@ -3791,24 +3630,22 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var declarationContainer: IrDeclarationContainer? = null
         var superType: MutableList<IrDataIndex> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> name = readWithLength { readIrDataIndex() }
-                    3 -> kind = ClassKind.fromIndex(readInt32())
-                    4 -> visibility = readWithLength { readVisibility() }
-                    5 -> modality = ModalityKind.fromIndex(readInt32())
-                    6 -> isCompanion = readBool()
-                    7 -> isInner = readBool()
-                    8 -> isData = readBool()
-                    9 -> isExternal = readBool()
-                    10 -> isInline = readBool()
-                    11 -> thisReceiver = readWithLength { readIrValueParameter() }
-                    12 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
-                    13 -> declarationContainer = readWithLength { readIrDeclarationContainer() }
-                    14 -> superType.add(readWithLength { readIrDataIndex() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> name = readWithLength { readIrDataIndex() }
+                24 -> kind = ClassKind.fromIndex(readInt32())
+                34 -> visibility = readWithLength { readVisibility() }
+                40 -> modality = ModalityKind.fromIndex(readInt32())
+                48 -> isCompanion = readBool()
+                56 -> isInner = readBool()
+                64 -> isData = readBool()
+                72 -> isExternal = readBool()
+                80 -> isInline = readBool()
+                90 -> thisReceiver = readWithLength { readIrValueParameter() }
+                98 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                106 -> declarationContainer = readWithLength { readIrDeclarationContainer() }
+                114 -> superType.add(readWithLength { readIrDataIndex() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrClass(base!!, name!!, kind!!, visibility!!, modality!!, isCompanion, isInner, isData, isExternal, isInline, thisReceiver, typeParameters!!, declarationContainer!!, superType)
@@ -3822,16 +3659,14 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var expandedType: IrDataIndex? = null
         var isActual: Boolean = false
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> name = readWithLength { readIrDataIndex() }
-                    3 -> visibility = readWithLength { readVisibility() }
-                    4 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
-                    5 -> expandedType = readWithLength { readIrDataIndex() }
-                    6 -> isActual = readBool()
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> name = readWithLength { readIrDataIndex() }
+                26 -> visibility = readWithLength { readVisibility() }
+                34 -> typeParameters = readWithLength { readIrTypeParameterContainer() }
+                42 -> expandedType = readWithLength { readIrDataIndex() }
+                48 -> isActual = readBool()
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrTypeAlias(base!!, name!!, visibility!!, typeParameters!!, expandedType!!, isActual)
@@ -3843,14 +3678,12 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var correspondingClass: IrClass? = null
         var name: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> initializer = readWithLength { readIrDataIndex() }
-                    3 -> correspondingClass = readWithLength { readIrClass() }
-                    4 -> name = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> initializer = readWithLength { readIrDataIndex() }
+                26 -> correspondingClass = readWithLength { readIrClass() }
+                34 -> name = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrEnumEntry(base!!, initializer, correspondingClass, name!!)
@@ -3860,12 +3693,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var base: IrDeclarationBase? = null
         var body: IrDataIndex? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> base = readWithLength { readIrDeclarationBase() }
-                    2 -> body = readWithLength { readIrDataIndex() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> base = readWithLength { readIrDeclarationBase() }
+                18 -> body = readWithLength { readIrDataIndex() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrAnonymousInit(base!!, body!!)
@@ -3886,58 +3717,56 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var irTypeAlias: IrTypeAlias? = null
         var oneOfCase: IrDeclaration.DeclaratorCase = IrDeclaration.DeclaratorCase.DECLARATOR_NOT_SET
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> {
-                        irAnonymousInit = readWithLength { readIrAnonymousInit() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_ANONYMOUS_INIT
-                    }
-                    2 -> {
-                        irClass = readWithLength { readIrClass() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_CLASS
-                    }
-                    3 -> {
-                        irConstructor = readWithLength { readIrConstructor() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_CONSTRUCTOR
-                    }
-                    4 -> {
-                        irEnumEntry = readWithLength { readIrEnumEntry() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_ENUM_ENTRY
-                    }
-                    5 -> {
-                        irField = readWithLength { readIrField() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_FIELD
-                    }
-                    6 -> {
-                        irFunction = readWithLength { readIrFunction() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_FUNCTION
-                    }
-                    7 -> {
-                        irProperty = readWithLength { readIrProperty() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_PROPERTY
-                    }
-                    8 -> {
-                        irTypeParameter = readWithLength { readIrTypeParameter() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_TYPE_PARAMETER
-                    }
-                    9 -> {
-                        irVariable = readWithLength { readIrVariable() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_VARIABLE
-                    }
-                    10 -> {
-                        irValueParameter = readWithLength { readIrValueParameter() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_VALUE_PARAMETER
-                    }
-                    11 -> {
-                        irLocalDelegatedProperty = readWithLength { readIrLocalDelegatedProperty() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_LOCAL_DELEGATED_PROPERTY
-                    }
-                    12 -> {
-                        irTypeAlias = readWithLength { readIrTypeAlias() }
-                        oneOfCase = IrDeclaration.DeclaratorCase.IR_TYPE_ALIAS
-                    }
-                    else -> skip(type_)
+            when (val fieldHeader = readInt32()) {
+                10 -> {
+                    irAnonymousInit = readWithLength { readIrAnonymousInit() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_ANONYMOUS_INIT
                 }
+                18 -> {
+                    irClass = readWithLength { readIrClass() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_CLASS
+                }
+                26 -> {
+                    irConstructor = readWithLength { readIrConstructor() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_CONSTRUCTOR
+                }
+                34 -> {
+                    irEnumEntry = readWithLength { readIrEnumEntry() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_ENUM_ENTRY
+                }
+                42 -> {
+                    irField = readWithLength { readIrField() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_FIELD
+                }
+                50 -> {
+                    irFunction = readWithLength { readIrFunction() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_FUNCTION
+                }
+                58 -> {
+                    irProperty = readWithLength { readIrProperty() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_PROPERTY
+                }
+                66 -> {
+                    irTypeParameter = readWithLength { readIrTypeParameter() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_TYPE_PARAMETER
+                }
+                74 -> {
+                    irVariable = readWithLength { readIrVariable() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_VARIABLE
+                }
+                82 -> {
+                    irValueParameter = readWithLength { readIrValueParameter() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_VALUE_PARAMETER
+                }
+                90 -> {
+                    irLocalDelegatedProperty = readWithLength { readIrLocalDelegatedProperty() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_LOCAL_DELEGATED_PROPERTY
+                }
+                98 -> {
+                    irTypeAlias = readWithLength { readIrTypeAlias() }
+                    oneOfCase = IrDeclaration.DeclaratorCase.IR_TYPE_ALIAS
+                }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrDeclaration(oneOfCase!!, irAnonymousInit, irClass, irConstructor, irEnumEntry, irField, irFunction, irProperty, irTypeParameter, irVariable, irValueParameter, irLocalDelegatedProperty, irTypeAlias)
@@ -3947,12 +3776,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var condition: IrExpression? = null
         var result: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> condition = readWithLength { readIrExpression() }
-                    2 -> result = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> condition = readWithLength { readIrExpression() }
+                18 -> result = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrBranch(condition!!, result!!)
@@ -3961,11 +3788,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrBlockBody(): IrBlockBody {
         var statement: MutableList<IrStatement> = mutableListOf()
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> statement.add(readWithLength { readIrStatement() })
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> statement.add(readWithLength { readIrStatement() })
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrBlockBody(statement)
@@ -3975,12 +3800,10 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var catchParameter: IrVariable? = null
         var result: IrExpression? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> catchParameter = readWithLength { readIrVariable() }
-                    2 -> result = readWithLength { readIrExpression() }
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                10 -> catchParameter = readWithLength { readIrVariable() }
+                18 -> result = readWithLength { readIrExpression() }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrCatch(catchParameter!!, result!!)
@@ -3989,11 +3812,9 @@ class IrProtoReaderMimic(private val source: ByteArray) {
     fun readIrSyntheticBody(): IrSyntheticBody {
         var kind: IrSyntheticBodyKind? = null
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> kind = IrSyntheticBodyKind.fromIndex(readInt32())
-                    else -> skip(type_)
-                }
+            when (val fieldHeader = readInt32()) {
+                8 -> kind = IrSyntheticBodyKind.fromIndex(readInt32())
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrSyntheticBody(kind!!)
@@ -4009,35 +3830,33 @@ class IrProtoReaderMimic(private val source: ByteArray) {
         var syntheticBody: IrSyntheticBody? = null
         var oneOfCase: IrStatement.StatementCase = IrStatement.StatementCase.STATEMENT_NOT_SET
         while (hasData) {
-            readField { fieldNumber, type_ ->
-                when (fieldNumber) {
-                    1 -> coordinates = readWithLength { readCoordinates() }
-                    2 -> {
-                        declaration = readWithLength { readIrDeclaration() }
-                        oneOfCase = IrStatement.StatementCase.DECLARATION
-                    }
-                    3 -> {
-                        expression = readWithLength { readIrExpression() }
-                        oneOfCase = IrStatement.StatementCase.EXPRESSION
-                    }
-                    4 -> {
-                        blockBody = readWithLength { readIrBlockBody() }
-                        oneOfCase = IrStatement.StatementCase.BLOCK_BODY
-                    }
-                    5 -> {
-                        branch = readWithLength { readIrBranch() }
-                        oneOfCase = IrStatement.StatementCase.BRANCH
-                    }
-                    6 -> {
-                        catch = readWithLength { readIrCatch() }
-                        oneOfCase = IrStatement.StatementCase.CATCH
-                    }
-                    7 -> {
-                        syntheticBody = readWithLength { readIrSyntheticBody() }
-                        oneOfCase = IrStatement.StatementCase.SYNTHETIC_BODY
-                    }
-                    else -> skip(type_)
+            when (val fieldHeader = readInt32()) {
+                10 -> coordinates = readWithLength { readCoordinates() }
+                18 -> {
+                    declaration = readWithLength { readIrDeclaration() }
+                    oneOfCase = IrStatement.StatementCase.DECLARATION
                 }
+                26 -> {
+                    expression = readWithLength { readIrExpression() }
+                    oneOfCase = IrStatement.StatementCase.EXPRESSION
+                }
+                34 -> {
+                    blockBody = readWithLength { readIrBlockBody() }
+                    oneOfCase = IrStatement.StatementCase.BLOCK_BODY
+                }
+                42 -> {
+                    branch = readWithLength { readIrBranch() }
+                    oneOfCase = IrStatement.StatementCase.BRANCH
+                }
+                50 -> {
+                    catch = readWithLength { readIrCatch() }
+                    oneOfCase = IrStatement.StatementCase.CATCH
+                }
+                58 -> {
+                    syntheticBody = readWithLength { readIrSyntheticBody() }
+                    oneOfCase = IrStatement.StatementCase.SYNTHETIC_BODY
+                }
+                else -> skip(fieldHeader and 7)
             }
         }
         return IrStatement(coordinates!!, oneOfCase!!, declaration, expression, blockBody, branch, catch, syntheticBody)
