@@ -165,7 +165,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                             
                                 this.write(line);
                             }
-  }
+                        }
                     };
                     
                     LogReporter.${"$"}inject = ['baseReporterDecorator'];
