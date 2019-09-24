@@ -237,8 +237,8 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
   @Override
   public void addProblemElement(@Nullable RefEntity refElement, boolean filterSuppressed, @NotNull final CommonProblemDescriptor... descriptors) {
     if (refElement == null || descriptors.length == 0) return;
-    ExternalProblemFilter externalProblemFilter = ExternalProblemFilter.getInstance(getContext().getProject());
-    if (externalProblemFilter != null && externalProblemFilter.isFiltered(refElement, descriptors)) return;
+    ReportedProblemFilter filter = myContext.getReportedProblemFilter();
+    if (filter != null && !filter.shouldReportProblem(refElement, descriptors)) return;
 
     checkFromSameFile(refElement, descriptors);
     if (filterSuppressed) {

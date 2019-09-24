@@ -19,6 +19,7 @@ import com.intellij.codeInspection.reference.RefVisitor;
 import com.intellij.codeInspection.ui.DefaultInspectionToolPresentation;
 import com.intellij.codeInspection.ui.InspectionResultsView;
 import com.intellij.codeInspection.ui.InspectionToolPresentation;
+import com.intellij.codeInspection.ui.ReportedProblemFilter;
 import com.intellij.codeInspection.ui.actions.ExportHTMLAction;
 import com.intellij.concurrency.JobLauncher;
 import com.intellij.concurrency.JobLauncherImpl;
@@ -99,6 +100,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
   private Content myContent;
   private volatile boolean myViewClosed = true;
   private long myInspectionStartedTimestamp;
+  private ReportedProblemFilter myReportedProblemFilter = null;
 
   public GlobalInspectionContextImpl(@NotNull Project project, @NotNull NotNullLazyValue<? extends ContentManager> contentManager) {
     super(project);
@@ -110,9 +112,17 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     return myContentManager.getValue();
   }
 
+  public ReportedProblemFilter getReportedProblemFilter() {
+    return myReportedProblemFilter;
+  }
+
+  public void setReportedProblemFilter(ReportedProblemFilter reportedProblemFilter) {
+    myReportedProblemFilter = reportedProblemFilter;
+  }
+
   public void addView(@NotNull InspectionResultsView view,
-                                   @NotNull String title,
-                                   boolean isOffline) {
+                      @NotNull String title,
+                      boolean isOffline) {
     LOG.assertTrue(myContent == null, "GlobalInspectionContext is busy under other view now");
     myView = view;
     if (!isOffline) {

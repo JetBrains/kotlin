@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInspection.ex.*;
-import com.intellij.codeInspection.ui.ExternalProblemFilter;
 import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import com.intellij.conversion.ConversionListener;
 import com.intellij.conversion.ConversionService;
@@ -190,7 +189,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     if (myAnalyzeChanges) {
       List<VirtualFile> files = ChangeListManager.getInstance(project).getAffectedFiles();
       for (VirtualFile file : files) {
-        logMessageLn(0, "modified file" + file.getPath());
+        reportMessage(0, "modified file" + file.getPath());
       }
       scope = new AnalysisScope(GlobalSearchScope.filesScope(project, files), project);
     }
@@ -248,7 +247,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     }
 
     if (myAnalyzeChanges) {
-      setupAnalyzeChangesHandler(project);
+      setupAnalyzeChangesHandler(project, context);
     }
 
     final List<Path> inspectionsResults = new ArrayList<>();
@@ -270,9 +269,9 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     }
   }
 
-  private void setupAnalyzeChangesHandler(Project project) {
+  private void setupAnalyzeChangesHandler(Project project, GlobalInspectionContextImpl context) {
     ChangeListManager changeListManager = ChangeListManager.getInstance(project);
-    ExternalProblemFilter.getInstance(project).registerProblemFilter(
+    context.setReportedProblemFilter(
       (element, descriptors) -> {
         Optional<ProblemDescriptorBase> any = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).findAny();
         if (any.isPresent()) {
