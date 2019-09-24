@@ -17,18 +17,18 @@ public interface CommandLineInspectionProjectConfigurator {
   /**
    * Returns true if any additional configuration is required to inspect the project at the given path.
    */
-  boolean isApplicable(@NotNull Path projectPath, @NotNull CommandLineInspectionLogger logger);
+  boolean isApplicable(@NotNull Path projectPath, @NotNull CommandLineInspectionProgressReporter logger);
 
   /**
    * Invoked before a project is imported.
    */
-  default void configureEnvironment(@NotNull Path projectPath, @NotNull CommandLineInspectionLogger logger) {
+  default void configureEnvironment(@NotNull Path projectPath, @NotNull CommandLineInspectionProgressReporter logger) {
   }
 
   /**
    * Invoked after the project has been imported and before the analysis on the specified scope
    * is started.
    */
-  default void configureProject(@NotNull Project project, @NotNull AnalysisScope scope, @NotNull CommandLineInspectionLogger logger) {
+  default void configureProject(@NotNull Project project, @NotNull AnalysisScope scope, @NotNull CommandLineInspectionProgressReporter logger) {
   }
 }

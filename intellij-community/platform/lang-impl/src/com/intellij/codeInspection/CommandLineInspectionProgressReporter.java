@@ -4,10 +4,8 @@ package com.intellij.codeInspection;
 /**
  * @author yole
  */
-public interface CommandLineInspectionLogger {
-  void logMessage(int minVerboseLevel, String message);
+public interface CommandLineInspectionProgressReporter {
+  void reportError(String message);
 
-  void logError(String message);
-
-  void logMessageLn(int minVerboseLevel, String message);
+  void reportMessage(int minVerboseLevel, String message);
 }

@@ -55,7 +55,7 @@ import java.util.concurrent.ForkJoinPool;
  * @author max
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class InspectionApplication implements CommandLineInspectionLogger {
+public class InspectionApplication implements CommandLineInspectionProgressReporter {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.InspectionApplication");
 
   public InspectionToolCmdlineOptionHelpProvider myHelpProvider;
@@ -79,12 +79,12 @@ public class InspectionApplication implements CommandLineInspectionLogger {
 
   public void startup() {
     if (myProjectPath == null) {
-      logError("Project to inspect is not defined");
+      reportError("Project to inspect is not defined");
       printHelp();
     }
 
     if (myProfileName == null && myProfilePath == null && myStubProfile == null) {
-      logError("Profile to inspect with is not defined");
+      reportError("Profile to inspect with is not defined");
       printHelp();
     }
     IdeaForkJoinWorkerThreadFactory.setupForkJoinCommonPool(true);
@@ -95,7 +95,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
     }
     catch (Throwable e) {
       LOG.error(e);
-      logError(e.getMessage());
+      reportError(e.getMessage());
       gracefulExit();
       return;
     }
@@ -108,9 +108,9 @@ public class InspectionApplication implements CommandLineInspectionLogger {
   public void execute() throws Exception {
     ApplicationManager.getApplication().runReadAction((ThrowableComputable<Object, Exception>)() -> {
       final ApplicationInfoEx appInfo = (ApplicationInfoEx)ApplicationInfo.getInstance();
-      logMessage(1, InspectionsBundle.message("inspection.application.starting.up",
+      reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.starting.up",
                                               appInfo.getFullApplicationName() + " (build " + appInfo.getBuild().asString() + ")"));
-      logMessageLn(1, InspectionsBundle.message("inspection.done"));
+      reportMessage(1, InspectionsBundle.message("inspection.done"));
 
       Disposable disposable = Disposer.newDisposable();
       try {
@@ -132,11 +132,11 @@ public class InspectionApplication implements CommandLineInspectionLogger {
   private void run(@NotNull Path projectPath, @NotNull Disposable parentDisposable) throws IOException, JDOMException {
     VirtualFile vfsProject = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(projectPath.toString()));
     if (vfsProject == null) {
-      logError(InspectionsBundle.message("inspection.application.file.cannot.be.found", projectPath));
+      reportError(InspectionsBundle.message("inspection.application.file.cannot.be.found", projectPath));
       printHelp();
     }
 
-    logMessage(1, InspectionsBundle.message("inspection.application.opening.project"));
+    reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.opening.project"));
     if (ConversionService.getInstance().convertSilently(projectPath, createConversionListener()).openingIsCanceled()) {
       gracefulExit();
       return;
@@ -150,7 +150,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
 
     Project project = ProjectUtil.openOrImport(projectPath, null, false);
     if (project == null) {
-      logError("Unable to open project");
+      reportError("Unable to open project");
       gracefulExit();
       return;
     }
@@ -161,8 +161,8 @@ public class InspectionApplication implements CommandLineInspectionLogger {
 
     PatchProjectUtil.patchProject(project);
 
-    logMessageLn(1, InspectionsBundle.message("inspection.done"));
-    logMessage(1, InspectionsBundle.message("inspection.application.initializing.project"));
+    reportMessage(1, InspectionsBundle.message("inspection.done"));
+    reportMessageNoLineBreak(1, InspectionsBundle.message("inspection.application.initializing.project"));
 
     InspectionProfileImpl inspectionProfile = loadInspectionProfile(project);
     if (inspectionProfile == null) return;
@@ -184,7 +184,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
 
       VirtualFile vfsDir = LocalFileSystem.getInstance().findFileByPath(mySourceDirectory);
       if (vfsDir == null) {
-        logError(InspectionsBundle.message("inspection.application.directory.cannot.be.found", mySourceDirectory));
+        reportError(InspectionsBundle.message("inspection.application.directory.cannot.be.found", mySourceDirectory));
         printHelp();
       }
 
@@ -192,10 +192,10 @@ public class InspectionApplication implements CommandLineInspectionLogger {
       scope = new AnalysisScope(Objects.requireNonNull(psiDirectory));
     }
 
-    logMessageLn(1, InspectionsBundle.message("inspection.done"));
+    reportMessage(1, InspectionsBundle.message("inspection.done"));
 
     if (!myRunWithEditorSettings) {
-      logMessageLn(1, InspectionsBundle.message("inspection.application.chosen.profile.log.message", inspectionProfile.getName()));
+      reportMessage(1, InspectionsBundle.message("inspection.application.chosen.profile.log.message", inspectionProfile.getName()));
     }
 
     InspectionsReportConverter reportConverter = getReportConverter(myOutputFormat);
@@ -239,7 +239,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
         reportConverter.convert(resultsDataPath.toString(), myOutPath, context.getTools(), ContainerUtil.map2List(inspectionsResults, path -> path.toFile()));
       }
       catch (InspectionsReportConverter.ConversionException e) {
-        logError("\n" + e.getMessage());
+        reportError("\n" + e.getMessage());
         printHelp();
       }
     }
@@ -260,7 +260,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
         return;
       }
       context.launchInspectionsOffline(scope, resultsDataPath.toString(), myRunGlobalToolsOnly, inspectionsResults);
-      logMessageLn(1, "\n" + InspectionsBundle.message("inspection.capitalized.done") + "\n");
+      reportMessage(1, "\n" + InspectionsBundle.message("inspection.capitalized.done") + "\n");
       if (!myErrorCodeRequired) {
         closeProject(project);
       }
@@ -276,12 +276,12 @@ public class InspectionApplication implements CommandLineInspectionLogger {
           String prefix = getPrefix(text);
           if (prefix == null) return;
           if (prefix.equals(lastPrefix)) {
-            logMessage(1, ".");
+            reportMessageNoLineBreak(1, ".");
             return;
           }
           lastPrefix = prefix;
-          logMessageLn(1, "");
-          logMessageLn(1, prefix);
+          reportMessage(1, "");
+          reportMessage(1, prefix);
           return;
         }
 
@@ -292,12 +292,12 @@ public class InspectionApplication implements CommandLineInspectionLogger {
             String prefix = getPrefix(text);
             myLastPercent = percent;
             String msg = (prefix != null ? prefix : InspectionsBundle.message("inspection.display.name")) + " " + percent + "%";
-            logMessageLn(2, msg);
+            reportMessage(2, msg);
           }
           return;
         }
 
-        logMessageLn(2, text);
+        reportMessage(2, text);
       }
     });
   }
@@ -328,7 +328,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
     if (myProfileName != null) {
       inspectionProfile = loadProfileByName(project, myProfileName);
       if (inspectionProfile == null) {
-        logError("Profile with configured name (" + myProfileName + ") was not found (neither in project nor in config directory)");
+        reportError("Profile with configured name (" + myProfileName + ") was not found (neither in project nor in config directory)");
         gracefulExit();
         return null;
       }
@@ -338,7 +338,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
     if (myProfilePath != null) {
       inspectionProfile = loadProfileByPath(myProfilePath);
       if (inspectionProfile == null) {
-        logError("Failed to load profile from \'" + myProfilePath + "\'");
+        reportError("Failed to load profile from \'" + myProfilePath + "\'");
         gracefulExit();
         return null;
       }
@@ -355,7 +355,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
       }
 
       inspectionProfile = InspectionProjectProfileManager.getInstance(project).getCurrentProfile();
-      logError("Using default project profile");
+      reportError("Using default project profile");
     }
     return inspectionProfile;
   }
@@ -364,7 +364,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
   private InspectionProfileImpl loadProfileByPath(final String profilePath) throws IOException, JDOMException {
     InspectionProfileImpl inspectionProfile = ApplicationInspectionProfileManager.getInstanceImpl().loadProfile(profilePath);
     if (inspectionProfile != null) {
-      logMessageLn(1, "Loaded profile \'" + inspectionProfile.getName() + "\' from file \'" + profilePath + "\'");
+      reportMessage(1, "Loaded profile \'" + inspectionProfile.getName() + "\' from file \'" + profilePath + "\'");
     }
     return inspectionProfile;
   }
@@ -374,14 +374,14 @@ public class InspectionApplication implements CommandLineInspectionLogger {
     InspectionProjectProfileManager profileManager = InspectionProjectProfileManager.getInstance(project);
     InspectionProfileImpl inspectionProfile = profileManager.getProfile(profileName, false);
     if (inspectionProfile != null) {
-      logMessageLn(1, "Loaded shared project profile \'" + profileName + "\'");
+      reportMessage(1, "Loaded shared project profile \'" + profileName + "\'");
     }
     else {
       //check if ide profile is used for project
       for (InspectionProfileImpl profile : profileManager.getProfiles()) {
         if (Comparing.strEqual(profile.getName(), profileName)) {
           inspectionProfile = profile;
-          logMessageLn(1, "Loaded local profile \'" + profileName + "\'");
+          reportMessage(1, "Loaded local profile \'" + profileName + "\'");
           break;
         }
       }
@@ -405,19 +405,19 @@ public class InspectionApplication implements CommandLineInspectionLogger {
     return new ConversionListener() {
       @Override
       public void conversionNeeded() {
-        logMessageLn(1, InspectionsBundle.message("inspection.application.project.has.older.format.and.will.be.converted"));
+        reportMessage(1, InspectionsBundle.message("inspection.application.project.has.older.format.and.will.be.converted"));
       }
 
       @Override
       public void successfullyConverted(@NotNull final File backupDir) {
-        logMessageLn(1, InspectionsBundle.message(
+        reportMessage(1, InspectionsBundle.message(
           "inspection.application.project.was.succesfully.converted.old.project.files.were.saved.to.0",
                                                   backupDir.getAbsolutePath()));
       }
 
       @Override
       public void error(@NotNull final String message) {
-        logError(InspectionsBundle.message("inspection.application.cannot.convert.project.0", message));
+        reportError(InspectionsBundle.message("inspection.application.cannot.convert.project.0", message));
       }
 
       @Override
@@ -426,7 +426,7 @@ public class InspectionApplication implements CommandLineInspectionLogger {
         for (File file : readonlyFiles) {
           files.append(file.getAbsolutePath()).append("; ");
         }
-        logError(InspectionsBundle.message("inspection.application.cannot.convert.the.project.the.following.files.are.read.only.0", files.toString()));
+        reportError(InspectionsBundle.message("inspection.application.cannot.convert.the.project.the.following.files.are.read.only.0", files.toString()));
       }
     };
   }
@@ -447,20 +447,19 @@ public class InspectionApplication implements CommandLineInspectionLogger {
     myVerboseLevel = verboseLevel;
   }
 
-  @Override
-  public void logMessage(int minVerboseLevel, String message) {
+  private void reportMessageNoLineBreak(int minVerboseLevel, String message) {
     if (myVerboseLevel >= minVerboseLevel) {
       System.out.print(message);
     }
   }
 
   @Override
-  public void logError(String message) {
+  public void reportError(String message) {
     System.err.println(message);
   }
 
   @Override
-  public void logMessageLn(int minVerboseLevel, String message) {
+  public void reportMessage(int minVerboseLevel, String message) {
     if (myVerboseLevel >= minVerboseLevel) {
       System.out.println(message);
     }
