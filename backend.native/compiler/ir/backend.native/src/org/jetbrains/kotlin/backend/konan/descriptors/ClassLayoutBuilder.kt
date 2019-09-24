@@ -93,7 +93,7 @@ internal class ClassGlobalHierarchyInfo(val classIdLo: Int, val classIdHi: Int,
 
 internal class GlobalHierarchyAnalysisResult(val bitsPerColor: Int)
 
-internal class GlobalHierarchyAnalysis(val context: Context) {
+internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrModuleFragment) {
     fun run() {
         /*
          * The algorithm for fast interface call and check:
@@ -142,7 +142,7 @@ internal class GlobalHierarchyAnalysis(val context: Context) {
         val root = context.irBuiltIns.anyClass.owner
         val immediateInheritors = mutableMapOf<IrClass, MutableList<IrClass>>()
         val allClasses = mutableListOf<IrClass>()
-        context.irModule!!.acceptVoid(object: IrElementVisitorVoid {
+        irModule.acceptVoid(object: IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -251,7 +251,7 @@ internal class GlobalHierarchyAnalysis(val context: Context) {
     }
 
     private fun assignColorsToInterfaces(): Map<IrClass, Int> {
-        val graph = InterfacesForbiddennessGraph.build(context.irModule!!)
+        val graph = InterfacesForbiddennessGraph.build(irModule)
         val coloring = graph.computeColoringGreedy()
         return graph.nodes.mapIndexed { v, irClass -> irClass to coloring[v] }.toMap()
     }

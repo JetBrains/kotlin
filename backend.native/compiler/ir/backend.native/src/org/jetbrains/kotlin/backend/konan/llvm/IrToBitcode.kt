@@ -1392,7 +1392,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, obj)
 
-        return if (!context.shouldOptimize()) {
+        return if (!context.ghaEnabled()) {
             call(context.llvm.isInstanceFunction, listOf(srcObjInfoPtr, codegen.typeInfoValue(dstClass)))
         } else {
             val dstHierarchyInfo = context.getLayoutBuilder(dstClass).hierarchyInfo

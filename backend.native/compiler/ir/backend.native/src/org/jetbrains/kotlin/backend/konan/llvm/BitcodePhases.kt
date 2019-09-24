@@ -38,11 +38,7 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
 internal val RTTIPhase = makeKonanModuleOpPhase(
         name = "RTTI",
         description = "RTTI generation",
-        op = { context, irModule ->
-            if (context.shouldOptimize())
-                GlobalHierarchyAnalysis(context).run()
-            irModule.acceptVoid(RTTIGeneratorVisitor(context))
-        }
+        op = { context, irModule -> irModule.acceptVoid(RTTIGeneratorVisitor(context)) }
 )
 
 internal val generateDebugInfoHeaderPhase = makeKonanModuleOpPhase(
@@ -80,6 +76,12 @@ internal val devirtualizationPhase = makeKonanModuleOpPhase(
                     irModule, context, context.moduleDFG!!, ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
             )
         }
+)
+
+internal val ghaPhase = makeKonanModuleOpPhase(
+        name = "GHAPhase",
+        description = "Global hierarchy analysis",
+        op = { context, irModule -> GlobalHierarchyAnalysis(context, irModule).run() }
 )
 
 internal val IrFunction.longName: String

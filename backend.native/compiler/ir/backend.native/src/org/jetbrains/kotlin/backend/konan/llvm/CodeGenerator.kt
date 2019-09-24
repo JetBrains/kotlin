@@ -779,7 +779,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 load(slot)
             }
 
-            !context.shouldOptimize() -> call(context.llvm.lookupOpenMethodFunction, listOf(typeInfoPtr, methodHash))
+            !context.ghaEnabled() -> call(context.llvm.lookupOpenMethodFunction, listOf(typeInfoPtr, methodHash))
 
             else -> {
                 // Essentially: typeInfo.itable[place(interfaceId)].vtable[method]

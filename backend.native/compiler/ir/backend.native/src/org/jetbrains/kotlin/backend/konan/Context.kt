@@ -435,6 +435,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun shouldContainAnyDebugInfo() = shouldContainDebugInfo() || shouldContainLocationDebugInfo()
 
     fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+    fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
 
     val memoryModel = config.memoryModel
 

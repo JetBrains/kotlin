@@ -225,7 +225,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val reflectionInfo = getReflectionInfo(irClass)
         val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
         val hierarchyInfo =
-                if (context.shouldOptimize())
+                if (context.ghaEnabled())
                     context.getLayoutBuilder(irClass).hierarchyInfo
                 else ClassGlobalHierarchyInfo.DUMMY
         val typeInfo = TypeInfo(
@@ -302,7 +302,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     }
 
     private fun interfaceTable(irClass: IrClass): Pair<ConstPointer?, Int> {
-        val needInterfaceTable = context.shouldOptimize() && !irClass.isInterface
+        val needInterfaceTable = context.ghaEnabled() && !irClass.isInterface
                 && !irClass.isAbstract() && !irClass.isObjCClass()
         if (!needInterfaceTable) return Pair(null, 0)
         // The details are in ClassLayoutBuilder.
@@ -484,12 +484,12 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val typeInfoWithVtableType = structType(runtime.typeInfoType, vtable.llvmType)
         val typeInfoWithVtableGlobal = staticData.createGlobal(typeInfoWithVtableType, "", isExported = false)
         val result = typeInfoWithVtableGlobal.pointer.getElementPtr(0)
-        val typeHierarchyInfo = if (!context.shouldOptimize())
+        val typeHierarchyInfo = if (!context.ghaEnabled())
             ClassGlobalHierarchyInfo.DUMMY
         else
             ClassGlobalHierarchyInfo(-1, -1, 0, 0)
 
-        val interfaceTable = if (!context.shouldOptimize()) null else {
+        val interfaceTable = if (!context.ghaEnabled()) null else {
             val layoutBuilder = context.getLayoutBuilder(irClass)
             val vtableEntries = layoutBuilder.interfaceTableEntries.map { methodImpls[it]!!.bitcast(int8TypePtr) }
             val interfaceVTable = staticData.placeGlobalArray("", kInt8Ptr, vtableEntries)
