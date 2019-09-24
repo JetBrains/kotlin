@@ -215,7 +215,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
     fun useSafari() = useBrowser("Safari", versions.karmaSafariLauncher)
 
-    fun useIe() = useBrowser("Ie", versions.karmaIeLauncher)
+    fun useIe() = useBrowser("IE", versions.karmaIeLauncher)
 
     private fun useBrowser(id: String, dependency: NpmPackageVersion) {
         config.browsers.add(id)
