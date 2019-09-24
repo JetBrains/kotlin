@@ -3,21 +3,19 @@ package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.EditorFactoryEvent;
 import com.intellij.openapi.editor.event.EditorFactoryListener;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.impl.ProjectFrameHelper;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.EventDispatcher;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +26,8 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.*;
 
-public final class EditorTracker implements ProjectComponent {
+@Service
+public final class EditorTracker implements Disposable {
   private static final Logger LOG = Logger.getInstance(EditorTracker.class);
 
   private final Project myProject;
@@ -38,56 +37,54 @@ public final class EditorTracker implements ProjectComponent {
   private final Map<Editor, Window> myEditorToWindowMap = new HashMap<>();
   private List<Editor> myActiveEditors = Collections.emptyList(); // accessed in EDT only
 
-  private final EventDispatcher<EditorTrackerListener> myDispatcher = EventDispatcher.create(EditorTrackerListener.class);
-
-  private JFrame myIdeFrame;
   private Window myActiveWindow;
+  private final Map<Editor, Runnable> myExecuteOnEditorRelease = new HashMap<>();
 
-  public EditorTracker(Project project) {
+  public EditorTracker(@NotNull Project project) {
     myProject = project;
-  }
 
-  @Override
-  public void projectOpened() {
-    myIdeFrame = (WindowManager.getInstance()).getFrame(myProject);
-    myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
+    project.getMessageBus().connect(this).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-        if (myIdeFrame == null || myIdeFrame.getFocusOwner() == null) {
+        JFrame frame = WindowManager.getInstance().getFrame(myProject);
+        if (frame == null || frame.getFocusOwner() == null) {
           return;
         }
-        setActiveWindow(myIdeFrame);
+
+        setActiveWindow(frame);
       }
     });
-
-    final MyEditorFactoryListener myEditorFactoryListener = new MyEditorFactoryListener();
-    EditorFactory.getInstance().addEditorFactoryListener(myEditorFactoryListener, myProject);
-    Disposer.register(myProject, () -> myEditorFactoryListener.executeOnRelease(null));
   }
 
-  private void editorFocused(Editor editor) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
-    Window window = myEditorToWindowMap.get(editor);
-    if (window == null) return;
+  public static EditorTracker getInstance(@NotNull Project project) {
+    return project.getService(EditorTracker.class);
+  }
 
-    List<Editor> list = myWindowToEditorsMap.get(window);
-    int index = list.indexOf(editor);
-    LOG.assertTrue(index >= 0);
-    if (list.isEmpty()) return;
-
-    for (int i = index - 1; i >= 0; i--) {
-      list.set(i + 1, list.get(i));
+  static final class MyAppLevelEditorFactoryListener implements EditorFactoryListener {
+    @Override
+    public void editorCreated(@NotNull EditorFactoryEvent event) {
+      Project project = event.getEditor().getProject();
+      if (project != null) {
+        getInstance(project).editorCreated(event);
+      }
     }
-    list.set(0, editor);
 
-    setActiveWindow(window);
+    @Override
+    public void editorReleased(@NotNull EditorFactoryEvent event) {
+      Project project = event.getEditor().getProject();
+      if (project != null) {
+        getInstance(project).editorReleased(event);
+      }
+    }
   }
 
-  private void registerEditor(Editor editor) {
+  private void registerEditor(@NotNull Editor editor) {
     unregisterEditor(editor);
 
-    final Window window = windowByEditor(editor);
-    if (window == null) return;
+    Window window = windowByEditor(editor);
+    if (window == null) {
+      return;
+    }
 
     myEditorToWindowMap.put(editor, window);
     List<Editor> list = myWindowToEditorsMap.get(window);
@@ -161,7 +158,8 @@ public final class EditorTracker implements ProjectComponent {
   @Nullable
   private Window windowByEditor(@NotNull Editor editor) {
     Window window = SwingUtilities.windowForComponent(editor.getComponent());
-    return (window instanceof IdeFrameImpl && window != myIdeFrame) ? null : window;
+    ProjectFrameHelper frameHelper = ProjectFrameHelper.getFrameHelper(window);
+    return (frameHelper != null && frameHelper.getProject() != myProject) ? null : window;
   }
 
   @NotNull
@@ -170,27 +168,30 @@ public final class EditorTracker implements ProjectComponent {
     return myActiveEditors;
   }
 
-  private void setActiveWindow(Window window) {
+  private void setActiveWindow(@Nullable Window window) {
     myActiveWindow = window;
-    List<Editor> editors = editorsByWindow(myActiveWindow);
-    setActiveEditors(editors);
-  }
 
-  @NotNull
-  private List<Editor> editorsByWindow(Window window) {
-    List<Editor> list = myWindowToEditorsMap.get(window);
-    if (list == null) return Collections.emptyList();
-    List<Editor> filtered = new SmartList<>();
-    for (Editor editor : list) {
-      if (editor.getContentComponent().isShowing()) {
-        filtered.add(editor);
-      }
+    List<Editor> list = window == null ? null : myWindowToEditorsMap.get(window);
+    if (list == null) {
+      setActiveEditors(Collections.emptyList());
     }
-    return filtered;
+    else {
+      List<Editor> editors = new SmartList<>();
+      for (Editor editor : list) {
+        if (editor.getContentComponent().isShowing()) {
+          editors.add(editor);
+        }
+      }
+      setActiveEditors(editors);
+    }
   }
 
   public void setActiveEditors(@NotNull List<Editor> editors) {
     ApplicationManager.getApplication().assertIsDispatchThread();
+    if (editors.equals(myActiveEditors)) {
+      return;
+    }
+
     myActiveEditors = editors;
 
     if (LOG.isDebugEnabled()) {
@@ -201,68 +202,82 @@ public final class EditorTracker implements ProjectComponent {
       }
     }
 
-    myDispatcher.getMulticaster().activeEditorsChanged(editors);
+    myProject.getMessageBus().syncPublisher(EditorTrackerListener.TOPIC).activeEditorsChanged(editors);
   }
 
-  void addEditorTrackerListener(@NotNull Disposable parentDisposable, @NotNull EditorTrackerListener listener) {
-    myDispatcher.addListener(listener,parentDisposable);
-  }
-
-  private class MyEditorFactoryListener implements EditorFactoryListener {
-    private final Map<Editor, Runnable> myExecuteOnEditorRelease = new HashMap<>();
-
-    @Override
-    public void editorCreated(@NotNull EditorFactoryEvent event) {
-      final Editor editor = event.getEditor();
-      if (editor.getProject() != null && editor.getProject() != myProject || myProject.isDisposed()) return;
-      final PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
-      if (psiFile == null) return;
-
-      final JComponent component = editor.getComponent();
-      final JComponent contentComponent = editor.getContentComponent();
-
-      final HierarchyListener hierarchyListener = __ -> registerEditor(editor);
-      component.addHierarchyListener(hierarchyListener);
-
-      final FocusListener focusListener = new FocusListener() {
-        @Override
-        public void focusGained(@NotNull FocusEvent e) {
-          editorFocused(editor);
-        }
-
-        @Override
-        public void focusLost(@NotNull FocusEvent e) {
-        }
-      };
-      contentComponent.addFocusListener(focusListener);
-
-      myExecuteOnEditorRelease.put(event.getEditor(), () -> {
-        component.removeHierarchyListener(hierarchyListener);
-        contentComponent.removeFocusListener(focusListener);
-      });
+  private void editorCreated(@NotNull EditorFactoryEvent event) {
+    final Editor editor = event.getEditor();
+    if ((editor.getProject() != null && editor.getProject() != myProject) || myProject.isDisposedOrDisposeInProgress()) {
+      return;
     }
 
-    @Override
-    public void editorReleased(@NotNull EditorFactoryEvent event) {
-      final Editor editor = event.getEditor();
-      if (editor.getProject() != null && editor.getProject() != myProject) return;
-      unregisterEditor(editor);
-      executeOnRelease(editor);
-    }
+    final PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
+    if (psiFile == null) return;
 
-    private void executeOnRelease(Editor editor) {
-      if (editor == null) {
-        for (Runnable r : myExecuteOnEditorRelease.values()) {
-          r.run();
+    final JComponent component = editor.getComponent();
+    final JComponent contentComponent = editor.getContentComponent();
+
+    final HierarchyListener hierarchyListener = __ -> registerEditor(editor);
+    component.addHierarchyListener(hierarchyListener);
+
+    FocusListener focusListener = new FocusListener() {
+      @Override
+      public void focusGained(@NotNull FocusEvent e) {
+        ApplicationManager.getApplication().assertIsDispatchThread();
+        Window window = myEditorToWindowMap.get(editor);
+        if (window == null) {
+          return;
         }
-        myExecuteOnEditorRelease.clear();
+
+        List<Editor> list = myWindowToEditorsMap.get(window);
+        int index = list.indexOf(editor);
+        LOG.assertTrue(index >= 0);
+        if (list.isEmpty()) return;
+
+        for (int i = index - 1; i >= 0; i--) {
+          list.set(i + 1, list.get(i));
+        }
+        list.set(0, editor);
+
+        setActiveWindow(window);
       }
-      else {
-        final Runnable runnable = myExecuteOnEditorRelease.get(editor);
-        if (runnable != null) {
-          runnable.run();
-          myExecuteOnEditorRelease.remove(editor);
-        }
+
+      @Override
+      public void focusLost(@NotNull FocusEvent e) {
+      }
+    };
+    contentComponent.addFocusListener(focusListener);
+
+    myExecuteOnEditorRelease.put(event.getEditor(), () -> {
+      component.removeHierarchyListener(hierarchyListener);
+      contentComponent.removeFocusListener(focusListener);
+    });
+  }
+
+  private void editorReleased(@NotNull EditorFactoryEvent event) {
+    final Editor editor = event.getEditor();
+    if (editor.getProject() != null && editor.getProject() != myProject) return;
+    unregisterEditor(editor);
+    executeOnRelease(editor);
+  }
+
+  @Override
+  public void dispose() {
+    executeOnRelease(null);
+  }
+
+  private void executeOnRelease(@Nullable Editor editor) {
+    if (editor == null) {
+      for (Runnable r : myExecuteOnEditorRelease.values()) {
+        r.run();
+      }
+      myExecuteOnEditorRelease.clear();
+    }
+    else {
+      final Runnable runnable = myExecuteOnEditorRelease.get(editor);
+      if (runnable != null) {
+        runnable.run();
+        myExecuteOnEditorRelease.remove(editor);
       }
     }
   }

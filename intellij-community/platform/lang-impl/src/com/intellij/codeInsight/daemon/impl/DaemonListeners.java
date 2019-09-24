@@ -158,22 +158,25 @@ public final class DaemonListeners implements Disposable {
     eventMulticaster.addEditorMouseMotionListener(new MyEditorMouseMotionListener(), this);
     eventMulticaster.addEditorMouseListener(new MyEditorMouseListener(TooltipController.getInstance()), this);
 
-    EditorTracker editorTracker = project.getComponent(EditorTracker.class);
-    editorTracker.addEditorTrackerListener(this, __ -> {
-      List<Editor> activeEditors = editorTracker.getActiveEditors();
-      if (myActiveEditors.equals(activeEditors)) {
-        return;
-      }
-      myActiveEditors = activeEditors;
-      stopDaemon(true, "Active editor change");  // do not stop daemon if idea loses/gains focus
-      if (ApplicationManager.getApplication().isDispatchThread() && LaterInvocator.isInModalContext()) {
-        // editor appear in modal context, re-enable the daemon
-        myDaemonCodeAnalyzer.setUpdateByTimerEnabled(true);
-      }
+    connection.subscribe(EditorTrackerListener.TOPIC, new EditorTrackerListener() {
+      @Override
+      public void activeEditorsChanged(@NotNull List<Editor> activeEditors) {
+        if (myActiveEditors.equals(activeEditors)) {
+          return;
+        }
 
-      ErrorStripeUpdateManager errorStripeUpdateManager = ErrorStripeUpdateManager.getInstance(myProject);
-      for (Editor editor : activeEditors) {
-        errorStripeUpdateManager.repaintErrorStripePanel(editor);
+        myActiveEditors = activeEditors;
+        // do not stop daemon if idea loses/gains focus
+        DaemonListeners.this.stopDaemon(true, "Active editor change");
+        if (ApplicationManager.getApplication().isDispatchThread() && LaterInvocator.isInModalContext()) {
+          // editor appear in modal context, re-enable the daemon
+          myDaemonCodeAnalyzer.setUpdateByTimerEnabled(true);
+        }
+
+        ErrorStripeUpdateManager errorStripeUpdateManager = ErrorStripeUpdateManager.getInstance(myProject);
+        for (Editor editor : activeEditors) {
+          errorStripeUpdateManager.repaintErrorStripePanel(editor);
+        }
       }
     });
 
