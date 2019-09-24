@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.isFlexible
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()
 
-    override fun accepts(file: VirtualFile) = IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)
+    override fun accepts(file: VirtualFile) = IDEKotlinBinaryClassCache.getInstance().isKotlinJvmCompiledFile(file)
 
     override fun getStubBuilder() = stubBuilder
 
@@ -67,8 +67,9 @@ fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
 ): DecompiledText {
-    val classHeader = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
-                                 ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
+    val classHeader =
+        IDEKotlinBinaryClassCache.getInstance().getKotlinBinaryClassHeaderData(classFile)
+            ?: error("Decompiled data factory shouldn't be called on an unsupported file: $classFile")
 
     val classId = classHeader.classId
 

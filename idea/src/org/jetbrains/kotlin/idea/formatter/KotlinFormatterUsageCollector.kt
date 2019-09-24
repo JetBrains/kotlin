@@ -42,14 +42,18 @@ class KotlinFormatterUsageCollector {
         private val KOTLIN_DEFAULT_COMMON = KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
             .also { KotlinStyleGuideCodeStyle.applyToCommonSettings(it) }
 
-        private val KOTLIN_DEFAULT_CUSTOM = KotlinCodeStyleSettings.DEFAULT.cloneSettings()
-            .also { KotlinStyleGuideCodeStyle.applyToKotlinCustomSettings(it) }
+        private val KOTLIN_DEFAULT_CUSTOM by lazy {
+            KotlinCodeStyleSettings.defaultSettings().cloneSettings()
+                .also { KotlinStyleGuideCodeStyle.applyToKotlinCustomSettings(it) }
+        }
 
         private val KOTLIN_OBSOLETE_DEFAULT_COMMON = KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
             .also { KotlinObsoleteCodeStyle.applyToCommonSettings(it) }
 
-        private val KOTLIN_OBSOLETE_DEFAULT_CUSTOM = KotlinCodeStyleSettings.DEFAULT.cloneSettings()
-            .also { KotlinObsoleteCodeStyle.applyToKotlinCustomSettings(it) }
+        private val KOTLIN_OBSOLETE_DEFAULT_CUSTOM by lazy {
+            KotlinCodeStyleSettings.defaultSettings().cloneSettings()
+                .also { KotlinObsoleteCodeStyle.applyToKotlinCustomSettings(it) }
+        }
 
         fun getKotlinFormatterKind(project: Project): KotlinFormatterKind {
             val isProject = CodeStyleSettingsManager.getInstance(project).USE_PER_PROJECT_SETTINGS
@@ -60,11 +64,11 @@ class KotlinFormatterUsageCollector {
             val kotlinCustomSettings = settings.kotlinCustomSettings
 
             val isDefaultKotlinCommonSettings = kotlinCommonSettings == KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
-            val isDefaultKotlinCustomSettings = kotlinCustomSettings == KotlinCodeStyleSettings.DEFAULT
+            val isDefaultKotlinCustomSettings = kotlinCustomSettings == KotlinCodeStyleSettings.defaultSettings()
 
             if (isDefaultKotlinCommonSettings && isDefaultKotlinCustomSettings) {
                 return if (isDefaultOfficialCodeStyle) {
-                    paired(IDEA_OFFICIAL_DEFAULT, isProject)
+                    paired(KotlinFormatterKind.IDEA_OFFICIAL_DEFAULT, isProject)
                 } else {
                     paired(IDEA_DEFAULT, isProject)
                 }

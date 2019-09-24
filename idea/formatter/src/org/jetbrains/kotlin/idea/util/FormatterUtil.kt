@@ -16,4 +16,4 @@ fun ASTBlock.requireNode() = node ?: error("ASTBlock.getNode() returned null")
 /**
  * Can be removed with all usages after moving master to 1.3 with new default code style settings.
  */
-val isDefaultOfficialCodeStyle by lazy { !KotlinCodeStyleSettings.DEFAULT.CONTINUATION_INDENT_FOR_CHAINED_CALLS }
+val isDefaultOfficialCodeStyle by lazy { !KotlinCodeStyleSettings.defaultSettings().CONTINUATION_INDENT_FOR_CHAINED_CALLS }
