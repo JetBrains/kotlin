@@ -145,11 +145,11 @@ class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApp
                                 child1 as JKElement,
                                 child2 as JKElement
                             )
-                        }.reduce(Boolean::and)
+                        }.fold(true, Boolean::and)
                     }
                     else -> false
                 }
-            }.reduce(Boolean::and)
+            }.fold(true, Boolean::and)
         } else false
     }
 
