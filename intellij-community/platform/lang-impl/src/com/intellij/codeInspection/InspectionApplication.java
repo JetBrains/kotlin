@@ -21,6 +21,7 @@ import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.util.Comparing;
@@ -65,6 +66,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.locks.LockSupport;
 
 import static com.intellij.codeInspection.InspectionApplicationUtilKt.runAnalysisAfterShelvingSync;
 
@@ -86,8 +88,8 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   public boolean myRunGlobalToolsOnly;
   public boolean myAnalyzeChanges;
   private int myVerboseLevel;
-  private final Map<VirtualFile, List<Range>> diffMap = new ConcurrentHashMap<>();
-  private final MultiMap<Pair<VirtualFile, Integer>, String> originalWarnings = new ConcurrentMultiMap<>();
+  private final Map<String, List<Range>> diffMap = new ConcurrentHashMap<>();
+  private final MultiMap<Pair<String, Integer>, String> originalWarnings = new ConcurrentMultiMap<>();
   public String myOutputFormat;
 
   public boolean myErrorCodeRequired = true;
@@ -268,6 +270,10 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       VirtualFile[] changes = ChangesUtil.getFilesFromChanges(ChangeListManager.getInstance(project).getAllChanges());
       setupFirstAnalysisHandler(context);
       final List<Path> inspectionsResults = new ArrayList<>();
+      DumbService dumbService = DumbService.getInstance(project);
+      while (dumbService.isDumb()) {
+        LockSupport.parkNanos(50_000_000);
+      }
       runAnalysisAfterShelvingSync(
         project,
         ChangeListManager.getInstance(project).getAffectedFiles(),
@@ -306,16 +312,20 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   }
 
   private void setupFirstAnalysisHandler(GlobalInspectionContextImpl context) {
+    if (myVerboseLevel > 0) {
+      reportMessage(1, "Running first analysis stage...");
+    }
     context.setReportedProblemFilter(
       (element, descriptors) -> {
-        Optional<ProblemDescriptorBase> any = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).findAny();
-        if (any.isPresent()) {
-          ProblemDescriptorBase problemDescriptor = any.get();
+        List<ProblemDescriptorBase> problemDescriptors = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).toList();
+        if (!problemDescriptors.isEmpty()) {
+          ProblemDescriptorBase problemDescriptor = problemDescriptors.get(0);
           VirtualFile file = problemDescriptor.getContainingFile();
           if (file == null) return true;
           int lineNumber = problemDescriptor.getLineNumber();
-          String text = problemDescriptor.toString();
-          originalWarnings.putValue(Pair.create(file, lineNumber), text);
+          for (ProblemDescriptorBase it : problemDescriptors) {
+            originalWarnings.putValue(Pair.create(file.getPath(), lineNumber), it.toString());
+          }
         }
         return true;
       }
@@ -323,12 +333,16 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   }
 
   private void setupSecondAnalysisHandler(Project project, GlobalInspectionContextImpl context) {
+    if (myVerboseLevel > 0) {
+      reportMessage(1, "Running second analysis stage...");
+    }
+    printBeforeSecondStageStatistics();
     ChangeListManager changeListManager = ChangeListManager.getInstance(project);
     context.setReportedProblemFilter(
       (element, descriptors) -> {
-        Optional<ProblemDescriptorBase> any = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).findAny();
-        if (any.isPresent()) {
-          ProblemDescriptorBase problemDescriptor = any.get();
+        List<ProblemDescriptorBase> any = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).toList();
+        if (!any.isEmpty()) {
+          ProblemDescriptorBase problemDescriptor = any.get(0);
           String text = problemDescriptor.toString();
           VirtualFile file = problemDescriptor.getContainingFile();
           if (file == null) return false;
@@ -336,18 +350,44 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
           int line = problemDescriptor.getLineNumber();
           Optional<Range> first = StreamEx.of(ranges).findFirst((it) -> it.start1 <= line && line < it.end1);
           if (!first.isPresent()) {
+            reportMessage(3, "Not filtered: ");
+            reportMessage(3,file.getPath() + ":" + (line + 1));
+            reportMessage(3, "\t\t" + text);
             return false;
           }
           Range originRange = first.get();
           int position = originRange.start2 + line - originRange.start1;
-          Collection<String> problems = originalWarnings.get(Pair.create(file, position));
+          Collection<String> problems = originalWarnings.get(Pair.create(file.getPath(), position));
           if (problems.stream().anyMatch(it -> Objects.equals(it, text))) {
             return true;
           }
+          reportMessage(3, "Not filtered: ");
+          reportMessage(3,file.getPath() + ":" + (line + 1) + " Original: " + (position + 1));
+          reportMessage(3, "\t\t" + text);
+
+          return false;
         }
-        return false;
+        else {
+          return false;
+        }
       }
     );
+  }
+
+  private void printBeforeSecondStageStatistics() {
+    if (myVerboseLevel == 3) {
+      reportMessage(3, "Old warnings:");
+      ArrayList<Map.Entry<Pair<String, Integer>, Collection<String>>> entries = new ArrayList<>(originalWarnings.entrySet());
+      reportMessage(3, "total size: " + entries.size());
+      entries.sort(Comparator.comparing((Map.Entry<Pair<String, Integer>, Collection<String>> o) -> o.getKey().first)
+                     .thenComparingInt(o -> o.getKey().second));
+      for (Map.Entry<Pair<String, Integer>, Collection<String>> entry : entries) {
+        reportMessage(3, entry.getKey().first + ":" + (entry.getKey().second + 1));
+        for (String value : entry.getValue()) {
+          reportMessage(3, "\t\t" + value);
+        }
+      }
+    }
   }
 
   private void runUnderProgress(@NotNull Project project,
@@ -378,11 +418,18 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       private String lastPrefix = "";
       private int myLastPercent = -1;
 
+      {
+        setText("");
+      }
+
       @Override
       public void setText(String text) {
         if (myVerboseLevel == 0) return;
 
         if (myVerboseLevel == 1) {
+          if (text == null) {
+            return;
+          }
           String prefix = getPrefix(text);
           if (prefix == null) return;
           if (prefix.equals(lastPrefix)) {
@@ -619,7 +666,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
 
   private List<Range> getOrComputeUnchangedRanges(@NotNull VirtualFile virtualFile,
                                                   @NotNull ChangeListManager changeListManager) {
-    return diffMap.computeIfAbsent(virtualFile, (key) -> computeDiff(key, changeListManager));
+    return diffMap.computeIfAbsent(virtualFile.getPath(), (key) -> computeDiff(virtualFile, changeListManager));
   }
 
   private static List<Range> computeDiff(@NotNull VirtualFile virtualFile,

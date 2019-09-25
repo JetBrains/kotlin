@@ -10,6 +10,13 @@ import com.intellij.openapi.vfs.VirtualFile
 
 
 fun runAnalysisAfterShelvingSync(project: Project, files: List<VirtualFile>, progressIndicator: ProgressIndicator, afterShelve: Runnable) {
+  var tryNo = 100
+  //TODO fix hacky hack
+  while (ProjectLevelVcsManager.getInstance(project).allVcsRoots.isEmpty() && tryNo > 0)
+  {
+    Thread.sleep(50)
+    tryNo--
+  }
   val versionedRoots = files.mapNotNull { ProjectLevelVcsManager.getInstance(project).getVcsRootFor(it) }.toSet()
   val message = VcsBundle.message("searching.for.code.smells.freezing.process")
   VcsPreservingExecutor.executeOperation(project, versionedRoots, message, progressIndicator, afterShelve)
