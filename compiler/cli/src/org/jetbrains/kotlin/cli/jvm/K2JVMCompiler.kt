@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.codegen.CompilationException
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -204,12 +205,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (!arguments.disableDefaultScriptingPlugin) {
             val explicitOrLoadedScriptingPlugin =
                 pluginClasspaths.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) } ||
-                        try {
-                            PluginCliParser::class.java.classLoader.loadClass("org.jetbrains.kotlin.extensions.ScriptingCompilerConfigurationExtension")
-                            true
-                        } catch (_: Throwable) {
-                            false
-                        }
+                        tryLoadScriptingPluginFromCurrentClassLoader(configuration)
             // if scripting plugin is not enabled explicitly (probably from another path) and not in the classpath already,
             // try to find and enable it implicitly
             if (!explicitOrLoadedScriptingPlugin) {
@@ -241,6 +237,20 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             pluginOptions.add("plugin:kotlin.scripting:disable=true")
         }
         return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, configuration)
+    }
+
+    private fun tryLoadScriptingPluginFromCurrentClassLoader(configuration: CompilerConfiguration): Boolean = try {
+        val pluginRegistrarClass = PluginCliParser::class.java.classLoader.loadClass(
+            "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar"
+        )
+        val pluginRegistrar = pluginRegistrarClass.newInstance() as? ComponentRegistrar
+        if (pluginRegistrar != null) {
+            configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, pluginRegistrar)
+            true
+        } else false
+    } catch (_: Throwable) {
+        // TODO: add finer error processing and logging
+        false
     }
 
     private fun createCoreEnvironment(
