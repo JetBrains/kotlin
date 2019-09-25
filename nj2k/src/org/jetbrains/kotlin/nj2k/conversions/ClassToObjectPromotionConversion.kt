@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.declarationList
 import org.jetbrains.kotlin.nj2k.getCompanion
@@ -70,6 +71,8 @@ class ClassToObjectPromotionConversion(context: NewJ2kConverterContext) : Recurs
         }
     }
 
-    private fun JKClass.hasInheritors() =
-        context.converter.converterServices.oldServices.referenceSearcher.hasInheritors(psi()!!)
+    private fun JKClass.hasInheritors(): Boolean {
+        val psi = psi<PsiClass>() ?: return false
+        return context.converter.converterServices.oldServices.referenceSearcher.hasInheritors(psi)
+    }
 }

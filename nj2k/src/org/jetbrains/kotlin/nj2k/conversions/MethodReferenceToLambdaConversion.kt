@@ -75,8 +75,7 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
                         JKArgumentList(arguments)
                     )
                 is JKClassSymbol -> JKNewExpression(symbol, JKArgumentList(), JKTypeArgumentList())
-                is JKUnresolvedSymbol -> return recurse(element)
-                else -> error("Symbol should be either method symbol or class symbol, but it is ${symbol::class}")
+                else -> return recurse(element)
             }
         val qualifier = when {
             receiverParameter != null ->
@@ -94,8 +93,7 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
                 when (symbol) {
                     is JKMethodSymbol -> symbol.returnType ?: JKNoType
                     is JKClassSymbol -> JKClassType(symbol)
-                    is JKUnresolvedSymbol -> return recurse(element)
-                    else -> error("Symbol should be either method symbol or class symbol, but it is ${symbol::class}")
+                    else -> return recurse(element)
                 }
             )
         )

@@ -77,7 +77,7 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
             ?.returnedExpression
             ?.unpackedReferenceToProperty()
             ?.takeIf {
-                it.type() == this.type()!!
+                it.type() == type() ?: return@takeIf false
             }
         return RealGetter(this, target, name)
     }
@@ -184,7 +184,7 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
         ktSetter.filterModifiers()
         if (setter is RealSetter) {
             setter.function.forAllUsages { usage ->
-                val callExpression = usage.getStrictParentOfType<KtCallExpression>()!!
+                val callExpression = usage.getStrictParentOfType<KtCallExpression>() ?: return@forAllUsages
                 val qualifier = callExpression.getQualifiedExpressionForSelector()
                 val newValue = callExpression.valueArguments.single()
                 if (qualifier != null) {

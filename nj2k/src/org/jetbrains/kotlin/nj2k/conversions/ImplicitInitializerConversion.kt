@@ -67,7 +67,7 @@ class ImplicitInitializerConversion(context: NewJ2kConverterContext) : Recursive
             .toMap()
             .toMutableMap()
 
-        val constructorsWithInitializers = findUsages(parentOfType<JKClass>()!!, context).mapNotNull { usage ->
+        val constructorsWithInitializers = findUsages(containingClass, context).mapNotNull { usage ->
             val parent = usage.parent
             val assignmentStatement =
                 when {

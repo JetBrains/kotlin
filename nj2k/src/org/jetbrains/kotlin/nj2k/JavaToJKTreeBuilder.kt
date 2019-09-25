@@ -41,16 +41,17 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.types.*
 
-
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -249,7 +250,7 @@ class JavaToJKTreeBuilder constructor(
                 JavaTokenType.LONG_LITERAL -> JKLiteralExpression(text, LONG)
                 JavaTokenType.FLOAT_LITERAL -> JKLiteralExpression(text, FLOAT)
                 JavaTokenType.DOUBLE_LITERAL -> JKLiteralExpression(text, DOUBLE)
-                else -> error("Unknown literal element type: ${this.literalElementType}")
+                else -> throwCanNotConvertError("Unknown literal element type: $literalElementType")
             }.also {
                 it.assignNonCodeElements(this)
             }
@@ -531,7 +532,7 @@ class JavaToJKTreeBuilder constructor(
         fun PsiTypeCastExpression.toJK(): JKExpression {
             return JKTypeCastExpression(
                 operand?.toJK() ?: throwCanNotConvertError(),
-                castType?.type?.toJK()?.asTypeElement() ?: throwCanNotConvertError()
+                (castType?.type?.toJK() ?: JKNoType).asTypeElement()
             ).also {
                 it.assignNonCodeElements(this)
             }
@@ -647,10 +648,12 @@ class JavaToJKTreeBuilder constructor(
                 with(expressionTreeMapper) { argumentList?.toJK() ?: JKArgumentList() },
                 initializingClass?.createClassBody() ?: JKClassBody(),
                 JKTypeElement(
-                    JKClassType(
-                        symbolProvider.provideDirectSymbol(containingClass ?: throwCanNotConvertError()) as JKClassSymbol,
-                        emptyList()
-                    )
+                    containingClass?.let { klass ->
+                        JKClassType(
+                            symbolProvider.provideDirectSymbol(klass) as JKClassSymbol,
+                            emptyList()
+                        )
+                    } ?: JKNoType
                 )
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
@@ -701,14 +704,17 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun <T : PsiModifierListOwner> T.annotationList(docCommentOwner: PsiDocCommentOwner?): JKAnnotationList {
-            val plainAnnotations = annotations.map { it.cast<PsiAnnotation>().toJK() }
-            val deprecatedAnnotation = docCommentOwner?.docComment?.deprecatedAnnotation() ?: return JKAnnotationList(plainAnnotations)
-            return JKAnnotationList(
-                plainAnnotations.mapNotNull { annotation ->
-                    if (annotation.classSymbol.fqName == "java.lang.Deprecated") null else annotation
-                } + deprecatedAnnotation
-            )
+            val deprecatedAnnotation = docCommentOwner?.docComment?.deprecatedAnnotation()
+            val plainAnnotations = annotations.mapNotNull { annotation ->
+                when {
+                    annotation !is PsiAnnotation -> null
+                    annotation.qualifiedName == DEPRECATED_ANNOTAION_FQ_NAME && deprecatedAnnotation != null -> null
+                    else -> annotation.toJK()
+                }
+            }
+            return JKAnnotationList(plainAnnotations + listOfNotNull(deprecatedAnnotation))
         }
+
 
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotation(
@@ -755,9 +761,10 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAnnotationMethod.toJK(): JKJavaAnnotationMethod =
             JKJavaAnnotationMethod(
-                returnType?.toJK()?.asTypeElement()
-                    ?: JKTypeElement(JKJavaVoidType).takeIf { isConstructor }
-                    ?: throwCanNotConvertError("type of PsiAnnotationMethod can not be retrieved"),
+                JKTypeElement(
+                    returnType?.toJK()
+                        ?: JKJavaVoidType.takeIf { isConstructor }
+                        ?: JKNoType),
                 nameIdentifier.toJK(),
                 defaultValue?.toJK() ?: JKStubExpression(),
                 otherModifiers(),
@@ -772,9 +779,10 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiMethod.toJK(): JKMethod {
             return JKMethodImpl(
-                returnType?.toJK()?.asTypeElement()
-                    ?: JKTypeElement(JKJavaVoidType).takeIf { isConstructor }
-                    ?: throwCanNotConvertError("type of PsiAnnotationMethod can not be retrieved"),
+                JKTypeElement(
+                    returnType?.toJK()
+                        ?: JKJavaVoidType.takeIf { isConstructor }
+                        ?: JKNoType),
                 nameIdentifier.toJK(),
                 parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStub,
@@ -845,11 +853,11 @@ class JavaToJKTreeBuilder constructor(
                 is PsiExpressionStatement -> JKExpressionStatement(with(expressionTreeMapper) { expression.toJK() })
                 is PsiReturnStatement -> JKReturnStatement(with(expressionTreeMapper) { returnValue.toJK() })
                 is PsiDeclarationStatement ->
-                    JKDeclarationStatement(declaredElements.map {
+                    JKDeclarationStatement(declaredElements.mapNotNull {
                         when (it) {
                             is PsiClass -> it.toJK()
                             is PsiLocalVariable -> it.toJK()
-                            else -> it.throwCanNotConvertError()
+                            else -> null
                         }
                     })
                 is PsiAssertStatement ->
@@ -993,7 +1001,7 @@ class JavaToJKTreeBuilder constructor(
                 this is PsiWhiteSpace -> JKSpaceElement(text)
                 text == ";" -> null
                 text == "" -> null
-                else -> error("Token should be either token or whitespace")
+                else -> null
             } ?: return null
             tokenCache[this] = token
             return token
@@ -1054,8 +1062,13 @@ class JavaToJKTreeBuilder constructor(
         also { it.assignNonCodeElements(psi) }
 
     private fun PsiElement.throwCanNotConvertError(message: String? = null): Nothing {
-        error("Cannot convert the following Java element ${this::class} with text `$text`" + message?.let { " due to `$it`" }.orEmpty())
+        throw KotlinExceptionWithAttachments("Cannot convert the following Java element ${this::class}" + message?.let { " due to `$it`" })
+            .withAttachment("elementText", text)
+            .withAttachment("file", containingFile?.text)
     }
 
+    companion object {
+        private const val DEPRECATED_ANNOTAION_FQ_NAME = "java.lang.Deprecated"
+    }
 }
 

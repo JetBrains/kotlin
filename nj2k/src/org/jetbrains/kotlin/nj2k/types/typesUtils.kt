@@ -78,7 +78,7 @@ fun JKType.applyRecursive(transform: (JKType) -> JKType?): JKType =
         is JKJavaDisjunctionType ->
             JKJavaDisjunctionType(disjunctions.map { it.applyRecursive(transform) }, nullability)
         is JKStarProjectionType -> this
-        else -> TODO(this::class.toString())
+        else -> this
     }
 
 inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability): T =
@@ -92,7 +92,7 @@ inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability)
         is JKJavaArrayType -> JKJavaArrayType(type, newNullability)
         is JKContextType -> JKContextType
         is JKJavaDisjunctionType -> this
-        else -> TODO(this::class.toString())
+        else -> this
     } as T
 
 @Suppress("UNCHECKED_CAST")

@@ -15,8 +15,8 @@ class AnyWithStringConcatenationConversion(context: NewJ2kConverterContext) : Re
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKBinaryExpression) return recurse(element)
         if (element.operator.token == JKOperatorToken.PLUS
-            && element.right.calculateType(typeFactory).isStringType()
-            && !element.left.calculateType(typeFactory).isStringType()
+            && element.right.calculateType(typeFactory)?.isStringType() == true
+            && element.left.calculateType(typeFactory)?.isStringType() == false
         ) {
             return recurse(
                 JKBinaryExpression(

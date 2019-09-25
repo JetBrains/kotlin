@@ -115,7 +115,7 @@ class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveAppl
             this is JKIfElseStatement ||
                     this is JKJavaSwitchStatement ||
                     this is JKKtWhenStatement ->
-                this.psi!!.canCompleteNormally()
+                psi?.canCompleteNormally() == true
             else -> true
         }
 

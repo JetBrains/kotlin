@@ -82,7 +82,7 @@ class RemoveRedundantNullabilityProcessing : InspectionLikeProcessingForElement<
 
     override fun apply(element: KtProperty) {
         val typeElement = element.typeReference?.typeElement
-        typeElement?.replace(typeElement.cast<KtNullableType>().innerType!!)
+        typeElement?.replace(typeElement.safeAs<KtNullableType>()?.innerType ?: return)
     }
 }
 
@@ -269,8 +269,8 @@ class JavaObjectEqualsToEqOperatorProcessing : InspectionLikeProcessingForElemen
         element.getQualifiedExpressionForSelectorOrThis().replace(
             factory.createExpressionByPattern(
                 "($0 == $1)",
-                element.valueArguments[0].getArgumentExpression()!!,
-                element.valueArguments[1].getArgumentExpression()!!
+                element.valueArguments[0].getArgumentExpression() ?: return,
+                element.valueArguments[1].getArgumentExpression() ?: return
             )
         )
     }
@@ -312,7 +312,7 @@ class RemoveRedundantModalityModifierProcessing : InspectionLikeProcessingForEle
     }
 
     override fun apply(element: KtDeclaration) {
-        element.removeModifier(element.modalityModifierType()!!)
+        element.removeModifier(element.modalityModifierType() ?: return)
     }
 }
 
@@ -329,7 +329,7 @@ class RemoveRedundantVisibilityModifierProcessing : InspectionLikeProcessingForE
     }
 
     override fun apply(element: KtDeclaration) {
-        element.removeModifier(element.visibilityModifierType()!!)
+        element.removeModifier(element.visibilityModifierType() ?: return)
     }
 }
 

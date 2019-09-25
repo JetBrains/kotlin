@@ -46,11 +46,13 @@ class JKMultiverseKtEnumEntrySymbol(
     override val typeFactory: JKTypeFactory
 ) : JKFieldSymbol(), JKMultiverseKtSymbol<KtEnumEntry> {
     override val fieldType: JKType?
-        get() = JKClassType(
-            symbolProvider.provideDirectSymbol(target.containingClass()!!) as JKClassSymbol,
-            emptyList(),
-            Nullability.NotNull
-        )
+        get() = target.containingClass()?.let { klass ->
+            JKClassType(
+                symbolProvider.provideDirectSymbol(klass) as? JKClassSymbol ?: return@let null,
+                emptyList(),
+                Nullability.NotNull
+            )
+        }
 }
 
 class JKUnresolvedField(

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.nj2k.types.*
 
 abstract class JKExpression : JKAnnotationMemberValue(), PsiOwner by PsiOwnerImpl() {
     // we don't need exact type here (eg with substituted type parameters)
-    abstract fun calculateType(typeFactory: JKTypeFactory): JKType
+    abstract fun calculateType(typeFactory: JKTypeFactory): JKType?
 }
 
 abstract class JKOperatorExpression : JKExpression() {
@@ -92,7 +92,7 @@ class JKLiteralExpression(
 }
 
 class JKStubExpression : JKExpression() {
-    override fun calculateType(typeFactory: JKTypeFactory) = JKNoType
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
     override fun accept(visitor: JKVisitor) = visitor.visitStubExpression(this)
 }
 
@@ -118,7 +118,7 @@ class JKIfElseExpression(
     var thenBranch by child(thenBranch)
     var elseBranch by child(elseBranch)
 
-    override fun calculateType(typeFactory: JKTypeFactory): JKType = type
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = type
     override fun accept(visitor: JKVisitor) = visitor.visitIfElseExpression(this)
 }
 
@@ -133,7 +133,7 @@ class JKLambdaExpression(
     var functionalType by child(functionalType)
     val returnType by child(returnType)
 
-    override fun calculateType(typeFactory: JKTypeFactory): JKType = JKNoType
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
     override fun accept(visitor: JKVisitor) = visitor.visitLambdaExpression(this)
 }
 
@@ -141,7 +141,7 @@ class JKLambdaExpression(
 abstract class JKCallExpression : JKExpression(), JKTypeArgumentListOwner {
     abstract val identifier: JKMethodSymbol
     abstract var arguments: JKArgumentList
-    override fun calculateType(typeFactory: JKTypeFactory): JKType = identifier.returnType ?: JKNoType
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = identifier.returnType
 }
 
 class JKDelegationConstructorCall(
@@ -181,18 +181,18 @@ class JKNewExpression(
 
 
 class JKFieldAccessExpression(var identifier: JKFieldSymbol) : JKExpression() {
-    override fun calculateType(typeFactory: JKTypeFactory) = identifier.fieldType ?: JKNoType
+    override fun calculateType(typeFactory: JKTypeFactory) = identifier.fieldType 
     override fun accept(visitor: JKVisitor) = visitor.visitFieldAccessExpression(this)
 }
 
 class JKPackageAccessExpression(var identifier: JKPackageSymbol) : JKExpression() {
-    override fun calculateType(typeFactory: JKTypeFactory) = JKNoType
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
     override fun accept(visitor: JKVisitor) = visitor.visitPackageAccessExpression(this)
 }
 
 
 class JKClassAccessExpression(var identifier: JKClassSymbol) : JKExpression() {
-    override fun calculateType(typeFactory: JKTypeFactory) = JKNoType
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
     override fun accept(visitor: JKVisitor) = visitor.visitClassAccessExpression(this)
 }
 
@@ -204,7 +204,7 @@ class JKMethodReferenceExpression(
 ) : JKExpression() {
     val qualifier by child(qualifier)
     val functionalType by child(functionalType)
-    override fun calculateType(typeFactory: JKTypeFactory): JKType = JKNoType
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
     override fun accept(visitor: JKVisitor) = visitor.visitMethodReferenceExpression(this)
 }
 
@@ -221,7 +221,7 @@ class JKClassLiteralExpression(
     var literalType: ClassLiteralType
 ) : JKExpression() {
     val classType: JKTypeElement by child(classType)
-    override fun calculateType(typeFactory: JKTypeFactory): JKType = when (literalType) {
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = when (literalType) {
         ClassLiteralType.KOTLIN_CLASS -> typeFactory.types.kotlinClass
         else -> typeFactory.types.javaKlass
     }
@@ -289,7 +289,7 @@ class JKKtAnnotationArrayInitializerExpression(initializers: List<JKAnnotationMe
     constructor(vararg initializers: JKAnnotationMemberValue) : this(initializers.toList())
 
     val initializers: List<JKAnnotationMemberValue> by children(initializers)
-    override fun calculateType(typeFactory: JKTypeFactory) = JKNoType
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
     override fun accept(visitor: JKVisitor) = visitor.visitKtAnnotationArrayInitializerExpression(this)
 }
 

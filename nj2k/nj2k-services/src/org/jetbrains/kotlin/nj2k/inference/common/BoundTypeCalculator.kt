@@ -206,7 +206,7 @@ open class BoundTypeCalculatorImpl(
                     arguments.mapIndexed { i, argument ->
                         TypeParameter(
                             argument.type.boundTypeUnenhanced(
-                                typeVariable?.typeParameters?.get(i)?.boundType?.label?.safeAs<TypeVariableLabel>()?.typeVariable,
+                                typeVariable?.typeParameters?.getOrNull(i)?.boundType?.label?.safeAs<TypeVariableLabel>()?.typeVariable,
                                 contextBoundType,
                                 call,
                                 isImplicitReceiver,

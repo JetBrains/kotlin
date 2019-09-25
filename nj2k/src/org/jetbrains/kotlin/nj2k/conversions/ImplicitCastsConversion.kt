@@ -30,8 +30,8 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
 
     private fun convertBinaryExpression(binaryExpression: JKBinaryExpression): JKExpression {
         fun JKBinaryExpression.convertBinaryOperationWithChar(): JKBinaryExpression {
-            val leftType = left.calculateType(typeFactory).asPrimitiveType() ?: return this
-            val rightType = right.calculateType(typeFactory).asPrimitiveType() ?: return this
+            val leftType = left.calculateType(typeFactory)?.asPrimitiveType() ?: return this
+            val rightType = right.calculateType(typeFactory)?.asPrimitiveType() ?: return this
 
             val leftOperandCastedCasted by lazy(LazyThreadSafetyMode.NONE) {
                 JKBinaryExpression(
@@ -97,7 +97,7 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
 
     private fun JKExpression.castStringToRegex(toType: JKType): JKExpression? {
         if (toType.safeAs<JKClassType>()?.classReference?.fqName != "java.util.regex.Pattern") return null
-        val expressionType = calculateType(typeFactory)
+        val expressionType = calculateType(typeFactory) ?: return null
         if (!expressionType.isStringType()) return null
         return JKQualifiedExpression(
             copyTreeAndDetach().parenthesizeIfBinaryExpression(),
@@ -117,7 +117,7 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
             val casted = expression.castToAsPrimitiveTypes(toType, strict) ?: return null
             return JKPrefixExpression(casted, operator)
         }
-        val expressionTypeAsPrimitive = calculateType(typeFactory).asPrimitiveType() ?: return null
+        val expressionTypeAsPrimitive = calculateType(typeFactory)?.asPrimitiveType() ?: return null
         val toTypeAsPrimitive = toType.asPrimitiveType() ?: return null
         if (toTypeAsPrimitive == expressionTypeAsPrimitive) return null
 

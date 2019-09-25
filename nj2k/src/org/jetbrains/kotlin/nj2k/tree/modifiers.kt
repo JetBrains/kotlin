@@ -43,7 +43,7 @@ enum class OtherModifier(override val text: String) : Modifier {
     VOLATILE("volatile")
 }
 
-abstract class JKModifierElement : JKTreeElement()
+sealed class JKModifierElement : JKTreeElement()
 
 
 interface JKOtherModifiersOwner : JKModifiersListOwner {
@@ -131,7 +131,6 @@ val JKModifierElement.modifier: Modifier
         is JKModalityModifierElement -> modality
         is JKVisibilityModifierElement -> visibility
         is JKOtherModifierElement -> otherModifier
-        else -> error("")
     }
 
 

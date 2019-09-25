@@ -107,7 +107,9 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
             }
         is PsiCapturedWildcardType ->
             JKCapturedType(fromPsiType(type.wildcard) as JKWildCardType)
-        else -> throw Exception("Invalid PSI ${this::class.java}")
+        is PsiIntersectionType -> // TODO what to do with intersection types? old j2k just took the first conjunct
+            fromPsiType(type.representative)
+        else -> throw Exception("Invalid PSI ${type::class.java}")
     }
 
     private fun createKotlinType(type: KotlinType): JKType {
