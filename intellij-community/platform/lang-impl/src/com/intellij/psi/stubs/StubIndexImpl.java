@@ -155,7 +155,8 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     };
   }
 
-  private static <K> boolean registerIndexer(@NotNull final StubIndexExtension<K, ?> extension, final boolean forceClean, @NotNull AsyncState state)
+  private static <K> void registerIndexer(@NotNull final StubIndexExtension<K, ?> extension, final boolean forceClean,
+                                          @NotNull AsyncState state, @NotNull IndicesRegistrationResult registrationResultSink)
     throws IOException {
     final StubIndexKey<K, ?> indexKey = extension.getKey();
     final int version = extension.getVersion();
@@ -165,7 +166,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     }
 
     final File indexRootDir = IndexInfrastructure.getIndexRootDir(indexKey);
-    boolean needRebuild = false;
 
     if (forceClean || IndexingStamp.versionDiffers(indexKey, version)) {
       final File versionFile = IndexInfrastructure.getVersionFile(indexKey);
@@ -174,14 +174,14 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       final String[] children = indexRootDir.list();
       // rebuild only if there exists what to rebuild
       boolean indexRootHasChildren = children != null && children.length > 0;
-      needRebuild = !forceClean && (versionFileExisted || indexRootHasChildren);
-      if (needRebuild) {
-        LOG.info("Version has changed for stub index " + extension.getKey() + ". The index will be rebuilt.");
-      } else {
-        LOG.debug("Stub index " + indexKey + " will be built.");
-      }
+      boolean needRebuild = !forceClean && (versionFileExisted || indexRootHasChildren);
+
+      if (needRebuild) registrationResultSink.registerIndexAsChanged(indexKey);
+      else registrationResultSink.registerIndexAsInitiallyBuilt(indexKey);
       if (indexRootHasChildren) FileUtil.deleteWithRenaming(indexRootDir);
       IndexingStamp.rewriteVersion(indexKey, version); // todo snapshots indices
+    } else {
+      registrationResultSink.registerIndexAsUptoDate(indexKey);
     }
     FileBasedIndexImpl fileBasedIndexManager = (FileBasedIndexImpl)FileBasedIndex.getInstance();
     UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex =
@@ -234,7 +234,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
         break;
       }
       catch (IOException e) {
-        needRebuild = true;
+        registrationResultSink.registerIndexAsInitiallyBuilt(indexKey);
         onExceptionInstantiatingIndex(indexKey, version, indexRootDir, e);
       }
       catch (RuntimeException e) {
@@ -243,7 +243,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
         onExceptionInstantiatingIndex(indexKey, version, indexRootDir, e);
       }
     }
-    return needRebuild;
   }
 
   @NotNull
@@ -680,7 +679,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
 
   private class StubIndexInitialization extends IndexInfrastructure.DataInitialization<AsyncState> {
     private final AsyncState state = new AsyncState();
-    private final StringBuilder updated = new StringBuilder();
+    private final IndicesRegistrationResult indicesRegistrationSink = new IndicesRegistrationResult();
 
     @Override
     protected void prepare() {
@@ -696,12 +695,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
         extension.getKey(); // initialize stub index keys
 
         addNestedInitializationTask(() -> {
-          @SuppressWarnings("unchecked") boolean rebuildRequested = registerIndexer(extension, forceClean, state);
-          if (rebuildRequested) {
-            synchronized (updated) {
-              updated.append(extension).append(' ');
-            }
-          }
+          registerIndexer(extension, forceClean, state, indicesRegistrationSink);
         });
       }
     }
@@ -714,7 +708,13 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     @Override
     protected AsyncState finish() {
       boolean someIndicesWereDropped = dropUnregisteredIndices(state);
+
+      StringBuilder updated = new StringBuilder();
+      String updatedIndices = indicesRegistrationSink.changedIndices();
+      if (!updatedIndices.isEmpty()) updated.append(updatedIndices);
       if (someIndicesWereDropped) updated.append(" and some indices were dropped");
+      indicesRegistrationSink.logChangedAndFullyBuiltIndices(LOG, "Following stub indices will be updated:",
+                                                             "Following stub indices will be built:");
 
       if (updated.length() > 0) {
         final Throwable e = new Throwable(updated.toString());
