@@ -122,6 +122,79 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @TestMetadata("idea/testData/multiModuleQuickFix/addMissingActualMembers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddMissingActualMembers extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddMissingActualMembers() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/addMissingActualMembers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("classFunction")
+        public void testClassFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classFunction/");
+        }
+
+        @TestMetadata("classFunctionSameSignature")
+        public void testClassFunctionSameSignature() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classFunctionSameSignature/");
+        }
+
+        @TestMetadata("classFunctionWithConstructor")
+        public void testClassFunctionWithConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classFunctionWithConstructor/");
+        }
+
+        @TestMetadata("classFunctionWithConstructorAndParameters")
+        public void testClassFunctionWithConstructorAndParameters() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classFunctionWithConstructorAndParameters/");
+        }
+
+        @TestMetadata("classFunctionWithIncompatibleConstructor")
+        public void testClassFunctionWithIncompatibleConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classFunctionWithIncompatibleConstructor/");
+        }
+
+        @TestMetadata("classOverloadedFunction")
+        public void testClassOverloadedFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classOverloadedFunction/");
+        }
+
+        @TestMetadata("classPropertyInConstructor")
+        public void testClassPropertyInConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classPropertyInConstructor/");
+        }
+
+        @TestMetadata("classSomeProperties")
+        public void testClassSomeProperties() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classSomeProperties/");
+        }
+
+        @TestMetadata("classWithIncompilableFunction")
+        public void testClassWithIncompilableFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/classWithIncompilableFunction/");
+        }
+
+        @TestMetadata("companionAbsence")
+        public void testCompanionAbsence() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/companionAbsence/");
+        }
+
+        @TestMetadata("primaryConstructorAbsence")
+        public void testPrimaryConstructorAbsence() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/primaryConstructorAbsence/");
+        }
+
+        @TestMetadata("secondaryConstructorAbsence")
+        public void testSecondaryConstructorAbsence() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addMissingActualMembers/secondaryConstructorAbsence/");
+        }
+    }
+
     @TestMetadata("idea/testData/multiModuleQuickFix/changeSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -701,56 +774,6 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/other"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("classFunction")
-        public void testClassFunction() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classFunction/");
-        }
-
-        @TestMetadata("classFunctionSameSignature")
-        public void testClassFunctionSameSignature() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classFunctionSameSignature/");
-        }
-
-        @TestMetadata("classFunctionWithConstructor")
-        public void testClassFunctionWithConstructor() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classFunctionWithConstructor/");
-        }
-
-        @TestMetadata("classFunctionWithConstructorAndParameters")
-        public void testClassFunctionWithConstructorAndParameters() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classFunctionWithConstructorAndParameters/");
-        }
-
-        @TestMetadata("classFunctionWithIncompatibleConstructor")
-        public void testClassFunctionWithIncompatibleConstructor() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classFunctionWithIncompatibleConstructor/");
-        }
-
-        @TestMetadata("classOverloadedFunction")
-        public void testClassOverloadedFunction() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classOverloadedFunction/");
-        }
-
-        @TestMetadata("classPropertyInConstructor")
-        public void testClassPropertyInConstructor() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classPropertyInConstructor/");
-        }
-
-        @TestMetadata("classSomeProperties")
-        public void testClassSomeProperties() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classSomeProperties/");
-        }
-
-        @TestMetadata("classWithIncompilableFunction")
-        public void testClassWithIncompilableFunction() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/classWithIncompilableFunction/");
-        }
-
-        @TestMetadata("companionAbsence")
-        public void testCompanionAbsence() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/companionAbsence/");
-        }
-
         @TestMetadata("convertActualEnumToSealedClass")
         public void testConvertActualEnumToSealedClass() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/other/convertActualEnumToSealedClass/");
@@ -996,11 +1019,6 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/other/orderImpl/");
         }
 
-        @TestMetadata("primaryConstructorAbsence")
-        public void testPrimaryConstructorAbsence() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/primaryConstructorAbsence/");
-        }
-
         @TestMetadata("safeDeleteForbiddenFromActual")
         public void testSafeDeleteForbiddenFromActual() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/other/safeDeleteForbiddenFromActual/");
@@ -1014,11 +1032,6 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         @TestMetadata("safeDeleteUsedInAnotherPlatform")
         public void testSafeDeleteUsedInAnotherPlatform() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/other/safeDeleteUsedInAnotherPlatform/");
-        }
-
-        @TestMetadata("secondaryConstructorAbsence")
-        public void testSecondaryConstructorAbsence() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/other/secondaryConstructorAbsence/");
         }
     }
 }
