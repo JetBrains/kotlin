@@ -102,7 +102,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                         return util.format.apply(null, args) + '\n'
                     };
             
-                    const LogReporter = function (baseReporterDecorator) {
+                    const LogReporter = function (baseReporterDecorator, formatError) {
                         const teamcityReporter = require("karma-teamcity-reporter")["reporter:teamcity"][1];
                         teamcityReporter.call(this, baseReporterDecorator);
 
@@ -139,22 +139,24 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                            this.browserResults[browser.id].consoleCollector = []
                         };
             
-                        const tcSpecFailure = this.specFailure;
                         this.specFailure = function (browser, result) {
-                            tcSpecFailure.call(this, browser, result);
                             var log = this.getLog(browser, result);
                             var testName = result.description;
-                        
-                            const endMessage = log.pop();
-                            const failedMessage = log.pop();
+                
+                            log.push(formatMessage(this.TEST_START, testName));
                             this.browserResults[browser.id].consoleCollector.forEach(item => {
-                              log.push(
-                                formatMessage(this.TEST_STD_OUT, testName, item)
-                              )
+                                log.push(
+                                    formatMessage(this.TEST_STD_OUT, testName, item)
+                                )
                             });
-                            log.push(failedMessage);
-                            log.push(endMessage);
-                        
+                
+                            log.push(formatMessage(this.TEST_FAILED, testName, formatError(
+                                result.log
+                                    .map(log => formatError(log))
+                                    .join('\n\n')
+                            )));
+                            log.push(formatMessage(this.TEST_END, testName, result.time));
+                
                             this.browserResults[browser.id].consoleCollector = []
                         };
                         
@@ -168,7 +170,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                         }
                     };
                     
-                    LogReporter.${"$"}inject = ['baseReporterDecorator'];
+                    LogReporter.${"$"}inject = ['baseReporterDecorator', 'formatError'];
             
                     config.plugins = config.plugins || [];
                     config.plugins.push('karma-*'); // default
