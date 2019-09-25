@@ -35,10 +35,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfiguration>(KotlinRunConfigurationType.getInstance()) {
-
-    override fun setupConfigurationFromContext(configuration: KotlinRunConfiguration,
-                                               context: ConfigurationContext,
-                                               sourceElement: Ref<PsiElement>): Boolean {
+    override fun setupConfigurationFromContext(
+        configuration: KotlinRunConfiguration,
+        context: ConfigurationContext,
+        sourceElement: Ref<PsiElement>
+    ): Boolean {
         val location = context.location ?: return false
         val module = location.module?.asJvmModule() ?: return false
         val container = getEntryPointContainer(location) ?: return false
@@ -87,17 +88,15 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
             return null
         }
 
-        fun getStartClassFqName(container: KtDeclarationContainer): String? = when(container) {
+        fun getStartClassFqName(container: KtDeclarationContainer): String? = when (container) {
             is KtFile -> container.javaFileFacadeFqName.asString()
             is KtClassOrObject -> {
                 if (!container.isValid) {
                     null
-                }
-                else if (container is KtObjectDeclaration && container.isCompanion()) {
+                } else if (container is KtObjectDeclaration && container.isCompanion()) {
                     val containerClass = container.getParentOfType<KtClass>(true)
                     containerClass?.toLightClass()?.let { ClassUtil.getJVMClassName(it) }
-                }
-                else {
+                } else {
                     container.toLightClass()?.let { ClassUtil.getJVMClassName(it) }
                 }
             }
@@ -111,6 +110,5 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
                 PsiTreeUtil.getNonStrictParentOfType(this, KtClassOrObject::class.java, KtFile::class.java)
             return element as KtDeclarationContainer?
         }
-
     }
 }
