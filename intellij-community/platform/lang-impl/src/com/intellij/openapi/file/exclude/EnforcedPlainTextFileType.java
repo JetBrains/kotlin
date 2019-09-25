@@ -2,23 +2,17 @@
 package com.intellij.openapi.file.exclude;
 
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class EnforcedPlainTextFileType implements FileTypeIdentifiableByVirtualFile {
+public class EnforcedPlainTextFileType implements FileType {
   public static final FileType INSTANCE = new EnforcedPlainTextFileType();
 
   private final EnforcedPlainTextFileTypeManager myTypeManager = EnforcedPlainTextFileTypeManager.getInstance();
 
   private EnforcedPlainTextFileType() {
-  }
-
-  @Override
-  public boolean isMyFileType(@NotNull VirtualFile file) {
-    return myTypeManager != null && myTypeManager.isMarkedAsPlainText(file);
   }
 
   @NotNull
