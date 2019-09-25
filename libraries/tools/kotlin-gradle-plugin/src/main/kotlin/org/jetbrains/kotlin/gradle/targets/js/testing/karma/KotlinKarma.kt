@@ -150,11 +150,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                                 )
                             });
                 
-                            log.push(formatMessage(this.TEST_FAILED, testName, formatError(
+                            log.push(formatMessage(this.TEST_FAILED, testName, 
                                 result.log
                                     .map(log => formatError(log))
                                     .join('\n\n')
-                            )));
+                            ));
                             log.push(formatMessage(this.TEST_END, testName, result.time));
                 
                             this.browserResults[browser.id].consoleCollector = []
@@ -457,6 +457,20 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                         parseConsole(value)
                     }
 
+                    override fun processStackTrace(stackTrace: String): String {
+                        return stackTrace.lines()
+                            .joinToString("\n") { line ->
+                                val index = line.indexOf(KARMA_SOURCE_MAP_DELIMETER)
+                                if (index == -1)
+                                    line
+                                else
+                                    line
+                                        .removeRange(index, line.length - 1)
+                                        .replace(WEBPACK_PROTOCOL, "")
+                            }
+
+                    }
+
                     override fun getSuiteName(message: BaseTestSuiteMessage): String {
                         val src = message.suiteName.trim()
                         // example: "sample.a DeepPackageTest Inner.HeadlessChrome 74.0.3729 (Mac OS X 10.14.4)"
@@ -511,6 +525,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     companion object {
         const val CHROME_BIN = "CHROME_BIN"
         const val CHROME_CANARY_BIN = "CHROME_CANARY_BIN"
+
+        const val WEBPACK_PROTOCOL = "webpack://"
+        const val KARMA_SOURCE_MAP_DELIMETER = " <-"
 
         val KARMA_PROBLEM = "(?m)^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN) \\[.*]: (.*)\$".toRegex()
     }
