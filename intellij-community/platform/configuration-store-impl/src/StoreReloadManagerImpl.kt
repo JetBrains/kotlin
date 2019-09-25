@@ -34,6 +34,7 @@ import com.intellij.util.ExceptionUtil
 import com.intellij.util.SingleAlarm
 import gnu.trove.THashSet
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.ApiStatus
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
@@ -42,7 +43,12 @@ import kotlin.collections.LinkedHashSet
 private val CHANGED_FILES_KEY = Key<LinkedHashMap<ComponentStoreImpl, LinkedHashSet<StateStorage>>>("CHANGED_FILES_KEY")
 private val CHANGED_SCHEMES_KEY = Key<LinkedHashMap<SchemeChangeApplicator, LinkedHashSet<SchemeChangeEvent>>>("CHANGED_SCHEMES_KEY")
 
-internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
+/**
+ * This service is temporary allowed to be overriden to support reloading of new project model entities. It should be removed after merging
+ * new project model modules to community project.
+ */
+@ApiStatus.Internal
+open class StoreReloadManagerImpl : StoreReloadManager, Disposable {
   private val reloadBlockCount = AtomicInteger()
   private val blockStackTrace = AtomicReference<String?>()
   private val changedApplicationFiles = LinkedHashSet<StateStorage>()
@@ -56,7 +62,8 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
     processOpenedProjects { project ->
       val changedSchemes = CHANGED_SCHEMES_KEY.getAndClear(project as UserDataHolderEx)
       val changedStorages = CHANGED_FILES_KEY.getAndClear(project as UserDataHolderEx)
-      if ((changedSchemes == null || changedSchemes.isEmpty()) && (changedStorages == null || changedStorages.isEmpty())) {
+      if ((changedSchemes == null || changedSchemes.isEmpty()) && (changedStorages == null || changedStorages.isEmpty())
+          && !mayHaveAdditionalConfigurations(project)) {
         return@processOpenedProjects
       }
 
@@ -82,6 +89,8 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
             }
           }
         }
+
+        reloadAdditionalConfigurations(project)
       }
     }
 
@@ -89,6 +98,11 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       doReloadProject(project)
     }
   }, delay = 300, parentDisposable = this)
+
+  protected open fun reloadAdditionalConfigurations(project: Project) {
+  }
+
+  protected open fun mayHaveAdditionalConfigurations(project: Project): Boolean = false
 
   internal class MyVirtualFileManagerListener : VirtualFileManagerListener {
     private val manager = StoreReloadManager.getInstance()
@@ -193,9 +207,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       }
     }
 
-    if (!isReloadBlocked()) {
-      changedFilesAlarm.cancelAndRequest()
-    }
+    scheduleProcessingChangedFiles()
   }
 
   internal fun registerChangedSchemes(events: List<SchemeChangeEvent>, schemeFileTracker: SchemeChangeApplicator, project: Project) {
@@ -208,6 +220,10 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
       changes.getOrPut(schemeFileTracker) { LinkedHashSet() }.addAll(events)
     }
 
+    scheduleProcessingChangedFiles()
+  }
+
+  override fun scheduleProcessingChangedFiles() {
     if (!isReloadBlocked()) {
       changedFilesAlarm.cancelAndRequest()
     }
