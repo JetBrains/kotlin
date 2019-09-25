@@ -15,7 +15,7 @@ kotlin {
     }
         
     hostTarget.apply {
-        compilations["main"].kotlinOptions.freeCompilerArgs = listOf("-l", "kotlinx-cli")
+        compilations["main"].enableEndorsedLibs = true
         binaries {
             executable {
                 entryPoint = "sample.csvparser.main"

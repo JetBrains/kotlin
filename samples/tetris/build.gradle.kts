@@ -70,7 +70,7 @@ kotlin {
             }
         }
 
-        compilations["main"].kotlinOptions.freeCompilerArgs = listOf("-l", "kotlinx-cli")
+        compilations["main"].enableEndorsedLibs = true
     }
 }
 

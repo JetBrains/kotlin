@@ -24,7 +24,7 @@ kotlin {
             executable(listOf(DEBUG))
         }
         binaries.getTest("DEBUG").apply {
-            freeCompilerArgs.add("-Xlibrary-to-cover=${compilations["main"].output.classesDirs.singleFile.absolutePath}")
+            freeCompilerArgs += listOf("-Xlibrary-to-cover=${compilations["main"].output.classesDirs.singleFile.absolutePath}")
         }
     }
 }

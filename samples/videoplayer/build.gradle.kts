@@ -46,7 +46,7 @@ kotlin {
             }
         }
 
-        compilations["main"].kotlinOptions.freeCompilerArgs = listOf("-l", "kotlinx-cli")
+        compilations["main"].enableEndorsedLibs = true
     }
 
     // Enable experimental stdlib API used by the sample.
