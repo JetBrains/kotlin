@@ -86,6 +86,9 @@ class KotlinNativeCompilation(
         DefaultCInteropSettings(project, cinteropName, this)
     }
 
+    // Endorsed library controller.
+    var enableEndorsedLibs = false
+
     fun cinterops(action: Closure<Unit>) = cinterops(ConfigureUtil.configureUsing(action))
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
 

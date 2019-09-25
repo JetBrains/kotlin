@@ -4,14 +4,13 @@
  */
 
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
+
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -49,15 +48,25 @@ class KotlinNativeTargetPreset(
         }
     }
 
-    // We declare default K/N dependencies as files to avoid searching them in remote repos (see KT-28128).
-    private fun defaultLibs(target: KonanTarget? = null): List<Dependency> = with(project) {
-
-        val relPath = if (target != null) "platform/${target.name}" else "common"
-
-        file("$konanHome/klib/$relPath")
+    private fun nativeLibrariesList(directory: String) = with(project) {
+        file("$konanHome/klib/$directory")
             .listFiles { file -> file.isDirectory }
             ?.sortedBy { dir -> dir.name.toLowerCase() }
-            ?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()
+    }
+
+    // We declare default K/N dependencies (default and platform libraries) as files to avoid searching them in remote repos (see KT-28128).
+    private fun defaultLibs(stdlibOnly: Boolean = false): List<Dependency> = with(project) {
+        var filesList = nativeLibrariesList("common")
+        if (stdlibOnly) {
+            filesList = filesList?.filter { dir -> dir.name == "stdlib" }
+        }
+
+        filesList?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()
+    }
+
+    private fun platformLibs(target: KonanTarget): List<Dependency> = with(project) {
+        val filesList = nativeLibrariesList("platform/${target.name}")
+        filesList?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()
     }
 
     override fun createTarget(name: String): KotlinNativeTarget {
@@ -75,15 +84,18 @@ class KotlinNativeTargetPreset(
         KotlinNativeTargetConfigurator(kotlinPluginVersion).configureTarget(result)
 
         // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
+
         result.compilations.all { compilation ->
             val target = compilation.target.konanTarget
-            // First, put common libs:
-            defaultLibs().forEach {
-                project.dependencies.add(compilation.compileDependencyConfigurationName, it)
-            }
-            // Then, platform-specific libs:
-            defaultLibs(target).forEach {
-                project.dependencies.add(compilation.compileDependencyConfigurationName, it)
+            compilation.target.project.whenEvaluated {
+                // First, put common libs:
+                defaultLibs(!compilation.enableEndorsedLibs).forEach {
+                    project.dependencies.add(compilation.compileDependencyConfigurationName, it)
+                }
+                // Then, platform-specific libs:
+                platformLibs(target).forEach {
+                    project.dependencies.add(compilation.compileDependencyConfigurationName, it)
+                }
             }
         }
 

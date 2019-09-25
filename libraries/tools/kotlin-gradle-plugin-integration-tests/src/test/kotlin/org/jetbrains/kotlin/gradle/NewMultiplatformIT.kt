@@ -692,6 +692,25 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testEndorsedLibsController() {
+        with(
+            transformProjectWithPluginsDsl("new-mpp-native-endorsed", gradleVersion)
+        ) {
+            setupWorkingDir()
+
+            build("build") {
+                assertSuccessful()
+            }
+            gradleBuildScript().modify {
+                it.replace("enableEndorsedLibs = true", "")
+            }
+            build("build") {
+                assertFailed()
+            }
+        }
+    }
+
+    @Test
     fun testDependenciesOnMppLibraryPartsWithNoMetadata() {
         val repoDir = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
             setupWorkingDir()

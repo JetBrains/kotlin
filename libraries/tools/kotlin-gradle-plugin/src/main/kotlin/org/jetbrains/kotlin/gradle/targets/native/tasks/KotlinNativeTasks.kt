@@ -139,6 +139,10 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
         get() = languageSettings.progressiveMode
     // endregion.
 
+    @get:Input
+    val enableEndorsedLibs: Boolean
+        get() = compilation.enableEndorsedLibs
+
     val kotlinNativeVersion: String
         @Input get() = project.konanVersion.toString()
 
@@ -184,8 +188,10 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions> : Abstra
     // Args used by both the compiler and IDEA.
     protected open fun buildCommonArgs(defaultsOnly: Boolean = false): List<String> = mutableListOf<String>().apply {
         add("-Xmulti-platform")
-        // Endorsed libs are disabled in plugin.
-        add("-no-endorsed-libs")
+
+        if (!enableEndorsedLibs) {
+            add("-no-endorsed-libs")
+        }
 
         // Compiler plugins.
         compilerPluginClasspath?.let { pluginClasspath ->
