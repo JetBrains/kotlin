@@ -360,7 +360,6 @@ public final class DaemonListeners implements Disposable {
     LanguageAnnotators.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<KeyedLazyInstance<Annotator>>() {
       @Override
       public void extensionListChanged() {
-        CachedAnnotators.clearCache(project);
         stopDaemonAndRestartAllFiles("annotators list changed");
       }
     }, this);
