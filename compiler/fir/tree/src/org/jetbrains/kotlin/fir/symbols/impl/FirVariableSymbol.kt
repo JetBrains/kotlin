@@ -22,7 +22,7 @@ open class FirPropertySymbol(
     callableId: CallableId,
     val isFakeOverride: Boolean = false,
     // Actual for fake override only
-    val overriddenSymbol: FirPropertySymbol? = null
+    override val overriddenSymbol: FirPropertySymbol? = null
 ) : FirVariableSymbol<FirProperty>(callableId)
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)

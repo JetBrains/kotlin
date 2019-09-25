@@ -8,8 +8,8 @@ FILE: problems2.kt
             ^find Null(null)
         }
 
-        public final fun intern(obj: R|T|): <ERROR TYPE REF: Inapplicable(HIDDEN): [/Interner.find]> {
-            ^intern <Inapplicable(HIDDEN): [/Interner.find]>#(R|<local>/obj|)
+        public final fun intern(obj: R|T|): R|kotlin/Int?| {
+            ^intern this@R|/Interner|.R|FakeOverride</Interner.find: R|kotlin/Int?|>|(R|<local>/obj|)
         }
 
     }

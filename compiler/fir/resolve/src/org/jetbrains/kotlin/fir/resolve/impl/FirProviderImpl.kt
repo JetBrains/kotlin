@@ -23,13 +23,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirProviderImpl(val session: FirSession) : FirProvider() {
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
+        symbol.overriddenSymbol?.let {
+            return getFirCallableContainerFile(it)
+        }
         return state.callableContainerMap[symbol]
     }
 
