@@ -47,6 +47,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
 import com.intellij.openapi.vfs.newvfs.persistent.FlushingDaemon;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
+import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -103,7 +104,7 @@ import java.util.stream.Stream;
 /**
  * @author Eugene Zhuravlev
  */
-public final class FileBasedIndexImpl extends FileBasedIndex implements Disposable {
+public final class FileBasedIndexImpl extends FileBasedIndex {
   private static final ThreadLocal<VirtualFile> ourIndexedFile = new ThreadLocal<>();
   static final Logger LOG = Logger.getInstance("#com.intellij.util.indexing.FileBasedIndexImpl");
   private static final String CORRUPTION_MARKER_NAME = "corruption.marker";
@@ -258,13 +259,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         cleanupMemoryStorage(false);
       }
     });
-
-    ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
-      @Override
-      public void writeActionStarted(@NotNull Object action) {
-        myUpToDateIndicesForUnsavedOrTransactedDocuments.clear();
-      }
-    }, this);
 
     myConnection = connection;
 
@@ -491,11 +485,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     return extension instanceof CustomImplementationFileBasedIndexExtension
            ? ((CustomImplementationFileBasedIndexExtension<K, V>)extension).createIndexImplementation(extension, storage)
            : new VfsAwareMapReduceIndex<>(extension, storage);
-  }
-
-  @Override
-  public void dispose() {
-    performShutdown();
   }
 
   private final AtomicBoolean myShutdownPerformed = new AtomicBoolean(false);
@@ -2519,6 +2508,15 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
           }
         }
 
+        Disposable disposable = () -> performShutdown();
+        ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
+          @Override
+          public void writeActionStarted(@NotNull Object action) {
+            myUpToDateIndicesForUnsavedOrTransactedDocuments.clear();
+          }
+        }, disposable);
+        Disposer.register(((PersistentFSImpl)ManagingFS.getInstance()), disposable);
+
         registerIndexableSet(new AdditionalIndexableFileSet(), null);
         return state;
       }
@@ -2586,7 +2584,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     if (index == null) {
       IndicesRegistrationResult registrationResult = new IndicesRegistrationResult();
       try {
-        registerIndexer(FileContentHashIndexExtension.create(enumeratorPath, this), myState, registrationResult);
+        registerIndexer(FileContentHashIndexExtension.create(enumeratorPath, ApplicationManager.getApplication()), myState, registrationResult);
         registrationResult.logChangedAndFullyBuiltIndices(LOG, "Version was changed for:", "Index is to be rebuilt:");
       }
       catch (IOException e) {

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs.provided;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.*;
@@ -48,7 +49,7 @@ public class StubProvidedIndexExtension implements ProvidedIndexExtension<Intege
     SerializationManagerImpl manager =
       new SerializationManagerImpl(new File(new File(path, StringUtil.toLowerCase(StubUpdatingIndex.INDEX_ID.getName())), "rep.names"),
                                    true);
-    Disposer.register(((FileBasedIndexImpl)FileBasedIndex.getInstance()), manager);
+    Disposer.register(ApplicationManager.getApplication(), manager);
     return new SerializedStubTreeDataExternalizer(false, manager);
   }
 
