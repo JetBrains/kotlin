@@ -41,6 +41,9 @@ val myTrailingWhitespacesCheckBox = CheckboxDescriptor(ApplicationBundle.message
                                                                        model::setTrailingWhitespacesShown))
 val myShowVerticalIndentGuidesCheckBox = CheckboxDescriptor("Show indent guides",
                                                             PropertyBinding(model::isIndentGuidesShown, model::setIndentGuidesShown))
+val myShowStringContentIndentGuideCheckBox = CheckboxDescriptor("Show string content indent guide",
+                                                                PropertyBinding(model::isStringContentIndentGuideShown,
+                                                                                model::setStringContentIndentGuideShown))
 val myFocusModeCheckBox = CheckboxDescriptor("Highlight only current declaration", PropertyBinding(model::isFocusMode, model::setFocusMode))
 val myCbShowIntentionBulbCheckBox = CheckboxDescriptor("Show intention bulb",
                                                        PropertyBinding(model::isShowIntentionBulb, model::setShowIntentionBulb))
@@ -86,6 +89,9 @@ class EditorAppearanceConfigurable : BoundCompositeConfigurable<UnnamedConfigura
       }
       row {
         checkBox(myShowVerticalIndentGuidesCheckBox)
+      }
+      row {
+        checkBox(myShowStringContentIndentGuideCheckBox)
       }
       if (ApplicationManager.getApplication().isInternal) {
         row {
