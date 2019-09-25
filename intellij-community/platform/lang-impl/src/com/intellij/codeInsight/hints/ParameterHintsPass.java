@@ -3,6 +3,7 @@ package com.intellij.codeInsight.hints;
 
 import com.intellij.codeHighlighting.EditorBoundHighlightingPass;
 import com.intellij.codeInsight.daemon.impl.ParameterHintsPresentationManager;
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diff.impl.DiffUtil;
 import com.intellij.openapi.editor.Editor;
@@ -64,6 +65,7 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
     Language language = myFile.getLanguage();
     InlayParameterHintsProvider provider = InlayParameterHintsExtension.INSTANCE.forLanguage(language);
     if (provider == null || !provider.canShowHintsWhenDisabled() && !isEnabled(language) || DiffUtil.isDiffEditor(myEditor)) return;
+    if (!HighlightingLevelManager.getInstance(myFile.getProject()).shouldHighlight(myFile)) return;
 
     myTraverser.forEach(element -> process(element, provider));
   }

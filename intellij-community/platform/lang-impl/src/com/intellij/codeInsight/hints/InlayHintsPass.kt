@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.hints
 
 import com.intellij.codeHighlighting.EditorBoundHighlightingPass
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager
 import com.intellij.concurrency.JobLauncher
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.Inlay
@@ -18,6 +19,7 @@ class InlayHintsPass(
   val settings: InlayHintsSettings
 ) : EditorBoundHighlightingPass(editor, rootElement.containingFile, true) {
   override fun doCollectInformation(progress: ProgressIndicator) {
+    if (!HighlightingLevelManager.getInstance(myFile.project).shouldHighlight(myFile)) return
     JobLauncher.getInstance().invokeConcurrentlyUnderProgress(
       collectors,
       progress,
