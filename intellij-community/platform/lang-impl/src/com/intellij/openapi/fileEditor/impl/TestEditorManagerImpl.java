@@ -30,9 +30,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.messages.MessageBusConnection;
@@ -464,10 +461,8 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
     Editor editor = myVirtualFile2Editor.get(file);
 
     if (editor == null) {
-      PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
-      LOG.assertTrue(psiFile != null, file);
-      Document document = PsiDocumentManager.getInstance(myProject).getDocument(psiFile);
-      LOG.assertTrue(document != null, psiFile);
+      Document document = FileDocumentManager.getInstance().getDocument(file);
+      LOG.assertTrue(document != null, file);
       editor = EditorFactory.getInstance().createEditor(document, myProject);
       final EditorHighlighter highlighter = HighlighterFactory.createHighlighter(myProject, file);
       Language language = TextEditorImpl.getDocumentLanguage(editor);
