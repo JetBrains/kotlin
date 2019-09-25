@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
@@ -74,7 +73,7 @@ fun runCommonization(parameters: CommonizationParameters): CommonizationResult {
     val modulesByTargets = LinkedHashMap<Target, Collection<ModuleDescriptor>>() // use linked hash map to preserve order
 
     // build resulting descriptors:
-    val visitor = DeclarationsBuilderVisitor(storageManager, DefaultBuiltIns.Instance) { target, commonizedModules ->
+    val visitor = DeclarationsBuilderVisitor(storageManager) { target, commonizedModules ->
         check(target !in modulesByTargets)
         modulesByTargets[target] = commonizedModules
     }

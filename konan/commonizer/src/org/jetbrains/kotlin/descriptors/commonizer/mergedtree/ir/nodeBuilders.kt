@@ -34,7 +34,7 @@ internal fun buildModuleNode(
     storageManager = storageManager,
     descriptors = modules,
     targetDeclarationProducer = ::Module,
-    commonValueProducer = { Module(it.firstNonNull().name) },
+    commonValueProducer = { commonize(it, ModuleCommonizer.default()) },
     recursionMarker = null,
     nodeProducer = ::ModuleNode
 )

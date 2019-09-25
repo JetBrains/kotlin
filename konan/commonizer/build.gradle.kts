@@ -9,7 +9,8 @@ dependencies {
 
     compile(kotlinStdlib())
 
-    compile(project(":kotlin-native:kotlin-native-utils"))
+    compile(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+    compile(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
 
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":compiler:tests-common"))

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.Target
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 /** Builds and initializes the new tree of common descriptors */
 internal class DeclarationsBuilderVisitor(
     private val storageManager: StorageManager,
-    private val builtIns: KotlinBuiltIns,
     private val collector: (Target, Collection<ModuleDescriptor>) -> Unit
 ) : NodeVisitor<List<DeclarationDescriptor?>, List<DeclarationDescriptor?>> {
     override fun visitRootNode(node: RootNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
@@ -54,7 +52,7 @@ internal class DeclarationsBuilderVisitor(
     override fun visitModuleNode(node: ModuleNode, data: List<DeclarationDescriptor?>): List<ModuleDescriptorImpl?> {
         // build module descriptors:
         val moduleDescriptorsGroup = CommonizedGroup<ModuleDescriptorImpl>(node.dimension)
-        node.buildDescriptors(moduleDescriptorsGroup, storageManager, builtIns)
+        node.buildDescriptors(moduleDescriptorsGroup, storageManager)
         val moduleDescriptors = moduleDescriptorsGroup.toList()
 
         // build package fragments:

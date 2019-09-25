@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Module
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ModuleNode
@@ -15,21 +14,19 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun ModuleNode.buildDescriptors(
     output: CommonizedGroup<ModuleDescriptorImpl>,
-    storageManager: StorageManager,
-    builtIns: KotlinBuiltIns
+    storageManager: StorageManager
 ) {
     target.forEachIndexed { index, module ->
-        module?.buildDescriptor(output, index, storageManager, builtIns)
+        module?.buildDescriptor(output, index, storageManager)
     }
 
-    common()?.buildDescriptor(output, indexOfCommon, storageManager, builtIns)
+    common()?.buildDescriptor(output, indexOfCommon, storageManager)
 }
 
 private fun Module.buildDescriptor(
     output: CommonizedGroup<ModuleDescriptorImpl>,
     index: Int,
-    storageManager: StorageManager,
-    builtIns: KotlinBuiltIns
+    storageManager: StorageManager
 ) {
     val moduleDescriptor = ModuleDescriptorImpl(
         moduleName = name,

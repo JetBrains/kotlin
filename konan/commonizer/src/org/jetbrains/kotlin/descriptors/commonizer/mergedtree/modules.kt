@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildModuleNode
 import org.jetbrains.kotlin.descriptors.commonizer.toList
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
