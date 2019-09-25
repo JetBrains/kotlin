@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirCallableReferenceAccessImpl(
@@ -21,8 +20,7 @@ class FirCallableReferenceAccessImpl(
     override var explicitReceiver: FirExpression? = null
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        calleeReference = calleeReference.transformSingle(transformer, data)
-        explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
+        super<FirModifiableQualifiedAccess>.transformChildren(transformer, data)
 
         return super<FirCallableReferenceAccess>.transformChildren(transformer, data)
     }
