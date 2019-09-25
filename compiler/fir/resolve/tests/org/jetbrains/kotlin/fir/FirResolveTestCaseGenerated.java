@@ -292,6 +292,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/dispatchReceiver.kt");
         }
 
+        @TestMetadata("extensionPropertyInLambda.kt")
+        public void testExtensionPropertyInLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/extensionPropertyInLambda.kt");
+        }
+
         @TestMetadata("genericPropertyAccess.kt")
         public void testGenericPropertyAccess() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/genericPropertyAccess.kt");

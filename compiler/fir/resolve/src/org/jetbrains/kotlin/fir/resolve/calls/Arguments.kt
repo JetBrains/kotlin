@@ -48,6 +48,9 @@ fun resolveArgumentExpression(
             isSafeCall,
             typeProvider
         )
+        // TODO:!
+        is FirCallableReferenceAccess -> Unit
+        // NB: FirCallableReferenceAccess should be checked earlier
         is FirQualifiedAccessExpression -> resolvePlainExpressionArgument(
             csBuilder,
             argument,
@@ -59,8 +62,6 @@ fun resolveArgumentExpression(
         )
         // TODO:!
         is FirAnonymousFunction -> preprocessLambdaArgument(csBuilder, argument, expectedType, expectedTypeRef, acceptLambdaAtoms)
-        // TODO:!
-        is FirCallableReferenceAccess -> Unit
         // TODO:!
         //TODO: Collection literal
         is FirWrappedArgumentExpression -> resolveArgumentExpression(

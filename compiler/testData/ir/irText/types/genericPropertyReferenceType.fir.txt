@@ -40,27 +40,28 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:y visibility:public modality:FINAL [var]
-    FUN name:<get-y> visibility:public modality:FINAL <> () returnType:IrErrorType
+    FUN name:<get-y> visibility:public modality:FINAL <> () returnType:T of <uninitialized parent>
       correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-y> (): IrErrorType declared in <root>'
-          ERROR_CALL 'Unresolved reference: <Unresolved name: x>#' type=IrErrorType
-    FUN name:<set-y> visibility:public modality:FINAL <> (v:IrErrorType) returnType:kotlin.Unit
+        RETURN type=kotlin.Nothing from='public final fun <get-y> (): T of <uninitialized parent> declared in <root>'
+          CALL 'public final fun <get-x> (): T of <uninitialized parent> declared in <root>.C' type=T of <uninitialized parent> origin=null
+            $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C<*> origin=null
+    FUN name:<set-y> visibility:public modality:FINAL <> (v:T of <uninitialized parent>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
-      VALUE_PARAMETER name:v index:0 type:IrErrorType
+      VALUE_PARAMETER name:v index:0 type:T of <uninitialized parent>
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: x>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: R|/C.x|' type=IrErrorType
   FUN name:use visibility:public modality:FINAL <> (p:kotlin.reflect.KMutableProperty<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:p index:0 type:kotlin.reflect.KMutableProperty<kotlin.String>
     BLOCK_BODY
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        p: PROPERTY_REFERENCE 'public final y: IrErrorType [var]' field=null getter='public final fun <get-y> (): IrErrorType declared in <root>' setter='public final fun <set-y> (v: IrErrorType): kotlin.Unit declared in <root>' type=IrErrorType origin=null
+        p: PROPERTY_REFERENCE 'public final y: T of <uninitialized parent> [var]' field=null getter='public final fun <get-y> (): T of <uninitialized parent> declared in <root>' setter='public final fun <set-y> (v: T of <uninitialized parent>): kotlin.Unit declared in <root>' type=T of <uninitialized parent> origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       TYPE_OP type=<root>.C<kotlin.String> origin=CAST typeOperand=<root>.C<kotlin.String>
         GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        p: PROPERTY_REFERENCE 'public final y: IrErrorType [var]' field=null getter='public final fun <get-y> (): IrErrorType declared in <root>' setter='public final fun <set-y> (v: IrErrorType): kotlin.Unit declared in <root>' type=IrErrorType origin=null
+        p: PROPERTY_REFERENCE 'public final y: T of <uninitialized parent> [var]' field=null getter='public final fun <get-y> (): T of <uninitialized parent> declared in <root>' setter='public final fun <set-y> (v: T of <uninitialized parent>): kotlin.Unit declared in <root>' type=T of <uninitialized parent> origin=null
