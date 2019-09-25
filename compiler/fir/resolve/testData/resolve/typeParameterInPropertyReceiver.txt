@@ -1,5 +1,5 @@
 FILE: typeParameterInPropertyReceiver.kt
     public final val <T : R|kotlin/Any|> R|T|.self: R|T|
         public get(): R|T| {
-            ^ this#
+            ^ this@R|/self|
         }

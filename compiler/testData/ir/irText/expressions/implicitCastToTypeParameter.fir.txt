@@ -33,11 +33,11 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
       correspondingProperty: PROPERTY name:asT visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-asT> (): T of <uninitialized parent>? declared in <root>'
-          WHEN type=IrErrorType origin=IF
+          WHEN type=T of <uninitialized parent>? origin=IF
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <uninitialized parent>
-                ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
-              then: ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+                ERROR_CALL 'Unresolved reference: this@R|/asT|' type=<root>.Foo<T of <uninitialized parent>>
+              then: ERROR_CALL 'Unresolved reference: this@R|/asT|' type=T of <uninitialized parent>
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Null type=kotlin.Nothing? value=null

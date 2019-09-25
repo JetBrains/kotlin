@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-castExtVal> (): T of <uninitialized parent> declared in <root>'
           TYPE_OP type=T of <uninitialized parent> origin=CAST typeOperand=T of <uninitialized parent>
-            ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+            ERROR_CALL 'Unresolved reference: this@R|/castExtVal|' type=T of <uninitialized parent>
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-castMemberExtVal> (): T of <root>.Host declared in <root>.Host'
             TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
-              GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host<T of <root>.Host> origin=null
+              ERROR_CALL 'Unresolved reference: this@R|/Host.castMemberExtVal|' type=kotlin.Any
     PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val]
       FUN name:<get-castGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:TV of <uninitialized parent>
         correspondingProperty: PROPERTY name:castGenericMemberExtVal visibility:public modality:FINAL [val]
@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-castGenericMemberExtVal> (): TV of <uninitialized parent> declared in <root>.Host'
             TYPE_OP type=TV of <uninitialized parent> origin=CAST typeOperand=TV of <uninitialized parent>
-              GET_VAR '<this>: <root>.Host declared in <root>.Host' type=T of <root>.Host origin=null
+              ERROR_CALL 'Unresolved reference: this@R|/Host.castGenericMemberExtVal|' type=TV of <uninitialized parent>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

@@ -72,7 +72,7 @@ FILE: problems2.kt
             public get(): R|kotlin/String|
 
     }
-    public final val R|KonanTarget|.presetName: <ERROR TYPE REF: Unresolved name: name>
-        public get(): <ERROR TYPE REF: Unresolved name: name> {
-            ^ this#.<Unresolved name: name>#
+    public final val R|KonanTarget|.presetName: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ this@R|/presetName|.R|/KonanTarget.name|
         }

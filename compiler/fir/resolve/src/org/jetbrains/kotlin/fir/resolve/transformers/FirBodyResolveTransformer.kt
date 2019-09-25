@@ -675,18 +675,30 @@ open class FirBodyResolveTransformer(
         }
     }
 
-    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Any?): CompositeTransformResult<FirDeclaration> {
-        if (propertyAccessor is FirDefaultPropertyAccessor || propertyAccessor.body == null) {
-            return transformFunction(propertyAccessor, data)
+    private fun transformAccessor(
+        accessor: FirPropertyAccessor,
+        enhancedTypeRef: FirTypeRef,
+        owner: FirVariable<*>
+    ) {
+        if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
+            transformFunction(accessor, enhancedTypeRef)
         }
-        val returnTypeRef = propertyAccessor.returnTypeRef
-        if (returnTypeRef is FirImplicitTypeRef && data !is FirResolvedTypeRef) {
-            propertyAccessor.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
+        val returnTypeRef = accessor.returnTypeRef
+        if (returnTypeRef is FirImplicitTypeRef && enhancedTypeRef !is FirResolvedTypeRef) {
+            accessor.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
         }
-        return if (data is FirResolvedTypeRef && returnTypeRef !is FirResolvedTypeRef) {
-            transformFunctionWithGivenSignature(propertyAccessor, data)
+        val expectedReturnTypeRef = if (enhancedTypeRef is FirResolvedTypeRef && returnTypeRef !is FirResolvedTypeRef) {
+            enhancedTypeRef
         } else {
-            transformFunctionWithGivenSignature(propertyAccessor, returnTypeRef)
+            returnTypeRef
+        }
+        val receiverTypeRef = owner.receiverTypeRef
+        if (receiverTypeRef != null) {
+            withLabelAndReceiverType(owner.name, owner, receiverTypeRef.coneTypeUnsafe()) {
+                transformFunctionWithGivenSignature(accessor, expectedReturnTypeRef, receiverTypeRef)
+            }
+        } else {
+            transformFunctionWithGivenSignature(accessor, expectedReturnTypeRef)
         }
     }
 
@@ -732,14 +744,16 @@ open class FirBodyResolveTransformer(
 
     private fun <F : FirVariable<F>> FirVariable<F>.transformAccessors() {
         var enhancedTypeRef = returnTypeRef
-        getter?.transform<FirDeclaration, Any?>(this@FirBodyResolveTransformer, enhancedTypeRef)
+        getter?.let {
+            transformAccessor(it, enhancedTypeRef, this)
+        }
         if (returnTypeRef is FirImplicitTypeRef) {
             storeVariableReturnType(this)
             enhancedTypeRef = returnTypeRef
         }
         setter?.let {
             it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)
-            it.transform<FirDeclaration, Any?>(this@FirBodyResolveTransformer, enhancedTypeRef)
+            transformAccessor(it, enhancedTypeRef, this)
         }
     }
 
@@ -902,6 +916,9 @@ open class FirBodyResolveTransformer(
                 ImplicitDispatchReceiverValue(owner.symbol, type, symbolProvider, session, scopeSession)
             }
             is FirFunction<*> -> {
+                ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
+            }
+            is FirVariable<*> -> {
                 ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
             }
             else -> {
