@@ -23,19 +23,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 class ClassMapCachingNulls<T> {
-  private final Map<Class, T[]> myBackingMap;
+  private final Map<Class<?>, T[]> myBackingMap;
   private final T[] myEmptyArray;
   private final List<? extends T> myOrderingArray;
-  private final Map<Class, T[]> myMap = ContainerUtil.newConcurrentMap();
+  private final Map<Class<?>, T[]> myMap = ContainerUtil.newConcurrentMap();
 
-  ClassMapCachingNulls(@NotNull Map<Class, T[]> backingMap, T[] emptyArray, @NotNull List<? extends T> orderingArray) {
+  ClassMapCachingNulls(@NotNull Map<Class<?>, T[]> backingMap, T[] emptyArray, @NotNull List<? extends T> orderingArray) {
     myBackingMap = backingMap;
     myEmptyArray = emptyArray;
     myOrderingArray = orderingArray;
   }
 
   @Nullable
-  public T[] get(Class aClass) {
+  T[] get(Class<?> aClass) {
     T[] value = myMap.get(aClass);
     if (value != null) {
       if (value == myEmptyArray) {
@@ -50,7 +50,7 @@ class ClassMapCachingNulls<T> {
     return cache(aClass, result);
   }
 
-  private T[] cache(Class aClass, List<T> result) {
+  private T[] cache(Class<?> aClass, List<T> result) {
     T[] value;
     if (result == null) {
       myMap.put(aClass, myEmptyArray);
@@ -65,14 +65,14 @@ class ClassMapCachingNulls<T> {
   }
 
   @Nullable
-  private List<T> getFromBackingMap(Class aClass) {
+  private List<T> getFromBackingMap(Class<?> aClass) {
     T[] value = myBackingMap.get(aClass);
     Set<T> result = null;
     if (value != null) {
       assert value.length != 0;
       result = new HashSet<>(Arrays.asList(value));
     }
-    for (final Class superclass : JBIterable.of(aClass.getSuperclass()).append(aClass.getInterfaces())) {
+    for (Class<?> superclass : JBIterable.<Class<?>>of(aClass.getSuperclass()).append(aClass.getInterfaces())) {
       result = addFromUpper(result, superclass);
     }
     
@@ -80,7 +80,7 @@ class ClassMapCachingNulls<T> {
     return ContainerUtil.filter(myOrderingArray, result::contains);
   }
 
-  private Set<T> addFromUpper(Set<T> value, Class superclass) {
+  private Set<T> addFromUpper(Set<T> value, Class<?> superclass) {
     T[] fromUpper = get(superclass);
     if (fromUpper != null) {
       assert fromUpper.length != 0;
@@ -93,11 +93,8 @@ class ClassMapCachingNulls<T> {
     return value;
   }
 
-  Map<Class, T[]> getBackingMap() {
+  Map<Class<?>, T[]> getBackingMap() {
     return myBackingMap;
   }
 
-  public void clearCache() {
-    myMap.clear();
-  }
 }

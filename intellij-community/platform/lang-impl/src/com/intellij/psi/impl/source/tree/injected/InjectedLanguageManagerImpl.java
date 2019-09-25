@@ -38,6 +38,7 @@ import java.util.*;
 /**
  * @author cdr
  */
+@SuppressWarnings("deprecation")
 public class InjectedLanguageManagerImpl extends InjectedLanguageManager implements Disposable {
   private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl");
   @SuppressWarnings("RedundantStringConstructorCall")
@@ -163,10 +164,16 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
       return cached;
     }
 
-    Map<Class, MultiHostInjector[]> injectors = new HashMap<>();
+    ClassMapCachingNulls<MultiHostInjector> result = calcInjectorMap();
+    cachedInjectors = result;
+    return result;
+  }
 
-    List<MultiHostInjector> allInjectors = new ArrayList<>();
-    allInjectors.addAll(myManualInjectors);
+  @NotNull
+  private ClassMapCachingNulls<MultiHostInjector> calcInjectorMap() {
+    Map<Class<?>, MultiHostInjector[]> injectors = new HashMap<>();
+
+    List<MultiHostInjector> allInjectors = new ArrayList<>(myManualInjectors);
     Collections.addAll(allInjectors, MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getExtensions(myProject));
     if (LanguageInjector.EXTENSION_POINT_NAME.hasAnyExtensions()) {
       allInjectors.add(PsiManagerRegisteredInjectorsAdapter.INSTANCE);
@@ -180,9 +187,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
       }
     }
 
-    ClassMapCachingNulls<MultiHostInjector> result = new ClassMapCachingNulls<>(injectors, new MultiHostInjector[0], allInjectors);
-    cachedInjectors = result;
-    return result;
+    return new ClassMapCachingNulls<>(injectors, new MultiHostInjector[0], allInjectors);
   }
 
   private void clearInjectorCache() {
@@ -239,6 +244,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
    *  @param rangeToEdit range in encoded(raw) PSI
    *  @return list of ranges in encoded (raw) PSI
    */
+  @SuppressWarnings("ConstantConditions")
   @Override
   @NotNull
   public List<TextRange> intersectWithAllEditableFragments(@NotNull PsiFile injectedPsi, @NotNull TextRange rangeToEdit) {
@@ -275,11 +281,13 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
           count--;
         }
         else {
+          //noinspection unchecked
           ((List<TextRange>)result).add(intersection);
         }
       }
       offset += shred.getPrefix().length() + shred.getRangeInsideHost().getLength() + shred.getSuffix().length();
     }
+    //noinspection unchecked
     return count == 0 ? Collections.emptyList() : count == 1 ? Collections.singletonList((TextRange)result) : (List<TextRange>)result;
   }
 
@@ -369,7 +377,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
     return start + length;
   }
 
-  private final Map<Class,MultiHostInjector[]> myInjectorsClone = new HashMap<>();
+  private final Map<Class<?>, MultiHostInjector[]> myInjectorsClone = new HashMap<>();
   @TestOnly
   public static void pushInjectors(@NotNull Project project) {
     InjectedLanguageManagerImpl cachedManager = (InjectedLanguageManagerImpl)project.getUserData(INSTANCE_CACHE);
@@ -392,8 +400,8 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
     try {
       ClassMapCachingNulls<MultiHostInjector> cached = cachedManager.cachedInjectors;
       if (cached == null) return;
-      for (Map.Entry<Class, MultiHostInjector[]> entry : cached.getBackingMap().entrySet()) {
-        Class key = entry.getKey();
+      for (Map.Entry<Class<?>, MultiHostInjector[]> entry : cached.getBackingMap().entrySet()) {
+        Class<?> key = entry.getKey();
         if (cachedManager.myInjectorsClone.isEmpty()) return;
         MultiHostInjector[] oldInjectors = cachedManager.myInjectorsClone.get(key);
         for (MultiHostInjector injector : entry.getValue()) {
@@ -406,11 +414,6 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
     finally {
       cachedManager.myInjectorsClone.clear();
     }
-  }
-
-  @FunctionalInterface
-  interface InjProcessor {
-    boolean process(@NotNull PsiElement element, @NotNull MultiHostInjector injector);
   }
 
   InjectionResult processInPlaceInjectorsFor(@NotNull PsiFile hostPsiFile, @NotNull PsiElement element) {
