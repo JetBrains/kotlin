@@ -111,7 +111,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
             }
             createProjectSkeleton(rootDir)
             if (externalProjectSettings.distributionType == DistributionType.DEFAULT_WRAPPED) {
-                setGradleWrapperToUseVersion(rootDir, "5.5")
+                setGradleWrapperToUseVersion(rootDir, "5.5.1")
             }
 
             if (notImportedCommonSourceSets) GradlePropertiesFileFacade.forProject(module.project).addNotImportedCommonSourceSetsProperty()
