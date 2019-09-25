@@ -323,10 +323,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         requiredDependencies.add(versions.karmaSourceMapLoader)
         sourceMaps = true
         addPreprocessor("sourcemap")
-
-        // stacktraces with sourcemaps
-        requiredDependencies.add(versions.karmaSourceMapSupport)
-        config.frameworks.add("source-map-support")
     }
 
     private fun addPreprocessor(name: String, predicate: (String) -> Boolean = { true }) {

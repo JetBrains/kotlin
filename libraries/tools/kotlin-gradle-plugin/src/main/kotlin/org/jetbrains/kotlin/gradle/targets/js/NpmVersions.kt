@@ -41,7 +41,6 @@ class NpmVersions {
     val karmaCoverage = NpmPackageVersion("karma-coverage", "1.1.2")
 
     val karmaSourceMapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.3.7")
-    val karmaSourceMapSupport = NpmPackageVersion("karma-source-map-support", "1.4.0")
 
     val browserProcessHrtime = NpmPackageVersion("browser-process-hrtime", "1.0.0")
 
