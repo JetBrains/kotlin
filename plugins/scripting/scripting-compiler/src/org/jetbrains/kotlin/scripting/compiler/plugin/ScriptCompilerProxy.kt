@@ -10,7 +10,7 @@ import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 
-interface ScriptJvmCompilerProxy {
+interface ScriptCompilerProxy {
     fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration

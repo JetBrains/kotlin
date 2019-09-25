@@ -17,7 +17,7 @@ class JsScriptEvaluator : ScriptEvaluator {
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         return try {
-            val evalResult = engine.eval<Any?>((compiledScript as CompiledToJsScript).jsCode)
+            val evalResult = engine.eval<Any?>((compiledScript as JsCompiledScript).jsCode)
             ResultWithDiagnostics.Success(
                 EvaluationResult(
                     ResultValue.Value(

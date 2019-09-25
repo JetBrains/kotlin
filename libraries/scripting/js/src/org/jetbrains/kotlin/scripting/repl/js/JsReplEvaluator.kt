@@ -11,9 +11,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 
 class JsReplEvaluator : ReplEvaluator {
     //TODO: support println()
-    private val engine = ScriptEngineNashorn()
-
-    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = JsState(lock)
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = JsEvaluationState(lock, ScriptEngineNashorn())
 
     override fun eval(
         state: IReplStageState<*>,
@@ -22,7 +20,8 @@ class JsReplEvaluator : ReplEvaluator {
         invokeWrapper: InvokeWrapper?
     ): ReplEvalResult {
         return try {
-            val evalResult = engine.eval<Any?>(compileResult.data as String)
+            val evaluationState = state.asState(JsEvaluationState::class.java)
+            val evalResult = evaluationState.engine.eval<Any?>(compileResult.data as String)
             ReplEvalResult.ValueResult("result", evalResult, "Any?")
         } catch (e: Exception) {
             ReplEvalResult.Error.Runtime("Error while evaluating", e)

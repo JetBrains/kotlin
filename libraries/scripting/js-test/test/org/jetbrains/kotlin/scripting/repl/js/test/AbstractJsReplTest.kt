@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigura
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.platform
-import org.jetbrains.kotlin.scripting.repl.js.JsReplEvaluator
-import org.jetbrains.kotlin.scripting.repl.js.ReplMessageCollector
+import org.jetbrains.kotlin.scripting.repl.js.*
 import java.io.Closeable
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.baseClass
@@ -31,22 +30,24 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.JsDependency
 
 abstract class AbstractJsReplTest : Closeable {
-    abstract fun createCompiler(): ReplCompiler
-    abstract fun preprocessEvaluation()
+    protected lateinit var compilationState: JsReplCompilationState
+    protected lateinit var evaluationState: JsEvaluationState
+
+    protected abstract fun createCompilationState(): JsReplCompilationState
+    protected abstract fun createEvaluationState(): JsEvaluationState
 
     fun compile(codeLine: ReplCodeLine): ReplCompileResult {
-        return compiler.compile(compiler.createState(), codeLine)
+        return JsReplCompiler(environment).compile(compilationState, codeLine)
     }
 
     fun evaluate(compileResult: ReplCompileResult.CompiledClasses): ReplEvalResult {
-        return jsEvaluator.eval(jsEvaluator.createState(), compileResult)
+        return JsReplEvaluator().eval(evaluationState, compileResult)
     }
 
     fun reset() {
         collector.clear()
-        compiler = createCompiler()
-        jsEvaluator = JsReplEvaluator()
-        preprocessEvaluation()
+        compilationState = createCompilationState()
+        evaluationState = createEvaluationState()
     }
 
     private val collector: MessageCollector = ReplMessageCollector()
@@ -54,9 +55,6 @@ abstract class AbstractJsReplTest : Closeable {
     protected val environment = KotlinCoreEnvironment.createForProduction(
         disposable, loadConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES
     )
-
-    lateinit var compiler: ReplCompiler
-    lateinit var jsEvaluator: JsReplEvaluator
 
     private var snippetId: Int = 1 //index 0 for klib
     fun newSnippetId(): Int = snippetId++

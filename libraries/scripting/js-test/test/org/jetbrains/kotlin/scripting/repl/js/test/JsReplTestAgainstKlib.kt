@@ -6,19 +6,41 @@
 package org.jetbrains.kotlin.scripting.repl.js.test
 
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.cli.common.repl.ReplCompiler
+import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
 import org.jetbrains.kotlin.scripting.repl.js.*
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 class JsReplTestAgainstKlib : AbstractJsReplTest() {
-    override fun createCompiler(): ReplCompiler = JsReplCompiler(environment)
 
-    override fun preprocessEvaluation() {
-        val scriptDependencyBinary = (compiler as JsReplCompiler).scriptDependencyBinary
+    private var dependencyCode: String? = null
 
-        jsEvaluator.eval(
-            jsEvaluator.createState(),
-            createCompileResult(scriptDependencyBinary)
+    override fun createCompilationState(): JsReplCompilationState {
+        val nameTables = NameTables(emptyList())
+        val symbolTable = SymbolTable()
+        val dependencyCompiler = JsScriptDependencyCompiler(environment.configuration, nameTables, symbolTable)
+        val dependencies = readLibrariesFromConfiguration(environment.configuration)
+        dependencyCode = dependencyCompiler.compile(dependencies)
+
+        return JsReplCompilationState(
+            ReentrantReadWriteLock(),
+            nameTables,
+            dependencies,
+            ReplCodeAnalyzer.ResettableAnalyzerState(),
+            symbolTable
         )
+    }
+
+    override fun createEvaluationState(): JsEvaluationState {
+        val state = JsEvaluationState(ReentrantReadWriteLock(), ScriptEngineNashorn())
+
+        JsReplEvaluator().eval(state, createCompileResult(dependencyCode ?: error("Dependencies has to be compiled first")))
+
+        dependencyCode = null
+
+        return state
     }
 
     override fun close() {

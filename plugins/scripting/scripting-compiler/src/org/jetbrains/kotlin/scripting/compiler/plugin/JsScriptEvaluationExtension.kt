@@ -6,22 +6,28 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.core.JavaCoreProjectEnvironment
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.JsScriptCompilerWithDependenciesProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollector
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.platform
-import org.jetbrains.kotlin.scripting.repl.js.CompiledToJsScript
-import org.jetbrains.kotlin.scripting.repl.js.JsScriptCompiler
-import org.jetbrains.kotlin.scripting.repl.js.JsScriptDependencyCompiler
-import org.jetbrains.kotlin.scripting.repl.js.JsScriptEvaluator
+import org.jetbrains.kotlin.scripting.repl.js.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.JsDependency
 
+// TODO: the code below has to be considered as temporary hack and removed ASAP.
+// Actual ScriptCompilationConfiguration should be set up from CompilerConfiguration.
 fun loadScriptConfiguration(configuration: CompilerConfiguration) {
     val scriptConfiguration = ScriptCompilationConfiguration {
         baseClass("kotlin.Any")
@@ -55,37 +61,13 @@ class JsScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         return JsScriptEvaluator()
     }
 
-    private var environment: KotlinCoreEnvironment? = null
-    private var dependencyJsCode: String? = null
-    private val scriptCompiler: JsScriptCompiler by lazy {
-        val env = environment ?: error("Expected environment is initialized prior to compiler instantiation")
-        JsScriptCompiler(env).apply {
-            dependencyJsCode = JsScriptDependencyCompiler(env.configuration, nameTables, symbolTable).compile(dependencies)
-        }
+    private var scriptCompilerProxy: ScriptCompilerProxy? = null
+
+    override fun createScriptCompiler(environment: KotlinCoreEnvironment): ScriptCompilerProxy {
+        return scriptCompilerProxy ?: JsScriptCompilerWithDependenciesProxy(environment).also { scriptCompilerProxy = it }
     }
 
-    override suspend fun compilerInvoke(
-        environment: KotlinCoreEnvironment,
-        script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> {
-
-        this.environment = environment
-
-        return scriptCompiler.invoke(script, scriptCompilationConfiguration).onSuccess {
-            val compiledResult = it as CompiledToJsScript
-            val actualResult = dependencyJsCode?.let { d ->
-                dependencyJsCode = null
-                CompiledToJsScript(d + "\n" + compiledResult.jsCode, compiledResult.compilationConfiguration)
-            } ?: compiledResult
-
-            ResultWithDiagnostics.Success(actualResult)
-        }
-    }
-
-    override fun ScriptEvaluationConfiguration.Builder.platformEvaluationConfiguration() {
-
-    }
+    override fun ScriptEvaluationConfiguration.Builder.platformEvaluationConfiguration() {}
 
     override fun isAccepted(arguments: CommonCompilerArguments): Boolean {
         return arguments is K2JSCompilerArguments

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptJvmCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import kotlin.script.experimental.api.*
@@ -30,7 +30,7 @@ import kotlin.script.experimental.jvm.compilationCache
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
 
-class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptJvmCompilerProxy {
+class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
 
     override fun compile(
         script: SourceCode,
@@ -50,7 +50,7 @@ class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguratio
         }
 }
 
-class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) : ScriptJvmCompilerProxy {
+class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) : ScriptCompilerProxy {
 
     override fun compile(
         script: SourceCode,

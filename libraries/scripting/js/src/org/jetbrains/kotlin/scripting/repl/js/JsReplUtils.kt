@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.scripting.repl.js
 
 import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.js.engine.ScriptEngine
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.CompiledScript
@@ -14,7 +17,7 @@ import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 
-class JsState(override val lock: ReentrantReadWriteLock) : IReplStageState<ScriptDescriptor> {
+abstract class JsState(override val lock: ReentrantReadWriteLock) : IReplStageState<ScriptDescriptor> {
     override val history: IReplStageHistory<ScriptDescriptor>
         get() = TODO("not implemented")
 
@@ -23,7 +26,18 @@ class JsState(override val lock: ReentrantReadWriteLock) : IReplStageState<Scrip
 
 }
 
-class CompiledToJsScript(
+abstract class JsCompilationState(
+    lock: ReentrantReadWriteLock,
+    val nameTables: NameTables,
+    val dependencies: List<ModuleDescriptor>) : JsState(lock)
+
+class JsEvaluationState(lock: ReentrantReadWriteLock, val engine: ScriptEngine) : JsState(lock) {
+    override fun dispose() {
+        engine.release()
+    }
+}
+
+class JsCompiledScript(
     val jsCode: String,
     override val compilationConfiguration: ScriptCompilationConfiguration
 ) : CompiledScript<Any> {

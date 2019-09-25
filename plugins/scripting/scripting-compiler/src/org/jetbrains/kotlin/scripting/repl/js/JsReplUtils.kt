@@ -18,13 +18,16 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.ir.backend.js.getModuleDescriptorByLibrary
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.*
 import java.nio.charset.Charset
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.jvm.JsDependency
@@ -180,3 +183,12 @@ class DependencyLoader {
         }
     }
 }
+
+class JsReplCompilationState(
+    lock: ReentrantReadWriteLock,
+    nameTables: NameTables,
+    dependencies: List<ModuleDescriptor>,
+    val replState: ReplCodeAnalyzer.ResettableAnalyzerState,
+    val symbolTable: SymbolTable
+) : JsCompilationState(lock, nameTables, dependencies)
+

@@ -43,18 +43,8 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         return BasicJvmScriptEvaluator()
     }
 
-    private var environment: KotlinCoreEnvironment? = null
-    private val scriptCompiler: ScriptJvmCompilerFromEnvironment by lazy {
-        ScriptJvmCompilerFromEnvironment(environment!!)
-    }
-
-    override suspend fun compilerInvoke(
-        environment: KotlinCoreEnvironment,
-        script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> {
-        this.environment = environment
-        return scriptCompiler.compile(script, scriptCompilationConfiguration)
+    override fun createScriptCompiler(environment: KotlinCoreEnvironment): ScriptCompilerProxy {
+        return ScriptJvmCompilerFromEnvironment(environment)
     }
 
     override fun isAccepted(arguments: CommonCompilerArguments): Boolean =

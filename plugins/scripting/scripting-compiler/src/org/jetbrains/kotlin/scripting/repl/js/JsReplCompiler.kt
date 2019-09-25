@@ -7,21 +7,22 @@ package org.jetbrains.kotlin.scripting.repl.js
 
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
-class JsReplCompiler(
-    environment: KotlinCoreEnvironment
-) : ReplCompiler {
-    private val nameTables: NameTables = NameTables(emptyList())
-    private val dependencies: List<ModuleDescriptor> = readLibrariesFromConfiguration(environment.configuration)
-
-    val scriptDependencyBinary = ScriptDependencyCompiler(environment, nameTables).compile(dependencies).first
-    private val compiler = CoreScriptingJsCompiler(environment, nameTables, dependencies)
+// Used to compile REPL code lines
+class JsReplCompiler(private val environment: KotlinCoreEnvironment) : ReplCompiler {
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> {
-        return JsState(lock)
+        return JsReplCompilationState(
+            lock,
+            NameTables(emptyList()),
+            readLibrariesFromConfiguration(environment.configuration),
+            ReplCodeAnalyzer.ResettableAnalyzerState(),
+            SymbolTable()
+        )
     }
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult {
@@ -29,6 +30,13 @@ class JsReplCompiler(
     }
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
-        return compiler.compile(codeLine)
+        val compilationState = state.asState(JsReplCompilationState::class.java)
+        return JsCoreScriptingCompiler(
+            environment,
+            compilationState.nameTables,
+            compilationState.symbolTable,
+            compilationState.dependencies,
+            compilationState.replState
+        ).compile(codeLine)
     }
 }
