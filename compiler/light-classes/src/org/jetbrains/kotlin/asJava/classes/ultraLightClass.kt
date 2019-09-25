@@ -377,7 +377,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         val bindingContext = typeReference.analyze()
 
         val superClassDescriptor = CodegenUtil.getSuperClassBySuperTypeListEntry(superTypeEntry, bindingContext) ?: return
-        val delegationType = superTypeEntry.delegateExpression.kotlinType(bindingContext) ?: return
+        val delegationType = superTypeEntry.delegateExpression.kotlinType(bindingContext)
 
         for (delegate in DelegationResolver.getDelegates(classDescriptor, superClassDescriptor, delegationType).keys) {
             when (delegate) {

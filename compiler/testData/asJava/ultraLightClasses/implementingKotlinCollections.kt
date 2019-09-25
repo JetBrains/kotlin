@@ -18,5 +18,7 @@ abstract class SmartSet<T> private constructor() : AbstractMutableSet<T>() {
     return true
   }
 
+  /* Should erasure T but UL classes does not support it in this case
   override fun contains(element: T): Boolean = true
+   */
 }
