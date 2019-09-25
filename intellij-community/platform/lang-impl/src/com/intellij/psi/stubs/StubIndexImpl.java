@@ -579,19 +579,19 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
 
   static void initExtensions() {
     // initialize stub index keys
-    for (StubIndexExtension extension : StubIndexExtension.EP_NAME.getExtensionList()) {
+    for (StubIndexExtension<?, ?> extension : StubIndexExtension.EP_NAME.getExtensionList()) {
       extension.getKey();
     }
   }
 
   public void dispose() {
-    for (UpdatableIndex index : getAsyncState().myIndices.values()) {
+    for (UpdatableIndex<?, ?, ?> index : getAsyncState().myIndices.values()) {
       index.dispose();
     }
   }
 
   void setDataBufferingEnabled(final boolean enabled) {
-    for (UpdatableIndex index : getAsyncState().myIndices.values()) {
+    for (UpdatableIndex<?, ?, ?> index : getAsyncState().myIndices.values()) {
       index.setBufferingEnabled(enabled);
     }
   }
@@ -602,7 +602,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     stubUpdatingIndex.getWriteLock().lock();
 
     try {
-      for (UpdatableIndex index : getAsyncState().myIndices.values()) {
+      for (UpdatableIndex<?, ?, ?> index : getAsyncState().myIndices.values()) {
         index.cleanupMemoryStorage();
       }
     }
@@ -613,7 +613,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
 
   void clearAllIndices() {
     if (!myInitialized) return;
-    for (UpdatableIndex index : getAsyncState().myIndices.values()) {
+    for (UpdatableIndex<?, ?, ?> index : getAsyncState().myIndices.values()) {
       try {
         index.clear();
       }
@@ -661,12 +661,12 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     myPreviouslyRegistered = state;
   }
 
-  public <K> void updateIndex(@NotNull StubIndexKey key,
+  public <K> void updateIndex(@NotNull StubIndexKey<K, ?> key,
                               int fileId,
                               @NotNull final Map<K, StubIdList> oldInputData,
                               @NotNull final Map<K, StubIdList> newInputData) {
     try {
-      final UpdatableIndex<K, Void, FileContent> index = getIndex((StubIndexKey<K, ?>)key);
+      final UpdatableIndex<K, Void, FileContent> index = getIndex(key);
       if (index == null) return;
 
       Map<K, Void> oldKeys = Maps.asMap(oldInputData.keySet(), x -> null);
@@ -674,7 +674,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
 
       final ThrowableComputable<InputDataDiffBuilder<K, Void>, IOException>
         oldMapGetter = () -> new MapInputDataDiffBuilder<>(fileId, oldKeys);
-      index.updateWithMap(new UpdateData<>(fileId, newKeys, oldMapGetter, key, null));
+      index.updateWithMap(new UpdateData<K, Void>(fileId, newKeys, oldMapGetter, (IndexId)key, null));
     }
     catch (StorageException e) {
       LOG.info(e);
