@@ -6,6 +6,7 @@ import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -80,6 +81,12 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
   protected abstract void handleBuildEvent(UUID sessionId, CmdlineRemoteProto.Message.BuilderMessage.BuildEvent event);
 
   private void handleConstantSearchTask(final Channel channel, final UUID sessionId, final CmdlineRemoteProto.Message.BuilderMessage.ConstantSearchTask task) {
+    if (ReadAction.compute(() -> !myProject.isDisposed() && DumbService.getInstance(myProject).isSuspendedDumbMode())) {
+      LOG.debug("Constant search wasn't performed because of suspended dumb mode, so waiting for it to finish within a timeout makes little sense");
+      notifyConstantSearchFinished(channel, sessionId, task.getOwnerClassName(), task.getFieldName(), null);
+      return;
+    }
+
     CancellablePromise<Set<String>> search = ReadAction
       .nonBlocking(() -> doHandleConstantSearchTask(sessionId, task))
       .inSmartMode(myProject)
