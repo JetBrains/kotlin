@@ -136,18 +136,5 @@ class IDEKotlinBinaryClassCache {
 
     companion object {
         fun getInstance(): IDEKotlinBinaryClassCache = service()
-//        @JvmStatic @Volatile
-//        private var instance: IDEKotlinBinaryClassCache? = null
-//
-//        fun getInstance(): IDEKotlinBinaryClassCache {
-//            if (instance == null) {
-//                synchronized(IDEKotlinBinaryClassCache::class.java) {
-//                    if (instance == null) {
-//                        instance = IDEKotlinBinaryClassCache()
-//                    }
-//                }
-//            }
-//            return instance!!
-//        }
     }
 }

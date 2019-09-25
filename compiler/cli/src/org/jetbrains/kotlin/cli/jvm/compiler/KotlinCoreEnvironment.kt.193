@@ -123,7 +123,7 @@ import java.util.zip.ZipFile
 import javax.xml.stream.XMLInputFactory
 
 class KotlinCoreEnvironment private constructor(
-    private val projectEnvironment: JavaCoreProjectEnvironment,
+    val projectEnvironment: JavaCoreProjectEnvironment,
     initialConfiguration: CompilerConfiguration,
     configFiles: EnvironmentConfigFiles
 ) {
