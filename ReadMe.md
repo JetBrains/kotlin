@@ -41,7 +41,15 @@ For local development, if you're not working on bytecode generation or the stand
 
 You also can use [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties) to setup `JDK_*` variables.
 
-> Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572).
+Note: The JDK 9 for MacOS is not available on Oracle's site. You can install it by
+
+```bash
+$ brew tap adoptopenjdk/openjdk
+$ brew cask install adoptopenjdk9
+
+$ /usr/libexec/java_home -v 9 # get path to JDK 9
+/Library/Java/JavaVirtualMachines/adoptopenjdk-9.jdk/Contents/Home
+```
 
 On Windows you might need to add long paths setting to the repo:
 
