@@ -1,6 +1,6 @@
 import kotlinx.cli.*
 
-fun main() {
+fun main(args: Array<String>) {
     val argParser = ArgParser("test")
     val mode by argParser.option(
         ArgType.Choice(listOf("video", "audio", "both")), shortName = "m", description = "Play mode")

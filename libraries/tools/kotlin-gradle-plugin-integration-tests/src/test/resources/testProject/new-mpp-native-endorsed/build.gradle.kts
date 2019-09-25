@@ -9,15 +9,25 @@ repositories {
 }
 
 kotlin {
-    sourceSets["commonMain"].apply {
-        dependencies {
-            api("org.jetbrains.kotlin:kotlin-stdlib-common")
-        }
-    }
 
     val macos = macosX64("macos64")
     val linux = linuxX64("linux64")
     val windows = mingwX64("mingw64")
+
+    sourceSets {
+        val commonNative by creating {}
+
+        windows.compilations["main"].defaultSourceSet {
+            dependsOn(commonNative)
+        }
+        linux.compilations["main"].defaultSourceSet {
+            dependsOn(commonNative)
+        }
+        macos.compilations["main"].defaultSourceSet {
+            dependsOn(commonNative)
+        }
+    }
+
 
     configure(listOf(macos, linux, windows)) {
         compilations.all {

@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch")
+@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 
-// Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
@@ -55,6 +54,7 @@ class KotlinNativeTargetPreset(
             ?.sortedBy { dir -> dir.name.toLowerCase() }
     }
 
+    // We declare default K/N dependencies (default and platform libraries) as files to avoid searching them in remote repos (see KT-28128).
     private fun defaultLibs(stdlibOnly: Boolean = false): List<Dependency> = with(project) {
         var filesList = nativeLibrariesList("common")
         if (stdlibOnly) {
@@ -64,7 +64,6 @@ class KotlinNativeTargetPreset(
         filesList?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()
     }
 
-    // We declare default K/N dependencies as files to avoid searching them in remote repos (see KT-28128).
     private fun platformLibs(target: KonanTarget): List<Dependency> = with(project) {
         val filesList = nativeLibrariesList("platform/${target.name}")
         filesList?.map { dir -> dependencies.create(files(dir)) } ?: emptyList()

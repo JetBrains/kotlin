@@ -694,7 +694,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testEndorsedLibsController() {
         with(
-            transformProjectWithPluginsDsl("kotlin-dsl", gradleVersion, "new-mpp-native-binaries")
+            transformProjectWithPluginsDsl("new-mpp-native-endorsed", gradleVersion)
         ) {
             setupWorkingDir()
 
