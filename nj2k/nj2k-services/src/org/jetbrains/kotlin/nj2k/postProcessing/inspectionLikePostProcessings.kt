@@ -124,20 +124,20 @@ abstract class InspectionLikeProcessing {
     open val writeActionNeeded = true
 }
 
-abstract class InspectionLikeProcessingForElement<E : PsiElement>(private val classTag: KClass<E>) : InspectionLikeProcessing() {
+abstract class InspectionLikeProcessingForElement<E : PsiElement>(private val classTag: Class<E>) : InspectionLikeProcessing() {
     protected abstract fun isApplicableTo(element: E, settings: ConverterSettings?): Boolean
     protected abstract fun apply(element: E)
 
 
     @Suppress("UNCHECKED_CAST")
     final override fun isApplicableToElement(element: PsiElement, settings: ConverterSettings?): Boolean {
-        if (!element::class.isSubclassOf(classTag)) return false
+        if (!classTag.isInstance(element)) return false
         if (!element.isValid) return false
         @Suppress("UNCHECKED_CAST") return isApplicableTo(element as E, settings)
     }
 
     final override fun applyToElement(element: PsiElement) {
-        if (!element::class.isSubclassOf(classTag)) return
+        if (!classTag.isInstance(element)) return
         if (!element.isValid) return
         @Suppress("UNCHECKED_CAST") apply(element as E)
     }
@@ -148,7 +148,7 @@ inline fun <reified E : PsiElement, I : SelfTargetingRangeIntention<E>> intentio
     intention: I,
     writeActionNeeded: Boolean = true,
     noinline additionalChecker: (E) -> Boolean = { true }
-) = object : InspectionLikeProcessingForElement<E>(E::class) {
+) = object : InspectionLikeProcessingForElement<E>(E::class.java) {
     override fun isApplicableTo(element: E, settings: ConverterSettings?): Boolean =
         intention.applicabilityRange(element) != null
                 && additionalChecker(element)
@@ -164,7 +164,7 @@ inline fun <reified E : PsiElement, I : SelfTargetingRangeIntention<E>> intentio
 inline fun <reified E : PsiElement, I : AbstractApplicabilityBasedInspection<E>> inspectionBasedProcessing(
     inspection: I,
     writeActionNeeded: Boolean = true
-) = object : InspectionLikeProcessingForElement<E>(E::class) {
+) = object : InspectionLikeProcessingForElement<E>(E::class.java) {
     override fun isApplicableTo(element: E, settings: ConverterSettings?): Boolean =
         inspection.isApplicable(element)
 
