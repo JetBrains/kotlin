@@ -101,7 +101,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
                     container.toLightClass()?.let { ClassUtil.getJVMClassName(it) }
                 }
             }
-            else -> throw IllegalArgumentException("Invalid entry-point container: " + (container as PsiElement).text)
+            else -> null
         }
 
         private fun PsiElement.declarationContainer(strict: Boolean): KtDeclarationContainer? {

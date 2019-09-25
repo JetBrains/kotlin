@@ -277,6 +277,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
 
     private void updateMainClassName(PsiElement element) {
         KtDeclarationContainer container = KotlinRunConfigurationProducer.Companion.getEntryPointContainer(element);
+        if (container == null) return;
         String name = KotlinRunConfigurationProducer.Companion.getStartClassFqName(container);
         if (name != null) {
             MAIN_CLASS_NAME = name;
