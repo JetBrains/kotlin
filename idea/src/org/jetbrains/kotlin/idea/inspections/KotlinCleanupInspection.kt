@@ -49,7 +49,7 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
 
         val problemDescriptors = arrayListOf<ProblemDescriptor>()
 
-        val importsToRemove = file.importDirectives.filter { DeprecatedSymbolUsageFix.isImportToBeRemoved(it) }
+        val importsToRemove = DeprecatedSymbolUsageFix.importDirectivesToBeRemoved(file)
         for (import in importsToRemove) {
             val removeImportFix = RemoveImportFix(import)
             val problemDescriptor = createProblemDescriptor(import, removeImportFix.text, listOf(removeImportFix), file, manager)
