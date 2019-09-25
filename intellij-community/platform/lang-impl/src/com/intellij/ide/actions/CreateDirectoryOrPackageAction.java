@@ -430,11 +430,15 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
           wrapperPanel.setBackground(UIUtil.getListBackground());
 
           if (index == 0 || value.contributor != list.getModel().getElementAt(index - 1).contributor) {
-            SeparatorWithText separator = new SeparatorWithText();
+            SeparatorWithText separator = new SeparatorWithText() {
+              @Override
+              protected void paintLinePart(Graphics g, int xMin, int xMax, int hGap, int y) {
+              }
+            };
 
             separator.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
-            int vGap = UIUtil.DEFAULT_VGAP/2;
-            separator.setBorder(BorderFactory.createEmptyBorder(vGap, 0, vGap, 0));
+            int vGap = UIUtil.DEFAULT_VGAP / 2;
+            separator.setBorder(BorderFactory.createEmptyBorder(vGap * (index == 0 ? 1 : 2), 0, vGap, 0));
 
             separator.setCaption(value.contributor.getDescription());
             separator.setCaptionCentered(false);
