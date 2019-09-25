@@ -7,6 +7,7 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -44,6 +45,10 @@ public abstract class StubForwardIndexExternalizer<StubKeySerializationState> im
 
   @Override
   public Map<StubIndexKey, Map<Object, StubIdList>> read(@NotNull DataInput in) throws IOException {
+    return doRead(in, null, null);
+  }
+
+  <K> Map<StubIndexKey, Map<Object, StubIdList>> doRead(@NotNull DataInput in, @Nullable StubIndexKey<K, ?> requestedIndex, @Nullable K requestedKey) throws IOException {
     if (!myEnsuredStubElementTypesLoaded) {
       ProgressManager.getInstance().executeNonCancelableSection(() -> {
         SerializationManager.getInstance().initSerializers();
@@ -53,14 +58,23 @@ public abstract class StubForwardIndexExternalizer<StubKeySerializationState> im
     }
     int stubIndicesValueMapSize = DataInputOutputUtil.readINT(in);
     if (stubIndicesValueMapSize > 0) {
-      THashMap<StubIndexKey, Map<Object, StubIdList>> stubIndicesValueMap = new THashMap<>(stubIndicesValueMapSize);
+      THashMap<StubIndexKey, Map<Object, StubIdList>> stubIndicesValueMap = requestedIndex != null ? null : new THashMap<>(stubIndicesValueMapSize);
       StubIndexImpl stubIndex = (StubIndexImpl)StubIndex.getInstance();
       StubKeySerializationState stubKeySerializationState = createStubIndexKeySerializationState(in, stubIndicesValueMapSize);
       for (int i = 0; i < stubIndicesValueMapSize; ++i) {
         ID<Object, ?> indexKey = (ID<Object, ?>)readStubIndexKey(in, stubKeySerializationState);
         if (indexKey instanceof StubIndexKey) { // indexKey can be ID in case of removed index
           StubIndexKey<Object, ?> stubIndexKey = (StubIndexKey<Object, ?>)indexKey;
-          stubIndicesValueMap.put(stubIndexKey, stubIndex.deserializeIndexValue(in, stubIndexKey));
+          boolean deserialize = requestedIndex == null || requestedIndex.equals(stubIndexKey);
+          if (deserialize) {
+            Map<Object, StubIdList> value = stubIndex.deserializeIndexValue(in, stubIndexKey, requestedKey);
+            if (requestedIndex != null) {
+              return Collections.singletonMap(requestedIndex, value);
+            }
+            stubIndicesValueMap.put(stubIndexKey, value);
+          } else {
+            stubIndex.skipIndexValue(in);
+          }
         }
       }
       return stubIndicesValueMap;

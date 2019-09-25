@@ -14,6 +14,7 @@ import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ThrowableComputable;
+import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,18 +33,13 @@ import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.MapInputDataDiffBuilder;
 import com.intellij.util.indexing.impl.UpdateData;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.DataInputOutputUtil;
-import com.intellij.util.io.KeyDescriptor;
-import com.intellij.util.io.VoidDataExternalizer;
+import com.intellij.util.io.*;
+import com.intellij.util.io.DataOutputStream;
 import gnu.trove.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
@@ -321,26 +317,41 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     if (index == null) return;
     KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
 
-    DataInputOutputUtil.writeINT(out, map.size());
+    BufferExposingByteArrayOutputStream indexOs = new BufferExposingByteArrayOutputStream();
+    DataOutputStream indexDos = new DataOutputStream(indexOs);
     for (K key : map.keySet()) {
-      keyDescriptor.save(out, key);
-      StubIdExternalizer.INSTANCE.save(out, map.get(key));
+      keyDescriptor.save(indexDos, key);
+      StubIdExternalizer.INSTANCE.save(indexDos, map.get(key));
     }
+    DataInputOutputUtil.writeINT(out, indexDos.size());
+    out.write(indexOs.getInternalBuffer(), 0, indexOs.size());
   }
 
   @NotNull
-  <K> Map<K, StubIdList> deserializeIndexValue(@NotNull DataInput in, @NotNull StubIndexKey<K, ?> stubIndexKey) throws IOException {
+  <K> Map<K, StubIdList> deserializeIndexValue(@NotNull DataInput in, @NotNull StubIndexKey<K, ?> stubIndexKey, @Nullable K requestedKey) throws IOException {
     UpdatableIndex<K, Void, FileContent> index = getIndex(stubIndexKey);
     KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
-    int mapSize = DataInputOutputUtil.readINT(in);
 
-    Map<K, StubIdList> result = new THashMap<>(mapSize, getKeyHashingStrategy(stubIndexKey));
-    for (int i = 0; i < mapSize; ++i) {
-      K key = keyDescriptor.read(in);
-      StubIdList read = StubIdExternalizer.INSTANCE.read(in);
+    int bufferSize = DataInputOutputUtil.readINT(in);
+    byte[] buffer = new byte[bufferSize];
+    in.readFully(buffer);
+    UnsyncByteArrayInputStream indexIs = new UnsyncByteArrayInputStream(buffer);
+    DataInputStream indexDis = new DataInputStream(indexIs);
+    Map<K, StubIdList> result = new THashMap<>(getKeyHashingStrategy(stubIndexKey));
+    while (indexDis.available() > 0) {
+      K key = keyDescriptor.read(indexDis);
+      StubIdList read = StubIdExternalizer.INSTANCE.read(indexDis);
       result.put(key, read);
+      if (requestedKey != null && requestedKey.equals(key)) {
+        return result;
+      }
     }
     return result;
+  }
+
+  <K> void skipIndexValue(@NotNull DataInput in) throws IOException {
+    int bufferSize = DataInputOutputUtil.readINT(in);
+    in.skipBytes(bufferSize);
   }
 
   @Override
@@ -369,15 +380,9 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
         Map<Integer, SerializedStubTree> data = stubUpdatingIndex.getIndexedFileData(id);
         LOG.assertTrue(data.size() == 1);
         SerializedStubTree tree = data.values().iterator().next();
-        tree.restoreIndexedStubs(StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE);
-        Map<Object, StubIdList> map = tree.getStubIndicesValueMap().get(indexKey);
-        if (ContainerUtil.isEmpty(map)) {
-          LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. No stub index key is present");
-          return true;
-        }
-        StubIdList list = map.get(key);
+        StubIdList list = tree.restoreIndexedStubs(StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE, indexKey, key);
         if (list == null) {
-          LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. Stub key is not present in forward index data");
+          LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. No stub index key is present");
           return true;
         }
         if (!myStubProcessingHelper.processStubsInFile(project, file, list, processor, scope, requiredClass)) {

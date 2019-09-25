@@ -19,14 +19,11 @@
  */
 package com.intellij.psi.stubs;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.ThreadLocalCachedValue;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.psi.impl.DebugUtil;
-import com.intellij.util.Function;
 import com.intellij.util.io.*;
-import gnu.trove.TObjectHashingStrategy;
 import one.util.streamex.IntStreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -123,6 +120,12 @@ public class SerializedStubTree {
     if (myIndexedStubs == null) {
       myIndexedStubs = dataExternalizer.read(new DataInputStream(new ByteArrayInputStream(myIndexedStubBytes, 0, myIndexedStubByteLength)));
     }
+  }
+
+  <K> StubIdList restoreIndexedStubs(@NotNull StubForwardIndexExternalizer<?> dataExternalizer, @NotNull StubIndexKey<K, ?> indexKey, @NotNull K key) throws IOException {
+    Map<StubIndexKey, Map<Object, StubIdList>> incompleteMap = dataExternalizer.doRead(new DataInputStream(new ByteArrayInputStream(myIndexedStubBytes, 0, myIndexedStubByteLength)), indexKey, key);
+    Map<Object, StubIdList> map = incompleteMap.get(indexKey);
+    return map == null ? null : map.get(key);
   }
 
   @NotNull
