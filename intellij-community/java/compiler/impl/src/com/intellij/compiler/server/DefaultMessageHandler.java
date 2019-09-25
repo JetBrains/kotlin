@@ -3,7 +3,6 @@ package com.intellij.compiler.server;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.lang.java.JavaLanguage;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -90,18 +89,18 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
     final boolean accessChanged = task.getIsAccessChanged();
     final boolean isRemoved = task.getIsFieldRemoved();
     boolean canceled = false;
-    final Ref<Boolean> isSuccess = Ref.create(Boolean.TRUE);
+    boolean isSuccess = true;
     final Set<String> affectedPaths = Collections.synchronizedSet(new HashSet<>()); // PsiSearchHelper runs multiple threads
     final long searchStart = System.currentTimeMillis();
     try {
       if (myConstantSearchTime > CONSTANT_SEARCH_TIME_LIMIT) {
         // skipping constant search and letting the build rebuild dependent modules
-        isSuccess.set(Boolean.FALSE);
+        isSuccess = false;
         LOG.debug("Total constant search time exceeded time limit for this build session");
       }
       else if(isDumbMode()) {
         // do not wait until dumb mode finishes
-        isSuccess.set(Boolean.FALSE);
+        isSuccess = false;
         LOG.debug("Constant search task: cannot search in dumb mode");
       }
       else {
@@ -111,45 +110,33 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
           "Searching for usages of changed/removed constants for class " + qualifiedName
         ).getCompileMessage());
 
-        final PsiClass[] classes = ReadAction
-          .compute(() -> JavaPsiFacade.getInstance(myProject).findClasses(qualifiedName, GlobalSearchScope.allScope(myProject)));
+        PsiClass[] classes = JavaPsiFacade.getInstance(myProject).findClasses(qualifiedName, GlobalSearchScope.allScope(myProject));
 
         try {
           if (isRemoved) {
-            ApplicationManager.getApplication().runReadAction(() -> {
-              if (classes.length > 0) {
-                for (PsiClass aClass : classes) {
-                  final boolean success = aClass.isValid() && performRemovedConstantSearch(aClass, fieldName, accessFlags, affectedPaths);
-                  if (!success) {
-                    isSuccess.set(Boolean.FALSE);
-                    break;
-                  }
+            if (classes.length > 0) {
+              for (PsiClass aClass : classes) {
+                if (!performRemovedConstantSearch(aClass, fieldName, accessFlags, affectedPaths)) {
+                  isSuccess = false;
+                  break;
                 }
               }
-              else {
-                isSuccess.set(
-                  performRemovedConstantSearch(null, fieldName, accessFlags, affectedPaths)
-                );
-              }
-            });
+            }
+            else {
+              isSuccess = performRemovedConstantSearch(null, fieldName, accessFlags, affectedPaths);
+            }
           }
           else {
             if (classes.length > 0) {
-              final Collection<PsiField> changedFields = ReadAction.compute(() -> {
-                final List<PsiField> fields = new SmartList<>();
-                for (PsiClass aClass : classes) {
-                  if (!aClass.isValid()) {
-                    return Collections.emptyList();
-                  }
-                  final PsiField changedField = aClass.findFieldByName(fieldName, false);
-                  if (changedField != null) {
-                    fields.add(changedField);
-                  }
+              List<PsiField> changedFields = new SmartList<>();
+              for (PsiClass aClass : classes) {
+                final PsiField changedField = aClass.findFieldByName(fieldName, false);
+                if (changedField != null) {
+                  changedFields.add(changedField);
                 }
-                return fields;
-              });
+              }
               if (changedFields.isEmpty()) {
-                isSuccess.set(Boolean.FALSE);
+                isSuccess = false;
                 LOG.debug("Constant search task: field " + fieldName + " not found in classes " + qualifiedName);
               }
               else {
@@ -159,20 +146,20 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
                     continue;
                   }
                   if (!affectDirectUsages(changedField, accessChanged, affectedPaths)) {
-                    isSuccess.set(Boolean.FALSE);
+                    isSuccess = false;
                     break;
                   }
                 }
               }
             }
             else {
-              isSuccess.set(Boolean.FALSE);
+              isSuccess = false;
               LOG.debug("Constant search task: class " + qualifiedName + " not found");
             }
           }
         }
         catch (Throwable e) {
-          isSuccess.set(Boolean.FALSE);
+          isSuccess = false;
           LOG.debug("Constant search task: failed with message " + e.getMessage());
         }
       }
@@ -193,12 +180,12 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
                                                    UUID sessionId,
                                                    String ownerClassName,
                                                    String fieldName,
-                                                   Ref<Boolean> isSuccess, Set<String> affectedPaths) {
+                                                   boolean isSuccess, Set<String> affectedPaths) {
     final CmdlineRemoteProto.Message.ControllerMessage.ConstantSearchResult.Builder builder =
       CmdlineRemoteProto.Message.ControllerMessage.ConstantSearchResult.newBuilder();
     builder.setOwnerClassName(ownerClassName);
     builder.setFieldName(fieldName);
-    if (isSuccess.get()) {
+    if (isSuccess) {
       builder.setIsSuccess(true);
       builder.addAllPath(affectedPaths);
       LOG.debug("Constant search task: " + affectedPaths.size() + " affected files found");
@@ -265,7 +252,7 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
           return false;
         }
       }
-    }, fieldName, searchScope, UsageSearchContext.IN_CODE);
+    }, fieldName, searchScope);
 
     return result.get();
   }
@@ -286,45 +273,44 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
     return searchScope;
   }
 
-  private static boolean processIdentifiers(PsiSearchHelper helper, @NotNull final PsiElementProcessor<? super PsiIdentifier> processor, @NotNull final String identifier, @NotNull SearchScope searchScope, short searchContext) {
+  private static void processIdentifiers(PsiSearchHelper helper,
+                                         @NotNull final PsiElementProcessor<? super PsiIdentifier> processor,
+                                         @NotNull final String identifier,
+                                         @NotNull SearchScope searchScope) {
     TextOccurenceProcessor processor1 =
       (element, offsetInElement) -> !(element instanceof PsiIdentifier) || processor.execute((PsiIdentifier)element);
     SearchScope javaScope = searchScope instanceof GlobalSearchScope
                             ? GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, JavaFileType.INSTANCE)
                             : searchScope;
-    return helper.processElementsWithWord(processor1, javaScope, identifier, searchContext, true, false);
+    helper.processElementsWithWord(processor1, javaScope, identifier, UsageSearchContext.IN_CODE, true, false);
   }
 
   private boolean affectDirectUsages(final PsiField psiField,
-                                  final boolean ignoreAccessScope,
-                                  final Set<? super String> affectedPaths) throws ProcessCanceledException {
-    return ReadAction.compute(() -> {
-      if (psiField.isValid()) {
-        final PsiFile fieldContainingFile = psiField.getContainingFile();
-        final Set<PsiFile> processedFiles = new HashSet<>();
-        if (fieldContainingFile != null) {
-          processedFiles.add(fieldContainingFile);
-        }
-        // if field is invalid, the file might be changed, so next time it is compiled,
-        // the constant value change, if any, will be processed
-        final Collection<PsiReferenceExpression> references = doFindReferences(psiField, ignoreAccessScope);
-        if (references == null) {
-          return false;
-        }
+                                     final boolean ignoreAccessScope,
+                                     final Set<? super String> affectedPaths) throws ProcessCanceledException {
+    final PsiFile fieldContainingFile = psiField.getContainingFile();
+    final Set<PsiFile> processedFiles = new HashSet<>();
+    if (fieldContainingFile != null) {
+      processedFiles.add(fieldContainingFile);
+    }
+    // if field is invalid, the file might be changed, so next time it is compiled,
+    // the constant value change, if any, will be processed
+    final Collection<PsiReferenceExpression> references = doFindReferences(psiField, ignoreAccessScope);
+    if (references == null) {
+      return false;
+    }
 
-        for (final PsiReferenceExpression ref : references) {
-          final PsiElement usage = ref.getElement();
-          final PsiFile containingPsi = usage.getContainingFile();
-          if (containingPsi != null && processedFiles.add(containingPsi)) {
-            final VirtualFile vFile = containingPsi.getOriginalFile().getVirtualFile();
-            if (vFile != null) {
-              affectedPaths.add(vFile.getPath());
-            }
-          }
+    for (final PsiReferenceExpression ref : references) {
+      final PsiElement usage = ref.getElement();
+      final PsiFile containingPsi = usage.getContainingFile();
+      if (containingPsi != null && processedFiles.add(containingPsi)) {
+        final VirtualFile vFile = containingPsi.getOriginalFile().getVirtualFile();
+        if (vFile != null) {
+          affectedPaths.add(vFile.getPath());
         }
       }
-      return true;
-    });
+    }
+    return true;
   }
 
   @Nullable("returns null if search failed")
@@ -353,7 +339,7 @@ public abstract class DefaultMessageHandler implements BuilderMessageHandler {
         }
         return true;
       }
-    }, psiField.getName(), searchScope, UsageSearchContext.IN_CODE);
+    }, psiField.getName(), searchScope);
 
     return result;
   }
