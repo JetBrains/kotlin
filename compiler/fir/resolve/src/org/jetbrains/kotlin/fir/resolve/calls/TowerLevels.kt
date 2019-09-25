@@ -238,7 +238,10 @@ class QualifiedReceiverTowerLevel(
 
         val processorForCallables: (FirCallableSymbol<*>) -> ProcessorAction = {
             val fir = it.fir
-            if (fir is FirCallableMemberDeclaration<*> && fir.isStatic || it.callableId.classId == null) {
+            if (fir is FirCallableMemberDeclaration<*> && fir.isStatic ||
+                it.callableId.classId == null ||
+                fir is FirConstructor && !fir.isInner
+            ) {
                 @Suppress("UNCHECKED_CAST")
                 processor.consumeCandidate(it as T, null, null)
             } else {
@@ -300,7 +303,10 @@ private fun FirScope.processFunctionsAndConstructorsByName(
         return ProcessorAction.STOP
     }
 
-    return processFunctionsByName(name, processor)
+    return processFunctionsByName(name) {
+        if (it is FirConstructorSymbol) ProcessorAction.NEXT
+        else processor(it)
+    }
 }
 
 private fun FirScope.getFirstClassifierOrNull(name: Name): FirClassifierSymbol<*>? {

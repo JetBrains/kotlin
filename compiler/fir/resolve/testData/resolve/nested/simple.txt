@@ -40,6 +40,6 @@ FILE: simple.kt
     public final fun test(): R|kotlin/Unit| {
         lval o: R|Owner| = R|/Owner.Owner|()
         R|<local>/o|.R|/Owner.foo|()
-        lval n: <ERROR TYPE REF: Unresolved name: Nested> = Q|Owner|.<Unresolved name: Nested>#()
-        R|<local>/n|.<Unresolved name: baz>#()
+        lval n: R|Owner.Nested| = Q|Owner|.R|/Owner.Nested.Nested|()
+        R|<local>/n|.R|/Owner.Nested.baz|()
     }

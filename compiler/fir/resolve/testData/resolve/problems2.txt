@@ -61,7 +61,7 @@ FILE: problems2.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|Some|.<Unresolved name: WithPrimary>#(Int(42), R?C|kotlin/arrayOf|(String(alpha), String(omega)))
+        Q|Some|.R|/Some.WithPrimary.WithPrimary|(Int(42), R|kotlin/arrayOf|<R|kotlin/String|>(String(alpha), String(omega)))
     }
     public final class KonanTarget : R|kotlin/Any| {
         public constructor(name: R|kotlin/String|): R|KonanTarget| {
