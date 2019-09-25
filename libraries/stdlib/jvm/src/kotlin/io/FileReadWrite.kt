@@ -122,7 +122,7 @@ public fun File.appendBytes(array: ByteArray): Unit = FileOutputStream(this, tru
  * @param charset character set to use.
  * @return the entire content of this file as a String.
  */
-public fun File.readText(charset: Charset = Charsets.UTF_8): String = readBytes().toString(charset)
+public fun File.readText(charset: Charset = Charsets.UTF_8): String = reader(charset).use { it.readText() }
 
 /**
  * Sets the content of this file as [text] encoded using UTF-8 or specified [charset].
