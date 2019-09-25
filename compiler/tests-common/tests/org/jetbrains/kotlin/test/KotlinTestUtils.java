@@ -91,8 +91,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.intellij.openapi.application.PathManager.PROPERTY_CONFIG_PATH;
-import static com.intellij.openapi.application.PathManager.PROPERTY_SYSTEM_PATH;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
 
 public class KotlinTestUtils {
@@ -1075,6 +1073,10 @@ public class KotlinTestUtils {
     private static void runTest0WithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String testDataFilePath, String ignoreDirective) throws Exception {
         File testDataFile = new File(testDataFilePath);
 
+        if (isMutedWithFile(testDataFile)) {
+            return;
+        }
+
         boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirective);
 
         if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
@@ -1088,6 +1090,9 @@ public class KotlinTestUtils {
             test.invoke(testDataFilePath);
         }
         catch (Throwable e) {
+            if (checkFailFile(e, testDataFile)) {
+                return;
+            }
 
             if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
                 String text = doLoadFile(testDataFile);
@@ -1127,12 +1132,13 @@ public class KotlinTestUtils {
             return;
         }
 
+        Assert.assertNull("Test is good but there is a fail file", failFile(testDataFile));
+
         if (isIgnored) {
             if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
                 String text = doLoadFile(testDataFile);
                 String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
                 String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
-
                 if (!newText.equals(text)) {
                     System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
                     FileUtil.writeToFile(testDataFile, newText);
@@ -1141,6 +1147,47 @@ public class KotlinTestUtils {
 
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive.");
         }
+    }
+
+    private static boolean isMutedWithFile(@NotNull File testDataFile) {
+        if (!testDataFile.isFile()) {
+            return false;
+        }
+
+        File muteFile = new File(testDataFile.getPath() + ".mute");
+        return muteFile.exists() && muteFile.isFile();
+    }
+
+
+    @Nullable
+    private static File failFile(@NotNull File testDataFile) {
+        if (!testDataFile.isFile()) {
+            return null;
+        }
+
+        File failFile = new File(testDataFile.getPath() + ".fail");
+        if (!failFile.exists() || !failFile.isFile()) {
+            return null;
+        }
+
+        return failFile;
+    }
+
+    private static boolean checkFailFile(@NotNull Throwable failure, @NotNull File testDataFile) {
+        File failFile = failFile(testDataFile);
+        if (failFile == null) {
+            return false;
+        }
+
+        String muteMessage = failure.getMessage();
+
+        Throwable cause = failure.getCause();
+        if (cause != null) {
+            muteMessage = muteMessage + "\n" + cause.toString();
+        }
+
+        assertEqualsToFile(failFile, muteMessage);
+        return true;
     }
 
     public static String getTestsRoot(@NotNull Class<?> testCaseClass) {
