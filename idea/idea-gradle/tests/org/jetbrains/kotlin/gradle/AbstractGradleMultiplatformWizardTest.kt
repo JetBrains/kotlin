@@ -179,7 +179,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
                 }
             })
 
-        GradleSettings.getInstance(project).gradleVmOptions = "-Xmx128m -XX:MaxPermSize=64m"
+        GradleSettings.getInstance(project).gradleVmOptions = "-Xmx256m -XX:MaxPermSize=64m"
         val wrapperJarFrom = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(GradleImportingTestCase.wrapperJar())!!
         val wrapperJarFromTo = project.createProjectSubFile("gradle/wrapper/gradle-wrapper.jar")
         runWrite {
