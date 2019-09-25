@@ -10007,6 +10007,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/assignmentInIf.kt");
         }
 
+        @TestMetadata("atAssignment.kt")
+        public void testAtAssignment() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/atAssignment.kt");
+        }
+
         @TestMetadata("cannotRemoveType.kt")
         public void testCannotRemoveType() throws Exception {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/cannotRemoveType.kt");
