@@ -25,6 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.moveCaret
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -76,25 +77,35 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
-        val typeReference = element.typeReference ?: return
-
+        if (element.typeReference == null) return
         val assignment = findAssignment(element) ?: return
         val initializer = assignment.right ?: return
-        val newInitializer = element.setInitializer(initializer)!!
 
+        element.initializer = initializer
         if (element.hasModifier(KtTokens.LATEINIT_KEYWORD)) element.removeModifier(KtTokens.LATEINIT_KEYWORD)
 
-        val initializerBlock = assignment.parent.parent as? KtAnonymousInitializer
-        assignment.delete()
-        if (initializerBlock != null && (initializerBlock.body as? KtBlockExpression)?.isEmpty() == true) {
-            initializerBlock.delete()
+        val grandParent = assignment.parent.parent
+        val initializerBlock = grandParent as? KtAnonymousInitializer
+        val secondaryConstructor = grandParent as? KtSecondaryConstructor
+        val newProperty = if (!element.isLocal && (initializerBlock != null || secondaryConstructor != null)) {
+            assignment.delete()
+            if ((initializerBlock?.body as? KtBlockExpression)?.isEmpty() == true) initializerBlock.delete()
+            val secondaryConstructorBlock = secondaryConstructor?.bodyBlockExpression
+            if (secondaryConstructorBlock?.isEmpty() == true) secondaryConstructorBlock.delete()
+            element
+        } else {
+            assignment.replaced(element).also {
+                element.delete()
+            }
         }
+        val newInitializer = newProperty.initializer!!
+        val typeReference = newProperty.typeReference!!
 
         editor?.apply {
             unblockDocument()
 
-            if (element.canOmitDeclaredType(newInitializer, canChangeTypeToSubtype = !element.isVar)) {
-                val colon = element.colon!!
+            if (newProperty.canOmitDeclaredType(newInitializer, canChangeTypeToSubtype = !newProperty.isVar)) {
+                val colon = newProperty.colon!!
                 selectionModel.setSelection(colon.startOffset, typeReference.endOffset)
                 moveCaret(typeReference.endOffset, ScrollType.CENTER)
             } else {
