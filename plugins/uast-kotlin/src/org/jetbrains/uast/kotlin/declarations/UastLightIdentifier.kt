@@ -49,6 +49,7 @@ class KotlinUIdentifier private constructor(
         if (sourcePsi == null) return true
         if (sourcePsi is LeafPsiElement) return true
         if (sourcePsi is KtElement && sourcePsi.firstChild == null) return true
+        if (sourcePsi is KtStringTemplateExpression && sourcePsi.parent is KtCallExpression) return true // string literals could be identifiers of calls e.g. `"main" {}` in gradle.kts
         return false
     }
 
