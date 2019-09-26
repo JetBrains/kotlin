@@ -10012,6 +10012,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/atAssignment.kt");
         }
 
+        @TestMetadata("atAssignmentInConstructor.kt")
+        public void testAtAssignmentInConstructor() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/atAssignmentInConstructor.kt");
+        }
+
+        @TestMetadata("atAssignmentInInitializer.kt")
+        public void testAtAssignmentInInitializer() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/atAssignmentInInitializer.kt");
+        }
+
         @TestMetadata("cannotRemoveType.kt")
         public void testCannotRemoveType() throws Exception {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/cannotRemoveType.kt");
@@ -10045,6 +10055,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("correctConditionalAssignment.kt")
         public void testCorrectConditionalAssignment() throws Exception {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/correctConditionalAssignment.kt");
+        }
+
+        @TestMetadata("deleteConstructor.kt")
+        public void testDeleteConstructor() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/deleteConstructor.kt");
         }
 
         @TestMetadata("deleteInitBlock.kt")
