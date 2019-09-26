@@ -7,6 +7,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.folding.impl.FoldingUtil;
 import com.intellij.codeInsight.hint.TooltipController;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
@@ -14,6 +15,9 @@ import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.IdeTooltipManager;
 import com.intellij.ide.PowerSaveMode;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.todo.TodoConfiguration;
 import com.intellij.lang.LanguageAnnotators;
@@ -27,21 +31,22 @@ import com.intellij.openapi.command.CommandEvent;
 import com.intellij.openapi.command.CommandListener;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEventMulticasterEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
+import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
+import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.extensions.ExtensionPointAdapter;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileTypes.FileTypeEvent;
 import com.intellij.openapi.fileTypes.FileTypeListener;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -51,9 +56,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.UserDataHolderEx;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
@@ -357,6 +360,13 @@ public final class DaemonListeners implements Disposable {
         stopDaemonAndRestartAllFiles("annotators list changed");
       }
     }, this);
+
+    connection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+      @Override
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+        removeQuickFixesContributedByPlugin(pluginDescriptor);
+      }
+    });
   }
 
   private boolean worthBothering(final Document document, Project project) {
@@ -620,5 +630,41 @@ public final class DaemonListeners implements Disposable {
     if (myDaemonCodeAnalyzer.doRestart()) {
       myDaemonEventPublisher.daemonCancelEventOccurred(reason);
     }
+  }
+
+  private void removeQuickFixesContributedByPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+    for (FileEditor fileEditor : FileEditorManager.getInstance(myProject).getAllEditors()) {
+      if (fileEditor instanceof TextEditor) {
+        Editor editor = ((TextEditor)fileEditor).getEditor();
+        removeHighlightersContributedByPlugin(pluginDescriptor, editor.getMarkupModel().getAllHighlighters());
+        MarkupModel documentMarkupModel = DocumentMarkupModel.forDocument(editor.getDocument(), myProject, false);
+        if (documentMarkupModel != null) {
+          removeHighlightersContributedByPlugin(pluginDescriptor, documentMarkupModel.getAllHighlighters());
+        }
+      }
+    }
+  }
+
+  private static void removeHighlightersContributedByPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor,
+                                                            RangeHighlighter[] highlighters) {
+    for (RangeHighlighter highlighter : highlighters) {
+      HighlightInfo info = HighlightInfo.fromRangeHighlighter(highlighter);
+      if (info == null) continue;
+      List<Pair<HighlightInfo.IntentionActionDescriptor, TextRange>> ranges = info.quickFixActionRanges;
+      if (ranges != null) {
+        ranges.removeIf((pair) -> isContributedByPlugin(pair.first, pluginDescriptor));
+      }
+      List<Pair<HighlightInfo.IntentionActionDescriptor, RangeMarker>> markers = info.quickFixActionMarkers;
+      if (markers != null) {
+        markers.removeIf((pair) -> isContributedByPlugin(pair.first, pluginDescriptor));
+      }
+    }
+  }
+
+  private static boolean isContributedByPlugin(@NotNull HighlightInfo.IntentionActionDescriptor intentionActionDescriptor,
+                                               @NotNull IdeaPluginDescriptor descriptor) {
+    IntentionAction action = intentionActionDescriptor.getAction();
+    PluginId pluginId = PluginManagerCore.getPluginByClassName(action.getClass().getName());
+    return descriptor.getPluginId().equals(pluginId);
   }
 }
