@@ -510,10 +510,10 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             recordClosure(classDescriptor, name);
 
             Type containerType = getMetadataOwner(property);
-            List<VariableDescriptorWithAccessors> descriptors = bindingTrace.get(DELEGATED_PROPERTIES, containerType);
+            List<VariableDescriptorWithAccessors> descriptors = bindingTrace.get(DELEGATED_PROPERTIES_WITH_METADATA, containerType);
             if (descriptors == null) {
                 descriptors = new ArrayList<>(1);
-                bindingTrace.record(DELEGATED_PROPERTIES, containerType, descriptors);
+                bindingTrace.record(DELEGATED_PROPERTIES_WITH_METADATA, containerType, descriptors);
             }
             descriptors.add(variableDescriptor);
 

@@ -69,7 +69,7 @@ public class CodegenBinding {
     public static final WritableSlice<ValueParameterDescriptor, ValueParameterDescriptor> PARAMETER_SYNONYM =
             Slices.createSimpleSlice();
 
-    public static final WritableSlice<Type, List<VariableDescriptorWithAccessors>> DELEGATED_PROPERTIES =
+    public static final WritableSlice<Type, List<VariableDescriptorWithAccessors>> DELEGATED_PROPERTIES_WITH_METADATA =
             Slices.createSimpleSlice();
     public static final WritableSlice<VariableDescriptorWithAccessors, Type> DELEGATED_PROPERTY_METADATA_OWNER =
             Slices.createSimpleSlice();
@@ -87,7 +87,7 @@ public class CodegenBinding {
 
     @Nullable
     public static List<LocalVariableDescriptor> getLocalDelegatedProperties(@NotNull BindingContext bindingContext, @NotNull Type owner) {
-        List<VariableDescriptorWithAccessors> properties = bindingContext.get(DELEGATED_PROPERTIES, owner);
+        List<VariableDescriptorWithAccessors> properties = bindingContext.get(DELEGATED_PROPERTIES_WITH_METADATA, owner);
         return properties == null ? null : CollectionsKt.filterIsInstance(properties, LocalVariableDescriptor.class);
     }
 

@@ -49,7 +49,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
 import static org.jetbrains.kotlin.codegen.FunctionCodegen.processInterfaceMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTIES;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND;
@@ -572,7 +572,7 @@ public class PropertyCodegen {
         Type owner = bindingContext.get(DELEGATED_PROPERTY_METADATA_OWNER, descriptor);
         assert owner != null : "Delegated property owner not found: " + descriptor;
 
-        List<VariableDescriptorWithAccessors> allDelegatedProperties = bindingContext.get(DELEGATED_PROPERTIES, owner);
+        List<VariableDescriptorWithAccessors> allDelegatedProperties = bindingContext.get(DELEGATED_PROPERTIES_WITH_METADATA, owner);
         int index = allDelegatedProperties == null ? -1 : allDelegatedProperties.indexOf(descriptor);
         if (index < 0) {
             throw new AssertionError("Delegated property not found in " + owner + ": " + descriptor);
