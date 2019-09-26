@@ -38,7 +38,7 @@ public class DefaultCompletionContributor extends CompletionContributor {
     if (!includePsiFeatures) return;
     
     if (CompletionUtil.shouldShowFeature(project, CodeCompletionFeatures.EDITING_COMPLETION_FINISH_BY_SMART_ENTER)) {
-      final String shortcut = getActionShortcut(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_COMPLETE_STATEMENT);
+      final String shortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_COMPLETE_STATEMENT);
       if (StringUtil.isNotEmpty(shortcut)) {
         lookup.addAdvertisement(LangBundle.message("completion.smart.enter.ad", shortcut), null);
       }
@@ -46,7 +46,7 @@ public class DefaultCompletionContributor extends CompletionContributor {
 
     if ((CompletionUtil.shouldShowFeature(project, ShowQuickDocInfoAction.CODEASSISTS_QUICKJAVADOC_FEATURE) ||
          CompletionUtil.shouldShowFeature(project, ShowQuickDocInfoAction.CODEASSISTS_QUICKJAVADOC_LOOKUP_FEATURE))) {
-      final String shortcut = getActionShortcut(IdeActions.ACTION_QUICK_JAVADOC);
+      final String shortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_QUICK_JAVADOC);
       if (StringUtil.isNotEmpty(shortcut)) {
         lookup.addAdvertisement(LangBundle.message("completion.quick.javadoc.ad", shortcut), null);
       }
@@ -54,7 +54,7 @@ public class DefaultCompletionContributor extends CompletionContributor {
 
     if (CompletionUtil.shouldShowFeature(project, ShowImplementationsAction.CODEASSISTS_QUICKDEFINITION_FEATURE) ||
         CompletionUtil.shouldShowFeature(project, ShowImplementationsAction.CODEASSISTS_QUICKDEFINITION_LOOKUP_FEATURE)) {
-      final String shortcut = getActionShortcut(IdeActions.ACTION_QUICK_IMPLEMENTATIONS);
+      final String shortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_QUICK_IMPLEMENTATIONS);
       if (StringUtil.isNotEmpty(shortcut)) {
         lookup.addAdvertisement(LangBundle.message("completion.quick.implementations.ad", shortcut), null);
       }

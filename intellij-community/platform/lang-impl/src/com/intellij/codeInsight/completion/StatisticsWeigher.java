@@ -133,7 +133,7 @@ public class StatisticsWeigher extends CompletionWeigher {
       if (baseInfo == StatisticsInfo.EMPTY) {
         return 0;
       }
-      int minRecency = baseInfo.getLastUseRecency();
+      int minRecency = StatisticsManager.getInstance().getLastUseRecency(baseInfo);
       return minRecency == Integer.MAX_VALUE ? 0 : StatisticsManager.RECENCY_OBLIVION_THRESHOLD - minRecency;
     }
 

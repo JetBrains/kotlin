@@ -60,7 +60,7 @@ public class FilePathCompletionContributor extends CompletionContributor {
                                     @NotNull CompletionResultSet result) {
         final PsiReference psiReference = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
         if (getReference(psiReference) != null && parameters.getInvocationCount() == 1) {
-          final String shortcut = getActionShortcut(IdeActions.ACTION_CODE_COMPLETION);
+          final String shortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_CODE_COMPLETION);
           result.addLookupAdvertisement(CodeInsightBundle.message("class.completion.file.path", shortcut));
         }
       }
@@ -172,7 +172,7 @@ public class FilePathCompletionContributor extends CompletionContributor {
           }
 
           if (set.getSuitableFileTypes().length > 0 && parameters.getInvocationCount() == 1) {
-            final String shortcut = getActionShortcut(IdeActions.ACTION_CODE_COMPLETION);
+            final String shortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_CODE_COMPLETION);
             result.addLookupAdvertisement(CodeInsightBundle.message("class.completion.file.path.all.variants", shortcut));
           }
 
