@@ -57,7 +57,7 @@ abstract class CopyPathProvider : DumbAwareAction() {
     }
 
     val refs = elements.map { element ->
-      val virtualFile = if (element is PsiFileSystemItem) element.virtualFile else element.containingFile.virtualFile
+      val virtualFile = if (element is PsiFileSystemItem) element.virtualFile else element.containingFile?.virtualFile
 
       getPathToElement(project, virtualFile ?: return@map null, editor) ?: return@map null
     }.filterNotNull()
