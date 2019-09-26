@@ -28,7 +28,6 @@ import java.awt.event.MouseEvent
 import java.awt.font.FontRenderContext
 import java.util.*
 import javax.swing.Icon
-import javax.swing.UIManager
 import kotlin.math.max
 
 class PresentationFactory(private val editor: EditorImpl) {
@@ -393,7 +392,7 @@ class PresentationFactory(private val editor: EditorImpl) {
   }
 
   private fun getFontData(editor: Editor): FontData {
-    val familyName = UIManager.getFont("Label.font").family
+    val familyName = UIUtil.getLabelFont().family
     val size = max(1, editor.colorsScheme.editorFontSize - 1)
     var metrics = editor.getUserData(FONT_DATA)
     if (metrics != null && !metrics.isActual(editor, familyName, size)) {
