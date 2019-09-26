@@ -102,7 +102,9 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
     override fun clearConfigurationCachesAndRehighlight() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-        clearAndRehighlight()
+        if (project.isOpen) {
+            rehighlightOpenedScripts()
+        }
     }
 
     @Deprecated("Use getScriptClasspath(KtFile) instead")
@@ -322,7 +324,7 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
         return isConfigurationCached(file) && memoryCache.isConfigurationUpToDate(file)
     }
 
-    private fun clearAndRehighlight() {
+    private fun rehighlightOpenedScripts() {
         val openedScripts = FileEditorManager.getInstance(project).openFiles.filterNot { it.isNonScript() }
         updateHighlighting(openedScripts)
     }
