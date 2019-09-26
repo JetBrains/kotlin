@@ -238,22 +238,11 @@ public final class CompletionServiceImpl extends CompletionService {
     if (oldIndicator != null && !(phase instanceof CompletionPhase.BgCalculation)) {
       LOG.assertTrue(!oldIndicator.isRunning() || oldIndicator.isCanceled(), "don't change phase during running completion: oldPhase=" + oldPhase);
     }
-    boolean wasCompletionRunning = isRunningPhase(oldPhase);
-    boolean isCompletionRunning = isRunningPhase(phase);
-    if (isCompletionRunning != wasCompletionRunning) {
-      ApplicationManager.getApplication().getMessageBus().syncPublisher(CompletionPhaseListener.TOPIC).completionPhaseChanged(isCompletionRunning);
-    }
 
     Disposer.dispose(oldPhase);
     ourPhase = phase;
     ourPhaseTrace = new Throwable();
   }
-
-  private static boolean isRunningPhase(@NotNull CompletionPhase phase) {
-    return phase != CompletionPhase.NoCompletion && !(phase instanceof CompletionPhase.ZombiePhase) &&
-           !(phase instanceof CompletionPhase.ItemsCalculated);
-  }
-
 
   public static CompletionPhase getCompletionPhase() {
     return ourPhase;
@@ -281,7 +270,7 @@ public final class CompletionServiceImpl extends CompletionService {
       } else {
         sorter = sorter.weigh(new LookupElementWeigher(id, true, false) {
           @Override
-          public Comparable weigh(@NotNull LookupElement element) {
+          public Comparable<?> weigh(@NotNull LookupElement element) {
             //noinspection unchecked
             return weigher.weigh(element, location);
           }
