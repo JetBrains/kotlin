@@ -14,27 +14,34 @@ import com.intellij.util.concurrency.Semaphore
 
 class ExternalSystemEventDispatcherTest : LightPlatformTestCase() {
 
-  fun testInvokeOnCompletion() {
-    val testSystemId = ProjectSystemId("ExternalSystemEventDispatcherTest")
-    val taskId = ExternalSystemTaskId.create(testSystemId, ExternalSystemTaskType.EXECUTE_TASK, "test")
+  fun `test invokeOnCompletion`() {
+    val parsers = listOf(
+      BuildOutputParser { line, reader, messageConsumer ->
+        messageConsumer.accept(OutputBuildEventImpl(reader.parentEventId, line, true))
+        return@BuildOutputParser true
+      }
+    )
 
+    doInvokeOnCompletionTest(parsers)
+  }
+
+  fun `test invokeOnCompletion with bad output parser`() {
+    val parsers = listOf(
+      BuildOutputParser { _, _, _ -> throw RuntimeException("Bad parser") },
+      BuildOutputParser { line, reader, messageConsumer ->
+        messageConsumer.accept(OutputBuildEventImpl(reader.parentEventId, line, true))
+        return@BuildOutputParser true
+      }
+    )
+
+    doInvokeOnCompletionTest(parsers)
+  }
+
+  private fun doInvokeOnCompletionTest(parsers: List<BuildOutputParser>) {
     val eventMessages = mutableListOf<String>()
-    val progressListener = BuildProgressListener { _, event -> eventMessages += event.message }
-
-    ExtensionTestUtil.maskExtensions(ExternalSystemOutputParserProvider.EP_NAME,
-                                     listOf(object : ExternalSystemOutputParserProvider {
-                                       override fun getExternalSystemId(): ProjectSystemId = testSystemId
-
-                                       override fun getBuildOutputParsers(taskId: ExternalSystemTaskId): MutableList<BuildOutputParser> {
-                                         return mutableListOf(BuildOutputParser { line, reader, messageConsumer ->
-                                           messageConsumer.accept(OutputBuildEventImpl(reader.parentEventId, line, true))
-                                           return@BuildOutputParser true
-                                         })
-                                       }
-                                     }),
-                                     testRootDisposable)
+    ExtensionTestUtil.maskExtensions(ExternalSystemOutputParserProvider.EP_NAME, listOf(TestParserProvider(parsers)), testRootDisposable)
     val semaphore = Semaphore(1)
-    val dispatcher = ExternalSystemEventDispatcher(taskId, progressListener)
+    val dispatcher = ExternalSystemEventDispatcher(taskId, BuildProgressListener { _, event -> eventMessages += event.message })
     dispatcher.use {
       it.onEvent(1, StartBuildEventImpl(DefaultBuildDescriptor(taskId, "test task", "/path", System.currentTimeMillis()), "Build started"))
       it.invokeOnCompletion { eventMessages += "completion message 1" }
@@ -52,7 +59,6 @@ class ExternalSystemEventDispatcherTest : LightPlatformTestCase() {
     }
 
     assertTrue(semaphore.waitFor(500))
-
     assertSameElements(eventMessages.take(8),
                        "Build started",
                        "sub task1 started",
@@ -67,5 +73,18 @@ class ExternalSystemEventDispatcherTest : LightPlatformTestCase() {
                         "completion message 1",
                         "Build finished",
                         "completion message 2")
+  }
+
+  private class TestParserProvider(val parsers: List<BuildOutputParser>) : ExternalSystemOutputParserProvider {
+    override fun getExternalSystemId(): ProjectSystemId = testSystemId
+
+    override fun getBuildOutputParsers(taskId: ExternalSystemTaskId): List<BuildOutputParser> {
+      return parsers
+    }
+  }
+
+  companion object {
+    private val testSystemId = ProjectSystemId("ExternalSystemEventDispatcherTest")
+    private val taskId = ExternalSystemTaskId.create(testSystemId, ExternalSystemTaskType.EXECUTE_TASK, "ExternalSystemEventDispatcherTest")
   }
 }

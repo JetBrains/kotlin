@@ -4,6 +4,7 @@ package com.intellij.build.output
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
 import com.intellij.execution.process.ProcessIOExecutorService
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.util.ConcurrencyUtil.underThreadNameRunnable
 import org.jetbrains.annotations.ApiStatus
 import java.io.Closeable
@@ -47,7 +48,15 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
         if (line.isBlank()) continue
         for (parser in parsers) {
           val readerWrapper = BuildOutputInstantReaderWrapper(this)
-          if (parser.parse(line, readerWrapper, messageConsumer)) break
+          try {
+            if (parser.parse(line, readerWrapper, messageConsumer)) break
+          }
+          catch (e: Exception) {
+            when {
+              LOG.isDebugEnabled -> LOG.warn("Build output parser error", e)
+              else -> LOG.warn("Build output parser error: ${e.message}")
+            }
+          }
           readerWrapper.pushBackReadLines()
         }
       }
@@ -160,6 +169,7 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
   }
 
   companion object {
+    private val LOG = logger<BuildOutputInstantReader>()
     private enum class State { NotStarted, Running, Closed }
   }
 }
