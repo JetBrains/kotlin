@@ -59,9 +59,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 /**
@@ -288,7 +288,7 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
     ): List<DeclarationDescriptor> {
 
         val element = element ?: return emptyList()
-        if (element.isImportDirectiveExpression() || isSelectorInQualified(element)) return emptyList()
+        if (element.isImportDirectiveExpression()) return emptyList()
 
         val result = ArrayList<DeclarationDescriptor>()
 
@@ -296,17 +296,7 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
 
         indicesHelper.getKotlinEnumsByName(name).filterTo(result, filterByCallType)
 
-        val resolutionFacade = element.getResolutionFacade()
-        val actualReceiverTypes = callTypeAndReceiver
-            .receiverTypesWithIndex(
-                bindingContext, element,
-                resolutionFacade.moduleDescriptor, resolutionFacade,
-                stableSmartCastsOnly = false,
-                withImplicitReceiversWhenExplicitPresent = true
-            ).orEmpty()
-
-
-        val explicitReceiverTypes = actualReceiverTypes.filterNot { it.implicit }
+        val actualReceivers = getReceiversForExpression(element, callTypeAndReceiver, bindingContext)
 
         val checkDispatchReceiver = when (callTypeAndReceiver) {
             is CallTypeAndReceiver.OPERATOR, is CallTypeAndReceiver.INFIX -> true
@@ -314,10 +304,12 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         }
 
         val processor = { descriptor: CallableDescriptor ->
-            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)
-                && descriptor.isValidByReceiversFor(explicitReceiverTypes, actualReceiverTypes, checkDispatchReceiver)
-            ) {
-                result.add(descriptor)
+            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)) {
+                if (descriptor.extensionReceiverParameter != null) {
+                    result.addAll(descriptor.substituteExtensionIfCallable(actualReceivers.allReceivers, callTypeAndReceiver.callType))
+                } else if (descriptor.isValidByReceiversFor(actualReceivers, checkDispatchReceiver)) {
+                    result.add(descriptor)
+                }
             }
         }
 
@@ -337,19 +329,52 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         return result
     }
 
+    /**
+     * Currently at most one explicit receiver can be used in expression, but it can change in the future,
+     * so we use `Collection` to represent explicit receivers.
+     */
+    private class Receivers(val explicitReceivers: Collection<KotlinType>, val allReceivers: Collection<KotlinType>)
 
-    private fun CallableDescriptor.isValidByReceiversFor(
-        explicitReceiverTypes: Collection<ReceiverType>,
-        allReceiverTypes: Collection<ReceiverType>,
-        checkDispatchReceiver: Boolean
-    ): Boolean {
-        val bothReceivers = listOfNotNull(extensionReceiverParameter, dispatchReceiverParameter.takeIf { checkDispatchReceiver })
+    private fun getReceiversForExpression(
+        element: KtSimpleNameExpression,
+        callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+        bindingContext: BindingContext
+    ): Receivers {
+        val resolutionFacade = element.getResolutionFacade()
+        val actualReceiverTypes = callTypeAndReceiver
+            .receiverTypesWithIndex(
+                bindingContext, element,
+                resolutionFacade.moduleDescriptor, resolutionFacade,
+                stableSmartCastsOnly = false,
+                withImplicitReceiversWhenExplicitPresent = true
+            ).orEmpty()
 
-        val receiverTypesPerReceiver = generateSequence(explicitReceiverTypes.ifEmpty { allReceiverTypes }) { allReceiverTypes }
+        val explicitReceiverType = actualReceiverTypes.filterNot { it.implicit }
 
-        return bothReceivers
-            .zip(receiverTypesPerReceiver.asIterable())
-            .all { (receiver, possibleTypes) -> possibleTypes.any { it.type.isSubtypeOf(receiver.type) } }
+        return Receivers(
+            explicitReceiverType.map { it.type },
+            actualReceiverTypes.map { it.type }
+        )
+    }
+
+    /**
+     * This methods accepts only callables with no extension receiver because it ignores generics
+     * and does not perform any substitution.
+     *
+     * @return true iff [this] descriptor can be called given [actualReceivers] present in scope AND
+     * passed [Receivers.explicitReceivers] are satisfied if present.
+     */
+    private fun CallableDescriptor.isValidByReceiversFor(actualReceivers: Receivers, checkDispatchReceiver: Boolean): Boolean {
+        require(extensionReceiverParameter == null) { "This method works only on non-extension callables, got $this" }
+
+        val dispatcherReceiver = dispatchReceiverParameter.takeIf { checkDispatchReceiver }
+
+        return if (dispatcherReceiver == null) {
+            actualReceivers.explicitReceivers.isEmpty()
+        } else {
+            val typesToCheck = with(actualReceivers) { explicitReceivers.ifEmpty { allReceivers } }
+            typesToCheck.any { it.isSubtypeOf(dispatcherReceiver.type) }
+        }
     }
 
     override fun fillCandidates(

@@ -1766,6 +1766,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/autoImports/checkNoStackOverflowInImportInnerClassInCurrentFile.kt");
         }
 
+        @TestMetadata("companionObjectMemberExtensionFunctionImportWhenExplicitReceiverPresent.kt")
+        public void testCompanionObjectMemberExtensionFunctionImportWhenExplicitReceiverPresent() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/companionObjectMemberExtensionFunctionImportWhenExplicitReceiverPresent.kt");
+        }
+
+        @TestMetadata("companionObjectMemberExtensionPropertyImportWhenExplicitReceiverPresent.kt")
+        public void testCompanionObjectMemberExtensionPropertyImportWhenExplicitReceiverPresent() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/companionObjectMemberExtensionPropertyImportWhenExplicitReceiverPresent.kt");
+        }
+
         @TestMetadata("conflictWithClassIdentifier.kt")
         public void testConflictWithClassIdentifier() throws Exception {
             runTest("idea/testData/quickfix/autoImports/conflictWithClassIdentifier.kt");
@@ -1884,6 +1894,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("notForThisLabel.kt")
         public void testNotForThisLabel() throws Exception {
             runTest("idea/testData/quickfix/autoImports/notForThisLabel.kt");
+        }
+
+        @TestMetadata("objectMemberExtensionFunctionImportWhenExplicitReceiverPresent.kt")
+        public void testObjectMemberExtensionFunctionImportWhenExplicitReceiverPresent() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/objectMemberExtensionFunctionImportWhenExplicitReceiverPresent.kt");
+        }
+
+        @TestMetadata("objectMemberExtensionFunctionWithGenericImportWhenExplicitReceiverPresent.kt")
+        public void testObjectMemberExtensionFunctionWithGenericImportWhenExplicitReceiverPresent() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/objectMemberExtensionFunctionWithGenericImportWhenExplicitReceiverPresent.kt");
+        }
+
+        @TestMetadata("objectMemberExtensionPropertyImportWhenExplicitReceiverPresent.kt")
+        public void testObjectMemberExtensionPropertyImportWhenExplicitReceiverPresent() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/objectMemberExtensionPropertyImportWhenExplicitReceiverPresent.kt");
+        }
+
+        @TestMetadata("objectMemberExtensionPropertyWithGenericImportWhenExplicitReceiverPresent.kt")
+        public void testObjectMemberExtensionPropertyWithGenericImportWhenExplicitReceiverPresent() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/objectMemberExtensionPropertyWithGenericImportWhenExplicitReceiverPresent.kt");
         }
 
         @TestMetadata("sAMConstructorFromLambda.kt")
