@@ -14993,6 +14993,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/simplifyBooleanWithConstants/inapplicableUsesVals3.kt");
         }
 
+        @TestMetadata("minusDoubleZero.kt")
+        public void testMinusDoubleZero() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZero.kt");
+        }
+
+        @TestMetadata("minusDoubleZero2.kt")
+        public void testMinusDoubleZero2() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZero2.kt");
+        }
+
         @TestMetadata("notEqualsFalse.kt")
         public void testNotEqualsFalse() throws Exception {
             runTest("idea/testData/intentions/simplifyBooleanWithConstants/notEqualsFalse.kt");

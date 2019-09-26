@@ -431,7 +431,15 @@ private class ConstantExpressionEvaluatorVisitor(
         if (nodeElementType == KtNodeTypes.NULL) return NullValue().wrap()
 
         val result: Any? = when (nodeElementType) {
-            KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> parseNumericLiteral(text, nodeElementType)
+            KtNodeTypes.INTEGER_CONSTANT -> parseNumericLiteral(text, nodeElementType)
+            KtNodeTypes.FLOAT_CONSTANT -> {
+                val prefix = expression.parent as? KtPrefixExpression
+                if (prefix != null && prefix.operationToken == KtTokens.MINUS) {
+                    parseNumericLiteral(prefix.text, nodeElementType)
+                } else {
+                    parseNumericLiteral(text, nodeElementType)
+                }
+            }
             KtNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
             KtNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantChecker.parseChar(expression)
             else -> throw IllegalArgumentException("Unsupported constant: " + expression)
