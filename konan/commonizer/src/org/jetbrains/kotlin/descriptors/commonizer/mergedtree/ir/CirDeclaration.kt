@@ -14,44 +14,44 @@ import org.jetbrains.kotlin.name.Name
  * An intermediate representation of [DeclarationDescriptor]s for commonization purposes.
  *
  * The most essential subclasses are:
- * - [ClassDeclaration] - represents [ClassDescriptor]
- * - [TypeAlias] - [TypeAliasDescriptor]
- * - [Function] - [SimpleFunctionDescriptor]
- * - [Property] - [PropertyDescriptor]
- * - [Package] - union of multiple [PackageFragmentDescriptor]s with the same [FqName] contributed by commonized [ModuleDescriptor]s
- * - [Module] - [ModuleDescriptor]
- * - [Root] - the root of the whole IR tree
+ * - [CirClass] - represents [ClassDescriptor]
+ * - [CirTypeAlias] - [TypeAliasDescriptor]
+ * - [CirFunction] - [SimpleFunctionDescriptor]
+ * - [CirProperty] - [PropertyDescriptor]
+ * - [CirPackage] - union of multiple [PackageFragmentDescriptor]s with the same [FqName] contributed by commonized [ModuleDescriptor]s
+ * - [CirModule] - [ModuleDescriptor]
+ * - [CirRoot] - the root of the whole Commonizer IR tree
  */
-interface Declaration
+interface CirDeclaration
 
-interface AnnotatedDeclaration : Declaration {
+interface CirAnnotatedDeclaration : CirDeclaration {
     val annotations: Annotations
 }
 
-interface NamedDeclaration : Declaration {
+interface CirNamedDeclaration : CirDeclaration {
     val name: Name
 }
 
-interface DeclarationWithVisibility : Declaration {
+interface CirDeclarationWithVisibility : CirDeclaration {
     val visibility: Visibility
 }
 
-interface DeclarationWithModality : Declaration {
+interface CirDeclarationWithModality : CirDeclaration {
     val modality: Modality
 }
 
-interface MaybeCallableMemberOfClass : Declaration {
+interface CirMaybeCallableMemberOfClass : CirDeclaration {
     val containingClassKind: ClassKind? // null assumes no containing class
     val containingClassModality: Modality? // null assumes no containing class
     val containingClassIsData: Boolean? // null assumes no containing class
 }
 
-interface DeclarationWithTypeParameters : Declaration {
-    val typeParameters: List<TypeParameter>
+interface CirDeclarationWithTypeParameters : CirDeclaration {
+    val typeParameters: List<CirTypeParameter>
 }
 
 /** Indicates presence of recursion in lazy calculations. */
-interface RecursionMarker : Declaration
+interface CirRecursionMarker : CirDeclaration
 
 @Suppress("unused", "NOTHING_TO_INLINE")
-internal inline fun Declaration.unsupported(): Nothing = error("This method should never be called")
+internal inline fun CirDeclaration.unsupported(): Nothing = error("This method should never be called")

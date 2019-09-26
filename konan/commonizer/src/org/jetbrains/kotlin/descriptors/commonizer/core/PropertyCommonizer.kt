@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonProperty
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Property
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonProperty
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiverNoAnnotations
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirProperty
 
-class PropertyCommonizer(cache: ClassifiersCache) : AbstractFunctionOrPropertyCommonizer<Property>(cache) {
+class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirProperty>(cache) {
     private val setter = PropertySetterCommonizer.default()
     private var isExternal = true
 
-    override fun commonizationResult() = CommonProperty(
+    override fun commonizationResult() = CirCommonProperty(
         name = name,
         modality = modality.result,
         visibility = visibility.result,
@@ -26,7 +26,7 @@ class PropertyCommonizer(cache: ClassifiersCache) : AbstractFunctionOrPropertyCo
         typeParameters = typeParameters.result
     )
 
-    override fun doCommonizeWith(next: Property): Boolean {
+    override fun doCommonizeWith(next: CirProperty): Boolean {
         when {
             next.isConst -> return false // expect property can't be const because expect can't have initializer
             next.isLateInit -> return false // expect property can't be lateinit

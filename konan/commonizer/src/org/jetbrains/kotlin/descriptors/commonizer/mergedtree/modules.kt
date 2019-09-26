@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ModuleNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModuleNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildModuleNode
 import org.jetbrains.kotlin.descriptors.commonizer.toList
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.utils.alwaysTrue
 
 internal fun mergeModules(
     storageManager: StorageManager,
-    cacheRW: RootNode.ClassifiersCacheImpl,
+    cacheRW: CirRootNode.ClassifiersCacheImpl,
     modules: List<ModuleDescriptor?>
-): ModuleNode {
+): CirModuleNode {
     val node = buildModuleNode(storageManager, modules)
 
     val packageMemberScopesMap = CommonizedGroupMap<FqName, MemberScope>(modules.size)

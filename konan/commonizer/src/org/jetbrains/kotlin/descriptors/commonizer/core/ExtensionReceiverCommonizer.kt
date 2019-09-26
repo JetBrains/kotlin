@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface ExtensionReceiverCommonizer : Commonizer<ExtensionReceiver?, UnwrappedType?> {
+interface ExtensionReceiverCommonizer : Commonizer<CirExtensionReceiver?, UnwrappedType?> {
     companion object {
-        fun default(cache: ClassifiersCache): ExtensionReceiverCommonizer = DefaultExtensionReceiverCommonizer(cache)
+        fun default(cache: CirClassifiersCache): ExtensionReceiverCommonizer = DefaultExtensionReceiverCommonizer(cache)
     }
 }
 
-private class DefaultExtensionReceiverCommonizer(cache: ClassifiersCache) :
+private class DefaultExtensionReceiverCommonizer(cache: CirClassifiersCache) :
     ExtensionReceiverCommonizer,
-    AbstractNullableCommonizer<ExtensionReceiver, UnwrappedType, KotlinType, UnwrappedType>(
+    AbstractNullableCommonizer<CirExtensionReceiver, UnwrappedType, KotlinType, UnwrappedType>(
         wrappedCommonizerFactory = { TypeCommonizer.default(cache) },
         extractor = { it.type },
         builder = { it }

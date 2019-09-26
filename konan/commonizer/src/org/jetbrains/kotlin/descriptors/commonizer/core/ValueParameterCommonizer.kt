@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.isNull
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
 
-interface ValueParameterCommonizer : Commonizer<ValueParameter, ValueParameter> {
+interface ValueParameterCommonizer : Commonizer<CirValueParameter, CirValueParameter> {
     companion object {
-        fun default(cache: ClassifiersCache): ValueParameterCommonizer = DefaultValueParameterCommonizer(cache)
+        fun default(cache: CirClassifiersCache): ValueParameterCommonizer = DefaultValueParameterCommonizer(cache)
     }
 }
 
-private class DefaultValueParameterCommonizer(cache: ClassifiersCache) :
+private class DefaultValueParameterCommonizer(cache: CirClassifiersCache) :
     ValueParameterCommonizer,
-    AbstractStandardCommonizer<ValueParameter, ValueParameter>() {
+    AbstractStandardCommonizer<CirValueParameter, CirValueParameter>() {
 
     private lateinit var name: Name
     private val returnType = TypeCommonizer.default(cache)
@@ -28,7 +28,7 @@ private class DefaultValueParameterCommonizer(cache: ClassifiersCache) :
     private var isCrossinline = true
     private var isNoinline = true
 
-    override fun commonizationResult() = CommonValueParameter(
+    override fun commonizationResult() = CirCommonValueParameter(
         name = name,
         returnType = returnType.result,
         varargElementType = varargElementType,
@@ -36,14 +36,14 @@ private class DefaultValueParameterCommonizer(cache: ClassifiersCache) :
         isNoinline = isNoinline
     )
 
-    override fun initialize(first: ValueParameter) {
+    override fun initialize(first: CirValueParameter) {
         name = first.name
         varargElementType = first.varargElementType
         isCrossinline = first.isCrossinline
         isNoinline = first.isNoinline
     }
 
-    override fun doCommonizeWith(next: ValueParameter): Boolean {
+    override fun doCommonizeWith(next: CirValueParameter): Boolean {
         val result = !next.declaresDefaultValue
                 && varargElementType.isNull() == next.varargElementType.isNull()
                 && name == next.name
@@ -58,14 +58,14 @@ private class DefaultValueParameterCommonizer(cache: ClassifiersCache) :
     }
 }
 
-interface ValueParameterListCommonizer : Commonizer<List<ValueParameter>, List<ValueParameter>> {
+interface ValueParameterListCommonizer : Commonizer<List<CirValueParameter>, List<CirValueParameter>> {
     companion object {
-        fun default(cache: ClassifiersCache): ValueParameterListCommonizer = DefaultValueParameterListCommonizer(cache)
+        fun default(cache: CirClassifiersCache): ValueParameterListCommonizer = DefaultValueParameterListCommonizer(cache)
     }
 }
 
-private class DefaultValueParameterListCommonizer(cache: ClassifiersCache) :
+private class DefaultValueParameterListCommonizer(cache: CirClassifiersCache) :
     ValueParameterListCommonizer,
-    AbstractListCommonizer<ValueParameter, ValueParameter>(
+    AbstractListCommonizer<CirValueParameter, CirValueParameter>(
         singleElementCommonizerFactory = { ValueParameterCommonizer.default(cache) }
     )

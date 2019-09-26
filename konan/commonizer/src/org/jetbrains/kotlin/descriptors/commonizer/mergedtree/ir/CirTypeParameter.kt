@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
-interface TypeParameter {
+interface CirTypeParameter {
     val annotations: Annotations
     val name: Name
     val isReified: Boolean
@@ -20,19 +20,19 @@ interface TypeParameter {
     val upperBounds: List<UnwrappedType>
 }
 
-data class CommonTypeParameter(
+data class CirCommonTypeParameter(
     override val name: Name,
     override val isReified: Boolean,
     override val variance: Variance,
     override val upperBounds: List<UnwrappedType>
-) : TypeParameter {
+) : CirTypeParameter {
     override val annotations get() = Annotations.EMPTY
 }
 
-data class TargetTypeParameter(private val descriptor: TypeParameterDescriptor) : TypeParameter {
-    override val annotations get() = descriptor.annotations
-    override val name get() = descriptor.name
-    override val isReified get() = descriptor.isReified
-    override val variance get() = descriptor.variance
-    override val upperBounds by lazy(PUBLICATION) { descriptor.upperBounds.map { it.unwrap() } }
+data class CirWrappedTypeParameter(private val wrapped: TypeParameterDescriptor) : CirTypeParameter {
+    override val annotations get() = wrapped.annotations
+    override val name get() = wrapped.name
+    override val isReified get() = wrapped.isReified
+    override val variance get() = wrapped.variance
+    override val upperBounds by lazy(PUBLICATION) { wrapped.upperBounds.map { it.unwrap() } }
 }

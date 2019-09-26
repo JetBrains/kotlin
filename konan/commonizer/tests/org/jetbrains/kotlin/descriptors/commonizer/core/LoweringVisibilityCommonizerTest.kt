@@ -16,7 +16,7 @@ import org.junit.Test
 abstract class LoweringVisibilityCommonizerTest(
     private val allowPrivate: Boolean,
     private val areMembersVirtual: Boolean
-) : AbstractCommonizerTest<DeclarationWithVisibility, Visibility>() {
+) : AbstractCommonizerTest<CirDeclarationWithVisibility, Visibility>() {
 
     @Test
     fun publicOnly() = doTestSuccess(PUBLIC, PUBLIC.toMock(), PUBLIC.toMock(), PUBLIC.toMock())
@@ -32,19 +32,19 @@ abstract class LoweringVisibilityCommonizerTest(
 
     final override fun createCommonizer() = VisibilityCommonizer.lowering(allowPrivate = allowPrivate)
 
-    protected fun Visibility.toMock() = object : FunctionOrProperty {
+    protected fun Visibility.toMock() = object : CirFunctionOrProperty {
         override val visibility: Visibility = this@toMock
         override val modality: Modality get() = if (areMembersVirtual) Modality.OPEN else Modality.FINAL
         override val containingClassModality: Modality? get() = if (areMembersVirtual) Modality.OPEN else null
         override val containingClassKind: ClassKind? get() = if (areMembersVirtual) ClassKind.CLASS else null
         override val isExternal: Boolean get() = unsupported()
-        override val extensionReceiver: ExtensionReceiver? get() = unsupported()
+        override val extensionReceiver: CirExtensionReceiver? get() = unsupported()
         override val returnType: UnwrappedType get() = unsupported()
         override val kind: CallableMemberDescriptor.Kind get() = unsupported()
         override val annotations: Annotations get() = unsupported()
         override val name: Name get() = unsupported()
         override val containingClassIsData: Boolean? get() = unsupported()
-        override val typeParameters: List<TypeParameter> get() = unsupported()
+        override val typeParameters: List<CirTypeParameter> get() = unsupported()
     }
 
     class PrivateMembers : LoweringVisibilityCommonizerTest(true, false) {

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class DeclarationsBuilderVisitor(
     private val storageManager: StorageManager,
     private val collector: (Target, Collection<ModuleDescriptor>) -> Unit
-) : NodeVisitor<List<DeclarationDescriptor?>, List<DeclarationDescriptor?>> {
-    override fun visitRootNode(node: RootNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
+) : CirNodeVisitor<List<DeclarationDescriptor?>, List<DeclarationDescriptor?>> {
+    override fun visitRootNode(node: CirRootNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
         val allTargets = (node.target + node.common()!!).map { it.target }
 
         val modulesByTargets = HashMap<Target, MutableList<ModuleDescriptorImpl>>()
@@ -49,7 +49,7 @@ internal class DeclarationsBuilderVisitor(
         return noReturningDeclarations()
     }
 
-    override fun visitModuleNode(node: ModuleNode, data: List<DeclarationDescriptor?>): List<ModuleDescriptorImpl?> {
+    override fun visitModuleNode(node: CirModuleNode, data: List<DeclarationDescriptor?>): List<ModuleDescriptorImpl?> {
         // build module descriptors:
         val moduleDescriptorsGroup = CommonizedGroup<ModuleDescriptorImpl>(node.dimension)
         node.buildDescriptors(moduleDescriptorsGroup, storageManager)
@@ -70,7 +70,7 @@ internal class DeclarationsBuilderVisitor(
         return moduleDescriptors
     }
 
-    override fun visitPackageNode(node: PackageNode, data: List<DeclarationDescriptor?>): List<PackageFragmentDescriptor?> {
+    override fun visitPackageNode(node: CirPackageNode, data: List<DeclarationDescriptor?>): List<PackageFragmentDescriptor?> {
         val containingDeclarations = data.asListContaining<ModuleDescriptorImpl>()
 
         // build package fragments:
@@ -101,21 +101,21 @@ internal class DeclarationsBuilderVisitor(
         return packageFragments
     }
 
-    override fun visitPropertyNode(node: PropertyNode, data: List<DeclarationDescriptor?>): List<PropertyDescriptor?> {
+    override fun visitPropertyNode(node: CirPropertyNode, data: List<DeclarationDescriptor?>): List<PropertyDescriptor?> {
         val propertyDescriptorsGroup = CommonizedGroup<PropertyDescriptor>(node.dimension)
         node.buildDescriptors(propertyDescriptorsGroup, data, storageManager)
 
         return propertyDescriptorsGroup.toList()
     }
 
-    override fun visitFunctionNode(node: FunctionNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
+    override fun visitFunctionNode(node: CirFunctionNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
         val functionDescriptorsGroup = CommonizedGroup<SimpleFunctionDescriptor>(node.dimension)
         node.buildDescriptors(functionDescriptorsGroup, data)
 
         return functionDescriptorsGroup.toList()
     }
 
-    override fun visitClassNode(node: ClassNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
+    override fun visitClassNode(node: CirClassNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
         val classesGroup = CommonizedGroup<ClassifierDescriptorWithTypeParameters>(node.dimension)
         node.buildDescriptors(classesGroup, data, storageManager)
         val classes = classesGroup.toList().asListContaining<CommonizedClassDescriptor>()
@@ -149,7 +149,7 @@ internal class DeclarationsBuilderVisitor(
         return classes
     }
 
-    override fun visitClassConstructorNode(node: ClassConstructorNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
+    override fun visitClassConstructorNode(node: CirClassConstructorNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
         val containingDeclarations = data.asListContaining<ClassDescriptor>()
 
         val constructorsGroup = CommonizedGroup<ClassConstructorDescriptor>(node.dimension)
@@ -158,7 +158,7 @@ internal class DeclarationsBuilderVisitor(
         return constructorsGroup.toList()
     }
 
-    override fun visitTypeAliasNode(node: TypeAliasNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
+    override fun visitTypeAliasNode(node: CirTypeAliasNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
         val typeAliasesGroup = CommonizedGroup<ClassifierDescriptorWithTypeParameters>(node.dimension)
         node.buildDescriptors(typeAliasesGroup, data, storageManager)
         val typeAliases = typeAliasesGroup.toList()

@@ -104,7 +104,7 @@ private fun createPackageFragmentForClassifier(classifierFqName: FqName): Packag
         override fun toString() = "package $name"
     }
 
-internal val EMPTY_CLASSIFIERS_CACHE = object : ClassifiersCache {
-    override val classes: Map<FqName, ClassNode> get() = emptyMap()
-    override val typeAliases: Map<FqName, TypeAliasNode> get() = emptyMap()
+internal val EMPTY_CLASSIFIERS_CACHE = object : CirClassifiersCache {
+    override val classes: Map<FqName, CirClassNode> get() = emptyMap()
+    override val typeAliases: Map<FqName, CirTypeAliasNode> get() = emptyMap()
 }

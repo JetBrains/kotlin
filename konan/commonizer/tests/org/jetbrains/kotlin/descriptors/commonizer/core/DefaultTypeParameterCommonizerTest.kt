@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonTypeParameter
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonTypeParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.junit.Test
 
-class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<TypeParameter, TypeParameter>() {
+class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, CirTypeParameter>() {
     override fun createCommonizer() = TypeParameterCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
 
     @Test
@@ -87,7 +87,7 @@ class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<TypeParameter,
             isReified: Boolean = false,
             variance: Variance = Variance.INVARIANT,
             upperBounds: List<String> = listOf("kotlin.Any")
-        ) = CommonTypeParameter(
+        ) = CirCommonTypeParameter(
             name = Name.identifier(name),
             isReified = isReified,
             variance = variance,

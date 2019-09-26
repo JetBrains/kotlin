@@ -8,108 +8,108 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
-interface Node<T : Declaration, R : Declaration> {
+interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     val target: List<T?>
     val common: NullableLazyValue<R>
 
-    fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T): R
+    fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R
 }
 
-class RootNode(
-    override val target: List<Root>,
-    override val common: NullableLazyValue<Root>
-) : Node<Root, Root> {
-    class ClassifiersCacheImpl : ClassifiersCache {
-        override val classes = HashMap<FqName, ClassNode>()
-        override val typeAliases = HashMap<FqName, TypeAliasNode>()
+class CirRootNode(
+    override val target: List<CirRoot>,
+    override val common: NullableLazyValue<CirRoot>
+) : CirNode<CirRoot, CirRoot> {
+    class ClassifiersCacheImpl : CirClassifiersCache {
+        override val classes = HashMap<FqName, CirClassNode>()
+        override val typeAliases = HashMap<FqName, CirTypeAliasNode>()
     }
 
-    val modules: MutableList<ModuleNode> = ArrayList()
+    val modules: MutableList<CirModuleNode> = ArrayList()
     val cache = ClassifiersCacheImpl()
 
-    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T): R =
+    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitRootNode(this, data)
 }
 
-class ModuleNode(
-    override val target: List<Module?>,
-    override val common: NullableLazyValue<Module>
-) : Node<Module, Module> {
-    val packages: MutableList<PackageNode> = ArrayList()
+class CirModuleNode(
+    override val target: List<CirModule?>,
+    override val common: NullableLazyValue<CirModule>
+) : CirNode<CirModule, CirModule> {
+    val packages: MutableList<CirPackageNode> = ArrayList()
 
-    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T) =
+    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitModuleNode(this, data)
 }
 
-class PackageNode(
-    override val target: List<Package?>,
-    override val common: NullableLazyValue<Package>
-) : Node<Package, Package> {
-    val properties: MutableList<PropertyNode> = ArrayList()
-    val functions: MutableList<FunctionNode> = ArrayList()
-    val classes: MutableList<ClassNode> = ArrayList()
-    val typeAliases: MutableList<TypeAliasNode> = ArrayList()
+class CirPackageNode(
+    override val target: List<CirPackage?>,
+    override val common: NullableLazyValue<CirPackage>
+) : CirNode<CirPackage, CirPackage> {
+    val properties: MutableList<CirPropertyNode> = ArrayList()
+    val functions: MutableList<CirFunctionNode> = ArrayList()
+    val classes: MutableList<CirClassNode> = ArrayList()
+    val typeAliases: MutableList<CirTypeAliasNode> = ArrayList()
 
-    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T) =
+    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitPackageNode(this, data)
 }
 
-class PropertyNode(
-    override val target: List<Property?>,
-    override val common: NullableLazyValue<Property>
-) : Node<Property, Property> {
-    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T) =
+class CirPropertyNode(
+    override val target: List<CirProperty?>,
+    override val common: NullableLazyValue<CirProperty>
+) : CirNode<CirProperty, CirProperty> {
+    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitPropertyNode(this, data)
 }
 
-class FunctionNode(
-    override val target: List<Function?>,
-    override val common: NullableLazyValue<Function>
-) : Node<Function, Function> {
-    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T) =
+class CirFunctionNode(
+    override val target: List<CirFunction?>,
+    override val common: NullableLazyValue<CirFunction>
+) : CirNode<CirFunction, CirFunction> {
+    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitFunctionNode(this, data)
 }
 
-class ClassNode(
-    override val target: List<ClassDeclaration?>,
-    override val common: NullableLazyValue<ClassDeclaration>
-) : Node<ClassDeclaration, ClassDeclaration> {
+class CirClassNode(
+    override val target: List<CirClass?>,
+    override val common: NullableLazyValue<CirClass>
+) : CirNode<CirClass, CirClass> {
     lateinit var fqName: FqName
 
-    val constructors: MutableList<ClassConstructorNode> = ArrayList()
-    val properties: MutableList<PropertyNode> = ArrayList()
-    val functions: MutableList<FunctionNode> = ArrayList()
-    val classes: MutableList<ClassNode> = ArrayList()
+    val constructors: MutableList<CirClassConstructorNode> = ArrayList()
+    val properties: MutableList<CirPropertyNode> = ArrayList()
+    val functions: MutableList<CirFunctionNode> = ArrayList()
+    val classes: MutableList<CirClassNode> = ArrayList()
 
-    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T): R =
+    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitClassNode(this, data)
 }
 
-class ClassConstructorNode(
-    override val target: List<ClassConstructor?>,
-    override val common: NullableLazyValue<ClassConstructor>
-) : Node<ClassConstructor, ClassConstructor> {
-    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T): R =
+class CirClassConstructorNode(
+    override val target: List<CirClassConstructor?>,
+    override val common: NullableLazyValue<CirClassConstructor>
+) : CirNode<CirClassConstructor, CirClassConstructor> {
+    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitClassConstructorNode(this, data)
 }
 
-class TypeAliasNode(
-    override val target: List<TypeAlias?>,
-    override val common: NullableLazyValue<ClassDeclaration>
-) : Node<TypeAlias, ClassDeclaration> {
+class CirTypeAliasNode(
+    override val target: List<CirTypeAlias?>,
+    override val common: NullableLazyValue<CirClass>
+) : CirNode<CirTypeAlias, CirClass> {
     lateinit var fqName: FqName
 
-    override fun <R, T> accept(visitor: NodeVisitor<R, T>, data: T): R =
+    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitTypeAliasNode(this, data)
 }
 
-interface ClassifiersCache {
-    val classes: Map<FqName, ClassNode>
-    val typeAliases: Map<FqName, TypeAliasNode>
+interface CirClassifiersCache {
+    val classes: Map<FqName, CirClassNode>
+    val typeAliases: Map<FqName, CirTypeAliasNode>
 }
 
-internal inline val Node<*, *>.indexOfCommon: Int
+internal inline val CirNode<*, *>.indexOfCommon: Int
     get() = target.size
 
-internal inline val Node<*, *>.dimension: Int
+internal inline val CirNode<*, *>.dimension: Int
     get() = target.size + 1

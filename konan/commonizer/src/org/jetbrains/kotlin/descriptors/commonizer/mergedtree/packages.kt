@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PackageNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPackageNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPackageNode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun mergePackages(
     storageManager: StorageManager,
-    cacheRW: RootNode.ClassifiersCacheImpl,
+    cacheRW: CirRootNode.ClassifiersCacheImpl,
     packageFqName: FqName,
     packageMemberScopes: List<MemberScope?>
-): PackageNode {
+): CirPackageNode {
     val node = buildPackageNode(storageManager, packageFqName, packageMemberScopes)
 
     val propertiesMap = CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(packageMemberScopes.size)

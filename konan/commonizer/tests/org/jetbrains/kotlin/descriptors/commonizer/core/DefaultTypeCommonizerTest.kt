@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType

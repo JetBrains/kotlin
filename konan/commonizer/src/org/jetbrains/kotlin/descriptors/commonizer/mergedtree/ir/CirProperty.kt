@@ -9,90 +9,90 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Getter.Companion.toGetter
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Setter.Companion.toSetter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirGetter.Companion.toGetter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSetter.Companion.toSetter
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
-interface Property : FunctionOrProperty {
+interface CirProperty : CirFunctionOrProperty {
     val isVar: Boolean
     val isLateInit: Boolean
     val isConst: Boolean
     val isDelegate: Boolean
-    val getter: Getter?
-    val setter: Setter?
+    val getter: CirGetter?
+    val setter: CirSetter?
     val backingFieldAnnotations: Annotations? // null assumes no backing field
     val delegateFieldAnnotations: Annotations? // null assumes no backing field
     val compileTimeInitializer: ConstantValue<*>?
 }
 
-data class CommonProperty(
+data class CirCommonProperty(
     override val name: Name,
     override val modality: Modality,
     override val visibility: Visibility,
     override val isExternal: Boolean,
-    override val extensionReceiver: ExtensionReceiver?,
+    override val extensionReceiver: CirExtensionReceiver?,
     override val returnType: UnwrappedType,
     override val kind: CallableMemberDescriptor.Kind,
-    override val setter: Setter?,
-    override val typeParameters: List<TypeParameter>
-) : CommonFunctionOrProperty(), Property {
+    override val setter: CirSetter?,
+    override val typeParameters: List<CirTypeParameter>
+) : CirCommonFunctionOrProperty(), CirProperty {
     override val isVar get() = setter != null
     override val isLateInit get() = false
     override val isConst get() = false
     override val isDelegate get() = false
-    override val getter get() = Getter.DEFAULT_NO_ANNOTATIONS
+    override val getter get() = CirGetter.DEFAULT_NO_ANNOTATIONS
     override val backingFieldAnnotations: Annotations? get() = null
     override val delegateFieldAnnotations: Annotations? get() = null
     override val compileTimeInitializer: ConstantValue<*>? get() = null
 }
 
-class TargetProperty(descriptor: PropertyDescriptor) : TargetFunctionOrProperty<PropertyDescriptor>(descriptor), Property {
-    override val isVar get() = descriptor.isVar
-    override val isLateInit get() = descriptor.isLateInit
-    override val isConst get() = descriptor.isConst
-    override val isDelegate get() = @Suppress("DEPRECATION") descriptor.isDelegated
-    override val getter by lazy(PUBLICATION) { descriptor.getter?.toGetter() }
-    override val setter by lazy(PUBLICATION) { descriptor.setter?.toSetter() }
-    override val backingFieldAnnotations get() = descriptor.backingField?.annotations
-    override val delegateFieldAnnotations get() = descriptor.delegateField?.annotations
-    override val compileTimeInitializer get() = descriptor.compileTimeInitializer
+class CirWrappedProperty(wrapped: PropertyDescriptor) : CirWrappedFunctionOrProperty<PropertyDescriptor>(wrapped), CirProperty {
+    override val isVar get() = wrapped.isVar
+    override val isLateInit get() = wrapped.isLateInit
+    override val isConst get() = wrapped.isConst
+    override val isDelegate get() = @Suppress("DEPRECATION") wrapped.isDelegated
+    override val getter by lazy(PUBLICATION) { wrapped.getter?.toGetter() }
+    override val setter by lazy(PUBLICATION) { wrapped.setter?.toSetter() }
+    override val backingFieldAnnotations get() = wrapped.backingField?.annotations
+    override val delegateFieldAnnotations get() = wrapped.delegateField?.annotations
+    override val compileTimeInitializer get() = wrapped.compileTimeInitializer
 }
 
-interface PropertyAccessor {
+interface CirPropertyAccessor {
     val annotations: Annotations
     val isDefault: Boolean
     val isExternal: Boolean
     val isInline: Boolean
 }
 
-data class Getter(
+data class CirGetter(
     override val annotations: Annotations,
     override val isDefault: Boolean,
     override val isExternal: Boolean,
     override val isInline: Boolean
-) : PropertyAccessor {
+) : CirPropertyAccessor {
     companion object {
-        val DEFAULT_NO_ANNOTATIONS = Getter(Annotations.EMPTY, isDefault = true, isExternal = false, isInline = false)
+        val DEFAULT_NO_ANNOTATIONS = CirGetter(Annotations.EMPTY, isDefault = true, isExternal = false, isInline = false)
 
         fun PropertyGetterDescriptor.toGetter() =
             if (isDefault && annotations.isEmpty())
                 DEFAULT_NO_ANNOTATIONS
             else
-                Getter(annotations, isDefault, isExternal, isInline)
+                CirGetter(annotations, isDefault, isExternal, isInline)
     }
 }
 
-data class Setter(
+data class CirSetter(
     override val annotations: Annotations,
     val parameterAnnotations: Annotations,
     override val visibility: Visibility,
     override val isDefault: Boolean,
     override val isExternal: Boolean,
     override val isInline: Boolean
-) : PropertyAccessor, DeclarationWithVisibility {
+) : CirPropertyAccessor, CirDeclarationWithVisibility {
     companion object {
-        fun createDefaultNoAnnotations(visibility: Visibility) = Setter(
+        fun createDefaultNoAnnotations(visibility: Visibility) = CirSetter(
             Annotations.EMPTY,
             Annotations.EMPTY,
             visibility,
@@ -101,7 +101,7 @@ data class Setter(
             isInline = false
         )
 
-        fun PropertySetterDescriptor.toSetter() = Setter(
+        fun PropertySetterDescriptor.toSetter() = CirSetter(
             annotations,
             valueParameters.single().annotations,
             visibility,

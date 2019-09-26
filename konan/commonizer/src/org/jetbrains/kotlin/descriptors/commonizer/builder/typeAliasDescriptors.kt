@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassDeclaration
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeAlias
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeAliasNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeAlias
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.storage.StorageManager
 
-internal fun TypeAliasNode.buildDescriptors(
+internal fun CirTypeAliasNode.buildDescriptors(
     output: CommonizedGroup<ClassifierDescriptorWithTypeParameters>,
     containingDeclarations: List<DeclarationDescriptor?>,
     storageManager: StorageManager
 ) {
-    val commonClass: ClassDeclaration? = common()
+    val commonClass: CirClass? = common()
     val markAsActual = commonClass != null
 
     target.forEachIndexed { index, typeAlias ->
@@ -29,7 +29,7 @@ internal fun TypeAliasNode.buildDescriptors(
     commonClass?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = true)
 }
 
-private fun TypeAlias.buildDescriptor(
+private fun CirTypeAlias.buildDescriptor(
     output: CommonizedGroup<ClassifierDescriptorWithTypeParameters>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,

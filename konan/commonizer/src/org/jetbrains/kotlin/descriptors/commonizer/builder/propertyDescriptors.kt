@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Property
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PropertyNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirProperty
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPropertyNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.storage.StorageManager
 
-internal fun PropertyNode.buildDescriptors(
+internal fun CirPropertyNode.buildDescriptors(
     output: CommonizedGroup<PropertyDescriptor>,
     containingDeclarations: List<DeclarationDescriptor?>,
     storageManager: StorageManager
@@ -33,7 +33,7 @@ internal fun PropertyNode.buildDescriptors(
     commonProperty?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = markAsExpectAndActual)
 }
 
-private fun Property.buildDescriptor(
+private fun CirProperty.buildDescriptor(
     output: CommonizedGroup<PropertyDescriptor>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,

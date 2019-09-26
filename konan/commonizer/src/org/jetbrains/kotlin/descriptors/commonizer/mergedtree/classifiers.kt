@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
 import org.jetbrains.kotlin.name.Name
@@ -20,7 +20,7 @@ internal fun mergeClasses(
     cacheRW: ClassifiersCacheImpl,
     containingDeclarationCommon: NullableLazyValue<*>?,
     classes: List<ClassDescriptor?>
-): ClassNode {
+): CirClassNode {
     val node = buildClassNode(storageManager, cacheRW, containingDeclarationCommon, classes)
 
     val constructorsMap = CommonizedGroupMap<ConstructorApproximationKey, ClassConstructorDescriptor>(classes.size)

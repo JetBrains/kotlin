@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.checker.isClassType
 
-class TypeAliasCommonizer(cache: ClassifiersCache) : AbstractStandardCommonizer<TypeAlias, ClassDeclaration>() {
+class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirClass>() {
     private lateinit var name: Name
     private val underlyingType = TypeCommonizer.default(cache)
     private val visibility = VisibilityCommonizer.lowering(allowPrivate = true)
 
-    override fun commonizationResult() = CommonClassDeclaration(
+    override fun commonizationResult() = CirCommonClass(
         name = name,
         typeParameters = emptyList(),
         kind = ClassKind.CLASS,
@@ -27,11 +27,11 @@ class TypeAliasCommonizer(cache: ClassifiersCache) : AbstractStandardCommonizer<
         isInner = false
     )
 
-    override fun initialize(first: TypeAlias) {
+    override fun initialize(first: CirTypeAlias) {
         name = first.name
     }
 
-    override fun doCommonizeWith(next: TypeAlias) =
+    override fun doCommonizeWith(next: CirTypeAlias) =
         next.typeParameters.isEmpty() // TAs with declared type parameters can't be commonized
                 && next.underlyingType.arguments.isEmpty() // TAs with functional types or types with parameters at the right-hand side can't be commonized
                 && next.underlyingType.isClassType // right-hand side could have only class

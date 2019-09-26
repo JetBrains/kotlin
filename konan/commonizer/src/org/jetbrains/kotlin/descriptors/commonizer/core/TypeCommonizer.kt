@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.isUnderStandardKotlinPackages
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Node
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirNode
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
 
 interface TypeCommonizer : Commonizer<KotlinType, UnwrappedType> {
     companion object {
-        fun default(cache: ClassifiersCache): TypeCommonizer = DefaultTypeCommonizer(cache)
+        fun default(cache: CirClassifiersCache): TypeCommonizer = DefaultTypeCommonizer(cache)
     }
 }
 
-private class DefaultTypeCommonizer(private val cache: ClassifiersCache) :
+private class DefaultTypeCommonizer(private val cache: CirClassifiersCache) :
     TypeCommonizer,
     AbstractStandardCommonizer<KotlinType, UnwrappedType>() {
 
@@ -36,7 +36,7 @@ private class DefaultTypeCommonizer(private val cache: ClassifiersCache) :
 /**
  * See also [AbstractStrictEqualityTypeChecker].
  */
-internal fun areTypesEqual(cache: ClassifiersCache, a: UnwrappedType, b: UnwrappedType): Boolean = when {
+internal fun areTypesEqual(cache: CirClassifiersCache, a: UnwrappedType, b: UnwrappedType): Boolean = when {
     a === b -> true
     a is SimpleType -> (b is SimpleType) && areSimpleTypesEqual(cache, a, b)
     a is FlexibleType -> (b is FlexibleType)
@@ -44,7 +44,7 @@ internal fun areTypesEqual(cache: ClassifiersCache, a: UnwrappedType, b: Unwrapp
     else -> false
 }
 
-private fun areSimpleTypesEqual(cache: ClassifiersCache, a: SimpleType, b: SimpleType): Boolean = areAbbreviatedTypesEqual(
+private fun areSimpleTypesEqual(cache: CirClassifiersCache, a: SimpleType, b: SimpleType): Boolean = areAbbreviatedTypesEqual(
     cache,
     a = a.getAbbreviation() ?: a,
     aExpanded = a,
@@ -53,7 +53,7 @@ private fun areSimpleTypesEqual(cache: ClassifiersCache, a: SimpleType, b: Simpl
 )
 
 private fun areAbbreviatedTypesEqual(
-    cache: ClassifiersCache,
+    cache: CirClassifiersCache,
     a: SimpleType,
     aExpanded: SimpleType,
     b: SimpleType,
@@ -130,7 +130,7 @@ private inline fun SimpleType.nonNullDescriptorExpectedErrorMessage() =
     "${TypeCommonizer::class} couldn't obtain non-null descriptor from: $this, ${this::class}"
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun Node<*, *>?.canBeCommonized() =
+private inline fun CirNode<*, *>?.canBeCommonized() =
     if (this == null) {
         // No node means that the class or type alias was not subject for commonization at all, probably it lays
         // not in commonized module descriptors but somewhere in their dependencies.

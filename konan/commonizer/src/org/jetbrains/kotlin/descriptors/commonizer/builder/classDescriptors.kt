@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.storage.StorageManager
 
-internal fun ClassNode.buildDescriptors(
+internal fun CirClassNode.buildDescriptors(
     output: CommonizedGroup<ClassifierDescriptorWithTypeParameters>,
     containingDeclarations: List<DeclarationDescriptor?>,
     storageManager: StorageManager
@@ -26,7 +26,7 @@ internal fun ClassNode.buildDescriptors(
     commonClass?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = true)
 }
 
-internal fun ClassDeclaration.buildDescriptor(
+internal fun CirClass.buildDescriptor(
     output: CommonizedGroup<in ClassifierDescriptorWithTypeParameters>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,
@@ -60,7 +60,7 @@ internal fun ClassDeclaration.buildDescriptor(
     output[index] = classDescriptor
 }
 
-internal fun ClassConstructorNode.buildDescriptors(
+internal fun CirClassConstructorNode.buildDescriptors(
     output: CommonizedGroup<ClassConstructorDescriptor>,
     containingDeclarations: List<ClassDescriptor?>
 ) {
@@ -74,7 +74,7 @@ internal fun ClassConstructorNode.buildDescriptors(
     commonConstructor?.buildDescriptor(output, indexOfCommon, containingDeclarations, isExpect = true)
 }
 
-private fun ClassConstructor.buildDescriptor(
+private fun CirClassConstructor.buildDescriptor(
     output: CommonizedGroup<ClassConstructorDescriptor>,
     index: Int,
     containingDeclarations: List<ClassDescriptor?>,

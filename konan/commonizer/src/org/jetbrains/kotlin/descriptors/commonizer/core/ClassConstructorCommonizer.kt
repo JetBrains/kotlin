@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassConstructor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonClassConstructor
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassConstructor
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonClassConstructor
 
-class ClassConstructorCommonizer(cache: ClassifiersCache) : AbstractStandardCommonizer<ClassConstructor, ClassConstructor>() {
+class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirClassConstructor, CirClassConstructor>() {
     private var isPrimary = false
     private lateinit var kind: CallableMemberDescriptor.Kind
     private val visibility = VisibilityCommonizer.equalizing()
@@ -20,7 +20,7 @@ class ClassConstructorCommonizer(cache: ClassifiersCache) : AbstractStandardComm
     private var hasStableParameterNames = true
     private var hasSynthesizedParameterNames = false
 
-    override fun commonizationResult() = CommonClassConstructor(
+    override fun commonizationResult() = CirCommonClassConstructor(
         isPrimary = isPrimary,
         kind = kind,
         visibility = visibility.result,
@@ -30,12 +30,12 @@ class ClassConstructorCommonizer(cache: ClassifiersCache) : AbstractStandardComm
         hasSynthesizedParameterNames = hasSynthesizedParameterNames
     )
 
-    override fun initialize(first: ClassConstructor) {
+    override fun initialize(first: CirClassConstructor) {
         isPrimary = first.isPrimary
         kind = first.kind
     }
 
-    override fun doCommonizeWith(next: ClassConstructor): Boolean {
+    override fun doCommonizeWith(next: CirClassConstructor): Boolean {
         val result = !next.containingClassKind.isSingleton // don't commonize constructors for objects and enum entries
                 && next.containingClassModality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
                 && isPrimary == next.isPrimary

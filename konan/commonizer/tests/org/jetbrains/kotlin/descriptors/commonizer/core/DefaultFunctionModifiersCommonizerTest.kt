@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.core.TestFunctionModifiers.Companion.areEqual
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
+import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestFunctionModifiers.Companion.areEqual
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionModifiers
 import org.junit.Test
 
-class DefaultFunctionModifiersCommonizerTest : AbstractCommonizerTest<FunctionModifiers, FunctionModifiers>() {
+class DefaultFunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifiers, CirFunctionModifiers>() {
 
     @Test
     fun allDefault() = doTestSuccess(
@@ -162,21 +162,21 @@ class DefaultFunctionModifiersCommonizerTest : AbstractCommonizerTest<FunctionMo
     )
 
     override fun createCommonizer() = FunctionModifiersCommonizer.default()
-    override fun isEqual(a: FunctionModifiers?, b: FunctionModifiers?) = (a === b) || (a != null && b != null && areEqual(a, b))
+    override fun isEqual(a: CirFunctionModifiers?, b: CirFunctionModifiers?) = (a === b) || (a != null && b != null && areEqual(a, b))
 }
 
-private typealias mockFunctionModifiers = TestFunctionModifiers
+private typealias mockFunctionModifiers = CirTestFunctionModifiers
 
-private data class TestFunctionModifiers(
+private data class CirTestFunctionModifiers(
     override val isOperator: Boolean = false,
     override val isInfix: Boolean = false,
     override val isInline: Boolean = false,
     override val isTailrec: Boolean = false,
     override val isSuspend: Boolean = false,
     override val isExternal: Boolean = false
-) : FunctionModifiers {
+) : CirFunctionModifiers {
     companion object {
-        fun areEqual(a: FunctionModifiers, b: FunctionModifiers) =
+        fun areEqual(a: CirFunctionModifiers, b: CirFunctionModifiers) =
             a.isOperator == b.isOperator && a.isInfix == b.isInfix && a.isInline == b.isInline
                     && a.isTailrec == b.isTailrec && a.isSuspend == b.isSuspend && a.isExternal == b.isExternal
     }

@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassDeclaration
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonClassDeclaration
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonClass
 import org.jetbrains.kotlin.name.Name
 
-class ClassCommonizer(cache: ClassifiersCache) : AbstractStandardCommonizer<ClassDeclaration, ClassDeclaration>() {
+class ClassCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirClass, CirClass>() {
     private lateinit var name: Name
     private lateinit var kind: ClassKind
     private val typeParameters = TypeParameterListCommonizer.default(cache)
@@ -21,7 +21,7 @@ class ClassCommonizer(cache: ClassifiersCache) : AbstractStandardCommonizer<Clas
     private var isInline = false
     private var isCompanion = false
 
-    override fun commonizationResult() = CommonClassDeclaration(
+    override fun commonizationResult() = CirCommonClass(
         name = name,
         typeParameters = typeParameters.result,
         kind = kind,
@@ -32,7 +32,7 @@ class ClassCommonizer(cache: ClassifiersCache) : AbstractStandardCommonizer<Clas
         isInner = isInner
     )
 
-    override fun initialize(first: ClassDeclaration) {
+    override fun initialize(first: CirClass) {
         name = first.name
         kind = first.kind
         isInner = first.isInner
@@ -40,7 +40,7 @@ class ClassCommonizer(cache: ClassifiersCache) : AbstractStandardCommonizer<Clas
         isCompanion = first.isCompanion
     }
 
-    override fun doCommonizeWith(next: ClassDeclaration) =
+    override fun doCommonizeWith(next: CirClass) =
         kind == next.kind
                 && isInner == next.isInner
                 && isInline == next.isInline

@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Module
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModule
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.junit.Test
 
-class DefaultModuleCommonizerTest : AbstractCommonizerTest<Module, Module>() {
+class DefaultModuleCommonizerTest : AbstractCommonizerTest<CirModule, CirModule>() {
 
     @Test
     fun allAreNative() = doTestSuccess(
@@ -66,7 +66,7 @@ class DefaultModuleCommonizerTest : AbstractCommonizerTest<Module, Module>() {
 
     override fun createCommonizer() = ModuleCommonizer.default()
 
-    override fun isEqual(a: Module?, b: Module?) =
+    override fun isEqual(a: CirModule?, b: CirModule?) =
         (a === b) || (a != null && b != null && a.name == b.name && a.builtIns::class.java.name == b.builtIns::class.java.name)
 
     private companion object {
@@ -74,6 +74,6 @@ class DefaultModuleCommonizerTest : AbstractCommonizerTest<Module, Module>() {
         inline val JVM_BUILT_INS get() = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
         inline val DEFAULT_BUILT_INS get() = DefaultBuiltIns.Instance
 
-        fun KotlinBuiltIns.toMock() = Module(Name.identifier("fakeModule"), this)
+        fun KotlinBuiltIns.toMock() = CirModule(Name.identifier("fakeModule"), this)
     }
 }

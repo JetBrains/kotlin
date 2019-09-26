@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Function
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 
-internal fun FunctionNode.buildDescriptors(
+internal fun CirFunctionNode.buildDescriptors(
     output: CommonizedGroup<SimpleFunctionDescriptor>,
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
@@ -29,7 +29,7 @@ internal fun FunctionNode.buildDescriptors(
     commonFunction?.buildDescriptor(output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
 }
 
-private fun Function.buildDescriptor(
+private fun CirFunction.buildDescriptor(
     output: CommonizedGroup<SimpleFunctionDescriptor>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassConstructorNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildFunctionNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildPropertyNode
@@ -17,21 +17,21 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun mergeProperties(
     storageManager: StorageManager,
-    cache: ClassifiersCache,
+    cache: CirClassifiersCache,
     containingDeclarationCommon: NullableLazyValue<*>?,
     properties: List<PropertyDescriptor?>
 ) = buildPropertyNode(storageManager, cache, containingDeclarationCommon, properties)
 
 internal fun mergeFunctions(
     storageManager: StorageManager,
-    cache: ClassifiersCache,
+    cache: CirClassifiersCache,
     containingDeclarationCommon: NullableLazyValue<*>?,
     properties: List<SimpleFunctionDescriptor?>
 ) = buildFunctionNode(storageManager, cache, containingDeclarationCommon, properties)
 
 internal fun mergeClassConstructors(
     storageManager: StorageManager,
-    cache: ClassifiersCache,
+    cache: CirClassifiersCache,
     containingDeclarationCommon: NullableLazyValue<*>?,
     constructors: List<ClassConstructorDescriptor?>
 ) = buildClassConstructorNode(storageManager, cache, containingDeclarationCommon, constructors)

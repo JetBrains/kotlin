@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionOrProperty
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionOrProperty
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.isNonAbstractMemberInInterface
 import org.jetbrains.kotlin.name.Name
 
-abstract class AbstractFunctionOrPropertyCommonizer<T : FunctionOrProperty>(cache: ClassifiersCache) : AbstractStandardCommonizer<T, T>() {
+abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(cache: CirClassifiersCache) : AbstractStandardCommonizer<T, T>() {
     protected lateinit var name: Name
     protected val modality = ModalityCommonizer.default()
     protected val visibility = VisibilityCommonizer.lowering()

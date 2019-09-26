@@ -7,30 +7,30 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Module
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModule
 import org.jetbrains.kotlin.name.Name
 
-interface ModuleCommonizer : Commonizer<Module, Module> {
+interface ModuleCommonizer : Commonizer<CirModule, CirModule> {
     companion object {
         fun default(): ModuleCommonizer = DefaultModuleCommonizer()
     }
 }
 
-private class DefaultModuleCommonizer : ModuleCommonizer, AbstractStandardCommonizer<Module, Module>() {
+private class DefaultModuleCommonizer : ModuleCommonizer, AbstractStandardCommonizer<CirModule, CirModule>() {
     private lateinit var name: Name
     private var konanBuiltIns: KonanBuiltIns? = null
 
-    override fun commonizationResult() = Module(
+    override fun commonizationResult() = CirModule(
         name = name,
         builtIns = konanBuiltIns ?: DefaultBuiltIns.Instance
     )
 
-    override fun initialize(first: Module) {
+    override fun initialize(first: CirModule) {
         name = first.name
         konanBuiltIns = first.konanBuiltIns
     }
 
-    override fun doCommonizeWith(next: Module): Boolean {
+    override fun doCommonizeWith(next: CirModule): Boolean {
         // keep the first met KonanBuiltIns when all targets are Kotlin/Native
         // otherwise use DefaultBuiltIns
         if (konanBuiltIns != null) {
@@ -40,6 +40,6 @@ private class DefaultModuleCommonizer : ModuleCommonizer, AbstractStandardCommon
         return true
     }
 
-    private inline val Module.konanBuiltIns
+    private inline val CirModule.konanBuiltIns
         get() = builtIns as? KonanBuiltIns
 }

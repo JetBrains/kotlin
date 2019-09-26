@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
-import org.jetbrains.kotlin.descriptors.commonizer.core.TestValueParameter.Companion.areEqual
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
 import org.junit.Test
 
-class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<ValueParameter>, List<ValueParameter>>() {
+class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValueParameter>, List<CirValueParameter>>() {
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
@@ -166,7 +166,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
 
     override fun createCommonizer() = ValueParameterListCommonizer.default(EMPTY_CLASSIFIERS_CACHE)
 
-    override fun isEqual(a: List<ValueParameter>?, b: List<ValueParameter>?): Boolean {
+    override fun isEqual(a: List<CirValueParameter>?, b: List<CirValueParameter>?): Boolean {
         if (a === b)
             return true
         else if (a == null || b == null || a.size != b.size)
@@ -181,7 +181,7 @@ class DefaultValueParameterListCommonizerTest : AbstractCommonizerTest<List<Valu
     }
 
     private companion object {
-        fun mockValueParams(vararg params: Pair<String, String>): List<ValueParameter> {
+        fun mockValueParams(vararg params: Pair<String, String>): List<CirValueParameter> {
             check(params.isNotEmpty())
             return params.map { (name, returnTypeFqName) ->
                 DefaultValueParameterCommonizerTest.mockValueParam(

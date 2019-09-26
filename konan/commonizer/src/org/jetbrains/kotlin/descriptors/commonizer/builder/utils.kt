@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.TypeParameter
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-internal fun List<TypeParameter>.buildDescriptors(
+internal fun List<CirTypeParameter>.buildDescriptors(
     containingDeclaration: DeclarationDescriptor
 ): List<TypeParameterDescriptor> {
     return mapIndexed { index, param ->
@@ -35,7 +35,7 @@ internal fun List<TypeParameter>.buildDescriptors(
     }
 }
 
-internal fun List<ValueParameter>.buildDescriptors(
+internal fun List<CirValueParameter>.buildDescriptors(
     containingDeclaration: CallableDescriptor
 ) = mapIndexed { index, param ->
     ValueParameterDescriptorImpl(
@@ -53,7 +53,7 @@ internal fun List<ValueParameter>.buildDescriptors(
     )
 }
 
-internal fun ExtensionReceiver.buildExtensionReceiver(
+internal fun CirExtensionReceiver.buildExtensionReceiver(
     containingDeclaration: CallableDescriptor
 ) = DescriptorFactory.createExtensionReceiverParameterForCallable(
     containingDeclaration,

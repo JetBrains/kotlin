@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CommonFunction
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.ExtensionReceiver.Companion.toReceiverNoAnnotations
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Function
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonFunction
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiverNoAnnotations
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
 
-class FunctionCommonizer(cache: ClassifiersCache) : AbstractFunctionOrPropertyCommonizer<Function>(cache) {
+class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirFunction>(cache) {
     private val modifiers = FunctionModifiersCommonizer.default()
     private val valueParameters = ValueParameterListCommonizer.default(cache)
     private var hasStableParameterNames = true
     private var hasSynthesizedParameterNames = false
 
-    override fun commonizationResult() = CommonFunction(
+    override fun commonizationResult() = CirCommonFunction(
         name = name,
         modality = modality.result,
         visibility = visibility.result,
@@ -30,7 +30,7 @@ class FunctionCommonizer(cache: ClassifiersCache) : AbstractFunctionOrPropertyCo
         hasSynthesizedParameterNames = hasSynthesizedParameterNames
     )
 
-    override fun doCommonizeWith(next: Function): Boolean {
+    override fun doCommonizeWith(next: CirFunction): Boolean {
         val result = super.doCommonizeWith(next)
                 && modifiers.commonizeWith(next)
                 && valueParameters.commonizeWith(next.valueParameters)

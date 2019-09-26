@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.FunctionModifiers
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionModifiers
 
-interface FunctionModifiersCommonizer : Commonizer<FunctionModifiers, FunctionModifiers> {
+interface FunctionModifiersCommonizer : Commonizer<CirFunctionModifiers, CirFunctionModifiers> {
     companion object {
         fun default(): FunctionModifiersCommonizer = DefaultFunctionModifiersCommonizer()
     }
 }
 
 private class DefaultFunctionModifiersCommonizer : FunctionModifiersCommonizer {
-    private var modifiers: FunctionModifiersImpl? = null
+    private var modifiers: CirFunctionModifiersImpl? = null
     private var error = false
 
-    override val result: FunctionModifiers
+    override val result: CirFunctionModifiers
         get() = modifiers?.takeIf { !error } ?: throw IllegalCommonizerStateException()
 
-    override fun commonizeWith(next: FunctionModifiers): Boolean {
+    override fun commonizeWith(next: CirFunctionModifiers): Boolean {
         if (error)
             return false
 
         val modifiers = modifiers
         if (modifiers == null)
-            this.modifiers = FunctionModifiersImpl(next)
+            this.modifiers = CirFunctionModifiersImpl(next)
         else {
             if (modifiers.isSuspend != next.isSuspend)
                 error = true
@@ -42,15 +42,15 @@ private class DefaultFunctionModifiersCommonizer : FunctionModifiersCommonizer {
         return !error
     }
 
-    private data class FunctionModifiersImpl(
+    private data class CirFunctionModifiersImpl(
         override var isOperator: Boolean,
         override var isInfix: Boolean,
         override var isInline: Boolean,
         override var isTailrec: Boolean,
         override var isSuspend: Boolean,
         override var isExternal: Boolean
-    ) : FunctionModifiers {
-        constructor(function: FunctionModifiers) : this(
+    ) : CirFunctionModifiers {
+        constructor(function: CirFunctionModifiers) : this(
             function.isOperator,
             function.isInfix,
             function.isInline,

@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Package
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.PackageNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPackage
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPackageNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-internal fun PackageNode.buildDescriptors(
+internal fun CirPackageNode.buildDescriptors(
     output: CommonizedGroup<CommonizedPackageFragmentDescriptor>,
     modules: List<ModuleDescriptorImpl?>
 ) {
@@ -26,7 +26,7 @@ internal fun PackageNode.buildDescriptors(
     common()?.buildDescriptor(output, indexOfCommon, modules)
 }
 
-private fun Package.buildDescriptor(
+private fun CirPackage.buildDescriptor(
     output: CommonizedGroup<CommonizedPackageFragmentDescriptor>,
     index: Int,
     modules: List<ModuleDescriptorImpl?>

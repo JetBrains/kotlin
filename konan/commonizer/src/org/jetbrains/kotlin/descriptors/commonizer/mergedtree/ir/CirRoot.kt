@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.commonizer.Target
 
-data class Package(val fqName: FqName) : Declaration
+data class CirRoot(val target: Target) : CirDeclaration

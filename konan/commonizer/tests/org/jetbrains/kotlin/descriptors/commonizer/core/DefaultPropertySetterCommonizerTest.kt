@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.Setter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSetter
 import org.junit.Test
 
-class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<Setter?, Setter?>() {
+class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<CirSetter?, CirSetter?>() {
 
     @Test
     fun absentOnly() = super.doTestSuccess(null, null, null, null)
@@ -56,13 +56,13 @@ class DefaultPropertySetterCommonizerTest : AbstractCommonizerTest<Setter?, Sett
 
     private fun doTestSuccess(expected: Visibility?, vararg variants: Visibility?) =
         super.doTestSuccess(
-            expected?.let { Setter.createDefaultNoAnnotations(expected) },
-            *variants.map { it?.let(Setter.Companion::createDefaultNoAnnotations) }.toTypedArray()
+            expected?.let { CirSetter.createDefaultNoAnnotations(expected) },
+            *variants.map { it?.let(CirSetter.Companion::createDefaultNoAnnotations) }.toTypedArray()
         )
 
     private fun doTestFailure(vararg variants: Visibility?) =
         super.doTestFailure(
-            *variants.map { it?.let(Setter.Companion::createDefaultNoAnnotations) }.toTypedArray()
+            *variants.map { it?.let(CirSetter.Companion::createDefaultNoAnnotations) }.toTypedArray()
         )
 
     override fun createCommonizer() = PropertySetterCommonizer.default()

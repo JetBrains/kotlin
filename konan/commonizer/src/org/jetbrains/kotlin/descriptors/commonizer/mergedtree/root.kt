@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.RootNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildRootNode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 internal fun mergeRoots(
     storageManager: StorageManager,
     modulesByTargets: List<Pair<InputTarget, Collection<ModuleDescriptor>>>
-): RootNode {
+): CirRootNode {
     val node = buildRootNode(storageManager, modulesByTargets.map { it.first })
 
     val modulesMap = CommonizedGroupMap<Name, ModuleDescriptor>(modulesByTargets.size)
