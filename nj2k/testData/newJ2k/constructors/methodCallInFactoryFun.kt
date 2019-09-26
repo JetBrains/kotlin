@@ -1,5 +1,4 @@
 internal class C(private val arg1: Int, private val arg2: Int, private val arg3: Int) {
-
     fun foo(p: Int): Int {
         return p
     }
@@ -17,4 +16,5 @@ internal class C(private val arg1: Int, private val arg2: Int, private val arg3:
             return 0
         }
     }
+
 }

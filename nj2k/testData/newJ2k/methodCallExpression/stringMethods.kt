@@ -118,7 +118,8 @@ internal class A {
     }
 
     fun unsupportedMethods() {
-        val s = "test string" /* TODO:
+        val s = "test string"
+        /* TODO:
         s.indexOf(32);
         s.indexOf(32, 2);
         s.lastIndexOf(32);

@@ -12,6 +12,5 @@ class C {
         } catch (e: IOException) {
             println(e)
         }
-
     }
 }

@@ -9,7 +9,6 @@ internal object One {
 }
 
 internal class IntContainer(i: Int)
-
 internal class Test {
     fun putInt(i: Int) {}
     fun test() {

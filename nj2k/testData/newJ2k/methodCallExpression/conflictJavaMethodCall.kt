@@ -1,5 +1,4 @@
 // RUNTIME_WITH_FULL_JDK
-
 class Test {
     internal fun m() {
         java.lang.Double.isFinite(2.0)

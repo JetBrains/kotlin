@@ -11,21 +11,13 @@ internal object Test {
         b += c
         a = b
         //-----
-
-
         a = b
         //-----
-
-
         a += b
         //-----
-
-
         b = c
         a += b
         //-----
-
-
         b += c
         a = b
     }

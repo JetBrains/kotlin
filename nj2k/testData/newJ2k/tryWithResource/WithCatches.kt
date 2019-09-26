@@ -14,6 +14,5 @@ class C {
         } catch (e: Exception) {
             System.err.println(e)
         }
-
     }
 }

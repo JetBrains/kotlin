@@ -10,8 +10,10 @@ internal class A {
     fun foo(c: KotlinClass): Int {
         return (c.nullableProperty!!.length
                 + c.property.length
-                + nullableStaticVar!! + staticVar
-                + nullableStaticFun(1)!! + staticFun(1)
+                + nullableStaticVar!!
+                + staticVar
+                + nullableStaticFun(1)!!
+                + staticFun(1)
                 + nullableGlobalFunction("")!!.length
                 + globalFunction("").length)
     }

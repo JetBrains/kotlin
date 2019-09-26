@@ -21,6 +21,5 @@ internal object FileRead {
         } catch (e: Exception) {
             System.err.println("Error: " + e.message)
         }
-
     }
 }

@@ -3,4 +3,5 @@ class AAA {
         set(x) {
             field += x
         }
+
 }

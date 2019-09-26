@@ -10,21 +10,13 @@ internal object Test {
         b += c
         a = b
         //-----
-
-
         a = b
         //-----
-
-
         a += b
         //-----
-
-
         b = c
         a += b
         //-----
-
-
         a = c.let { b += it; b }
     }
 }

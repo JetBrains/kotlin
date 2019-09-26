@@ -8,7 +8,6 @@ internal class Test {
         println(true or false)
         println(true xor false)
         println(!true)
-
         println(true && false)
         println(true || false)
     }

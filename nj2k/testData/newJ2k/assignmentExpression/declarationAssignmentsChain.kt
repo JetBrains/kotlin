@@ -7,27 +7,20 @@ internal object Test {
         var d = 0
         val e = 0
         //-----
-
         d *= e
         c = d
         b += c
         a = b
         val f = a
-//-----
+        //-----
         val g = a
         //-----
-
-
         a = b
         val h = a
         //-----
-
-
         a += b
         val i = a
         //-----
-
-
         b = c
         a += b
         val j = a

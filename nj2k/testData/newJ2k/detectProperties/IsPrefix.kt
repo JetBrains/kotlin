@@ -2,6 +2,7 @@ internal interface I {
     val isSomething1: Boolean
     val isSomething2: Boolean?
     val isSomething3: Int
+
     fun isSomething4(): Boolean
     fun setSomething4(value: Boolean)
     fun isSomething5(): Boolean

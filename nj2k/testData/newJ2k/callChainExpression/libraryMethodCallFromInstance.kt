@@ -1,9 +1,7 @@
 internal class Library {
     fun call() {}
-
     val string: String
         get() = ""
-
 }
 
 internal class User {
@@ -11,7 +9,6 @@ internal class User {
         val lib = Library()
         lib.call()
         lib.string.isEmpty()
-
         Library().call()
         Library().string.isEmpty()
     }

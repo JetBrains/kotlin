@@ -1,4 +1,7 @@
-internal enum class E { A, B, C }
+internal enum class E {
+    A, B, C
+}
+
 internal class A {
     fun foo(list: List<String?>, collection: Collection<Int?>, map: Map<Int, Int?>) {
         val a = "".length
