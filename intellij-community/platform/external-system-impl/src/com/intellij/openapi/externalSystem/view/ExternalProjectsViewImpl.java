@@ -289,7 +289,7 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
     return group;
   }
 
-  private void initStructure() {
+  public void initStructure() {
     myStructure = new ExternalProjectsStructure(myProject, myTree);
     Disposer.register(this, myStructure);
     myStructure.init(this);
@@ -533,11 +533,6 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
   }
 
   private void scheduleStructureRequest(final Runnable r) {
-    if (isUnitTestMode()) {
-      r.run();
-      return;
-    }
-
     invokeLater(myProject, () -> {
       if (!myToolWindow.isVisible()) return;
 
