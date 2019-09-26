@@ -18,6 +18,8 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -38,20 +40,12 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
-import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
-import com.intellij.openapi.progress.util.ReadTask;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -67,12 +61,14 @@ import com.intellij.usageView.UsageViewShortNameLocation;
 import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.usageView.UsageViewUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.lang.annotations.JdkConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.concurrency.CancellablePromise;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -85,8 +81,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Future;
 
 public final class CtrlMouseHandler {
   private static final Logger LOG = Logger.getInstance(CtrlMouseHandler.class);
@@ -637,8 +632,7 @@ public final class CtrlMouseHandler {
     private final int myHostOffset;
     private BrowseMode myBrowseMode;
     private boolean myDisposed;
-    private final ProgressIndicator myProgress = new ProgressIndicatorBase();
-    private CompletableFuture<?> myExecutionProgress;
+    private CancellablePromise<?> myExecutionProgress;
 
     TooltipProvider(@NotNull EditorEx hostEditor, @NotNull LogicalPosition hostPos) {
       myHostEditor = hostEditor;
@@ -653,7 +647,7 @@ public final class CtrlMouseHandler {
 
     void dispose() {
       myDisposed = true;
-      myProgress.cancel();
+      myExecutionProgress.cancel();
     }
 
     BrowseMode getBrowseMode() {
@@ -673,31 +667,20 @@ public final class CtrlMouseHandler {
         return;
       }
 
-      PsiDocumentManager.getInstance(myProject).performWhenAllCommitted(
-        () -> myExecutionProgress = ProgressIndicatorUtils.scheduleWithWriteActionPriority(myProgress, new ReadTask() {
-          @Nullable
-          @Override
-          public Continuation performInReadAction(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
-            return doExecute();
-          }
-
-          @Override
-          public void onCanceled(@NotNull ProgressIndicator indicator) {
-            LOG.debug("Highlighting was cancelled");
-          }
-        }));
+      myExecutionProgress = ReadAction
+        .nonBlocking(() -> doExecute())
+        .withDocumentsCommitted(myProject)
+        .expireWhen(() -> isTaskOutdated(myHostEditor))
+        .finishOnUiThread(ModalityState.defaultModalityState(), Runnable::run)
+        .submit(AppExecutorUtil.getAppExecutorService());
     }
 
-    private ReadTask.Continuation createDisposalContinuation() {
-      return new ReadTask.Continuation(() -> {
-        if (!isTaskOutdated(myHostEditor)) disposeHighlighter();
-      });
+    private Runnable createDisposalContinuation() {
+      return CtrlMouseHandler.this::disposeHighlighter;
     }
 
-    @Nullable
-    private ReadTask.Continuation doExecute() {
-      if (isTaskOutdated(myHostEditor)) return null;
-
+    @NotNull
+    private Runnable doExecute() {
       EditorEx editor = getPossiblyInjectedEditor();
       int offset = getOffset(editor);
 
@@ -717,10 +700,7 @@ public final class CtrlMouseHandler {
       }
 
       LOG.debug("Obtained info about element under cursor");
-      return new ReadTask.Continuation(() -> {
-        if (isTaskOutdated(editor)) return;
-        addHighlighterAndShowHint(info, docInfo, editor);
-      });
+      return () -> addHighlighterAndShowHint(info, docInfo, editor);
     }
 
     @NotNull
@@ -819,47 +799,27 @@ public final class CtrlMouseHandler {
       if (!hint.isVisible()) return;
       Disposable hintDisposable = Disposer.newDisposable("CtrlMouseHandler.TooltipProvider.updateOnPsiChanges");
       hint.addHintListener(__ -> Disposer.dispose(hintDisposable));
-      AtomicBoolean updating = new AtomicBoolean(false);
-      myProject.getMessageBus().connect(hintDisposable).subscribe(PsiModificationTracker.TOPIC, () -> {
-        if (updating.getAndSet(true)) return;
-        PsiDocumentManager.getInstance(myProject).performWhenAllCommitted(() -> {
-          ProgressIndicatorBase progress = new ProgressIndicatorBase();
-          if (Disposer.isDisposed(hintDisposable)) {
-            progress.cancel();
+      myProject.getMessageBus().connect(hintDisposable).subscribe(PsiModificationTracker.TOPIC, () -> ReadAction
+        .nonBlocking(() -> {
+          try {
+            DocInfo newDocInfo = info.getInfo();
+            return (Runnable)() -> {
+              if (newDocInfo.text != null && !oldText.equals(newDocInfo.text)) {
+                updateText(newDocInfo.text, textConsumer, hint, editor);
+              }
+            };
           }
-          else {
-            Disposer.register(hintDisposable, () -> progress.cancel());
+          catch (IndexNotReadyException e) {
+            showDumbModeNotification(myProject);
+            return createDisposalContinuation();
           }
-          ProgressIndicatorUtils.scheduleWithWriteActionPriority(progress, new ReadTask() {
-            @Nullable
-            @Override
-            public Continuation performInReadAction(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
-              if (!info.isValid(editor.getDocument())) {
-                updating.set(false);
-                return null;
-              }
-              try {
-                DocInfo newDocInfo = info.getInfo();
-                return new Continuation(() -> {
-                  updating.set(false);
-                  if (newDocInfo.text != null && !oldText.equals(newDocInfo.text)) {
-                    updateText(newDocInfo.text, textConsumer, hint, editor);
-                  }
-                });
-              }
-              catch (IndexNotReadyException e) {
-                showDumbModeNotification(myProject);
-                return createDisposalContinuation();
-              }
-            }
-
-            @Override
-            public void onCanceled(@NotNull ProgressIndicator indicator) {
-              updating.set(false);
-            }
-          });
-        });
-      });
+        })
+        .finishOnUiThread(ModalityState.defaultModalityState(), Runnable::run)
+        .withDocumentsCommitted(myProject)
+        .expireWith(hintDisposable)
+        .expireWhen(() -> !info.isValid(editor.getDocument()))
+        .coalesceBy(hint)
+        .submit(AppExecutorUtil.getAppExecutorService()));
     }
 
     public void showHint(@NotNull LightweightHint hint, @NotNull Editor editor) {
@@ -909,7 +869,7 @@ public final class CtrlMouseHandler {
   public boolean isCalculationInProgress() {
     TooltipProvider provider = myTooltipProvider;
     if (provider == null) return false;
-    CompletableFuture<?> progress = provider.myExecutionProgress;
+    Future<?> progress = provider.myExecutionProgress;
     if (progress == null) return false;
     return !progress.isDone();
   }
