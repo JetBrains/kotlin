@@ -33,11 +33,11 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
         val newSelector = conversion.createBuilder().build(selector)
 
         if (this is JKQualifiedExpression && conversion.replaceType == ReplaceType.REPLACE_WITH_QUALIFIER) {
-            newSelector.rightNonCodeElements += receiver.leftNonCodeElements
-            newSelector.rightNonCodeElements += receiver.leftNonCodeElements
-            newSelector.rightNonCodeElements += receiver.rightNonCodeElements
-            newSelector.rightNonCodeElements += selector.leftNonCodeElements
-            newSelector.rightNonCodeElements += selector.rightNonCodeElements
+            newSelector.leadingComments += receiver.trailingComments
+            newSelector.leadingComments += receiver.trailingComments
+            newSelector.leadingComments += receiver.leadingComments
+            newSelector.leadingComments += selector.trailingComments
+            newSelector.leadingComments += selector.leadingComments
         }
 
         return when (conversion.replaceType) {
@@ -93,19 +93,19 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                         symbolProvider.provideMethodSymbol(fqName),
                         argumentsProvider(from::arguments.detached()),
                         from::typeArgumentList.detached()
-                    ).withNonCodeElementsFrom(from)
+                    ).withFormattingFrom(from)
                 is JKFieldAccessExpression ->
                     JKCallExpressionImpl(
                         symbolProvider.provideMethodSymbol(fqName),
                         JKArgumentList(),
                         JKTypeArgumentList()
-                    ).withNonCodeElementsFrom(from)
+                    ).withFormattingFrom(from)
                 is JKNewExpression ->
                     JKCallExpressionImpl(
                         symbolProvider.provideMethodSymbol(fqName),
                         argumentsProvider(from::arguments.detached()),
                         JKTypeArgumentList()
-                    ).withNonCodeElementsFrom(from)
+                    ).withFormattingFrom(from)
                 else -> error("Bad conversion")
             }
     }
@@ -118,11 +118,11 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                 is JKCallExpression ->
                     JKFieldAccessExpression(
                         symbolProvider.provideFieldSymbol(fqName)
-                    ).withNonCodeElementsFrom(from)
+                    ).withFormattingFrom(from)
                 is JKFieldAccessExpression ->
                     JKFieldAccessExpression(
                         symbolProvider.provideFieldSymbol(fqName)
-                    ).withNonCodeElementsFrom(from)
+                    ).withFormattingFrom(from)
                 else -> error("Bad conversion")
             }
     }
@@ -141,7 +141,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                             JKArgumentList(arguments.drop(1)),
                             from::typeArgumentList.detached()
                         )
-                    ).withNonCodeElementsFrom(from)
+                    ).withFormattingFrom(from)
                 }
                 else -> error("Bad conversion")
             }
@@ -354,7 +354,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
                 JKArgumentList(
                     detachedArguments.drop(1) + JKNamedArgument(
                         detachedArguments.first()::value.detached().also {
-                            it.clearNonCodeElements()
+                            it.clearFormatting()
                         },
                         JKNameIdentifier("ignoreCase")
                     )

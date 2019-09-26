@@ -29,49 +29,50 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
     }
 
     inner class Visitor : JKVisitorWithCommentsPrinting() {
-        private val printedTokens = mutableSetOf<JKNonCodeElement>()
+        private val printedTokens = mutableSetOf<JKComment>()
 
         //TODO move to ast transformation phase
-        private fun JKNonCodeElement.shouldBeDropped(): Boolean =
-            this is JKCommentElement && text.startsWith("//noinspection")
+        private fun JKComment.shouldBeDropped(): Boolean =
+            text.startsWith("//noinspection")
 
-        private fun JKNonCodeElement.createText() =
+        private fun JKComment.createText() =
             if (this !in printedTokens) {
                 printedTokens += this
                 text
-            } else ""
+            } else null
 
 
-        private fun List<JKNonCodeElement>.createText(): String {
-            val text = filterNot { it.shouldBeDropped() }.joinToString("") { token -> token.createText() }
-            val needNewLine = text.lastIndexOf('\n') < text.lastIndexOf("//")
-            return text + "\n".takeIf { needNewLine }.orEmpty()
+        private fun List<JKComment>.createText(): String = buildString {
+            var needNewLine = false
+            for (comment in this@createText) {
+                if (comment.shouldBeDropped()) continue
+                val text = comment.createText() ?: continue
+                if (needNewLine) appendln() else append(' ')
+                append(text)
+                needNewLine = text.startsWith("//") || '\n' in text
+            }
         }
 
-        private fun JKNonCodeElementsListOwner.needPreserveSpacesAfterLastComment() =
-            this is JKArgument
-                    || this is JKParameter
-                    || safeAs<JKTreeElement>()?.parent is JKArgument
-                    || safeAs<JKTreeElement>()?.parent is JKBinaryExpression
-                    || safeAs<JKTreeElement>()?.parent is JKQualifiedExpression
+        private fun String.hasNoLineBreakAfterSingleLineComment() = lastIndexOf('\n') < lastIndexOf("//")
 
-        override fun printLeftNonCodeElements(element: JKNonCodeElementsListOwner) {
-            val text = element.leftNonCodeElements
-                .let {
-                    if (element.needPreserveSpacesAfterLastComment()) it
-                    else it.dropWhile { it is JKSpaceElement }
-                }.createText()
+        override fun printLeftNonCodeElements(element: JKFormattingOwner) {
+            val text = element.trailingComments.createText()
             printer.printWithNoIndent(text)
+
+            val addNewLine = element.hasTrailingLineBreak
+                    || element is JKDeclaration && element.trailingComments.isNotEmpty() // add new line between comment & declaration
+                    || text.hasNoLineBreakAfterSingleLineComment()
+
+            if (addNewLine) printer.println()
         }
 
 
-        override fun printRightNonCodeElements(element: JKNonCodeElementsListOwner) {
-            val text = element.rightNonCodeElements
-                .let {
-                    if (element.needPreserveSpacesAfterLastComment()) it
-                    else it.dropLastWhile { it is JKSpaceElement }
-                }.createText()
+        override fun printRightNonCodeElements(element: JKFormattingOwner) {
+            val text = element.leadingComments.createText()
             printer.printWithNoIndent(text)
+
+            val addNewLine = element.hasLeadingLineBreak || text.hasNoLineBreakAfterSingleLineComment()
+            if (addNewLine) printer.println()
         }
 
         private fun renderTokenElement(tokenElement: JKTokenElement) {

@@ -24,7 +24,7 @@ class SynchronizedStatementConversion(context: NewJ2kConverterContext) : Recursi
                     element.lockExpression,
                     lambdaBody
                 )
-            ).withNonCodeElementsFrom(element)
+            ).withFormattingFrom(element)
         return recurse(JKExpressionStatement(synchronizedCall))
     }
 

@@ -8,8 +8,6 @@ internal class A {
     fun constructors() {
         String()
         // TODO: new String("original");
-
-
         String(charArrayOf('a', 'b', 'c'))
         String(charArrayOf('b', 'd'), 1, 1)
         String(intArrayOf(32, 65, 127), 0, 3)
@@ -88,8 +86,7 @@ internal class A {
         useSplit(s.split("\\s+", 2));
         int limit = 5;
         useSplit(s.split("\\s+", limit));
-        */
-        s.trim { it <= ' ' }
+        */s.trim { it <= ' ' }
         "$s another"
         s.toByteArray()
         s.toByteArray(Charset.forName("utf-8"))
@@ -121,8 +118,7 @@ internal class A {
     }
 
     fun unsupportedMethods() {
-        val s = "test string"
-        /* TODO:
+        val s = "test string" /* TODO:
         s.indexOf(32);
         s.indexOf(32, 2);
         s.lastIndexOf(32);

@@ -40,8 +40,10 @@ abstract class JKBlock : JKTreeElement() {
 
 
 object JKBodyStub : JKBlock() {
-    override val leftNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
-    override val rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
+    override val trailingComments: MutableList<JKComment> = mutableListOf()
+    override val leadingComments: MutableList<JKComment> = mutableListOf()
+    override var hasTrailingLineBreak = false
+    override var hasLeadingLineBreak = false
 
     override fun copy(): JKTreeElement = this
 
@@ -172,7 +174,7 @@ class JKNameIdentifier(val value: String) : JKTreeElement() {
 }
 
 
-interface JKAnnotationListOwner : JKNonCodeElementsListOwner {
+interface JKAnnotationListOwner : JKFormattingOwner {
     var annotationList: JKAnnotationList
 }
 

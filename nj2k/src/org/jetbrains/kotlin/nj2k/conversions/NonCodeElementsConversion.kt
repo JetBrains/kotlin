@@ -14,8 +14,8 @@ class NonCodeElementsConversion(context: NewJ2kConverterContext) : RecursiveAppl
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         when (element) {
             is JKClass -> {
-                element.name.rightNonCodeElements += element.inheritance.leftNonCodeElements
-                element.inheritance.leftNonCodeElements.clear()
+                element.name.leadingComments += element.inheritance.trailingComments
+                element.inheritance.trailingComments.clear()
             }
         }
         return recurse(element)

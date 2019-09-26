@@ -26,8 +26,8 @@ class JKBinaryExpression(
     right: JKExpression,
     override var operator: JKOperator
 ) : JKOperatorExpression() {
-    var right by child(right)
     var left by child(left)
+    var right by child(right)
 
     override fun accept(visitor: JKVisitor) = visitor.visitBinaryExpression(this)
 }

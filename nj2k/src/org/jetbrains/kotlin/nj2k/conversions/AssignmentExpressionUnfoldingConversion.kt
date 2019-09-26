@@ -34,14 +34,14 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
                     val assignment = statement.expression as JKJavaAssignmentExpression
                     newStatements += assignment
                         .unfoldToStatementsList(assignmentTarget = null)
-                        .withNonCodeElementsFrom(statement)
+                        .withFormattingFrom(statement)
                 }
                 statement is JKDeclarationStatement && statement.containsAssignment() -> {
                     val variable = statement.declaredStatements.single() as JKVariable
                     val assignment = variable.initializer as JKJavaAssignmentExpression
                     newStatements += assignment
                         .unfoldToStatementsList(variable.detached(statement))
-                        .withNonCodeElementsFrom(statement)
+                        .withFormattingFrom(statement)
                 }
                 else -> {
                     newStatements += statement
@@ -62,7 +62,7 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
                 assignment::expression.detached(),
                 assignment.operator
             )
-        }.withNonCodeElementsFrom(this)
+        }.withFormattingFrom(this)
     }
 
     private fun JKExpressionStatement.canBeConvertedToBlock() = when (val parent = parent) {
@@ -73,7 +73,7 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
     }
 
     private fun JKJavaAssignmentExpression.convertAssignments() =
-        unfoldToExpressionsChain().withNonCodeElementsFrom(this)
+        unfoldToExpressionsChain().withFormattingFrom(this)
 
     private fun JKDeclarationStatement.containsAssignment() =
         declaredStatements.singleOrNull()?.safeAs<JKVariable>()?.initializer is JKJavaAssignmentExpression
@@ -118,7 +118,7 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
             this::field.detached(),
             JKKtItExpression(operator.returnType),
             operator
-        ).withNonCodeElementsFrom(this)
+        ).withFormattingFrom(this)
         return when {
             operator.isSimpleToken() ->
                 JKAssignmentChainAlsoLink(receiver, assignment, field.copyTreeAndDetach())
@@ -129,7 +129,7 @@ class AssignmentExpressionUnfoldingConversion(context: NewJ2kConverterContext) :
 
     private fun JKJavaAssignmentExpression.toDeclarationChainLink(expression: JKExpression) =
         createKtAssignmentStatement(this::field.detached(), expression, this.operator)
-            .withNonCodeElementsFrom(this)
+            .withFormattingFrom(this)
 
     private fun createKtAssignmentStatement(
         field: JKExpression,

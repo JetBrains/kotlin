@@ -29,7 +29,7 @@ class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplica
                 tryStatement::finallyBlock.detached(),
                 tryStatement.catchSections.flatMap(::convertCatchSection)
             )
-        ).withNonCodeElementsFrom(tryStatement)
+        ).withFormattingFrom(tryStatement)
 
     private fun convertTryStatementWithResources(tryStatement: JKJavaTryStatement): JKStatement {
         val body =
@@ -44,7 +44,7 @@ class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplica
                     tryStatement::finallyBlock.detached(),
                     tryStatement.catchSections.flatMap(::convertCatchSection)
                 )
-            ).withNonCodeElementsFrom(tryStatement)
+            ).withFormattingFrom(tryStatement)
         } else body
     }
 
@@ -77,7 +77,7 @@ class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplica
             JKKtTryCatchSection(
                 parameter,
                 javaCatchSection.block.copyTreeAndDetach()
-            ).withNonCodeElementsFrom(javaCatchSection)
+            ).withFormattingFrom(javaCatchSection)
         }
     }
 }

@@ -5,10 +5,6 @@ class TestMutltipleCtorsWithJavadoc
  */(private val x: String?) {
     private var y: String? = null
 
-    // ---
-    // Constructors
-    //
-
     /**
      * Javadoc for 2nd ctor
      * @param x
@@ -17,6 +13,7 @@ class TestMutltipleCtorsWithJavadoc
     constructor(x: String?, y: String?) : this(x) {
         this.y = y
     }
-
-
+    // ---
+// Constructors
+//
 }

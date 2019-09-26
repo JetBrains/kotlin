@@ -46,9 +46,11 @@ private class JKListChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKT
 }
 
 
-abstract class JKTreeElement : JKElement, JKNonCodeElementsListOwner, Cloneable {
-    override val leftNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
-    override val rightNonCodeElements: MutableList<JKNonCodeElement> = mutableListOf()
+abstract class JKTreeElement : JKElement, JKFormattingOwner, Cloneable {
+    override val trailingComments: MutableList<JKComment> = mutableListOf()
+    override val leadingComments: MutableList<JKComment> = mutableListOf()
+    override var hasTrailingLineBreak = false
+    override var hasLeadingLineBreak = false
 
     override var parent: JKElement? = null
 
@@ -149,11 +151,11 @@ interface PsiOwner {
 
 class PsiOwnerImpl(override var psi: PsiElement? = null) : PsiOwner
 
-interface JKTypeArgumentListOwner : JKNonCodeElementsListOwner {
+interface JKTypeArgumentListOwner : JKFormattingOwner {
     var typeArgumentList: JKTypeArgumentList
 }
 
-interface JKTypeParameterListOwner : JKNonCodeElementsListOwner {
+interface JKTypeParameterListOwner : JKFormattingOwner {
     var typeParameterList: JKTypeParameterList
 }
 

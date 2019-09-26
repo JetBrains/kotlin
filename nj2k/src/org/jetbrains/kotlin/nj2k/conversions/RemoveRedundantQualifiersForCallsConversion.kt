@@ -24,7 +24,7 @@ class RemoveRedundantQualifiersForCallsConversion(context: NewJ2kConverterContex
         }
         if (needRemoveQualifier) {
             element.invalidate()
-            return recurse(element.selector.withNonCodeElementsFrom(element.receiver).withNonCodeElementsFrom(element))
+            return recurse(element.selector.withFormattingFrom(element.receiver).withFormattingFrom(element))
         }
         return recurse(element)
     }

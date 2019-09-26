@@ -5,10 +5,7 @@ internal class A // end of primary constructor body
     // this is a secondary constructor 2
     constructor(s: String) : this(s.length) {} // end of secondary constructor 2 body
 
-
-// this is a primary constructor
-
-
+    // this is a primary constructor
     // this is a secondary constructor 1
 
 
@@ -18,7 +15,7 @@ internal class A // end of primary constructor body
 internal class B // end of constructor body
 (private val x: Int) {
     fun foo() {}
-// this constructor will disappear
+    // this constructor will disappear
 
 }
 

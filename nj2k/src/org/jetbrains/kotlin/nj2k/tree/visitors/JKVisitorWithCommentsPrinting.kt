@@ -3,8 +3,8 @@ package org.jetbrains.kotlin.nj2k.tree.visitors
 import org.jetbrains.kotlin.nj2k.tree.*
 
 abstract class JKVisitorWithCommentsPrinting : JKVisitor() {
-    abstract fun printLeftNonCodeElements(element: JKNonCodeElementsListOwner)
-    abstract fun printRightNonCodeElements(element: JKNonCodeElementsListOwner)
+    abstract fun printLeftNonCodeElements(element: JKFormattingOwner)
+    abstract fun printRightNonCodeElements(element: JKFormattingOwner)
 
     override fun visitTreeElement(treeElement: JKTreeElement) {
         printLeftNonCodeElements(treeElement)

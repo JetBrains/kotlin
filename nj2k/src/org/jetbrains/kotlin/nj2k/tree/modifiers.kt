@@ -98,7 +98,7 @@ enum class Mutability(override val text: String) : Modifier {
     UNKNOWN("var")
 }
 
-interface JKModifiersListOwner : JKNonCodeElementsListOwner
+interface JKModifiersListOwner : JKFormattingOwner
 
 fun JKOtherModifiersOwner.elementByModifier(modifier: OtherModifier): JKOtherModifierElement? =
     otherModifierElements.firstOrNull { it.otherModifier == modifier }

@@ -23,25 +23,25 @@ class JavaModifiersConversion(context: NewJ2kConverterContext) : RecursiveApplic
             element.elementByModifier(OtherModifier.VOLATILE)?.also { modifierElement ->
                 element.otherModifierElements -= modifierElement
                 element.annotationList.annotations +=
-                    jvmAnnotation("Volatile", symbolProvider).withNonCodeElementsFrom(modifierElement)
+                    jvmAnnotation("Volatile", symbolProvider).withFormattingFrom(modifierElement)
             }
 
             element.elementByModifier(OtherModifier.TRANSIENT)?.also { modifierElement ->
                 element.otherModifierElements -= modifierElement
                 element.annotationList.annotations +=
-                    jvmAnnotation("Transient", symbolProvider).withNonCodeElementsFrom(modifierElement)
+                    jvmAnnotation("Transient", symbolProvider).withFormattingFrom(modifierElement)
             }
 
             element.elementByModifier(OtherModifier.STRICTFP)?.also { modifierElement ->
                 element.otherModifierElements -= modifierElement
                 element.annotationList.annotations +=
-                    jvmAnnotation("Strictfp", symbolProvider).withNonCodeElementsFrom(modifierElement)
+                    jvmAnnotation("Strictfp", symbolProvider).withFormattingFrom(modifierElement)
             }
 
             element.elementByModifier(OtherModifier.SYNCHRONIZED)?.also { modifierElement ->
                 element.otherModifierElements -= modifierElement
                 element.annotationList.annotations +=
-                    jvmAnnotation("Synchronized", symbolProvider).withNonCodeElementsFrom(modifierElement)
+                    jvmAnnotation("Synchronized", symbolProvider).withFormattingFrom(modifierElement)
             }
 
             element.elementByModifier(OtherModifier.NATIVE)?.also { modifierElement ->

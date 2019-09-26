@@ -43,7 +43,7 @@ class BoxedTypeOperationsConversion(context: NewJ2kConverterContext) : Recursive
                 "kotlin.${primitiveTypeName.capitalize()}.to${operationType.capitalize()}"
             ),
             JKArgumentList()
-        ).withNonCodeElementsFrom(methodCallExpression)
+        ).withFormattingFrom(methodCallExpression)
     }
 
     companion object {

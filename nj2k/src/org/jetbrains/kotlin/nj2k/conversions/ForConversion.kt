@@ -27,8 +27,8 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaForLoopStatement) return recurse(element)
 
-        convertToForeach(element)?.also { return recurse(it.withNonCodeElementsFrom(element)) }
-        convertToWhile(element)?.also { return recurse(it.withNonCodeElementsFrom(element)) }
+        convertToForeach(element)?.also { return recurse(it.withFormattingFrom(element)) }
+        convertToWhile(element)?.also { return recurse(it.withFormattingFrom(element)) }
 
         return recurse(element)
     }

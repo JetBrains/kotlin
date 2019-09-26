@@ -29,7 +29,7 @@ class ConstructorConversion(context: NewJ2kConverterContext) : RecursiveApplicab
             element.modalityElement
         ).also {
             symbolProvider.transferSymbol(it, element)
-        }.withNonCodeElementsFrom(element)
+        }.withFormattingFrom(element)
     }
 
     private fun lookupDelegationCall(block: JKBlock): JKDelegationConstructorCall? {

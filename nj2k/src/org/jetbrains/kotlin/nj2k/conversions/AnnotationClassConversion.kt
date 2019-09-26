@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.modality
 import org.jetbrains.kotlin.nj2k.toExpression
 import org.jetbrains.kotlin.nj2k.tree.*
 
@@ -58,11 +57,11 @@ class AnnotationClassConversion(context: NewJ2kConverterContext) : RecursiveAppl
                 JKKtAnnotationArrayInitializerExpression(initializer)
             } else initializer
         ).also { parameter ->
-            if (leftNonCodeElements.any { it is JKCommentElement }) {
-                parameter.leftNonCodeElements += leftNonCodeElements
+            if (trailingComments.any { it is JKComment }) {
+                parameter.trailingComments += trailingComments
             }
-            if (rightNonCodeElements.any { it is JKCommentElement }) {
-                parameter.rightNonCodeElements += rightNonCodeElements
+            if (leadingComments.any { it is JKComment }) {
+                parameter.leadingComments += leadingComments
             }
 
         }

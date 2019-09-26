@@ -34,5 +34,5 @@ class StaticInitDeclarationConversion(context : NewJ2kConverterContext) : Recurs
     }
 
     private fun JKJavaStaticInitDeclaration.toKtInitDeclaration() =
-        JKKtInitDeclaration(::block.detached()).withNonCodeElementsFrom(this)
+        JKKtInitDeclaration(::block.detached()).withFormattingFrom(this)
 }

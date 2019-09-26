@@ -32,10 +32,10 @@ class PrimaryConstructorDetectConversion(context: NewJ2kConverterContext) : Recu
         primaryConstructorCandidate.invalidate()
         if (primaryConstructorCandidate.block.statements.isNotEmpty()) {
             val initDeclaration = JKKtInitDeclaration(primaryConstructorCandidate.block)
-                .withNonCodeElementsFrom(primaryConstructorCandidate)
-            primaryConstructorCandidate.clearNonCodeElements()
+                .withFormattingFrom(primaryConstructorCandidate)
+            primaryConstructorCandidate.clearFormatting()
             primaryConstructorCandidate.forEachModifier { modifierElement ->
-                modifierElement.clearNonCodeElements()
+                modifierElement.clearFormatting()
             }
             element.classBody.declarations =
                 element.classBody.declarations.replace(primaryConstructorCandidate, initDeclaration)
@@ -52,7 +52,7 @@ class PrimaryConstructorDetectConversion(context: NewJ2kConverterContext) : Recu
                 primaryConstructorCandidate.otherModifierElements,
                 primaryConstructorCandidate.visibilityElement,
                 primaryConstructorCandidate.modalityElement
-            ).withNonCodeElementsFrom(primaryConstructorCandidate)
+            ).withFormattingFrom(primaryConstructorCandidate)
 
         symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)
 

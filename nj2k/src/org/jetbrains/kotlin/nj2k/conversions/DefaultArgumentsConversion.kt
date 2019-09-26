@@ -108,7 +108,7 @@ class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApp
                 parameter.initializer = remapParameterSymbol(defaultValue) as JKExpression
             }
             element.declarations -= method
-            calledMethod.withNonCodeElementsFrom(method)
+            calledMethod.withFormattingFrom(method)
         }
         if (element.parentOfType<JKClass>()?.classKind != JKClass.ClassKind.ANNOTATION) {
             for (method in element.declarations) {

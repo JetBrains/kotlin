@@ -102,7 +102,7 @@ fun <R : JKTreeElement> applyRecursive(
 
 
 inline fun <reified T : JKTreeElement> T.copyTree(): T =
-    copy().withNonCodeElementsFrom(this) as T
+    copy().withFormattingFrom(this) as T
 
 inline fun <reified T : JKTreeElement> T.copyTreeAndDetach(): T =
     copyTree().also {

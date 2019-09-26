@@ -45,7 +45,7 @@ fun canKeepEqEq(left: PsiExpression, right: PsiExpression?): Boolean {
 
 internal fun PsiMember.visibility(
     referenceSearcher: ReferenceSearcher,
-    assignNonCodeElements: ((JKNonCodeElementsListOwner, PsiElement) -> Unit)?
+    assignNonCodeElements: ((JKFormattingOwner, PsiElement) -> Unit)?
 ): JKVisibilityModifierElement =
     modifierList?.children?.mapNotNull { child ->
         if (child !is PsiKeyword) return@mapNotNull null
@@ -64,7 +64,7 @@ internal fun PsiMember.visibility(
     }?.firstOrNull() ?: JKVisibilityModifierElement(Visibility.INTERNAL)
 
 
-fun PsiMember.modality(assignNonCodeElements: ((JKNonCodeElementsListOwner, PsiElement) -> Unit)?) =
+fun PsiMember.modality(assignNonCodeElements: ((JKFormattingOwner, PsiElement) -> Unit)?) =
     modifierList?.children?.mapNotNull { child ->
         if (child !is PsiKeyword) return@mapNotNull null
         when (child.text) {

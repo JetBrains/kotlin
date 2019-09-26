@@ -48,7 +48,7 @@ class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveAppl
                                 statement.block.statements
                                     .takeWhile { !isSwitchBreak(it) }
                                     .map { it.copyTreeAndDetach() }
-                            ).withNonCodeElementsFrom(statement)
+                            ).withFormattingFrom(statement)
                         isSwitchBreak(statement) -> null
                         else -> statement.copyTreeAndDetach()
                     }

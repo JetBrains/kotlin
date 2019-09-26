@@ -53,7 +53,7 @@ class ClassToObjectPromotionConversion(context: NewJ2kConverterContext) : Recurs
                         element.otherModifierElements,
                         element.visibilityElement,
                         JKModalityModifierElement(Modality.FINAL)
-                    ).withNonCodeElementsFrom(element)
+                    ).withFormattingFrom(element)
                 )
             }
         }

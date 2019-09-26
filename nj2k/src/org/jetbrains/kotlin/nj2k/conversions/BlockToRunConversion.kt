@@ -27,7 +27,7 @@ class BlockToRunConversion(context: NewJ2kConverterContext) : RecursiveApplicabl
             symbolProvider.provideMethodSymbol("kotlin.run"),
             JKArgumentList(lambda)
         )
-        return recurse(JKExpressionStatement(call).withNonCodeElementsFrom(element))
+        return recurse(JKExpressionStatement(call).withFormattingFrom(element))
     }
 
 }
