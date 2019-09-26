@@ -51,12 +51,12 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
             import androidx.compose.*
 
             @Composable fun Int.Foo() {}
-            
+
             @Composable
             fun test() {
                 val x = 1
                 x.<call>Foo()
-                
+
                 with(x) {
                     <call>Foo()
                 }
@@ -69,7 +69,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
             import androidx.compose.*
 
             @Composable operator fun Int.invoke(y: Int) {}
-            
+
             @Composable
             fun test() {
                 val x = 1

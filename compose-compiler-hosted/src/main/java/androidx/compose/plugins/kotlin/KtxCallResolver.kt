@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.psi.ValueArgumentName
 import androidx.compose.plugins.kotlin.analysis.ComposeDefaultErrorMessages
 import androidx.compose.plugins.kotlin.analysis.ComposeErrors
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.IGNORE_COMPOSABLE_INTERCEPTION
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.STABLE_TYPE
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -95,12 +96,14 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentUnmapped
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
@@ -162,16 +165,18 @@ import java.util.concurrent.atomic.AtomicBoolean
  * each attribute, etc.
  */
 class KtxCallResolver(
-    private val callResolver: CallResolver,
-    private val facade: ExpressionTypingFacade,
+    callResolver: CallResolver,
+    private val nullableFacade: ExpressionTypingFacade?,
     private val project: Project,
     private val composableAnnotationChecker: ComposableAnnotationChecker
 ) {
-    companion object {
-        val resolving: ThreadLocal<AtomicBoolean> = object : ThreadLocal<AtomicBoolean>() {
-            override fun initialValue() = AtomicBoolean()
-        }
-    }
+    private val isDeprecatedKtxTagResolve: Boolean = nullableFacade != null
+
+    private val facade: ExpressionTypingFacade
+        get() = nullableFacade
+            ?: error("Cannot use ExpressionTypingFacade in call interception mode")
+
+    private val callResolver = NoInterceptionCallResolver(callResolver)
 
     private class TempResolveInfo(
         val valid: Boolean,
@@ -261,7 +266,6 @@ class KtxCallResolver(
 
     fun initializeFromKtxElement(element: KtxElement, context: ExpressionTypingContext): Boolean {
 
-        val wasResolving = resolving.get().getAndSet(true)
         module = context.scope.ownerDescriptor.module
 
         // we want to report errors on the tag names (open and closing), and not the entire element, since
@@ -274,13 +278,10 @@ class KtxCallResolver(
         )
 
         val result = resolveComposer(element, context)
-        if (wasResolving) resolving.get().set(false)
         return result
     }
 
     fun initializeFromCall(call: Call, context: ExpressionTypingContext): Boolean {
-        val wasResolving = resolving.get().getAndSet(true)
-
         val callee = call.calleeExpression ?: error("Expected calleeExpression")
 
         module = context.scope.ownerDescriptor.module
@@ -288,8 +289,6 @@ class KtxCallResolver(
         tagExpressions = listOf(callee)
 
         val result = resolveComposer(callee, context)
-
-        if (wasResolving) resolving.get().set(false)
 
         return result
     }
@@ -428,7 +427,6 @@ class KtxCallResolver(
         element: KtxElement,
         context: ExpressionTypingContext
     ): ResolvedKtxElementCall {
-        val wasResolving = resolving.get().getAndSet(true)
         mainElement = element
 
         val openTagExpr = element.simpleTagName ?: element.qualifiedTagName
@@ -464,7 +462,7 @@ class KtxCallResolver(
                 // target descriptor gets chosen.
                 value = psiFactory.createSimpleName("_")
             }
-            if (value == null && attr.equals == null) {
+            if (isDeprecatedKtxTagResolve && value == null && attr.equals == null) {
                 // punning...
                 // punning has a single expression that both acts as reference to the value and to the property/setter. As a result, we
                 // need to save the descriptors that it targets into a different writable slice that we can surface later in a
@@ -578,7 +576,6 @@ class KtxCallResolver(
         // commit, but don't include diagnostics
         tmpTraceAndCache.trace.commit({ _, _ -> true }, false)
 
-        if (wasResolving) resolving.get().set(false)
         return result
     }
 
@@ -586,7 +583,6 @@ class KtxCallResolver(
         call: Call,
         context: ExpressionTypingContext
     ): ResolvedKtxElementCall {
-        val wasResolving = resolving.get().getAndSet(true)
         val callee = call.calleeExpression ?: error("Expected calleeExpression")
 
         mainElement = callee
@@ -660,7 +656,6 @@ class KtxCallResolver(
         )
 
         tmpTraceAndCache.commit()
-        if (wasResolving) resolving.get().set(false)
         return result
     }
 
@@ -735,24 +730,26 @@ class KtxCallResolver(
         errorNode?.let { error ->
             when (error) {
                 is ErrorNode.NonCallableRoot -> {
-                    val type = facade.getTypeInfo(
-                        openTagExpr,
-                        context.withThrowawayTrace(openTagExpr)
-                    ).type
+                    if (isDeprecatedKtxTagResolve) {
+                        val type = facade.getTypeInfo(
+                            openTagExpr,
+                            context.withThrowawayTrace(openTagExpr)
+                        ).type
 
-                    if (type != null) {
-                        ComposeErrors.INVALID_TAG_TYPE.report(
-                            context,
-                            tagExpressions,
-                            type,
-                            emitSimpleUpperBoundTypes
-                        )
-                    } else {
-                        ComposeErrors.INVALID_TAG_DESCRIPTOR.report(
-                            context,
-                            tagExpressions,
-                            emitSimpleUpperBoundTypes
-                        )
+                        if (type != null) {
+                            ComposeErrors.INVALID_TAG_TYPE.report(
+                                context,
+                                tagExpressions,
+                                type,
+                                emitSimpleUpperBoundTypes
+                            )
+                        } else {
+                            ComposeErrors.INVALID_TAG_DESCRIPTOR.report(
+                                context,
+                                tagExpressions,
+                                emitSimpleUpperBoundTypes
+                            )
+                        }
                     }
                 }
                 is ErrorNode.NonEmittableNonCallable -> {
@@ -831,7 +828,7 @@ class KtxCallResolver(
         // it's okay if the tag doesn't show up as used, so we remove it from this list
         val unusedAttributes = (attrInfos - usedAttributes - TAG_KEY).toMutableMap()
 
-        if (unusedAttributes.isNotEmpty()) {
+        if (isDeprecatedKtxTagResolve && unusedAttributes.isNotEmpty()) {
 
             // if we have some unused attributes, we want to provide some helpful diagnostics on them, so we grab
             // every possible attribute for the call. Note that we only want to run this (expensive) calculation in
@@ -991,17 +988,19 @@ class KtxCallResolver(
 
         // for each attribute we've consumed, we want to go through and call `checkType` so that the type system can flow through to
         // all of the attributes with the right type information (now that we know what types the attributes should have).
-        for (name in usedAttributes) {
-            val expr = attrInfos[name]?.value ?: continue
-            var type = usedAttributeNodes.find { it.name == name }?.type
-            if (type == null && name == CHILDREN_KEY) {
-                type = functionType().makeComposable(module)
-            }
+        if (isDeprecatedKtxTagResolve) {
+            for (name in usedAttributes) {
+                val expr = attrInfos[name]?.value ?: continue
+                var type = usedAttributeNodes.find { it.name == name }?.type
+                if (type == null && name == CHILDREN_KEY) {
+                    type = functionType().makeComposable(module)
+                }
 
-            facade.checkType(
-                expr,
-                context.replaceExpectedType(type)
-            )
+                facade.checkType(
+                    expr,
+                    context.replaceExpectedType(type)
+                )
+            }
         }
 
         return ResolvedKtxElementCall(
@@ -1297,7 +1296,8 @@ class KtxCallResolver(
                 candidateContext
             )
 
-            if (candidateResults.isNothing) return@mapNotNull TempResolveInfo(
+            if (candidateResults.isNothing)
+                return@mapNotNull TempResolveInfo(
                 false,
                 tmpForCandidate,
                 (attributes - attrsUsedInCall).keys,
@@ -1319,6 +1319,7 @@ class KtxCallResolver(
                                 is ArgumentMatch -> {
                                     when (it.status) {
                                         ArgumentMatchStatus.TYPE_MISMATCH -> {
+                                            if (!isDeprecatedKtxTagResolve) return@forEach
                                             val attr =
                                                 attributes[it.valueParameter.name.asString()]
                                                     ?: return@forEach
@@ -1338,6 +1339,7 @@ class KtxCallResolver(
                                             )
                                         }
                                         ArgumentMatchStatus.MATCH_MODULO_UNINFERRED_TYPES -> {
+                                            if (!isDeprecatedKtxTagResolve) return@forEach
                                             val attr = attributes[it.valueParameter.name.asString()]
                                                 ?: return@forEach
                                             val key = attr.key ?: return@forEach
@@ -1547,7 +1549,8 @@ class KtxCallResolver(
                     },
                     expressionToReportErrorsOn = expression,
                     context = candidateContext
-                ) ?: return@mapNotNull TempResolveInfo(
+                ) ?:
+                return@mapNotNull TempResolveInfo(
                     false,
                     tmpForCandidate,
                     (attributes - attrsUsedInCall - attrsUsedInSets).keys,
@@ -2382,12 +2385,14 @@ class KtxCallResolver(
         val descriptor = resolvedCall.resultingDescriptor as PropertyDescriptor
         val expectedType = descriptor.type
 
-        facade.getTypeInfo(
-            valueExpr,
-            contextToUse
-                .replaceExpectedType(expectedType)
-                .replaceCallPosition(CallPosition.PropertyAssignment(keyExpr))
-        )
+        if (isDeprecatedKtxTagResolve) {
+            facade.getTypeInfo(
+                valueExpr,
+                contextToUse
+                    .replaceExpectedType(expectedType)
+                    .replaceCallPosition(CallPosition.PropertyAssignment(keyExpr))
+            )
+        }
 
         if (temporaryForVariable.trace.hasTypeMismatchErrorsOn(valueExpr)) {
             expectedTypes.add(expectedType)
@@ -2459,12 +2464,14 @@ class KtxCallResolver(
 
         temporaryForFunction.commit()
 
-        facade.getTypeInfo(
-            childrenExpr,
-            context.replaceExpectedType(
-                resolvedCall.resultingDescriptor.valueParameters.first().type
+        if (isDeprecatedKtxTagResolve) {
+            facade.getTypeInfo(
+                childrenExpr,
+                context.replaceExpectedType(
+                    resolvedCall.resultingDescriptor.valueParameters.first().type
+                )
             )
-        )
+        }
         return resolvedCall
     }
 
@@ -2527,13 +2534,15 @@ class KtxCallResolver(
                 (resolvedCall.resultingDescriptor).type.makeComposable(module)
             else (resolvedCall.resultingDescriptor).type
 
-        facade.getTypeInfo(
-            childrenExpr,
-            context
-                .replaceTraceAndCache(temporaryForVariable)
-                .replaceExpectedType(expectedType)
-                .replaceCallPosition(CallPosition.PropertyAssignment(null))
-        )
+        if (isDeprecatedKtxTagResolve) {
+            facade.getTypeInfo(
+                childrenExpr,
+                context
+                    .replaceTraceAndCache(temporaryForVariable)
+                    .replaceExpectedType(expectedType)
+                    .replaceCallPosition(CallPosition.PropertyAssignment(null))
+            )
+        }
 
         if (temporaryForVariable.trace.hasTypeMismatchErrorsOn(childrenExpr)) {
             return null
@@ -2692,8 +2701,11 @@ class KtxCallResolver(
 
         val receiverExpr = expression.receiverExpression
 
-        val receiverTypeInfo = when (context.trace.get(BindingContext.QUALIFIER, receiverExpr)) {
-            null -> facade.getTypeInfo(receiverExpr, currentContext)
+        val qualifier = context.trace.get(BindingContext.QUALIFIER, receiverExpr)
+
+        val receiverTypeInfo = when {
+            !isDeprecatedKtxTagResolve -> error("in here")
+            qualifier == null -> facade.getTypeInfo(receiverExpr, currentContext)
             else -> KotlinTypeInfo(null, currentContext.dataFlowInfo)
         }
 
@@ -3861,3 +3873,102 @@ private val ResolvedCall<*>.semanticCall: ResolvedCall<*>
 private val Collection<ValueParameterDescriptor>.possibleChildrenParameter:
         ValueParameterDescriptor?
     get() = maxBy { it.index }?.let { if (it.type.isFunctionType) it else null }
+
+
+
+
+class NoInterceptionCallResolver(private val callResolver: CallResolver) {
+    fun resolveCallWithGivenName(
+        context: ResolutionContext<*>,
+        call: Call,
+        name: Name,
+        tracing: TracingStrategy
+    ): OverloadResolutionResults<FunctionDescriptor> {
+        context.trace.record(IGNORE_COMPOSABLE_INTERCEPTION, call, true)
+        return callResolver.resolveCallWithGivenName(
+            context,
+            call,
+            name,
+            tracing
+        )
+    }
+
+    fun resolveCallWithGivenName(
+        context: ResolutionContext<*>,
+        call: Call,
+        functionReference: KtReferenceExpression,
+        name: Name
+    ): OverloadResolutionResults<FunctionDescriptor> {
+        context.trace.record(IGNORE_COMPOSABLE_INTERCEPTION, call, true)
+        return callResolver.resolveCallWithGivenName(
+            context,
+            call,
+            functionReference,
+            name
+        )
+    }
+
+    fun resolveCallWithKnownCandidate(
+        call: Call,
+        tracing: TracingStrategy,
+        context: ResolutionContext<*>,
+        candidate: ResolutionCandidate<FunctionDescriptor>,
+        dataFlowInfoForArguments: MutableDataFlowInfoForArguments?
+    ): OverloadResolutionResults<FunctionDescriptor> {
+        context.trace.record(IGNORE_COMPOSABLE_INTERCEPTION, call, true)
+        return callResolver.resolveCallWithKnownCandidate(
+            call,
+            tracing,
+            context,
+            candidate,
+            dataFlowInfoForArguments
+        )
+    }
+
+    fun resolveSimpleProperty(
+        context: BasicCallResolutionContext
+    ): OverloadResolutionResults<VariableDescriptor> {
+        return callResolver.resolveSimpleProperty(
+            context
+        )
+    }
+
+    fun resolveFunctionCall(
+        context: BasicCallResolutionContext
+    ): OverloadResolutionResults<FunctionDescriptor> {
+        context.trace.record(IGNORE_COMPOSABLE_INTERCEPTION, context.call, true)
+        return callResolver.resolveFunctionCall(
+            context
+        )
+    }
+
+    fun <T: CallableDescriptor> computeTasksAndResolveCall(
+        context: BasicCallResolutionContext,
+        name: Name,
+        tracing: TracingStrategy,
+        kind: NewResolutionOldInference.ResolutionKind
+    ): OverloadResolutionResults<T> {
+        context.trace.record(IGNORE_COMPOSABLE_INTERCEPTION, context.call, true)
+        return callResolver.computeTasksAndResolveCall(
+            context,
+            name,
+            tracing,
+            kind
+        )
+    }
+
+    fun <T: CallableDescriptor> computeTasksAndResolveCall(
+        context: BasicCallResolutionContext,
+        name: Name,
+        referenceExpression: KtReferenceExpression,
+        kind: NewResolutionOldInference.ResolutionKind
+    ): OverloadResolutionResults<T> {
+        context.trace.record(IGNORE_COMPOSABLE_INTERCEPTION, context.call, true)
+        return callResolver.computeTasksAndResolveCall(
+            context,
+            name,
+            referenceExpression,
+            kind
+        )
+    }
+}

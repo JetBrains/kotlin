@@ -17,6 +17,7 @@
 package androidx.compose.plugins.kotlin
 
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.IGNORE_COMPOSABLE_INTERCEPTION
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -90,7 +91,10 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
             )
         }
         if (candidates.isEmpty()) return candidates
-        if (KtxCallResolver.resolving.get().get()) return candidates
+        val bindingContext = resolutionContext.trace.bindingContext
+        val call = resolutionContext.call
+        val shouldIgnore = bindingContext[IGNORE_COMPOSABLE_INTERCEPTION, call] ?: false
+        if (shouldIgnore) return candidates
 
         for (arg in resolutionContext.call.valueArguments) {
             if (arg is KtLambdaArgument) continue
@@ -122,7 +126,6 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         var walker: PsiElement? = element
         var isComposableContext = false
         var composableDescriptor: SimpleFunctionDescriptor? = null
-        val facade = CallResolutionInterceptorExtension.facade.get().peek()
         while (walker != null) {
             val descriptor = try {
                 resolutionContext.trace[BindingContext.FUNCTION, walker]
@@ -155,12 +158,10 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
             (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
         val ktxCallResolver = KtxCallResolver(
             callResolver,
-            facade,
+            null,
             element.project,
             composableAnnotationChecker
         )
-
-        val call = resolutionContext.call
 
         val resolvedKtxElementCall = try {
 
