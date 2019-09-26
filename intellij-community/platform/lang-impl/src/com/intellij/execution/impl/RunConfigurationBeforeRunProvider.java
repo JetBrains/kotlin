@@ -164,8 +164,13 @@ extends BeforeRunTaskProvider<RunConfigurationBeforeRunProvider.RunConfigurableB
   public static boolean doExecuteTask(@NotNull final ExecutionEnvironment env,
                                       @NotNull final RunnerAndConfigurationSettings settings,
                                       @Nullable final ExecutionTarget target) {
-    final String executorId = env.getExecutor().getId();
-    ExecutionEnvironmentBuilder builder = ExecutionEnvironmentBuilder.createOrNull(env.getExecutor(), settings);
+    RunConfiguration configuration = settings.getConfiguration();
+    Executor executor = configuration instanceof BeforeRunTaskAwareConfiguration &&
+                        ((BeforeRunTaskAwareConfiguration)configuration).useRunExecutor()
+                        ? DefaultRunExecutor.getRunExecutorInstance()
+                        : env.getExecutor();
+    final String executorId = executor.getId();
+    ExecutionEnvironmentBuilder builder = ExecutionEnvironmentBuilder.createOrNull(executor, settings);
     if (builder == null) {
       return false;
     }
