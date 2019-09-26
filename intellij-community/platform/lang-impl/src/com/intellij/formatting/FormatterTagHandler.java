@@ -16,12 +16,10 @@
 package com.intellij.formatting;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -44,16 +42,20 @@ public class FormatterTagHandler {
 
   protected FormatterTag getFormatterTag(@NotNull PsiComment comment) {
     CharSequence nodeChars = comment.getNode().getChars();
+    return extractFormatterTag(nodeChars, 0, nodeChars.length());
+  }
+
+  private FormatterTag extractFormatterTag(@NotNull CharSequence chars, int startOffset, int endOffset) {
     if (mySettings.FORMATTER_TAGS_ACCEPT_REGEXP) {
       Pattern onPattern = mySettings.getFormatterOnPattern();
       Pattern offPattern = mySettings.getFormatterOffPattern();
-      if (onPattern != null && onPattern.matcher(nodeChars).find()) return FormatterTag.ON;
-      if (offPattern != null && offPattern.matcher(nodeChars).find()) return FormatterTag.OFF;
+      if (onPattern != null && onPattern.matcher(chars.subSequence(startOffset, endOffset)).find()) return FormatterTag.ON;
+      if (offPattern != null && offPattern.matcher(chars.subSequence(startOffset, endOffset)).find()) return FormatterTag.OFF;
     }
     else {
-      for (int i = 0; i < nodeChars.length(); i++) {
-        if (isFormatterTagAt(nodeChars, i, mySettings.FORMATTER_ON_TAG)) return FormatterTag.ON;
-        if (isFormatterTagAt(nodeChars, i, mySettings.FORMATTER_OFF_TAG)) return FormatterTag.OFF;
+      for (int i = startOffset; i < endOffset; i++) {
+        if (isFormatterTagAt(chars, i, mySettings.FORMATTER_ON_TAG)) return FormatterTag.ON;
+        if (isFormatterTagAt(chars, i, mySettings.FORMATTER_OFF_TAG)) return FormatterTag.OFF;
       }
     }
     return FormatterTag.NONE;
@@ -71,45 +73,37 @@ public class FormatterTagHandler {
 
   public List<TextRange> getEnabledRanges(ASTNode rootNode, TextRange initialRange) {
     EnabledRangesCollector collector = new EnabledRangesCollector(initialRange);
-    rootNode.getPsi().accept(collector);
+    collector.processText(rootNode.getChars());
     return collector.getRanges();
   }
 
-  private class EnabledRangesCollector extends PsiRecursiveElementVisitor {
+  private class EnabledRangesCollector {
     private final List<FormatterTagInfo> myTagInfoList = new ArrayList<>();
     private final TextRange myInitialRange;
-    private int myInjectedOffset = 0;
 
     private EnabledRangesCollector(TextRange initialRange) {
       myInitialRange = initialRange;
     }
 
-    @Override
-    public void visitElement(PsiElement element) {
-      if (element instanceof PsiLanguageInjectionHost) {
-        myInjectedOffset = element.getTextRange().getStartOffset();
-        InjectedLanguageManager.getInstance(element.getProject()).enumerate(
-          element, (injectedPsi, places) -> { injectedPsi.accept(this); });
-        myInjectedOffset = 0;
-      }
-      else {
-        super.visitElement(element);
-      }
-    }
-
-    @Override
-    public void visitComment(PsiComment comment) {
-      FormatterTag tag = getFormatterTag(comment);
-      //noinspection EnumSwitchStatementWhichMissesCases
-      switch (tag) {
-        case OFF:
-          myTagInfoList.add(
-            new FormatterTagInfo(comment.getTextRange().getEndOffset() + myInjectedOffset, FormatterTag.OFF));
-          break;
-        case ON:
-          myTagInfoList.add(
-            new FormatterTagInfo(comment.getTextRange().getStartOffset() + myInjectedOffset, FormatterTag.ON));
-          break;
+    private void processText(@NotNull CharSequence chars) {
+      int lineStart = 0;
+      for (int currPos = 0; currPos < chars.length(); currPos ++) {
+        char c = chars.charAt(currPos);
+        if (c == '\n') {
+          FormatterTag formatterTag = extractFormatterTag(chars, lineStart, currPos);
+          //noinspection EnumSwitchStatementWhichMissesCases
+          switch (formatterTag) {
+            case OFF:
+              myTagInfoList.add(
+                new FormatterTagInfo(lineStart, FormatterTag.OFF));
+              break;
+            case ON:
+              myTagInfoList.add(
+                new FormatterTagInfo(lineStart, FormatterTag.ON));
+              break;
+          }
+          lineStart = currPos + 1;
+        }
       }
     }
 
