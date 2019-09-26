@@ -13,7 +13,6 @@ import com.intellij.build.output.LineProcessor
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputDispatcherFactory
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemOutputMessageDispatcher
 import com.intellij.util.SmartList
-import com.intellij.util.containers.toMutableSmartList
 import org.apache.commons.lang.ClassUtils
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -125,7 +124,7 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
       myRootReader.closeAndGetFuture().let { futures += it }
       tasksOutputReaders.clear()
       val future = CompletableFuture.allOf(*futures.toTypedArray())
-      val handlers = onCompletionHandlers.toMutableSmartList()
+      val handlers = onCompletionHandlers.toList()
       onCompletionHandlers.clear()
       for (handler in handlers) {
         future.whenComplete { _, u -> handler.accept(u) }

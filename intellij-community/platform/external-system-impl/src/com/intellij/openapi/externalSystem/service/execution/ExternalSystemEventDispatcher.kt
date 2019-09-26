@@ -10,7 +10,6 @@ import com.intellij.build.output.BuildOutputParser
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.util.SmartList
-import com.intellij.util.containers.toMutableSmartList
 import org.jetbrains.annotations.ApiStatus
 import java.io.Closeable
 import java.util.function.Consumer
@@ -106,7 +105,7 @@ private class DefaultOutputMessageDispatcher(buildId: Any,
 
   override fun close() {
     val future = closeAndGetFuture()
-    val handlers = onCompletionHandlers.toMutableSmartList()
+    val handlers = onCompletionHandlers.toList()
     onCompletionHandlers.clear()
     for (handler in handlers) {
       future.whenComplete { _, u -> handler.accept(u) }
