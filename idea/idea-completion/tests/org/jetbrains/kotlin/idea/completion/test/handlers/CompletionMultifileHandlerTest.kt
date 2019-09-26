@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers
 
+import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
@@ -73,6 +74,10 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest()
     }
 
+    fun testPropertyFunctionConflict2() {
+        doTest(tailText = " { Int, Int -> ... } (i: (Int, Int) -> Unit) (a.b)")
+    }
+
     fun testExclCharInsertImport() {
         doTest('!')
     }
@@ -105,17 +110,26 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
         doTest()
     }
 
-    fun doTest(completionChar: Char = '\n', vararg extraFileNames: String) {
+    fun doTest(completionChar: Char = '\n', vararg extraFileNames: String, tailText: String? = null) {
         val fileName = getTestName(false)
 
         configureByFiles(null, *extraFileNames)
-        configureByFiles(null, fileName + "-1.kt", fileName + "-2.kt")
+        configureByFiles(null, "$fileName-1.kt", "$fileName-2.kt")
         complete(2)
         if (myItems != null) {
-            val item = myItems.singleOrNull() ?: error("Multiple items in completion")
+            val item = if (tailText == null)
+                myItems.singleOrNull() ?: error("Multiple items in completion")
+            else {
+                val presentation = LookupElementPresentation()
+                myItems.first {
+                    it.renderElement(presentation)
+                    presentation.tailText == tailText
+                } ?: error("Tail text not found")
+            }
+
             selectItem(item, completionChar)
         }
-        checkResultByFile(fileName + ".kt.after")
+        checkResultByFile("$fileName.kt.after")
     }
 
     override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers/multifile/").path + File.separator

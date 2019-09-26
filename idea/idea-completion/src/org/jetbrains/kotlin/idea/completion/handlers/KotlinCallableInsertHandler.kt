@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDeclarationInsertHandler() {
     companion object {
-        private val shortenReferences = ShortenReferences { ShortenReferences.Options.DEFAULT.copy(dropBracesInStringTemplates = false) }
+        val SHORTEN_REFERENCES = ShortenReferences { ShortenReferences.Options.DEFAULT.copy(dropBracesInStringTemplates = false) }
     }
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
@@ -54,7 +54,7 @@ abstract class KotlinCallableInsertHandler(val callType: CallType<*>) : BaseDecl
 
                 psiDocumentManager.commitAllDocuments()
 
-                shortenReferences.process(file, context.startOffset, context.tailOffset - 1)
+                SHORTEN_REFERENCES.process(file, context.startOffset, context.tailOffset - 1)
 
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
 
