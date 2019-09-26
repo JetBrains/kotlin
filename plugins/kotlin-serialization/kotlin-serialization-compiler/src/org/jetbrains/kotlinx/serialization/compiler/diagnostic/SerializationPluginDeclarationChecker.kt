@@ -164,7 +164,15 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         trace: BindingTrace,
         fallbackElement: PsiElement
     ) {
-        type.arguments.forEachIndexed { i, it -> checkType(module, it.type, element?.typeArgumentsAsTypes?.get(i), trace, fallbackElement) }
+        type.arguments.forEachIndexed { i, it ->
+            checkType(
+                module,
+                it.type,
+                element?.typeArgumentsAsTypes?.getOrNull(i),
+                trace,
+                fallbackElement
+            )
+        }
     }
 
     private fun AbstractSerialGenerator.checkType(
