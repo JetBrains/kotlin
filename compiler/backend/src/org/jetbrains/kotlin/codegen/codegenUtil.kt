@@ -323,7 +323,7 @@ fun MemberDescriptor.isToArrayFromCollection(): Boolean {
 fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent(), shortName())).internalName
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
-fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>, endLabel: Label? = null) {
+fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>, endLabel: Label?) {
     // Do not write line numbers until destructuring happens
     // (otherwise destructuring variables will be uninitialized in the beginning of lambda)
     codegen.runWithShouldMarkLineNumbers(false) {

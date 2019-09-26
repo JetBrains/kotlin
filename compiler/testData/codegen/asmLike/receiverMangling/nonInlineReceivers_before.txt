@@ -22,7 +22,7 @@ public final class NonInlineReceivers_beforeKt : java/lang/Object {
             0 block: Lkotlin/jvm/functions/Function1;
     }
 
-    public final static void foo(java.lang.String x, int $receiver) {
+    public final static void foo(java.lang.String $receiver, int count) {
         Local variables:
             2 x: Z
             0 $receiver: Ljava/lang/String;
