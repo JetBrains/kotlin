@@ -33,7 +33,7 @@ data class CapturedValueData(
     ) : ValueDescriptorImpl(delegate.project) {
         override fun getName() = valueName
 
-        override fun calcValue(evaluationContext: EvaluationContextImpl?): Value = delegate.calcValue(evaluationContext)
+        override fun calcValue(evaluationContext: EvaluationContextImpl?): Value? = delegate.calcValue(evaluationContext)
         override fun getDescriptorEvaluation(context: DebuggerContext?): PsiExpression = delegate.getDescriptorEvaluation(context)
         override fun getModifier(value: JavaValue?): XValueModifier = delegate.getModifier(value)
     }
