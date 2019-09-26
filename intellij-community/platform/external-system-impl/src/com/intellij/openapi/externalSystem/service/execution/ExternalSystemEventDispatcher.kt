@@ -10,6 +10,7 @@ import com.intellij.build.output.BuildOutputParser
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.util.SmartList
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.ApiStatus
 import java.io.Closeable
 import java.util.concurrent.CompletableFuture
@@ -114,7 +115,7 @@ interface ExternalSystemOutputMessageDispatcher : Closeable, Appendable, BuildPr
 
 @ApiStatus.Experimental
 abstract class AbstractOutputMessageDispatcher(private val buildProgressListener: BuildProgressListener) : ExternalSystemOutputMessageDispatcher {
-  private val onCompletionHandlers = SmartList<Consumer<Throwable?>>()
+  private val onCompletionHandlers = ContainerUtil.createConcurrentList<Consumer<Throwable?>>()
 
   override fun onEvent(buildId: Any, event: BuildEvent) =
     when (event) {
