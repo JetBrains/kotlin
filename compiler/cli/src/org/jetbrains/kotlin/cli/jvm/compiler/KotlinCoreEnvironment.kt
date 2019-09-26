@@ -16,16 +16,12 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
-import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
-import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
@@ -35,7 +31,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
-import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -46,19 +41,13 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
-import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
-import com.intellij.psi.augment.PsiAugmentProvider
-import com.intellij.psi.augment.TypeAnnotationModifier
-import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.file.impl.JavaFileManager
-import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
 import com.intellij.util.lang.UrlClassLoader
@@ -66,7 +55,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.FacadeCache
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -129,7 +117,7 @@ class KotlinCoreEnvironment private constructor(
 ) {
 
     class ProjectEnvironment(
-        disposable: Disposable, applicationEnvironment: JavaCoreApplicationEnvironment
+        disposable: Disposable, applicationEnvironment: KotlinCoreApplicationEnvironment
     ) :
         KotlinCoreProjectEnvironment(disposable, applicationEnvironment) {
 
@@ -420,7 +408,7 @@ class KotlinCoreEnvironment private constructor(
         private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
 
         private val APPLICATION_LOCK = Object()
-        private var ourApplicationEnvironment: JavaCoreApplicationEnvironment? = null
+        private var ourApplicationEnvironment: KotlinCoreApplicationEnvironment? = null
         private var ourProjectCount = 0
 
         @JvmStatic
@@ -465,11 +453,11 @@ class KotlinCoreEnvironment private constructor(
         }
 
         // used in the daemon for jar cache cleanup
-        val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
+        val applicationEnvironment: KotlinCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
         fun getOrCreateApplicationEnvironmentForProduction(
             parentDisposable: Disposable, configuration: CompilerConfiguration
-        ): JavaCoreApplicationEnvironment {
+        ): KotlinCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment == null) {
                     val disposable = Disposer.newDisposable()
@@ -510,12 +498,8 @@ class KotlinCoreEnvironment private constructor(
 
         private fun createApplicationEnvironment(
             parentDisposable: Disposable, configuration: CompilerConfiguration, unitTestMode: Boolean
-        ): JavaCoreApplicationEnvironment {
-            Extensions.cleanRootArea(parentDisposable)
-            registerAppExtensionPoints()
-            val applicationEnvironment = object : JavaCoreApplicationEnvironment(parentDisposable, unitTestMode) {
-                override fun createJrtFileSystem(): VirtualFileSystem? = CoreJrtFileSystem()
-            }
+        ): KotlinCoreApplicationEnvironment {
+            val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, unitTestMode)
 
             registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
 
@@ -523,27 +507,6 @@ class KotlinCoreEnvironment private constructor(
             registerApplicationServices(applicationEnvironment)
 
             return applicationEnvironment
-        }
-
-        private fun registerAppExtensionPoints() {
-            val area = Extensions.getRootArea()
-
-            CoreApplicationEnvironment.registerExtensionPoint(area, BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(area, FileContextProvider.EP_NAME, FileContextProvider::class.java)
-
-            CoreApplicationEnvironment.registerExtensionPoint(area, MetaDataContributor.EP_NAME, MetaDataContributor::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(area, PsiAugmentProvider.EP_NAME, PsiAugmentProvider::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
-
-            CoreApplicationEnvironment.registerExtensionPoint(area, ContainerProvider.EP_NAME, ContainerProvider::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(
-                area, ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java
-            )
-
-            CoreApplicationEnvironment.registerExtensionPoint(area, TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(area, MetaLanguage.EP_NAME, MetaLanguage::class.java)
-
-            IdeaExtensionPoints.registerVersionSpecificAppExtensionPoints(area)
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
@@ -643,7 +606,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
 
-        private fun registerApplicationServicesForCLI(applicationEnvironment: JavaCoreApplicationEnvironment) {
+        private fun registerApplicationServicesForCLI(applicationEnvironment: KotlinCoreApplicationEnvironment) {
             // ability to get text from annotations xml files
             applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml")
             applicationEnvironment.registerParserDefinition(JavaParserDefinition())
@@ -652,7 +615,7 @@ class KotlinCoreEnvironment private constructor(
         // made public for Upsource
         @Suppress("MemberVisibilityCanBePrivate")
         @JvmStatic
-        fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
+        fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
             with(applicationEnvironment) {
                 registerFileType(KotlinFileType.INSTANCE, "kt")
                 registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
