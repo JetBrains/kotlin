@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.util.SmartList
 import org.jetbrains.annotations.ApiStatus
 import java.io.Closeable
+import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
 /**
@@ -86,30 +87,15 @@ class ExternalSystemEventDispatcher(taskId: ExternalSystemTaskId,
   }
 }
 
-private class DefaultOutputMessageDispatcher(buildId: Any,
-                                             private val buildProgressListener: BuildProgressListener,
-                                             parsers: List<BuildOutputParser>) :
-  BuildOutputInstantReaderImpl(buildId, buildId, buildProgressListener, parsers), ExternalSystemOutputMessageDispatcher {
-  private val onCompletionHandlers = SmartList<Consumer<Throwable?>>()
-  override var stdOut: Boolean = true
+private class DefaultOutputMessageDispatcher(buildProgressListener: BuildProgressListener, val outputReader: BuildOutputInstantReaderImpl) :
+  AbstractOutputMessageDispatcher(buildProgressListener), Appendable by outputReader {
 
-  override fun onEvent(buildId: Any, event: BuildEvent) =
-    when (event) {
-      is FinishBuildEvent -> invokeOnCompletion(Consumer { buildProgressListener.onEvent(buildId, event) })
-      else -> buildProgressListener.onEvent(buildId, event)
-    }
+  constructor(buildId: Any, buildProgressListener: BuildProgressListener, parsers: List<BuildOutputParser>) :
+    this(buildProgressListener, BuildOutputInstantReaderImpl(buildId, buildId, buildProgressListener, parsers))
 
-  override fun invokeOnCompletion(handler: Consumer<Throwable?>) {
-    onCompletionHandlers.add(handler)
-  }
-
-  override fun close() {
-    val future = closeAndGetFuture()
-    val handlers = onCompletionHandlers.toList()
-    onCompletionHandlers.clear()
-    for (handler in handlers) {
-      future.whenComplete { _, u -> handler.accept(u) }
-    }
+  override var stdOut = true
+  override fun closeAndGetFuture(): CompletableFuture<Unit> {
+    return outputReader.closeAndGetFuture()
   }
 }
 
@@ -124,4 +110,30 @@ interface ExternalSystemOutputDispatcherFactory {
 interface ExternalSystemOutputMessageDispatcher : Closeable, Appendable, BuildProgressListener {
   var stdOut: Boolean
   fun invokeOnCompletion(handler: Consumer<Throwable?>)
+}
+
+@ApiStatus.Experimental
+abstract class AbstractOutputMessageDispatcher(private val buildProgressListener: BuildProgressListener) : ExternalSystemOutputMessageDispatcher {
+  private val onCompletionHandlers = SmartList<Consumer<Throwable?>>()
+
+  override fun onEvent(buildId: Any, event: BuildEvent) =
+    when (event) {
+      is FinishBuildEvent -> invokeOnCompletion(Consumer { buildProgressListener.onEvent(buildId, event) })
+      else -> buildProgressListener.onEvent(buildId, event)
+    }
+
+  override fun invokeOnCompletion(handler: Consumer<Throwable?>) {
+    onCompletionHandlers.add(handler)
+  }
+
+  abstract fun closeAndGetFuture(): CompletableFuture<*>
+
+  override fun close() {
+    val future = closeAndGetFuture()
+    val handlers = onCompletionHandlers.toList().asReversed()
+    onCompletionHandlers.clear()
+    for (handler in handlers) {
+      future.whenComplete { _, u -> handler.accept(u) }
+    }
+  }
 }
