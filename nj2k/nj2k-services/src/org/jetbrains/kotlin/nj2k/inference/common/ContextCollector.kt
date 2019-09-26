@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class ContextCollector(private val resolutionFacade: ResolutionFacade) {
@@ -25,9 +27,6 @@ abstract class ContextCollector(private val resolutionFacade: ResolutionFacade) 
             is TypeParameterDescriptor -> TypeParameterReference(descriptor)
             else -> null
         }
-
-    private fun KtTypeReference.classReference(): ClassReference? =
-        analyze(resolutionFacade)[BindingContext.TYPE, this]?.classReference()
 
     private fun KtTypeElement.toData(): TypeElementData? {
         val typeReference = parent as? KtTypeReference ?: return null
@@ -43,19 +42,26 @@ abstract class ContextCollector(private val resolutionFacade: ResolutionFacade) 
         val typeElementToTypeVariable = mutableMapOf<KtTypeElement, TypeVariable>()
         val typeBasedTypeVariables = mutableListOf<TypeBasedTypeVariable>()
 
-        fun KtTypeReference.toBoundType(owner: TypeVariableOwner, defaultState: State? = null): BoundType? {
+        fun KtTypeReference.toBoundType(
+            owner: TypeVariableOwner,
+            alreadyCalculatedType: KotlinType? = null,
+            defaultState: State? = null
+        ): BoundType? {
             val typeElement = typeElement ?: return null
-            val classReference = classReference() ?: NoClassReference
-
+            val type = alreadyCalculatedType ?: analyze(resolutionFacade, BodyResolveMode.PARTIAL)[BindingContext.TYPE, this]
+            val classReference = type?.classReference() ?: NoClassReference
             val state = defaultState ?: classReference.getState(typeElement)
+
             val typeArguments =
                 if (classReference is DescriptorClassReference) {
-                    typeElement.typeArgumentsAsTypes.zip(
-                        classReference.descriptor.declaredTypeParameters
-                    ) { typeArgument, typeParameter ->
+                    val typeParameters = classReference.descriptor.declaredTypeParameters
+                    typeElement.typeArgumentsAsTypes.mapIndexed { index, typeArgument ->
                         TypeParameter(
-                            typeArgument?.toBoundType(owner) ?: BoundType.STAR_PROJECTION,
-                            typeParameter.variance
+                            typeArgument?.toBoundType(
+                                owner,
+                                alreadyCalculatedType = type?.arguments?.getOrNull(index)?.type
+                            ) ?: BoundType.STAR_PROJECTION,
+                            typeParameters.getOrNull(index)?.variance ?: Variance.INVARIANT
                         )
                     }
                 } else emptyList()
