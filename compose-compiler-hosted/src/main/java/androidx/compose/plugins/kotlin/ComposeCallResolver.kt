@@ -16,6 +16,7 @@
 
 package androidx.compose.plugins.kotlin
 
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.IGNORE_COMPOSABLE_INTERCEPTION
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -52,6 +53,11 @@ class ComposeCallResolver(
         location: LookupLocation
     ): Collection<FunctionDescriptor> {
         if (candidates.isEmpty()) return candidates
+        val bindingContext = resolutionContext.trace.bindingContext
+        val call = resolutionContext.call
+        val shouldIgnore = bindingContext[IGNORE_COMPOSABLE_INTERCEPTION, call] ?: false
+
+        if (shouldIgnore) return candidates
 
         val composables = mutableListOf<FunctionDescriptor>()
         val nonComposables = mutableListOf<FunctionDescriptor>()
@@ -75,10 +81,6 @@ class ComposeCallResolver(
         // If none of the candidates are composable or constructors, then it's unnecessary for us
         // to do any work at all, since it will never be anything we intercept
         if (!needToLookupComposer) return candidates
-
-        // TODO(lmr): refactor/removal of ktxcallresolver so we don't need to do this!!!
-        // THREAD LOCAL!!!!
-        if (KtxCallResolver.resolving.get().get()) return candidates
 
         // use the scope tower to find any variable that would resolve with "composer" in scope.
         val composer = scopeTower
@@ -128,12 +130,10 @@ class ComposeCallResolver(
         // ktx call resolver. This needs to be refactored to be simpler, but this should work as
         // a starting point.
         //
-        // TODO(lmr): refactor this to remove KtxCallResolver and the use of the facade
-        // THREAD LOCAL!!!!
-        val facade = CallResolutionInterceptorExtension.facade.get().peek()
+        // TODO(lmr): refactor this to remove KtxCallResolver
         val ktxCallResolver = KtxCallResolver(
             callResolver,
-            facade,
+            null,
             project,
             ComposableAnnotationChecker.get(project)
         )
@@ -146,8 +146,6 @@ class ComposeCallResolver(
             resolutionContext.languageVersionSettings,
             resolutionContext.dataFlowValueFactory
         )
-
-        val call = resolutionContext.call
 
         val element = call.callElement as KtExpression
 

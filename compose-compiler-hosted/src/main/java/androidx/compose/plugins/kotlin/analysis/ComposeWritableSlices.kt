@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -39,6 +40,8 @@ object ComposeWritableSlices {
     val RESTART_CALLS: WritableSlice<SimpleFunctionDescriptor, ResolvedRestartCalls> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val COMPOSER_EMIT_METADATA: WritableSlice<VariableDescriptor, ComposerEmitMetadata> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val IGNORE_COMPOSABLE_INTERCEPTION: WritableSlice<Call, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
 
