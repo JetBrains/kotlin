@@ -64,6 +64,7 @@ class CreateTypeParameterFromUsageFix(
 
     fun doInvoke(): List<KtTypeParameter> {
         val declaration = data.declaration
+        if (!declaration.isWritable) return emptyList()
         val project = declaration.project
         val usages = project.runSynchronouslyWithProgress("Searching ${declaration.name}...", true) {
             runReadAction {

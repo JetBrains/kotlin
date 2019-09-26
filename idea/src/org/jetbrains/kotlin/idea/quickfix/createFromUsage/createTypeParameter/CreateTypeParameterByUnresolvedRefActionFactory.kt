@@ -90,6 +90,7 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
                 QuickFixWithDelegateFactory factory@{
                     val originalElement = originalElementPointer.element ?: return@factory null
                     val data = quickFixDataFactory()?.copy(declaration = it) ?: return@factory null
+                    if (!data.declaration.isWritable) return@factory null
                     CreateTypeParameterFromUsageFix(originalElement, data, presentTypeParameterNames = true)
                 }
             }
