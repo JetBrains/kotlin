@@ -330,7 +330,11 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
         }
 }
 
-internal abstract class IndexedGetIterationHandler(protected val context: CommonBackendContext) : ExpressionHandler {
+internal abstract class IndexedGetIterationHandler(
+    protected val context: CommonBackendContext,
+    val canCacheLast: Boolean = true
+) :
+    ExpressionHandler {
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Consider the case like:
@@ -348,19 +352,20 @@ internal abstract class IndexedGetIterationHandler(protected val context: Common
             //
             // This also ensures that the semantics of re-assignment of array variables used in the loop is consistent with the semantics
             // proposed in https://youtrack.jetbrains.com/issue/KT-21354.
-            val arrayReference = scope.createTemporaryVariable(
+            val objectVariable = scope.createTemporaryVariable(
                 expression, nameHint = "indexedObject"
             )
 
             val last = irCall(expression.type.sizePropertyGetter).apply {
-                dispatchReceiver = irGet(arrayReference)
+                dispatchReceiver = irGet(objectVariable)
             }
 
             IndexedGetHeaderInfo(
                 first = irInt(0),
                 last = last,
                 step = irInt(1),
-                objectVariable = arrayReference,
+                canCacheLast = canCacheLast,
+                objectVariable = objectVariable,
                 expressionHandler = this@IndexedGetIterationHandler
             )
         }
@@ -381,8 +386,24 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         get() = getClass()!!.functions.first { it.name.asString() == "get" }
 }
 
-/** Builds a [HeaderInfo] for iteration over characters in a `CharacterSequence`. */
-internal class CharSequenceIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context) {
+/** Builds a [HeaderInfo] for iteration over characters in a [String]. */
+internal class StringIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context) {
+    override fun match(expression: IrExpression) = expression.type.isString()
+
+    override val IrType.sizePropertyGetter
+        get() = getClass()!!.properties.first { it.name.asString() == "length" }.getter!!
+
+    override val IrType.getFunction
+        get() = getClass()!!.functions.first { it.name.asString() == "get" }
+}
+
+/**
+ * Builds a [HeaderInfo] for iteration over characters in a [CharSequence].
+ *
+ * Note: The value for "last" can NOT be cached (i.e., stored in a variable) because the size/length can change within the loop. This means
+ * that "last" is re-evaluated with each iteration of the loop.
+ */
+internal class CharSequenceIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = false) {
     override fun match(expression: IrExpression) = expression.type.isSubtypeOfClass(context.ir.symbols.charSequence)
 
     // The lowering operates on subtypes of CharSequence. Therefore, the IrType could be

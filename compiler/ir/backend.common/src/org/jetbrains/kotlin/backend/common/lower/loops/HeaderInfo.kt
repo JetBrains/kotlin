@@ -72,6 +72,7 @@ internal sealed class HeaderInfo(
     val first: IrExpression,
     val last: IrExpression,
     val step: IrExpression,
+    val canCacheLast: Boolean,
     val isReversed: Boolean,
     val direction: ProgressionDirection,
     val additionalNotEmptyCondition: IrExpression?
@@ -95,7 +96,13 @@ internal class ProgressionHeaderInfo(
     direction: ProgressionDirection,
     additionalNotEmptyCondition: IrExpression? = null,
     val additionalVariables: List<IrVariable> = listOf()
-) : HeaderInfo(progressionType, first, last, step, isReversed, direction, additionalNotEmptyCondition) {
+) : HeaderInfo(
+    progressionType, first, last, step,
+    canCacheLast = true,
+    isReversed = isReversed,
+    direction = direction,
+    additionalNotEmptyCondition = additionalNotEmptyCondition
+) {
 
     val canOverflow: Boolean by lazy {
         if (canOverflow != null) return@lazy canOverflow
@@ -142,6 +149,7 @@ internal class IndexedGetHeaderInfo(
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
+    canCacheLast: Boolean = true,
     val objectVariable: IrVariable,
     val expressionHandler: IndexedGetIterationHandler
 ) : HeaderInfo(
@@ -149,6 +157,7 @@ internal class IndexedGetHeaderInfo(
     first,
     last,
     step,
+    canCacheLast = canCacheLast,
     isReversed = false,
     direction = ProgressionDirection.INCREASING,
     additionalNotEmptyCondition = null
@@ -222,9 +231,12 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
 
     private val reversedHandler = ReversedHandler(context, this)
 
+    // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
+    // String is subtype of CharSequence and therefore its handler is more specialized.
     private val expressionHandlers = listOf(
         ArrayIterationHandler(context),
         DefaultProgressionHandler(context),
+        StringIterationHandler(context),
         CharSequenceIterationHandler(context)
     )
 

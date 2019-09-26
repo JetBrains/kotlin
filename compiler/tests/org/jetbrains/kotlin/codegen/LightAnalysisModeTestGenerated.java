@@ -18819,6 +18819,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/ranges/forByteProgressionWithIntIncrement.kt");
         }
 
+        @TestMetadata("forInCharSequenceLengthDecreasedInLoopBody.kt")
+        public void testForInCharSequenceLengthDecreasedInLoopBody() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInCharSequenceLengthDecreasedInLoopBody.kt");
+        }
+
+        @TestMetadata("forInCharSequenceLengthIncreasedInLoopBody.kt")
+        public void testForInCharSequenceLengthIncreasedInLoopBody() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInCharSequenceLengthIncreasedInLoopBody.kt");
+        }
+
         @TestMetadata("forInRangeLiteralWithMixedTypeBounds.kt")
         public void testForInRangeLiteralWithMixedTypeBounds() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/forInRangeLiteralWithMixedTypeBounds.kt");
