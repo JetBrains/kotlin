@@ -2445,6 +2445,19 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
     @Override
     protected void prepare() {
+      // PersistentFS lifecycle should contain FileBasedIndex lifecycle, so,
+      // 1) we call for it's instance before index creation to make sure it's initialized
+      // 2) we dispose FileBasedIndex before PersistentFS disposing
+      PersistentFSImpl fs = (PersistentFSImpl)ManagingFS.getInstance();
+      Disposable disposable = () -> performShutdown();
+      ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
+        @Override
+        public void writeActionStarted(@NotNull Object action) {
+          myUpToDateIndicesForUnsavedOrTransactedDocuments.clear();
+        }
+      }, disposable);
+      Disposer.register(fs, disposable);
+
       initAssociatedDataForExtensions();
 
       File indexRoot = PathManager.getIndexRoot();
@@ -2507,15 +2520,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
             LOG.error(e);
           }
         }
-
-        Disposable disposable = () -> performShutdown();
-        ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
-          @Override
-          public void writeActionStarted(@NotNull Object action) {
-            myUpToDateIndicesForUnsavedOrTransactedDocuments.clear();
-          }
-        }, disposable);
-        Disposer.register(((PersistentFSImpl)ManagingFS.getInstance()), disposable);
 
         registerIndexableSet(new AdditionalIndexableFileSet(), null);
         return state;
