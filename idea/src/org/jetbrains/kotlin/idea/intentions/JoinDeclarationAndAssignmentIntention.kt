@@ -90,7 +90,8 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
         val newProperty = if (!element.isLocal && (initializerBlock != null || secondaryConstructor != null)) {
             assignment.delete()
             if ((initializerBlock?.body as? KtBlockExpression)?.isEmpty() == true) initializerBlock.delete()
-            if ((secondaryConstructor?.bodyBlockExpression)?.isEmpty() == true) secondaryConstructor.delete()
+            val secondaryConstructorBlock = secondaryConstructor?.bodyBlockExpression
+            if (secondaryConstructorBlock?.isEmpty() == true) secondaryConstructorBlock.delete()
             element
         } else {
             assignment.replaced(element).also {

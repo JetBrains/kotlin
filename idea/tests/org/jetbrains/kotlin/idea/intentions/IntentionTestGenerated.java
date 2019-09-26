@@ -10057,9 +10057,14 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/joinDeclarationAndAssignment/correctConditionalAssignment.kt");
         }
 
-        @TestMetadata("deleteConstructor.kt")
-        public void testDeleteConstructor() throws Exception {
-            runTest("idea/testData/intentions/joinDeclarationAndAssignment/deleteConstructor.kt");
+        @TestMetadata("deleteConstructorBlock.kt")
+        public void testDeleteConstructorBlock() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/deleteConstructorBlock.kt");
+        }
+
+        @TestMetadata("deleteConstructorBlock2.kt")
+        public void testDeleteConstructorBlock2() throws Exception {
+            runTest("idea/testData/intentions/joinDeclarationAndAssignment/deleteConstructorBlock2.kt");
         }
 
         @TestMetadata("deleteInitBlock.kt")
