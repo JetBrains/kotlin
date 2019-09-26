@@ -5,6 +5,8 @@ import com.intellij.build.*
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.replaceService
+import com.intellij.util.concurrency.Semaphore
+import junit.framework.TestCase
 import org.assertj.core.api.Assertions
 
 abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
@@ -45,6 +47,7 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
     val buildView = viewManager.getBuildsMap().values.first()
     val eventView = buildView.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
     eventView!!.addFilter { true }
+    viewManager.waitForPendingBuilds()
     edt {
       val tree = eventView.tree
       PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
@@ -77,19 +80,46 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
 
   interface TestViewManager : ViewManager {
     fun getBuildsMap(): MutableMap<BuildDescriptor, BuildView>
+    fun waitForPendingBuilds()
   }
 
   protected class TestSyncViewManager(project: Project) :
     SyncViewManager(project), TestViewManager {
+    private val semaphore = Semaphore()
+    override fun waitForPendingBuilds() = TestCase.assertTrue(semaphore.waitFor(1000))
+
     override fun getBuildsMap(): MutableMap<BuildDescriptor, BuildView> {
       return super.getBuildsMap()
+    }
+
+    override fun onBuildStart(buildDescriptor: BuildDescriptor?) {
+      super.onBuildStart(buildDescriptor)
+      semaphore.down()
+    }
+
+    override fun onBuildFinish(buildDescriptor: BuildDescriptor?) {
+      super.onBuildFinish(buildDescriptor)
+      semaphore.up()
     }
   }
 
   protected class TestBuildViewManager(project: Project) :
     BuildViewManager(project), TestViewManager {
+    private val semaphore = Semaphore()
+    override fun waitForPendingBuilds() = TestCase.assertTrue(semaphore.waitFor(1000))
+
     override fun getBuildsMap(): MutableMap<BuildDescriptor, BuildView> {
       return super.getBuildsMap()
+    }
+
+    override fun onBuildStart(buildDescriptor: BuildDescriptor?) {
+      super.onBuildStart(buildDescriptor)
+      semaphore.down()
+    }
+
+    override fun onBuildFinish(buildDescriptor: BuildDescriptor?) {
+      super.onBuildFinish(buildDescriptor)
+      semaphore.up()
     }
   }
 
