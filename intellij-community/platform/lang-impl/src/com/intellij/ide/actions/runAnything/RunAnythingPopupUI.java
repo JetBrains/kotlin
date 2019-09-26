@@ -384,7 +384,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
       myChooseContextAction.setAvailableContexts(provider.getExecutionContexts(dataContext));
     }
 
-    AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, getDataContext());
+    AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
     ActionUtil.performDumbAwareUpdate(false, myChooseContextAction, event, false);
   }
 

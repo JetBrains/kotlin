@@ -4,9 +4,8 @@
 package com.intellij.ide.actions.runAnything
 
 import com.intellij.ide.actions.runAnything.RunAnythingContext.*
-import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.guessModuleDir
 import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.project.rootManager
 
 fun RunAnythingContext.getPath() = when (this) {
   is ProjectContext -> project.guessProjectDir()?.path
@@ -14,6 +13,3 @@ fun RunAnythingContext.getPath() = when (this) {
   is RecentDirectoryContext -> path
   is BrowseRecentDirectoryContext -> null
 }
-
-private fun Module.guessModuleDir() =
-  rootManager.contentRoots.firstOrNull { it.isDirectory }

@@ -6,7 +6,7 @@ import com.intellij.openapi.externalSystem.util.ui.Optional.Companion.EMPTY
 import com.intellij.util.containers.FList
 
 /**
- * Map for fast finding values by the prefix of them keys
+ * Map for fast finding values by the prefix of thier keys
  */
 class PrefixTreeMap<K, V> : Map<List<K>, V> {
 

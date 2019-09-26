@@ -1,14 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.execution
 
-import com.intellij.ide.IdeBundle
+import com.intellij.execution.Executor
 import com.intellij.ide.actions.runAnything.RunAnythingAction.EXECUTOR_KEY
 import com.intellij.ide.actions.runAnything.RunAnythingContext
 import com.intellij.ide.actions.runAnything.RunAnythingContext.*
-import com.intellij.ide.actions.runAnything.RunAnythingUtil.fetchProject
-import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider
-import com.intellij.ide.actions.runAnything.activity.RunAnythingProviderBase
-import com.intellij.ide.actions.runAnything.items.RunAnythingHelpItem
+import com.intellij.ide.actions.runAnything.RunAnythingUtil
+import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandLineProvider
 import com.intellij.ide.util.gotoByName.GotoClassModel2
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.externalSystem.model.DataNode
@@ -23,13 +21,11 @@ import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.text.StringUtil.*
+import com.intellij.openapi.util.text.StringUtil.isNotEmpty
+import com.intellij.openapi.util.text.StringUtil.substringBeforeLast
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
-import com.intellij.util.execution.ParametersListUtil
 import com.intellij.util.indexing.FindSymbolParameters
 import groovyjarjarcommonscli.Option
 import icons.GradleIcons
@@ -45,14 +41,8 @@ import javax.swing.Icon
 import kotlin.collections.LinkedHashMap
 
 
-class GradleRunAnythingProvider : RunAnythingProviderBase<String>() {
-
-  override fun getCommand(value: String) = value
-
+class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
   override fun getIcon(value: String): Icon? = GradleIcons.Gradle
-
-  override fun getHelpItem(dataContext: DataContext) =
-    RunAnythingHelpItem(helpCommandPlaceholder, helpCommand, helpDescription, helpIcon)
 
   override fun getHelpGroupTitle() = "Gradle"
 
@@ -64,27 +54,22 @@ class GradleRunAnythingProvider : RunAnythingProviderBase<String>() {
 
   override fun getHelpIcon(): Icon? = GradleIcons.Gradle
 
-  override fun getMainListItem(dataContext: DataContext, value: String) =
-    RunAnythingGradleItem(getCommand(value), getIcon(value))
-
-  override fun findMatchingValue(dataContext: DataContext, pattern: String) =
-    if (pattern.startsWith(helpCommand)) getCommand(pattern) else null
-
   override fun getExecutionContexts(dataContext: DataContext): List<RunAnythingContext> {
     return super.getExecutionContexts(dataContext).filter {
       it !is ModuleContext || !it.module.isSourceRoot()
     }
   }
 
-  override fun getValues(dataContext: DataContext, pattern: String): List<String> {
-    val commandLine = parseCommandLine(pattern) ?: return emptyList()
-    val context = createContext(dataContext)
+  override fun suggestCompletionVariants(dataContext: DataContext, commandLine: CommandLine): Sequence<String> {
+    val project = RunAnythingUtil.fetchProject(dataContext)
+    val executionContext = dataContext.getData(EXECUTING_CONTEXT) ?: ProjectContext(project)
+    val context = createContext(project, executionContext, dataContext)
     val tasksVariants = completeTasks(commandLine, context)
     val taskOptionsVariants = completeTaskOptions(commandLine, context)
     val taskClassArgumentsVariants = completeTaskClassArguments(commandLine, context)
     val longOptionsVariants = completeOptions(commandLine, isLongOpt = true)
     val shortOptionsVariants = completeOptions(commandLine, isLongOpt = false)
-    val completion = when {
+    return when {
       commandLine.toComplete.startsWith("--") ->
         taskOptionsVariants + longOptionsVariants + shortOptionsVariants + taskClassArgumentsVariants + tasksVariants
       commandLine.toComplete.startsWith("-") ->
@@ -94,56 +79,48 @@ class GradleRunAnythingProvider : RunAnythingProviderBase<String>() {
       else ->
         taskClassArgumentsVariants + tasksVariants + taskOptionsVariants + longOptionsVariants + shortOptionsVariants
     }
-    val prefix = commandLine.prefix
-    return completion.map { if (prefix.isEmpty()) "$helpCommand $it" else "$helpCommand $prefix $it" }
   }
 
-  override fun execute(dataContext: DataContext, value: String) {
-    val commandLine = parseCommandLine(value)!!
-    val context = createContext(dataContext)
-    if (context.externalProjectPath == null) {
-      Messages.showWarningDialog(
-        context.project,
-        IdeBundle.message("run.anything.notification.warning.content", commandLine.command),
-        IdeBundle.message("run.anything.notification.warning.title"))
-      return
-    }
-    val executor = EXECUTOR_KEY.getData(dataContext)
-    GradleExecuteTaskAction.runGradle(context.project, executor, context.externalProjectPath, commandLine.command)
+  override fun runAnything(dataContext: DataContext, commandLine: CommandLine): Boolean {
+    val project = RunAnythingUtil.fetchProject(dataContext)
+    val executionContext = dataContext.getData(EXECUTING_CONTEXT) ?: ProjectContext(project)
+    val context = createContext(project, executionContext, dataContext)
+    val externalProjectPath = context.externalProjectPath ?: return false
+    GradleExecuteTaskAction.runGradle(project, context.executor, externalProjectPath, commandLine.command)
+    return true
   }
 
-  private fun completeTasks(commandLine: CommandLine, context: Context): List<String> {
+  private fun completeTasks(commandLine: CommandLine, context: Context): Sequence<String> {
     return getTasks(context)
-      .filterNot { commandLine.commands.any { task -> matchTask(task, it.first, it.second) } }
+      .filterNot { commandLine.completedCommands.any { task -> matchTask(task, it.first, it.second) } }
       .flatMap {
         when {
           it.second.isInherited -> sequenceOf(it.first.removePrefix(":"))
           else -> sequenceOf(it.first, it.first.removePrefix(":"))
         }
       }
-      .toList()
   }
 
-  private fun completeOptions(commandLine: CommandLine, isLongOpt: Boolean): List<String> {
-    return GradleCommandLineOptionsProvider.getSupportedOptions().options
+  private fun completeOptions(commandLine: CommandLine, isLongOpt: Boolean): Sequence<String> {
+    return GradleCommandLineOptionsProvider.getSupportedOptions().options.asSequence()
       .filterIsInstance<Option>()
       .mapNotNull { if (isLongOpt) it.longOpt else it.opt }
       .map { if (isLongOpt) "--$it" else "-$it" }
-      .filter { it !in commandLine.commands }
+      .filter { it !in commandLine }
   }
 
-  private fun completeTaskOptions(commandLine: CommandLine, context: Context): List<String> {
-    val task = commandLine.commands.lastOrNull() ?: return emptyList()
+  private fun completeTaskOptions(commandLine: CommandLine, context: Context): Sequence<String> {
+    val task = commandLine.completedCommands.lastOrNull() ?: return emptySequence()
     return getTaskOptions(context, task).map { it.name }
   }
 
-  private fun completeTaskClassArguments(commandLine: CommandLine, context: Context): List<String> {
-    if (commandLine.commands.size < 2) return emptyList()
-    val task = commandLine.commands[commandLine.commands.size - 2]
-    val optionName = commandLine.commands[commandLine.commands.size - 1]
+  private fun completeTaskClassArguments(commandLine: CommandLine, context: Context): Sequence<String> {
+    if (commandLine.completedCommands.size < 2) return emptySequence()
+    val task = commandLine.completedCommands[commandLine.completedCommands.size - 2]
+    val optionName = commandLine.completedCommands[commandLine.completedCommands.size - 1]
     val options = getTaskOptions(context, task)
-    val option = ContainerUtil.find(options) { optionName == it.name } ?: return emptyList()
-    if (!option.argumentTypes.contains(TaskOption.ArgumentType.CLASS)) return emptyList()
+    val option = options.find { optionName == it.name } ?: return emptySequence()
+    if (!option.argumentTypes.contains(TaskOption.ArgumentType.CLASS)) return emptySequence()
     val callChain = when {
       !commandLine.toComplete.contains(".") -> "*"
       else -> substringBeforeLast(commandLine.toComplete, ".") + "."
@@ -152,15 +129,14 @@ class GradleRunAnythingProvider : RunAnythingProviderBase<String>() {
     val model = GotoClassModel2(context.project)
     val parameters = FindSymbolParameters.simple(context.project, false)
     model.processNames({ result.add("$callChain$it") }, parameters)
-    return result
+    return result.asSequence()
   }
 
-  private fun getTaskOptions(context: Context, task: String): List<TaskOption> {
+  private fun getTaskOptions(context: Context, task: String): Sequence<TaskOption> {
     val provider = GradleCommandLineTaskOptionsProvider()
     return getTasks(context)
       .filter { matchTask(task, it.first, it.second) }
       .flatMap { provider.getTaskOptions(it.second).asSequence() }
-      .toList()
   }
 
   private fun matchTask(name: String, fqName: String, taskData: TaskData): Boolean {
@@ -232,25 +208,12 @@ class GradleRunAnythingProvider : RunAnythingProviderBase<String>() {
     return tasks
   }
 
-  private fun parseCommandLine(commandLine: String): CommandLine? {
-    val command = when {
-      commandLine.startsWith(helpCommand) -> trimStart(commandLine, helpCommand)
-      helpCommand.startsWith(commandLine) -> ""
-      else -> return null
-    }
-    val prefix = notNullize(substringBeforeLast(command, " "), "").trim()
-    val toComplete = notNullize(substringAfterLast(command, " "), "").trim()
-    val commands = ParametersListUtil.parse(prefix)
-    return CommandLine(commands, command, prefix, toComplete)
-  }
-
-  private fun createContext(dataContext: DataContext): Context {
-    val project = fetchProject(dataContext)
-    val context = dataContext.getData(RunAnythingProvider.EXECUTING_CONTEXT) ?: ProjectContext(project)
+  private fun createContext(project: Project, context: RunAnythingContext, dataContext: DataContext): Context {
     val externalProjectPath = context.getProjectPath()
     val gradlePath = context.getGradlePath(project)
     val tasks = fetchTasks(project)[externalProjectPath] ?: MultiMap()
-    return Context(context, project, gradlePath, externalProjectPath, tasks)
+    val executor = EXECUTOR_KEY.getData(dataContext)
+    return Context(context, project, gradlePath, externalProjectPath, tasks, executor)
   }
 
   private fun RunAnythingContext.getProjectPath() = when (this) {
@@ -283,19 +246,13 @@ class GradleRunAnythingProvider : RunAnythingProviderBase<String>() {
     GradleProjectResolverUtil.getGradlePath(module)
       .removeSuffix(":")
 
-  private data class CommandLine(
-    val commands: List<String>,
-    val command: String,
-    val prefix: String,
-    val toComplete: String
-  )
-
-  private data class Context(
+  data class Context(
     val context: RunAnythingContext,
     val project: Project,
     val gradlePath: String?,
     val externalProjectPath: String?,
-    val tasks: MultiMap<String, TaskData>
+    val tasks: MultiMap<String, TaskData>,
+    val executor: Executor?
   )
 
   companion object {

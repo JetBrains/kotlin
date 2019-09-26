@@ -6,9 +6,15 @@ data class Inverted<T>(val value: T)
 operator fun <T> T.not() = Inverted(this)
 
 /**
+ * assertCollection([1, 3, 5], 1, !2, 3, !4, 5) -> success
+ * assertCollection([1, 3, 5], 1, !2, 3)        -> success
+ * assertCollection([1, 3, 5], 1, 2, 3, 4, 5)   -> fail
+ * assertCollection([1, 3, 5], 1, !2, 3, 4)     -> fail
+ * assertCollection([1, 3, 5], [1, 3], ![2, 4]) -> success
+ *
  * @param elements must be a T, Iterable<T>, Inverted<T> or Inverted<Iterable<T>>
  */
-inline fun <reified T> assertContains(actual: Iterable<T>, vararg elements: Any?) {
+inline fun <reified T> assertCollection(actual: Collection<T>, vararg elements: Any?) {
   val (positive, negative) = partition(elements.toList())
   positive.forEach { require(it is T) }
   negative.forEach { require(it is T) }

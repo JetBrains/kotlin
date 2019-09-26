@@ -50,22 +50,22 @@ class GradleRunAnythingProviderTest : GradleRunAnythingProviderTestCase() {
       "gradle test --tests org.jetbrains.ClassF",
       "gradle test --tests org.jetbrains.ClassG"
     )
-    withVariantsFor("gradle test ") { assertContains(it, "gradle test --tests") }
-    withVariantsFor("gradle test -") { assertContains(it, "gradle test --tests") }
-    withVariantsFor("gradle test --") { assertContains(it, "gradle test --tests") }
-    withVariantsFor("gradle test --t") { assertContains(it, "gradle test --tests") }
-    withVariantsFor("gradle test --tests ") { assertContains(it, *wcCompletions) }
-    withVariantsFor("gradle test --tests *") { assertContains(it, *wcCompletions) }
-    withVariantsFor("gradle test --tests *.") { assertContains(it, *wcFqnCompletions) }
-    withVariantsFor("gradle test --tests *.Class") { assertContains(it, *wcFqnCompletions) }
-    withVariantsFor("gradle test --tests org.jetbrains.") { assertContains(it, *fqnCompletions) }
-    withVariantsFor("gradle test --tests org.jetbrains.Class") { assertContains(it, *fqnCompletions) }
+    withVariantsFor("gradle test ") { assertCollection(it, "gradle test --tests") }
+    withVariantsFor("gradle test -") { assertCollection(it, "gradle test --tests") }
+    withVariantsFor("gradle test --") { assertCollection(it, "gradle test --tests") }
+    withVariantsFor("gradle test --t") { assertCollection(it, "gradle test --tests") }
+    withVariantsFor("gradle test --tests ") { assertCollection(it, *wcCompletions) }
+    withVariantsFor("gradle test --tests *") { assertCollection(it, *wcCompletions) }
+    withVariantsFor("gradle test --tests *.") { assertCollection(it, *wcFqnCompletions) }
+    withVariantsFor("gradle test --tests *.Class") { assertCollection(it, *wcFqnCompletions) }
+    withVariantsFor("gradle test --tests org.jetbrains.") { assertCollection(it, *fqnCompletions) }
+    withVariantsFor("gradle test --tests org.jetbrains.Class") { assertCollection(it, *fqnCompletions) }
   }
 
   @Test
   fun `test regular project`() {
     withVariantsFor("") {
-      assertContains(it, getGradleOptions(), !getCommonTasks(), !getCommonTasks(":"))
+      assertCollection(it, getGradleOptions(), !getCommonTasks(), !getCommonTasks(":"))
     }
   }
 
@@ -73,23 +73,23 @@ class GradleRunAnythingProviderTest : GradleRunAnythingProviderTestCase() {
   fun `test single project`() {
     importProject(GradleBuildScriptBuilderEx().generate())
     withVariantsFor("") {
-      assertContains(it, getGradleOptions(), getCommonTasks(), getCommonTasks(":"))
+      assertCollection(it, getGradleOptions(), getCommonTasks(), getCommonTasks(":"))
     }
     importProject(GradleBuildScriptBuilderEx().withTask("my-task").generate())
     withVariantsFor("") {
-      assertContains(it, getGradleOptions(), getCommonTasks(), getCommonTasks(":"))
-      assertContains(it, "my-task", ":my-task")
+      assertCollection(it, getGradleOptions(), getCommonTasks(), getCommonTasks(":"))
+      assertCollection(it, "my-task", ":my-task")
     }
     withVariantsFor("wrapper ") {
-      assertContains(it, "wrapper my-task", "wrapper :my-task", !"wrapper wrapper", !"wrapper :wrapper")
+      assertCollection(it, "wrapper my-task", "wrapper :my-task", !"wrapper wrapper", !"wrapper :wrapper")
     }
     withVariantsFor("my-task ") {
-      assertContains(it, getGradleOptions("my-task "), getCommonTasks("my-task "), getCommonTasks("my-task :"))
-      assertContains(it, !"my-task my-task", !"my-task :my-task")
+      assertCollection(it, getGradleOptions("my-task "), getCommonTasks("my-task "), getCommonTasks("my-task :"))
+      assertCollection(it, !"my-task my-task", !"my-task :my-task")
     }
     withVariantsFor(":my-task ") {
-      assertContains(it, getGradleOptions(":my-task "), getCommonTasks(":my-task "), getCommonTasks(":my-task :"))
-      assertContains(it, !":my-task my-task", !":my-task :my-task")
+      assertCollection(it, getGradleOptions(":my-task "), getCommonTasks(":my-task "), getCommonTasks(":my-task :"))
+      assertCollection(it, !":my-task my-task", !":my-task :my-task")
     }
   }
 
@@ -103,49 +103,49 @@ class GradleRunAnythingProviderTest : GradleRunAnythingProviderTestCase() {
     createProjectSubFile("composite/settings.gradle", GradleSettingScriptBuilder("composite").withModule("module").generate())
     importProject()
     withVariantsFor("") {
-      assertContains(it, getGradleOptions())
-      assertContains(it, getRootProjectTasks(), getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
-      assertContains(it, getCommonTasks(), getCommonTasks(":"), getCommonTasks(":module:"))
-      assertContains(it, "taskP", ":taskP", !":module:taskP")
-      assertContains(it, "taskM", !":taskM", ":module:taskM")
-      assertContains(it, !"taskC", !":taskC", !":module:taskC")
-      assertContains(it, !"taskCM", !":taskCM", !":module:taskCM")
+      assertCollection(it, getGradleOptions())
+      assertCollection(it, getRootProjectTasks(), getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
+      assertCollection(it, getCommonTasks(), getCommonTasks(":"), getCommonTasks(":module:"))
+      assertCollection(it, "taskP", ":taskP", !":module:taskP")
+      assertCollection(it, "taskM", !":taskM", ":module:taskM")
+      assertCollection(it, !"taskC", !":taskC", !":module:taskC")
+      assertCollection(it, !"taskCM", !":taskCM", !":module:taskCM")
     }
     withVariantsFor("", "project") {
-      assertContains(it, getGradleOptions())
-      assertContains(it, getRootProjectTasks(), getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
-      assertContains(it, getCommonTasks(), getCommonTasks(":"), getCommonTasks(":module:"))
-      assertContains(it, "taskP", ":taskP", !":module:taskP")
-      assertContains(it, "taskM", !":taskM", ":module:taskM")
-      assertContains(it, !"taskC", !":taskC", !":module:taskC")
-      assertContains(it, !"taskCM", !":taskCM", !":module:taskCM")
+      assertCollection(it, getGradleOptions())
+      assertCollection(it, getRootProjectTasks(), getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
+      assertCollection(it, getCommonTasks(), getCommonTasks(":"), getCommonTasks(":module:"))
+      assertCollection(it, "taskP", ":taskP", !":module:taskP")
+      assertCollection(it, "taskM", !":taskM", ":module:taskM")
+      assertCollection(it, !"taskC", !":taskC", !":module:taskC")
+      assertCollection(it, !"taskCM", !":taskCM", !":module:taskCM")
     }
     withVariantsFor("", "project.module") {
-      assertContains(it, getGradleOptions())
-      assertContains(it, !getRootProjectTasks(), !getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
-      assertContains(it, getCommonTasks(), getCommonTasks(":"), !getCommonTasks(":module:"))
-      assertContains(it, !"taskP", !":taskP", !":module:taskP")
-      assertContains(it, "taskM", ":taskM", !":module:taskM")
-      assertContains(it, !"taskC", !":taskC", !":module:taskC")
-      assertContains(it, !"taskCM", !":taskCM", !":module:taskCM")
+      assertCollection(it, getGradleOptions())
+      assertCollection(it, !getRootProjectTasks(), !getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
+      assertCollection(it, getCommonTasks(), getCommonTasks(":"), !getCommonTasks(":module:"))
+      assertCollection(it, !"taskP", !":taskP", !":module:taskP")
+      assertCollection(it, "taskM", ":taskM", !":module:taskM")
+      assertCollection(it, !"taskC", !":taskC", !":module:taskC")
+      assertCollection(it, !"taskCM", !":taskCM", !":module:taskCM")
     }
     withVariantsFor("", "composite") {
-      assertContains(it, getGradleOptions())
-      assertContains(it, getRootProjectTasks(), getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
-      assertContains(it, getCommonTasks(), getCommonTasks(":"), getCommonTasks(":module:"))
-      assertContains(it, !"taskP", !":taskP", !":module:taskP")
-      assertContains(it, !"taskM", !":taskM", !":module:taskM")
-      assertContains(it, "taskC", ":taskC", !":module:taskC")
-      assertContains(it, "taskCM", !":taskCM", ":module:taskCM")
+      assertCollection(it, getGradleOptions())
+      assertCollection(it, getRootProjectTasks(), getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
+      assertCollection(it, getCommonTasks(), getCommonTasks(":"), getCommonTasks(":module:"))
+      assertCollection(it, !"taskP", !":taskP", !":module:taskP")
+      assertCollection(it, !"taskM", !":taskM", !":module:taskM")
+      assertCollection(it, "taskC", ":taskC", !":module:taskC")
+      assertCollection(it, "taskCM", !":taskCM", ":module:taskCM")
     }
     withVariantsFor("", "composite.module") {
-      assertContains(it, getGradleOptions())
-      assertContains(it, !getRootProjectTasks(), !getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
-      assertContains(it, getCommonTasks(), getCommonTasks(":"), !getCommonTasks(":module:"))
-      assertContains(it, !"taskP", !":taskP", !":module:taskP")
-      assertContains(it, !"taskM", !":taskM", !":module:taskM")
-      assertContains(it, !"taskC", !":taskC", !":module:taskC")
-      assertContains(it, "taskCM", ":taskCM", !":module:taskCM")
+      assertCollection(it, getGradleOptions())
+      assertCollection(it, !getRootProjectTasks(), !getRootProjectTasks(":"), !getRootProjectTasks(":module:"))
+      assertCollection(it, getCommonTasks(), getCommonTasks(":"), !getCommonTasks(":module:"))
+      assertCollection(it, !"taskP", !":taskP", !":module:taskP")
+      assertCollection(it, !"taskM", !":taskM", !":module:taskM")
+      assertCollection(it, !"taskC", !":taskC", !":module:taskC")
+      assertCollection(it, "taskCM", ":taskCM", !":module:taskCM")
     }
   }
 }
