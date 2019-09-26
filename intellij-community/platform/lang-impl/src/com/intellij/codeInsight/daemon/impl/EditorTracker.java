@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.*;
 
@@ -217,8 +218,12 @@ public final class EditorTracker implements Disposable {
     final JComponent component = editor.getComponent();
     final JComponent contentComponent = editor.getContentComponent();
 
-    final HierarchyListener hierarchyListener = __ -> registerEditor(editor);
-    component.addHierarchyListener(hierarchyListener);
+    final PropertyChangeListener propertyChangeListener = evt -> {
+      if (evt.getOldValue() == null && evt.getNewValue() != null) {
+        registerEditor(editor);
+      }
+    };
+    component.addPropertyChangeListener("ancestor", propertyChangeListener);
 
     FocusListener focusListener = new FocusListener() {
       @Override
@@ -249,7 +254,7 @@ public final class EditorTracker implements Disposable {
     contentComponent.addFocusListener(focusListener);
 
     myExecuteOnEditorRelease.put(event.getEditor(), () -> {
-      component.removeHierarchyListener(hierarchyListener);
+      component.removePropertyChangeListener("ancestor", propertyChangeListener);
       contentComponent.removeFocusListener(focusListener);
     });
   }
