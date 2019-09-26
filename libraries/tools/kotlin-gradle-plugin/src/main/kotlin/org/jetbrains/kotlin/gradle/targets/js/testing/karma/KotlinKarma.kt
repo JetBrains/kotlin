@@ -74,6 +74,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                 // reporter for browser logs
                 (function () {
                     const util = require('util');
+                    const resolve = require('url').resolve;
 
                     const escapeMessage = function (message) {
                         if (message === null || message === undefined) {
@@ -101,10 +102,67 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             
                         return util.format.apply(null, args) + '\n'
                     };
+                    
+                    function createFormatError(config, emitter) {
+                    const basePath = config.basePath;
+                    const urlRoot = config.urlRoot === '/' ? '' : (config.urlRoot || '');
+                    let lastServedFiles = [];
+                    
+                    emitter.on('file_list_modified', (files) => {
+                      lastServedFiles = files.served
+                    });
+                     const URL_REGEXP = new RegExp('(?:https?:\\/\\/' +
+                        config.hostname + '(?:\\:' + config.port + ')?' + ')?\\/?' +
+                        urlRoot + '\\/?' +
+                        '(base/|absolute)' + // prefix, including slash for base/ to create relative paths.
+                        '((?:[A-z]\\:)?[^\\?\\s\\:]*)' + // path
+                        '(\\?\\w*)?' + // sha
+                        '(\\:(\\d+))?' + // line
+                        '(\\:(\\d+))?' + // column
+                        '', 'g');
+                        
+                     const SourceMapConsumer = require('source-map').SourceMapConsumer;
+                     
+                     const cache = new WeakMap();
+                     function getSourceMapConsumer (sourceMap) {
+                         if (!cache.has(sourceMap)) {
+                             cache.set(sourceMap, new SourceMapConsumer(sourceMap))
+                         }
+                         return cache.get(sourceMap)
+                     }
+                     
+                     const PathUtils = require('karma/lib/utils/path-utils.js');
+                    
+                    return function (input) {
+                        let msg = input.replace(URL_REGEXP, function (_, prefix, path, __, ___, line, ____, column) {
+                            const normalizedPath = prefix === 'base/' ? `${"$"}basePath}/${"$"}{path}` : path;
+                            const file = lastServedFiles.find((file) => file.path === normalizedPath);
+                    
+                            if (file && file.sourceMap && line) {
+                                line = +line;
+                                column = +column;
+                                const bias = column ? SourceMapConsumer.GREATEST_LOWER_BOUND : SourceMapConsumer.LEAST_UPPER_BOUND;
+                    
+                                try {
+                                    const original = getSourceMapConsumer(file.sourceMap).originalPositionFor({ line, column: (column || 0), bias });
+                    
+                                    return `${"$"}{PathUtils.formatPathMapping(resolve(path, original.source), original.line, original.column)} <- ${"$"}{PathUtils.formatPathMapping(path, line, column)}`
+                                } catch (e) {
+                                }
+                            }
+                    
+                            return PathUtils.formatPathMapping(path, line, column) || prefix
+                        });
+                    
+                        return msg + '\n'
+                      };
+                      }
             
-                    const LogReporter = function (baseReporterDecorator, formatError) {
+                    const LogReporter = function (baseReporterDecorator, config, emitter) {
                         const teamcityReporter = require("karma-teamcity-reporter")["reporter:teamcity"][1];
                         teamcityReporter.call(this, baseReporterDecorator);
+                        
+                        const formatError = createFormatError(config, emitter);
 
                         this.TEST_STD_OUT = "##teamcity[testStdOut name='%s' out='%s' flowId='']";
                         
@@ -170,7 +228,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                         }
                     };
                     
-                    LogReporter.${"$"}inject = ['baseReporterDecorator', 'formatError'];
+                    LogReporter.${"$"}inject = ['baseReporterDecorator', 'config', 'emitter'];
             
                     config.plugins = config.plugins || [];
                     config.plugins.push('karma-*'); // default
