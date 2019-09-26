@@ -5,7 +5,7 @@ public final class DeepInlineKt : java/lang/Object {
             1 $i$f$block: I
     }
 
-    public final static void foo(java.lang.String $this$block, int $i$a$-block-DeepInlineKt$foo$1$1$1) {
+    public final static void foo(java.lang.String $this$foo, int count) {
         Local variables:
             14 $this$block: J
             16 $i$a$-block-DeepInlineKt$foo$1$1$1: I
