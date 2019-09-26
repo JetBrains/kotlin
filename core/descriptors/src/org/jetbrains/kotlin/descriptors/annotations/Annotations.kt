@@ -50,32 +50,32 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 }
 
 class FilteredAnnotations(
-        private val delegate: Annotations,
-        private val fqNameFilter: (FqName) -> Boolean
+    private val delegate: Annotations,
+    private val fqNameFilter: (FqName) -> Boolean
 ) : Annotations {
 
     override fun hasAnnotation(fqName: FqName) =
-            if (fqNameFilter(fqName)) delegate.hasAnnotation(fqName)
-            else false
+        if (fqNameFilter(fqName)) delegate.hasAnnotation(fqName)
+        else false
 
     override fun findAnnotation(fqName: FqName) =
-            if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
-            else null
+        if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
+        else null
 
     override fun iterator() = delegate.filter(this::shouldBeReturned).iterator()
 
     override fun isEmpty() = delegate.any(this::shouldBeReturned)
 
     private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean =
-            annotation.fqName.let { fqName ->
-                fqName != null && fqNameFilter(fqName)
-            }
+        annotation.fqName.let { fqName ->
+            fqName != null && fqNameFilter(fqName)
+        }
 }
 
 class CompositeAnnotations(
-        private val delegates: List<Annotations>
+    private val delegates: List<Annotations>
 ) : Annotations {
-    constructor(vararg delegates: Annotations): this(delegates.toList())
+    constructor(vararg delegates: Annotations) : this(delegates.toList())
 
     override fun isEmpty() = delegates.all { it.isEmpty() }
 
@@ -90,8 +90,8 @@ class CompositeAnnotations(
 }
 
 fun composeAnnotations(first: Annotations, second: Annotations) =
-        when {
-            first.isEmpty() -> second
-            second.isEmpty() -> first
-            else -> CompositeAnnotations(first, second)
-        }
+    when {
+        first.isEmpty() -> second
+        second.isEmpty() -> first
+        else -> CompositeAnnotations(first, second)
+    }
