@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.KotlinType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirClass : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility, CirDeclarationWithModality {
@@ -21,7 +20,7 @@ interface CirClass : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclaratio
     val isInline: Boolean
     val isInner: Boolean
     val isExternal: Boolean
-    val supertypes: Collection<KotlinType>
+    val supertypes: Collection<CirType>
 }
 
 interface CirClassConstructor : CirAnnotatedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility, CirMaybeCallableMemberOfClass, CirCallableMemberWithParameters {
@@ -46,7 +45,7 @@ data class CirCommonClass(
     override val isData get() = false
     override val isExternal get() = false
     override var companion: FqName? = null
-    override val supertypes: MutableCollection<KotlinType> = ArrayList()
+    override val supertypes: MutableCollection<CirType> = ArrayList()
 }
 
 data class CirCommonClassConstructor(
@@ -58,10 +57,10 @@ data class CirCommonClassConstructor(
     override val hasStableParameterNames: Boolean,
     override val hasSynthesizedParameterNames: Boolean
 ) : CirClassConstructor {
-    override val annotations: Annotations get() = Annotations.EMPTY
-    override val containingClassKind: ClassKind get() = unsupported()
-    override val containingClassModality: Modality get() = unsupported()
-    override val containingClassIsData: Boolean get() = unsupported()
+    override val annotations get() = Annotations.EMPTY
+    override val containingClassKind get() = unsupported()
+    override val containingClassModality get() = unsupported()
+    override val containingClassIsData get() = unsupported()
 }
 
 class CirWrappedClass(private val wrapped: ClassDescriptor) : CirClass {
@@ -77,35 +76,40 @@ class CirWrappedClass(private val wrapped: ClassDescriptor) : CirClass {
     override val isInline get() = wrapped.isInline
     override val isInner get() = wrapped.isInner
     override val isExternal get() = wrapped.isExternal
-    override val supertypes: Collection<KotlinType> get() = wrapped.typeConstructor.supertypes
+    override val supertypes by lazy(PUBLICATION) { wrapped.typeConstructor.supertypes.map(CirType.Companion::create) }
 }
 
 class CirWrappedClassConstructor(private val wrapped: ClassConstructorDescriptor) : CirClassConstructor {
-    override val isPrimary: Boolean get() = wrapped.isPrimary
-    override val kind: CallableMemberDescriptor.Kind get() = wrapped.kind
-    override val containingClassKind: ClassKind get() = wrapped.containingDeclaration.kind
-    override val containingClassModality: Modality get() = wrapped.containingDeclaration.modality
-    override val containingClassIsData: Boolean get() = wrapped.containingDeclaration.isData
-    override val annotations: Annotations get() = wrapped.annotations
-    override val visibility: Visibility get() = wrapped.visibility
-    override val typeParameters: List<CirTypeParameter> by lazy(PUBLICATION) { wrapped.typeParameters.map(::CirWrappedTypeParameter) }
-    override val valueParameters: List<CirValueParameter> by lazy(PUBLICATION) { wrapped.valueParameters.map(::CirWrappedValueParameter) }
-    override val hasStableParameterNames: Boolean get() = wrapped.hasStableParameterNames()
-    override val hasSynthesizedParameterNames: Boolean get() = wrapped.hasSynthesizedParameterNames()
+    override val isPrimary get() = wrapped.isPrimary
+    override val kind get() = wrapped.kind
+    override val containingClassKind get() = wrapped.containingDeclaration.kind
+    override val containingClassModality get() = wrapped.containingDeclaration.modality
+    override val containingClassIsData get() = wrapped.containingDeclaration.isData
+    override val annotations get() = wrapped.annotations
+    override val visibility get() = wrapped.visibility
+    override val typeParameters by lazy(PUBLICATION) {
+        wrapped.typeParameters.mapNotNull { typeParameter ->
+            // save only type parameters that are contributed by the constructor itself
+            typeParameter.takeIf { it.containingDeclaration == wrapped }?.let(::CirWrappedTypeParameter)
+        }
+    }
+    override val valueParameters by lazy(PUBLICATION) { wrapped.valueParameters.map(::CirWrappedValueParameter) }
+    override val hasStableParameterNames get() = wrapped.hasStableParameterNames()
+    override val hasSynthesizedParameterNames get() = wrapped.hasSynthesizedParameterNames()
 }
 
 object CirClassRecursionMarker : CirClass, CirRecursionMarker {
-    override val companion: FqName? get() = unsupported()
-    override val kind: ClassKind get() = unsupported()
-    override val modality: Modality get() = unsupported()
-    override val isCompanion: Boolean get() = unsupported()
-    override val isData: Boolean get() = unsupported()
-    override val isInline: Boolean get() = unsupported()
-    override val isInner: Boolean get() = unsupported()
-    override val isExternal: Boolean get() = unsupported()
-    override val supertypes: Collection<KotlinType> get() = unsupported()
-    override val annotations: Annotations get() = unsupported()
-    override val name: Name get() = unsupported()
-    override val visibility: Visibility get() = unsupported()
-    override val typeParameters: List<CirTypeParameter> get() = unsupported()
+    override val companion get() = unsupported()
+    override val kind get() = unsupported()
+    override val modality get() = unsupported()
+    override val isCompanion get() = unsupported()
+    override val isData get() = unsupported()
+    override val isInline get() = unsupported()
+    override val isInner get() = unsupported()
+    override val isExternal get() = unsupported()
+    override val supertypes get() = unsupported()
+    override val annotations get() = unsupported()
+    override val name get() = unsupported()
+    override val visibility get() = unsupported()
+    override val typeParameters get() = unsupported()
 }

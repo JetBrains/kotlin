@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonTypeParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
@@ -91,7 +92,7 @@ class DefaultTypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParamet
             name = Name.identifier(name),
             isReified = isReified,
             variance = variance,
-            upperBounds = upperBounds.map { mockClassType(it).unwrap() }
+            upperBounds = upperBounds.map { CirType.create(mockClassType(it)) }
         )
     }
 }

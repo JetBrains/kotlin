@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.junit.Test
 
-class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionReceiver?, UnwrappedType?>() {
+class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionReceiver?, CirExtensionReceiver?>() {
 
     @Test
     fun nullReceiver() = doTestSuccess(
@@ -24,7 +24,7 @@ class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensi
 
     @Test
     fun sameReceiver() = doTestSuccess(
-        mockClassType("kotlin.String").unwrap(),
+        mockExtensionReceiver("kotlin.String"),
         mockExtensionReceiver("kotlin.String"),
         mockExtensionReceiver("kotlin.String"),
         mockExtensionReceiver("kotlin.String")
@@ -56,5 +56,5 @@ class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensi
 
 private fun mockExtensionReceiver(typeFqName: String) = CirExtensionReceiver(
     annotations = Annotations.EMPTY,
-    type = mockClassType(typeFqName).unwrap()
+    type = CirType.create(mockClassType(typeFqName))
 )

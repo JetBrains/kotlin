@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedClassDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedTypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.builder.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
@@ -31,8 +32,17 @@ internal fun mockClassType(
 ): KotlinType = LazyWrappedType(LockBasedStorageManager.NO_LOCKS) {
     val classFqName = FqName(fqName)
 
-    val classDescriptor = CommonizedClassDescriptor(
+    val targetComponents = TargetDeclarationsBuilderComponents(
         storageManager = LockBasedStorageManager.NO_LOCKS,
+        target = InputTarget("Arbitrary target"),
+        builtIns = DefaultBuiltIns.Instance,
+        isCommon = false,
+        index = 0,
+        cache = DeclarationsBuilderCache(1)
+    )
+
+    val classDescriptor = CommonizedClassDescriptor(
+        targetComponents = targetComponents,
         containingDeclaration = createPackageFragmentForClassifier(classFqName),
         annotations = Annotations.EMPTY,
         name = classFqName.shortName(),
@@ -46,16 +56,14 @@ internal fun mockClassType(
         isExternal = false,
         isExpect = false,
         isActual = false,
+        cirDeclaredTypeParameters = emptyList(),
         companionObjectName = null,
-        supertypes = emptyList()
+        cirSupertypes = emptyList()
     )
 
-    classDescriptor.declaredTypeParameters = emptyList()
+    classDescriptor.unsubstitutedMemberScope = CommonizedMemberScope()
 
-    classDescriptor.initialize(
-        unsubstitutedMemberScope = MemberScope.Empty,
-        constructors = emptyList()
-    )
+    classDescriptor.initialize(constructors = emptyList())
 
     classDescriptor.defaultType.makeNullableAsSpecified(nullable)
 }
@@ -80,8 +88,8 @@ internal fun mockTAType(
 
     typeAliasDescriptor.initialize(
         declaredTypeParameters = emptyList(),
-        underlyingType = rightHandSideType.getAbbreviation() ?: rightHandSideType,
-        expandedType = rightHandSideType
+        underlyingType = LockBasedStorageManager.NO_LOCKS.createLazyValue { rightHandSideType.getAbbreviation() ?: rightHandSideType },
+        expandedType = LockBasedStorageManager.NO_LOCKS.createLazyValue { rightHandSideType }
     )
 
     (rightHandSideType.getAbbreviatedType()?.expandedType ?: rightHandSideType)

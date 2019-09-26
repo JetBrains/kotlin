@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.UnwrappedType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirFunctionModifiers {
@@ -33,7 +32,7 @@ data class CirCommonFunction(
     override val modality: Modality,
     override val visibility: Visibility,
     override val extensionReceiver: CirExtensionReceiver?,
-    override val returnType: UnwrappedType,
+    override val returnType: CirType,
     override val kind: CallableMemberDescriptor.Kind,
     private val modifiers: CirFunctionModifiers,
     override val valueParameters: List<CirValueParameter>,
@@ -49,15 +48,15 @@ class CirWrappedFunction(wrapped: SimpleFunctionDescriptor) : CirWrappedFunction
     override val isTailrec get() = wrapped.isTailrec
     override val isSuspend get() = wrapped.isSuspend
     override val valueParameters by lazy(PUBLICATION) { wrapped.valueParameters.map(::CirWrappedValueParameter) }
-    override val hasStableParameterNames: Boolean get() = wrapped.hasStableParameterNames()
-    override val hasSynthesizedParameterNames: Boolean get() = wrapped.hasSynthesizedParameterNames()
+    override val hasStableParameterNames get() = wrapped.hasStableParameterNames()
+    override val hasSynthesizedParameterNames get() = wrapped.hasSynthesizedParameterNames()
 }
 
 interface CirValueParameter {
     val name: Name
     val annotations: Annotations
-    val returnType: UnwrappedType
-    val varargElementType: UnwrappedType?
+    val returnType: CirType
+    val varargElementType: CirType?
     val declaresDefaultValue: Boolean
     val isCrossinline: Boolean
     val isNoinline: Boolean
@@ -65,8 +64,8 @@ interface CirValueParameter {
 
 data class CirCommonValueParameter(
     override val name: Name,
-    override val returnType: UnwrappedType,
-    override val varargElementType: UnwrappedType?,
+    override val returnType: CirType,
+    override val varargElementType: CirType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
 ) : CirValueParameter {
@@ -77,8 +76,8 @@ data class CirCommonValueParameter(
 data class CirWrappedValueParameter(private val wrapped: ValueParameterDescriptor) : CirValueParameter {
     override val name get() = wrapped.name
     override val annotations get() = wrapped.annotations
-    override val returnType by lazy(PUBLICATION) { wrapped.returnType!!.unwrap() }
-    override val varargElementType by lazy(PUBLICATION) { wrapped.varargElementType?.unwrap() }
+    override val returnType by lazy(PUBLICATION) { CirType.create(wrapped.returnType!!) }
+    override val varargElementType by lazy(PUBLICATION) { wrapped.varargElementType?.let(CirType.Companion::create) }
     override val declaresDefaultValue get() = wrapped.declaresDefaultValue()
     override val isCrossinline get() = wrapped.isCrossinline
     override val isNoinline get() = wrapped.isNoinline

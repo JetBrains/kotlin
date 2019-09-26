@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.junit.Test
 
 class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, CirValueParameter>() {
@@ -153,7 +153,7 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParam
             isNoinline: Boolean = false,
             declaresDefaultValue: Boolean = false
         ): CirValueParameter {
-            val returnType = mockClassType(returnTypeFqName).unwrap()
+            val returnType = CirType.create(mockClassType(returnTypeFqName))
 
             return CirTestValueParameter(
                 name = Name.identifier(name),
@@ -171,8 +171,8 @@ class DefaultValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParam
 internal data class CirTestValueParameter(
     override val name: Name,
     override val annotations: Annotations,
-    override val returnType: UnwrappedType,
-    override val varargElementType: UnwrappedType?,
+    override val returnType: CirType,
+    override val varargElementType: CirType?,
     override val declaresDefaultValue: Boolean,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean

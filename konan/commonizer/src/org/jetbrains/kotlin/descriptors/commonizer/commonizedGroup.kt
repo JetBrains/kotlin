@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-/** Fixed-size ordered collection that represents a commonized group of same-rank elements */
+/** Fixed-size ordered collection with no extra space that represents a commonized group of same-rank elements */
 internal class CommonizedGroup<T : Any>(
     val size: Int,
     initialize: (Int) -> T?
@@ -42,6 +42,7 @@ internal class CommonizedGroupMap<K, V : Any>(val size: Int) : Iterable<Map.Entr
     private val wrapped: MutableMap<K, CommonizedGroup<V>> = HashMap()
 
     operator fun get(key: K): CommonizedGroup<V> = wrapped.getOrPut(key) { CommonizedGroup(size) }
+    fun getOrNull(key: K): CommonizedGroup<V>? = wrapped[key]
 
     override fun iterator(): Iterator<Map.Entry<K, CommonizedGroup<V>>> = wrapped.iterator()
 }

@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiver
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.KotlinType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirFunctionOrProperty : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility, CirDeclarationWithModality, CirMaybeCallableMemberOfClass {
     val isExternal: Boolean
     val extensionReceiver: CirExtensionReceiver?
-    val returnType: UnwrappedType
+    val returnType: CirType
     val kind: CallableMemberDescriptor.Kind
 }
 
@@ -32,7 +32,7 @@ abstract class CirWrappedFunctionOrProperty<T : CallableMemberDescriptor>(protec
     final override val visibility get() = wrapped.visibility
     final override val isExternal get() = wrapped.isExternal
     final override val extensionReceiver by lazy(PUBLICATION) { wrapped.extensionReceiverParameter?.toReceiver() }
-    final override val returnType by lazy(PUBLICATION) { wrapped.returnType!!.unwrap() }
+    final override val returnType by lazy(PUBLICATION) { CirType.create(wrapped.returnType!!) }
     final override val kind get() = wrapped.kind
     final override val containingClassKind: ClassKind? get() = containingClass?.kind
     final override val containingClassModality: Modality? get() = containingClass?.modality
@@ -43,11 +43,11 @@ abstract class CirWrappedFunctionOrProperty<T : CallableMemberDescriptor>(protec
 
 data class CirExtensionReceiver(
     val annotations: Annotations,
-    val type: UnwrappedType
+    val type: CirType
 ) {
     companion object {
-        fun UnwrappedType.toReceiverNoAnnotations() = CirExtensionReceiver(Annotations.EMPTY, this)
-        fun ReceiverParameterDescriptor.toReceiver() = CirExtensionReceiver(annotations, type.unwrap())
+        fun CirType.toReceiverNoAnnotations() = CirExtensionReceiver(Annotations.EMPTY, this)
+        fun ReceiverParameterDescriptor.toReceiver() = CirExtensionReceiver(annotations, CirType.create(type))
     }
 }
 

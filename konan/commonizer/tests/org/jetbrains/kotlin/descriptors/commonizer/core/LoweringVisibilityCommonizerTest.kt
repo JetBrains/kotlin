@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.junit.Test
 
 abstract class LoweringVisibilityCommonizerTest(
@@ -39,7 +38,7 @@ abstract class LoweringVisibilityCommonizerTest(
         override val containingClassKind: ClassKind? get() = if (areMembersVirtual) ClassKind.CLASS else null
         override val isExternal: Boolean get() = unsupported()
         override val extensionReceiver: CirExtensionReceiver? get() = unsupported()
-        override val returnType: UnwrappedType get() = unsupported()
+        override val returnType: CirType get() = unsupported()
         override val kind: CallableMemberDescriptor.Kind get() = unsupported()
         override val annotations: Annotations get() = unsupported()
         override val name: Name get() = unsupported()

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonFunction
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiverNoAnnotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
 
 class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirFunction>(cache) {
@@ -20,7 +19,7 @@ class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
         name = name,
         modality = modality.result,
         visibility = visibility.result,
-        extensionReceiver = extensionReceiver.result?.toReceiverNoAnnotations(),
+        extensionReceiver = extensionReceiver.result,
         returnType = returnType.result,
         kind = kind,
         modifiers = modifiers.result,

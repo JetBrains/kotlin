@@ -13,38 +13,44 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 internal fun CirPackageNode.buildDescriptors(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<CommonizedPackageFragmentDescriptor>,
     modules: List<ModuleDescriptorImpl?>
 ) {
     target.forEachIndexed { index, pkg ->
-        pkg?.buildDescriptor(output, index, modules)
+        pkg?.buildDescriptor(components, output, index, modules)
     }
 
-    common()?.buildDescriptor(output, indexOfCommon, modules)
+    common()?.buildDescriptor(components, output, indexOfCommon, modules)
 }
 
 private fun CirPackage.buildDescriptor(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<CommonizedPackageFragmentDescriptor>,
     index: Int,
     modules: List<ModuleDescriptorImpl?>
 ) {
     val module = modules[index] ?: error("No containing declaration for package $this")
+
     val packageFragment = CommonizedPackageFragmentDescriptor(module, fqName)
+
+    // cache created package fragment descriptor:
+    components.cache.cache(fqName, index, packageFragment)
+
     output[index] = packageFragment
 }
 
-internal class CommonizedPackageFragmentDescriptor(
+class CommonizedPackageFragmentDescriptor(
     module: ModuleDescriptor,
     fqName: FqName
 ) : PackageFragmentDescriptorImpl(module, fqName) {
-    private lateinit var memberScope: MemberScope
+    private lateinit var memberScope: CommonizedMemberScope
 
-    fun initialize(memberScope: MemberScope) {
+    fun initialize(memberScope: CommonizedMemberScope) {
         this.memberScope = memberScope
     }
 
-    override fun getMemberScope() = memberScope
+    override fun getMemberScope(): CommonizedMemberScope = memberScope
 }

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -15,14 +17,12 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
-import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 class CommonizedClassDescriptor(
-    storageManager: StorageManager,
+    targetComponents: TargetDeclarationsBuilderComponents,
     containingDeclaration: DeclarationDescriptor,
     override val annotations: Annotations,
     name: Name,
@@ -36,18 +36,33 @@ class CommonizedClassDescriptor(
     isExternal: Boolean,
     private val isExpect: Boolean,
     private val isActual: Boolean,
+    cirDeclaredTypeParameters: List<CirTypeParameter>,
     companionObjectName: Name?,
-    supertypes: Collection<KotlinType>
-) : ClassDescriptorBase(storageManager, containingDeclaration, name, SourceElement.NO_SOURCE, isExternal) {
-    private lateinit var _unsubstitutedMemberScope: MemberScope
+    cirSupertypes: Collection<CirType>
+) : ClassDescriptorBase(targetComponents.storageManager, containingDeclaration, name, SourceElement.NO_SOURCE, isExternal) {
+    private lateinit var _unsubstitutedMemberScope: CommonizedMemberScope
     private lateinit var constructors: Collection<ClassConstructorDescriptor>
     private var primaryConstructor: ClassConstructorDescriptor? = null
-    private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(storageManager, this) else MemberScope.Empty
-    private lateinit var declaredTypeParameters: List<TypeParameterDescriptor>
-    private val typeConstructor = CommonizedClassTypeConstructor(storageManager, supertypes)
-    private val sealedSubclasses = storageManager.createLazyValue { computeSealedSubclasses(this) }
 
-    private val companionObjectDescriptor = storageManager.createNullableLazyValue {
+    private val staticScope = if (kind == ClassKind.ENUM_CLASS)
+        StaticScopeForKotlinEnum(targetComponents.storageManager, this)
+    else
+        MemberScope.Empty
+
+    private val typeConstructor = CommonizedClassTypeConstructor(targetComponents, cirSupertypes)
+    private val sealedSubclasses = targetComponents.storageManager.createLazyValue { computeSealedSubclasses(this) }
+
+    private val declaredTypeParametersAndTypeParameterResolver = targetComponents.storageManager.createLazyValue {
+        val parent = if (isInner) (containingDeclaration as? ClassDescriptor)?.getTypeParameterResolver() else null
+
+        cirDeclaredTypeParameters.buildDescriptorsAndTypeParameterResolver(
+            targetComponents,
+            parent ?: TypeParameterResolver.EMPTY,
+            this
+        )
+    }
+
+    private val companionObjectDescriptor = targetComponents.storageManager.createNullableLazyValue {
         if (companionObjectName != null)
             unsubstitutedMemberScope.getContributedClassifier(companionObjectName, NoLookupLocation.FOR_ALREADY_TRACKED) as? ClassDescriptor
         else
@@ -64,18 +79,21 @@ class CommonizedClassDescriptor(
     override fun isExpect() = isExpect
     override fun isActual() = isActual
 
-    override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner): MemberScope {
+    override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner): CommonizedMemberScope {
         check(kotlinTypeRefiner == KotlinTypeRefiner.Default) {
             "${kotlinTypeRefiner::class.java} is not supported in ${this::class.java}"
         }
         return _unsubstitutedMemberScope
     }
 
-    override fun getDeclaredTypeParameters() = declaredTypeParameters
-    fun setDeclaredTypeParameters(declaredTypeParameters: List<TypeParameterDescriptor>) {
-        this.declaredTypeParameters = declaredTypeParameters
+    override fun getUnsubstitutedMemberScope(): CommonizedMemberScope = super.getUnsubstitutedMemberScope() as CommonizedMemberScope
+
+    fun setUnsubstitutedMemberScope(unsubstitutedMemberScope: CommonizedMemberScope) {
+        _unsubstitutedMemberScope = unsubstitutedMemberScope
     }
 
+    override fun getDeclaredTypeParameters() = declaredTypeParametersAndTypeParameterResolver().first
+    val typeParameterResolver: TypeParameterResolver get() = declaredTypeParametersAndTypeParameterResolver().second
     override fun getConstructors() = constructors
     override fun getUnsubstitutedPrimaryConstructor() = primaryConstructor
     override fun getStaticScope(): MemberScope = staticScope
@@ -83,12 +101,7 @@ class CommonizedClassDescriptor(
     override fun getCompanionObjectDescriptor() = companionObjectDescriptor()
     override fun getSealedSubclasses() = sealedSubclasses()
 
-    fun initialize(
-        unsubstitutedMemberScope: MemberScope,
-        constructors: Collection<CommonizedClassConstructorDescriptor>
-    ) {
-        _unsubstitutedMemberScope = unsubstitutedMemberScope
-
+    fun initialize(constructors: Collection<CommonizedClassConstructorDescriptor>) {
         if (isExpect && kind.isSingleton) {
             check(constructors.isEmpty())
 
@@ -109,15 +122,19 @@ class CommonizedClassDescriptor(
     override fun toString() = (if (isExpect) "expect " else if (isActual) "actual " else "") + "class " + name.toString()
 
     private inner class CommonizedClassTypeConstructor(
-        storageManager: StorageManager,
-        private val computedSupertypes: Collection<KotlinType>
-    ) : AbstractClassTypeConstructor(storageManager) {
-        private val parameters = storageManager.createLazyValue {
+        targetComponents: TargetDeclarationsBuilderComponents,
+        cirSupertypes: Collection<CirType>
+    ) : AbstractClassTypeConstructor(targetComponents.storageManager) {
+        private val parameters = targetComponents.storageManager.createLazyValue {
             this@CommonizedClassDescriptor.computeConstructorTypeParameters()
         }
 
+        private val supertypes = targetComponents.storageManager.createLazyValue {
+            cirSupertypes.map { it.buildType(targetComponents, this@CommonizedClassDescriptor.typeParameterResolver) }
+        }
+
         override fun getParameters() = parameters()
-        override fun computeSupertypes() = computedSupertypes
+        override fun computeSupertypes() = supertypes()
         override fun isDenotable() = true
         override fun getDeclarationDescriptor() = this@CommonizedClassDescriptor
         override val supertypeLoopChecker get() = SupertypeLoopChecker.EMPTY

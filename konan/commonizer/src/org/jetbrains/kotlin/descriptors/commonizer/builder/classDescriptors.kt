@@ -9,35 +9,37 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
-import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.name.FqName
 
 internal fun CirClassNode.buildDescriptors(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<ClassifierDescriptorWithTypeParameters>,
-    containingDeclarations: List<DeclarationDescriptor?>,
-    storageManager: StorageManager
+    containingDeclarations: List<DeclarationDescriptor?>
 ) {
     val commonClass = common()
     val markAsActual = commonClass != null && commonClass.kind != ClassKind.ENUM_ENTRY
 
     target.forEachIndexed { index, clazz ->
-        clazz?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = markAsActual)
+        clazz?.buildDescriptor(components, output, index, containingDeclarations, fqName, isActual = markAsActual)
     }
 
-    commonClass?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = true)
+    commonClass?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, fqName, isExpect = true)
 }
 
 internal fun CirClass.buildDescriptor(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<in ClassifierDescriptorWithTypeParameters>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,
-    storageManager: StorageManager,
+    fqName: FqName,
     isExpect: Boolean = false,
     isActual: Boolean = false
 ) {
+    val targetComponents = components.targetComponents[index]
     val containingDeclaration = containingDeclarations[index] ?: error("No containing declaration for class $this")
 
     val classDescriptor = CommonizedClassDescriptor(
-        storageManager = storageManager,
+        targetComponents = targetComponents,
         containingDeclaration = containingDeclaration,
         annotations = annotations,
         name = name,
@@ -51,36 +53,41 @@ internal fun CirClass.buildDescriptor(
         isExternal = isExternal,
         isExpect = isExpect,
         isActual = isActual,
+        cirDeclaredTypeParameters = typeParameters,
         companionObjectName = companion?.shortName(),
-        supertypes = supertypes
+        cirSupertypes = supertypes
     )
 
-    classDescriptor.declaredTypeParameters = typeParameters.buildDescriptors(classDescriptor)
+    // cache created class descriptor:
+    components.cache.cache(fqName, index, classDescriptor)
 
     output[index] = classDescriptor
 }
 
 internal fun CirClassConstructorNode.buildDescriptors(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<ClassConstructorDescriptor>,
-    containingDeclarations: List<ClassDescriptor?>
+    containingDeclarations: List<CommonizedClassDescriptor?>
 ) {
     val commonConstructor = common()
     val markAsActual = commonConstructor != null
 
     target.forEachIndexed { index, constructor ->
-        constructor?.buildDescriptor(output, index, containingDeclarations, isActual = markAsActual)
+        constructor?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsActual)
     }
 
-    commonConstructor?.buildDescriptor(output, indexOfCommon, containingDeclarations, isExpect = true)
+    commonConstructor?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = true)
 }
 
 private fun CirClassConstructor.buildDescriptor(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<ClassConstructorDescriptor>,
     index: Int,
-    containingDeclarations: List<ClassDescriptor?>,
+    containingDeclarations: List<CommonizedClassDescriptor?>,
     isExpect: Boolean = false,
     isActual: Boolean = false
 ) {
+    val targetComponents = components.targetComponents[index]
     val containingDeclaration = containingDeclarations[index] ?: error("No containing declaration for constructor $this")
 
     val constructorDescriptor = CommonizedClassConstructorDescriptor(
@@ -96,10 +103,18 @@ private fun CirClassConstructor.buildDescriptor(
     constructorDescriptor.setHasStableParameterNames(hasStableParameterNames)
     constructorDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames)
 
+    val classTypeParameters = containingDeclaration.declaredTypeParameters
+    val (constructorTypeParameters, typeParameterResolver) = typeParameters.buildDescriptorsAndTypeParameterResolver(
+        targetComponents = targetComponents,
+        parentTypeParameterResolver = containingDeclaration.typeParameterResolver,
+        containingDeclaration = constructorDescriptor,
+        typeParametersIndexOffset = classTypeParameters.size
+    )
+
     constructorDescriptor.initialize(
-        valueParameters.buildDescriptors(constructorDescriptor),
+        valueParameters.buildDescriptors(targetComponents, typeParameterResolver, constructorDescriptor),
         visibility,
-        typeParameters.buildDescriptors(constructorDescriptor)
+        classTypeParameters + constructorTypeParameters
     )
 
     output[index] = constructorDescriptor

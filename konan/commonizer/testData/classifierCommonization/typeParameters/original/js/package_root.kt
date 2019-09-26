@@ -634,3 +634,26 @@ class I<T : I<T>> {
     val property: T get() = TODO()
     fun function(value: T): T = value
 }
+
+interface J1<A> {
+    actual fun a(): A
+}
+interface J2<A, B> {
+    actual fun a(b: B): A
+    actual fun b(a: A): B
+}
+interface J3<A, B, C> {
+    actual fun a(b: B, c: C): A
+    actual fun b(a: A, c: C): B
+    actual fun c(a: A, b: B): C
+}
+
+class K<A, B : A, C : J1<B>, D : J2<C, A>> : J3<D, C, B> {
+    override fun a(b: C, c: B): D = TODO()
+    override fun b(a: D, c: B): C = TODO()
+    override fun c(a: D, b: C): B = TODO()
+    inner class Inner<C, D : C, E : J2<C, D>> {
+        fun dependentFunction(value: A): E = TODO()
+        fun <A : CharSequence, E : Number> independentFunction(value: A): E = TODO()
+    }
+}

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -25,28 +25,33 @@ class CommonizedTypeAliasDescriptor(
     private val isActual: Boolean
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility) {
 
-    override lateinit var underlyingType: SimpleType
-    override lateinit var expandedType: SimpleType
+    private lateinit var underlyingTypeImpl: NotNullLazyValue<SimpleType>
+    override val underlyingType get() = underlyingTypeImpl()
 
-    private lateinit var defaultType: SimpleType
-    override fun getDefaultType() = defaultType
+    private lateinit var expandedTypeImpl: NotNullLazyValue<SimpleType>
+    override val expandedType: SimpleType get() = expandedTypeImpl()
+
+    private val defaultTypeImpl = storageManager.createLazyValue { computeDefaultType() }
+    override fun getDefaultType() = defaultTypeImpl()
 
     override val classDescriptor get() = expandedType.constructor.declarationDescriptor as? ClassDescriptor
 
-    private lateinit var typeConstructorParameters: List<TypeParameterDescriptor>
-    override fun getTypeConstructorTypeParameters() = typeConstructorParameters
+    private val typeConstructorParametersImpl = storageManager.createLazyValue { computeConstructorTypeParameters() }
+    override fun getTypeConstructorTypeParameters() = typeConstructorParametersImpl()
 
-    override lateinit var constructors: Collection<TypeAliasConstructorDescriptor>
+    private val constructorsImpl = storageManager.createLazyValue { getTypeAliasConstructors() }
+    override val constructors get() = constructorsImpl()
 
     override fun isActual() = isActual
 
-    fun initialize(declaredTypeParameters: List<TypeParameterDescriptor>, underlyingType: SimpleType, expandedType: SimpleType) {
+    fun initialize(
+        declaredTypeParameters: List<TypeParameterDescriptor>,
+        underlyingType: NotNullLazyValue<SimpleType>,
+        expandedType: NotNullLazyValue<SimpleType>
+    ) {
         super.initialize(declaredTypeParameters)
-        this.underlyingType = underlyingType
-        this.expandedType = expandedType
-        typeConstructorParameters = computeConstructorTypeParameters()
-        defaultType = computeDefaultType()
-        constructors = getTypeAliasConstructors()
+        underlyingTypeImpl = underlyingType
+        expandedTypeImpl = expandedType
     }
 
     override fun substitute(substitutor: TypeSubstitutor): ClassifierDescriptorWithTypeParameters {
@@ -61,8 +66,8 @@ class CommonizedTypeAliasDescriptor(
         )
         substituted.initialize(
             declaredTypeParameters,
-            substitutor.safeSubstitute(underlyingType, Variance.INVARIANT).asSimpleType(),
-            substitutor.safeSubstitute(expandedType, Variance.INVARIANT).asSimpleType()
+            storageManager.createLazyValue { substitutor.safeSubstitute(underlyingType, Variance.INVARIANT).asSimpleType() },
+            storageManager.createLazyValue { substitutor.safeSubstitute(expandedType, Variance.INVARIANT).asSimpleType() }
         )
         return substituted
     }

@@ -15,7 +15,7 @@ internal fun MemberScope.collectMembers(vararg collectors: (DeclarationDescripto
     getContributedDescriptors().forEach { member ->
         collectors.any { it(member) }
                 // each member must be consumed, otherwise - error
-                || throw IllegalStateException("Unhandled member declaration: $member")
+                || error("Unhandled member declaration: $member")
     }
 
 @Suppress("FunctionName")

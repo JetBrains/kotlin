@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.checker.isClassType
 
 class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirClass>() {
     private lateinit var name: Name
@@ -34,7 +33,7 @@ class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommoniz
     override fun doCommonizeWith(next: CirTypeAlias) =
         next.typeParameters.isEmpty() // TAs with declared type parameters can't be commonized
                 && next.underlyingType.arguments.isEmpty() // TAs with functional types or types with parameters at the right-hand side can't be commonized
-                && next.underlyingType.isClassType // right-hand side could have only class
+                && next.underlyingType.kind == CirSimpleTypeKind.CLASS // right-hand side could have only class
                 && underlyingType.commonizeWith(next.underlyingType)
                 && visibility.commonizeWith(next)
 }

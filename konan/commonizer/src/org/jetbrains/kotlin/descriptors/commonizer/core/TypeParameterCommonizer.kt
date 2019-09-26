@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonTypeParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeParameter
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
 
 interface TypeParameterCommonizer : Commonizer<CirTypeParameter, CirTypeParameter> {
@@ -48,7 +47,7 @@ private class DefaultTypeParameterCommonizer(cache: CirClassifiersCache) :
                 && upperBounds.commonizeWith(next.upperBounds)
 }
 
-private class TypeParameterUpperBoundsCommonizer(cache: CirClassifiersCache) : AbstractListCommonizer<KotlinType, UnwrappedType>(
+private class TypeParameterUpperBoundsCommonizer(cache: CirClassifiersCache) : AbstractListCommonizer<CirType, CirType>(
     singleElementCommonizerFactory = { TypeCommonizer.default(cache) }
 )
 

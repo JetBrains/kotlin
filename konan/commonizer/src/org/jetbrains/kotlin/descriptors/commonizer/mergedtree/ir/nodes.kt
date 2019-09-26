@@ -15,6 +15,10 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R
 }
 
+interface CirNodeWithFqName<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
+    val fqName: FqName
+}
+
 class CirRootNode(
     override val target: List<CirRoot>,
     override val common: NullableLazyValue<CirRoot>
@@ -29,6 +33,8 @@ class CirRootNode(
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitRootNode(this, data)
+
+    override fun toString() = toString(this)
 }
 
 class CirModuleNode(
@@ -39,12 +45,16 @@ class CirModuleNode(
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitModuleNode(this, data)
+
+    override fun toString() = toString(this)
 }
 
 class CirPackageNode(
     override val target: List<CirPackage?>,
     override val common: NullableLazyValue<CirPackage>
-) : CirNode<CirPackage, CirPackage> {
+) : CirNodeWithFqName<CirPackage, CirPackage> {
+    override lateinit var fqName: FqName
+
     val properties: MutableList<CirPropertyNode> = ArrayList()
     val functions: MutableList<CirFunctionNode> = ArrayList()
     val classes: MutableList<CirClassNode> = ArrayList()
@@ -52,6 +62,8 @@ class CirPackageNode(
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitPackageNode(this, data)
+
+    override fun toString() = toString(this)
 }
 
 class CirPropertyNode(
@@ -60,6 +72,8 @@ class CirPropertyNode(
 ) : CirNode<CirProperty, CirProperty> {
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitPropertyNode(this, data)
+
+    override fun toString() = toString(this)
 }
 
 class CirFunctionNode(
@@ -68,13 +82,15 @@ class CirFunctionNode(
 ) : CirNode<CirFunction, CirFunction> {
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitFunctionNode(this, data)
+
+    override fun toString() = toString(this)
 }
 
 class CirClassNode(
     override val target: List<CirClass?>,
     override val common: NullableLazyValue<CirClass>
-) : CirNode<CirClass, CirClass> {
-    lateinit var fqName: FqName
+) : CirNodeWithFqName<CirClass, CirClass> {
+    override lateinit var fqName: FqName
 
     val constructors: MutableList<CirClassConstructorNode> = ArrayList()
     val properties: MutableList<CirPropertyNode> = ArrayList()
@@ -83,6 +99,8 @@ class CirClassNode(
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitClassNode(this, data)
+
+    override fun toString() = toString(this)
 }
 
 class CirClassConstructorNode(
@@ -91,16 +109,20 @@ class CirClassConstructorNode(
 ) : CirNode<CirClassConstructor, CirClassConstructor> {
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitClassConstructorNode(this, data)
+
+    override fun toString() = toString(this)
 }
 
 class CirTypeAliasNode(
     override val target: List<CirTypeAlias?>,
     override val common: NullableLazyValue<CirClass>
-) : CirNode<CirTypeAlias, CirClass> {
-    lateinit var fqName: FqName
+) : CirNodeWithFqName<CirTypeAlias, CirClass> {
+    override lateinit var fqName: FqName
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitTypeAliasNode(this, data)
+
+    override fun toString() = toString(this)
 }
 
 interface CirClassifiersCache {
@@ -113,3 +135,13 @@ internal inline val CirNode<*, *>.indexOfCommon: Int
 
 internal inline val CirNode<*, *>.dimension: Int
     get() = target.size + 1
+
+private fun toString(node: CirNode<*, *>) = buildString {
+    if (node is CirNodeWithFqName) {
+        append("fqName=").append(node.fqName).append(", ")
+    }
+    append("target=")
+    node.target.joinTo(this)
+    append(", common=")
+    append(if (node.common.isComputed()) node.common() else "<NOT COMPUTED>")
+}

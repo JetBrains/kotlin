@@ -16,31 +16,31 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun CirPropertyNode.buildDescriptors(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<PropertyDescriptor>,
-    containingDeclarations: List<DeclarationDescriptor?>,
-    storageManager: StorageManager
+    containingDeclarations: List<DeclarationDescriptor?>
 ) {
     val commonProperty = common()
     val markAsExpectAndActual = commonProperty != null && commonProperty.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
 
     target.forEachIndexed { index, property ->
-        property?.buildDescriptor(output, index, containingDeclarations, storageManager, isActual = markAsExpectAndActual)
+        property?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
     }
 
-    commonProperty?.buildDescriptor(output, indexOfCommon, containingDeclarations, storageManager, isExpect = markAsExpectAndActual)
+    commonProperty?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
 }
 
 private fun CirProperty.buildDescriptor(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<PropertyDescriptor>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,
-    storageManager: StorageManager,
     isExpect: Boolean = false,
     isActual: Boolean = false
 ) {
+    val targetComponents = components.targetComponents[index]
     val containingDeclaration = containingDeclarations[index] ?: error("No containing declaration for property $this")
 
     val propertyDescriptor = PropertyDescriptorImpl.create(
@@ -60,11 +60,17 @@ private fun CirProperty.buildDescriptor(
         isDelegate
     )
 
+    val (typeParameters, typeParameterResolver) = typeParameters.buildDescriptorsAndTypeParameterResolver(
+        targetComponents,
+        containingDeclaration.getTypeParameterResolver(),
+        propertyDescriptor
+    )
+
     propertyDescriptor.setType(
-        returnType,
-        typeParameters.buildDescriptors(propertyDescriptor),
+        returnType.buildType(targetComponents, typeParameterResolver),
+        typeParameters,
         buildDispatchReceiver(propertyDescriptor),
-        extensionReceiver?.buildExtensionReceiver(propertyDescriptor)
+        extensionReceiver?.buildExtensionReceiver(targetComponents, typeParameterResolver, propertyDescriptor)
     )
 
     val getterDescriptor = getter?.let { getter ->
@@ -103,7 +109,7 @@ private fun CirProperty.buildDescriptor(
     )
 
     compileTimeInitializer?.let { constantValue ->
-        propertyDescriptor.setCompileTimeInitializer(storageManager.createNullableLazyValue { constantValue })
+        propertyDescriptor.setCompileTimeInitializer(targetComponents.storageManager.createNullableLazyValue { constantValue })
     }
 
     output[index] = propertyDescriptor

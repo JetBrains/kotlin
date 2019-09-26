@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.types.SimpleType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirTypeAlias : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility {
-    val underlyingType: SimpleType
-    val expandedType: SimpleType
+    val underlyingType: CirSimpleType
+    val expandedType: CirSimpleType
 }
 
 class CirWrappedTypeAlias(private val wrapped: TypeAliasDescriptor) : CirTypeAlias {
@@ -19,6 +18,6 @@ class CirWrappedTypeAlias(private val wrapped: TypeAliasDescriptor) : CirTypeAli
     override val name get() = wrapped.name
     override val typeParameters by lazy(PUBLICATION) { wrapped.declaredTypeParameters.map(::CirWrappedTypeParameter) }
     override val visibility get() = wrapped.visibility
-    override val underlyingType get() = wrapped.underlyingType
-    override val expandedType get() = wrapped.expandedType
+    override val underlyingType by lazy(PUBLICATION) { CirSimpleType(wrapped.underlyingType) }
+    override val expandedType by lazy(PUBLICATION) { CirSimpleType(wrapped.expandedType) }
 }

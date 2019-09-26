@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 
 /**
  * Unlike [Commonizer] which commonizes only single elements, this [AbstractListCommonizer] commonizes lists of elements using
  * [Commonizer]s produced by [singleElementCommonizerFactory].
  *
  * Example:
- *   Input: N lists of [KotlinType]
- *   Output: list of [UnwrappedType]
+ *   Input: N lists of [CirType]
+ *   Output: list of [CirType]
  */
 abstract class AbstractListCommonizer<T, R>(
     private val singleElementCommonizerFactory: () -> Commonizer<T, R>

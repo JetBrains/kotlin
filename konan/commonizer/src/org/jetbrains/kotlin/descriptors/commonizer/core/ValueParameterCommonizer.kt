@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonValueP
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.isNull
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.UnwrappedType
 
 interface ValueParameterCommonizer : Commonizer<CirValueParameter, CirValueParameter> {
     companion object {
@@ -24,7 +24,7 @@ private class DefaultValueParameterCommonizer(cache: CirClassifiersCache) :
 
     private lateinit var name: Name
     private val returnType = TypeCommonizer.default(cache)
-    private var varargElementType: UnwrappedType? = null
+    private var varargElementType: CirType? = null
     private var isCrossinline = true
     private var isNoinline = true
 

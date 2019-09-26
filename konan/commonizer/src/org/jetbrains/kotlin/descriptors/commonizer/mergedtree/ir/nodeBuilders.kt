@@ -50,7 +50,9 @@ internal fun buildPackageNode(
     commonValueProducer = { CirPackage(packageFqName) },
     recursionMarker = null,
     nodeProducer = ::CirPackageNode
-)
+).also { node ->
+    node.fqName = packageFqName
+}
 
 internal fun buildPropertyNode(
     storageManager: StorageManager,
@@ -85,21 +87,17 @@ internal fun buildClassNode(
     cacheRW: ClassifiersCacheImpl,
     containingDeclarationCommon: NullableLazyValue<*>?,
     classes: List<ClassDescriptor?>
-): CirClassNode {
-    val fqName = classes.firstNonNull().fqNameSafe
-
-    return buildNode(
-        storageManager = storageManager,
-        descriptors = classes,
-        targetDeclarationProducer = ::CirWrappedClass,
-        commonValueProducer = { commonize(containingDeclarationCommon, it, ClassCommonizer(cacheRW)) },
-        recursionMarker = CirClassRecursionMarker,
-        nodeProducer = ::CirClassNode
-    ).also { node ->
+): CirClassNode = buildNode(
+    storageManager = storageManager,
+    descriptors = classes,
+    targetDeclarationProducer = ::CirWrappedClass,
+    commonValueProducer = { commonize(containingDeclarationCommon, it, ClassCommonizer(cacheRW)) },
+    recursionMarker = CirClassRecursionMarker,
+    nodeProducer = ::CirClassNode
+).also { node ->
+    classes.firstNonNull().fqNameSafe.let { fqName ->
         node.fqName = fqName
-        cacheRW.classes.put(fqName, node)?.let { oldNode ->
-            throw IllegalStateException("Class node with FQ name $fqName has been overwritten: $oldNode")
-        }
+        cacheRW.classes.putSafe(fqName, node)
     }
 }
 
@@ -121,21 +119,17 @@ internal fun buildTypeAliasNode(
     storageManager: StorageManager,
     cacheRW: ClassifiersCacheImpl,
     typeAliases: List<TypeAliasDescriptor?>
-): CirTypeAliasNode {
-    val fqName = typeAliases.firstNonNull().fqNameSafe
-
-    return buildNode(
-        storageManager = storageManager,
-        descriptors = typeAliases,
-        targetDeclarationProducer = ::CirWrappedTypeAlias,
-        commonValueProducer = { commonize(it, TypeAliasCommonizer(cacheRW)) },
-        recursionMarker = CirClassRecursionMarker,
-        nodeProducer = ::CirTypeAliasNode
-    ).also { node ->
+): CirTypeAliasNode = buildNode(
+    storageManager = storageManager,
+    descriptors = typeAliases,
+    targetDeclarationProducer = ::CirWrappedTypeAlias,
+    commonValueProducer = { commonize(it, TypeAliasCommonizer(cacheRW)) },
+    recursionMarker = CirClassRecursionMarker,
+    nodeProducer = ::CirTypeAliasNode
+).also { node ->
+    typeAliases.firstNonNull().fqNameSafe.let { fqName ->
         node.fqName = fqName
-        cacheRW.typeAliases.put(fqName, node)?.let { oldNode ->
-            throw IllegalStateException("Type alias node with FQ name $fqName has been overwritten: $oldNode")
-        }
+        cacheRW.typeAliases.putSafe(fqName, node)
     }
 }
 
@@ -171,6 +165,11 @@ private fun <D : Any, T : CirDeclaration, R : CirDeclaration, N : CirNode<T, R>>
         storageManager.createNullableLazyValue(commonComputable)
 
     return nodeProducer(declarations, commonLazyValue)
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun <K, V : Any> MutableMap<K, V>.putSafe(key: K, value: V) = put(key, value)?.let { oldValue ->
+    error("${oldValue::class.java} with key=$key has been overwritten: $oldValue")
 }
 
 internal fun <T, R> commonize(declarations: List<T?>, commonizer: Commonizer<T, R>): R? {

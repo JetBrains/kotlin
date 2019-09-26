@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -21,8 +22,11 @@ internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
 
 internal inline fun <reified T> Iterable<T?>.firstNonNull() = firstIsInstance<T>()
 
-internal val KotlinType.fqName: FqName
-    get() = (constructor.declarationDescriptor ?: throw IllegalStateException("No declaration descriptor found for $constructor")).fqNameSafe
+internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
+    get() = (constructor.declarationDescriptor ?: error("No declaration descriptor found for $constructor"))
+
+internal inline val KotlinType.fqName: FqName
+    get() = declarationDescriptor.fqNameSafe
 
 internal val KotlinType.fqNameWithTypeParameters: String
     get() = buildString { buildFqNameWithTypeParameters(this@fqNameWithTypeParameters) }

@@ -634,3 +634,26 @@ actual class I<T : I<T>> actual constructor() {
     actual val property: T get() = TODO()
     actual fun function(value: T): T = value
 }
+
+actual interface J1<A> {
+    actual fun a(): A
+}
+actual interface J2<A, B> {
+    actual fun a(b: B): A
+    actual fun b(a: A): B
+}
+actual interface J3<A, B, C> {
+    actual fun a(b: B, c: C): A
+    actual fun b(a: A, c: C): B
+    actual fun c(a: A, b: B): C
+}
+
+actual class K<A, B : A, C : J1<B>, D : J2<C, A>> actual constructor() : J3<D, C, B> {
+    actual override fun a(b: C, c: B): D = TODO()
+    actual override fun b(a: D, c: B): C = TODO()
+    actual override fun c(a: D, b: C): B = TODO()
+    actual inner class Inner<C, D : C, E : J2<C, D>> actual constructor() {
+        actual fun dependentFunction(value: A): E = TODO()
+        actual fun <A : CharSequence, E : Number> independentFunction(value: A): E = TODO()
+    }
+}

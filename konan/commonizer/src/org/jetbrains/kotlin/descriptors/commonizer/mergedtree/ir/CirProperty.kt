@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirGetter.Companion.toGetter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSetter.Companion.toSetter
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -32,7 +31,7 @@ data class CirCommonProperty(
     override val visibility: Visibility,
     override val isExternal: Boolean,
     override val extensionReceiver: CirExtensionReceiver?,
-    override val returnType: UnwrappedType,
+    override val returnType: CirType,
     override val kind: CallableMemberDescriptor.Kind,
     override val setter: CirSetter?,
     override val typeParameters: List<CirTypeParameter>

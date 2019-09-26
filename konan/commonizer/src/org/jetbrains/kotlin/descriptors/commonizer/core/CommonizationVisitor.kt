@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
-import org.jetbrains.kotlin.descriptors.commonizer.fqNameWithTypeParameters
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
-import org.jetbrains.kotlin.types.KotlinType
-import java.lang.IllegalStateException
 
 internal class CommonizationVisitor(
     private val root: CirRootNode
@@ -83,7 +80,7 @@ internal class CommonizationVisitor(
             val companionObjectFqName = node.target.mapTo(HashSet()) { it!!.companion }.singleOrNull()
             if (companionObjectFqName != null) {
                 val companionObjectNode = root.cache.classes[companionObjectFqName]
-                    ?: throw IllegalStateException("Can't find companion object with FQ name $companionObjectFqName")
+                    ?: error("Can't find companion object with FQ name $companionObjectFqName")
 
                 if (companionObjectNode.common() != null) {
                     // companion object has been successfully commonized
@@ -92,7 +89,7 @@ internal class CommonizationVisitor(
             }
 
             // find out common (and commonized) supertypes
-            val supertypesMap = CommonizedGroupMap<String, KotlinType>(node.target.size)
+            val supertypesMap = CommonizedGroupMap<String, CirType>(node.target.size)
             node.target.forEachIndexed { index, clazz ->
                 for (supertype in clazz!!.supertypes) {
                     supertypesMap[supertype.fqNameWithTypeParameters][index] = supertype

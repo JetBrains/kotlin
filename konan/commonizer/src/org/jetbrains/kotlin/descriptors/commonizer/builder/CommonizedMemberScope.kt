@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.utils.Printer
 
-internal class CommonizedMemberScope : MemberScopeImpl() {
+class CommonizedMemberScope : MemberScopeImpl() {
     private val members = ArrayList<DeclarationDescriptor>()
 
     operator fun plusAssign(member: DeclarationDescriptor) {
@@ -51,7 +51,17 @@ internal class CommonizedMemberScope : MemberScopeImpl() {
 
         operator fun Array<CommonizedMemberScope>.plusAssign(members: List<DeclarationDescriptor?>) {
             members.forEachIndexed { index, member ->
-                this[index] += member ?: return@forEachIndexed
+                if (member != null) {
+                    this[index] += member
+                }
+            }
+        }
+
+        operator fun List<CommonizedMemberScope?>.plusAssign(members: List<DeclarationDescriptor?>) {
+            members.forEachIndexed { index, member ->
+                if (member != null) {
+                    this[index]?.run { this += member }
+                }
             }
         }
     }

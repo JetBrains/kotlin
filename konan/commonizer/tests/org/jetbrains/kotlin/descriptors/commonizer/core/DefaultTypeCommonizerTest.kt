@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
@@ -17,12 +18,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.getAbbreviation
 import org.junit.Before
 import org.junit.Test
 
-class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedType>() {
+class DefaultTypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     private lateinit var cache: ClassifiersCacheImpl
 
@@ -33,7 +33,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun classTypesInKotlinPackageWithSameName() = doTestSuccess(
-        mockClassType("kotlin.collections.List").unwrap(),
+        mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List")
@@ -62,7 +62,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun classTypesInKotlinxPackageWithSameName() = doTestSuccess(
-        mockClassType("kotlinx.cinterop.CPointer").unwrap(),
+        mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer"),
         mockClassType("kotlinx.cinterop.CPointer")
@@ -91,7 +91,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun classTypesInUserPackageWithSameName() = doTestSuccess(
-        mockClassType("org.sample.Foo").unwrap(),
+        mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo")
@@ -117,7 +117,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun classTypesInKotlinPackageWithSameNullability1() = doTestSuccess(
-        mockClassType("kotlin.collections.List").unwrap(),
+        mockClassType("kotlin.collections.List"),
         mockClassType("kotlin.collections.List", nullable = false),
         mockClassType("kotlin.collections.List", nullable = false),
         mockClassType("kotlin.collections.List", nullable = false)
@@ -125,7 +125,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun classTypesInKotlinPackageWithSameNullability2() = doTestSuccess(
-        mockClassType("kotlin.collections.List", nullable = true).unwrap(),
+        mockClassType("kotlin.collections.List", nullable = true),
         mockClassType("kotlin.collections.List", nullable = true),
         mockClassType("kotlin.collections.List", nullable = true),
         mockClassType("kotlin.collections.List", nullable = true)
@@ -147,7 +147,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun classTypesInUserPackageWithSameNullability1() = doTestSuccess(
-        mockClassType("org.sample.Foo").unwrap(),
+        mockClassType("org.sample.Foo"),
         mockClassType("org.sample.Foo", nullable = false),
         mockClassType("org.sample.Foo", nullable = false),
         mockClassType("org.sample.Foo", nullable = false)
@@ -155,7 +155,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun classTypesInUserPackageWithSameNullability2() = doTestSuccess(
-        mockClassType("org.sample.Foo", nullable = true).unwrap(),
+        mockClassType("org.sample.Foo", nullable = true),
         mockClassType("org.sample.Foo", nullable = true),
         mockClassType("org.sample.Foo", nullable = true),
         mockClassType("org.sample.Foo", nullable = true)
@@ -177,7 +177,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInKotlinPackageWithSameNameAndClass() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") }.unwrap(),
+        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") }
@@ -199,7 +199,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInKotlinxPackageWithSameNameAndClass() = doTestSuccess(
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") }.unwrap(),
+        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
         mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") }
@@ -224,7 +224,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         // that's OK as long as the fully expanded right-hand side is the same class
         mockTAType("kotlin.FictitiousTypeAlias") {
             mockClassType("kotlin.FictitiousClass")
-        }.unwrap(),
+        },
 
         mockTAType("kotlin.FictitiousTypeAlias") {
             mockClassType("kotlin.FictitiousClass")
@@ -247,7 +247,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInUserPackageWithSameNameAndClass() = doTestSuccess(
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") }.unwrap(),
+        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") }
@@ -280,7 +280,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInKotlinPackageWithSameNullability1() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") }.unwrap(),
+        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") }
@@ -288,7 +288,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInKotlinPackageWithSameNullability2() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") }.unwrap(),
+        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") }
@@ -310,7 +310,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInKotlinPackageWithDifferentNullability3() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") }.unwrap(),
+        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) }
@@ -318,7 +318,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInKotlinPackageWithDifferentNullability4() = doTestSuccess(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") }.unwrap(),
+        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) },
         mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) }
@@ -326,7 +326,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInUserPackageWithSameNullability1() = doTestSuccess(
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") }.unwrap(),
+        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") }
@@ -334,7 +334,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
 
     @Test
     fun taTypesInUserPackageWithSameNullability2() = doTestSuccess(
-        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") }.unwrap(),
+        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") }
@@ -366,7 +366,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) }
     )
 
-    private fun prepareCache(vararg variants: KotlinType) {
+    private fun prepareCache(variants: Array<out KotlinType>) {
         check(variants.isNotEmpty())
 
         val classesMap = CommonizedGroupMap<FqName, ClassDescriptor>(variants.size)
@@ -381,7 +381,7 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
                     typeAliasesMap[descriptor.fqNameSafe][index] = descriptor
                     recurse(descriptor.underlyingType, index) // expand underlying types recursively
                 }
-                else -> IllegalStateException("Unexpected descriptor of KotlinType: $descriptor, $type")
+                else -> error("Unexpected descriptor of KotlinType: $descriptor, $type")
             }
         }
 
@@ -398,17 +398,22 @@ class DefaultTypeCommonizerTest : AbstractCommonizerTest<KotlinType, UnwrappedTy
         }
     }
 
-    override fun doTestSuccess(expected: UnwrappedType, vararg variants: KotlinType) {
-        prepareCache(*variants)
-        super.doTestSuccess(expected, *variants)
+    fun doTestSuccess(expected: KotlinType, vararg variants: KotlinType) {
+        prepareCache(variants)
+
+        doTestSuccess(
+            expected = CirType.create(expected),
+            variants = *variants.map(CirType.Companion::create).toTypedArray()
+        )
     }
 
-    override fun doTestFailure(vararg variants: KotlinType) {
-        prepareCache(*variants)
-        super.doTestFailure(*variants)
+    fun doTestFailure(vararg variants: KotlinType) {
+        prepareCache(variants)
+
+        doTestFailure(variants = *variants.map(CirType.Companion::create).toTypedArray())
     }
 
     override fun createCommonizer() = TypeCommonizer.default(cache)
 
-    override fun isEqual(a: UnwrappedType?, b: UnwrappedType?) = (a === b) || (a != null && b != null && areTypesEqual(cache, a, b))
+    override fun isEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areTypesEqual(cache, a, b))
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 
 internal fun CirFunctionNode.buildDescriptors(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<SimpleFunctionDescriptor>,
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
@@ -23,19 +24,21 @@ internal fun CirFunctionNode.buildDescriptors(
     val markAsExpectAndActual = commonFunction != null && commonFunction.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
 
     target.forEachIndexed { index, function ->
-        function?.buildDescriptor(output, index, containingDeclarations, isActual = markAsExpectAndActual)
+        function?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
     }
 
-    commonFunction?.buildDescriptor(output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
+    commonFunction?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
 }
 
 private fun CirFunction.buildDescriptor(
+    components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<SimpleFunctionDescriptor>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,
     isExpect: Boolean = false,
     isActual: Boolean = false
 ) {
+    val targetComponents = components.targetComponents[index]
     val containingDeclaration = containingDeclarations[index] ?: error("No containing declaration for function $this")
 
     val functionDescriptor = SimpleFunctionDescriptorImpl.create(
@@ -59,12 +62,18 @@ private fun CirFunction.buildDescriptor(
     functionDescriptor.setHasStableParameterNames(hasStableParameterNames)
     functionDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames)
 
+    val (typeParameters, typeParameterResolver) = typeParameters.buildDescriptorsAndTypeParameterResolver(
+        targetComponents,
+        containingDeclaration.getTypeParameterResolver(),
+        functionDescriptor
+    )
+
     functionDescriptor.initialize(
-        extensionReceiver?.buildExtensionReceiver(functionDescriptor),
+        extensionReceiver?.buildExtensionReceiver(targetComponents, typeParameterResolver, functionDescriptor),
         buildDispatchReceiver(functionDescriptor),
-        typeParameters.buildDescriptors(functionDescriptor),
-        valueParameters.buildDescriptors(functionDescriptor),
-        returnType,
+        typeParameters,
+        valueParameters.buildDescriptors(targetComponents, typeParameterResolver, functionDescriptor),
+        returnType.buildType(targetComponents, typeParameterResolver),
         modality,
         visibility
     )
