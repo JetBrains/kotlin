@@ -59,7 +59,8 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
             || element.setter != null
             || element.getter != null
             || element.receiverTypeReference != null
-            || element.name == null) {
+            || element.name == null
+        ) {
             return null
         }
 
@@ -109,8 +110,7 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
         val assignments = mutableListOf<KtBinaryExpression>()
         fun process(binaryExpr: KtBinaryExpression) {
             if (binaryExpr.operationToken != KtTokens.EQ) return
-            val left = binaryExpr.left
-            val leftReference = when (left) {
+            val leftReference = when (val left = binaryExpr.left) {
                 is KtNameReferenceExpression ->
                     left
                 is KtDotQualifiedExpression ->
@@ -138,7 +138,7 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
         if (assignments.any { it.parent.invalidParent() }) return null
 
         val firstAssignment = assignments.firstOrNull() ?: return null
-        if (assignments.any { it !== firstAssignment && it.parent.parent is KtSecondaryConstructor}) return null
+        if (assignments.any { it !== firstAssignment && it.parent.parent is KtSecondaryConstructor }) return null
 
         val context = firstAssignment.analyze()
         val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] ?: return null
