@@ -47,9 +47,17 @@ public class TemplateListPanel extends JPanel implements Disposable {
   private static final String TEMPLATE_SETTINGS = "TemplateSettings";
   private static final TemplateImpl MOCK_TEMPLATE = new TemplateImpl("mockTemplate-xxx", "mockTemplateGroup-yyy");
   public static final String ABBREVIATION = "<abbreviation>";
-  public static final Comparator<TemplateImpl> TEMPLATE_COMPARATOR = (o1, o2) -> {
-    int compareKey = o1.getKey().compareToIgnoreCase(o2.getKey());
-    return compareKey != 0 ? compareKey : o1.getGroupName().compareToIgnoreCase(o2.getGroupName());
+  public static final Comparator<TemplateImpl> TEMPLATE_COMPARATOR = new Comparator<TemplateImpl>() {
+    @Override
+    public int compare(TemplateImpl o1, TemplateImpl o2) {
+      int compareKey = compareCaseInsensitively(o1.getKey(), o2.getKey());
+      return compareKey != 0 ? compareKey : compareCaseInsensitively(o1.getGroupName(), o2.getGroupName());
+    }
+
+    private int compareCaseInsensitively(String s1, String s2) {
+      int result = s1.compareToIgnoreCase(s2);
+      return result != 0 ? result : s1.compareTo(s2);
+    }
   };
 
   static {
