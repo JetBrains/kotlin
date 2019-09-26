@@ -7,8 +7,6 @@ import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
-import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -67,9 +65,7 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
   @Nullable
   @Override
   public JComponent createComponent() {
-    ExtensionPoint<LineMarkerProvider> point = Extensions.getRootArea().getExtensionPoint(LineMarkerProviders.EP_NAME);
-    @SuppressWarnings("unchecked")
-    LanguageExtensionPoint<LineMarkerProvider>[] extensions = (LanguageExtensionPoint<LineMarkerProvider>[])point.getExtensions();
+    LanguageExtensionPoint<LineMarkerProvider>[] extensions = LineMarkerProviders.EP_NAME.getExtensions();
     NullableFunction<LanguageExtensionPoint<LineMarkerProvider>, PluginDescriptor> function =
       point1 -> {
         LineMarkerProvider instance = point1.getInstance();
