@@ -446,7 +446,7 @@ public final class ConversionContextImpl implements ConversionContext {
 
   @Override
   public File getSettingsBaseDir() {
-    return mySettingsBaseDir.toFile();
+    return mySettingsBaseDir != null ? mySettingsBaseDir.toFile() : null;
   }
 
   @NotNull
