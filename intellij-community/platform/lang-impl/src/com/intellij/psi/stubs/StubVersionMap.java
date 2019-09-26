@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -240,7 +241,11 @@ class StubVersionMap {
   private static final FileAttribute VERSION_STAMP = new FileAttribute("stubIndex.versionStamp", 2, true);
   public void persistIndexedState(int fileId, @NotNull VirtualFile file) throws IOException {
     try (DataOutputStream stream = FSRecords.writeAttribute(fileId, VERSION_STAMP)) {
-      DataInputOutputUtil.writeINT(stream, getIndexingTimestampDiffForFileType(file.getFileType()));
+      FileType[] type = {null};
+      ProgressManager.getInstance().executeNonCancelableSection(() -> {
+        type[0] = file.getFileType();
+      });
+      DataInputOutputUtil.writeINT(stream, getIndexingTimestampDiffForFileType(type[0]));
     }
   }
 
