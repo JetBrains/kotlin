@@ -19,6 +19,8 @@ import com.intellij.ide.util.treeView.smartTree.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -46,6 +48,7 @@ import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure;
 import com.intellij.util.*;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.containers.JBTreeTraverser;
 import com.intellij.util.ui.UIUtil;
@@ -476,40 +479,17 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
     ApplicationManager.getApplication().assertIsDispatchThread();
 
     cancelScrollToSelectedElement();
+    if (isDisposed()) return;
 
-    final ProgressIndicatorBase newIndicator = new ProgressIndicatorBase();
-    myLastAutoscrollIndicator = newIndicator;
+    final ProgressIndicatorBase indicator = new ProgressIndicatorBase();
+    myLastAutoscrollIndicator = indicator;
 
-    PsiDocumentManager.getInstance(myProject).performWhenAllCommitted(
-      () -> scrollToSelectedElementLaterImpl(this::doFindSelectedElement, this::doScrollToSelectedElement, newIndicator)
-    );
-  }
-
-  // elementFinder is run off EDT
-  // elementSelector is run on EDT
-  private void scrollToSelectedElementLaterImpl(@NotNull Supplier<Object> elementFinder,
-                                                @NotNull Consumer<Object> elementSelector,
-                                                @NotNull ProgressIndicator indicator) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
-
-    if (isDisposed() || indicator.isCanceled()) return;
-
-    ApplicationManager.getApplication().executeOnPooledThread(
-      ConcurrencyUtil.underThreadNameRunnable("StructureView: find selected element", () -> {
-        Ref<Object> selectedElement = Ref.create();
-        while (!ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(() -> selectedElement.set(elementFinder.get()),
-                                                                              new SensitiveProgressWrapper(indicator))) {
-          if (isDisposed() || indicator.isCanceled()) return;
-          ProgressIndicatorUtils.yieldToPendingWriteActions();
-          if (isDisposed() || indicator.isCanceled()) return;
-        }
-        if (!selectedElement.isNull()) {
-          ApplicationManager.getApplication().invokeLater(() -> {
-            if (isDisposed() || indicator.isCanceled()) return;
-            elementSelector.consume(selectedElement.get());
-          });
-        }
-      }));
+    ReadAction.nonBlocking(this::doFindSelectedElement)
+      .withDocumentsCommitted(myProject)
+      .expireWhen(this::isDisposed)
+      .cancelWith(indicator)
+      .finishOnUiThread(ModalityState.current(), this::doScrollToSelectedElement)
+      .submit(AppExecutorUtil.getAppExecutorService());
   }
 
   @Nullable
@@ -522,8 +502,8 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
     return null;
   }
 
-  private void doScrollToSelectedElement(@NotNull Object currentEditorElement) {
-    if (isDisposed()) return;
+  private void doScrollToSelectedElement(@Nullable Object currentEditorElement) {
+    if (currentEditorElement == null) return;
     if (UIUtil.isFocusAncestor(this)) return;
     select(currentEditorElement, false);
   }
