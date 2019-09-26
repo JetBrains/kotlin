@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -48,7 +49,10 @@ fun KtWhenExpression.getSubjectToIntroduce(): KtExpression? {
             if (condition !is KtWhenConditionWithExpression) return null
 
             val candidate = condition.expression?.getWhenConditionSubjectCandidate() ?: return null
-            if (candidate !is KtNameReferenceExpression && candidate !is KtThisExpression) return null
+            if (candidate !is KtNameReferenceExpression
+                && (candidate as? KtQualifiedExpression)?.selectorExpression !is KtNameReferenceExpression
+                && candidate !is KtThisExpression
+            ) return null
 
             if (lastCandidate == null) {
                 lastCandidate = candidate
@@ -66,12 +70,14 @@ private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? = wh
 
     is KtBinaryExpression -> {
         val lhs = left
+        val rhs = right
         when (operationToken) {
             KtTokens.IN_KEYWORD, KtTokens.NOT_IN -> lhs
-            KtTokens.EQEQ -> lhs as? KtNameReferenceExpression ?: right
+            KtTokens.EQEQ ->
+                lhs?.takeIf { it.hasCandidateNameReferenceExpression() } ?: rhs?.takeIf { it.hasCandidateNameReferenceExpression() }
             KtTokens.OROR -> {
                 val leftCandidate = lhs.getWhenConditionSubjectCandidate()
-                val rightCandidate = right.getWhenConditionSubjectCandidate()
+                val rightCandidate = rhs.getWhenConditionSubjectCandidate()
                 if (leftCandidate.matches(rightCandidate)) leftCandidate else null
             }
             else -> null
@@ -80,6 +86,15 @@ private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? = wh
     }
 
     else -> null
+}
+
+private fun KtExpression.hasCandidateNameReferenceExpression(): Boolean {
+    val nameReferenceExpression = this as? KtNameReferenceExpression
+        ?: (this as? KtQualifiedExpression)?.selectorExpression as? KtNameReferenceExpression
+        ?: return false
+    val resolved = nameReferenceExpression.mainReference.resolve()
+    if (resolved is KtObjectDeclaration || (resolved as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true) return false
+    return true
 }
 
 fun KtWhenExpression.introduceSubject(): KtWhenExpression? {
