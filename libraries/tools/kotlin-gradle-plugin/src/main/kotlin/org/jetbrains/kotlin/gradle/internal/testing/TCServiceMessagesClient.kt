@@ -154,12 +154,13 @@ internal open class TCServiceMessagesClient(
 
         val parsedStackTrace = settings.stackTraceParser(stacktrace)
 
+        val failMessage = parsedStackTrace?.message ?: message.failureMessage
         results.failure(
             descriptor.id,
             KotlinTestFailure(
-                (parsedStackTrace?.message ?: message.failureMessage)?.let { extractExceptionClassName(it) }
+                failMessage?.let { extractExceptionClassName(it) }
                     ?: "Unknown",
-                message.failureMessage,
+                failMessage,
                 stacktrace,
                 patchStackTrace(this, parsedStackTrace?.stackTrace),
                 message.expected,

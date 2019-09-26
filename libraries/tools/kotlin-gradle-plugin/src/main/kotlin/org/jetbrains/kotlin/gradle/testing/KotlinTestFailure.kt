@@ -19,7 +19,7 @@ import org.gradle.internal.serialize.PlaceholderException
 class KotlinTestFailure(
     className: String,
     message: String?,
-    val stackTraceString: String?,
+    private val stackTraceString: String?,
     private val stackTrace: List<StackTraceElement>? = null,
     val expected: String? = null,
     val actual: String? = null
@@ -38,9 +38,10 @@ class KotlinTestFailure(
         return this
     }
 
-    override fun toString(): String =
-        if (stackTraceString != null) {
+    override fun toString(): String {
+        return if (stackTraceString != null) {
             if (message != null && message!! !in stackTraceString) message + "\n" + stackTraceString
             else stackTraceString
         } else message ?: "Test failed"
+    }
 }
