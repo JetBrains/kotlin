@@ -1,3 +1,3 @@
 
-fun f(s: <selection>_Qfadj4tPV.same.same</selection>) {
+fun f(s: <selection>_root_ide_package_.same.same</selection>) {
 }

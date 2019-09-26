@@ -789,11 +789,11 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
          *
          *  fun test(a: Any) {
          *      a.A() // invalid code -> incorrect import/completion/etc.
-         *      _Qfadj4tPV.a.A() // OK
+         *      _root_ide_package_.a.A() // OK
          *  }
          *  ---------
          */
-        const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE = "_Qfadj4tPV"
+        const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE = "_root_ide_package_"
         const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE_WITH_DOT = "$ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE."
     }
 }

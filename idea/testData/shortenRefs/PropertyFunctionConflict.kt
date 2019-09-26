@@ -2,6 +2,6 @@ package a
 
 class Goo {
     fun x() {
-        <selection>_Qfadj4tPV.a.b.foo()</selection>
+        <selection>_root_ide_package_.a.b.foo()</selection>
     }
 }
