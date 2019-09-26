@@ -1,11 +1,13 @@
-class Foo {
-    val bar = 1
+import Platform.JvmPlatform
+
+sealed class Platform {
+    object JvmPlatform : Platform()
+    class Another(val name: String) : Platform()
 }
 
-fun test(foo: Foo): Int {
-    return <caret>when {
-        foo.bar == 1 -> 10
-        foo.bar == 2 -> 20
-        else -> 30
-    }
+class ModuleInfo(val platform: Platform)
+
+fun foo(moduleInfo: ModuleInfo) = <caret>when {
+    JvmPlatform == moduleInfo.platform -> 1
+    else -> 0
 }
