@@ -60,14 +60,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -871,15 +867,18 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
         }
       }));
 
-      AncestorListener ancestorListener = new AncestorListenerAdapter() {
-        @Override
-        public void ancestorMoved(AncestorEvent event) {
-          hideLookup(false);
-        }
-      };
-      editorComponent.addAncestorListener(ancestorListener);
+      Window window = ComponentUtil.getWindow(editorComponent);
+      if (window != null) {
+        ComponentListener windowListener = new ComponentAdapter() {
+          @Override
+          public void componentMoved(ComponentEvent event) {
+            hideLookup(false);
+          }
+        };
 
-      Disposer.register(this, () -> editorComponent.removeAncestorListener(ancestorListener));
+        window.addComponentListener(windowListener);
+        Disposer.register(this, () -> editorComponent.removeComponentListener(windowListener));
+      }
     }
 
     myList.addListSelectionListener(new ListSelectionListener() {
