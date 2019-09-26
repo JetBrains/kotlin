@@ -57,7 +57,7 @@ public class IntentionsUIImpl extends IntentionsUI {
   public void hide() {
     ApplicationManager.getApplication().assertIsDispatchThread();
     IntentionHintComponent hint = myLastIntentionHint;
-    if (hint != null && hint.isVisible()) {
+    if (hint != null && !hint.isDisposed() && hint.isVisible()) {
       hint.hide();
       myLastIntentionHint = null;
     }

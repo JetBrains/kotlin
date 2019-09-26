@@ -11,6 +11,7 @@ import com.intellij.codeInsight.unwrap.ScopeHighlighter;
 import com.intellij.codeInspection.SuppressIntentionActionFromFix;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.ActionsCollector;
+import com.intellij.ide.plugins.DynamicPlugins;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
@@ -147,7 +148,6 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     return component;
   }
 
-  @TestOnly
   public boolean isDisposed() {
     return myDisposed;
   }
@@ -363,6 +363,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
     ListPopupStep step = new IntentionListStep(this, myEditor, myFile, project, myCachedIntentions);
     recreateMyPopup(step);
     EditorUtil.disposeWithEditor(myEditor, this);
+    DynamicPlugins.onPluginUnload(this, () -> Disposer.dispose(this));
   }
 
   public void hide() {
