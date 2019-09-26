@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
@@ -39,7 +39,7 @@ fun resolveArgumentExpression(
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     return when (argument) {
-        is FirFunctionCall, is FirCallLikeControlFlowExpression -> resolveSubCallArgument(
+        is FirFunctionCall, is FirWhenExpression, is FirTryExpression -> resolveSubCallArgument(
             csBuilder,
             argument as FirResolvable,
             expectedType,
@@ -248,7 +248,7 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
 ): ConeKotlinType? {
     if (candidateExpectedType.isBuiltinFunctionalType) return null
     // TODO: if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return null
-    val firNamedFunction = symbol.fir as? FirNamedFunction ?: return null
+    val firNamedFunction = symbol.fir as? FirSimpleFunction ?: return null
     if (!samResolver.shouldRunSamConversionForFunction(firNamedFunction)) return null
 
     val argumentIsFunctional = when ((argument as? FirWrappedArgumentExpression)?.expression ?: argument) {

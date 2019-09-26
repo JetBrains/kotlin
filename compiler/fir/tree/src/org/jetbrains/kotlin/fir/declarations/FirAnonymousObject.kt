@@ -7,19 +7,26 @@ package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirAnonymousObject(psi: PsiElement?) : @VisitedSupertype FirClass, FirUnknownTypeExpression(psi) {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+interface FirAnonymousObject : FirClass, FirExpression {
+    override val psi: PsiElement?
+    override val session: FirSession
+    override val resolvePhase: FirResolvePhase
     override val classKind: ClassKind
-        get() = ClassKind.OBJECT
+    override val superTypeRefs: List<FirTypeRef>
+    override val declarations: List<FirDeclaration>
+    override val annotations: List<FirAnnotationCall>
+    override val typeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitAnonymousObject(this, data)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirClass>.acceptChildren(visitor, data)
-        super<FirUnknownTypeExpression>.acceptChildren(visitor, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObject(this, data)
 }

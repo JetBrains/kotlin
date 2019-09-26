@@ -83,7 +83,7 @@ class InvokeReceiverCandidateCollector(
             val session = components.session
             val boundInvokeCallInfo = CallInfo(
                 invokeCallInfo.callKind,
-                FirQualifiedAccessExpressionImpl(null, false).apply {
+                FirQualifiedAccessExpressionImpl(null).apply {
                     calleeReference = FirNamedReferenceWithCandidate(
                         null,
                         (candidate.symbol as FirCallableSymbol<*>).callableId.callableName,

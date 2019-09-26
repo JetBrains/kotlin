@@ -6,14 +6,22 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirNamedArgumentExpression(
-    psi: PsiElement?
-) : FirWrappedArgumentExpression(psi) {
-    abstract val name: Name
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitNamedArgumentExpression(this, data)
+interface FirNamedArgumentExpression : FirWrappedArgumentExpression {
+    override val psi: PsiElement?
+    override val typeRef: FirTypeRef
+    override val annotations: List<FirAnnotationCall>
+    override val expression: FirExpression
+    override val isSpread: Boolean
+    val name: Name
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedArgumentExpression(this, data)
 }

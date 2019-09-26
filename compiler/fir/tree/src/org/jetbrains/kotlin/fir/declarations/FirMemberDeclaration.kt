@@ -1,35 +1,30 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirMemberDeclaration : FirTypeParameterContainer, FirNamedDeclaration, FirAnnotationContainer {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+interface FirMemberDeclaration : FirNamedDeclaration, FirAnnotationContainer {
+    override val psi: PsiElement?
+    override val session: FirSession
+    override val resolvePhase: FirResolvePhase
+    override val name: Name
+    override val annotations: List<FirAnnotationCall>
+    val typeParameters: List<FirTypeParameter>
     val status: FirDeclarationStatus
 
-    val visibility: Visibility get() = status.visibility
-
-    val modality: Modality? get() = status.modality
-
-    val isExpect: Boolean get() = status.isExpect
-
-    val isActual: Boolean get() = status.isActual
-
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitMemberDeclaration(this, data)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        acceptAnnotations(visitor, data)
-        for (typeParameter in typeParameters) {
-            typeParameter.accept(visitor, data)
-        }
-        status.accept(visitor, data)
-        super.acceptChildren(visitor, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)
 }

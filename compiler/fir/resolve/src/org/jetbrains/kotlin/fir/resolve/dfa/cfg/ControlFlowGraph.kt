@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class ControlFlowGraph(val name: String, val kind: Kind) {
     val nodes = mutableListOf<CFGNode<*>>()
@@ -146,7 +148,7 @@ class StubNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, le
     override val fir: FirStub get() = FirStub
 }
 
-class VariableDeclarationNode(owner: ControlFlowGraph, override val fir: FirVariable<*>, level: Int) : CFGNode<FirVariable<*>>(owner, level)
+class VariableDeclarationNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNode<FirProperty>(owner, level)
 class VariableAssignmentNode(owner: ControlFlowGraph, override val fir: FirVariableAssignment, level: Int) : CFGNode<FirVariableAssignment>(owner, level)
 
 // ----------------------------------- Other -----------------------------------
@@ -158,4 +160,10 @@ class AnnotationExitNode(owner: ControlFlowGraph, override val fir: FirAnnotatio
 
 object FirStub : FirElement {
     override val psi: PsiElement? get() = null
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        return this
+    }
 }

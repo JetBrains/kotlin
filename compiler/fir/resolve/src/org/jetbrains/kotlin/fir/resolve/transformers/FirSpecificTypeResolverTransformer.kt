@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -34,21 +32,23 @@ class FirSpecificTypeResolverTransformer(
         functionTypeRef.transformChildren(this, data)
         return FirResolvedFunctionTypeRefImpl(
             functionTypeRef.psi,
+            typeResolver.resolveType(functionTypeRef, towerScope, position),
             functionTypeRef.isMarkedNullable,
-            functionTypeRef.annotations as MutableList<FirAnnotationCall>,
             functionTypeRef.receiverTypeRef,
-            functionTypeRef.valueParameters as MutableList<FirValueParameter>,
-            functionTypeRef.returnTypeRef,
-            typeResolver.resolveType(functionTypeRef, towerScope, position)
-        ).compose()
+            functionTypeRef.returnTypeRef
+        ).apply {
+            annotations += functionTypeRef.annotations
+            valueParameters += functionTypeRef.valueParameters
+        }.compose()
     }
 
     private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): CompositeTransformResult<FirTypeRef> {
         return FirResolvedTypeRefImpl(
             typeRef.psi,
-            resolvedType,
-            typeRef.annotations
-        ).compose()
+            resolvedType
+        ).apply {
+            annotations += typeRef.annotations
+        }.compose()
     }
 
     override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {

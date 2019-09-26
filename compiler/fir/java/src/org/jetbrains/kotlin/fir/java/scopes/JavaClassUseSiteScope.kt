@@ -59,7 +59,7 @@ class JavaClassUseSiteScope(
             substitutor
         )
 
-    private fun isOverriddenFunCheck(overriddenInJava: FirNamedFunction, base: FirNamedFunction): Boolean {
+    private fun isOverriddenFunCheck(overriddenInJava: FirSimpleFunction, base: FirSimpleFunction): Boolean {
         val receiverTypeRef = base.receiverTypeRef
         val baseParameterTypes = listOfNotNull(receiverTypeRef) + base.valueParameters.map { it.returnTypeRef }
 
@@ -83,7 +83,7 @@ class JavaClassUseSiteScope(
         }
     }
 
-    private fun isOverriddenPropertyCheck(overriddenInJava: FirNamedFunction, base: FirProperty): Boolean {
+    private fun isOverriddenPropertyCheck(overriddenInJava: FirSimpleFunction, base: FirProperty): Boolean {
         val receiverTypeRef = base.receiverTypeRef
         if (receiverTypeRef == null) {
             // TODO: setters

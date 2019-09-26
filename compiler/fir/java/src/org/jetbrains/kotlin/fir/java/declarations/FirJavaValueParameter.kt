@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirJavaValueParameter(
@@ -19,8 +20,15 @@ class FirJavaValueParameter(
     returnTypeRef: FirJavaTypeRef,
     isVararg: Boolean
 ) : FirValueParameterImpl(
-    session, psi, name, returnTypeRef,
-    defaultValue = null, isCrossinline = false, isNoinline = false, isVararg = isVararg
+    psi,
+    session,
+    returnTypeRef,
+    name,
+    FirVariableSymbol(name),
+    defaultValue = null,
+    isCrossinline = false,
+    isNoinline = false,
+    isVararg = isVararg
 ) {
     init {
         resolvePhase = FirResolvePhase.DECLARATIONS

@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -54,7 +50,7 @@ class ConeOverloadConflictResolver(
 
     private fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
         return when (val declaration = call.symbol.fir) {
-            is FirNamedFunction -> createFlatSignature(call, declaration)
+            is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
             is FirVariable<*> -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
@@ -81,7 +77,7 @@ class ConeOverloadConflictResolver(
         return type
     }
 
-    private fun createFlatSignature(call: Candidate, function: FirNamedFunction): FlatSignature<Candidate> {
+    private fun createFlatSignature(call: Candidate, function: FirSimpleFunction): FlatSignature<Candidate> {
         return FlatSignature(
             call,
             function.typeParameters.map { it.symbol },

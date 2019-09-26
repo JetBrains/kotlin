@@ -6,18 +6,15 @@
 package org.jetbrains.kotlin.fir.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.BaseTransformedType
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
-import org.jetbrains.kotlin.fir.FirReference
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.*
 
-@BaseTransformedType
-abstract class FirControlFlowGraphReference : FirPureAbstractElement(), @VisitedSupertype FirReference {
-    override val psi: PsiElement? get() = null
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        return visitor.visitControlFlowGraphReference(this, data)
-    }
+interface FirControlFlowGraphReference : FirReference {
+    override val psi: PsiElement?
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitControlFlowGraphReference(this, data)
 }
-

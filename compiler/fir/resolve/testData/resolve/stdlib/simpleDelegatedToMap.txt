@@ -12,7 +12,7 @@ FILE: simpleDelegatedToMap.kt
                 ^ D|/C.foo|.<Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(this@R|/C|, ::R|/C.foo|)
             }
             public set(<set-?>: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>): R|kotlin/Unit| {
-                D|/C.foo|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(this@R|/C|, ::R|/C.foo|, R|<local>/<set-?>|)
+                D|/C.foo|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(this@R|/C|, ::R|/C.foo|, R|<local>/foo|)
             }
 
     }
@@ -21,5 +21,5 @@ FILE: simpleDelegatedToMap.kt
             ^ D|/bar|.<Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(Null(null), ::R|/bar|)
         }
         public set(<set-?>: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>): R|kotlin/Unit| {
-            D|/bar|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(Null(null), ::R|/bar|, R|<local>/<set-?>|)
+            D|/bar|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(Null(null), ::R|/bar|, R|<local>/bar|)
         }

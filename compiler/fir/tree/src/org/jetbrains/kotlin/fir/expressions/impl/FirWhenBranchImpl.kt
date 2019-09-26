@@ -6,32 +6,44 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirAbstractElement
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirWhenBranchImpl(
-    psi: PsiElement?,
+    override val psi: PsiElement?,
     override var condition: FirExpression,
     override var result: FirBlock
-) : FirAbstractElement(psi), FirWhenBranch {
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+) : FirWhenBranch {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        condition.accept(visitor, data)
+        result.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
         transformCondition(transformer, data)
         transformResult(transformer, data)
+        transformOtherChildren(transformer, data)
         return this
     }
 
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch {
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
         condition = condition.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch {
+    override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
         result = result.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
         return this
     }
 }

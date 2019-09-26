@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -105,7 +105,7 @@ class FirClassSubstitutionScope(
     companion object {
         fun createFakeOverrideFunction(
             session: FirSession,
-            baseFunction: FirNamedFunction,
+            baseFunction: FirSimpleFunction,
             baseSymbol: FirNamedFunctionSymbol,
             newReceiverType: ConeKotlinType? = null,
             newReturnType: ConeKotlinType? = null,
@@ -115,23 +115,30 @@ class FirClassSubstitutionScope(
             with(baseFunction) {
                 // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
                 // As second alternative, we can invent some light-weight kind of FirRegularClass
-                FirMemberFunctionImpl(
+                FirSimpleFunctionImpl(
+                    psi,
                     session,
-                    psi, symbol, name,
+                    baseFunction.returnTypeRef.withReplacedConeType(newReturnType),
                     baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType),
-                    baseFunction.returnTypeRef.withReplacedConeType(newReturnType)
+                    name,
+                    baseFunction.status,
+                    symbol
                 ).apply {
                     resolvePhase = baseFunction.resolvePhase
-                    status = baseFunction.status as FirDeclarationStatusImpl
                     valueParameters += baseFunction.valueParameters.zip(
                         newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
                     ) { valueParameter, newType ->
                         with(valueParameter) {
                             FirValueParameterImpl(
-                                session, psi,
-                                name, this.returnTypeRef.withReplacedConeType(newType),
-                                defaultValue, isCrossinline, isNoinline, isVararg,
-                                FirVariableSymbol(valueParameter.symbol.callableId)
+                                psi,
+                                session,
+                                this.returnTypeRef.withReplacedConeType(newType),
+                                name,
+                                FirVariableSymbol(valueParameter.symbol.callableId),
+                                defaultValue,
+                                isCrossinline,
+                                isNoinline,
+                                isVararg
                             )
                         }
                     }
@@ -149,15 +156,20 @@ class FirClassSubstitutionScope(
         ): FirPropertySymbol {
             val symbol = FirPropertySymbol(baseSymbol.callableId, true, baseSymbol)
             with(baseProperty) {
-                FirMemberPropertyImpl(
+                FirPropertyImpl(
+                    psi,
                     session,
-                    psi, symbol, name,
-                    baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType),
                     baseProperty.returnTypeRef.withReplacedConeType(newReturnType),
-                    isVar, initializer = null, delegate = null
+                    baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType),
+                    name,
+                    null,
+                    null,
+                    isVar,
+                    symbol,
+                    false,
+                    baseProperty.status
                 ).apply {
                     resolvePhase = baseProperty.resolvePhase
-                    status = baseProperty.status as FirDeclarationStatusImpl
                 }
             }
             return symbol
@@ -170,6 +182,8 @@ fun FirTypeRef.withReplacedConeType(newType: ConeKotlinType?): FirResolvedTypeRe
     require(this is FirResolvedTypeRef)
     if (newType == null) return this
 
-    return FirResolvedTypeRefImpl(psi, newType, annotations = annotations)
+    return FirResolvedTypeRefImpl(psi, newType).apply {
+        annotations += this@withReplacedConeType.annotations
+    }
 
 }

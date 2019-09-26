@@ -5,26 +5,34 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> :
-    @VisitedSupertype FirDeclaration, FirMemberDeclaration, FirCallableDeclaration<F> {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    val isOverride: Boolean get() = status.isOverride
-
-    val isStatic: Boolean get() = status.isStatic
-
-    val containerSource: DeserializedContainerSource? get() = null
+interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : FirCallableDeclaration<F>, FirMemberDeclaration {
+    override val psi: PsiElement?
+    override val session: FirSession
+    override val resolvePhase: FirResolvePhase
+    override val annotations: List<FirAnnotationCall>
+    override val returnTypeRef: FirTypeRef
+    override val receiverTypeRef: FirTypeRef?
+    override val symbol: FirCallableSymbol<F>
+    override val name: Name
+    override val typeParameters: List<FirTypeParameter>
+    override val status: FirDeclarationStatus
+    val containerSource: DeserializedContainerSource?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableMemberDeclaration(this, data)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        receiverTypeRef?.accept(visitor, data)
-        super<FirMemberDeclaration>.acceptChildren(visitor, data)
-        returnTypeRef.accept(visitor, data)
-    }
-
-
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<F>
 }

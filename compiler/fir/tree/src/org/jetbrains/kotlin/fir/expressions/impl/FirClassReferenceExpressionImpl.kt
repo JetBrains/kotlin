@@ -6,15 +6,39 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
-import org.jetbrains.kotlin.fir.transformSingle
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.*
 
-class FirClassReferenceExpressionImpl(psi: PsiElement?, override var classTypeRef: FirTypeRef) : FirClassReferenceExpression(psi) {
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+class FirClassReferenceExpressionImpl(
+    override val psi: PsiElement?,
+    override var classTypeRef: FirTypeRef
+) : FirClassReferenceExpression, FirAbstractAnnotatedElement {
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        typeRef.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
+        classTypeRef.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirClassReferenceExpressionImpl {
+        typeRef = typeRef.transformSingle(transformer, data)
+        annotations.transformInplace(transformer, data)
         classTypeRef = classTypeRef.transformSingle(transformer, data)
-        return super.transformChildren(transformer, data)
+        return this
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
     }
 }

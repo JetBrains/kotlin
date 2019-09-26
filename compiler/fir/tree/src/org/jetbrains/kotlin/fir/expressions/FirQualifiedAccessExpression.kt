@@ -6,21 +6,32 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirQualifiedAccessExpression(
-    psi: PsiElement?
-) : FirQualifiedAccess, @VisitedSupertype FirUnknownTypeExpression(psi) {
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitQualifiedAccessExpression(this, data)
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        calleeReference.accept(visitor, data)
-        explicitReceiver?.accept(visitor, data)
-        dispatchReceiver.accept(visitor, data)
-        extensionReceiver.accept(visitor, data)
-        super<FirUnknownTypeExpression>.acceptChildren(visitor, data)
-    }
+interface FirQualifiedAccessExpression : FirExpression, FirQualifiedAccess {
+    override val psi: PsiElement?
+    override val typeRef: FirTypeRef
+    override val annotations: List<FirAnnotationCall>
+    override val safe: Boolean
+    override val explicitReceiver: FirExpression?
+    override val dispatchReceiver: FirExpression
+    override val extensionReceiver: FirExpression
+    override val calleeReference: FirReference
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccessExpression(this, data)
+
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 }

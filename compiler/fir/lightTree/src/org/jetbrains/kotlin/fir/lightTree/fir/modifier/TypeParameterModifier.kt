@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.REIFICATION_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VARIANCE_MODIFIER
 import org.jetbrains.kotlin.types.Variance
 
 class TypeParameterModifier(
-    psi: PsiElement? = null,
+    override val psi: PsiElement? = null,
     private val varianceModifiers: MutableList<VarianceModifier> = mutableListOf(),
-
     private var reificationModifier: ReificationModifier? = null
-) : FirAbstractAnnotatedElement(psi) {
+) : FirAbstractAnnotatedElement {
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+
     fun addModifier(modifier: LighterASTNode) {
         val tokenType = modifier.tokenType
         when {

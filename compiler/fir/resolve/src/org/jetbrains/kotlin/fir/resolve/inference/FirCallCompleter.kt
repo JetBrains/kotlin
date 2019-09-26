@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -18,12 +19,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.MapArguments
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.returnExpressions
-import org.jetbrains.kotlin.fir.transformSingle
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
@@ -38,7 +40,8 @@ class FirCallCompleter(
 ) : BodyResolveComponents by transformer {
     private val completer = ConstraintSystemCompleter(inferenceComponents)
 
-    fun <T : FirResolvable> completeCall(call: T, expectedTypeRef: FirTypeRef?): T {
+    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): T
+            where T : FirResolvable, T : FirStatement {
         val typeRef = typeFromCallee(call)
         if (typeRef.type is ConeKotlinErrorType) {
             if (call is FirExpression) {
@@ -95,17 +98,20 @@ class FirCallCompleter(
         ): Pair<List<FirExpression>, InferenceSession> {
 
             val itParam = when {
-                lambdaArgument.valueParameters.isEmpty() && parameters.size == 1 ->
+                lambdaArgument.valueParameters.isEmpty() && parameters.size == 1 -> {
+                    val name = Name.identifier("it")
                     FirValueParameterImpl(
-                        session,
                         null,
-                        Name.identifier("it"),
-                        FirResolvedTypeRefImpl(null, parameters.single(), emptyList()),
+                        session,
+                        FirResolvedTypeRefImpl(null, parameters.single()),
+                        name,
+                        FirVariableSymbol(name),
                         defaultValue = null,
                         isCrossinline = false,
                         isNoinline = false,
                         isVararg = false
                     )
+                }
                 else -> null
             }
 

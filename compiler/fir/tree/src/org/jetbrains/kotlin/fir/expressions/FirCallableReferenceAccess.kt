@@ -6,9 +6,32 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirCallableReferenceAccess(psi: PsiElement?) : FirQualifiedAccessExpression(psi) {
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitCallableReferenceAccess(this, data)
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+interface FirCallableReferenceAccess : FirQualifiedAccessExpression {
+    override val psi: PsiElement?
+    override val typeRef: FirTypeRef
+    override val annotations: List<FirAnnotationCall>
+    override val safe: Boolean
+    override val explicitReceiver: FirExpression?
+    override val dispatchReceiver: FirExpression
+    override val extensionReceiver: FirExpression
+    override val calleeReference: FirReference
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableReferenceAccess(this, data)
+
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
+
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
+
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
 }

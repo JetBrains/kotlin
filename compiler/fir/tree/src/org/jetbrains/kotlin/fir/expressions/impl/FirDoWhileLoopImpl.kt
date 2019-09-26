@@ -6,19 +6,54 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.transformInplace
-import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.visitors.*
 
-class FirDoWhileLoopImpl(psi: PsiElement?, condition: FirExpression) : FirAbstractLoop(psi, condition), FirDoWhileLoop {
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+class FirDoWhileLoopImpl(
+    override val psi: PsiElement?,
+    override var condition: FirExpression
+) : FirDoWhileLoop, FirAbstractLoop, FirAbstractAnnotatedElement {
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override lateinit var block: FirBlock
+    override var label: FirLabel? = null
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        annotations.forEach { it.accept(visitor, data) }
+        block.accept(visitor, data)
+        condition.accept(visitor, data)
+        label?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
+        transformBlock(transformer, data)
+        transformCondition(transformer, data)
+        transformOtherChildren(transformer, data)
+        return this
+    }
+
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
         block = block.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
         condition = condition.transformSingle(transformer, data)
-        label = label?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
         annotations.transformInplace(transformer, data)
+        label = label?.transformSingle(transformer, data)
         return this
     }
 }

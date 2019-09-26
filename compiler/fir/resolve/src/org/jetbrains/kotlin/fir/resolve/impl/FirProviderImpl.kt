@@ -85,25 +85,23 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
                 state.classifierContainerFileMap[classId] = file
             }
 
-            override fun <F : FirCallableMemberDeclaration<F>> visitCallableMemberDeclaration(
-                callableMemberDeclaration: FirCallableMemberDeclaration<F>
-            ) {
-                val symbol = callableMemberDeclaration.symbol
+            override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>) {
+                val symbol = callableDeclaration.symbol
                 val callableId = symbol.callableId
                 state.callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
                 state.callableContainerMap[symbol] = file
             }
 
             override fun visitConstructor(constructor: FirConstructor) {
-                visitCallableMemberDeclaration(constructor)
+                visitCallableDeclaration(constructor)
             }
 
-            override fun visitNamedFunction(namedFunction: FirNamedFunction) {
-                visitCallableMemberDeclaration(namedFunction)
+            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+                visitCallableDeclaration(simpleFunction)
             }
 
             override fun visitProperty(property: FirProperty) {
-                visitCallableMemberDeclaration(property)
+                visitCallableDeclaration(property)
             }
         })
     }

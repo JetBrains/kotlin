@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeAliasLookupTag
 import org.jetbrains.kotlin.name.ClassId
 
-sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration<D>>(
+sealed class FirClassLikeSymbol<D>(
     val classId: ClassId
-) : FirClassifierSymbol<D>() {
+) : FirClassifierSymbol<D>() where D : FirClassLikeDeclaration<D>, D : FirSymbolOwner<D> {
     abstract override fun toLookupTag(): ConeClassLikeLookupTag
 
     override fun equals(other: Any?): Boolean =

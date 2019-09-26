@@ -1,29 +1,39 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirAbstractElement
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirAnonymousInitializerImpl(
+    override val psi: PsiElement?,
     override val session: FirSession,
-    psi: PsiElement?,
     override var body: FirBlock?
-) : FirAnonymousInitializer, FirAbstractElement(psi) {
-    override var resolvePhase = FirResolvePhase.RAW_FIR
+) : FirAnonymousInitializer {
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        body?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousInitializerImpl {
         body = body?.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
+        resolvePhase = newResolvePhase
     }
 }

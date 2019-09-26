@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.toConeProjection
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
@@ -85,13 +85,16 @@ private fun JavaType?.enhancePossiblyFlexible(
 
             FirResolvedTypeRefImpl(
                 psi = null,
-                type = coneFlexibleOrSimpleType(session, lowerResult, upperResult),
-                annotations = annotations
-            )
+                type = coneFlexibleOrSimpleType(session, lowerResult, upperResult)
+            ).apply {
+                this.annotations += annotations
+            }
         }
         else -> {
             val enhanced = type.toNotNullConeKotlinType(session, javaTypeParameterStack)
-            FirResolvedTypeRefImpl(psi = null, type = enhanced, annotations = annotations)
+            FirResolvedTypeRefImpl(psi = null, type = enhanced).apply {
+                this.annotations += annotations
+            }
         }
     }
 }
@@ -249,7 +252,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
 
         return if (firEnumEntry != null) FirQualifiedAccessExpressionImpl(null).apply {
             calleeReference = FirSimpleNamedReference(
-                null, name // TODO: , firEnumEntry.symbol
+                null, name, null // TODO: , firEnumEntry.symbol
             )
         } else if (firElement is FirJavaClass) {
             val firStaticProperty = firElement.declarations.filterIsInstance<FirJavaField>().find {

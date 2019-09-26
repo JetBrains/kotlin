@@ -6,27 +6,37 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirNamedReference
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeCallWithArgumentList
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionContainer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirFunctionCall(
-    psi: PsiElement?
-) : @VisitedSupertype FirUnknownTypeCallWithArgumentList(psi), FirQualifiedAccess, FirTypeProjectionContainer {
-    abstract override val calleeReference: FirNamedReference
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitFunctionCall(this, data)
+interface FirFunctionCall : FirQualifiedAccessExpression, FirCall {
+    override val psi: PsiElement?
+    override val typeRef: FirTypeRef
+    override val annotations: List<FirAnnotationCall>
+    override val safe: Boolean
+    override val explicitReceiver: FirExpression?
+    override val dispatchReceiver: FirExpression
+    override val extensionReceiver: FirExpression
+    override val arguments: List<FirExpression>
+    val typeArguments: List<FirTypeProjection>
+    override val calleeReference: FirNamedReference
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        calleeReference.accept(visitor, data)
-        explicitReceiver?.accept(visitor, data)
-        for (typeArgument in typeArguments) {
-            typeArgument.accept(visitor, data)
-        }
-        super<FirUnknownTypeCallWithArgumentList>.acceptChildren(visitor, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionCall(this, data)
+
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall
+
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall
+
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall
+
+    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirFunctionCall
 }

@@ -5,15 +5,24 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.*
 
-object FirNoReceiverExpression : FirExpression(null) {
+object FirNoReceiverExpression : FirExpression {
+    override val psi: PsiElement? = null
     override val typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+    override val annotations: List<FirAnnotationCall> get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirNoReceiverExpression {
+        return this
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

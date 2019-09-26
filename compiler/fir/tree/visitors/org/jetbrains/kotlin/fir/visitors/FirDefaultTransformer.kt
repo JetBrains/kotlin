@@ -70,7 +70,7 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         return transformJump(breakExpression, data)
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirDeclaration> {
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirStatement> {
         return transformRegularClass(enumEntry, data)
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -27,7 +28,7 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
     override lateinit var session: FirSession
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        session = file.fileSession
+        session = file.session
         val scopeSession = ScopeSession()
         return withScopeCleanup {
             towerScope.addImportingScopes(file, session, scopeSession)
@@ -35,7 +36,7 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
         withScopeCleanup {
             regularClass.addTypeParametersScope()
             regularClass.typeParameters.forEach {
@@ -58,7 +59,7 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
             towerScope.scopes += FirNestedClassifierScope(classId, firProvider)
             regularClass.addTypeParametersScope()
 
-            transformDeclaration(regularClass, data)
+            transformDeclaration(regularClass, data) as CompositeTransformResult<FirStatement>
         }
     }
 
@@ -84,10 +85,10 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
         }
     }
 
-    override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup {
-            namedFunction.addTypeParametersScope()
-            transformDeclaration(namedFunction, data)
+            simpleFunction.addTypeParametersScope()
+            transformDeclaration(simpleFunction, data)
         }
     }
 
@@ -100,7 +101,7 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
         return FirSpecificTypeResolverTransformer(towerScope, FirPosition.OTHER, session).transformTypeRef(typeRef, data)
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirStatement> {
         val result = transformDeclaration(valueParameter, data).single as FirValueParameter
         if (result.isVararg) {
             val returnTypeRef = result.returnTypeRef

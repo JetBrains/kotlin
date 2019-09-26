@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 
+inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeUnsafe() = (this as FirResolvedTypeRef).type as T
+inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe() = (this as? FirResolvedTypeRef)?.type as? T
+
 val FirTypeRef.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
 val FirTypeRef.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
 val FirTypeRef.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
@@ -17,3 +20,9 @@ val FirTypeRef.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, fals
 
 private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean =
     this is FirImplicitBuiltinTypeRef && type.lookupTag.classId == classId && type.isNullable == isNullable
+
+val FirFunctionTypeRef.parametersCount: Int
+    get() = if (receiverTypeRef != null)
+        valueParameters.size + 1
+    else
+        valueParameters.size

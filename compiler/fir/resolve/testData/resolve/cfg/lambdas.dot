@@ -107,15 +107,45 @@ digraph lambdas_kt {
 
   subgraph cluster_11 {
     color=red
-    32 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+    32 [label="Enter function test_2" style="filled" fillcolor=red];
     subgraph cluster_12 {
       color=blue
       33 [label="Enter block"];
-      34 [label="Access variable R|<local>/x|"];
-      35 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
-      36 [label="Exit block"];
+      subgraph cluster_13 {
+        color=blue
+        34 [label="Enter when"];
+        subgraph cluster_14 {
+          color=blue
+          35 [label="Enter when branch condition "];
+          36 [label="Access variable R|<local>/x|"];
+          37 [label="Type operator: x is Int"];
+          38 [label="Exit when branch condition"];
+        }
+        subgraph cluster_15 {
+          color=blue
+          39 [label="Enter when branch condition else"];
+          40 [label="Exit when branch condition"];
+        }
+        41 [label="Enter when branch result"];
+        subgraph cluster_16 {
+          color=blue
+          42 [label="Enter block"];
+          43 [label="Exit block"];
+        }
+        44 [label="Exit when branch result"];
+        45 [label="Enter when branch result"];
+        subgraph cluster_17 {
+          color=blue
+          46 [label="Enter block"];
+          47 [label="Variable declaration: lval lambda: R|kotlin/Function0<kotlin/Int>|"];
+          48 [label="Exit block"];
+        }
+        49 [label="Exit when branch result"];
+        50 [label="Exit when"];
+      }
+      51 [label="Exit block"];
     }
-    37 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+    52 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
   32 -> {33};
@@ -123,65 +153,35 @@ digraph lambdas_kt {
   34 -> {35};
   35 -> {36};
   36 -> {37};
-
-  subgraph cluster_13 {
-    color=red
-    38 [label="Enter function test_2" style="filled" fillcolor=red];
-    subgraph cluster_14 {
-      color=blue
-      39 [label="Enter block"];
-      subgraph cluster_15 {
-        color=blue
-        40 [label="Enter when"];
-        subgraph cluster_16 {
-          color=blue
-          41 [label="Enter when branch condition "];
-          42 [label="Access variable R|<local>/x|"];
-          43 [label="Type operator: x is Int"];
-          44 [label="Exit when branch condition"];
-        }
-        subgraph cluster_17 {
-          color=blue
-          45 [label="Enter when branch condition else"];
-          46 [label="Exit when branch condition"];
-        }
-        47 [label="Enter when branch result"];
-        subgraph cluster_18 {
-          color=blue
-          48 [label="Enter block"];
-          49 [label="Exit block"];
-        }
-        50 [label="Exit when branch result"];
-        51 [label="Enter when branch result"];
-        subgraph cluster_19 {
-          color=blue
-          52 [label="Enter block"];
-          53 [label="Variable declaration: lval lambda: R|kotlin/Function0<kotlin/Int>|"];
-          54 [label="Exit block"];
-        }
-        55 [label="Exit when branch result"];
-        56 [label="Exit when"];
-      }
-      57 [label="Exit block"];
-    }
-    58 [label="Exit function test_2" style="filled" fillcolor=red];
-  }
-
-  38 -> {39};
+  37 -> {38};
+  38 -> {45 39};
   39 -> {40};
   40 -> {41};
   41 -> {42};
   42 -> {43};
   43 -> {44};
-  44 -> {51 45};
+  44 -> {50};
   45 -> {46};
   46 -> {47};
   47 -> {48};
   48 -> {49};
   49 -> {50};
-  50 -> {56};
+  50 -> {51};
   51 -> {52};
-  52 -> {53};
+
+  subgraph cluster_18 {
+    color=red
+    53 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+    subgraph cluster_19 {
+      color=blue
+      54 [label="Enter block"];
+      55 [label="Access variable R|<local>/x|"];
+      56 [label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
+      57 [label="Exit block"];
+    }
+    58 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+  }
+
   53 -> {54};
   54 -> {55};
   55 -> {56};

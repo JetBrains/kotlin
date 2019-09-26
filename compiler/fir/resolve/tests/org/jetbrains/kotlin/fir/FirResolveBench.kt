@@ -25,7 +25,7 @@ import kotlin.system.measureNanoTime
 
 
 fun checkFirProvidersConsistency(firFiles: List<FirFile>) {
-    for ((session, files) in firFiles.groupBy { it.fileSession }) {
+    for ((session, files) in firFiles.groupBy { it.session }) {
         val provider = session.firProvider as FirProviderImpl
         provider.ensureConsistent(files)
     }

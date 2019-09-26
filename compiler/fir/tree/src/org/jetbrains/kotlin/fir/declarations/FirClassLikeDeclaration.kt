@@ -5,28 +5,32 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.VisitedSupertype
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> :
-    @VisitedSupertype FirMemberDeclaration, FirStatement, FirSymbolOwner<F> {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+interface FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> : FirStatement, FirMemberDeclaration, FirSymbolOwner<F>, FirTypeParametersOwner {
+    override val psi: PsiElement?
+    override val annotations: List<FirAnnotationCall>
+    override val session: FirSession
+    override val resolvePhase: FirResolvePhase
+    override val name: Name
+    override val typeParameters: List<FirTypeParameter>
+    override val status: FirDeclarationStatus
+    val supertypesComputationStatus: SupertypesComputationStatus
     override val symbol: FirClassLikeSymbol<F>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        return super<FirMemberDeclaration>.accept(visitor, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassLikeDeclaration(this, data)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirMemberDeclaration>.acceptChildren(visitor, data)
-    }
-
-    enum class SupertypesComputationStatus {
-        NOT_COMPUTED, COMPUTING, COMPUTED
-    }
-
-    var supertypesComputationStatus: SupertypesComputationStatus
+    fun replaceSupertypesComputationStatus(newSupertypesComputationStatus: SupertypesComputationStatus)
 }
-

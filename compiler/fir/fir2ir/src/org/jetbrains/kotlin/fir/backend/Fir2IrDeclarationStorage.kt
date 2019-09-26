@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
-import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -52,7 +51,7 @@ class Fir2IrDeclarationStorage(
 
     private val typeParameterCache = mutableMapOf<FirTypeParameter, IrTypeParameter>()
 
-    private val functionCache = mutableMapOf<FirNamedFunction, IrSimpleFunction>()
+    private val functionCache = mutableMapOf<FirSimpleFunction, IrSimpleFunction>()
 
     private val constructorCache = mutableMapOf<FirConstructor, IrConstructor>()
 
@@ -273,7 +272,7 @@ class Fir2IrDeclarationStorage(
         }
         if (function !is FirConstructor) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
-            if (function is FirNamedFunction) {
+            if (function is FirSimpleFunction) {
                 val receiverTypeRef = function.receiverTypeRef
                 if (receiverTypeRef != null) {
                     extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
@@ -337,7 +336,7 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getIrFunction(
-        function: FirNamedFunction,
+        function: FirSimpleFunction,
         irParent: IrDeclarationParent? = null,
         shouldLeaveScope: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
@@ -611,7 +610,7 @@ class Fir2IrDeclarationStorage(
         val firDeclaration = firFunctionSymbol.fir
         val irParent = (firDeclaration as? FirCallableMemberDeclaration<*>)?.let { findIrParent(it) }
         return when (firDeclaration) {
-            is FirNamedFunction -> {
+            is FirSimpleFunction -> {
                 val irDeclaration = getIrFunction(firDeclaration, irParent, shouldLeaveScope = true).apply {
                     setAndModifyParent(irParent)
                 }

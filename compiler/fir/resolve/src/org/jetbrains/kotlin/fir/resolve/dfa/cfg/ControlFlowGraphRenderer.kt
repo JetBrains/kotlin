@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
@@ -155,10 +150,10 @@ fun CFGNode<*>.render(): String =
     }
 
 private fun FirFunction<*>.name(): String = when (this) {
-    is FirNamedFunction -> name.asString()
+    is FirSimpleFunction -> name.asString()
     is FirAnonymousFunction -> "anonymousFunction"
     is FirConstructor -> name.asString()
-    is FirAbstractPropertyAccessor -> if (isGetter) "getter" else "setter"
+    is FirPropertyAccessor -> if (isGetter) "getter" else "setter"
     is FirErrorFunction -> "errorFunction"
     else -> TODO(toString())
 }

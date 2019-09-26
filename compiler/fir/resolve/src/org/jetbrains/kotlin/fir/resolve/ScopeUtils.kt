@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
     return when (this) {
         is ConeKotlinErrorType -> null
-        is ConeClassErrorType -> null
         is ConeAbbreviatedType -> directExpansionType(useSiteSession)?.scope(useSiteSession, scopeSession)
         is ConeClassLikeType -> {
             // TODO: for ConeClassLikeType they might be a type alias instead of a regular class

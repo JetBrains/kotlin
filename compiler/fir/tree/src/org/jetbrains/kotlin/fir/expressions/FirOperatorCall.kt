@@ -6,12 +6,22 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirOperatorCall(psi: PsiElement?) : FirCallWithArgumentList(psi) {
-    abstract val operation: FirOperation
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitOperatorCall(this, data)
+interface FirOperatorCall : FirExpression, FirCall {
+    override val psi: PsiElement?
+    override val typeRef: FirTypeRef
+    override val annotations: List<FirAnnotationCall>
+    override val arguments: List<FirExpression>
+    val operation: FirOperation
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitOperatorCall(this, data)
+
+    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirOperatorCall
 }

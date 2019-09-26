@@ -5,9 +5,27 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 interface FirDoWhileLoop : FirLoop {
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitDoWhileLoop(this, data)
+    override val psi: PsiElement?
+    override val annotations: List<FirAnnotationCall>
+    override val block: FirBlock
+    override val condition: FirExpression
+    override val label: FirLabel?
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDoWhileLoop(this, data)
+
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
+
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoop
 }

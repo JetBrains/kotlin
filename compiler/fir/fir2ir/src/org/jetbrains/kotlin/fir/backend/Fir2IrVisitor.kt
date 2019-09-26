@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterCallableReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -164,7 +166,7 @@ class Fir2IrVisitor(
                     is FirClassSymbol -> {
                         val superClass = superSymbol.fir
                         for (declaration in superClass.declarations) {
-                            if (declaration is FirMemberDeclaration && (declaration is FirNamedFunction || declaration is FirProperty)) {
+                            if (declaration is FirMemberDeclaration && (declaration is FirSimpleFunction || declaration is FirProperty)) {
                                 result += declaration.name
                             }
                         }
@@ -270,7 +272,7 @@ class Fir2IrVisitor(
                 if (it !is FirConstructor || !it.isPrimary) {
                     val irDeclaration = it.toIrDeclaration() ?: return@forEach
                     declarations += irDeclaration
-                    if (it is FirMemberDeclaration && (it is FirNamedFunction || it is FirProperty)) {
+                    if (it is FirMemberDeclaration && (it is FirSimpleFunction || it is FirProperty)) {
                         processedCallableNames += it.name
                     }
                 }
@@ -317,12 +319,12 @@ class Fir2IrVisitor(
     ): T {
         setParentByParentStack()
         withParent {
-            if (firFunction is FirNamedFunction) {
+            if (firFunction is FirSimpleFunction) {
                 for ((index, typeParameter) in firFunction.typeParameters.withIndex()) {
                     typeParameters += declarationStorage.getIrTypeParameter(typeParameter, index).setParentByParentStack()
                 }
             }
-            val firFunctionSymbol = (firFunction as? FirNamedFunction)?.symbol
+            val firFunctionSymbol = (firFunction as? FirSimpleFunction)?.symbol
             val lastClass = classStack.lastOrNull()
             val containingClass = if (firOverriddenSymbol == null || firFunctionSymbol == null) {
                 lastClass
@@ -449,12 +451,12 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: Any?): IrElement {
+    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement {
         val irFunction = declarationStorage.getIrFunction(
-            namedFunction, irParent = parentStack.last() as? IrClass
+            simpleFunction, irParent = parentStack.last() as? IrClass
         )
         return irFunction.setParentByParentStack().withFunction {
-            setFunctionContent(irFunction.descriptor, namedFunction)
+            setFunctionContent(irFunction.descriptor, simpleFunction)
         }
     }
 
@@ -477,7 +479,8 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>, data: Any?): IrElement {
+    private fun visitLocalVariable(variable: FirProperty, data: Any?): IrElement {
+        assert(variable.isLocal)
         val irVariable = declarationStorage.createAndSaveIrVariable(variable)
         return irVariable.setParentByParentStack().apply {
             val initializer = variable.initializer
@@ -569,7 +572,8 @@ class Fir2IrVisitor(
         return this
     }
 
-    override fun visitProperty(property: FirProperty, data: Any?): IrProperty {
+    override fun visitProperty(property: FirProperty, data: Any?): IrElement {
+        if (property.isLocal) return visitLocalVariable(property, data)
         val irProperty = declarationStorage.getIrProperty(property, irParent = parentStack.last() as? IrClass)
         return irProperty.setParentByParentStack().withProperty { setPropertyContent(irProperty.descriptor, property) }
     }
@@ -634,7 +638,7 @@ class Fir2IrVisitor(
         var irTarget = functionStack.last()
         for (potentialTarget in functionStack.asReversed()) {
             // TODO: remove comparison by name
-            if (potentialTarget.name == (firTarget as? FirNamedFunction)?.name) {
+            if (potentialTarget.name == (firTarget as? FirSimpleFunction)?.name) {
                 irTarget = potentialTarget
                 break
             }
@@ -647,11 +651,6 @@ class Fir2IrVisitor(
                 result.toIrExpression()
             )
         }
-    }
-
-    override fun visitUncheckedNotNullCast(uncheckedNotNullCast: FirUncheckedNotNullCast, data: Any?): IrElement {
-        // TODO: Ensure correct
-        return uncheckedNotNullCast.expression.toIrExpression()
     }
 
     override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: Any?): IrElement {
@@ -797,6 +796,14 @@ class Fir2IrVisitor(
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
         return qualifiedAccessExpression.toIrExpression(qualifiedAccessExpression.typeRef).applyReceivers(qualifiedAccessExpression)
+    }
+
+    override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
+        return visitQualifiedAccessExpression(thisReceiverExpression, data)
+    }
+
+    override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Any?): IrElement {
+        return visitQualifiedAccessExpression(expressionWithSmartcast, data)
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
@@ -1255,13 +1262,13 @@ class Fir2IrVisitor(
             val leftOperand = binaryLogicExpression.leftOperand.accept(this, data) as IrExpression
             val rightOperand = binaryLogicExpression.rightOperand.accept(this, data) as IrExpression
             when (binaryLogicExpression.kind) {
-                FirBinaryLogicExpression.OperationKind.AND -> {
+                LogicOperationKind.AND -> {
                     IrIfThenElseImpl(startOffset, endOffset, irBuiltIns.booleanType, IrStatementOrigin.ANDAND).apply {
                         branches.add(IrBranchImpl(leftOperand, rightOperand))
                         branches.add(elseBranch(constFalse(rightOperand.startOffset, rightOperand.endOffset)))
                     }
                 }
-                FirBinaryLogicExpression.OperationKind.OR -> {
+                LogicOperationKind.OR -> {
                     IrIfThenElseImpl(startOffset, endOffset, irBuiltIns.booleanType, IrStatementOrigin.OROR).apply {
                         branches.add(IrBranchImpl(leftOperand, constTrue(leftOperand.startOffset, leftOperand.endOffset)))
                         branches.add(elseBranch(rightOperand))

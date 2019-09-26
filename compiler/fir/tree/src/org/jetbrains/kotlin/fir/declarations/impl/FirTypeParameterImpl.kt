@@ -1,49 +1,55 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirTypeParameterImpl(
-    session: FirSession,
-    psi: PsiElement?,
+    override val psi: PsiElement?,
+    override val session: FirSession,
+    override val name: Name,
     override val symbol: FirTypeParameterSymbol,
-    name: Name,
     override val variance: Variance,
     override val isReified: Boolean
-) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirTypeParameter {
+) : FirTypeParameter, FirAbstractAnnotatedElement {
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override val bounds: MutableList<FirTypeRef> = mutableListOf()
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+
     init {
         symbol.bind(this)
     }
 
-    /*
-     * Note that each type parameter have to has at least one upper bound (Any? if there is no other bounds)
-     *   so after initializing FirTypeParameterImpl you should call [addDefaultBoundIfNecessary] to guarantee
-     *   this contract
-     */
-    override val bounds: MutableList<FirTypeRef> = mutableListOf()
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        bounds.transformInplace(transformer, data)
-
-        return super<FirAbstractNamedAnnotatedDeclaration>.transformChildren(transformer, data)
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        bounds.forEach { it.accept(visitor, data) }
+        annotations.forEach { it.accept(visitor, data) }
     }
-}
 
-fun FirTypeParameterImpl.addDefaultBoundIfNecessary() {
-    if (bounds.isEmpty()) {
-        bounds += session.builtinTypes.nullableAnyType
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
+        bounds.transformInplace(transformer, data)
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
+        resolvePhase = newResolvePhase
     }
 }

@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
@@ -27,10 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -99,7 +93,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             }
             return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
                 if (shouldBeEnumEntry) {
-                    FirEnumEntryImpl(session, null, symbol, classId.shortClassName).apply {
+                    FirEnumEntryImpl(null, session, classId.shortClassName, symbol).apply {
                         resolvePhase = FirResolvePhase.DECLARATIONS
                     }
                 } else {
@@ -169,80 +163,84 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             val prefix = kind.classNamePrefix
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
             fictitiousFunctionSymbols.getOrPut(arity) {
+                val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.ABSTRACT).apply {
+                    isExpect = false
+                    isActual = false
+                    isInner = false
+                    isCompanion = false
+                    isData = false
+                    isInline = false
+                }
                 FirClassSymbol(this).apply {
                     FirClassImpl(
-                        session,
                         null,
-                        this,
+                        session,
                         relativeClassName.shortName(),
-                        Visibilities.PUBLIC,
-                        Modality.ABSTRACT,
-                        isExpect = false,
-                        isActual = false,
-                        classKind = ClassKind.INTERFACE,
-                        isInner = false,
-                        isCompanion = false,
-                        isData = false,
-                        isInline = false
+                        status,
+                        ClassKind.INTERFACE,
+                        this
                     ).apply klass@{
                         resolvePhase = FirResolvePhase.DECLARATIONS
                         typeParameters.addAll((1..arity).map {
                             FirTypeParameterImpl(
-                                this@FirLibrarySymbolProviderImpl.session,
                                 null,
-                                FirTypeParameterSymbol(),
+                                this@FirLibrarySymbolProviderImpl.session,
                                 Name.identifier("P$it"),
+                                FirTypeParameterSymbol(),
                                 Variance.IN_VARIANCE,
                                 false
                             )
                         })
                         typeParameters.add(
                             FirTypeParameterImpl(
-                                this@FirLibrarySymbolProviderImpl.session,
                                 null,
-                                FirTypeParameterSymbol(),
+                                this@FirLibrarySymbolProviderImpl.session,
                                 Name.identifier("R"),
+                                FirTypeParameterSymbol(),
                                 Variance.OUT_VARIANCE,
                                 false
                             )
                         )
                         val name = OperatorNameConventions.INVOKE
+                        val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.ABSTRACT).apply {
+                            isExpect = false
+                            isActual = false
+                            isOverride = false
+                            isOperator = true
+                            isInfix = false
+                            isInline = false
+                            isTailRec = false
+                            isExternal = false
+                            isSuspend = false
+                        }
                         addDeclaration(
-                            FirMemberFunctionImpl(
-                                this@FirLibrarySymbolProviderImpl.session,
+                            FirSimpleFunctionImpl(
                                 null,
-                                FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name)),
-                                name,
-                                Visibilities.PUBLIC,
-                                Modality.ABSTRACT,
-                                isExpect = false,
-                                isActual = false,
-                                isOverride = false,
-                                isOperator = true,
-                                isInfix = false,
-                                isInline = false,
-                                isTailRec = false,
-                                isExternal = false,
-                                isSuspend = false,
-                                receiverTypeRef = null,
-                                returnTypeRef = FirResolvedTypeRefImpl(
+                                this@FirLibrarySymbolProviderImpl.session,
+                                FirResolvedTypeRefImpl(
                                     null,
                                     ConeTypeParameterTypeImpl(
                                         typeParameters.last().symbol.toLookupTag(),
                                         false
                                     )
-                                )
+                                ),
+                                null,
+                                name,
+                                status,
+                                FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name))
                             ).apply {
                                 resolvePhase = FirResolvePhase.DECLARATIONS
                                 valueParameters += this@klass.typeParameters.dropLast(1).map { typeParameter ->
+                                    val name = Name.identifier(typeParameter.name.asString().toLowerCase())
                                     FirValueParameterImpl(
-                                        this@FirLibrarySymbolProviderImpl.session,
                                         null,
-                                        Name.identifier(typeParameter.name.asString().toLowerCase()),
+                                        this@FirLibrarySymbolProviderImpl.session,
                                         FirResolvedTypeRefImpl(
                                             null,
                                             ConeTypeParameterTypeImpl(typeParameter.symbol.toLookupTag(), false)
                                         ),
+                                        name,
+                                        FirVariableSymbol(name),
                                         defaultValue = null,
                                         isCrossinline = false,
                                         isNoinline = false,
@@ -251,7 +249,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                                 }
                             }
                         )
-                        replaceSupertypes(listOf(session.builtinTypes.anyType))
+                        replaceSuperTypeRefs(listOf(session.builtinTypes.anyType))
                     }
                 }
             }
@@ -280,7 +278,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
     }
 
     override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> {
-        return getClassDeclarations(classId).filterIsInstance<FirCallableMemberDeclaration<*>>().mapTo(mutableSetOf()) { it.name }
+        return getClassDeclarations(classId).filterIsInstance<FirMemberDeclaration>().mapTo(mutableSetOf()) { it.name }
     }
 
     private fun getClassDeclarations(classId: ClassId): List<FirDeclaration> {

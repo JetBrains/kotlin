@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirPosition
@@ -27,21 +28,24 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         initFromFile(file)
-        return transformElement(file, data)
+        return transformDeclaration(file, data) as CompositeTransformResult<FirFile>
     }
 
     fun initFromFile(file: FirFile) {
-        session = file.fileSession
+        session = file.session
         this.file = file
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
         val transformedClass = resolveSupertypesOrExpansions(regularClass) as? FirRegularClass ?: regularClass
 
         // resolve supertypes for nested classes
-        return transformElement(transformedClass, data)
+        return transformDeclaration(transformedClass, data) as CompositeTransformResult<FirStatement>
     }
 
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirStatement> {
+        return transformRegularClass(enumEntry, data)
+    }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         val result = resolveSupertypesOrExpansions(typeAlias)
@@ -67,15 +71,15 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
         return constructor.compose()
     }
 
-    override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return namedFunction.compose()
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        return simpleFunction.compose()
     }
 
     override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return property.compose()
     }
 
-    override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+    override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: Nothing?): CompositeTransformResult<FirStatement> {
         return function.compose()
     }
 
@@ -106,7 +110,11 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
             towerScope.addImportingScopes(file, session, scopeSession)
         }
 
-        override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): CompositeTransformResult<FirStatement> {
+            return transformRegularClass(enumEntry, data)
+        }
+
+        override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
             val classId = regularClass.classId
             if (!isOuterClass(classId, requestedClassId)) return regularClass.compose()
             val transformedClass = withScopeCleanup {
@@ -115,10 +123,13 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
                 regularClass.addTypeParametersScope()
 
                 val transformer = FirSpecificTypeResolverTransformer(towerScope, FirPosition.SUPER_TYPE_OR_EXPANSION, session)
-                val resolvedTypesRefs = regularClass.superTypeRefs.map { transformer.transformTypeRef(it, data).single }
+                val resolvedTypesRefs = regularClass.superTypeRefs.map {
+                    transformer.transformTypeRef(it, data).single
+                }
 
                 val resultingTypeRefs = resolveLoops(regularClass, classId, resolvedTypesRefs)
-                regularClass.replaceSupertypes(resultingTypeRefs)
+                regularClass.replaceSuperTypeRefs(resultingTypeRefs)
+                regularClass
             }
 
             if (regularClass.matchesRequestedDeclaration()) {
@@ -146,9 +157,9 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
                 val resolvedTypesRef = transformer.transformTypeRef(typeAlias.expandedTypeRef, data).single
                 val resultingTypeRef = resolveLoops(typeAlias, classId, listOf(resolvedTypesRef)).firstOrNull()
 
-                typeAlias.replaceExpandTypeRef(resultingTypeRef ?: resolvedTypesRef).also {
-                    resultingClass = it
-                }
+                typeAlias.replaceExpandedTypeRef(resultingTypeRef ?: resolvedTypesRef)
+                resultingClass = typeAlias
+                typeAlias
             }.compose()
         }
 
@@ -157,7 +168,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
             classId: ClassId,
             resolvedTypesRefs: List<FirTypeRef>
         ): List<FirTypeRef> {
-            firClassLikeDeclaration.supertypesComputationStatus = FirClassLikeDeclaration.SupertypesComputationStatus.COMPUTING
+            firClassLikeDeclaration.replaceSupertypesComputationStatus(SupertypesComputationStatus.COMPUTING)
 
             val resultingTypeRefs = mutableListOf<FirTypeRef>()
             for (superTypeRef in resolvedTypesRefs) {
@@ -196,7 +207,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
                 resultingTypeRefs.add(superTypeRef)
             }
 
-            firClassLikeDeclaration.supertypesComputationStatus = FirClassLikeDeclaration.SupertypesComputationStatus.COMPUTED
+            firClassLikeDeclaration.replaceSupertypesComputationStatus(SupertypesComputationStatus.COMPUTED)
             return resultingTypeRefs
         }
 
@@ -208,7 +219,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
         private fun resolveNestedClassesSupertypes(
             regularClass: FirRegularClass,
             data: Nothing?
-        ): CompositeTransformResult<FirDeclaration> {
+        ): CompositeTransformResult<FirStatement> {
             return withScopeCleanup {
                 // ? Is it Ok to use original file session here ?
                 val firProvider = FirProvider.getInstance(session)
@@ -236,6 +247,6 @@ private fun isOuterClass(outerCandidate: ClassId, innerCandidate: ClassId) =
 private fun ClassId.outerClasses() = generateSequence(this, ClassId::getOuterClassId)
 
 private fun FirClassLikeDeclaration<*>.areSupertypesComputed() =
-    supertypesComputationStatus == FirClassLikeDeclaration.SupertypesComputationStatus.COMPUTED
+    supertypesComputationStatus == SupertypesComputationStatus.COMPUTED
 private fun FirClassLikeDeclaration<*>.areSupertypesComputing() =
-    supertypesComputationStatus == FirClassLikeDeclaration.SupertypesComputationStatus.COMPUTING
+    supertypesComputationStatus == SupertypesComputationStatus.COMPUTING

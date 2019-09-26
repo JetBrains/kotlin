@@ -1,42 +1,46 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirControlFlowGraphOwner
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirTargetElement
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-// May be should inherit FirTypeParameterContainer
-interface FirFunction<F : FirFunction<F>> : @VisitedSupertype FirDeclarationWithBody, FirCallableDeclaration<F>, FirAnnotationContainer,
-    FirTargetElement, FirStatement, FirSymbolOwner<F> {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    val valueParameters: List<FirValueParameter>
-    val controlFlowGraphReference: FirControlFlowGraphReference?
-
+interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirControlFlowGraphOwner, FirTargetElement, FirAnnotationContainer, FirTypeParametersOwner, FirStatement {
+    override val psi: PsiElement?
+    override val session: FirSession
+    override val resolvePhase: FirResolvePhase
+    override val annotations: List<FirAnnotationCall>
+    override val returnTypeRef: FirTypeRef
+    override val receiverTypeRef: FirTypeRef?
+    override val controlFlowGraphReference: FirControlFlowGraphReference
+    override val typeParameters: List<FirTypeParameter>
     override val symbol: FirFunctionSymbol<F>
+    val valueParameters: List<FirValueParameter>
+    val body: FirBlock?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitFunction(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunction(this, data)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableDeclaration>.acceptChildren(visitor, data)
-        for (parameter in valueParameters) {
-            parameter.accept(visitor, data)
-        }
-        controlFlowGraphReference?.accept(visitor, data)
-        super<FirDeclarationWithBody>.acceptChildren(visitor, data)
-    }
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
     fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
-
-    fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction<F>
 }

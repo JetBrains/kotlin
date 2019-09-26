@@ -115,7 +115,7 @@ fun ControlFlowGraphBuilder.createAnnotationExitNode(fir: FirAnnotationCall): An
 fun ControlFlowGraphBuilder.createAnnotationEnterNode(fir: FirAnnotationCall): AnnotationEnterNode =
     AnnotationEnterNode(graph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirVariable<*>): VariableDeclarationNode =
+fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirProperty): VariableDeclarationNode =
     VariableDeclarationNode(graph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createConstExpressionNode(fir: FirConstExpression<*>): ConstExpressionNode =

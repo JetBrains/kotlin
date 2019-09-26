@@ -7,70 +7,97 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.contracts.description.InvocationKind
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.FirEmptyControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirAnonymousFunctionImpl(
-    session: FirSession,
-    psi: PsiElement?,
+    override val psi: PsiElement?,
+    override val session: FirSession,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override val symbol: FirAnonymousFunctionSymbol
-) : FirAnonymousFunction(session, psi), FirModifiableFunction<FirAnonymousFunction> {
+) : FirAnonymousFunction, FirModifiableFunction<FirAnonymousFunction>, FirAbstractAnnotatedElement {
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
+    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    override var body: FirBlock? = null
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override var label: FirLabel? = null
+    override var invocationKind: InvocationKind? = null
+
     init {
         symbol.bind(this)
     }
 
-    override var label: FirLabel? = null
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        annotations.forEach { it.accept(visitor, data) }
+        returnTypeRef.accept(visitor, data)
+        receiverTypeRef?.accept(visitor, data)
+        controlFlowGraphReference.accept(visitor, data)
+        typeParameters.forEach { it.accept(visitor, data) }
+        valueParameters.forEach { it.accept(visitor, data) }
+        body?.accept(visitor, data)
+        typeRef.accept(visitor, data)
+        label?.accept(visitor, data)
+    }
 
-    override val valueParameters = mutableListOf<FirValueParameter>()
-
-    override var body: FirBlock? = null
-
-    override var resolvePhase = FirResolvePhase.DECLARATIONS
-
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
-
-    override var invocationKind: InvocationKind? = null
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        annotations.transformInplace(transformer, data)
+        transformReturnTypeRef(transformer, data)
         receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
-        label = label?.transformSingle(transformer, data)
-        valueParameters.transformInplace(transformer, data)
-        body = body?.transformSingle(transformer, data)
         transformControlFlowGraphReference(transformer, data)
-
-        return super<FirAnonymousFunction>.transformChildren(transformer, data)
-    }
-
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
-    }
-
-    override fun replaceReceiverTypeRef(receiverTypeRef: FirTypeRef) {
-        this.receiverTypeRef = receiverTypeRef
-    }
-
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction {
-        valueParameters.transformInplace(transformer, data)
+        typeParameters.transformInplace(transformer, data)
+        transformValueParameters(transformer, data)
+        body = body?.transformSingle(transformer, data)
+        typeRef = typeRef.transformSingle(transformer, data)
+        label = label?.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction {
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
         controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
     }
 
-    override fun replaceInvocationKind(invocationKind: InvocationKind) {
-        this.invocationKind = invocationKind
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        valueParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
+        resolvePhase = newResolvePhase
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
+    }
+
+    override fun replaceInvocationKind(newInvocationKind: InvocationKind) {
+        invocationKind = newInvocationKind
     }
 }

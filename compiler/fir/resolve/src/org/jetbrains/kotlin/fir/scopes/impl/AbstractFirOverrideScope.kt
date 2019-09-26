@@ -31,7 +31,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
     private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef, substitution: ConeSubstitutor) =
         isEqualTypes(a.cast<FirResolvedTypeRef>().type, b.cast<FirResolvedTypeRef>().type, substitution)
 
-    private fun isOverriddenFunCheck(member: FirNamedFunction, self: FirNamedFunction): Boolean {
+    private fun isOverriddenFunCheck(member: FirSimpleFunction, self: FirSimpleFunction): Boolean {
         if (member.valueParameters.size != self.valueParameters.size) return false
         if (member.typeParameters.size != self.typeParameters.size) return false
 
@@ -63,7 +63,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
 
         fun similarFunctionsOrBothProperties(declaration: FirCallableDeclaration<*>, self: FirCallableDeclaration<*>): Boolean {
             return when (declaration) {
-                is FirNamedFunction -> self is FirNamedFunction && isOverriddenFunCheck(declaration, self)
+                is FirSimpleFunction -> self is FirSimpleFunction && isOverriddenFunCheck(declaration, self)
                 is FirConstructor -> false
                 is FirProperty -> self is FirProperty && sameReceivers(
                     declaration.receiverTypeRef,

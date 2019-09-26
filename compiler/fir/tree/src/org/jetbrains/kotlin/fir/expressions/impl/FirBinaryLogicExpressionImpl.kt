@@ -6,35 +6,60 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirBinaryLogicExpressionImpl(
-    psi: PsiElement?,
+    override val psi: PsiElement?,
     override var leftOperand: FirExpression,
     override var rightOperand: FirExpression,
-    override val kind: OperationKind
-) : FirBinaryLogicExpression(psi) {
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        transformLeftOperand(transformer, data)
-        transformRightOperand(transformer, data)
-        return transformRestChildren(transformer, data)
+    override val kind: LogicOperationKind
+) : FirBinaryLogicExpression, FirAbstractAnnotatedElement {
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        typeRef.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
+        leftOperand.accept(visitor, data)
+        rightOperand.accept(visitor, data)
     }
 
-    override fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+        transformLeftOperand(transformer, data)
+        transformRightOperand(transformer, data)
+        transformOtherChildren(transformer, data)
+        return this
+    }
+
+    override fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
         leftOperand = leftOperand.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression {
+    override fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
         rightOperand = rightOperand.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformRestChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression {
-        return super.transformChildren(transformer, data) as FirBinaryLogicExpression
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+        typeRef = typeRef.transformSingle(transformer, data)
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
     }
 }

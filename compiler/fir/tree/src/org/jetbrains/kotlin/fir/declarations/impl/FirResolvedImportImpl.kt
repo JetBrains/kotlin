@@ -1,27 +1,39 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import org.jetbrains.kotlin.fir.FirAbstractElement
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirResolvedImportImpl(
-    val delegate: FirImport,
+    override var delegate: FirImport,
     override val packageFqName: FqName,
     override val relativeClassName: FqName?
-) : FirAbstractElement(delegate.psi), FirResolvedImport, FirImport {
-    override val aliasName: Name?
-        get() = delegate.aliasName
+) : FirResolvedImport {
+    override val psi: PsiElement? get() = delegate.psi
+    override val importedFqName: FqName? get() = delegate.importedFqName
+    override val isAllUnder: Boolean get() = delegate.isAllUnder
+    override val aliasName: Name? get() = delegate.aliasName
+    override val resolvedClassId: ClassId? get() = relativeClassName?.let { ClassId(packageFqName, it, false) }
+    override val importedName: Name? get() = importedFqName?.shortName()
 
-    override val importedFqName: FqName?
-        get() = delegate.importedFqName
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+    }
 
-    override val isAllUnder: Boolean
-        get() = delegate.isAllUnder
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedImportImpl {
+        return this
+    }
 }

@@ -6,6 +6,39 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirTarget
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
+import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-class FirContinueExpressionImpl(psi: PsiElement?) : FirContinueExpression(psi)
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+class FirContinueExpressionImpl(
+    override val psi: PsiElement?
+) : FirContinueExpression, FirAbstractLoopJump, FirAbstractAnnotatedElement {
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(psi)
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override lateinit var target: FirTarget<FirLoop>
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        typeRef.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirContinueExpressionImpl {
+        typeRef = typeRef.transformSingle(transformer, data)
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
+    }
+}

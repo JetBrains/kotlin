@@ -29,38 +29,38 @@ const val WARNING_GENERATED_FILE =
 
 fun main(args: Array<String>) {
 
-    val rootPath = File(args[0])
-    val output = File(args[1])
-
-    val packageDirectory = output.resolve(VISITOR_PACKAGE.replace('.', '/'))
-    packageDirectory.mkdirs()
-
-    withPsiSetup {
-        val psiManager = PsiManager.getInstance(project)
-        val vfm = VirtualFileManager.getInstance()
-
-
-        val dataCollector = DataCollector()
-
-        rootPath.walkTopDown()
-            .filter {
-                it.extension == "kt"
-            }.map {
-                (vfm.getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem).findFileByIoFile(it)
-            }.flatMap {
-                SingleRootFileViewProvider(psiManager, it!!).allFiles.asSequence()
-            }
-            .filterIsInstance<KtFile>()
-            .forEach(dataCollector::readFile)
-
-
-        val data = dataCollector.computeResult()
-
-
-        SimpleVisitorGenerator(data).runGenerator(packageDirectory.resolve("${SIMPLE_VISITOR_NAME}Generated.kt"))
-        UnitVisitorGenerator(data).runGenerator(packageDirectory.resolve("${UNIT_VISITOR_NAME}Generated.kt"))
-        ParametricTransformerGenerator(data).runGenerator(packageDirectory.resolve("${PARAMETRIC_TRANSFORMER_NAME}Generated.kt"))
-    }
+//    val rootPath = File(args[0])
+//    val output = File(args[1])
+//
+//    val packageDirectory = output.resolve(VISITOR_PACKAGE.replace('.', '/'))
+//    packageDirectory.mkdirs()
+//
+//    withPsiSetup {
+//        val psiManager = PsiManager.getInstance(project)
+//        val vfm = VirtualFileManager.getInstance()
+//
+//
+//        val dataCollector = DataCollector()
+//
+//        rootPath.walkTopDown()
+//            .filter {
+//                it.extension == "kt"
+//            }.map {
+//                (vfm.getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem).findFileByIoFile(it)
+//            }.flatMap {
+//                SingleRootFileViewProvider(psiManager, it!!).allFiles.asSequence()
+//            }
+//            .filterIsInstance<KtFile>()
+//            .forEach(dataCollector::readFile)
+//
+//
+//        val data = dataCollector.computeResult()
+//
+//
+//        SimpleVisitorGenerator(data).runGenerator(packageDirectory.resolve("${SIMPLE_VISITOR_NAME}Generated.kt"))
+//        UnitVisitorGenerator(data).runGenerator(packageDirectory.resolve("${UNIT_VISITOR_NAME}Generated.kt"))
+//        ParametricTransformerGenerator(data).runGenerator(packageDirectory.resolve("${PARAMETRIC_TRANSFORMER_NAME}Generated.kt"))
+//    }
 }
 
 fun AbstractVisitorGenerator.runGenerator(file: File) {
