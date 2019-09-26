@@ -898,8 +898,10 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     Dimension preferredSize = myEditorPane.getPreferredSize();
 
     int height = preferredSize.height + (needsToolbar() ? myControlPanel.getPreferredSize().height : 0);
+    JScrollBar scrollBar = myScrollPane.getHorizontalScrollBar();
+    int reservedForScrollBar = scrollBar.isOpaque() ? scrollBar.getPreferredSize().height : 0;
     Insets insets = getInsets();
-    return Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height)) + insets.top + insets.bottom;
+    return Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height)) + insets.top + insets.bottom + reservedForScrollBar;
   }
 
   private Component getPopupAnchor() {
