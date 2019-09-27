@@ -223,17 +223,17 @@ data class KotlinWebpackConfig(
     private fun Appendable.appendProgressReporter() {
         if (!progressReporter) return
 
+        //language=ES6
         appendln(
             """
                 // Report progress to console
                 (function(config) {
                     const webpack = require('webpack');
                     const handler = (percentage, message, ...args) => {
-                        const p = percentage*100;
-                        let msg = Math.trunc(p/100) + Math.trunc(p%100) + '% ' + message + ' ' + args.join(' ');
+                        let msg = Math.trunc(percentage * 100) + '% ' + message + ' ' + args.join(' ');
                         ${if (progressReporterPathFilter == null) "" else """
                             msg = msg.replace(new RegExp(${jsQuotedString(progressReporterPathFilter)}, 'g'), '');
-                        """.trimIndent()}
+                        """.trimIndent()};
                         console.log(msg);
                     };
             
