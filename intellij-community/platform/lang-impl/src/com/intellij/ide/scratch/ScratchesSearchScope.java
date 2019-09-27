@@ -42,11 +42,6 @@ public class ScratchesSearchScope extends GlobalSearchScope {
   }
 
   @Override
-  public boolean isSearchOutsideRootModel() {
-    return true;
-  }
-
-  @Override
   public boolean isSearchInModuleContent(@NotNull Module aModule) {
     return false;
   }
