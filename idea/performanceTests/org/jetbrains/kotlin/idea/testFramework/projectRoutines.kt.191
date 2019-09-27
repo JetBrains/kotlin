@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.testFramework
 
+import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.lang.LanguageAnnotators
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
@@ -17,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.startup.StartupManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.PlatformTestUtil
@@ -66,10 +68,21 @@ fun dispatchAllInvocationEvents() {
     }
 }
 
+fun loadProjectWithName(path: String, name: String): Project? =
+    ProjectManagerEx.getInstanceEx().loadProject(name, path)
+
 fun closeProject(project: Project) {
     dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
     projectManagerEx.forceCloseProject(project, true)
+}
+
+fun runStartupActivities(project: Project) {
+    with(StartupManager.getInstance(project) as StartupManagerImpl) {
+        scheduleInitialVfsRefresh()
+        runStartupActivities()
+        runPostStartupActivities()
+    }
 }
 
 fun waitForAllEditorsFinallyLoaded(project: Project) {

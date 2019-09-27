@@ -163,7 +163,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             testName = "open project${if (note.isNotEmpty()) " $note" else ""}",
             test = {
                 val project = if (!simpleModule) {
-                    val project = projectManagerEx.loadProject(name, path)
+                    val project = loadProjectWithName(name = name, path = path)
                     assertNotNull("project $name at $path is not loaded", project)
                     val projectRootManager = ProjectRootManager.getInstance(project!!)
 
@@ -187,11 +187,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
 
                 dispatchAllInvocationEvents()
 
-                with(StartupManager.getInstance(project) as StartupManagerImpl) {
-                    scheduleInitialVfsRefresh()
-                    runStartupActivities()
-                    runPostStartupActivities()
-                }
+                runStartupActivities(project)
 
                 logMessage { "project $name is ${if (project.isInitialized) "initialized" else "not initialized"}" }
 
