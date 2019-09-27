@@ -11,6 +11,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.concurrency.Semaphore
+import org.assertj.core.api.Assertions.assertThat
 
 class ExternalSystemEventDispatcherTest : LightPlatformTestCase() {
 
@@ -57,8 +58,11 @@ class ExternalSystemEventDispatcherTest : LightPlatformTestCase() {
       it.invokeOnCompletion { semaphore.up() }
       it.appendln("Task output line 3")
     }
+    dispatcher.invokeOnCompletion { eventMessages += "Late completion message" }
 
     assertTrue(semaphore.waitFor(500))
+
+    assertThat(eventMessages).hasSize(11)
     assertSameElements(eventMessages.take(8),
                        "Build started",
                        "sub task1 started",

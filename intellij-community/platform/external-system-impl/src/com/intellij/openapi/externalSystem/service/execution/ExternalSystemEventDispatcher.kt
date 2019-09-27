@@ -7,6 +7,7 @@ import com.intellij.build.events.BuildEvent
 import com.intellij.build.events.FinishBuildEvent
 import com.intellij.build.output.BuildOutputInstantReaderImpl
 import com.intellij.build.output.BuildOutputParser
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.util.SmartList
@@ -116,6 +117,8 @@ interface ExternalSystemOutputMessageDispatcher : Closeable, Appendable, BuildPr
 @ApiStatus.Experimental
 abstract class AbstractOutputMessageDispatcher(private val buildProgressListener: BuildProgressListener) : ExternalSystemOutputMessageDispatcher {
   private val onCompletionHandlers = ContainerUtil.createConcurrentList<Consumer<Throwable?>>()
+  @Volatile
+  private var isClosed: Boolean = false
 
   override fun onEvent(buildId: Any, event: BuildEvent) =
     when (event) {
@@ -124,17 +127,27 @@ abstract class AbstractOutputMessageDispatcher(private val buildProgressListener
     }
 
   override fun invokeOnCompletion(handler: Consumer<Throwable?>) {
-    onCompletionHandlers.add(handler)
+    if (isClosed) {
+      LOG.warn("Attempt to add completion handler for closed output dispatcher, the handler will be ignored",
+               if (LOG.isDebugEnabled) Throwable() else null)
+    }
+    else {
+      onCompletionHandlers.add(handler)
+    }
   }
 
-  abstract fun closeAndGetFuture(): CompletableFuture<*>
+  protected abstract fun closeAndGetFuture(): CompletableFuture<*>
 
-  override fun close() {
+  final override fun close() {
     val future = closeAndGetFuture()
-    val handlers = onCompletionHandlers.toList().asReversed()
-    onCompletionHandlers.clear()
-    for (handler in handlers) {
+    isClosed = true
+    for (handler in onCompletionHandlers.asReversed()) {
       future.whenComplete { _, u -> handler.accept(u) }
     }
+    onCompletionHandlers.clear()
+  }
+
+  companion object {
+    private val LOG = logger<AbstractOutputMessageDispatcher>()
   }
 }
