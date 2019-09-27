@@ -42,7 +42,7 @@ class ChangeParameterTypeFix(element: KtParameter, type: KotlinType) : KotlinQui
 
     init {
         val declaration = PsiTreeUtil.getParentOfType(element, KtNamedDeclaration::class.java)
-        this.containingDeclarationName = declaration?.fqName?.asString() ?: declaration?.name
+        this.containingDeclarationName = declaration?.name
         this.isPrimaryConstructorParameter = declaration is KtPrimaryConstructor
     }
 
