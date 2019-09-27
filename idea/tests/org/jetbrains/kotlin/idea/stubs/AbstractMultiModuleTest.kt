@@ -109,7 +109,9 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     fun Module.enableMultiPlatform(additionalCompilerArguments: String = "") {
         createFacet()
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(project)?.getInitializedSettings(this)
+            ?: error("Facet settings are not found")
+
         facetSettings.useProjectSettings = false
         facetSettings.compilerSettings = CompilerSettings().apply {
             additionalArguments += " -Xmulti-platform $additionalCompilerArguments"
@@ -118,7 +120,9 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     fun Module.enableCoroutines() {
         createFacet()
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(project)?.getInitializedSettings(this)
+            ?: error("Facet settings are not found")
+
         facetSettings.useProjectSettings = false
         facetSettings.coroutineSupport = LanguageFeature.State.ENABLED
     }
