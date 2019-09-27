@@ -306,6 +306,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
 
     final List<Path> inspectionsResults = new ArrayList<>();
     GlobalInspectionContextImpl context = createGlobalInspectionContext(project);
+    setupSecondAnalysisHandler(project, context);
     runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
     final Path descriptionsFile = resultsDataPath.resolve(DESCRIPTIONS + XML_EXTENSION);
     describeInspections(descriptionsFile,
@@ -352,7 +353,6 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       }
     );
     syncProject(project, changes);
-    setupSecondAnalysisHandler(project, context);
     // new added files becomes invalid after unshelving, so we need to update our scope
     List<VirtualFile> files = ChangeListManager.getInstance(project).getAffectedFiles();
     if (myVerboseLevel == 3) {
