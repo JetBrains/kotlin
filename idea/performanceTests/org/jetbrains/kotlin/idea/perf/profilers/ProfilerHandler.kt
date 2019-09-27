@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.perf.profilers.async
+package org.jetbrains.kotlin.idea.perf.profilers
 
 import com.intellij.openapi.util.SystemInfo
+import org.jetbrains.kotlin.idea.perf.profilers.async.AsyncProfilerHandler
 import org.jetbrains.kotlin.idea.testFramework.logMessage
 
 interface ProfilerHandler {

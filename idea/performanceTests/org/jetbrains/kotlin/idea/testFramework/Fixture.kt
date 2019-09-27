@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.FileIndexFacade
@@ -35,10 +36,10 @@ import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlFileNSInfoProvider
 import com.intellij.testFramework.EditorTestUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.EditorTestFixture
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.xml.XmlSchemaProvider
+import junit.framework.TestCase.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
@@ -48,7 +49,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 
 
 class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, val vFile: VirtualFile = psiFile.virtualFile) {
-    private val delegate = EditorTestFixture(project, editor, vFile)
+    private var delegate = EditorTestFixture(project, editor, vFile)
 
     val document: Document
         get() = editor.document
@@ -59,24 +60,47 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
         delegate.type(s)
     }
 
+    fun performEditorAction(actionId: String): Boolean {
+        selectEditor()
+        return delegate.performEditorAction(actionId)
+    }
+
     fun complete(type: CompletionType = CompletionType.BASIC, invocationCount: Int = 1): Array<LookupElement> =
         delegate.complete(type, invocationCount) ?: emptyArray()
 
     fun revertChanges(revertChangesAtTheEnd: Boolean, text: String) {
         try {
             if (revertChangesAtTheEnd) {
-                runWriteAction {
-                    // TODO: [VD] revert ?
-                    //editorFixture.performEditorAction(IdeActions.SELECTED_CHANGES_ROLLBACK)
-                    document.setText(text)
-                    saveDocument(document)
-                    commitDocument(project, document)
-                }
-                dispatchAllInvocationEvents()
+                // TODO: [VD] revert ?
+                //editorFixture.performEditorAction(IdeActions.SELECTED_CHANGES_ROLLBACK)
+                applyText(text)
             }
         } finally {
             cleanupCaches(project, vFile)
         }
+    }
+
+    fun selectMarkers(initialMarker: String?, finalMarker: String?) {
+        selectEditor()
+        val text = editor.document.text
+        editor.selectionModel.setSelection(
+            initialMarker?.let { marker -> text.indexOf(marker) } ?: 0,
+            finalMarker?.let { marker -> text.indexOf(marker) } ?: text.length)
+    }
+
+    private fun selectEditor() {
+        val fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project)
+        fileEditorManagerEx.openFile(vFile, true)
+        check(fileEditorManagerEx.selectedEditor?.file == vFile) { "unable to open $vFile" }
+    }
+
+    fun applyText(text: String) {
+        runWriteAction {
+            document.setText(text)
+            saveDocument(document)
+            commitDocument(project, document)
+        }
+        dispatchAllInvocationEvents()
     }
 
     companion object {
@@ -112,15 +136,16 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             scriptDefinitionsManager.getAllDefinitions()
             dispatchAllInvocationEvents()
 
-            UsefulTestCase.assertTrue(scriptDefinitionsManager.isReady())
-            UsefulTestCase.assertFalse(KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled)
+            assertTrue(scriptDefinitionsManager.isReady())
+            assertFalse(KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled)
         }
 
 
         fun openFixture(project: Project, fileName: String): Fixture {
             val fileInEditor = openFileInEditor(project, fileName)
             val file = fileInEditor.psiFile
-            val editor = EditorFactory.getInstance().getEditors(fileInEditor.document, project)[0]
+            val editorFactory = EditorFactory.getInstance()
+            val editor = editorFactory.getEditors(fileInEditor.document, project)[0]
 
             return Fixture(project, editor, file)
         }
@@ -148,7 +173,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             )
                 .filter { it.canonicalPath?.contains("/$projectBaseName/$name") ?: false }.toList()
 
-            UsefulTestCase.assertEquals(
+            assertEquals(
                 "expected the only file with name '$name'\n, it were: [${virtualFiles.map { it.canonicalPath }.joinToString("\n")}]",
                 1,
                 virtualFiles.size
@@ -163,18 +188,18 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
             val psiFile = projectFileByName(project, name)
             val vFile = psiFile.virtualFile
 
-            UsefulTestCase.assertTrue("file $vFile is not indexed yet", FileIndexFacade.getInstance(project).isInContent(vFile))
+            assertTrue("file $vFile is not indexed yet", FileIndexFacade.getInstance(project).isInContent(vFile))
 
             runInEdtAndWait {
                 fileEditorManager.openFile(vFile, true)
             }
-            val document = fileDocumentManager.getDocument(vFile)!!
+            val document = fileDocumentManager.getDocument(vFile) ?: error("no document for $vFile found")
 
-            UsefulTestCase.assertNotNull("doc not found for $vFile", EditorFactory.getInstance().getEditors(document))
-            UsefulTestCase.assertTrue("expected non empty doc", document.text.isNotEmpty())
+            assertNotNull("doc not found for $vFile", EditorFactory.getInstance().getEditors(document))
+            assertTrue("expected non empty doc", document.text.isNotEmpty())
 
             val offset = psiFile.textOffset
-            UsefulTestCase.assertTrue("side effect: to load the text", offset >= 0)
+            assertTrue("side effect: to load the text", offset >= 0)
 
             waitForAllEditorsFinallyLoaded(project)
 
@@ -204,7 +229,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
                 }
 
                 val tasksIdx = fileInEditor.document.text.indexOf(marker)
-                UsefulTestCase.assertTrue(tasksIdx > 0)
+                assertTrue(tasksIdx > 0)
                 editor.caretModel.moveToOffset(tasksIdx + marker.length + 1)
 
                 for (surroundItem in surroundItems) {
@@ -218,7 +243,7 @@ class Fixture(val project: Project, val editor: Editor, val psiFile: PsiFile, va
                     val elements = fixture.complete()
                     val items = elements.map { it.lookupString }.toList()
                     for (lookupElement in lookupElements) {
-                        UsefulTestCase.assertTrue("'$lookupElement' has to be present in items", items.contains(lookupElement))
+                        assertTrue("'$lookupElement' has to be present in items", items.contains(lookupElement))
                     }
                 }
             } finally {

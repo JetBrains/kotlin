@@ -102,6 +102,21 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         }
     }
 
+    fun testKotlinProjectCopyAndPaste() {
+        tcSuite("Kotlin copy-and-paste") {
+            val stats = Stats("Kotlin copy-and-paste")
+            stats.use { stat ->
+                perfOpenKotlinProjectFast(stat)
+
+                perfCopyAndPaste(
+                    stat,
+                    sourceFileName = "compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt",
+                    targetFileName = "compiler/psi/src/org/jetbrains/kotlin/psi/KtImportInfo.kt"
+                )
+            }
+        }
+    }
+
     fun testKotlinProjectCompletionKtFile() {
         tcSuite("Kotlin completion ktFile") {
             val stats = Stats("Kotlin completion ktFile")
@@ -239,7 +254,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     testName = testName,
                     setUp = perfKtsFileAnalysisSetUp(project, fileName),
                     test = perfKtsFileAnalysisTest(),
-                    tearDown = perfKtsFileAnalysisTearDown(extraTimingsNs, project)
+                    tearDown = perfKtsFileAnalysisTearDown(extraTimingsNs, project),
+                    profileEnabled = true
                 )
 
                 extraStats.printWarmUpTimings(

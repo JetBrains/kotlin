@@ -201,7 +201,7 @@ projectTest(taskName = "performanceTest") {
     dependsOn(performanceTestRuntime)
 
     testClassesDirs = sourceSets["performanceTest"].output.classesDirs
-    classpath = performanceTestRuntime
+    classpath = performanceTestRuntime + files("${System.getenv("ASYNC_PROFILER_HOME")}/build/async-profiler.jar")
     workingDir = rootDir
 
     jvmArgs?.removeAll { it.startsWith("-Xmx") }

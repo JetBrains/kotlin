@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.idea.perf.profilers.async
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
 import org.jetbrains.kotlin.idea.testFramework.logMessage
-//import one.profiler.AsyncProfiler
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -33,6 +33,7 @@ internal class AsyncProfilerHandler : ProfilerHandler {
     }
 
     private fun execute(command: String) {
+        logMessage { "asyncProfiler command: '$command'" }
         executeMethod.invoke(asyncProfiler, command)
     }
 
@@ -49,7 +50,8 @@ internal class AsyncProfilerHandler : ProfilerHandler {
     override fun stopProfiling(snapshotsPath: String, activityName: String, options: List<String>) {
         val combinedOptions = ArrayList(options)
         val commandBuilder = AsyncProfilerCommandBuilder(snapshotsPath)
-        val stopAndDumpCommands = commandBuilder.buildStopAndDumpCommands(activityName, combinedOptions)
+        val name = activityName.replace(' ', '_').replace('/', '_')
+        val stopAndDumpCommands = commandBuilder.buildStopAndDumpCommands(name, combinedOptions)
         for (stopCommand in stopAndDumpCommands) {
             execute(stopCommand)
         }
