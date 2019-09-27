@@ -79,7 +79,7 @@ val compileWindowsResources: Exec? = if (isWindows) {
         val windresDir = if (isMingwX86Build)
             kotlinNativeDataPath.resolve("dependencies/msys2-mingw-w64-i686-gcc-7.4.0-clang-llvm-6.0.1/bin")
         else
-            kotlinNativeDataPath.resolve("dependencies/msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1-2/bin")
+            kotlinNativeDataPath.resolve("dependencies/msys2-mingw-w64-x86_64-clang-llvm-lld-compiler_rt-8.0.1/bin")
 
         val winResourceFile = kotlin.sourceSets["tetrisMain"].resources.files.first { it.name == "Tetris.rc" }
         val path = System.getenv("PATH")

@@ -21,7 +21,8 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class CompileCppToBitcode extends DefaultTask {
@@ -98,6 +99,11 @@ class CompileCppToBitcode extends DefaultTask {
         linkerArgs.addAll(args)
     }
 
+    private Boolean targetingMinGW() {
+        def hostManager = new HostManager()
+        return hostManager.targetByName(this.target).family == Family.MINGW
+    }
+
     @TaskAction
     void compile() {
         // the strange code below seems to be required due to some Gradle (Groovy?) behaviour
@@ -107,12 +113,16 @@ class CompileCppToBitcode extends DefaultTask {
         List<String> linkerArgs = this.getLinkerArgs()
         File objDir = this.getObjDir()
         objDir.mkdirs()
+        Boolean targetingMinGW = this.targetingMinGW()
 
         project.execKonanClang(this.target) {
             workingDir objDir
             executable "clang++"
-            args '-std=c++11'
+            args '-std=c++14'
             args '-O2'
+            if (!targetingMinGW) {
+                args '-fPIC'
+            }
             args compilerArgs
 
             args "-I$headersDir"

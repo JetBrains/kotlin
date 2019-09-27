@@ -23,7 +23,7 @@
 #include <llvm/Support/Casting.h>
 #include "DebugInfoC.h"
 /**
- * c++ --std=c++11 llvmDebugInfoC/src/DebugInfoC.cpp -IllvmDebugInfoC/include/ -Idependencies/all/clang+llvm-3.9.0-darwin-macos/include -Ldependencies/all/clang+llvm-3.9.0-darwin-macos/lib  -lLLVMCore -lLLVMSupport -lncurses -shared -o libLLVMDebugInfoC.dylib
+ * c++ --std=c++14 llvmDebugInfoC/src/DebugInfoC.cpp -IllvmDebugInfoC/include/ -Idependencies/all/clang+llvm-3.9.0-darwin-macos/include -Ldependencies/all/clang+llvm-3.9.0-darwin-macos/lib  -lLLVMCore -lLLVMSupport -lncurses -shared -o libLLVMDebugInfoC.dylib
  */
 
 namespace llvm {
@@ -84,20 +84,25 @@ DIModuleRef DICreateModule(DIBuilderRef builder, DIScopeOpaqueRef scope,
   return llvm::wrap(llvm::unwrap(builder)->createModule(llvm::unwrap(scope), name, configurationMacro, includePath, iSysRoot));
 }
 
-DISubprogramRef DICreateFunction(DIBuilderRef builder, DIScopeOpaqueRef scope,
+DISubprogramRef DICreateFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
                                  const char* name, const char *linkageName,
                                  DIFileRef file, unsigned lineNo,
                                  DISubroutineTypeRef type, int isLocal,
                                  int isDefinition, unsigned scopeLine) {
-  return llvm::wrap(llvm::unwrap(builder)->createFunction(llvm::unwrap(scope),
-                                                          name,
-                                                          linkageName,
-                                                          llvm::unwrap(file),
-                                                          lineNo,
-                                                          llvm::unwrap(type),
-                                                          isLocal,
-                                                          isDefinition,
-                                                          scopeLine));
+  auto builder = llvm::unwrap(builderRef);
+  auto subprogram = builder->createFunction(llvm::unwrap(scope),
+                                            name,
+                                            linkageName,
+                                            llvm::unwrap(file),
+                                            lineNo,
+                                            llvm::unwrap(type),
+                                            scopeLine, llvm::DINode::DIFlags::FlagZero, llvm::DISubprogram::toSPFlags(false, true, false));
+  auto tmp = subprogram->getRetainedNodes().get();
+  if (!tmp && tmp->isTemporary())
+    llvm::MDTuple::deleteTemporary(tmp);
+
+  builder->finalizeSubprogram(subprogram);
+  return llvm::wrap(subprogram);
 }
 
 DIScopeOpaqueRef DICreateLexicalBlockFile(DIBuilderRef builderRef, DIScopeOpaqueRef scopeRef, DIFileRef fileRef) {

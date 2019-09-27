@@ -1,0 +1,7 @@
+depends = 
+language = Objective-C
+package = platform.DriverKit
+modules = DriverKit
+
+compilerOpts = -framework DriverKit
+linkerOpts = -framework DriverKit

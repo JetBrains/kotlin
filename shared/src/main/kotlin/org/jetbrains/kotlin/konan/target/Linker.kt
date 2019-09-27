@@ -147,7 +147,7 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
     private val libtool = "$absoluteTargetToolchain/usr/bin/libtool"
     private val linker = "$absoluteTargetToolchain/usr/bin/ld"
     private val strip = "$absoluteTargetToolchain/usr/bin/strip"
-    private val dsymutil = "$absoluteLlvmHome/bin/llvm-dsymutil"
+    private val dsymutil = "$absoluteLlvmHome/bin/dsymutil"
 
     private val KonanTarget.isSimulator: Boolean
         get() = this == KonanTarget.TVOS_X64 || this == KonanTarget.IOS_X64 ||

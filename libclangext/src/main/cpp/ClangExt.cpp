@@ -193,4 +193,28 @@ extern "C" {
     return 0;
   }
 
+  unsigned clang_Cursor_isObjCReturningRetainedMethod(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (cursor.kind == CXCursor_ObjCInstanceMethodDecl) {
+      const Decl *decl = getCursorDecl(cursor);
+      if (const ObjCMethodDecl *methodDecl = dyn_cast_or_null<ObjCMethodDecl>(decl)) {
+        return methodDecl->hasAttr<NSReturnsRetainedAttr>();
+      }
+    }
+#endif
+    return 0;
+  }
+
+  unsigned clang_Cursor_isObjCConsumingSelfMethod(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (cursor.kind == CXCursor_ObjCInstanceMethodDecl) {
+      const Decl *decl = getCursorDecl(cursor);
+      if (const ObjCMethodDecl *methodDecl = dyn_cast_or_null<ObjCMethodDecl>(decl)) {
+        return methodDecl->hasAttr<NSConsumesSelfAttr>();
+      }
+    }
+#endif
+    return 0;
+  }
+
 }

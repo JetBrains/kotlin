@@ -33,7 +33,7 @@ typedef struct DISubprogram       *DISubprogramRef;
 typedef struct DIModule           *DIModuleRef;
 typedef struct DIScope            *DIScopeOpaqueRef;
 typedef struct DISubroutineType   *DISubroutineTypeRef;
-typedef struct DISubprogram       *DISubprogramRef;
+//typedef struct DISubprogram       *DISubprogramRef;
 typedef struct DILocation         *DILocationRef;
 typedef struct DILocalVariable    *DILocalVariableRef;
 typedef struct DIExpression       *DIExpressionRef;

@@ -1,4 +1,4 @@
-depends = CoreFoundation CoreGraphics CoreVideo Foundation Security darwin posix
+depends = CoreFoundation CoreGraphics CoreVideo Foundation ImageIO Security darwin posix
 language = Objective-C
 package = platform.CoreML
 modules = CoreML

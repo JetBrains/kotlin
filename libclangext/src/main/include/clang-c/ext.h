@@ -51,6 +51,10 @@ CXCursor clang_Type_getProtocol(CXType type, unsigned index);
 
 unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor);
 
+unsigned clang_Cursor_isObjCReturningRetainedMethod(CXCursor cursor);
+
+unsigned clang_Cursor_isObjCConsumingSelfMethod(CXCursor cursor);
+
 #ifdef __cplusplus
 }
 #endif

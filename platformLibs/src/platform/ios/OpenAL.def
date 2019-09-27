@@ -1,4 +1,4 @@
-depends = posix
+depends = darwin posix
 language = Objective-C
 package = platform.OpenAL
 modules = OpenAL

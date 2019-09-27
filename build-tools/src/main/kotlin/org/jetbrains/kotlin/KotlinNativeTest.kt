@@ -407,9 +407,10 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     // Replace testlib_api.h and all occurrences of the testlib with the actual name of the test
     private fun processCSource(): String {
         val sourceFile = File(cSource)
+        val prefixedName = if (HostManager.hostIsMingw) "$name" else "lib$name"
         val res = sourceFile.readText()
-                .replace("#include \"testlib_api.h\"", "#include \"lib${name}_api.h\"")
-                .replace("testlib", "lib${name}")
+                .replace("#include \"testlib_api.h\"", "#include \"${prefixedName}_api.h\"")
+                .replace("testlib", prefixedName)
         val newFileName = "$outputDirectory/${sourceFile.name}"
         println(newFileName)
         File(newFileName).run {

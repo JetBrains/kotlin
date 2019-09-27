@@ -1,7 +1,8 @@
-depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+depends = UIKit AVFoundation AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security darwin posix
 language = Objective-C
 package = platform.Photos
-modules = Photos
+// TODO: ugly hack while forwarded enums are supported.
+modules = UIKit Photos
 
 compilerOpts = -framework Photos
 linkerOpts = -framework Photos

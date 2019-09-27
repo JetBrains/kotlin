@@ -297,8 +297,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     private fun importMemset(): LLVMValueRef {
-        val parameterTypes = cValuesOf(int8TypePtr, int8Type, int32Type, int32Type, int1Type)
-        val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes, 5, 0)
+        val parameterTypes = cValuesOf(int8TypePtr, int8Type, int32Type, int1Type)
+        val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes, 4, 0)
         return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
     }
 

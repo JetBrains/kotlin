@@ -275,6 +275,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             KonanTarget.WATCHOS_X86 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
                         "-DKONAN_WATCHOS=1",
+                        "-DKONAN_NO_64BIT_ATOMIC=1",
                         "-DKONAN_X86=1",
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
