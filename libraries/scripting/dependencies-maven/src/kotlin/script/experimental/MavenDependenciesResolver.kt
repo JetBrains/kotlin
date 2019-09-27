@@ -16,7 +16,7 @@ import java.util.ArrayList
 
 val mavenCentral = RemoteRepository("maven-central", "default", "https://repo.maven.apache.org/maven2/")
 
-class MavenResolver : GenericDependenciesResolver {
+class MavenDependenciesResolver : GenericDependenciesResolver {
 
     override fun accepts(artifactCoordinates: GenericArtifactCoordinates): Boolean =
         artifactCoordinates.mavenArtifact != null
