@@ -1,9 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.codeInsight.hints.config.language
+package com.intellij.codeInsight.hints.settings.language
 
 import com.intellij.codeInsight.hints.*
+import com.intellij.codeInsight.hints.settings.InlayProviderSettingsModel
+import com.intellij.codeInsight.hints.settings.InlaySettingsProvider
 import com.intellij.lang.Language
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
@@ -39,17 +40,8 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
 
   companion object {
     fun getInlayProviderSettingsModels(project: Project, language: Language) : Array<InlayProviderSettingsModel> {
-      val parameterHintsProvider = InlayParameterHintsExtension.forLanguage(language)
-
-      val models = mutableListOf<InlayProviderSettingsModel>()
-      if (parameterHintsProvider != null) {
-        models += ParameterInlayProviderSettingsModel(parameterHintsProvider, language)
-      }
-
-      val config = InlayHintsSettings.instance()
-      HintUtils.getHintProvidersForLanguage(language, project).mapTo(models) {
-        NewInlayProviderSettingsModel(it.withSettingsCopy(), config)
-      }
+      val models = InlaySettingsProvider.EP.getExtensions().flatMap { it.createModels(project, language) }
+      if (models.isEmpty()) throw IllegalStateException("Language panel must have at least one config model")
       return models.toTypedArray()
     }
   }

@@ -2,7 +2,6 @@
 package com.intellij.codeInsight.hints
 
 import com.intellij.lang.Language
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 
 
@@ -11,11 +10,9 @@ object HintUtils {
     return InlayHintsProviderFactory.EP.extensionList
   }
 
-  fun getLanguagesWithParamAndInlayHintsSupport(project: Project) : Set<Language> {
+  fun getLanguagesWithNewInlayHints(project: Project) : Set<Language> {
     val languages = HashSet<Language>()
-    getAllMetaProviders().flatMapTo(languages) { it.getProvidersInfo(project).map { info -> info.language } }
-    val parameterHintsSupportingLanguages = getBaseLanguagesWithProviders()
-    languages.addAll(parameterHintsSupportingLanguages)
+    getAllMetaProviders().flatMap { it.getProvidersInfo(project).map { info -> info.language } }
     return languages
   }
 

@@ -1,9 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.codeInsight.hints.config
+package com.intellij.codeInsight.hints.settings
 
 import com.intellij.codeInsight.CodeInsightBundle
-import com.intellij.codeInsight.hints.HintUtils
-import com.intellij.codeInsight.hints.config.language.SingleLanguageInlayHintsConfigurable
+import com.intellij.codeInsight.hints.settings.language.SingleLanguageInlayHintsConfigurable
 import com.intellij.ide.DataManager
 import com.intellij.lang.Language
 import com.intellij.openapi.options.Configurable
@@ -17,7 +16,8 @@ import javax.swing.*
 import javax.swing.border.EmptyBorder
 
 class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite {
-  private val configurables: List<SingleLanguageInlayHintsConfigurable> = HintUtils.getLanguagesWithParamAndInlayHintsSupport(project)
+  private val configurables: List<SingleLanguageInlayHintsConfigurable> = InlaySettingsProvider.EP.getExtensions()
+    .flatMap { it.getSupportedLanguages(project) }
     .map { SingleLanguageInlayHintsConfigurable(project, it) }
     .sortedBy { it.displayName }
 
