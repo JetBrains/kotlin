@@ -131,7 +131,14 @@ public final class ConversionContextImpl implements ConversionContext {
       return moduleFiles;
     }, executor)
     .thenComposeAsync(moduleFiles -> {
-      return computeModuleFilesTimestamps(moduleFiles, executor);
+      int moduleCount = moduleFiles.size();
+      if (moduleCount < 50) {
+        return computeModuleFilesTimestamp(moduleFiles, executor);
+      }
+
+      int secondOffset = moduleCount / 2;
+      return computeModuleFilesTimestamp(moduleFiles.subList(0, secondOffset), executor)
+        .thenCombine(computeModuleFilesTimestamp(moduleFiles.subList(secondOffset, moduleCount), executor), (v1, v2) -> ContainerUtil.concat(v1, v2));
     }, executor));
 
     for (Path subDirName : dirs) {
@@ -154,18 +161,6 @@ public final class ConversionContextImpl implements ConversionContext {
       throw new CannotConvertException(e.getMessage(), e);
     }
     return totalResult;
-  }
-
-  @NotNull
-  private static CompletableFuture<List<ObjectLongHashMap<String>>> computeModuleFilesTimestamps(@NotNull List<Path> moduleFiles, @NotNull Executor executor) {
-    int moduleCount = moduleFiles.size();
-    if (moduleCount < 50) {
-      return computeModuleFilesTimestamp(moduleFiles, executor);
-    }
-
-    int secondOffset = moduleCount / 2;
-    return computeModuleFilesTimestamp(moduleFiles.subList(0, secondOffset), executor)
-      .thenCombine(computeModuleFilesTimestamp(moduleFiles.subList(secondOffset, moduleCount), executor), (v1, v2) -> ContainerUtil.concat(v1, v2));
   }
 
   @NotNull
