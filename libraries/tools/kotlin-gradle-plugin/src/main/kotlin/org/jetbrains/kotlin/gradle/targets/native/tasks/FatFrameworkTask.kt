@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -166,13 +167,10 @@ open class FatFrameworkTask: DefaultTask() {
 
     private val Framework.plistPlatform: String
         get() = when(konanTarget) {
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iPhoneOS"
-            KonanTarget.IOS_X64 -> "iPhoneSimulator"
-            KonanTarget.TVOS_ARM64 -> "appletvos"
-            KonanTarget.TVOS_X64 -> "appletvsimulator"
-            KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "watchos"
-            KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64 -> "watchsimulator"
-            else -> error("Fat frameworks are not supported for target `${konanTarget.visibleName}`")
+            IOS_ARM32, IOS_ARM64, IOS_X64 -> "iPhoneOS"
+            TVOS_ARM64, TVOS_X64 -> "AppleTVOS"
+            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64 -> "WatchOS"
+            else -> error("Fat frameworks are not supported for platform `${konanTarget.visibleName}`")
         }
 
     // Runs the PlistBuddy utility with the given commands to configure the given plist file.
