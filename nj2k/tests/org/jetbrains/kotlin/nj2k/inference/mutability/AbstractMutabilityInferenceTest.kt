@@ -50,8 +50,7 @@ abstract class AbstractMutabilityInferenceTest : AbstractConstraintCollectorTest
             MutabilityBoundTypeCalculator(resolutionFacade, typeEnhancer),
             MutabilityStateUpdater(),
             MutabilityDefaultStateProvider(),
-            renderDebugTypes = true,
-            printDebugConstraints = true
+            renderDebugTypes = true
         )
     }
 
