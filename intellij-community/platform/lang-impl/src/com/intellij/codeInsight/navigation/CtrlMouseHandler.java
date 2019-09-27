@@ -647,7 +647,9 @@ public final class CtrlMouseHandler {
 
     void dispose() {
       myDisposed = true;
-      myExecutionProgress.cancel();
+      if (myExecutionProgress != null) {
+        myExecutionProgress.cancel();
+      }
     }
 
     BrowseMode getBrowseMode() {
