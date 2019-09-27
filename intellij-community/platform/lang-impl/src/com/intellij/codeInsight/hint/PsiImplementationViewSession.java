@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.PomTargetPsiElement;
@@ -247,32 +248,15 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
 
   @Nullable
   public static PsiImplementationViewSession create(@NotNull DataContext dataContext,
-                                                     Project project,
-                                                     boolean searchDeep,
-                                                     boolean alwaysIncludeSelf) {
+                                                    @NotNull Project project,
+                                                    boolean searchDeep,
+                                                    boolean alwaysIncludeSelf) {
     PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
     Editor editor = getEditor(dataContext);
-
-    PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    element = getElement(project, file, editor, element);
-
-    if (element == null && file == null) return null;
-    PsiFile containingFile = element != null ? element.getContainingFile() : file;
-    if (containingFile == null || !containingFile.getViewProvider().isPhysical()) return null;
-
-
-    PsiReference ref = null;
-    if (editor != null) {
-      ref = TargetElementUtil.findReference(editor, editor.getCaretModel().getOffset());
-      if (element == null && ref != null) {
-        element = TargetElementUtil.getInstance().adjustReference(ref);
-      }
-    }
-
-    //check attached sources if any
-    if (element instanceof PsiCompiledElement) {
-      element = element.getNavigationElement();
-    }
+    Pair<PsiElement, PsiReference> pair = getElementAndReference(dataContext, project, file, editor);
+    if (pair == null) return null;
+    PsiElement element = pair.first;
+    PsiReference ref = pair.second;
 
     String text = "";
     PsiElement[] impls = PsiElement.EMPTY_ARRAY;
@@ -308,6 +292,34 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
     return new PsiImplementationViewSession(project, element, impls, text, editor,
                                             file != null ? file.getVirtualFile() : null,
                                             searchDeep, alwaysIncludeSelf);
+  }
+
+  @Nullable
+  public static Pair<PsiElement, PsiReference> getElementAndReference(@NotNull DataContext dataContext,
+                                                                      @NotNull Project project,
+                                                                      @Nullable PsiFile file,
+                                                                      @Nullable Editor editor) {
+    PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+    element = getElement(project, file, editor, element);
+
+    if (element == null && file == null) return null;
+    PsiFile containingFile = element != null ? element.getContainingFile() : file;
+    if (containingFile == null || !containingFile.getViewProvider().isPhysical()) return null;
+
+
+    PsiReference ref = null;
+    if (editor != null) {
+      ref = TargetElementUtil.findReference(editor, editor.getCaretModel().getOffset());
+      if (element == null && ref != null) {
+        element = TargetElementUtil.getInstance().adjustReference(ref);
+      }
+    }
+
+    //check attached sources if any
+    if (element instanceof PsiCompiledElement) {
+      element = element.getNavigationElement();
+    }
+    return Pair.pair(element, ref);
   }
 
   public static PsiElement getElement(@NotNull Project project, PsiFile file, Editor editor, PsiElement element) {

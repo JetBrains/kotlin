@@ -3,7 +3,10 @@ package com.intellij.codeInsight.hint.actions;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.documentation.DocumentationManager;
-import com.intellij.codeInsight.hint.*;
+import com.intellij.codeInsight.hint.ImplementationViewComponent;
+import com.intellij.codeInsight.hint.ImplementationViewElement;
+import com.intellij.codeInsight.hint.ImplementationViewSession;
+import com.intellij.codeInsight.hint.ImplementationViewSessionFactory;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.navigation.BackgroundUpdaterTaskBase;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
@@ -80,7 +83,7 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
     boolean isInvokedFromEditor = CommonDataKeys.EDITOR.getData(dataContext) != null;
 
     try {
-      for (ImplementationViewSessionFactory factory: ImplementationViewSessionFactory.EP_NAME.getExtensionList() ) {
+      for (ImplementationViewSessionFactory factory : getSessionFactories()) {
         ImplementationViewSession session = factory.createSession(dataContext, project, isSearchDeep(), isIncludeAlwaysSelf());
         if (session != null) {
           showImplementations(session, isInvokedFromEditor, invokedByShortcut);
@@ -88,15 +91,25 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
       }
     }
     catch (IndexNotReadyException e) {
-      DumbService.getInstance(project).showDumbModeNotification("Quick Definition can't be found without index");
+      DumbService.getInstance(project).showDumbModeNotification(getIndexNotReadyMessage());
     }
+  }
+
+  @NotNull
+  protected String getIndexNotReadyMessage() {
+    return CodeInsightBundle.message("show.implementations.index.not.ready");
+  }
+
+  @NotNull
+  protected List<ImplementationViewSessionFactory> getSessionFactories() {
+    return ImplementationViewSessionFactory.EP_NAME.getExtensionList();
   }
 
   private void updateElementImplementations(final Object lookupItemObject, ImplementationViewSession session) {
     ImplementationViewSessionFactory currentFactory = session.getFactory();
     ImplementationViewSession newSession = createNewSession(currentFactory, session, lookupItemObject);
     if (newSession == null) {
-      for (ImplementationViewSessionFactory factory: ImplementationViewSessionFactory.EP_NAME.getExtensionList()) {
+      for (ImplementationViewSessionFactory factory : getSessionFactories()) {
         if (currentFactory == factory) continue;
         newSession = createNewSession(factory, session, lookupItemObject);
         if (newSession != null) break;
@@ -111,9 +124,8 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
   private ImplementationViewSession createNewSession(ImplementationViewSessionFactory factory,
                                                      ImplementationViewSession session,
                                                      Object lookupItemObject) {
-    return factory.createSessionForLookupElement(session.getProject(),
-                                                                                                session.getEditor(), session.getFile(), lookupItemObject, isSearchDeep(),
-                                                                                                isIncludeAlwaysSelf());
+    return factory.createSessionForLookupElement(session.getProject(), session.getEditor(), session.getFile(), lookupItemObject,
+                                                 isSearchDeep(), isIncludeAlwaysSelf());
   }
 
   protected void showImplementations(@NotNull ImplementationViewSession session,
@@ -124,9 +136,9 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
     if (impls.size() == 0) return;
     Project project = session.getProject();
 
-    FeatureUsageTracker.getInstance().triggerFeatureUsed(CODEASSISTS_QUICKDEFINITION_FEATURE);
+    FeatureUsageTracker.getInstance().triggerFeatureUsed(getFeatureUsageTrackerKey());
     if (LookupManager.getInstance(project).getActiveLookup() != null) {
-      FeatureUsageTracker.getInstance().triggerFeatureUsed(CODEASSISTS_QUICKDEFINITION_LOOKUP_FEATURE);
+      FeatureUsageTracker.getInstance().triggerFeatureUsed(getFeatureUsageTrackerKeyForLookup());
     }
 
     VirtualFile virtualFile = session.getFile();
@@ -142,10 +154,10 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
     }
 
     final Ref<UsageView> usageView = new Ref<>();
-    final String title = CodeInsightBundle.message("implementation.view.title", session.getText());
+    final String title = getPopupTitle(session);
     JBPopup popup = SoftReference.dereference(myPopupRef);
     if (popup != null && popup.isVisible() && popup instanceof AbstractPopup) {
-      final ImplementationViewComponent component = (ImplementationViewComponent) ((AbstractPopup)popup).getComponent();
+      final ImplementationViewComponent component = (ImplementationViewComponent)((AbstractPopup)popup).getComponent();
       popup.setCaption(title);
       component.update(impls, index);
       updateInBackground(session, component, title, (AbstractPopup)popup, usageView);
@@ -196,6 +208,21 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
 
       myPopupRef = new WeakReference<>(popup);
     }
+  }
+
+  @NotNull
+  protected String getFeatureUsageTrackerKey() {
+    return CODEASSISTS_QUICKDEFINITION_FEATURE;
+  }
+
+  @NotNull
+  protected String getFeatureUsageTrackerKeyForLookup() {
+    return CODEASSISTS_QUICKDEFINITION_LOOKUP_FEATURE;
+  }
+
+  @NotNull
+  protected String getPopupTitle(@NotNull ImplementationViewSession session) {
+    return CodeInsightBundle.message("implementation.view.title", session.getText());
   }
 
   private void updateInBackground(@NotNull ImplementationViewSession session,
