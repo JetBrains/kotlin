@@ -390,8 +390,6 @@ class PSICallResolver(
         override val lexicalScope: LexicalScope get() = context.scope
         override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
         private val cache = HashMap<ReceiverParameterDescriptor, ReceiverValueWithSmartCastInfo>()
-        override val module: ModuleDescriptor
-            get() = context.scope.ownerDescriptor.module
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? {
             val implicitReceiver = scope.implicitReceiver ?: return null
@@ -406,7 +404,7 @@ class PSICallResolver(
             name: Name,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
-            return getContributedFunctionsAndConstructors(context, resolutionScope, name, location)
+            return getContributedFunctionsAndConstructors(context, resolutionScope, null, name, location)
         }
     }
 

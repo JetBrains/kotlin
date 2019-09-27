@@ -213,7 +213,7 @@ class NewResolutionOldInference(
         }
 
         CallResolutionInterceptorExtension.getInstances(context.call.callElement.project).forEach {
-            candidates = it.interceptCandidates(candidates, context, candidateResolver, name, kind, tracing)
+            candidates = it.interceptCandidates(candidates, context, candidateResolver, callResolver, name, kind, tracing)
         }
 
         if (candidates.isEmpty()) {
@@ -370,10 +370,6 @@ class NewResolutionOldInference(
         override val typeApproximator: TypeApproximator,
         val callResolver: CallResolver
     ) : ImplicitScopeTower {
-
-        override val module: ModuleDescriptor
-            get() = resolutionContext.scope.ownerDescriptor.module
-
         private val cache = HashMap<ReceiverValue, ReceiverValueWithSmartCastInfo>()
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? =
@@ -393,7 +389,7 @@ class NewResolutionOldInference(
             name: Name,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
-            return getContributedFunctionsAndConstructors(resolutionContext, resolutionScope, name, location)
+            return getContributedFunctionsAndConstructors(resolutionContext, resolutionScope, callResolver, name, location)
         }
     }
 
@@ -578,6 +574,7 @@ class NewResolutionOldInference(
 fun ImplicitScopeTower.getContributedFunctionsAndConstructors(
     resolutionContext: BasicCallResolutionContext,
     resolutionScope: ResolutionScope,
+    callResolver: CallResolver?,
     name: Name,
     location: LookupLocation
 ): Collection<FunctionDescriptor> {
@@ -592,10 +589,9 @@ fun ImplicitScopeTower.getContributedFunctionsAndConstructors(
     initialResults.addAll(syntheticScopes.collectSyntheticConstructors(resolutionScope, name, location))
 
     var interceptedResults: Collection<FunctionDescriptor> = initialResults
-    //     val project = (resolutionContext.callPosition as? CallPosition.ValueArgumentPosition)?.resolvedCall?.call?.callElement?.project
     val project = resolutionContext.call.callElement.project
     CallResolutionInterceptorExtension.getInstances(project).forEach {
-        interceptedResults = it.interceptCandidates(interceptedResults, this, resolutionContext, resolutionScope, name, location)
+        interceptedResults = it.interceptCandidates(interceptedResults, this, resolutionContext, resolutionScope, callResolver, name, location)
     }
 
     return interceptedResults

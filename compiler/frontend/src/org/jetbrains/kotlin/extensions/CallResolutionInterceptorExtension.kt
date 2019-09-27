@@ -17,16 +17,13 @@ interface CallResolutionInterceptorExtension {
     companion object : ProjectExtensionDescriptor<CallResolutionInterceptorExtension>(
         "org.jetbrains.kotlin.callResolutionInterceptorExtension",
         CallResolutionInterceptorExtension::class.java
-    ) {
-        val facade: ThreadLocal<Stack<ExpressionTypingFacade>> = object : ThreadLocal<Stack<ExpressionTypingFacade>>() {
-            override fun initialValue() = Stack<ExpressionTypingFacade>()
-        }
-    }
+    )
 
     fun interceptCandidates(
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
         context: BasicCallResolutionContext,
         candidateResolver: CandidateResolver,
+        callResolver: CallResolver?,
         name: Name,
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
@@ -39,6 +36,7 @@ interface CallResolutionInterceptorExtension {
         scopeTower: ImplicitScopeTower,
         resolutionContext: BasicCallResolutionContext,
         resolutionScope: ResolutionScope,
+        callResolver: CallResolver?,
         name: Name,
         location: LookupLocation
     ): Collection<FunctionDescriptor> {

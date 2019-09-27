@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 
 interface ImplicitScopeTower {
-    val module: ModuleDescriptor
-
     val lexicalScope: LexicalScope
 
     fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo?
