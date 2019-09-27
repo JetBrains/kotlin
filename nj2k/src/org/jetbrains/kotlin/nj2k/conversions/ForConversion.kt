@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.nj2k.conversions
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
+import org.jetbrains.kotlin.j2k.ast.LabeledStatement
 import org.jetbrains.kotlin.j2k.hasWriteAccesses
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.*
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
 import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
 import org.jetbrains.kotlin.nj2k.types.JKNoType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.abs
 
 
@@ -34,20 +36,82 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
     }
 
     private fun convertToWhile(loopStatement: JKJavaForLoopStatement): JKStatement? {
-        val whileBody = createWhileBody(loopStatement)
         val condition =
             if (loopStatement.condition !is JKStubExpression) loopStatement::condition.detached()
             else JKLiteralExpression("true", JKLiteralExpression.LiteralType.BOOLEAN)
+
+        val loopLabelName = "loop"
+        var needLabel = false
+        var whileBody = loopStatement::body.detached()
+
+        if (loopStatement.updaters.singleOrNull() !is JKEmptyStatement) {
+            val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
+                override fun applyToElement(element: JKTreeElement): JKTreeElement {
+                    if (element !is JKContinueStatement) return recurse(element)
+                    val elementPsi = element.psi<PsiContinueStatement>()!!
+                    if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
+                    if (element.parent is JKKtWhenCase) {
+                        element.label = JKLabelText(JKNameIdentifier(loopLabelName))
+                        needLabel = true
+                    }
+                    val statements = loopStatement.updaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
+                    return if (element.parent is JKBlock && element.parent !is JKJavaSwitchCase)
+                        JKBlockStatementWithoutBrackets(statements)
+                    else JKBlockStatement(JKBlockImpl(statements))
+                }
+            }
+            val body = continueStatementConverter.applyToElement(loopStatement::body.detached())
+
+            if (body is JKBlockStatement) {
+                val initializer = loopStatement.initializer
+                val hasNameConflict =
+                    initializer is JKDeclarationStatement && initializer.declaredStatements.any { loopVar ->
+                        loopVar is JKLocalVariable && body.statements.any { statement ->
+                            statement is JKDeclarationStatement && statement.declaredStatements.any {
+                                it is JKLocalVariable && it.name.value == loopVar.name.value
+                            }
+                        }
+                    }
+
+                val statements =
+                    if (hasNameConflict) {
+                        listOf(JKExpressionStatement(runExpression(body, symbolProvider))) + loopStatement::updaters.detached()
+                    } else {
+                        body.block::statements.detached() + loopStatement::updaters.detached()
+                    }
+                whileBody = JKBlockStatement(JKBlockImpl(statements))
+            } else {
+                val statements =
+                    listOf(body as JKStatement) + loopStatement::updaters.detached()
+                whileBody = JKBlockStatement(JKBlockImpl(statements))
+            }
+        }
+
         val whileStatement = JKWhileStatement(condition, whileBody)
 
         if (loopStatement.initializer is JKEmptyStatement) return whileStatement
 
-        val convertedFromForLoopSyntheticWhileStatement =
-            JKKtConvertedFromForLoopSyntheticWhileStatement(
+        if (!needLabel) {
+            val convertedFromForLoopSyntheticWhileStatement = JKKtConvertedFromForLoopSyntheticWhileStatement(
                 loopStatement::initializer.detached(),
                 whileStatement
             )
+            return returnWhileStatement(loopStatement, convertedFromForLoopSyntheticWhileStatement)
+        }
 
+        val labeledWhileStatement = JKBlockStatementWithoutBrackets(
+            listOf(
+                loopStatement::initializer.detached(),
+                JKLabeledExpression(
+                    whileStatement,
+                    listOf(JKNameIdentifier(loopLabelName))
+                ).asStatement()
+            )
+        )
+        return returnWhileStatement(loopStatement, labeledWhileStatement)
+    }
+
+    private fun returnWhileStatement(loopStatement: JKJavaForLoopStatement, statement: JKStatement): JKStatement {
         val notNeedParentBlock = loopStatement.parent is JKBlock
                 || loopStatement.parent is JKLabeledExpression && loopStatement.parent?.parent is JKBlock
 
@@ -55,53 +119,12 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
             loopStatement.hasNameConflict() ->
                 JKExpressionStatement(
                     runExpression(
-                        convertedFromForLoopSyntheticWhileStatement,
+                        statement,
                         symbolProvider
                     )
                 )
-            !notNeedParentBlock -> blockStatement(convertedFromForLoopSyntheticWhileStatement)
-            else -> convertedFromForLoopSyntheticWhileStatement
-        }
-    }
-
-    private fun createWhileBody(loopStatement: JKJavaForLoopStatement): JKStatement {
-        if (loopStatement.updaters.singleOrNull() is JKEmptyStatement) return loopStatement::body.detached()
-        val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
-            override fun applyToElement(element: JKTreeElement): JKTreeElement {
-                if (element !is JKContinueStatement) return recurse(element)
-                val elementPsi = element.psi<PsiContinueStatement>()!!
-                if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
-                val statements = loopStatement.updaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
-                return if (element.parent is JKBlock)
-                    JKBlockStatementWithoutBrackets(statements)
-                else JKBlockStatement(JKBlockImpl(statements))
-            }
-        }
-
-        val body = continueStatementConverter.applyToElement(loopStatement::body.detached())
-
-        if (body is JKBlockStatement) {
-            val initializer = loopStatement.initializer
-            val hasNameConflict =
-                initializer is JKDeclarationStatement && initializer.declaredStatements.any { loopVar ->
-                    loopVar is JKLocalVariable && body.statements.any { statement ->
-                        statement is JKDeclarationStatement && statement.declaredStatements.any {
-                            it is JKLocalVariable && it.name.value == loopVar.name.value
-                        }
-                    }
-                }
-
-            val statements =
-                if (hasNameConflict) {
-                    listOf(JKExpressionStatement(runExpression(body, symbolProvider))) + loopStatement::updaters.detached()
-                } else {
-                    body.block::statements.detached() + loopStatement::updaters.detached()
-                }
-            return JKBlockStatement(JKBlockImpl(statements))
-        } else {
-            val statements =
-                listOf(body as JKStatement) + loopStatement::updaters.detached()
-            return JKBlockStatement(JKBlockImpl(statements))
+            !notNeedParentBlock -> blockStatement(statement)
+            else -> statement
         }
     }
 
