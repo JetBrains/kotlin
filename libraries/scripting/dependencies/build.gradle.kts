@@ -9,7 +9,6 @@ jvmTarget = "1.6"
 dependencies {
     compile(kotlinStdlib())
     compile(project(":kotlin-script-util"))
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     testCompile(commonDep("junit"))
 }
 

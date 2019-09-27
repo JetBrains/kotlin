@@ -9,9 +9,8 @@ jvmTarget = "1.6"
 dependencies {
     compile(kotlinStdlib())
     compile(project(":kotlin-scripting-dependencies"))
-    compileOnly("org.jetbrains.kotlin:jcabi-aether:1.0-dev-3")
-    compileOnly("org.sonatype.aether:aether-api:1.13.1")
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    compile("org.jetbrains.kotlin:jcabi-aether:1.0-dev-3")
+    compile("org.sonatype.aether:aether-api:1.13.1")
     testCompile(commonDep("junit"))
 }
 
