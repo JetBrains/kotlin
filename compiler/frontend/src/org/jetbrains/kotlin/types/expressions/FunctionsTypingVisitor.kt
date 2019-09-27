@@ -21,11 +21,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYieldBeforeLambda
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
-import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
@@ -147,7 +144,12 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
-        val resultType = functionDescriptor.createFunctionType(components.builtIns, suspendFunctionTypeExpected)!!
+        val resultType = components.typeResolutionInterceptor.interceptType(
+            expression,
+            context,
+            functionDescriptor.createFunctionType(components.builtIns, suspendFunctionTypeExpected)!!
+        )
+
         if (functionTypeExpected) {
             // all checks were done before
             return createTypeInfo(resultType, context)
@@ -175,7 +177,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
             CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
             context.expectedType.isSuspendFunctionType()
-        )
+        ).let {
+            TypeResolutionInterceptor(expression.project).interceptFunctionLiteralDescriptor(expression, context, it)
+        }
         components.functionDescriptorResolver.initializeFunctionDescriptorAndExplicitReturnType(
             context.scope.ownerDescriptor, context.scope, functionLiteral,
             functionDescriptor, context.trace, context.expectedType, context.dataFlowInfo

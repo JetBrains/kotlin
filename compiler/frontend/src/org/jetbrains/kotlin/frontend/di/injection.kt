@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
+import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -72,6 +73,8 @@ fun StorageComponentContainer.configureModule(
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
         extension.registerModuleComponents(this, platform, moduleContext.module)
     }
+
+    useInstance(CandidateInterceptor(CallResolutionInterceptorExtension.getInstances(moduleContext.project)))
 
     useImpl<NewKotlinTypeCheckerImpl>()
 
