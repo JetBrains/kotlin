@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +22,7 @@ public abstract class BaseAnalysisAction extends AnAction {
   private final String myTitle;
   private final String myAnalysisNoon;
 
-  protected BaseAnalysisAction(String title, String analysisNoon) {
+  protected BaseAnalysisAction(@Nls(capitalization = Nls.Capitalization.Title) String title, String analysisNoon) {
     myTitle = title;
     myAnalysisNoon = analysisNoon;
   }
