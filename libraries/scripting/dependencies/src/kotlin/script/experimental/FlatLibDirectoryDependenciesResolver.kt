@@ -15,12 +15,12 @@ import java.lang.Exception
 class FlatLibDirectoryDependenciesResolver(vararg paths: File) : GenericDependenciesResolver {
 
     override fun addRepository(repositoryCoordinates: GenericRepositoryCoordinates) {
-        val repoDir = repositoryCoordinates.file ?: throw Exception("Invalid repository location: '${repositoryCoordinates.string}'")
+        val repoDir = repositoryCoordinates.file ?: throw IllegalArgumentException("Invalid repository location: '${repositoryCoordinates.string}'")
         localRepos.add(repoDir)
     }
 
     override fun resolve(artifactCoordinates: GenericArtifactCoordinates): ResolveArtifactResult {
-        if(!accepts(artifactCoordinates)) throw Exception("Path is empty")
+        require(accepts(artifactCoordinates)) { "Invalid artifact coordinates: $artifactCoordinates" }
 
         val resolveAttempts = mutableListOf<ResolveAttemptFailure>()
 

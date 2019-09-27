@@ -15,7 +15,7 @@ class DirectDependenciesResolver : GenericDependenciesResolver {
     private fun makeResolveFailureResult(location: String, message: String) = ResolveArtifactResult.Failure(listOf(ResolveAttemptFailure(location, message)))
 
     override fun resolve(artifactCoordinates: GenericArtifactCoordinates): ResolveArtifactResult {
-        if(!accepts(artifactCoordinates)) throw IllegalArgumentException("Invalid arguments: $artifactCoordinates")
+        require(accepts(artifactCoordinates)) { "Invalid artifact coordinates: $artifactCoordinates" }
         val file = File(artifactCoordinates.string)
         if(!file.exists()) return makeResolveFailureResult(file.canonicalPath, "File doesn't exist")
         if(!file.isFile && !file.isDirectory) return makeResolveFailureResult(file.canonicalPath, "Path is neither file nor directory")
