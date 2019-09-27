@@ -272,6 +272,12 @@ open class IrFileSerializer(
             declarationTable.uniqIdByDeclaration(declaration)
         proto.setUniqId(protoUniqId(uniqId))
 
+        if (uniqId.index == 2788072325478221814L) {
+            println("uniqId = 2788072325478221814L")
+            println(declaration.descriptor)
+            println((declaration).findTopLevelDeclaration().descriptor)
+        }
+
         val topLevelUniqId =
             declarationTable.uniqIdByDeclaration((declaration).findTopLevelDeclaration())
         proto.setTopLevelUniqId(protoUniqId(topLevelUniqId))

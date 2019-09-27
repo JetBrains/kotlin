@@ -18,18 +18,25 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleDescriptorFactory
+import org.jetbrains.kotlin.descriptors.konan.klibModuleOrigin
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.PackageAccessedHandler
+import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 
+val ModuleDescriptorImpl.isFromKlibWithEmptyDependencies
+    get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)
+                ?.library?.unresolvedDependencies?.isEmpty() ?: false
+
 internal class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
-    override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
+    override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
+    override val flexibleTypeDeserializer: FlexibleTypeDeserializer
 ): KlibMetadataModuleDescriptorFactory {
 
     override fun createDescriptorOptionalBuiltIns(
@@ -37,8 +44,7 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
-        packageAccessedHandler: PackageAccessedHandler?,
-        createBuiltinPackageFragment: Boolean
+        packageAccessedHandler: PackageAccessedHandler?
     ): ModuleDescriptorImpl {
 
         val libraryProto = parseModuleHeader(library.moduleHeaderData)
@@ -55,10 +61,10 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
 
         val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
-        // TODO: don't push me. Commonize for JS.
-        val compositePackageFragmentAddend = if (moduleDescriptor.name == Name.special("<stdlib>")) {
-            functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
-        } else null
+        val compositePackageFragmentAddend =
+            if (moduleDescriptor.isFromKlibWithEmptyDependencies) {
+                functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
+            } else null
 
         println("got compositePackageFragmentAddend: $compositePackageFragmentAddend")
 
@@ -118,7 +124,7 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
             LocalClassifierTypeSettings.Default,
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
-            NullFlexibleTypeDeserializer,
+            flexibleTypeDeserializer,
             emptyList(),
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetadataFileRegistry
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KotlinDeserializedFileMetadata
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KotlinPsiFileMetadata
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
@@ -28,14 +27,12 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter.Companion.CALLABLES
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter.Companion.CLASSIFIERS
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
-import java.io.ByteArrayOutputStream
 
 internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) -> R): List<R>
     = size?.let { this.chunked(size, transform) } ?: listOf(transform(this.toList()))
@@ -156,6 +153,33 @@ abstract class KlibMetadataSerializer(
         bindingContext: BindingContext
     ): List<ProtoBuf.PackageFragment> {
 
+        println("serializePackageFragment() TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE=$TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE")
+        println(classifierDescriptors.maybeChunked(TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE){it})
+
+        if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
+            TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null) {
+
+            val typeAliases = classifierDescriptors.filterIsInstance<TypeAliasDescriptor>()
+            val nonCassDescriptors = topLevelDescriptors+typeAliases
+
+
+            return listOf(withNewContext {
+                    val packageProto = if (nonCassDescriptors.isEmpty())
+                        emptyPackageProto()
+                    else
+                        buildPackageProto(fqName, nonCassDescriptors)
+
+                    buildFragment(
+                        packageProto,
+                        serializeClasses(fqName, classifierDescriptors),
+                        fqName,
+                        topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty(),
+                        bindingContext
+                    )
+                }
+            )
+        }
+
         val result = mutableListOf<ProtoBuf.PackageFragment>()
 
         result += classifierDescriptors.maybeChunked(TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE) { descriptors ->
@@ -186,7 +210,6 @@ abstract class KlibMetadataSerializer(
             withNewContext {
                 buildFragment(
                     buildPackageProto(fqName, descriptors),
-                    //buildClassesProto {},
                     emptyList(),
                     fqName,
                     descriptors.isEmpty(),
@@ -199,7 +222,6 @@ abstract class KlibMetadataSerializer(
             result += withNewContext {
                 buildFragment(
                     emptyPackageProto(),
-                    //buildClassesProto {},
                     emptyList(),
                     fqName,
                     true,
@@ -312,7 +334,9 @@ class KlibMetadataMonolithicSerializer(
     val bindingContext: BindingContext
 ) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable) {
 
-    protected fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor, bindingContext: BindingContext):
+    protected fun serializePackageFragment(fqName: FqName,
+                                           module: ModuleDescriptor,
+                                           bindingContext: BindingContext):
             List<ProtoBuf.PackageFragment> {
 
         // TODO: ModuleDescriptor should be able to return

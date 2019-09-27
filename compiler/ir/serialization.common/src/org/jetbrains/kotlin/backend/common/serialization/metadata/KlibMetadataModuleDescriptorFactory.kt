@@ -6,12 +6,14 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleDescriptorFactory
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.PackageAccessedHandler
+import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 
 interface KlibMetadataModuleDescriptorFactory {
 
     val descriptorFactory: KlibModuleDescriptorFactory
     val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory
+    val flexibleTypeDeserializer: FlexibleTypeDeserializer
 
     fun createDescriptor(
         library: KotlinLibrary,
@@ -39,7 +41,6 @@ interface KlibMetadataModuleDescriptorFactory {
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
-        packageAccessedHandler: PackageAccessedHandler?,
-        createBuiltinPackageFragment: Boolean = false
+        packageAccessedHandler: PackageAccessedHandler?
     ): ModuleDescriptorImpl
 }

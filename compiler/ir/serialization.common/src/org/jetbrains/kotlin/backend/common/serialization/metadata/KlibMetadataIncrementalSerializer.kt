@@ -34,33 +34,24 @@ class KlibMetadataIncrementalSerializer(
     descriptorTable: DescriptorTable
 ) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable) {
 
-    fun serializeDescriptors(
+    fun serializePackageFragment(
         bindingContext: BindingContext,
         module: ModuleDescriptor,
         scope: Collection<DeclarationDescriptor>,
         fqName: FqName
     ): ProtoBuf.PackageFragment {
 
-        val skip = fun(descriptor: DeclarationDescriptor): Boolean {
-            // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
-            if (descriptor.module != module) return true
-
-            if (descriptor is MemberDescriptor && descriptor.isExpect) {
-                return !(descriptor is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(
-                    descriptor
-                ))
-            }
-
-            return false
+        val allDescriptors = scope.filter {
+            it.module == module
         }
 
-        val classifierDescriptors = scope
-            .filterIsInstance<ClassDescriptor>()
+        val classifierDescriptors = allDescriptors
+            .filterIsInstance<ClassifierDescriptor>()
             .filter { !it.isExpectMember || it.isSerializableExpectClass }
             .sortedBy { it.fqNameSafe.asString() }
 
         val topLevelDescriptors = DescriptorSerializer.sort(
-            scope
+            allDescriptors
                 .filterIsInstance<CallableDescriptor>()
                 .filter { !it.isExpectMember }
         )
@@ -74,8 +65,8 @@ class KlibMetadataIncrementalSerializer(
     }
 
     fun serializedMetadata(
-        module: ModuleDescriptor,
-        fragments: Map<String, List<ByteArray>>
+        fragments: Map<String, List<ByteArray>>,
+        header: ByteArray
     ): SerializedMetadata {
         val fragmentNames = mutableListOf<String>()
         val fragmentParts = mutableListOf<List<ByteArray>>()
@@ -85,20 +76,8 @@ class KlibMetadataIncrementalSerializer(
             fragmentParts += fragment
         }
 
-        val stream = ByteArrayOutputStream()
-
-        serializeHeader(module, fragmentNames).writeDelimitedTo(stream)
-        //asLibrary().writeTo(stream)
-        //stream.appendPackageFragments(fragments)
-
-        val moduleLibrary = stream.toByteArray()
-
-        return SerializedMetadata(moduleLibrary, fragmentParts, fragmentNames)
+        return SerializedMetadata(header, fragmentParts, fragmentNames)
     }
-
-    //private fun asLibrary(): KlibMetadataProtoBuf.Library {
-    //    return KlibMetadataProtoBuf.Library.newBuilder().build()
-    //}
 
     private fun OutputStream.writeProto(fieldNumber: Int, content: ByteArray) {
         // Message header
@@ -113,23 +92,7 @@ class KlibMetadataIncrementalSerializer(
         // Fragment itself
         write(content)
     }
-/*
-    private fun OutputStream.appendPackageFragments(serializedFragments: Map<String, List<ByteArray>>) {
-        for ((_, fragments) in serializedFragments.entries.sortedBy { it.key }) {
-            for (fragment in fragments) {
-                writeProto(KlibMetadataProtoBuf.Library.PACKAGE_FRAGMENT_FIELD_NUMBER, fragment)
-            }
-        }
-    }
-*/
-    /*
-    fun readModuleAsProto(metadata: ByteArray, importedModuleList: List<String>): JsKlibMetadataParts {
-        val inputStream = ByteArrayInputStream(metadata)
-        val header = KlibMetadataProtoBuf.Header.parseDelimitedFrom(inputStream, KlibMetadataSerializerProtocol.extensionRegistry)
-        val content = KlibMetadataProtoBuf.Library.parseFrom(inputStream, KlibMetadataSerializerProtocol.extensionRegistry)
-        return JsKlibMetadataParts(header, content.packageFragmentList, importedModuleList)
-    }
-*/
+
     // TODO: For now, in the incremental serializer, we assume
     // there is only a single package fragment per file.
     // This is no always the case, actually.

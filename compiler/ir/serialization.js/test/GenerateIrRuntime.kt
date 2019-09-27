@@ -9,10 +9,12 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.Kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.konan.library.resolver.impl.KotlinLibraryResolverResultImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
@@ -62,6 +64,12 @@ fun buildKLib(
     dependencies: List<KotlinLibrary>,
     commonSources: List<String>
 ) {
+    val resolvedKlibs = KotlinLibraryResolverResultImpl(dependencies.map { KotlinResolvedLibraryImpl(it) })
+    println("resolvedKlibs:")
+    resolvedKlibs.forEach { klib, _ ->
+        println("klib: ${klib.libraryFile}")
+    }
+
     generateKLib(
         project = environment.project,
         files = sources.map { source ->
@@ -72,6 +80,7 @@ fun buildKLib(
             file
         },
         configuration = buildConfiguration(environment, moduleName),
+        resolvedLibraries = resolvedKlibs,
         allDependencies = dependencies,
         friendDependencies = emptyList(),
         outputKlibPath = outputPath,
@@ -113,12 +122,14 @@ fun main(args: Array<String>) {
         error("Please set path to .klm file: `-o some/dir/module-name.klm`")
     }
 
-    val name = outputPath.takeLastWhile { it != '/' }
+    //val name = outputPath.takeLastWhile { it != '/' }
+
+    //println("outputPath = $outputPath, name = $name")
 
     val dependencyKLibs = dependencies.map {
         val file = File(it)
         loadKlib(file.path)
     }
 
-    buildKLib(name.dropLast(4), listOfKtFilesFrom(inputFiles), outputPath, dependencyKLibs, listOfKtFilesFrom(commonSources))
+    buildKLib(File(outputPath).absolutePath, listOfKtFilesFrom(inputFiles), outputPath, dependencyKLibs, listOfKtFilesFrom(commonSources))
 }
