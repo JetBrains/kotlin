@@ -427,6 +427,16 @@ class JvmSymbols(
     }
 
     val systemArraycopy: IrSimpleFunctionSymbol = systemClass.functionByName("arraycopy")
+
+    val signatureStringIntrinsic: IrSimpleFunctionSymbol =
+        buildFun {
+            name = Name.special("<signature-string>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            addValueParameter("v", irBuiltIns.anyNType)
+            returnType = irBuiltIns.stringType
+        }.symbol
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =

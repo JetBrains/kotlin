@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -98,6 +98,9 @@ fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
         ((this as IrSimpleType).arguments.single() as IrTypeProjection).type
     else
         irBuiltIns.primitiveArrayElementTypes.getValue(this.classOrNull!!)
+
+val IrStatementOrigin?.isLambda
+    get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 val IrConstructor.shouldBeHidden: Boolean
     get() = !Visibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters

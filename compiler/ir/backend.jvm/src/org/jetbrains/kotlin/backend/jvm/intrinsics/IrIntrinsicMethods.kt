@@ -96,7 +96,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.checkNotNullSymbol.toKey()!! to IrCheckNotNull,
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
-                symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce
+                symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
+                symbols.signatureStringIntrinsic.toKey()!! to SignatureString
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +
