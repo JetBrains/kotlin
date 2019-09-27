@@ -35,8 +35,13 @@ class JKClass(
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 
-    enum class ClassKind {
-        ANNOTATION, CLASS, ENUM, INTERFACE, OBJECT, COMPANION
+    enum class ClassKind(val text: String) {
+        ANNOTATION("annotation class"),
+        CLASS("class"),
+        ENUM("enum class"),
+        INTERFACE("interface"),
+        OBJECT("object"),
+        COMPANION("companion object")
     }
 }
 

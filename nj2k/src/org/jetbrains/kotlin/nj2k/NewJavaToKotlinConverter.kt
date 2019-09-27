@@ -31,6 +31,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.nj2k.printing.JKCodeBuilder
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
@@ -135,7 +136,7 @@ class NewJavaToKotlinConverter(
             processor.updateState(i, 1, phaseDescription)
             val (element, ast) = elementWithAst
             if (ast == null) return@mapIndexed null
-            val code = NewCodeBuilder(context).run { printCodeOut(ast) }
+            val code = JKCodeBuilder(context).run { printCodeOut(ast) }
             val parseContext = when (element) {
                 is PsiStatement, is PsiExpression -> ParseContext.CODE_BLOCK
                 else -> ParseContext.TOP_LEVEL

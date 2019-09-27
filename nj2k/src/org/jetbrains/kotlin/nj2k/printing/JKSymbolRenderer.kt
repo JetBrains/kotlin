@@ -3,21 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.nj2k
+package org.jetbrains.kotlin.nj2k.printing
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.nj2k.JKImportStorage
+import org.jetbrains.kotlin.nj2k.escaped
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.JKClassAccessExpression
 import org.jetbrains.kotlin.nj2k.tree.JKQualifiedExpression
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class JKSymbolRenderer(private val importStorage: JKImportStorage, project: Project) {
+internal class JKSymbolRenderer(private val importStorage: JKImportStorage, project: Project) {
     private val canBeShortenedClassNameCache = CanBeShortenedCache(project)
 
     private fun JKSymbol.isFqNameExpected(owner: JKTreeElement?): Boolean {
