@@ -577,12 +577,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     val mergedDependencies = LinkedHashSet<KotlinDependency>().apply {
                         addAll(sourceSet.dependencies.mapNotNull { mppModel.dependencyMap[it] })
                         dependeeSourceSets.flatMapTo(this) { it.dependencies.mapNotNull { mppModel.dependencyMap[it] } }
-                        if (sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE) {
-                            sourceSetToCompilations[sourceSet.name]
-                                ?.takeIf { it.size > 1 }
-                                ?.let { compilations ->
-                                    addAll(propagatedDependencies(compilations))
-                                }
+                        if (mppModel.extraFeatures.isNativeDependencyPropagationEnabled
+                            && mppModel.extraFeatures.isHMPPEnabled
+                            && sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE
+                        ) {
+                            sourceSetToCompilations[sourceSet.name]?.let { compilations ->
+                                addAll(propagatedNativeDependencies(compilations))
+                            }
                         }
                     }
                     buildDependencies(
@@ -609,8 +610,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         // Currently such special casing is available for Apple platforms
         // (iOS, watchOS and tvOS) and native Android (ARM, X86).
         // TODO: Do we need to support user's interop libraries too?
-        private fun propagatedDependencies(compilations: List<CompilationWithDependencies>): List<ExternalDependency> {
-            if (compilations.isEmpty()) {
+        private fun propagatedNativeDependencies(compilations: List<CompilationWithDependencies>): List<ExternalDependency> {
+            if (compilations.size <= 1) {
                 return emptyList()
             }
 

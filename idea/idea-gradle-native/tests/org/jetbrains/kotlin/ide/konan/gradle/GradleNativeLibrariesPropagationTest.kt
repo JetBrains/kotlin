@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ide.konan.gradle
 import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.kotlin.gradle.ModuleInfo
 import org.jetbrains.kotlin.gradle.checkProjectStructure
-import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Test
@@ -63,12 +62,47 @@ class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
         }
     }
 
+    @Test
+    fun testCommonIOSWithDisabledPropagation() {
+        configureProject()
+        importProject()
+
+        // No dependencies should be propagated.
+        checkProjectStructure(
+            myProject,
+            projectPath,
+            exhaustiveModuleList = false,
+            exhaustiveSourceSourceRootList = false,
+            exhaustiveDependencyList = false,
+            exhaustiveTestsList = false
+        ) {
+
+            module("project_commonMain") {
+                noPlatformLibrary("Foundation")
+                noPlatformLibrary("CFNetwork")
+                noPlatformLibrary("WatchKit")
+            }
+
+            module("project_appleMain") {
+                noPlatformLibrary("Foundation")
+                noPlatformLibrary("CFNetwork")
+                noPlatformLibrary("WatchKit")
+            }
+
+            module("project_iosMain") {
+                noPlatformLibrary("Foundation")
+                noPlatformLibrary("CFNetwork")
+                noPlatformLibrary("WatchKit")
+            }
+        }
+    }
+
     private val ModuleInfo.kotlinVersion: String
         get() = requireNotNull(module.externalCompilerVersion) { "External compiler version should not be null" }
 
     private fun ModuleInfo.noPlatformLibrary(libraryName: String, targets: Collection<String> = testedTargets) {
         targets.forEach { target ->
-            assertNoDepForModule(module.name,"Kotlin/Native $kotlinVersion - $libraryName [$target]")
+            assertNoLibraryDepForModule(module.name, "Kotlin/Native $kotlinVersion - $libraryName [$target]")
         }
     }
 

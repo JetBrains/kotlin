@@ -86,8 +86,8 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
         assertModuleModuleDepScope("jvm_test", "common2_test", DependencyScope.COMPILE)
         assertModuleModuleDepScope("js_main", "common1_main", DependencyScope.COMPILE)
         assertModuleModuleDepScope("js_test", "common1_test", DependencyScope.COMPILE)
-        assertNoDepForModule("js_main", "common2_main")
-        assertNoDepForModule("js_test", "common2_test")
+        assertNoModuleDepForModule("js_main", "common2_main")
+        assertNoModuleDepForModule("js_test", "common2_test")
     }
 
     @Test
@@ -190,7 +190,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
 
             assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
             assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
-            assertNoDepForModule("project3_main", "project1_main")
+            assertNoModuleDepForModule("project3_main", "project1_main")
 
             TestCase.assertEquals(
                     listOf("jar:///project2/build/libs/project2-jar.jar!/"),
