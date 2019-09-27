@@ -1,4 +1,4 @@
-Resolve target: value-parameter s: kotlin.String?
+Resolve target: value-parameter s: kotlin.String? smart-cast to kotlin.String
 ----------------------------------------------
 fun foo(s: String?, b1: Boolean, b2: Boolean) {
     x(
