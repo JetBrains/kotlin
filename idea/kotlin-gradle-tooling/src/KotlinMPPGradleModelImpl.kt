@@ -82,6 +82,12 @@ data class KotlinCompilationArgumentsImpl(
     )
 }
 
+data class KotlinNativeCompilationExtensionsImpl(
+    override val konanTarget: String? = null
+) : KotlinNativeCompilationExtensions {
+    constructor(extensions: KotlinNativeCompilationExtensions) : this(extensions.konanTarget)
+}
+
 data class KotlinCompilationImpl(
     override val name: String,
     override val sourceSets: Collection<KotlinSourceSet>,
@@ -90,7 +96,7 @@ data class KotlinCompilationImpl(
     override val arguments: KotlinCompilationArguments,
     override val dependencyClasspath: Array<String>,
     override val kotlinTaskProperties: KotlinTaskProperties,
-    override val konanTarget: String? = null
+    override val nativeExtensions: KotlinNativeCompilationExtensions
 ) : KotlinCompilation {
 
     // create deep copy
@@ -106,7 +112,7 @@ data class KotlinCompilationImpl(
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
         kotlinCompilation.dependencyClasspath,
         KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties),
-        kotlinCompilation.konanTarget
+        KotlinNativeCompilationExtensionsImpl(kotlinCompilation.nativeExtensions)
     ) {
         disambiguationClassifier = kotlinCompilation.disambiguationClassifier
         platform = kotlinCompilation.platform
