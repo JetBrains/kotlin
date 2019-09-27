@@ -4,7 +4,6 @@ package com.intellij.codeInsight.daemon.impl;
 import com.intellij.ProjectTopics;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSettingListener;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.folding.impl.FoldingUtil;
 import com.intellij.codeInsight.hint.TooltipController;
@@ -63,9 +62,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
-import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.status.TogglePopupHintsPanel;
 import com.intellij.profile.ProfileChangeAdapter;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
@@ -355,8 +351,6 @@ public final class DaemonListeners implements Disposable {
       }
     });
 
-    connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (__, ___) -> updateStatusBar());
-
     LanguageAnnotators.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<KeyedLazyInstance<Annotator>>() {
       @Override
       public void extensionListChanged() {
@@ -515,13 +509,11 @@ public final class DaemonListeners implements Disposable {
     @Override
     public void profileChanged(InspectionProfile profile) {
       stopDaemonAndRestartAllFiles("Profile changed");
-      updateStatusBarLater();
     }
 
     @Override
     public void profileActivated(InspectionProfile oldProfile, @Nullable InspectionProfile profile) {
       stopDaemonAndRestartAllFiles("Profile activated");
-      updateStatusBarLater();
     }
 
     @Override
@@ -532,19 +524,6 @@ public final class DaemonListeners implements Disposable {
         stopDaemonAndRestartAllFiles("Inspection profiles activated");
       });
     }
-  }
-
-  private TogglePopupHintsPanel myTogglePopupHintsPanel;
-
-  void updateStatusBar() {
-    if (myTogglePopupHintsPanel != null) myTogglePopupHintsPanel.updateStatus();
-  }
-
-  private void updateStatusBarLater() {
-    UIUtil.invokeLaterIfNeeded(() -> {
-      if (myProject.isDisposed()) return;
-      updateStatusBar();
-    });
   }
 
   private class MyAnActionListener implements AnActionListener {

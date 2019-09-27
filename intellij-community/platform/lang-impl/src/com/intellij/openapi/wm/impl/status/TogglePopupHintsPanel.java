@@ -5,6 +5,7 @@ package com.intellij.openapi.wm.impl.status;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.HectorComponent;
 import com.intellij.codeInsight.daemon.impl.HectorComponentFactory;
+import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSettingListener;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightingLevelManager;
 import com.intellij.codeInspection.InspectionProfile;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
@@ -101,6 +102,8 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
         updateStatus();
       }
     });
+
+    myConnection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (__, ___) -> updateStatus());
   }
 
   @Override
@@ -123,6 +126,8 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
   public void updateStatus() {
     UIUtil.invokeLaterIfNeeded(() -> updateStatus(getCurrentFile()));
   }
+
+
 
   private void updateStatus(PsiFile file) {
     if (isDisposed()) return;
