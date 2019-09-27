@@ -77,7 +77,7 @@ kotlin {
 val compileWindowsResources: Exec? = if (isWindows) {
     val compileWindowsResources: Exec by tasks.creating(Exec::class) {
         val windresDir = if (isMingwX86Build)
-            kotlinNativeDataPath.resolve("dependencies/msys2-mingw-w64-i686-gcc-7.4.0-clang-llvm-6.0.1/bin")
+            kotlinNativeDataPath.resolve("dependencies/msys2-mingw-w64-i686-clang-llvm-lld-compiler_rt-8.0.1/bin")
         else
             kotlinNativeDataPath.resolve("dependencies/msys2-mingw-w64-x86_64-clang-llvm-lld-compiler_rt-8.0.1/bin")
 
