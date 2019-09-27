@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 inline fun <T> runAfterLoop(fn: () -> T): T {
     for (i in 1..2);
     return fn()

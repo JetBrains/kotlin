@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -72,32 +73,24 @@ class IrInlineCodegen(
                 activeLambda = null
             }
         } else {
-            putValueOnStack(argumentExpression, parameterType, irValueParameter.index, blockInfo, irValueParameter.type)
+            // Reusing the same local reduces the amount of debug information available when breaking
+            // inside the inline function. Here we replicate the behavior of the non-IR backend, which at least
+            // preserves the receivers.
+            val onStack = if (irValueParameter.index >= 0)
+                codegen.genOrGetLocal(argumentExpression, blockInfo)
+            else
+                codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+            // TODO support default argument erasure: do nothing if the parameter is a default mask, the argument is a constant int,
+            //      and processDefaultMaskOrMethodHandler(StackValue.constant(...), ValueKind.DEFAULT_MASK) is true.
+            val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toKotlinType())
+            putArgumentOrCapturedToLocalVal(expectedType, onStack, -1, irValueParameter.index, ValueKind.CAPTURED)
         }
     }
 
-    override fun putValueIfNeeded(
-        parameterType: Type,
-        value: StackValue,
-        kind: ValueKind,
-        parameterIndex: Int,
-        codegen: ExpressionCodegen
-    ) {
-        //TODO: support default argument erasure
-        //if (processDefaultMaskOrMethodHandler(value, kind)) return
-        putArgumentOrCapturedToLocalVal(JvmKotlinType(value.type, value.kotlinType), value, -1, parameterIndex, ValueKind.CAPTURED /*kind*/)
-    }
-
     private fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamIndex: Int) {
-        val onStack = codegen.gen(argumentExpression, valueType, argumentExpression.type, BlockInfo())
-        putArgumentOrCapturedToLocalVal(
-            JvmKotlinType(onStack.type, onStack.kotlinType), onStack, capturedParamIndex, capturedParamIndex, ValueKind.CAPTURED
-        )
-    }
-
-    private fun putValueOnStack(argumentExpression: IrExpression, valueType: Type, paramIndex: Int, blockInfo: BlockInfo, irType: IrType) {
-        val onStack = codegen.gen(argumentExpression, valueType, irType, blockInfo)
-        putArgumentOrCapturedToLocalVal(JvmKotlinType(onStack.type, onStack.kotlinType), onStack, -1, paramIndex, ValueKind.CAPTURED)
+        val onStack = codegen.genOrGetLocal(argumentExpression, BlockInfo())
+        val expectedType = JvmKotlinType(valueType, argumentExpression.type.toKotlinType())
+        putArgumentOrCapturedToLocalVal(expectedType, onStack, capturedParamIndex, capturedParamIndex, ValueKind.CAPTURED)
     }
 
     override fun beforeValueParametersStart() {
