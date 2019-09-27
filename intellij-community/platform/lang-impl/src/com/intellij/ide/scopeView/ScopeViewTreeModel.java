@@ -3,6 +3,8 @@ package com.intellij.ide.scopeView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CopyPasteUtil;
+import com.intellij.ide.bookmarks.Bookmark;
+import com.intellij.ide.bookmarks.BookmarksListener;
 import com.intellij.ide.projectView.*;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -74,6 +76,7 @@ import java.util.function.BiFunction;
 
 import static com.intellij.ide.projectView.impl.CompoundIconProvider.findIcon;
 import static com.intellij.ide.projectView.impl.ShowModulesAction.hasModules;
+import static com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode.patchIcon;
 import static com.intellij.openapi.util.io.FileUtil.getLocationRelativeToUserHome;
 import static com.intellij.openapi.vfs.VfsUtilCore.*;
 import static java.util.Collections.emptyList;
@@ -107,6 +110,22 @@ public final class ScopeViewTreeModel extends BaseTreeModel<AbstractTreeNode> im
     Disposer.register(this, model);
     root = new ProjectNode(project, settings);
     MessageBusConnection connection = project.getMessageBus().connect(this);
+    connection.subscribe(BookmarksListener.TOPIC, new BookmarksListener() {
+      @Override
+      public void bookmarkAdded(@NotNull Bookmark bookmark) {
+        bookmarkChanged(bookmark);
+      }
+
+      @Override
+      public void bookmarkRemoved(@NotNull Bookmark bookmark) {
+        bookmarkChanged(bookmark);
+      }
+
+      @Override
+      public void bookmarkChanged(@NotNull Bookmark bookmark) {
+        notifyPresentationChanged(bookmark.getFile());
+      }
+    });
     connection.subscribe(ProblemListener.TOPIC, new ProblemListener() {
       @Override
       public void problemsAppeared(@NotNull VirtualFile file) {
@@ -662,11 +681,12 @@ public final class ScopeViewTreeModel extends BaseTreeModel<AbstractTreeNode> im
     @Override
     protected void update(@NotNull PresentationData presentation) {
       super.myName = getNodeName(); // rebuild a node name used in #toString()
+      Project project = getProject();
       VirtualFile file = getVirtualFile();
       String title = getTitle();
       SimpleTextAttributes attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
       if (node.getRootID() instanceof VirtualFile) {
-        ProjectFileIndex index = getProjectFileIndex(getProject());
+        ProjectFileIndex index = getProjectFileIndex(project);
         if (index != null && file.equals(index.getContentRootForFile(file))) {
           attributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
         }
@@ -674,13 +694,8 @@ public final class ScopeViewTreeModel extends BaseTreeModel<AbstractTreeNode> im
       String text = title != null ? title : toString();
       presentation.setPresentableText(text);
       presentation.addText(text, attributes);
-      Icon icon = getIcon();
-      if (icon == null && file.isValid()) {
-        icon = file.isDirectory()
-               ? getFolderIcon(findFileSystemItem(file))
-               : file.getFileType().getIcon();
-      }
-      presentation.setIcon(icon);
+      Icon icon = findIcon(findFileSystemItem(file), 0);
+      presentation.setIcon(icon == null || project == null ? icon : patchIcon(project, icon, file));
       decorate(presentation);
     }
 
