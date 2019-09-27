@@ -206,7 +206,6 @@ private fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deseria
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
 val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
 
-// TODO: refactor with ResolvedDependencies class in Native.
 private class ModulesStructure(
     private val project: Project,
     private val files: List<KtFile>,
@@ -246,8 +245,6 @@ private class ModulesStructure(
         return analysisResult
     }
 
-    private val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
-    private val metadataVersion: JsKlibMetadataVersion = compilerConfiguration.metadataVersion
     private val languageVersionSettings: LanguageVersionSettings = compilerConfiguration.languageVersionSettings
 
     private val storageManager: LockBasedStorageManager = LockBasedStorageManager("ModulesStructure")

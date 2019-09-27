@@ -16,18 +16,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 
-
-/*
- * This is Konan specific part of public descriptor
- * tree serialization and deserialization.
- *
- * It takes care of module and package fragment serializations.
- * The lower level (classes and members) serializations are delegated
- * to the DescriptorSerializer class.
- * The lower level deserializations are performed by the frontend
- * with MemberDeserializer class.
- */
-
+// TODO: need a refactoring between IncrementalSerializer and MonolithicSerializer.
 class KlibMetadataMonolithicSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
