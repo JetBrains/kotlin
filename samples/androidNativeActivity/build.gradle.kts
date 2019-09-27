@@ -20,7 +20,9 @@ val libsDir = appDir.resolve("libs")
 
 val androidPresets = mapOf(
     "arm32" to ("androidNativeArm32" to "$libsDir/armeabi-v7a"),
-    "arm64" to ("androidNativeArm64" to "$libsDir/arm64-v8a")
+    "arm64" to ("androidNativeArm64" to "$libsDir/arm64-v8a"),
+    "x86" to ("androidNativeX86" to "$libsDir/x86"),
+    "x64" to ("androidNativeX64" to "$libsDir/x86_64")
 )
 
 android {
@@ -32,7 +34,7 @@ android {
         targetSdkVersion(28)
 
         ndk {
-            abiFilters("armeabi-v7a", "arm64-v8a")
+            abiFilters("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
     }
 
@@ -63,7 +65,11 @@ kotlin {
     sourceSets {
         val arm32Main by getting
         val arm64Main by getting
+        val x86Main by getting
+        val x64Main by getting
         arm64Main.dependsOn(arm32Main)
+        x86Main.dependsOn(arm32Main)
+        x64Main.dependsOn(arm32Main)
     }
 }
 
