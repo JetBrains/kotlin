@@ -1,4 +1,4 @@
-// "Change parameter 'x' type of function 'bar.foo' to '(HashSet<Int>) -> Int'" "true"
+// "Change parameter 'x' type of function 'foo' to '(HashSet<Int>) -> Int'" "true"
 package bar
 
 import java.util.HashSet
