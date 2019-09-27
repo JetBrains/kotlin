@@ -58,6 +58,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.CancellablePromise;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
 
@@ -111,7 +112,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
   // read from different threads
   // written from EDT only
   @Nullable
-  private volatile ProgressIndicatorBase myLastAutoscrollIndicator;
+  private volatile CancellablePromise<?> myLastAutoscrollPromise;
 
 
   public StructureViewComponent(@Nullable FileEditor editor,
@@ -469,9 +470,9 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
   }
 
   private void cancelScrollToSelectedElement() {
-    final ProgressIndicatorBase currentIndicator = myLastAutoscrollIndicator;
-    if (currentIndicator != null && !currentIndicator.isCanceled()) {
-      currentIndicator.cancel();
+    final CancellablePromise<?> lastPromise = myLastAutoscrollPromise;
+    if (lastPromise != null && !lastPromise.isCancelled()) {
+      lastPromise.cancel();
     }
   }
 
@@ -481,13 +482,9 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
     cancelScrollToSelectedElement();
     if (isDisposed()) return;
 
-    final ProgressIndicatorBase indicator = new ProgressIndicatorBase();
-    myLastAutoscrollIndicator = indicator;
-
-    ReadAction.nonBlocking(this::doFindSelectedElement)
+    myLastAutoscrollPromise = ReadAction.nonBlocking(this::doFindSelectedElement)
       .withDocumentsCommitted(myProject)
-      .expireWhen(this::isDisposed)
-      .cancelWith(indicator)
+      .expireWith(this)
       .finishOnUiThread(ModalityState.current(), this::doScrollToSelectedElement)
       .submit(AppExecutorUtil.getAppExecutorService());
   }
