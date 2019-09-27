@@ -6,7 +6,9 @@ import com.intellij.codeInsight.hint.EditorFragmentComponent
 import com.intellij.codeInsight.hints.ChangeListener
 import com.intellij.codeInsight.hints.InlayHintsSettings
 import com.intellij.codeInsight.hints.settings.InlayProviderSettingsModel
+import com.intellij.ide.CopyProvider
 import com.intellij.lang.Language
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
@@ -14,6 +16,7 @@ import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
+import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.ColoredListCellRenderer
@@ -26,6 +29,7 @@ import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GridLayout
+import java.awt.datatransfer.StringSelection
 import javax.swing.*
 import javax.swing.border.LineBorder
 
@@ -35,7 +39,7 @@ class SingleLanguageInlayHintsSettingsPanel(
   private val myModels: Array<InlayProviderSettingsModel>,
   private val myLanguage: Language,
   private val myProject: Project
-) : JPanel() {
+) : JPanel(), CopyProvider {
   private val config = InlayHintsSettings.instance()
   private val myProviderList = createList()
   private var myCurrentProvider = selectLastViewedProvider()
@@ -244,4 +248,15 @@ class SingleLanguageInlayHintsSettingsPanel(
     }
     myCasesPanel?.updateFromSettings()
   }
+
+  override fun performCopy(dataContext: DataContext) {
+    val selectedIndex = myProviderList.selectedIndex
+    if (selectedIndex < 0) return
+    val selection = myProviderList.model.getElementAt(selectedIndex)
+    CopyPasteManager.getInstance().setContents(StringSelection(selection.name))
+  }
+
+  override fun isCopyEnabled(dataContext: DataContext): Boolean = !myProviderList.isSelectionEmpty
+
+  override fun isCopyVisible(dataContext: DataContext): Boolean = false
 }
