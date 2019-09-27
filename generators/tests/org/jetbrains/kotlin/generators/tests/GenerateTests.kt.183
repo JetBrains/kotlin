@@ -867,7 +867,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIdeLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("delegation"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+            model("asJava/lightClasses", excludeDirs = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractIdeLightClassForScriptTest> {
+            model("asJava/script/ide", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractUltraLightClassSanityTest> {

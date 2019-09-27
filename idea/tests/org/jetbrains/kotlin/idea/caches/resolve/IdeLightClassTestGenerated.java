@@ -26,7 +26,7 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
     }
 
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true, "delegation");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true, "delegation", "script");
     }
 
     @TestMetadata("AnnotatedParameterInEnumConstructor.kt")
@@ -484,29 +484,6 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/publicField/Simple.kt");
-        }
-    }
-
-    @TestMetadata("compiler/testData/asJava/lightClasses/script")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Script extends AbstractIdeLightClassTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInScript() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/script"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("HelloWorld.kts")
-        public void testHelloWorld() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/script/HelloWorld.kts");
-        }
-
-        @TestMetadata("InnerClasses.kts")
-        public void testInnerClasses() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/script/InnerClasses.kts");
         }
     }
 }

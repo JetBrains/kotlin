@@ -47,8 +47,7 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
     fun doTest(testDataPath: String) {
         forceUsingOldLightClassesForTest()
         val extraFilePath = when {
-            testDataPath.endsWith(".kt") -> testDataPath.replace(".kt", ".extra.kt")
-            testDataPath.endsWith(".kts") -> testDataPath.replace(".kts", ".extra.kts")
+            testDataPath.endsWith(fileExtension) -> testDataPath.replace(fileExtension, ".extra" + fileExtension)
             else -> error("Invalid test data extension")
         }
 
@@ -79,6 +78,8 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+
+    open val fileExtension = ".kt"
 }
 
 abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase() {
