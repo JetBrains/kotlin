@@ -17,14 +17,15 @@ package com.intellij.psi.codeStyle;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.DumbProgressIndicator;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
-import com.intellij.openapi.progress.util.ReadTask;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.psi.PsiDocumentManager;
@@ -33,59 +34,38 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings.IndentOptions;
 import com.intellij.psi.codeStyle.autodetect.IndentOptionsAdjuster;
 import com.intellij.psi.codeStyle.autodetect.IndentOptionsDetectorImpl;
 import com.intellij.util.Time;
+import com.intellij.util.concurrency.SequentialTaskExecutor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
 
-class DetectAndAdjustIndentOptionsTask extends ReadTask {
+class DetectAndAdjustIndentOptionsTask {
+  private static final ExecutorService BOUNDED_EXECUTOR = SequentialTaskExecutor.createSequentialApplicationPoolExecutor(
+    "DetectableIndentOptionsProvider Pool");
   private static final Logger LOG = Logger.getInstance(DetectAndAdjustIndentOptionsTask.class);
   private static final int INDENT_COMPUTATION_TIMEOUT = 5 * Time.SECOND;
 
   private final Document myDocument;
   private final Project myProject;
   private final TimeStampedIndentOptions myOptionsToAdjust;
-  private final ExecutorService myExecutor;
-  
-  private volatile long myComputationStarted = 0;
 
-  DetectAndAdjustIndentOptionsTask(@NotNull Project project,
-                                          @NotNull Document document, 
-                                          @NotNull TimeStampedIndentOptions toAdjust,
-                                          @NotNull ExecutorService executor) {
+  DetectAndAdjustIndentOptionsTask(@NotNull Project project, @NotNull Document document, @NotNull TimeStampedIndentOptions toAdjust) {
     myProject = project;
     myDocument = document;
     myOptionsToAdjust = toAdjust;
-    myExecutor = executor;
   }
   
   private PsiFile getFile() {
-    if (myProject.isDisposed()) {
-      return null;
-    }
     return PsiDocumentManager.getInstance(myProject).getPsiFile(myDocument);
   }
 
-  @Nullable
-  @Override
-  public Continuation performInReadAction(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
+  @NotNull
+  private Runnable performInReadAction(@NotNull ProgressIndicator indicator) {
     PsiFile file = getFile();
-    if (file == null) {
-      return null;
-    }
-    
-    if (!PsiDocumentManager.getInstance(myProject).isCommitted(myDocument)) {
-      scheduleInBackgroundForCommittedDocument();
-      return null;
-    }
-
-    IndentOptionsDetectorImpl detector = new IndentOptionsDetectorImpl(file, indicator);
-
-    myComputationStarted = System.currentTimeMillis();
-    IndentOptionsAdjuster adjuster = detector.getIndentOptionsAdjuster();
-    
-    return new Continuation(adjuster != null ? () -> adjustOptions(adjuster) : EmptyRunnable.INSTANCE);
+    IndentOptionsAdjuster adjuster = file == null ? null : new IndentOptionsDetectorImpl(file, indicator).getIndentOptionsAdjuster();
+    return adjuster != null ? () -> adjustOptions(adjuster) : EmptyRunnable.INSTANCE;
   }
 
   private void adjustOptions(IndentOptionsAdjuster adjuster) {
@@ -106,44 +86,36 @@ class DetectAndAdjustIndentOptionsTask extends ReadTask {
     }
   }
 
-  @Override
-  public void onCanceled(@NotNull ProgressIndicator indicator) {
-    if (isComputingForTooLong()) {
-      logTooLongComputation();
-      return;
-    }
-    
-    scheduleInBackgroundForCommittedDocument();
-  }
-
   private void logTooLongComputation() {
     PsiFile file = getFile();
     String fileName = file != null ? file.getName() : "";
     LOG.debug("Indent detection is too long for: " + fileName);
   }
 
-  private boolean isComputingForTooLong() {
-    return System.currentTimeMillis() - myComputationStarted > INDENT_COMPUTATION_TIMEOUT;
-  }
-
-  public void scheduleInBackgroundForCommittedDocument() {
-    if (myProject.isDisposed()) return;
-    
+  void scheduleInBackgroundForCommittedDocument() {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       PsiDocumentManager.getInstance(myProject).commitDocument(myDocument);
-      Continuation continuation = performInReadAction(new DumbProgressIndicator());
-      if (continuation != null) {
-        continuation.getAction().run();
-      }
+      performInReadAction(new DumbProgressIndicator()).run();
     }
     else {
-      PsiDocumentManager manager = PsiDocumentManager.getInstance(myProject);
-      manager.performForCommittedDocument(myDocument, () -> ProgressIndicatorUtils.scheduleWithWriteActionPriority(myExecutor, this));
+      ReadAction
+        .nonBlocking(() -> {
+          Runnable resultInTime = ProgressIndicatorUtils.withTimeout(INDENT_COMPUTATION_TIMEOUT, () ->
+            performInReadAction(Objects.requireNonNull(ProgressIndicatorProvider.getGlobalProgressIndicator())));
+          if (resultInTime == null) {
+            logTooLongComputation();
+            return EmptyRunnable.INSTANCE;
+          }
+          return resultInTime;
+        })
+        .finishOnUiThread(ModalityState.defaultModalityState(), Runnable::run)
+        .withDocumentsCommitted(myProject)
+        .submit(BOUNDED_EXECUTOR);
     }
   }
 
   @NotNull
-  public static TimeStampedIndentOptions getDefaultIndentOptions(@NotNull PsiFile file, @NotNull Document document) {
+  static TimeStampedIndentOptions getDefaultIndentOptions(@NotNull PsiFile file, @NotNull Document document) {
     FileType fileType = file.getFileType();
     CodeStyleSettings settings = CodeStyle.getSettings(file);
     return new TimeStampedIndentOptions(settings.getIndentOptions(fileType), document.getModificationStamp());
