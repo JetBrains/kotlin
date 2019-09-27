@@ -1,4 +1,3 @@
-import java.util.Comparator
 import java.util.stream.Collectors
 
 internal class Test {

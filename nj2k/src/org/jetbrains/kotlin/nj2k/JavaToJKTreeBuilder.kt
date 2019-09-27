@@ -57,7 +57,7 @@ class JavaToJKTreeBuilder constructor(
     private val symbolProvider: JKSymbolProvider,
     private val typeFactory: JKTypeFactory,
     converterServices: NewJavaToKotlinServices,
-    private val importStorage: ImportStorage
+    private val importStorage: JKImportStorage
 ) {
     private fun PsiType?.toJK(): JKType {
         if (this == null) return JKNoType

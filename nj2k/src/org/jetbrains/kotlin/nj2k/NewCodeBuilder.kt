@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.nj2k
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.nj2k.symbols.*
+import org.jetbrains.kotlin.nj2k.symbols.JKSymbol
+import org.jetbrains.kotlin.nj2k.symbols.getDisplayFqName
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
 import org.jetbrains.kotlin.nj2k.types.*
@@ -15,7 +17,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class NewCodeBuilder(context: NewJ2kConverterContext) {
     private val elementInfoStorage = context.elementsInfoStorage
-    private val printer = JKPrinter(elementInfoStorage)
+    private val printer = JKPrinter(context.project, context.importStorage, elementInfoStorage)
 
     private fun classKindString(kind: JKClass.ClassKind): String = when (kind) {
         JKClass.ClassKind.ANNOTATION -> "annotation class"
@@ -689,7 +691,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
             printer.print("::")
             val needFqName = methodReferenceExpression.qualifier is JKStubExpression
             val displayName =
-                if (needFqName) methodReferenceExpression.identifier.getDisplayName()
+                if (needFqName) methodReferenceExpression.identifier.getDisplayFqName()
                 else methodReferenceExpression.identifier.name
 
             printer.print(displayName.escapedAsQualifiedName())
@@ -816,7 +818,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
 
         override fun visitAnnotationRaw(annotation: JKAnnotation) {
             printer.print("@")
-            printer.print(annotation.classSymbol.fqName.escapedAsQualifiedName())
+            printer.renderSymbol(annotation.classSymbol, annotation)
             if (annotation.arguments.isNotEmpty()) {
                 printer.par {
                     printer.renderList(annotation.arguments) { it.accept(this) }
@@ -880,9 +882,13 @@ enum class ParenthesisKind(val open: String, val close: String) {
     ANGLE("<", ">")
 }
 
+
 private class JKPrinter(
+    project: Project,
+    importStorage: JKImportStorage,
     private val elementInfoStorage: JKElementInfoStorage
 ) {
+    val symbolRenderer = JKSymbolRenderer(importStorage, project)
     private val stringBuilder: StringBuilder = StringBuilder()
     private var currentIndent = 0;
     private val indentSymbol = " ".repeat(4)
@@ -921,15 +927,11 @@ private class JKPrinter(
     }
 
     inline fun par(kind: ParenthesisKind = ParenthesisKind.ROUND, body: () -> Unit) {
-        this.print(kind.open)
+        print(kind.open)
         body()
-        this.print(kind.close)
+        print(kind.close)
     }
 
-    private fun JKSymbol.needFqName(): Boolean {
-        if (this !is JKClassSymbol && !isStaticMember && !isEnumConstant) return false
-        return fqName !in mappedToKotlinFqNames
-    }
 
     private fun JKType.renderTypeInfo() {
         this@JKPrinter.print(elementInfoStorage.getOrCreateInfoForElement(this).render())
@@ -984,9 +986,7 @@ private class JKPrinter(
     }
 
     fun renderSymbol(symbol: JKSymbol, owner: JKTreeElement?) {
-        val needFqName = symbol.needFqName() && owner?.isSelectorOfQualifiedExpression() != true
-        val displayName = if (needFqName) symbol.getDisplayName() else symbol.name
-        this.print(displayName.escapedAsQualifiedName())
+        print(symbolRenderer.renderSymbol(symbol, owner))
     }
 
     inline fun <T> renderList(list: List<T>, separator: String = ", ", renderElement: (T) -> Unit) =
@@ -1000,13 +1000,10 @@ private class JKPrinter(
             renderElement(it)
         }
     }
-
-    private fun JKTreeElement.isSelectorOfQualifiedExpression() =
-        parent?.safeAs<JKQualifiedExpression>()?.selector == this
 }
 
 
-private fun String.escapedAsQualifiedName(): String =
+fun String.escapedAsQualifiedName(): String =
     split('.')
         .map { it.escaped() }
         .joinToString(".") { it }
@@ -1016,14 +1013,3 @@ private fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
     val tail = if (size <= 1) null else subList(1, size)
     return head to tail
 }
-
-
-private val mappedToKotlinFqNames =
-    setOf(
-        "java.util.ArrayList",
-        "java.util.LinkedHashMap",
-        "java.util.HashMap",
-        "java.util.LinkedHashSet",
-        "java.util.HashSet"
-    )
-

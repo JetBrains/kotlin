@@ -13,13 +13,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 
-class ImportStorage {
+class JKImportStorage {
     private val imports = mutableSetOf<FqName>()
 
     fun addImport(import: FqName) {
         if (isImportNeeded(import)) {
             imports += import
         }
+    }
+
+    fun addImport(import: String) {
+        addImport(FqName(import))
     }
 
     fun getImports(): Set<FqName> = imports

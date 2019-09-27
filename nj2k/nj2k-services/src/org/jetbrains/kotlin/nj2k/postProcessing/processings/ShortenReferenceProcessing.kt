@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.nj2k.postProcessing.processings
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.nj2k.ImportStorage
+import org.jetbrains.kotlin.nj2k.JKImportStorage
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.postProcessing.GeneralPostProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.runUndoTransparentActionInEdt
@@ -19,7 +19,7 @@ class ShortenReferenceProcessing : GeneralPostProcessing {
     private val filter = filter@{ element: PsiElement ->
         when (element) {
             is KtQualifiedExpression -> when {
-                ImportStorage.isImportNeededForCall(element) -> ShortenReferences.FilterResult.PROCESS
+                JKImportStorage.isImportNeededForCall(element) -> ShortenReferences.FilterResult.PROCESS
                 else -> ShortenReferences.FilterResult.SKIP
             }
             else -> ShortenReferences.FilterResult.PROCESS

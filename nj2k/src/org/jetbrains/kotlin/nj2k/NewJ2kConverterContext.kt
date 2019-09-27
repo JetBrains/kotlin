@@ -15,7 +15,7 @@ data class NewJ2kConverterContext(
     val typeFactory: JKTypeFactory,
     val converter: NewJavaToKotlinConverter,
     val inConversionContext: (PsiElement) -> Boolean,
-    val importStorage: ImportStorage,
+    val importStorage: JKImportStorage,
     val elementsInfoStorage: JKElementInfoStorage
 ) : ConverterContext {
     val project: Project

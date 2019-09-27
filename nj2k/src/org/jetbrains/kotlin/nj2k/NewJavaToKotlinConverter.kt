@@ -102,7 +102,7 @@ class NewJavaToKotlinConverter(
         val typeFactory = JKTypeFactory(symbolProvider)
         symbolProvider.typeFactory = typeFactory
         symbolProvider.preBuildTree(inputElements)
-        val importStorage = ImportStorage()
+        val importStorage = JKImportStorage()
         val treeBuilder = JavaToJKTreeBuilder(symbolProvider, typeFactory, converterServices, importStorage)
 
 

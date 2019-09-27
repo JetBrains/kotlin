@@ -1,3 +1,5 @@
+import A.I
+
 open class A {
     interface I {
         fun f()
@@ -6,5 +8,5 @@ open class A {
 
 class B : A()
 class Test {
-    var z: A.I? = null
+    var z: I? = null
 }

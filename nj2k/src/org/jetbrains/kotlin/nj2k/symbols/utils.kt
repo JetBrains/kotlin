@@ -12,6 +12,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsNoWrapping
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.nj2k.isObjectOrCompanionObject
 import org.jetbrains.kotlin.nj2k.psi
 import org.jetbrains.kotlin.nj2k.tree.*
@@ -23,17 +24,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 val JKSymbol.isUnresolved
     get() = this is JKUnresolvedSymbol
 
-fun JKSymbol.getDisplayName(): String {
+fun JKSymbol.getDisplayFqName(): String {
     fun JKSymbol.isDisplayable() = this is JKClassSymbol || this is JKPackageSymbol
     if (this !is JKUniverseSymbol<*>) return fqName
     return generateSequence(declaredIn?.takeIf { it.isDisplayable() }) { symbol ->
         symbol.declaredIn?.takeIf { it.isDisplayable() }
     }.fold(name) { acc, symbol -> "${symbol.name}.$acc" }
-}
-
-fun JKSymbol.fqNameToImport(): String? = when {
-    this is JKClassSymbol && this !is JKUniverseClassSymbol -> fqName
-    else -> null
 }
 
 fun JKSymbol.deepestFqName(): String? {
@@ -46,6 +42,9 @@ fun JKSymbol.deepestFqName(): String? {
         }
     return target.deepestFqNameForTarget() ?: fqName
 }
+
+val JKSymbol.containingClass
+    get() = declaredIn as? JKClassSymbol
 
 val JKSymbol.isStaticMember
     get() = when (val target = target) {
@@ -66,3 +65,11 @@ val JKSymbol.isEnumConstant
         is KtEnumEntry -> true
         else -> false
     }
+
+val JKSymbol.isUnnamedCompanion
+    get() = when (val target = target) {
+        is JKClass -> target.classKind == JKClass.ClassKind.COMPANION
+        is KtObjectDeclaration -> target.isCompanion() && target.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.toString()
+        else -> false
+    }
+

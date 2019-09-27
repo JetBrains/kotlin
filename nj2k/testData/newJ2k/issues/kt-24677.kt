@@ -1,5 +1,7 @@
+import Foo.SomeClass
+
 internal interface FooInterface {
-    fun foo(): ArrayList<out Foo.SomeClass?>?
+    fun foo(): ArrayList<out SomeClass?>?
 }
 
 class Foo : FooInterface {
