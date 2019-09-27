@@ -151,7 +151,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             skipCurrentDir = true
             // TODO: pass logger attached to message collector here.
         ).libraryResolver()
-        val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true)
+        val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true, true)
         val friendDependencies = resolvedLibraries.getFullList()
             .filter {
                 it.moduleName in friendLibraries

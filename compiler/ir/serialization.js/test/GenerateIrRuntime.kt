@@ -130,7 +130,7 @@ fun main(args: Array<String>) {
         skipCurrentDir = true
         // TODO: pass logger attached to message collector here.
     ).libraryResolver()
-    val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true)
+    val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true, true)
 
     buildKLib(File(outputPath).absolutePath, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
 }

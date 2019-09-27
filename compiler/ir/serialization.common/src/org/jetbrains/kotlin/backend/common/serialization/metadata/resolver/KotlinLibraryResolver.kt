@@ -14,7 +14,8 @@ interface KotlinLibraryResolver<L: KotlinLibrary> {
     fun resolveWithDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,
-        noDefaultLibs: Boolean = false
+        noDefaultLibs: Boolean = false,
+        noEndorsedLibs: Boolean = false
     ): KotlinLibraryResolveResult
 }
 

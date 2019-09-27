@@ -12,7 +12,7 @@ interface SearchPathResolver<out L: KotlinLibrary> : WithLogger {
     fun resolutionSequence(givenPath: String): Sequence<File>
     fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean = false): L
     fun resolve(givenPath: String): L
-    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<L>
+    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L>
 }
 
 interface SearchPathResolverWithAttributes<out L: KotlinLibrary>: SearchPathResolver<L> {
@@ -119,21 +119,35 @@ open class KotlinLibrarySearchPathResolver<out L: KotlinLibrary>(
     val defaultRoots: List<File>
         get() = listOfNotNull(distHead, distPlatformHead).filter { it.exists }
 
-    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<L> {
+    private fun getDefaultLibrariesFromDir(directory: File) =
+        if (directory.exists) {
+            directory.listFiles
+                .asSequence()
+                .filterNot { it.name.startsWith('.') }
+                .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_STDLIB_NAME }
+                .map { UnresolvedLibrary(it.absolutePath, null) }
+                .map { resolve(it, isDefaultLink = true) }
+        } else emptySequence()
+
+    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L> {
 
         val result = mutableListOf<L>()
 
         if (!noStdLib) {
             result.add(resolve(UnresolvedLibrary(KOTLIN_STDLIB_NAME, null), true))
         }
+
+        // Endorsed libraries in distHead.
+        if (!noEndorsedLibs) {
+            distHead?.let {
+                result.addAll(getDefaultLibrariesFromDir(it))
+            }
+        }
+        // Platform libraries resolve.
         if (!noDefaultLibs) {
-            val defaultLibs = defaultRoots.flatMap { it.listFiles }
-                    .asSequence()
-                    .filterNot { it.name.startsWith('.') }
-                    .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_STDLIB_NAME }
-                    .map { UnresolvedLibrary(it.absolutePath, null) }
-                    .map { resolve(it, isDefaultLink = true) }
-            result.addAll(defaultLibs)
+            distPlatformHead?.let {
+                result.addAll(getDefaultLibrariesFromDir(it))
+            }
         }
 
         return result

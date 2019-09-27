@@ -104,7 +104,8 @@ abstract class BasicIrBoxTest(
             libraryResolver.resolveWithDependencies(
                 unresolvedLibraries = unresolvedLibraries,
                 noStdLib = true,
-                noDefaultLibs = true
+                noDefaultLibs = true,
+                noEndorsedLibs = true
             )
 
         val actualOutputFile = outputFile.absolutePath.let {
