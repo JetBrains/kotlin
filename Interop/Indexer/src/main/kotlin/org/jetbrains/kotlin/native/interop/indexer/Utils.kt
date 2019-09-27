@@ -201,15 +201,19 @@ fun StructDef.fieldsHaveDefaultAlignment(): Boolean {
     return true
 }
 
-internal fun CValue<CXCursor>.isLeaf(): Boolean {
-    var hasChildren = false
+internal fun CValue<CXCursor>.hasExpressionChild(): Boolean {
+    var result = false
 
-    visitChildren(this) { _, _ ->
-        hasChildren = true
-        CXChildVisitResult.CXChildVisit_Break
+    visitChildren(this) { cursor, _ ->
+        if (clang_isExpression(cursor.kind) != 0) {
+            result = true
+            CXChildVisitResult.CXChildVisit_Break
+        } else {
+            CXChildVisitResult.CXChildVisit_Continue
+        }
     }
 
-    return !hasChildren
+    return result
 }
 
 internal fun List<String>.toNativeStringArray(scope: AutofreeScope): CArrayPointer<CPointerVar<ByteVar>> {

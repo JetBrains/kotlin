@@ -49,3 +49,24 @@ static int vlaSum2DForward(int size; int array[][size], int size) {
     return vlaSum2D(size, array);
 }
 */
+
+// "Strict" enums heuristic based on whether enum constants are defined explicitly:
+enum StrictEnum1 {
+    StrictEnum1A,
+    StrictEnum1B
+};
+
+enum StrictEnum2 {
+    StrictEnum2A __attribute__((unused)),
+    StrictEnum2B __attribute__((unused))
+};
+
+enum NonStrictEnum1 {
+    NonStrictEnum1A = 0,
+    NonStrictEnum1B __attribute__((unused))
+};
+
+enum NonStrictEnum2 {
+    NonStrictEnum2A,
+    NonStrictEnum2B __attribute__((unused)) = 1
+};

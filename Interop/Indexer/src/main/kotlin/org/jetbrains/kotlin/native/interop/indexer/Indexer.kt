@@ -276,7 +276,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
                     val name = clang_getCursorSpelling(childCursor).convertAndDispose()
                     val value = clang_getEnumConstantDeclValue(childCursor)
 
-                    val constant = EnumConstant(name, value, isExplicitlyDefined = !childCursor.isLeaf())
+                    val constant = EnumConstant(name, value, isExplicitlyDefined = childCursor.hasExpressionChild())
                     enumDef.constants.add(constant)
                 }
 
