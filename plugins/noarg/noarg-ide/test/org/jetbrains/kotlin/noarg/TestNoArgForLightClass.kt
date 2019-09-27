@@ -42,9 +42,6 @@ class TestNoArgForLightClass : KotlinLightCodeInsightFixtureTestCase() {
                     + "@$noArgAnnotationName class $targetClassName(val e: Int)"
         ) as KtFile
 
-        //We have to call it because NoArg checker need to be executed and mark needed PSI for CodegenExtension
-        file.analyzeWithAllCompilerChecks()
-
         val classes = file.classes
         assertEquals(2, classes.size)
 
