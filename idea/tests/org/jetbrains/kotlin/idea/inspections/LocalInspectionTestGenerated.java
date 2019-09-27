@@ -5178,11 +5178,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2.kt");
             }
 
-            @TestMetadata("typeMismatch2_ni.kt")
-            public void testTypeMismatch2_ni() throws Exception {
-                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2_ni.kt");
-            }
-
             @TestMetadata("typeMismatch3.kt")
             public void testTypeMismatch3() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch3.kt");
