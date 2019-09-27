@@ -166,6 +166,12 @@ class ExpressionCodegen(
         return StackValue.onStack(type, irType.toKotlinType())
     }
 
+    internal fun genOrGetLocal(expression: IrExpression, data: BlockInfo): StackValue =
+        if (expression is IrGetValue)
+            StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toKotlinType())
+        else
+            gen(expression, typeMapper.mapType(expression.type), expression.type, data)
+
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()

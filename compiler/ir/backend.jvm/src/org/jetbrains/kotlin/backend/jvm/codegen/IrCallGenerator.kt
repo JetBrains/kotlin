@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -42,10 +40,6 @@ interface IrCallGenerator {
         blockInfo: BlockInfo
     ) {
         codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
-    }
-
-    fun putValueIfNeeded(parameterType: Type, value: StackValue, kind: ValueKind, parameterIndex: Int, codegen: ExpressionCodegen) {
-        value.put(parameterType, codegen.visitor)
     }
 
     object DefaultCallGenerator : IrCallGenerator
