@@ -62,7 +62,9 @@ class ExternalSystemEventDispatcherTest : LightPlatformTestCase() {
 
     assertTrue(semaphore.waitFor(500))
 
-    assertThat(eventMessages).hasSize(11)
+    assertThat(eventMessages)
+      .doesNotContain("Late completion message")
+      .hasSize(11)
     assertSameElements(eventMessages.take(8),
                        "Build started",
                        "sub task1 started",
