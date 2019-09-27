@@ -622,6 +622,8 @@ class KotlinCoreEnvironment private constructor(
             IrGenerationExtension.registerExtensionPoint(project)
             ScriptEvaluationExtension.registerExtensionPoint(project)
             ShellExtension.registerExtensionPoint(project)
+            TypeResolutionInterceptorExtension.registerExtensionPoint(project)
+            CallResolutionInterceptorExtension.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
@@ -389,6 +390,8 @@ class PSICallResolver(
         override val lexicalScope: LexicalScope get() = context.scope
         override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
         private val cache = HashMap<ReceiverParameterDescriptor, ReceiverValueWithSmartCastInfo>()
+        override val module: ModuleDescriptor
+            get() = context.scope.ownerDescriptor.module
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? {
             val implicitReceiver = scope.implicitReceiver ?: return null
@@ -396,6 +399,14 @@ class PSICallResolver(
             return cache.getOrPut(implicitReceiver) {
                 context.transformToReceiverWithSmartCastInfo(implicitReceiver.value)
             }
+        }
+
+        override fun getContributedFunctionsAndConstructors(
+            resolutionScope: ResolutionScope,
+            name: Name,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return getContributedFunctionsAndConstructors(context, resolutionScope, name, location)
         }
     }
 

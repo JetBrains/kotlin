@@ -681,7 +681,7 @@ public class CallResolver {
         OverloadResolutionResultsImpl<D> result;
         if (!(resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates)) {
             assert resolutionTask.name != null;
-            result = newResolutionOldInference.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
+            result = newResolutionOldInference.runResolution(context, resolutionTask.name, resolutionTask.resolutionKind, tracing, this);
         }
         else {
             assert resolutionTask.givenCandidates != null;
