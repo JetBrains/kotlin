@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -72,7 +73,7 @@ open class DefaultArgumentStubGenerator(
         val builder = context.createIrBuilder(newIrFunction.symbol)
 
         newIrFunction.body = builder.irBlockBody(newIrFunction) {
-            val params = mutableListOf<IrVariable>()
+            val params = mutableListOf<IrValueDeclaration>()
             val variables = mutableMapOf<IrValueDeclaration, IrValueDeclaration>()
 
             irFunction.dispatchReceiverParameter?.let {
@@ -85,8 +86,7 @@ open class DefaultArgumentStubGenerator(
 
             for (valueParameter in irFunction.valueParameters) {
                 val parameter = newIrFunction.valueParameters[valueParameter.index]
-
-                val argument = if (valueParameter.defaultValue != null) {
+                val remapped = if (valueParameter.defaultValue != null) {
                     val kIntAnd = symbols.intAnd.owner
                     val condition = irNotEquals(irCall(kIntAnd).apply {
                         dispatchReceiver = irGet(maskParameter(newIrFunction, valueParameter.index / 32))
@@ -104,21 +104,18 @@ open class DefaultArgumentStubGenerator(
                         }
                     })
 
-                    irIfThenElse(
+                    val argument = irIfThenElse(
                         type = parameter.type,
                         condition = condition,
                         thenPart = expressionBody.expression,
                         elsePart = irGet(parameter)
                     )
+                    createTmpVariable(argument, nameHint = parameter.name.asString())
                 } else {
-                    irGet(parameter)
+                    parameter
                 }
-
-                val temporaryVariable = createTmpVariable(argument, nameHint = parameter.name.asString())
-                temporaryVariable.parent = newIrFunction
-
-                params.add(temporaryVariable)
-                variables[valueParameter] = temporaryVariable
+                params.add(remapped)
+                variables[valueParameter] = remapped
             }
 
             when (irFunction) {
@@ -151,7 +148,7 @@ open class DefaultArgumentStubGenerator(
     private fun IrBlockBodyBuilder.dispatchToImplementation(
         irFunction: IrSimpleFunction,
         newIrFunction: IrFunction,
-        params: MutableList<IrVariable>
+        params: MutableList<IrValueDeclaration>
     ): IrExpression {
         val dispatchCall = irCall(irFunction.symbol).apply {
             passTypeArgumentsFrom(newIrFunction)
@@ -177,7 +174,7 @@ open class DefaultArgumentStubGenerator(
         handlerDeclaration: IrValueParameter,
         oldIrFunction: IrFunction,
         newIrFunction: IrFunction,
-        params: MutableList<IrVariable>
+        params: MutableList<IrValueDeclaration>
     ): IrExpression {
         assert(needSpecialDispatch(oldIrFunction as IrSimpleFunction))
         error("This method should be overridden")
