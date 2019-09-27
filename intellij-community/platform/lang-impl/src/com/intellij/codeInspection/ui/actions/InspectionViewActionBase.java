@@ -12,13 +12,16 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 public abstract class InspectionViewActionBase extends AnAction {
-  public InspectionViewActionBase(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
+
+  public InspectionViewActionBase(@Nullable @Nls(capitalization = Nls.Capitalization.Title) String text,
+                                  @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String description, @Nullable Icon icon) {
     super(text, description, icon);
   }
 
