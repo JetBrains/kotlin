@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testing
 
 import org.gradle.internal.serialize.PlaceholderException
+import java.io.PrintWriter
 
 /**
  * Class to be shown in default Gradle tests console reporter.
@@ -31,14 +32,24 @@ class KotlinTestFailure(
     null,
     null
 ) {
-    override fun getStackTrace(): Array<StackTraceElement> =
-        stackTrace?.toTypedArray() ?: arrayOf()
+    override fun getStackTrace(): Array<StackTraceElement> {
+        return stackTrace?.toTypedArray() ?: arrayOf()
+    }
+
+    override fun printStackTrace(s: PrintWriter?) {
+        setStackTrace(getStackTrace())
+        super.printStackTrace(s)
+    }
 
     override fun fillInStackTrace(): Throwable {
         return this
     }
 
     override fun toString(): String {
+        if (getStackTrace().isNotEmpty()) {
+            return message ?: "Test failed"
+        }
+
         return if (stackTraceString != null) {
             if (message != null && message!! !in stackTraceString) message + "\n" + stackTraceString
             else stackTraceString
