@@ -223,7 +223,7 @@ private val cleaningUpDiagnosticBasedPostProcessingGroup =
 
 private val processings: List<NamedPostProcessingGroup> = listOf(
     NamedPostProcessingGroup(
-        "Inferring declarations nullability",
+        "Inferring types",
         listOf(
             InspectionLikeProcessingGroup(
                 processings = listOf(
@@ -239,14 +239,13 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
     ),
     NamedPostProcessingGroup(
         "Formatting code",
-        listOf(FormatCodeProcessing())
+        listOf(
+            FormatCodeProcessing(),
+            ShortenReferenceProcessing()
+        )
     ),
     NamedPostProcessingGroup(
-        "Shortening fully-qualified references",
-        listOf(ShortenReferenceProcessing())
-    ),
-    NamedPostProcessingGroup(
-        "Converting POJOs to data classes",
+        "Cleaning up code",
         listOf(
             InspectionLikeProcessingGroup(VarToValProcessing()),
             ConvertGettersAndSettersToPropertyProcessing(),
@@ -255,12 +254,7 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
                 RemoveExplicitGetterInspectionBasedProcessing(),
                 RemoveExplicitSetterInspectionBasedProcessing()
             ),
-            ConvertToDataClassProcessing()
-        )
-    ),
-    NamedPostProcessingGroup(
-        "Cleaning up Kotlin code",
-        listOf(
+            ConvertToDataClassProcessing(),
             errorsFixingDiagnosticBasedPostProcessingGroup,
             addOrRemoveModifiersProcessingGroup,
             inspectionLikePostProcessingGroup,
@@ -273,11 +267,8 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
         "Optimizing imports",
         listOf(
             OptimizeImportsProcessing(),
-            ShortenReferenceProcessing()
+            ShortenReferenceProcessing(),
+            FormatCodeProcessing()
         )
-    ),
-    NamedPostProcessingGroup(
-        "Formatting code",
-        listOf(FormatCodeProcessing())
     )
 )
