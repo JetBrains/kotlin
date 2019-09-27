@@ -3,6 +3,7 @@ package com.intellij.codeInsight.hints.settings.language
 
 import com.intellij.codeInsight.hints.ChangeListener
 import com.intellij.codeInsight.hints.ImmediateConfigurable
+import com.intellij.ui.ContextHelpLabel
 import com.intellij.util.ui.JBUI
 import java.awt.Component
 import java.awt.Dimension
@@ -53,12 +54,23 @@ private class CaseListPanel(val cases: List<ImmediateConfigurable.Case>, listene
     add(Box.createRigidArea(JBUI.size(0, 5)))
     for (case in cases) {
       val checkBox = JCheckBox(case.name, case.value)
-      add(checkBox)
       checkBox.alignmentX = Component.LEFT_ALIGNMENT
       checkBoxes.add(checkBox)
       checkBox.addActionListener {
         case.value = checkBox.isSelected
         listener.settingsChanged()
+      }
+      val description = case.extendedDescription
+      if (description != null) {
+        val checkBoxPanel = JPanel()
+        checkBoxPanel.layout = BoxLayout(checkBoxPanel, BoxLayout.X_AXIS)
+        checkBoxPanel.alignmentX = Component.LEFT_ALIGNMENT
+        checkBoxPanel.add(checkBox)
+        checkBoxPanel.add(Box.createRigidArea(JBUI.size(5, 0)))
+        checkBoxPanel.add(ContextHelpLabel.create(description))
+        add(checkBoxPanel)
+      } else {
+        add(checkBox)
       }
       add(Box.createRigidArea(Dimension(0, 3)))
     }

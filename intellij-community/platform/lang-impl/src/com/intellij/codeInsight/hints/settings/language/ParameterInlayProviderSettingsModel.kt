@@ -33,7 +33,8 @@ class ParameterInlayProviderSettingsModel(
     val state = optionStates[index]
     ImmediateConfigurable.Case(option.name,
                                loadFromSettings = { state.state },
-                               onUserChanged = { state.state = it }
+                               onUserChanged = { state.state = it },
+                               extendedDescription = option.extendedDescription
     )
   }
 
