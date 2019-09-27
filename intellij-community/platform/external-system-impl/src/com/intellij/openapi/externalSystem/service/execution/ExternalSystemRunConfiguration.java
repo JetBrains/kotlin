@@ -42,6 +42,7 @@ import com.intellij.util.xmlb.Accessor;
 import com.intellij.util.xmlb.SerializationFilter;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -170,6 +171,21 @@ public class ExternalSystemRunConfiguration extends LocatableConfigurationBase i
       }
     }
     return scope;
+  }
+
+  /**
+   * @deprecated Internal class {@link MyRunnableState} was turned into fully fledged class {@link ExternalSystemRunnableState}.
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.3")
+  public static class MyRunnableState extends ExternalSystemRunnableState {
+    public MyRunnableState(@NotNull ExternalSystemTaskExecutionSettings settings,
+                           @NotNull Project project,
+                           boolean debug,
+                           @NotNull ExternalSystemRunConfiguration configuration,
+                           @NotNull ExecutionEnvironment env) {
+      super(settings, project, debug, configuration, env);
+    }
   }
 
   static void foldGreetingOrFarewell(@Nullable ExecutionConsole consoleView, String text, boolean isGreeting) {
