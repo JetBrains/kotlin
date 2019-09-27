@@ -246,7 +246,7 @@ task resultsTask() {
 
 boolean isExcluded(String dir) {
     // List of tests that fail due to unresolved compiler bugs
-    def excluded = [ "codegen/box/functions/bigArity" /* KT-26140 */ ]
+    def excluded = [ ]
 
     if (project.twoStageEnabled) {
         excluded += [
