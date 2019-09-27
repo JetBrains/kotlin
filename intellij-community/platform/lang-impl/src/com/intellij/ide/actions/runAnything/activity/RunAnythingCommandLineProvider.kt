@@ -3,7 +3,10 @@ package com.intellij.ide.actions.runAnything.activity
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.execution.ParametersListUtil
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.Internal
 abstract class RunAnythingCommandLineProvider : RunAnythingProviderWithVisibleExecutionFail<String>() {
 
   abstract override fun getHelpCommand(): String
@@ -23,40 +26,12 @@ abstract class RunAnythingCommandLineProvider : RunAnythingProviderWithVisibleEx
       helpCommand.startsWith(commandLine) -> ""
       else -> return null
     }
-    val parameters = parseIncompleteCommandLine(command)
+    val parameters = ParametersListUtil.parse(command, true, true, true)
     val toComplete = parameters.last()
     val prefix = command.removeSuffix(toComplete).trim()
-    val commands = parameters.filter { it.isNotEmpty() }
-    val completedCommands = parameters.dropLast(1).filter { it.isNotEmpty() }
-    return CommandLine(commands, completedCommands, command.trim(), prefix, toComplete)
-  }
-
-  private fun parseIncompleteCommandLine(commandLine: CharSequence): List<String> {
-    val parameters = ArrayList<String>()
-    val parameter = StringBuilder()
-    var leadingQuote: Char? = null
-    var leadingSlash = false
-    for (ch in commandLine) {
-      if (!leadingSlash) {
-        when (ch) {
-          leadingQuote -> leadingQuote = null
-          '\'', '"' -> leadingQuote = ch
-        }
-      }
-      when (ch) {
-        '\\' -> leadingSlash = !leadingSlash
-        else -> leadingSlash = false
-      }
-      if (leadingQuote == null && ch == ' ') {
-        parameters.add(parameter.toString())
-        parameter.clear()
-      }
-      else {
-        parameter.append(ch)
-      }
-    }
-    parameters.add(parameter.toString())
-    return parameters
+    val nonEmptyParameters = parameters.filter { it.isNotEmpty() }
+    val completedParameters = parameters.dropLast(1).filter { it.isNotEmpty() }
+    return CommandLine(nonEmptyParameters, completedParameters, command.trim(), prefix, toComplete)
   }
 
   override fun getValues(dataContext: DataContext, pattern: String): List<String> {
@@ -72,14 +47,13 @@ abstract class RunAnythingCommandLineProvider : RunAnythingProviderWithVisibleEx
   }
 
   data class CommandLine(
-    val commands: List<String>,
-    val completedCommands: List<String>,
+    val parameters: List<String>,
+    val completedParameters: List<String>,
     val command: String,
     val prefix: String,
     val toComplete: String
   ) {
-
-    private val commandSet by lazy { completedCommands.toSet() }
-    operator fun contains(command: String) = command in commandSet
+    private val parameterSet by lazy { completedParameters.toSet() }
+    operator fun contains(command: String) = command in parameterSet
   }
 }

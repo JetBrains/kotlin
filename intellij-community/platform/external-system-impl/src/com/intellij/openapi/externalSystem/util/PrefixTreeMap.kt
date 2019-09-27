@@ -1,8 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.util
 
-import com.intellij.openapi.externalSystem.util.ui.Optional
-import com.intellij.openapi.externalSystem.util.ui.Optional.Companion.EMPTY
 import com.intellij.util.containers.FList
 
 /**
@@ -52,34 +50,34 @@ class PrefixTreeMap<K, V> : Map<List<K>, V> {
     var size: Int = 0
       private set
 
-    var value = Optional.empty<V>()
+    var value = Value.empty<V>()
       private set
 
     private fun calculateCurrentSize() =
       children.values.sumBy { it.size } + if (value.isPresent) 1 else 0
 
-    private fun getAndSet(value: Optional<V>) =
+    private fun getAndSet(value: Value<V>) =
       this.value.also {
         this.value = value
         size = calculateCurrentSize()
       }
 
-    fun put(path: FList<K>, value: V): Optional<V> {
+    fun put(path: FList<K>, value: V): Value<V> {
       val (head, tail) = path
       val child = children.getOrPut(head) { Node() }
       val previousValue = when {
-        tail.isEmpty() -> child.getAndSet(Optional.of(value))
+        tail.isEmpty() -> child.getAndSet(Value.of(value))
         else -> child.put(tail, value)
       }
       size = calculateCurrentSize()
       return previousValue
     }
 
-    fun remove(path: FList<K>): Optional<V> {
+    fun remove(path: FList<K>): Value<V> {
       val (head, tail) = path
-      val child = children[head] ?: return EMPTY
+      val child = children[head] ?: return Value.EMPTY
       val value = when {
-        tail.isEmpty() -> child.getAndSet(EMPTY)
+        tail.isEmpty() -> child.getAndSet(Value.EMPTY)
         else -> child.remove(tail)
       }
       if (child.isEmpty) children.remove(head)
@@ -137,6 +135,24 @@ class PrefixTreeMap<K, V> : Map<List<K>, V> {
   }
 
   data class Entry<K, V>(override val key: K, override val value: V) : Map.Entry<K, V>
+
+  private class Value<out T> private constructor(val isPresent: Boolean, private val value: Any?) {
+
+    fun get(): T {
+      @Suppress("UNCHECKED_CAST")
+      if (isPresent) return value as T
+      throw NoSuchElementException("No value present")
+    }
+
+    fun getOrNull() = if (isPresent) get() else null
+
+    companion object {
+      val EMPTY = Value<Nothing>(false, null)
+
+      fun <T> empty() = EMPTY as Value<T>
+      fun <T> of(value: T) = Value<T>(true, value)
+    }
+  }
 
   companion object {
     private operator fun <E> FList<E>.component1() = head

@@ -3,7 +3,6 @@ package com.intellij.openapi.externalSystem.service.project.manage
 
 import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap
 import com.intellij.testFramework.UsefulTestCase
-import junit.framework.TestCase
 import org.junit.Test
 
 class PathPrefixTreeMapTest : UsefulTestCase() {

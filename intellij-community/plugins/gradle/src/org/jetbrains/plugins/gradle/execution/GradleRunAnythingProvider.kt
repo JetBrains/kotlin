@@ -92,7 +92,7 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
 
   private fun completeTasks(commandLine: CommandLine, context: Context): Sequence<String> {
     return getTasks(context)
-      .filterNot { commandLine.completedCommands.any { task -> matchTask(task, it.first, it.second) } }
+      .filterNot { commandLine.completedParameters.any { task -> matchTask(task, it.first, it.second) } }
       .flatMap {
         when {
           it.second.isInherited -> sequenceOf(it.first.removePrefix(":"))
@@ -110,14 +110,14 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
   }
 
   private fun completeTaskOptions(commandLine: CommandLine, context: Context): Sequence<String> {
-    val task = commandLine.completedCommands.lastOrNull() ?: return emptySequence()
+    val task = commandLine.completedParameters.lastOrNull() ?: return emptySequence()
     return getTaskOptions(context, task).map { it.name }
   }
 
   private fun completeTaskClassArguments(commandLine: CommandLine, context: Context): Sequence<String> {
-    if (commandLine.completedCommands.size < 2) return emptySequence()
-    val task = commandLine.completedCommands[commandLine.completedCommands.size - 2]
-    val optionName = commandLine.completedCommands[commandLine.completedCommands.size - 1]
+    if (commandLine.completedParameters.size < 2) return emptySequence()
+    val task = commandLine.completedParameters[commandLine.completedParameters.size - 2]
+    val optionName = commandLine.completedParameters[commandLine.completedParameters.size - 1]
     val options = getTaskOptions(context, task)
     val option = options.find { optionName == it.name } ?: return emptySequence()
     if (!option.argumentTypes.contains(TaskOption.ArgumentType.CLASS)) return emptySequence()
