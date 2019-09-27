@@ -71,8 +71,6 @@ val KotlinLibrary.isBuiltIns: Boolean
 fun loadKlib(klibPath: String) =
     createKotlinLibrary(KFile(KFile(klibPath).absolutePath))
 
-internal val JS_KLIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("JS KLIBRARY")
-
 private val emptyLoggingContext = object : LoggingContext {
     override var inVerbosePhase = false
 
@@ -88,8 +86,7 @@ fun generateKLib(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
-    resolvedLibraries: KotlinLibraryResolveResult,
-    allDependencies: List<KotlinLibrary>,
+    allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
     outputKlibPath: String,
     nopack: Boolean
@@ -123,7 +120,7 @@ fun generateKLib(
         icData = emptyList()
     }
 
-    val depsDescriptors = ModulesStructure(project, files, configuration, resolvedLibraries, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -139,7 +136,7 @@ fun generateKLib(
         psi2IrContext.bindingContext,
         files,
         outputKlibPath,
-        allDependencies,
+        allDependencies.getFullList(),
         moduleFragment,
         icData,
         nopack
@@ -167,11 +164,10 @@ fun loadIr(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
-    resolvedLibraries: KotlinLibraryResolveResult,
-    allDependencies: List<KotlinLibrary>,
+    allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>
 ): IrModuleInfo {
-    val depsDescriptors = ModulesStructure(project, files, configuration, resolvedLibraries, allDependencies, friendDependencies)
+    val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
 
@@ -181,7 +177,7 @@ fun loadIr(
 
     val deserializer = JsIrLinker(moduleDescriptor, JsMangler, emptyLoggingContext, irBuiltIns, symbolTable)
 
-    val deserializedModuleFragments = sortDependencies(allDependencies, depsDescriptors.descriptors).map {
+    val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
         deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it))!!
     }
 
@@ -206,69 +202,23 @@ private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): Gene
 private fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: JsIrLinker? = null) =
     Psi2IrTranslator(languageVersionSettings, configuration).generateModuleFragment(this, files, deserializer)
 
-/*
-private fun loadKlibMetadataParts(
-    moduleId: KotlinLibrary
-): JsKlibMetadataParts {
-    return KlibMetadataIncrementalSerializer.readModuleAsProto(moduleId.moduleHeaderData, moduleId.unresolvedDependencies)
-}
-*/
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
 val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
-/*
-private fun loadKlibMetadata(
-    klib: KotlinLibrary,
-    isBuiltIn: Boolean,
-    lookupTracker: LookupTracker,
-    storageManager: LockBasedStorageManager,
-    metadataVersion: JsKlibMetadataVersion,
-    languageVersionSettings: LanguageVersionSettings,
-    builtinsModule: ModuleDescriptorImpl?,
-    dependencies: List<ModuleDescriptorImpl>
-): ModuleDescriptorImpl {
-    assert(isBuiltIn == (builtinsModule === null))
 
-    val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-        klib,
-        languageVersionSettings,
-        storageManager,
-        builtinsModule?.builtIns,
-        packageAccessedHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
-        createBuiltinPackageFragment = true // TODO: This is JS specific. Move me to inheritance.
-    )
-
-    md.setDependencies(listOf(md) + dependencies)
-
-    return md
-}
-*/
 // TODO: refactor with ResolvedDependencies class in Native.
 private class ModulesStructure(
     private val project: Project,
     private val files: List<KtFile>,
     val compilerConfiguration: CompilerConfiguration,
-    val resolvedLibraries: KotlinLibraryResolveResult,
-    private val allDependencies: List<KotlinLibrary>,
+    val allDependencies: KotlinLibraryResolveResult,
     private val friendDependencies: List<KotlinLibrary>
 ) {
-/*
-    private val deserializedModuleParts: Map<KotlinLibrary, JsKlibMetadataParts> =
-        allDependencies.associateWith { loadKlibMetadataParts(it) }
-
-    fun findModuleByName(name: String): KotlinLibrary =
-        allDependencies.find { it.moduleName == name } ?: error("Module is not found: $name")
-*/
-    //val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> =
-    //    deserializedModuleParts.mapValues { (klib, _) ->
-    //        klib.unresolvedDependencies.map { findModuleByName(it.path) }
-    //    }
-
     val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> = {
         val result = mutableMapOf<KotlinLibrary, List<KotlinLibrary>>()
 
-        resolvedLibraries.forEach { klib, _ ->
-            val dependencies = resolvedLibraries.filterRoots {
+        allDependencies.forEach { klib, _ ->
+            val dependencies = allDependencies.filterRoots {
                 it.library == klib
             }.getFullList(TopologicalLibraryOrder)
             result.put(klib, dependencies.minus(klib))
@@ -276,13 +226,7 @@ private class ModulesStructure(
         result
     }()
 
-    init {
-        moduleDependencies.forEach { entry ->
-            println("${entry.key} -> ${entry.value}")
-        }
-    }
-
-    val builtInsDep = allDependencies.find { it.isBuiltIns }
+    val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
 
     fun runAnalysis(): JsAnalysisResult {
         val analysisResult =
@@ -290,7 +234,7 @@ private class ModulesStructure(
                 files,
                 project,
                 compilerConfiguration,
-                allDependencies.map { getModuleDescriptor(it) },
+                allDependencies.getFullList().map { getModuleDescriptor(it) },
                 friendModuleDescriptors = friendDependencies.map { getModuleDescriptor(it) },
                 thisIsBuiltInsModule = builtInModuleDescriptor == null,
                 customBuiltInsModule = builtInModuleDescriptor
@@ -324,8 +268,6 @@ private class ModulesStructure(
         )
         if (isBuiltIns) runtimeModule = md
 
-
-        println("${current.libraryFile} depends on ${moduleDependencies.getValue(current).map {it.libraryFile}}" )
         val dependencies = moduleDependencies.getValue(current).map { getModuleDescriptor(it) }
         md.setDependencies(listOf(md) + dependencies)
         md

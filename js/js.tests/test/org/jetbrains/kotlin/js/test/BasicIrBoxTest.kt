@@ -91,8 +91,7 @@ abstract class BasicIrBoxTest(
         }).map { File(it).absolutePath }
         val unresolvedLibraries = allKlibPaths.map { UnresolvedLibrary(it, null) }
 
-
-        println("allKLibPaths = $allKlibPaths")
+        // Configure the resolver to only work with absolute paths for now.
         val libraryResolver = KotlinLibrarySearchPathResolver<KotlinLibrary>(
             repositories = emptyList(),
             directLibs = allKlibPaths,
@@ -107,7 +106,6 @@ abstract class BasicIrBoxTest(
                 noStdLib = true,
                 noDefaultLibs = true
             )
-        val allDependencies = resolvedLibraries.getFullList()
 
         val actualOutputFile = outputFile.absolutePath.let {
             if (!isMainModule) it.replace("_v5.js", "/") else it
@@ -136,8 +134,7 @@ abstract class BasicIrBoxTest(
                 files = filesToCompile,
                 configuration = config.configuration,
                 phaseConfig = phaseConfig,
-                resolvedLibraries = resolvedLibraries,
-                allDependencies = allDependencies,
+                allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
                 mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                 exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
@@ -156,8 +153,7 @@ abstract class BasicIrBoxTest(
                 project = config.project,
                 files = filesToCompile,
                 configuration = config.configuration,
-                resolvedLibraries = resolvedLibraries,
-                allDependencies = allDependencies,
+                allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
                 outputKlibPath = actualOutputFile,
                 nopack = true

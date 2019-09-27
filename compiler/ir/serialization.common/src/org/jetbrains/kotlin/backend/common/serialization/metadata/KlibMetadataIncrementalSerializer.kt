@@ -8,24 +8,20 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
-import org.jetbrains.kotlin.backend.common.serialization.metadata.JsKlibMetadataParts
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializer
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
 
 // TODO: need a refactoring between IncrementalSerializer and MonolithicSerializer.
 class KlibMetadataIncrementalSerializer(
@@ -77,20 +73,6 @@ class KlibMetadataIncrementalSerializer(
         }
 
         return SerializedMetadata(header, fragmentParts, fragmentNames)
-    }
-
-    private fun OutputStream.writeProto(fieldNumber: Int, content: ByteArray) {
-        // Message header
-        write((fieldNumber shl 3) or 2)
-        // Size varint
-        var size = content.size
-        while (size > 0x7F) {
-            write(0x80 or (size and 0x7F))
-            size = size ushr 7
-        }
-        write(size)
-        // Fragment itself
-        write(content)
     }
 
     // TODO: For now, in the incremental serializer, we assume

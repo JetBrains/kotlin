@@ -52,8 +52,6 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
         val moduleName = Name.special(libraryProto.moduleName)
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
 
-        println("createDescriptorOptionalBuiltIns: $moduleName, builtIns = $builtIns")
-
         val moduleDescriptor = if (builtIns != null )
             descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
         else
@@ -65,8 +63,6 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
             if (moduleDescriptor.isFromKlibWithEmptyDependencies) {
                 functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
             } else null
-
-        println("got compositePackageFragmentAddend: $compositePackageFragmentAddend")
 
         val provider = createPackageFragmentProvider(
             library,
@@ -92,10 +88,6 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
         configuration: DeserializationConfiguration,
         compositePackageFragmentAddend: PackageFragmentProvider?
     ): PackageFragmentProvider {
-
-
-        println("createPackageFragmentProvider(${library.libraryName}, compositePackageFragmentAddend=$compositePackageFragmentAddend ")
-        println("\t$packageFragmentNames")
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
             library, packageFragmentNames, moduleDescriptor, packageAccessedHandler, storageManager)

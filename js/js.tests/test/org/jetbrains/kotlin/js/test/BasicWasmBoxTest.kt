@@ -113,8 +113,8 @@ abstract class BasicWasmBoxTest(
             files = filesToCompile,
             configuration = config.configuration,
             phaseConfig = phaseConfig,
-            resolvedLibraries = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
-            allDependencies = listOf(wasmRuntimeKlib),
+            // TODO: Bypass the resolver fow wasm.
+            allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
             friendDependencies = emptyList(),
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
         )

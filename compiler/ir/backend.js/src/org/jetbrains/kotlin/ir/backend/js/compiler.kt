@@ -29,14 +29,13 @@ fun compile(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
-    resolvedLibraries: KotlinLibraryResolveResult,
-    allDependencies: List<KotlinLibrary>,
+    allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
     mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet()
 ): CompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, files, configuration, resolvedLibraries, allDependencies, friendDependencies)
+        loadIr(project, files, configuration, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
 

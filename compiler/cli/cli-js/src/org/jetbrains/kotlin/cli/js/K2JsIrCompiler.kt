@@ -140,24 +140,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
-/*
-        val loadedLibrariesNames = mutableSetOf<String>()
-        val dependencies = mutableListOf<KotlinLibrary>()
-        val friendDependencies = mutableListOf<KotlinLibrary>()
 
-        for (library in libraries) {
-            val irLib = loadKlib(library)
-            if (irLib.moduleName !in loadedLibrariesNames) {
-                dependencies.add(irLib)
-                loadedLibrariesNames.add(irLib.moduleName)
-                if (library in friendLibraries) {
-                    friendDependencies.add(irLib)
-                }
-            }
-        }
-*/
         val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, null) }
-        // This resolver configuration only understands absolute path libraries.
+        // Configure resolver to only understands absolute path libraries.
         val libraryResolver = KotlinLibrarySearchPathResolver<KotlinLibrary>(
             repositories = emptyList(),
             directLibs = libraries,
@@ -166,9 +151,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             skipCurrentDir = true
             // TODO: pass logger attached to message collector here.
         ).libraryResolver()
-        val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries)
-        val dependencies = resolvedLibraries.getFullList()
-        val friendDependencies = dependencies
+        val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true)
+        val friendDependencies = resolvedLibraries.getFullList()
             .filter {
                 it.moduleName in friendLibraries
             }
@@ -189,8 +173,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 project = config.project,
                 files = sourcesFiles,
                 configuration = config.configuration,
-                resolvedLibraries = resolvedLibraries,
-                allDependencies = dependencies,
+                allDependencies = resolvedLibraries,
                 friendDependencies = friendDependencies,
                 outputKlibPath = outputKlibPath,
                 nopack = arguments.irLegacyGradlePluginCompatibility
@@ -205,8 +188,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourcesFiles,
                 configuration,
                 phaseConfig,
-                resolvedLibraries,
-                allDependencies = dependencies,
+                allDependencies = resolvedLibraries,
                 friendDependencies = friendDependencies,
                 mainArguments = mainCallArguments
             )

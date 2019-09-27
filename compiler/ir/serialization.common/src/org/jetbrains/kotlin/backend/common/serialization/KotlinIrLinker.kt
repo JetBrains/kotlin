@@ -418,9 +418,6 @@ abstract class KotlinIrLinker(
             fileToDeserializerMap[file] = fileDeserializer
 
             fileProto.declarationIdList.forEach {
-                if (it.index == 2788072325478221814L) {
-                    println("2788072325478221814L is found in $fileName")
-                }
                 val uniqId = it.uniqId()
                 assert(uniqId.isPublic)
                 moduleReversedFileIndex.getOrPut(uniqId) { fileDeserializer }

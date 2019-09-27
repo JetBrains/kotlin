@@ -25,13 +25,12 @@ fun compileWasm(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     phaseConfig: PhaseConfig,
-    resolvedLibraries: KotlinLibraryResolveResult,
-    allDependencies: List<KotlinLibrary>,
+    allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
     exportedDeclarations: Set<FqName> = emptySet()
 ): WasmCompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, files, configuration, resolvedLibraries, allDependencies, friendDependencies)
+        loadIr(project, files, configuration, allDependencies, friendDependencies)
 
     val moduleDescriptor = moduleFragment.descriptor
     val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)

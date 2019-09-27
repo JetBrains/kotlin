@@ -75,7 +75,6 @@ fun functionInterfacePackageFragmentProvider(
     storageManager: StorageManager,
     module: ModuleDescriptor
 ): PackageFragmentProvider {
-    println("functionInterfacePackageFragmentProvider()")
     val classFactory = BuiltInFictitiousFunctionClassFactory(storageManager, module)
     val fragments = listOf(
         KOTLIN_REFLECT_FQ_NAME,

@@ -3,12 +3,9 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.util.*
-import org.jetbrains.kotlin.library.*
-import kotlin.system.exitProcess
-import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 
-const val Kotlin_STDLIB_NAME = "stdlib"
+const val KOTLIN_STDLIB_NAME = "stdlib"
 
 interface SearchPathResolver<out L: KotlinLibrary> : WithLogger {
     val searchRoots: List<File>
@@ -127,13 +124,13 @@ open class KotlinLibrarySearchPathResolver<out L: KotlinLibrary>(
         val result = mutableListOf<L>()
 
         if (!noStdLib) {
-            result.add(resolve(UnresolvedLibrary(Kotlin_STDLIB_NAME, null), true))
+            result.add(resolve(UnresolvedLibrary(KOTLIN_STDLIB_NAME, null), true))
         }
         if (!noDefaultLibs) {
             val defaultLibs = defaultRoots.flatMap { it.listFiles }
                     .asSequence()
                     .filterNot { it.name.startsWith('.') }
-                    .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == Kotlin_STDLIB_NAME }
+                    .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_STDLIB_NAME }
                     .map { UnresolvedLibrary(it.absolutePath, null) }
                     .map { resolve(it, isDefaultLink = true) }
             result.addAll(defaultLibs)
