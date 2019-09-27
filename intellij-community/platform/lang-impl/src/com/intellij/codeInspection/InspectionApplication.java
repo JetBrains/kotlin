@@ -378,13 +378,13 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         if (!problemDescriptors.isEmpty()) {
           ProblemDescriptorBase problemDescriptor = problemDescriptors.get(0);
           VirtualFile file = problemDescriptor.getContainingFile();
-          if (file == null) return true;
+          if (file == null) return false;
           int lineNumber = problemDescriptor.getLineNumber();
           for (ProblemDescriptorBase it : problemDescriptors) {
             originalWarnings.putValue(Pair.create(file.getPath(), lineNumber), it.toString());
           }
         }
-        return true;
+        return false;
       }
     );
   }
@@ -402,23 +402,23 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
           ProblemDescriptorBase problemDescriptor = any.get(0);
           String text = problemDescriptor.toString();
           VirtualFile file = problemDescriptor.getContainingFile();
-          if (file == null) return false;
+          if (file == null) return true;
           List<Range> ranges = getOrComputeUnchangedRanges(file, changeListManager);
           int line = problemDescriptor.getLineNumber();
           Optional<Range> first = StreamEx.of(ranges).findFirst((it) -> it.start1 <= line && line < it.end1);
           if (!first.isPresent()) {
             logNotFiltered(text, file, line, -1);
-            return false;
+            return true;
           }
           Range originRange = first.get();
           int position = originRange.start2 + line - originRange.start1;
           Collection<String> problems = originalWarnings.get(Pair.create(file.getPath(), position));
           if (problems.stream().anyMatch(it -> Objects.equals(it, text))) {
-            return true;
+            return false;
           }
           logNotFiltered(text, file, line, position);
         }
-        return false;
+        return true;
       }
     );
   }
