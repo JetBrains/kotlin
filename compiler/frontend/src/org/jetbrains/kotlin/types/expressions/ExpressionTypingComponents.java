@@ -64,6 +64,7 @@ public class ExpressionTypingComponents {
     /*package*/ ContractParsingServices contractParsingServices;
     /*package*/ DataFlowValueFactory dataFlowValueFactory;
     /*package*/ NewKotlinTypeChecker kotlinTypeChecker;
+    /*package*/ TypeResolutionInterceptor typeResolutionInterceptor;
 
 
     @Inject
@@ -244,5 +245,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setKotlinTypeChecker(@NotNull NewKotlinTypeChecker kotlinTypeChecker) {
         this.kotlinTypeChecker = kotlinTypeChecker;
+    }
+
+    @Inject
+    public void setTypeResolutionInterceptor(@NotNull TypeResolutionInterceptor typeResolutionInterceptor) {
+        this.typeResolutionInterceptor = typeResolutionInterceptor;
     }
 }

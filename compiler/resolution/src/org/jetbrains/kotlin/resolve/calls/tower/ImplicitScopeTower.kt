@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
@@ -45,6 +43,13 @@ interface ImplicitScopeTower {
     val isNewInferenceEnabled: Boolean
 
     val typeApproximator: TypeApproximator
+
+    fun interceptCandidates(
+        resolutionScope: ResolutionScope,
+        name: Name,
+        initialResults: Collection<FunctionDescriptor>,
+        location: LookupLocation
+    ): Collection<FunctionDescriptor>
 }
 
 interface ScopeTowerLevel {
