@@ -4,14 +4,11 @@ package com.intellij.openapi.externalSystem.service.project.manage
 import com.intellij.ide.projectView.actions.MarkRootActionBase
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.TransactionGuard
-import com.intellij.openapi.externalSystem.util.DisposeAwareProjectChange
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.SourceFolder
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -113,38 +110,33 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
       override fun after(events: List<VFileEvent>) {
         val sourceFoldersToChange = ArrayList<SourceFolderModel>()
         val virtualFileManager = VirtualFileManager.getInstance()
-        for (event in events) {
-          synchronized(mutex) {
+        synchronized(mutex) {
+          for (event in events) {
             for (sourceFolder in sourceFolders.getAllDescendantValues(VfsUtilCore.pathToUrl(event.path))) {
-              val sourceFolderFile = ExternalSystemApiUtil.doWriteAction(Computable<VirtualFile> {
-                virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
-              })
+              val sourceFolderFile = virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
               if (sourceFolderFile != null && sourceFolderFile.isValid) {
                 sourceFoldersToChange.add(sourceFolder)
                 unsafeRemoveSourceFolder(sourceFolder.url)
               }
             }
-            ExternalSystemApiUtil.executeProjectChangeAction(false, object : DisposeAwareProjectChange(project) {
-              override fun execute() {
-                for ((module, url, type, packagePrefix, generated) in sourceFoldersToChange) {
-                  val moduleManager = ModuleRootManager.getInstance(module)
-                  val modifiableModuleModel = moduleManager.modifiableModel
-                  try {
-                    val contentEntry = MarkRootActionBase.findContentEntry(modifiableModuleModel, event.file!!)
-                    if (contentEntry != null) {
-                      val sourceFolder = contentEntry.addSourceFolder(url, type)
-                      if (packagePrefix != null && packagePrefix.isNotEmpty()) {
-                        sourceFolder.packagePrefix = packagePrefix
-                      }
-                      setForGeneratedSources(sourceFolder, generated)
-                    }
+
+            for ((module, url, type, packagePrefix, generated) in sourceFoldersToChange) {
+              val moduleManager = ModuleRootManager.getInstance(module)
+              val modifiableModuleModel = moduleManager.modifiableModel
+              try {
+                val contentEntry = MarkRootActionBase.findContentEntry(modifiableModuleModel, event.file!!)
+                if (contentEntry != null) {
+                  val sourceFolder = contentEntry.addSourceFolder(url, type)
+                  if (packagePrefix != null && packagePrefix.isNotEmpty()) {
+                    sourceFolder.packagePrefix = packagePrefix
                   }
-                  finally {
-                    modifiableModuleModel.commit()
-                  }
+                  setForGeneratedSources(sourceFolder, generated)
                 }
               }
-            })
+              finally {
+                modifiableModuleModel.commit()
+              }
+            }
           }
         }
       }
