@@ -239,7 +239,6 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
             processHandler.notifyTextAvailable(farewell + "\n", ProcessOutputTypes.SYSTEM);
             ExternalSystemRunConfiguration.foldGreetingOrFarewell(consoleView, farewell, false);
             processHandler.notifyProcessTerminated(0);
-            eventDispatcher.close();
           }
         };
         task.execute(ArrayUtil.prepend(taskListener, ExternalSystemTaskNotificationListener.EP_NAME.getExtensions()));

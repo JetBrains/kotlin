@@ -533,11 +533,6 @@ public class ExternalSystemUtil {
                 eventDispatcher.onEvent(event.getId(), buildEvent);
               }
             }
-
-            @Override
-            public void onEnd(@NotNull ExternalSystemTaskId id) {
-              eventDispatcher.close();
-            }
           };
           final long startTS = System.currentTimeMillis();
           resolveProjectTask
