@@ -289,6 +289,8 @@ interface KotlinFacetSettingsProvider {
     fun getInitializedSettings(module: Module): KotlinFacetSettings
 
     companion object {
-        fun getInstance(project: Project) = ServiceManager.getService(project, KotlinFacetSettingsProvider::class.java)!!
+        fun getInstance(project: Project): KotlinFacetSettingsProvider? {
+            return ServiceManager.getService(project, KotlinFacetSettingsProvider::class.java)
+        }
     }
 }

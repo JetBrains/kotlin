@@ -66,21 +66,27 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
     }
 
     fun testProject106InconsistentVersionInConfig() {
-        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getInitializedSettings(module)
+        val settings = KotlinFacetSettingsProvider.getInstance(myProject)?.getInitializedSettings(module)
+            ?: error("Facet settings are not found")
+
         Assert.assertEquals(false, settings.useProjectSettings)
         Assert.assertEquals("1.0", settings.languageLevel!!.description)
         Assert.assertEquals("1.0", settings.apiLevel!!.description)
     }
 
     fun testProject107InconsistentVersionInConfig() {
-        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getInitializedSettings(module)
+        val settings = KotlinFacetSettingsProvider.getInstance(myProject)?.getInitializedSettings(module)
+            ?: error("Facet settings are not found")
+
         Assert.assertEquals(false, settings.useProjectSettings)
         Assert.assertEquals("1.0", settings.languageLevel!!.description)
         Assert.assertEquals("1.0", settings.apiLevel!!.description)
     }
 
     fun testFacetWithProjectSettings() {
-        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getInitializedSettings(module)
+        val settings = KotlinFacetSettingsProvider.getInstance(myProject)?.getInitializedSettings(module)
+            ?: error("Facet settings are not found")
+
         Assert.assertEquals(true, settings.useProjectSettings)
         Assert.assertEquals("1.1", settings.languageLevel!!.description)
         Assert.assertEquals("1.1", settings.apiLevel!!.description)

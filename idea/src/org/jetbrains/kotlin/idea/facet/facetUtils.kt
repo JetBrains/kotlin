@@ -188,7 +188,10 @@ fun KotlinFacet.configureFacet(
     module.externalCompilerVersion = compilerVersion
 }
 
-fun Module.externalSystemTestTasks() = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this).externalSystemTestTasks
+fun Module.externalSystemTestTasks(): List<ExternalSystemTestTask> {
+    val settingsProvider = KotlinFacetSettingsProvider.getInstance(project) ?: return emptyList()
+    return settingsProvider.getInitializedSettings(this).externalSystemTestTasks
+}
 
 @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
 @Deprecated(
