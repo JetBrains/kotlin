@@ -263,16 +263,19 @@ uint64_t getTimeNanos() {
 // Time operations.
 using namespace std::chrono;
 
+// Get steady clock as a source of time
+using steady_time_clock = std::conditional<high_resolution_clock::is_steady, high_resolution_clock, steady_clock>::type;
+
 uint64_t getTimeMillis() {
-  return duration_cast<milliseconds>(high_resolution_clock::now().time_since_epoch()).count();
+  return duration_cast<milliseconds>(steady_time_clock::now().time_since_epoch()).count();
 }
 
 uint64_t getTimeNanos() {
-  return duration_cast<nanoseconds>(high_resolution_clock::now().time_since_epoch()).count();
+  return duration_cast<nanoseconds>(steady_time_clock::now().time_since_epoch()).count();
 }
 
 uint64_t getTimeMicros() {
-  return duration_cast<microseconds>(high_resolution_clock::now().time_since_epoch()).count();
+  return duration_cast<microseconds>(steady_time_clock::now().time_since_epoch()).count();
 }
 #endif
 
