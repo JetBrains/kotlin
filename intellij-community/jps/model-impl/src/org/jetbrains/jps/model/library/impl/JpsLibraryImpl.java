@@ -28,6 +28,7 @@ import org.jetbrains.jps.model.library.*;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -178,6 +179,8 @@ public class JpsLibraryImpl<P extends JpsElement> extends JpsNamedCompositeEleme
   private static void collectArchives(File file, boolean recursively, List<? super String> result) {
     final File[] children = file.listFiles();
     if (children != null) {
+      // There is no guarantee about order of files on different OS
+      Arrays.sort(children);
       for (File child : children) {
         final String extension = FileUtilRt.getExtension(child.getName());
         if (child.isDirectory()) {
