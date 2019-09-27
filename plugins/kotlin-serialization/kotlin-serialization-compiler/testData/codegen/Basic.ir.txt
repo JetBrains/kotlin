@@ -115,7 +115,6 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           DUP
           ILOAD (4)
           INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
-          CHECKCAST
           ATHROW
         LABEL (L5)
         LINENUMBER (13)
@@ -182,7 +181,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           CHECKCAST
           ALOAD (2)
-          GETFIELD (list, Ljava/util/List;)
+          INVOKESTATIC (ListOfUsers, access$prop$getList$3, (LListOfUsers;)Ljava/util/List;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V)
           ALOAD (4)
           ALOAD (3)
@@ -228,7 +227,7 @@ public final class ListOfUsers$Companion : java/lang/Object {
 public final class ListOfUsers : java/lang/Object {
     public final static ListOfUsers$Companion Companion
 
-    public final java.util.List list
+    private final java.util.List list
 
     public final static void <clinit>() {
           NEW
@@ -272,7 +271,6 @@ public final class ListOfUsers : java/lang/Object {
           DUP
           LDC (list)
           INVOKESPECIAL (kotlinx/serialization/MissingFieldException, <init>, (Ljava/lang/String;)V)
-          CHECKCAST
           ATHROW
         LABEL (L2)
           ALOAD (0)
@@ -283,6 +281,8 @@ public final class ListOfUsers : java/lang/Object {
           RETURN
         LABEL (L4)
     }
+
+    public final static java.util.List access$prop$getList$3(ListOfUsers $this)
 
     public final java.util.List getList()
 }
@@ -397,7 +397,6 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           DUP
           ILOAD (4)
           INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
-          CHECKCAST
           ATHROW
         LABEL (L5)
         LINENUMBER (10)
@@ -455,7 +454,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           INVOKEINTERFACE (kotlinx/serialization/Encoder, beginStructure, (Lkotlinx/serialization/SerialDescriptor;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/CompositeEncoder;)
           ASTORE (4)
           ALOAD (2)
-          GETFIELD (user, LUser;)
+          INVOKESTATIC (OptionalUser, access$prop$getUser$2, (LOptionalUser;)LUser;)
           NEW
           DUP
         LABEL (L2)
@@ -482,7 +481,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           GETSTATIC (INSTANCE, LUser$$serializer;)
           CHECKCAST
           ALOAD (2)
-          GETFIELD (user, LUser;)
+          INVOKESTATIC (OptionalUser, access$prop$getUser$2, (LOptionalUser;)LUser;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V)
           GOTO (L6)
         LABEL (L6)
@@ -530,7 +529,7 @@ public final class OptionalUser$Companion : java/lang/Object {
 public final class OptionalUser : java/lang/Object {
     public final static OptionalUser$Companion Companion
 
-    public final User user
+    private final User user
 
     public final static void <clinit>() {
           NEW
@@ -627,6 +626,8 @@ public final class OptionalUser : java/lang/Object {
           RETURN
         LABEL (L1)
     }
+
+    public final static User access$prop$getUser$2(OptionalUser $this)
 
     public final User getUser()
 }
@@ -761,7 +762,6 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           DUP
           ILOAD (4)
           INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
-          CHECKCAST
           ATHROW
         LABEL (L5)
         LINENUMBER (7)
@@ -824,13 +824,13 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (3)
           ICONST_0
           ALOAD (2)
-          GETFIELD (firstName, Ljava/lang/String;)
+          INVOKESTATIC (User, access$prop$getFirstName$0, (LUser;)Ljava/lang/String;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeStringElement, (Lkotlinx/serialization/SerialDescriptor;ILjava/lang/String;)V)
           ALOAD (4)
           ALOAD (3)
           ICONST_1
           ALOAD (2)
-          GETFIELD (lastName, Ljava/lang/String;)
+          INVOKESTATIC (User, access$prop$getLastName$1, (LUser;)Ljava/lang/String;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeStringElement, (Lkotlinx/serialization/SerialDescriptor;ILjava/lang/String;)V)
           ALOAD (4)
           ALOAD (3)
@@ -876,9 +876,9 @@ public final class User$Companion : java/lang/Object {
 public final class User : java/lang/Object {
     public final static User$Companion Companion
 
-    public final java.lang.String firstName
+    private final java.lang.String firstName
 
-    public final java.lang.String lastName
+    private final java.lang.String lastName
 
     public final static void <clinit>() {
           NEW
@@ -928,7 +928,6 @@ public final class User : java/lang/Object {
           DUP
           LDC (firstName)
           INVOKESPECIAL (kotlinx/serialization/MissingFieldException, <init>, (Ljava/lang/String;)V)
-          CHECKCAST
           ATHROW
         LABEL (L2)
           ALOAD (0)
@@ -948,7 +947,6 @@ public final class User : java/lang/Object {
           DUP
           LDC (lastName)
           INVOKESPECIAL (kotlinx/serialization/MissingFieldException, <init>, (Ljava/lang/String;)V)
-          CHECKCAST
           ATHROW
         LABEL (L5)
           ALOAD (0)
@@ -959,6 +957,10 @@ public final class User : java/lang/Object {
           RETURN
         LABEL (L7)
     }
+
+    public final static java.lang.String access$prop$getFirstName$0(User $this)
+
+    public final static java.lang.String access$prop$getLastName$1(User $this)
 
     public final java.lang.String getFirstName()
 
