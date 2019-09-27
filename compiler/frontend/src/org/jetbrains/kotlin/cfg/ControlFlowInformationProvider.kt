@@ -33,8 +33,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingDescriptor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
@@ -744,12 +747,11 @@ class ControlFlowInformationProvider private constructor(
                         }
                     }
                 }
-                if (functionDescriptor.isOverridableOrOverrides
-                    || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                    || OperatorNameConventions.GET_VALUE == functionName
-                    || OperatorNameConventions.SET_VALUE == functionName
-                    || OperatorNameConventions.PROVIDE_DELEGATE == functionName
-                ) {
+                if (functionDescriptor.isOperator && functionName in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS) {
+                    trace.record(UNUSED_DELEGATED_PROPERTY_OPERATOR_PARAMETER, variableDescriptor, true)
+                    return
+                }
+                if (functionDescriptor.isOverridableOrOverrides || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                     return
                 }
                 if (anonymous) {

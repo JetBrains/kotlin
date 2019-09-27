@@ -49,8 +49,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
 import static org.jetbrains.kotlin.codegen.FunctionCodegen.processInterfaceMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
@@ -569,6 +568,10 @@ public class PropertyCodegen {
             @NotNull VariableDescriptorWithAccessors descriptor,
             @NotNull BindingContext bindingContext
     ) {
+        if (Boolean.TRUE == bindingContext.get(DELEGATED_PROPERTY_WITH_OPTIMIZED_METADATA, descriptor)) {
+            return StackValue.constant(null, K_PROPERTY_TYPE);
+        }
+
         Type owner = bindingContext.get(DELEGATED_PROPERTY_METADATA_OWNER, descriptor);
         assert owner != null : "Delegated property owner not found: " + descriptor;
 

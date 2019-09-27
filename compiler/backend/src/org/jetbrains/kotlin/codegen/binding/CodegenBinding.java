@@ -75,6 +75,10 @@ public class CodegenBinding {
             Slices.createSimpleSlice();
     public static final WritableSlice<VariableDescriptor, VariableDescriptor> LOCAL_VARIABLE_PROPERTY_METADATA =
             Slices.createSimpleSlice();
+    public static final WritableSlice<FunctionDescriptor, Boolean> PROPERTY_METADATA_REQUIRED_FOR_OPERATOR_CALL =
+            Slices.createSimpleSlice();
+    public static final WritableSlice<VariableDescriptorWithAccessors, Boolean> DELEGATED_PROPERTY_WITH_OPTIMIZED_METADATA =
+            Slices.createSimpleSlice();
 
     public static final WritableSlice<FunctionDescriptor, String> CALL_LABEL_FOR_LAMBDA_ARGUMENT = Slices.createSimpleSlice();
 

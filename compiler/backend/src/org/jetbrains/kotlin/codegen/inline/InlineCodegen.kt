@@ -534,11 +534,40 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             else
                 mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
 
-            val methodId = MethodId(methodOwner.internalName, asmMethod)
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
             if (!isBuiltInArrayIntrinsic(functionDescriptor) && directMember !is DescriptorWithContainerSource) {
                 return sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
             }
+
+            return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature)
+        }
+
+        internal fun createSpecialInlineMethodNodeFromBinaries(functionDescriptor: FunctionDescriptor, state: GenerationState): MethodNode {
+            val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
+            assert(directMember is DescriptorWithContainerSource) {
+                "Function is not in binaries: $functionDescriptor"
+            }
+            assert(directMember is FunctionDescriptor && directMember.isOperator) {
+                "Operator function expected: $directMember"
+            }
+
+            val methodOwner = state.typeMapper.mapImplementationOwner(functionDescriptor)
+            val jvmSignature = state.typeMapper.mapSignatureWithGeneric(functionDescriptor, OwnerKind.IMPLEMENTATION)
+
+            val asmMethod = mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
+
+            return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature).node
+        }
+
+        private fun getCompiledMethodNodeInner(
+            functionDescriptor: FunctionDescriptor,
+            directMember: CallableMemberDescriptor,
+            asmMethod: Method,
+            methodOwner: Type,
+            state: GenerationState,
+            jvmSignature: JvmMethodSignature
+        ): SMAPAndMethodNode {
+            val methodId = MethodId(methodOwner.internalName, asmMethod)
 
             val resultInCache = state.inlineCache.methodNodeById.getOrPut(methodId) {
                 val result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod)

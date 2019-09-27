@@ -88,6 +88,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final SwitchCodegenProvider switchCodegenProvider;
     private final LanguageVersionSettings languageVersionSettings;
     private final ClassBuilderMode classBuilderMode;
+    private final DelegatedPropertiesCodegenHelper delegatedPropertiesCodegenHelper;
 
     public CodegenAnnotatingVisitor(@NotNull GenerationState state) {
         this.bindingTrace = state.getBindingTrace();
@@ -97,6 +98,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.switchCodegenProvider = new SwitchCodegenProvider(state);
         this.languageVersionSettings = state.getLanguageVersionSettings();
         this.classBuilderMode = state.getClassBuilderMode();
+        this.delegatedPropertiesCodegenHelper = new DelegatedPropertiesCodegenHelper(state);
     }
 
     @NotNull
@@ -509,15 +511,20 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             ClassDescriptor classDescriptor = recordClassForCallable(delegate, variableDescriptor, Collections.singleton(supertype), name);
             recordClosure(classDescriptor, name);
 
-            Type containerType = getMetadataOwner(property);
-            List<VariableDescriptorWithAccessors> descriptors = bindingTrace.get(DELEGATED_PROPERTIES_WITH_METADATA, containerType);
-            if (descriptors == null) {
-                descriptors = new ArrayList<>(1);
-                bindingTrace.record(DELEGATED_PROPERTIES_WITH_METADATA, containerType, descriptors);
-            }
-            descriptors.add(variableDescriptor);
+            if (delegatedPropertiesCodegenHelper.isDelegatedPropertyMetadataRequired(variableDescriptor)) {
+                Type containerType = getMetadataOwner(property);
+                List<VariableDescriptorWithAccessors> descriptors = bindingTrace.get(DELEGATED_PROPERTIES_WITH_METADATA, containerType);
+                if (descriptors == null) {
+                    descriptors = new ArrayList<>(1);
+                    bindingTrace.record(DELEGATED_PROPERTIES_WITH_METADATA, containerType, descriptors);
+                }
+                descriptors.add(variableDescriptor);
 
-            bindingTrace.record(DELEGATED_PROPERTY_METADATA_OWNER, variableDescriptor, containerType);
+                bindingTrace.record(DELEGATED_PROPERTY_METADATA_OWNER, variableDescriptor, containerType);
+            }
+            else {
+                bindingTrace.record(DELEGATED_PROPERTY_WITH_OPTIMIZED_METADATA, variableDescriptor);
+            }
         }
 
         super.visitProperty(property);
