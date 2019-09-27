@@ -27,11 +27,7 @@ fun check(f: KFunction<Any>) {
 
 fun box(): String {
     check(::K)
-
-    // Workaround KT-8596
-    val nested = K::Nested
-    check(nested)
-
+    check(K::Nested)
     check(K::Inner)
     check(::Secondary)
 
