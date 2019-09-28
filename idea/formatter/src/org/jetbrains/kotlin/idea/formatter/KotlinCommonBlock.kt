@@ -612,7 +612,7 @@ abstract class KotlinCommonBlock(
                         }
                     }
                 }
-                if (nodePsi.operationToken == ELVIS) {
+                if (nodePsi.operationToken == ELVIS && nodePsi.getStrictParentOfType<KtStringTemplateExpression>() == null) {
                     return { childElement ->
                         if (childElement.elementType == OPERATION_REFERENCE) {
                             Wrap.createWrap(settings.kotlinCustomSettings.WRAP_ELVIS_EXPRESSIONS, true)
