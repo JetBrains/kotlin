@@ -235,6 +235,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/ElvisContinuationIndentOptions.after.kt");
         }
 
+        @TestMetadata("ElvisInStringTemplate.after.kt")
+        public void testElvisInStringTemplate() throws Exception {
+            runTest("idea/testData/formatter/ElvisInStringTemplate.after.kt");
+        }
+
         @TestMetadata("ElvisIndent.after.kt")
         public void testElvisIndent() throws Exception {
             runTest("idea/testData/formatter/ElvisIndent.after.kt");
