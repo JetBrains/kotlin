@@ -453,8 +453,11 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
   }
 
   protected void registerContentEntry(RefEntity element, String packageName) {
-    Set<RefEntity> content = myContents.computeIfAbsent(packageName, k -> new HashSet<>());
-    content.add(element);
+    GlobalReportedProblemFilter globalReportedProblemFilter = myContext.getGlobalReportedProblemFilter();
+    if (globalReportedProblemFilter == null || globalReportedProblemFilter.shouldReportProblem(element, getToolWrapper().getShortName())) {
+      Set<RefEntity> content = myContents.computeIfAbsent(packageName, k -> new HashSet<>());
+      content.add(element);
+    }
   }
 
   @NotNull

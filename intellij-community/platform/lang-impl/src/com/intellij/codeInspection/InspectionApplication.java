@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInspection.ex.*;
+import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import com.intellij.conversion.ConversionListener;
 import com.intellij.conversion.ConversionService;
@@ -15,10 +16,12 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
@@ -39,9 +42,7 @@ import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vcs.ex.RangesBuilder;
 import com.intellij.openapi.vfs.*;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.psi.search.scope.packageSet.NamedScopesHolder;
@@ -372,6 +373,15 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     if (myVerboseLevel > 0) {
       reportMessage(1, "Running first analysis stage...");
     }
+    context.setGlobalReportedProblemFilter(
+      (entity, description) -> {
+        if (!(entity instanceof RefElement)) return false;
+        Pair<VirtualFile, Integer> fileAndLine = findFileAndLineByRefElement((RefElement) entity);
+        if (fileAndLine == null) return false;
+        originalWarnings.putValue(Pair.create(fileAndLine.first.getPath(), fileAndLine.second), description);
+        return false;
+      }
+    );
     context.setReportedProblemFilter(
       (element, descriptors) -> {
         List<ProblemDescriptorBase> problemDescriptors = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).toList();
@@ -395,6 +405,14 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     }
     printBeforeSecondStageProblems();
     ChangeListManager changeListManager = ChangeListManager.getInstance(project);
+    context.setGlobalReportedProblemFilter(
+      (entity, description) -> {
+        if (!(entity instanceof RefElement)) return false;
+        Pair<VirtualFile, Integer> fileAndLine = findFileAndLineByRefElement((RefElement)entity);
+        if (fileAndLine == null) return false;
+        return secondAnalysisFilter(changeListManager, description, fileAndLine.first, fileAndLine.second);
+      }
+    );
     context.setReportedProblemFilter(
       (element, descriptors) -> {
         List<ProblemDescriptorBase> any = StreamEx.of(descriptors).select(ProblemDescriptorBase.class).toList();
@@ -403,27 +421,48 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
           String text = problemDescriptor.toString();
           VirtualFile file = problemDescriptor.getContainingFile();
           if (file == null) return true;
-          List<Range> ranges = getOrComputeUnchangedRanges(file, changeListManager);
           int line = problemDescriptor.getLineNumber();
-          Optional<Range> first = StreamEx.of(ranges).findFirst((it) -> it.start1 <= line && line < it.end1);
-          if (!first.isPresent()) {
-            logNotFiltered(text, file, line, -1);
-            return true;
-          }
-          Range originRange = first.get();
-          int position = originRange.start2 + line - originRange.start1;
-          Collection<String> problems = originalWarnings.get(Pair.create(file.getPath(), position));
-          if (problems.stream().anyMatch(it -> Objects.equals(it, text))) {
-            return false;
-          }
-          logNotFiltered(text, file, line, position);
+          return secondAnalysisFilter(changeListManager, text, file, line);
         }
         return true;
       }
     );
   }
 
+  @Nullable
+  private static Pair<VirtualFile, Integer> findFileAndLineByRefElement(RefElement refElement) {
+    PsiElement element = refElement.getPsiElement();
+    PsiFile psiFile = element.getContainingFile();
+    if (psiFile == null) return null;
+    VirtualFile virtualFile = psiFile.getVirtualFile();
+    if (virtualFile == null) return null;
+    int line = ReadAction.compute(() -> {
+      Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
+      return (document == null) ? -1 : document.getLineNumber(element.getTextRange().getStartOffset());
+    });
+    return Pair.create(virtualFile, line);
+  }
+
+  private boolean secondAnalysisFilter(ChangeListManager changeListManager, String text, VirtualFile file, int line) {
+    List<Range> ranges = getOrComputeUnchangedRanges(file, changeListManager);
+    Optional<Range> first = StreamEx.of(ranges).findFirst((it) -> it.start1 <= line && line < it.end1);
+    if (!first.isPresent()) {
+      logNotFiltered(text, file, line, -1);
+      return true;
+    }
+    Range originRange = first.get();
+    int position = originRange.start2 + line - originRange.start1;
+    Collection<String> problems = originalWarnings.get(Pair.create(file.getPath(), position));
+    if (problems.stream().anyMatch(it -> Objects.equals(it, text))) {
+      return false;
+    }
+    logNotFiltered(text, file, line, position);
+    return true;
+  }
+
   private void logNotFiltered(String text, VirtualFile file, int line, int position) {
+    // unused asks shouldReport not only for warnings.
+    if (text.contains("unused")) return;
     reportMessage(3, "Not filtered: ");
     reportMessage(3,file.getPath() + ":" + (line + 1) + " Original: " + (position + 1));
     reportMessage(3, "\t\t" + text);

@@ -16,10 +16,7 @@ import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.codeInspection.reference.RefEntity;
 import com.intellij.codeInspection.reference.RefManagerImpl;
 import com.intellij.codeInspection.reference.RefVisitor;
-import com.intellij.codeInspection.ui.DefaultInspectionToolPresentation;
-import com.intellij.codeInspection.ui.InspectionResultsView;
-import com.intellij.codeInspection.ui.InspectionToolPresentation;
-import com.intellij.codeInspection.ui.ReportedProblemFilter;
+import com.intellij.codeInspection.ui.*;
 import com.intellij.codeInspection.ui.actions.ExportHTMLAction;
 import com.intellij.concurrency.JobLauncher;
 import com.intellij.concurrency.JobLauncherImpl;
@@ -100,6 +97,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
   private Content myContent;
   private volatile boolean myViewClosed = true;
   private long myInspectionStartedTimestamp;
+  private GlobalReportedProblemFilter myGlobalReportedProblemFilter = null;
   private ReportedProblemFilter myReportedProblemFilter = null;
 
   public GlobalInspectionContextImpl(@NotNull Project project, @NotNull NotNullLazyValue<? extends ContentManager> contentManager) {
@@ -118,6 +116,14 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
 
   public void setReportedProblemFilter(ReportedProblemFilter reportedProblemFilter) {
     myReportedProblemFilter = reportedProblemFilter;
+  }
+
+  public GlobalReportedProblemFilter getGlobalReportedProblemFilter() {
+    return myGlobalReportedProblemFilter;
+  }
+
+  public void setGlobalReportedProblemFilter(GlobalReportedProblemFilter reportedProblemFilter) {
+    myGlobalReportedProblemFilter = reportedProblemFilter;
   }
 
   public void addView(@NotNull InspectionResultsView view,
@@ -233,7 +239,9 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
                 InspectionToolWrapper toolWrapper = state.getTool();
                 InspectionToolPresentation presentation = getPresentation(toolWrapper);
                 BufferedWriter writer = writers[i];
-                if (writer != null) {
+                if (writer != null &&
+                    (myGlobalReportedProblemFilter == null ||
+                     myGlobalReportedProblemFilter.shouldReportProblem(refEntity, toolWrapper.getShortName())) ) {
                   presentation.exportResults(e -> {
                     try {
                       JbXmlOutputter.collapseMacrosAndWrite(e, getProject(), writer);
