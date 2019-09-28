@@ -1,3 +1,26 @@
+# v1.3.60 (Oct 2019)
+  * Support XCode 11
+  * Switch to LLVM 8.0
+  * New compiler targets:
+    * watchOS targets, watchos_x86 and watchos_arm32 (GH-3323, GH-3344)
+    * tvOS targets tvos_x64 and tvos_arm64 (GH-3303, GH-3363)
+    * native Android targets android_x86 and android_x64 (GH-3306, GH-3314)
+  * Standard CLI library kotlinx.cli is shipped with the compiler distribution (GH-3125)
+  * Improved debug information for inline functions (KT-28929, GH-3292)
+  * Improved runtime performance of interface calls, up to 5x faster (GH-????)
+  * Improved runtime performance of type checks, up to 50x faster (GH-3291)
+  * Produce native binaries directly from klibs, speeds up large project compilation (GH-3246)
+  * Supported arbitrary (up to 255 inclusive) function arity (GH-3253)
+  * Supported callable references to suspend functions (GH-3197)
+  * Implemented experimental -Xg0 switch, symbolication of release binaries for iOS (GH-3233, GH-3367)
+  * Interop:
+    * Allow passing untyped null as variadic function's parameter (GH-3312, KT-33525)
+  * Standard library:
+    * Allow scheduling jobs in arbitrary K/N context, not only Worker (GH-3316)
+  * Important bug fixes:
+    * Boxed negative values can lead to crashes on ios_arm64 (GH-3296)
+    * Implemented thread-safe tracking of Objective-C references to Kotlin objects (GH-3267)
+
 # v1.3.50 (Aug 2019)
   * Kotlin/Native versioning now aligned with Kotlin versioning
   * Exhaustive platform libraries on macOS (GH-3141)
@@ -11,12 +34,15 @@
     * Ensure produced Objective-C header does not have warnings (GH-3101)
     * Speed up interop stub generator (GH-3082, GH-3050)
     * getOriginalKotlinClass() to get KClass for Kotlin classes in Objective-C (GH-3036)
+    * Supported nullable primitive types in reverse C interop (GH-3198)
   * Standard library
     * API for delayed job execution on worker (GH-2971)
     * API for running via worker's job queue (GH-3078)
     * MonoClock and Duration support (GH-3028)
     * Support typeOf (KT-29917, KT-28625)
     * New zero-terminated utf8 to String conversion API (GH-3116)
+    * Optimize StringBuilder for certain cases (GH-3202)
+    * Implemented Array.fill API (GH-3244)
 
 # v1.3.0 (Jun 2019)
   * CoreLocation platform library on macOS (GH-3041)

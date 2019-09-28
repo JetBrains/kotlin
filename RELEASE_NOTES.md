@@ -16,12 +16,12 @@ that doesn't require an additional execution runtime.
 The _Kotlin/Native_ compiler produces mostly portable (modulo pointer size and target
 triplet) LLVM bitcode, and as such can easily support any platform, as long as there's an LLVM
 code generator for the platform.
- However, as actualy producing native code requires a platform linker and some
+ However, as actually producing native code requires a platform linker and some
 basic runtime shipped along with the translator, we only support a subset of all possible
 target platforms. Currently _Kotlin/Native_ is being shipped and tested with support for
 the following platforms:
 
- * Mac OS X 10.11 and later (x86-64), host and target (`-target macos_x64`, default on macOS hosts)
+ * Mac OS X 11 and later (x86-64), host and target (`-target macos_x64`, default on macOS hosts)
  * Ubuntu Linux x86-64 (14.04, 16.04 and later), other Linux flavours may work as well, host and target
    (`-target linux_x64`, default on Linux hosts, hosted on Linux, Windows and macOS).
  * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw_x64`,
@@ -30,12 +30,17 @@ the following platforms:
    Experimental support is available on Linux and macOS hosts (requires Wine).
  * Apple iOS (armv7 and arm64 devices, x86 simulator), cross-compiled target
    (`-target ios_arm32|ios_arm64|ios_x64`), hosted on macOS.
+ * Apple tvOS (arm64 devices, x86 simulator), cross-compiled target
+    (`-target tvos_arm64|tvos_x64`), hosted on macOS.
+ * Apple watchOS (arm32/arm64 devices, x86 simulator), cross-compiled target
+     (`-target watchos_arm32|watchos_arm64|watchos_x86`), hosted on macOS.
  * Linux arm32 hardfp, Raspberry Pi, cross-compiled target (`-target raspberrypi`), hosted on Linux, Windows and macOS
  * Linux MIPS big endian, cross-compiled target (`-target mips`), hosted on Linux.
  * Linux MIPS little endian, cross-compiled target (`-target mipsel`), hosted on Linux.
- * Android arm32 and arm64 (`-target android_arm32|android_arm64`) target, hosted on Linux, macOS and Windows
-   (only `android_arm32` at the moment).
- * WebAssembly (`-target wasm32`) target, hosted on Linux, Windows or macOS.
+ * Android x86 (32 and 64 bit), arm32 and arm64 (`-target android_x86|android_x64|android_arm32|android_arm64`) targets,
+   hosted on Linux, macOS and Windows.
+ * WebAssembly (`-target wasm32`) target, hosted on Linux, Windows or macOS. Webassembly support is experimental
+   and could be discontinued in further releases.
  * Experimental support for Zephyr RTOS (`-target zephyr_stm32f4_disco`) is available on macOS, Linux
    and Windows hosts.
 
@@ -45,10 +50,10 @@ the following platforms:
 
  ## Compatibility and features ##
 
-To run _Kotlin/Native_ compiler JDK 8 or Java 9 or Java 10 (JDK) for the host platform has to be installed.
+To run _Kotlin/Native_ compiler JDK 8 or later  (JDK) for the host platform has to be installed.
 Produced programs are fully self-sufficient and do not need JVM or other runtime.
 
-On macOS it also requires Xcode 9.4.1 or newer to be installed.
+On macOS it also requires Xcode 11.0 or newer to be installed.
 
 The language and library version supported by this EAP release match Kotlin 1.3.
 However, there are certain limitations, see section [Known Limitations](#limitations).
@@ -103,22 +108,6 @@ be targets.
 
 ### Debugging ###
 
- _Kotlin/Native_ supports preliminary source-level debugging on produced executables with `lldb` debugger.
+ _Kotlin/Native_ supports  source-level debugging on produced executables with `lldb` debugger.
  Produce your binary with debugging information by specifying `-g` _Kotlin/Native_ compiler switch.
- Konan plugin accepts `enableDebug` project's property, allowing two ways of producing binaries with the debug
- information:
-   - Gradle DSL
-   - argument `-PenableDebug=true` in Gradle command line
-
- Start your application with
-    
-    lldb my_program.kexe
- 
- and then 
-    
-    command script import tools/konan_lldb.py
-    b kfun:main()
-
-to set breakpoint in main function of your application. Single stepping and step into shall work, 
-variable inspection may have issues.
-See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md).
+See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md) for further information.
