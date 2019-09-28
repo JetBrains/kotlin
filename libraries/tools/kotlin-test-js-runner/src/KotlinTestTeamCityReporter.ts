@@ -78,7 +78,7 @@ export function runWithTeamCityReporter(
                 const startTime = timer ? timer.start() : null;
                 teamCity.sendMessage('testStarted', withName(name));
 
-                const revertLogMethods: CallableFunction[] = [];
+                let revertLogMethods: CallableFunction[] = [];
 
                 try {
                     runner.test(name, isIgnored, () => {
@@ -100,13 +100,12 @@ export function runWithTeamCityReporter(
                             [method: string]: (message?: any, ...optionalParams: any[]) => void
                         };
 
-                        logMethods
+                        revertLogMethods = logMethods
                             .map(method => {
                                 const realMethod = globalConsole[method];
                                 globalConsole[method] = log(method);
                                 return () => globalConsole[method] = realMethod
-                            })
-                            .forEach(method => revertLogMethods.push(method));
+                            });
                         fn();
                     });
                 } catch (e) {
