@@ -47,7 +47,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 val elementPsi = element.psi<PsiContinueStatement>()!!
                 if (elementPsi.findContinuedStatement() != loopStatement.psi<PsiForeachStatement>()) return recurse(element)
                 if (element.parent is JKKtWhenCase && element.label is JKLabelEmpty) {
-                    element.label = JKLabelText(loop)
+                    element.label = JKLabelText(loop.copyTreeAndDetach())
                     needLabel = true
                 }
                 return element
@@ -61,7 +61,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                     loopStatement.iterationExpression.detached(loopStatement),
                     body
                 ),
-                listOf(loop)
+                listOf(loop.copyTreeAndDetach())
             ).asStatement()
         }
         return null
@@ -91,7 +91,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 loopStatement::initializer.detached(),
                 JKLabeledExpression(
                     whileStatement,
-                    listOf(loop)
+                    listOf(loop.copyTreeAndDetach())
                 ).asStatement()
             )
         )
@@ -107,7 +107,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 val elementPsi = element.psi<PsiContinueStatement>()!!
                 if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
                 if (element.parent is JKKtWhenCase && element.label is JKLabelEmpty) {
-                    element.label = JKLabelText(loop)
+                    element.label = JKLabelText(loop.copyTreeAndDetach())
                     needLabel = true
                 }
                 val statements = loopStatement.updaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
@@ -212,7 +212,7 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 val elementPsi = element.psi<PsiContinueStatement>()!!
                 if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
                 if (element.parent is JKKtWhenCase && element.label is JKLabelEmpty) {
-                    element.label = JKLabelText(loop)
+                    element.label = JKLabelText(loop.copyTreeAndDetach())
                     needLabel = true
                 }
                 return element
@@ -228,13 +228,13 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         if (needLabel) {
             return JKLabeledExpression(
                 forInStatement,
-                listOf(loop)
+                listOf(loop.copyTreeAndDetach())
             ).asStatement()
         }
 
         return forInStatement
     }
-
+    
     private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {
         return when (this) {
             is PsiLoopStatement -> this
