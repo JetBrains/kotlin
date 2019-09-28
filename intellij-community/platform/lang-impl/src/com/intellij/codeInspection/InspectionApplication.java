@@ -216,7 +216,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
                              new AnalysisScope(project, files));
         }
         catch (IOException e) {
-          e.printStackTrace();
+          LOG.error(e);
         }
       }, InvokeAfterUpdateMode.SYNCHRONOUS_NOT_CANCELLABLE, null, null);
     }
