@@ -28,11 +28,9 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class KotlinPropertySetterBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinPropertyAccessorBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtPropertyAccessor) return
-
-        if (!psiElement.isSetter) return
 
         if (psiElement.bodyExpression != null || psiElement.equalsToken != null) return
 
@@ -43,11 +41,16 @@ class KotlinPropertySetterBodyFixer : SmartEnterProcessorWithFixers.Fixer<Kotlin
             }
         }
 
-        //setter without parameter and body is valid
+        // accessor without parameter and body is valid
         if (psiElement.namePlaceholder.endOffset == psiElement.endOffset) return
 
         val doc = editor.document
         var endOffset = psiElement.range.end
+
+        if (psiElement.isGetter && psiElement.rightParenthesis == null) {
+            doc.insertString(endOffset, ")")
+            endOffset++
+        }
 
         if (psiElement.text?.last() == ';') {
             doc.deleteString(endOffset - 1, endOffset)
