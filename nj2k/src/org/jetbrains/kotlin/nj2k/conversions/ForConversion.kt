@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.nj2k.conversions
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
-import org.jetbrains.kotlin.j2k.ast.LabeledStatement
 import org.jetbrains.kotlin.j2k.hasWriteAccesses
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.*
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
 import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
 import org.jetbrains.kotlin.nj2k.types.JKNoType
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.abs
 
 
@@ -27,12 +25,44 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         get() = context.converter.converterServices.oldServices.referenceSearcher
 
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
+        if (element is JKForInStatement) {
+            convertForInStatement(element)?.also { return it } ?: return recurse(element)
+        }
+
         if (element !is JKJavaForLoopStatement) return recurse(element)
 
         convertToForeach(element)?.also { return recurse(it.withNonCodeElementsFrom(element)) }
         convertToWhile(element)?.also { return recurse(it.withNonCodeElementsFrom(element)) }
 
         return recurse(element)
+    }
+
+    private fun convertForInStatement(loopStatement: JKForInStatement): JKStatement? {
+        var needLabel = false
+        val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
+            override fun applyToElement(telement: JKTreeElement): JKTreeElement {
+                if (telement !is JKContinueStatement) return recurse(telement)
+                val elementPsi = telement.psi<PsiContinueStatement>()!!
+                if (elementPsi.findContinuedStatement() != loopStatement.psi<PsiForeachStatement>()) return recurse(telement)
+                if (telement.parent is JKKtWhenCase && telement.label is JKLabelEmpty) {
+                    telement.label = JKLabelText(JKNameIdentifier("loop"))
+                    needLabel = true
+                }
+                return telement
+            }
+        }
+        val body = continueStatementConverter.applyToElement(loopStatement::body.detached())
+        if (needLabel && body is JKStatement) {
+            return JKLabeledExpression(
+                JKForInStatement(
+                    loopStatement.declaration.detached(loopStatement),
+                    loopStatement.iterationExpression.detached(loopStatement),
+                    body
+                ),
+                listOf(JKNameIdentifier("loop"))
+            ).asStatement()
+        }
+        return null
     }
 
     private fun convertToWhile(loopStatement: JKJavaForLoopStatement): JKStatement? {
@@ -74,12 +104,12 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 if (element !is JKContinueStatement) return recurse(element)
                 val elementPsi = element.psi<PsiContinueStatement>()!!
                 if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
-                if (element.parent is JKKtWhenCase) {
+                if (element.parent is JKKtWhenCase && element.label is JKLabelEmpty) {
                     element.label = JKLabelText(JKNameIdentifier("loop"))
                     needLabel = true
                 }
                 val statements = loopStatement.updaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
-                return if (element.parent is JKBlock && element.parent !is JKJavaSwitchCase)
+                return if (element.parent is JKBlock)
                     JKBlockStatementWithoutBrackets(statements)
                 else JKBlockStatement(JKBlockImpl(statements))
             }
@@ -128,55 +158,79 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         }
     }
 
-    private fun convertToForeach(loopStatement: JKJavaForLoopStatement): JKForInStatement? {
+    private fun convertToForeach(loopStatement: JKJavaForLoopStatement): JKStatement? {
         val loopVar =
-            (loopStatement.initializer as? JKDeclarationStatement)?.declaredStatements?.singleOrNull() as? JKLocalVariable ?: return null
+            (loopStatement.initializer as? JKDeclarationStatement)?.declaredStatements?.singleOrNull() as? JKLocalVariable
+                ?: return null
         val loopVarPsi = loopVar.psi<PsiLocalVariable>() ?: return null
-        val condition = loopStatement.condition as? JKBinaryExpression ?: return null
-        if (!loopVarPsi.hasWriteAccesses(referenceSearcher, loopStatement.body.psi())
-            && !loopVarPsi.hasWriteAccesses(referenceSearcher, loopStatement.condition.psi())
+        if (loopVarPsi.hasWriteAccesses(referenceSearcher, loopStatement.body.psi())
+            || loopVarPsi.hasWriteAccesses(referenceSearcher, loopStatement.condition.psi())
         ) {
-            val left = condition.left as? JKFieldAccessExpression ?: return null
-            val right = condition::right.detached()
-            if (right.psi<PsiExpression>()?.type in listOf(PsiType.DOUBLE, PsiType.FLOAT, PsiType.CHAR)) return null
-            if (left.identifier.target != loopVar) return null
-            val start = loopVar::initializer.detached()
-            val operationType =
-                (loopStatement.updaters.singleOrNull() as? JKExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
-            val reversed = when (operationType?.token?.text) {
-                "++" -> false
-                "--" -> true
-                else -> return null
-            }
-            val operatorToken =
-                ((condition.operator as? JKKtOperatorImpl)?.token as? JKKtSingleValueOperatorToken)?.psiToken
-            val inclusive = when (operatorToken) {
-                KtTokens.LT -> if (reversed) return null else false
-                KtTokens.LTEQ -> if (reversed) return null else true
-                KtTokens.GT -> if (reversed) false else return null
-                KtTokens.GTEQ -> if (reversed) true else return null
-                KtTokens.EXCLEQ -> false
-                else -> return null
-            }
-            val range = forIterationRange(start, right, reversed, inclusive)
-            val explicitType =
-                if (context.converter.settings.specifyLocalVariableTypeByDefault)
-                    JKJavaPrimitiveType.INT
-                else JKNoType
-            val loopVarDeclaration =
-                JKForLoopVariable(
-                    JKTypeElement(explicitType),
-                    loopVar::name.detached(),
-                    JKStubExpression()
-                )
-            return JKForInStatement(
-                loopVarDeclaration,
-                range,
-                loopStatement::body.detached()
-            )
-
+            return null
         }
-        return null
+
+        val condition = loopStatement.condition as? JKBinaryExpression ?: return null
+        val left = condition.left as? JKFieldAccessExpression ?: return null
+        val right = condition::right.detached()
+        if (right.psi<PsiExpression>()?.type in listOf(PsiType.DOUBLE, PsiType.FLOAT, PsiType.CHAR)) return null
+        if (left.identifier.target != loopVar) return null
+        val start = loopVar::initializer.detached()
+        val operationType =
+            (loopStatement.updaters.singleOrNull() as? JKExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
+        val reversed = when (operationType?.token?.text) {
+            "++" -> false
+            "--" -> true
+            else -> return null
+        }
+        val operatorToken =
+            ((condition.operator as? JKKtOperatorImpl)?.token as? JKKtSingleValueOperatorToken)?.psiToken
+        val inclusive = when (operatorToken) {
+            KtTokens.LT -> if (reversed) return null else false
+            KtTokens.LTEQ -> if (reversed) return null else true
+            KtTokens.GT -> if (reversed) false else return null
+            KtTokens.GTEQ -> if (reversed) true else return null
+            KtTokens.EXCLEQ -> false
+            else -> return null
+        }
+        val range = forIterationRange(start, right, reversed, inclusive)
+        val explicitType =
+            if (context.converter.settings.specifyLocalVariableTypeByDefault)
+                JKJavaPrimitiveType.INT
+            else JKNoType
+        val loopVarDeclaration =
+            JKForLoopVariable(
+                JKTypeElement(explicitType),
+                loopVar::name.detached(),
+                JKStubExpression()
+            )
+        var needLabel = false
+        val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
+            override fun applyToElement(element: JKTreeElement): JKTreeElement {
+                if (element !is JKContinueStatement) return recurse(element)
+                val elementPsi = element.psi<PsiContinueStatement>()!!
+                if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
+                if (element.parent is JKKtWhenCase && element.label is JKLabelEmpty) {
+                    element.label = JKLabelText(JKNameIdentifier("loop"))
+                    needLabel = true
+                }
+                return element
+            }
+        }
+        val body = continueStatementConverter.applyToElement(loopStatement::body.detached())
+        val forInStatement = JKForInStatement(
+            loopVarDeclaration,
+            range,
+            body as JKStatement
+        )
+
+        if (needLabel) {
+            return JKLabeledExpression(
+                forInStatement,
+                listOf(JKNameIdentifier("loop"))
+            ).asStatement()
+        }
+
+        return forInStatement
     }
 
     private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {

@@ -4615,6 +4615,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/switch/KT-19554.java");
         }
 
+        @TestMetadata("KT-34069.java")
+        public void testKT_34069() throws Exception {
+            runTest("nj2k/testData/newJ2k/switch/KT-34069.java");
+        }
+
         @TestMetadata("kt-539.java")
         public void testKt_539() throws Exception {
             runTest("nj2k/testData/newJ2k/switch/kt-539.java");
