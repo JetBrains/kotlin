@@ -301,13 +301,13 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   private void runAnalysis(Project project,
                            InspectionProfileImpl inspectionProfile,
                            AnalysisScope scope, InspectionsReportConverter reportConverter, Path resultsDataPath) throws IOException {
+    GlobalInspectionContextImpl context = createGlobalInspectionContext(project);
     if (myAnalyzeChanges) {
       scope = runFirstStage(project, createGlobalInspectionContext(project), scope, resultsDataPath);
+      setupSecondAnalysisHandler(project, context);
     }
 
     final List<Path> inspectionsResults = new ArrayList<>();
-    GlobalInspectionContextImpl context = createGlobalInspectionContext(project);
-    setupSecondAnalysisHandler(project, context);
     runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
     final Path descriptionsFile = resultsDataPath.resolve(DESCRIPTIONS + XML_EXTENSION);
     describeInspections(descriptionsFile,
