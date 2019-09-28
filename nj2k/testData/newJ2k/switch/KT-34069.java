@@ -25,6 +25,28 @@ public class TestContinueInSwitchInForeach {
         System.out.println("a = " + a + "; b = " + b + "; c = " + c);
     }
 
+    public void fooWithLabel(char[] cc) {
+        Loop: for (char ccc : cc) {
+            if (ccc == ';') {
+                continue;
+            }
+            switch (ccc) {
+                case ' ':
+                    continue Loop;
+                case 'a':
+                    a++;
+                    break;
+                case 'b':
+                    b++;
+                    break;
+                case 'c':
+                    c++;
+                    break;
+            }
+        }
+        System.out.println("a = " + a + "; b = " + b + "; c = " + c);
+    }
+
     public void bar(char[] cc) {
         for (int i = 0; i < 10; i++) {
             switch (cc[i]) {
@@ -32,6 +54,27 @@ public class TestContinueInSwitchInForeach {
                     continue;
                 case ' ':
                     continue;
+                case 'a':
+                    a++;
+                    break;
+                case 'b':
+                    b++;
+                    break;
+                case 'c':
+                    c++;
+                    break;
+            }
+        }
+        System.out.println("a = " + a + "; b = " + b + "; c = " + c);
+    }
+
+    public void barWithLabel(char[] cc) {
+        Loop: for (int i = 0; i < 10; i++) {
+            switch (cc[i]) {
+                case ';':
+                    continue Loop;
+                case ' ':
+                    continue Loop;
                 case 'a':
                     a++;
                     break;
