@@ -5,6 +5,7 @@ import com.intellij.ide.highlighter.ArchiveFileType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.ProjectBundle;
@@ -27,6 +28,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
 import java.util.*;
@@ -181,6 +183,13 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
       }
     }
     return result;
+  }
+
+  @TestOnly
+  public void addTestJdk(@NotNull Sdk jdk, @NotNull Disposable parentDisposable) {
+    ApplicationManager.getApplication().assertWriteAccessAllowed();
+    mySdks.add(jdk);
+    Disposer.register(parentDisposable, () -> WriteAction.runAndWait(()-> mySdks.remove(jdk)));
   }
 
   @Override
