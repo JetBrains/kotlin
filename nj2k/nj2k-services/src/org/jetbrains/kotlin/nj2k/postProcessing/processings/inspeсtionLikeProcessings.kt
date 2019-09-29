@@ -442,17 +442,6 @@ class RedundantSemicolonInspectionBasedProcessing :
     }
 }
 
-
-class RedundantCompanionReferenceInspectionBasedProcessing :
-    InspectionLikeProcessingForElement<KtReferenceExpression>(KtReferenceExpression::class.java) {
-    override fun isApplicableTo(element: KtReferenceExpression, settings: ConverterSettings?): Boolean =
-        RedundantCompanionReferenceInspection.isRedundantCompanionReference(element)
-
-    override fun apply(element: KtReferenceExpression) {
-        RemoveRedundantCompanionReferenceFix.removeRedundantCompanionReference(element)
-    }
-}
-
 class ExplicitThisInspectionBasedProcessing :
     InspectionLikeProcessingForElement<KtExpression>(KtExpression::class.java) {
     override fun isApplicableTo(element: KtExpression, settings: ConverterSettings?): Boolean =
