@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
-    fun llvmFunction(function: IrFunction): LLVMValueRef = llvmFunctionOrNull(function) ?: error("no function ${function.name} in ${function.file}")
+    fun llvmFunction(function: IrFunction): LLVMValueRef = llvmFunctionOrNull(function) ?: error("no function ${function.name} in ${function.file.fqName}")
     fun llvmFunctionOrNull(function: IrFunction): LLVMValueRef? = function.llvmFunctionOrNull
     val intPtrType = LLVMIntPtrType(llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
