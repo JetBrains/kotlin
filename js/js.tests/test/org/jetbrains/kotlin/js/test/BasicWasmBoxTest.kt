@@ -9,7 +9,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.Kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.compileWasm
@@ -22,7 +21,8 @@ import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
-import org.jetbrains.kotlin.konan.library.resolver.impl.KotlinLibraryResolverResultImpl
+import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverResultImpl
+import org.jetbrains.kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction

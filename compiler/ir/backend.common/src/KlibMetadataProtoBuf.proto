@@ -92,11 +92,6 @@ extend org.jetbrains.kotlin.metadata.EnumEntry {
   optional DescriptorUniqId enum_entry_uniq_id = 172;
 }
 
-extend org.jetbrains.kotlin.metadata.ValueParameter {
-  repeated org.jetbrains.kotlin.metadata.Annotation parameter_annotation = 170;
-  optional DescriptorUniqId value_param_uniq_id = 171;
-}
-
 extend org.jetbrains.kotlin.metadata.Type {
   repeated org.jetbrains.kotlin.metadata.Annotation type_annotation = 170;
 }

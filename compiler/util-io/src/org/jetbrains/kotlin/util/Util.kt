@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.util
+package org.jetbrains.kotlin.util
 
 import kotlin.system.measureTimeMillis
 import org.jetbrains.kotlin.konan.file.*
@@ -20,7 +20,8 @@ fun <T> printMillisec(message: String, body: () -> T): T {
 
 fun profile(message: String, body: () -> Unit) = profileIf(
     System.getProperty("konan.profile")?.equals("true") ?: false,
-    message, body)
+    message, body
+)
 
 fun profileIf(condition: Boolean, message: String, body: () -> Unit) =
     if (condition) printMillisec(message, body) else body()

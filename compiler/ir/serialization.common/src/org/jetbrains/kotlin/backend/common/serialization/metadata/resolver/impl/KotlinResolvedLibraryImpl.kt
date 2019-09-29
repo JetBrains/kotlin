@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.Kotlin.library.resolver.impl
+package org.jetbrains.kotlin.library.resolver.impl
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.KotlinLibrary

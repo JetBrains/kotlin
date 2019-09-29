@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.konan.library.resolver.impl
+package org.jetbrains.kotlin.library.resolver.impl
 
-import org.jetbrains.kotlin.Kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.Kotlin.library.resolver.KotlinLibraryResolver
-import org.jetbrains.kotlin.Kotlin.library.resolver.LibraryOrder
-import org.jetbrains.kotlin.Kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.util.WithLogger
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
+import org.jetbrains.kotlin.library.resolver.LibraryOrder
+import org.jetbrains.kotlin.util.WithLogger
 
 fun <L: KotlinLibrary> SearchPathResolver<L>.libraryResolver()
         = KotlinLibraryResolverImpl<L>(this)
@@ -37,7 +36,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
         noEndorsedLibs: Boolean
-    ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs)
+    ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
             .leaveDistinct()
             .resolveDependencies()
 

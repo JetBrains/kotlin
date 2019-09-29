@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.Kotlin.library.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.wasm.codegen.IrModuleToWasm

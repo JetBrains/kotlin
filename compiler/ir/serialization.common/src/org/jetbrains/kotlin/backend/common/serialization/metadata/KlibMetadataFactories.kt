@@ -26,18 +26,18 @@ open class KlibMetadataFactories(
 ) {
 
     /**
-     * The default [KonanModuleDescriptorFactory] factory instance.
+     * The default [KlibModuleDescriptorFactory] factory instance.
      */
     val DefaultDescriptorFactory: KlibModuleDescriptorFactory = KlibModuleDescriptorFactoryImpl(createBuiltIns)
 
     /**
-     * The default [KonanDeserializedPackageFragmentsFactory] factory instance.
+     * The default [KlibMetadataDeserializedPackageFragmentsFactory] factory instance.
      */
     val DefaultPackageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory =
         KlibMetadataDeserializedPackageFragmentsFactoryImpl()
 
     /**
-     * The default [KonanDeserializedModuleDescriptorFactory] factory instance.
+     * The default [KlibMetadataModuleDescriptorFactory] factory instance.
      */
     val DefaultDeserializedDescriptorFactory: KlibMetadataModuleDescriptorFactory =
         createDefaultKonanDeserializedModuleDescriptorFactory(
@@ -45,7 +45,7 @@ open class KlibMetadataFactories(
         )
 
     /**
-     * The default [KonanResolvedModuleDescriptorsFactory] factory instance.
+     * The default [KlibResolvedModuleDescriptorsFactory] factory instance.
      */
     val DefaultResolvedDescriptorsFactory: KlibResolvedModuleDescriptorsFactory =
         createDefaultKonanResolvedModuleDescriptorsFactory(DefaultDeserializedDescriptorFactory)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.library.lite
 
 import org.jetbrains.kotlin.konan.library.*
+import org.jetbrains.kotlin.library.*
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path

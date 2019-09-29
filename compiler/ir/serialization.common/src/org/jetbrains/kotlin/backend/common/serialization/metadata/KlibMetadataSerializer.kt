@@ -46,9 +46,9 @@ abstract class KlibMetadataSerializer(
         var classSerializer: DescriptorSerializer = topSerializer
     )
 
-    fun declarationTableHandler(declarationDescriptor: DeclarationDescriptor): KlibMetadataProtoBuf.DescriptorUniqId? {
-        val index = descriptorTable.get(declarationDescriptor)
-        return index?.let { newDescriptorUniqId(it) }
+    fun declarationTableHandler(declarationDescriptor: DeclarationDescriptor): KlibMetadataProtoBuf.DescriptorUniqId {
+        val index = descriptorTable.get(declarationDescriptor) ?: error("No descriptor ID found for $declarationDescriptor")
+        return index.let { newDescriptorUniqId(it) }
     }
 
     protected fun createNewContext(): SerializerContext {

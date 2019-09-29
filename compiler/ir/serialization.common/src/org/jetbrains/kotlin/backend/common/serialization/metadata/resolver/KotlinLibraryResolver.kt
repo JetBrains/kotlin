@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.Kotlin.library.resolver
+package org.jetbrains.kotlin.library.resolver
 
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary

@@ -44,11 +44,6 @@ class KlibMetadataSerializerExtension(
         super.serializeTypeAlias(typeAlias, proto)
     }
 
-    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
-        uniqId(descriptor)?.let { proto.setExtension(KlibMetadataProtoBuf.valueParamUniqId, it) }
-        super.serializeValueParameter(descriptor, proto)
-    }
-
     override fun serializeEnumEntry(descriptor: ClassDescriptor, proto: ProtoBuf.EnumEntry.Builder) {
         uniqId(descriptor)?.let { proto.setExtension(KlibMetadataProtoBuf.enumEntryUniqId, it) }
         super.serializeEnumEntry(descriptor, proto)

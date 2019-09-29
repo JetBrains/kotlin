@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.serialization.konan.impl
 
-import org.jetbrains.kotlin.Kotlin.library.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataModuleDescriptorFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.SyntheticModulesOrigin
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.konan.util.profile
+import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.PackageAccessedHandler
 import org.jetbrains.kotlin.name.FqName
@@ -50,7 +50,8 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = createDescriptorOptionalBuiltsIns(
-                        library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler)
+                    library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler
+                )
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
 

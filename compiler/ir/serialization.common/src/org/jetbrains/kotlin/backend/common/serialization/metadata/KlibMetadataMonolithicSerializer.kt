@@ -57,16 +57,14 @@ class KlibMetadataMonolithicSerializer(
         val fragmentNames = mutableListOf<String>()
         val emptyPackages = mutableListOf<String>()
 
-        getPackagesFqNames(moduleDescriptor).forEach iteration@{ packageFqName ->
+        for (packageFqName in getPackagesFqNames(moduleDescriptor)) {
             val packageProtos =
                 serializePackageFragment(packageFqName, moduleDescriptor, bindingContext)
-            if (packageProtos.isEmpty()) return@iteration
+            if (packageProtos.isEmpty()) continue
 
             val packageFqNameStr = packageFqName.asString()
 
-            //header.addPackageFragmentName(packageFqNameStr)
             if (packageProtos.all { it.getExtension(KlibMetadataProtoBuf.isEmpty)}) {
-                //header.addEmptyPackage(packageFqNameStr)
                 emptyPackages.add(packageFqNameStr)
             }
             fragments.add(packageProtos.map { it.toByteArray() })

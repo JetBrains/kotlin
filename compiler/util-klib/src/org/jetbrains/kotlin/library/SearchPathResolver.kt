@@ -2,8 +2,8 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.util.*
 
 const val KOTLIN_STDLIB_NAME = "stdlib"
 

@@ -25,6 +25,8 @@ dependencies {
     mavenCompileScope(project(":kotlin-compiler"))
 
     compile(project(":kotlin-native:kotlin-native-utils"))
+    compile(project(":kotlin-util-io"))
+    compile(project(":kotlin-util-klib"))
 
     testCompile(commonDep("junit:junit"))
 }

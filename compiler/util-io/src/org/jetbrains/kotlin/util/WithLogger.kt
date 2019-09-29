@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.konan.util
+package org.jetbrains.kotlin.util
 
 import kotlin.system.exitProcess
 

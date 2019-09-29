@@ -26,10 +26,9 @@ import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 
-val ModuleDescriptorImpl.isFromKlibWithEmptyDependencies
+val ModuleDescriptorImpl.isStdlibModule
     get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)
                 ?.library?.unresolvedDependencies?.isEmpty() ?: false
 
@@ -60,7 +59,7 @@ internal class KlibMetadataModuleDescriptorFactoryImpl(
         val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
         val compositePackageFragmentAddend =
-            if (moduleDescriptor.isFromKlibWithEmptyDependencies) {
+            if (moduleDescriptor.isStdlibModule) {
                 functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
             } else null
 
