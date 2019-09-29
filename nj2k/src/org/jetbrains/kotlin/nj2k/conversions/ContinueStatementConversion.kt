@@ -9,9 +9,10 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
 
-// This conversion is for converting 'continue' keywords to labeled ones. If the 'continue' keywords in 'switch'
-// is allowed by the kotlin syntax, ContinueStatementConverter, convertForInStatement and convertWhileStatement
-// in this file can be removed.
+// This conversion is for converting continue statements. For example, this adds updaters in converted while loops, and attaches
+// labels named 'loop' to continue statements inner 'when' in loops and their corresponding loops for avoiding syntax errors.
+// If the 'continue' keywords in 'switch' is allowed by the kotlin syntax, ContinueStatementConverter, convertForInStatement and
+// convertWhileStatement in this file can be removed.
 class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKKtConvertedFromForLoopSyntheticWhileStatement) {
