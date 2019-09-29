@@ -55,6 +55,13 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 apiVersion("1.3")
                 when (module.name) {
                     "project", "app", "lib" -> additionalArguments(null)
+                    "app_jvmMain", "app_jvmTest", "lib_jvmMain", "lib_jvmTest" ->
+                        additionalArguments(
+                            if (gradleKotlinPluginVersion == MINIMAL_SUPPORTED_VERSION)
+                                "-version"
+                            else
+                                "-Xallow-no-source-files"
+                        )
                     else -> additionalArguments("-version")
                 }
             }
@@ -292,6 +299,9 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 libraryDependency("Gradle: org.hamcrest:hamcrest-core:1.3@jar", DependencyScope.TEST)
                 libraryDependency("Gradle: org.hamcrest:hamcrest-integration:1.3@jar", DependencyScope.TEST)
                 libraryDependency("Gradle: org.hamcrest:hamcrest-library:1.3@jar", DependencyScope.TEST)
+                if (gradleKotlinPluginVersion != MINIMAL_SUPPORTED_VERSION) {
+                    libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-android-extensions-runtime:${kotlinVersion()}@jar", DependencyScope.COMPILE)
+                }
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}@jar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion()}@jar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion()}@jar", DependencyScope.COMPILE)
@@ -332,10 +342,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 sourceFolder("shared/src/androidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("shared/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
             }
-            var nativeVersion = when (gradleKotlinPluginVersion) {
-                MINIMAL_SUPPORTED_VERSION -> "1.3.10"
-                else -> "1.3.20"
-            }
+            var nativeVersion = kotlinVersion()
             module("shared_iOSMain") {
                 libraryDependency("Kotlin/Native $nativeVersion - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinVersion()}", DependencyScope.COMPILE)

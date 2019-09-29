@@ -5,7 +5,6 @@ kotlin {
         fromPreset(presets.jvm, 'android')
 
         fromPreset(presets.iosArm64, 'iOS') {
-            compilations.main.outputKinds('FRAMEWORK')
         }
     }
 

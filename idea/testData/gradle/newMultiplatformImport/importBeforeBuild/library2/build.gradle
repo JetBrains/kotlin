@@ -1,0 +1,14 @@
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+    targets { fromPreset(presets.jvm, 'jvm') }
+
+    sourceSets {
+        jvmMain {
+            dependencies {
+                implementation project(':library1')
+            }
+        }
+    }
+}
+ 
