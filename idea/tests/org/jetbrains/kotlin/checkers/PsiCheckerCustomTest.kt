@@ -8,35 +8,36 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.runner.RunWith
 
+@TestMetadata("idea/testData/checker/custom")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
+
     fun testNoUnusedParameterWhenCustom() {
         val testAnnotation = "MyTestAnnotation"
         EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(testAnnotation)
         try {
-            doTest(getTestDataFile("noUnusedParameterWhenCustom.kt"))
-        }
-        finally {
+            doTest("noUnusedParameterWhenCustom.kt")
+        } finally {
             EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.remove(testAnnotation)
         }
     }
 
     fun testConflictingOverloadsMultifile1() {
-        doTest(getTestDataFile("conflictingOverloadsMultifile1a.kt"),
-               getTestDataFile("conflictingOverloadsMultifile1b.kt"))
+        doTest(
+            "conflictingOverloadsMultifile1a.kt",
+            "conflictingOverloadsMultifile1b.kt"
+        )
     }
 
     fun testConflictingOverloadsMultifile2() {
-        doTest(getTestDataFile("conflictingOverloadsMultifile2a.kt"),
-               getTestDataFile("conflictingOverloadsMultifile2b.kt"))
+        doTest(
+            "conflictingOverloadsMultifile2a.kt",
+            "conflictingOverloadsMultifile2b.kt"
+        )
     }
-
-    private fun getTestDataFile(localName: String) = "idea/testData/checker/custom/$localName"
-
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory()
 
     override fun getProjectDescriptor(): LightProjectDescriptor = getProjectDescriptorFromTestName()
 }

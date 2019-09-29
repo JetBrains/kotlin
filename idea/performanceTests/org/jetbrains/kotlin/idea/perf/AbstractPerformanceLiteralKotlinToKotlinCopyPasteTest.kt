@@ -12,7 +12,6 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -22,8 +21,6 @@ import java.io.File
 abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractCopyPasteTest() {
 
     companion object {
-        val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/literal"
-
         @JvmStatic
         var warmedUp: Boolean = false
 
@@ -35,8 +32,6 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
             Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
         }
     }
-
-    override fun getTestDataPath() = BASE_PATH
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
@@ -83,14 +78,17 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
         )
     }
 
-    fun doPerfTest(path: String) {
+    fun doPerfTest(unused: String) {
         val testName = getTestName(false)
+        val fileName = fileName()
+        val testPath = testPath()
+        val expectedPath = File(testPath.replace(".kt", ".expected.kt"))
 
         val fileEditorManager = FileEditorManagerEx.getInstance(project)
         stats.perfTest<Array<PsiFile>, Unit>(
             testName = testName,
             setUp = {
-                it.setUpValue = myFixture.configureByFiles("$testName.kt", "$testName.to.kt")
+                it.setUpValue = myFixture.configureByFiles(fileName, fileName.replace(".kt", ".to.kt"))
             },
             test = {
                 fileEditorManager.setSelectedEditor(it.setUpValue!![0].virtualFile, "")
@@ -100,7 +98,7 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
                 myFixture.performEditorAction(IdeActions.ACTION_PASTE)
             },
             tearDown = {
-                KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.kt")), it.setUpValue!![1].text)
+                KotlinTestUtils.assertEqualsToFile(expectedPath, it.setUpValue!![1].text)
 
                 // to avoid VFS refresh
                 myFixture.performEditorAction(IdeActions.ACTION_UNDO)

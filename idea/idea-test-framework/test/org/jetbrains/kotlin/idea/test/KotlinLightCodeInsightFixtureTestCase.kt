@@ -29,6 +29,7 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
+import com.sun.tools.corba.se.idl.toJavaPortable.Util.fileName
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CompilerSettings
@@ -62,8 +63,15 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected open val captureExceptions = true
 
-    protected fun testPath(): String =
-        File(testDataPath, fileName()).toString()
+    protected fun testDataFile(): File = File(testDataPath, fileName())
+
+    protected fun testPath(): String = testDataFile().toString()
+
+    protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
+
+    override fun getTestDataPath(): String {
+        return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
+    }
 
     override fun setUp() {
         super.setUp()
@@ -194,8 +202,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected fun isAllFilesPresentInTest(): Boolean = KotlinTestUtils.isAllFilesPresentTest(getTestName(false))
 
-    protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
-
     protected fun performNotWriteEditorAction(actionId: String): Boolean {
         val dataContext = (myFixture.editor as EditorEx).dataContext
 
@@ -215,9 +221,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         return true
     }
 
-    override fun getTestDataPath(): String {
-        return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
-    }
 }
 
 

@@ -30,21 +30,20 @@ import java.io.File
 import java.util.*
 
 abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    fun doTest(testPath: String) {
+    fun doTest(unused: String) {
+        val testPath = testPath()
         val dumpNormal = dump(testPath, BodyResolveMode.PARTIAL)
 
         val testPathNoExt = FileUtil.getNameWithoutExtension(testPath)
-        KotlinTestUtils.assertEqualsToFile(File(testPathNoExt + ".dump"), dumpNormal)
+        KotlinTestUtils.assertEqualsToFile(File("$testPathNoExt.dump"), dumpNormal)
 
         val dumpForCompletion = dump(testPath, BodyResolveMode.PARTIAL_FOR_COMPLETION)
-        val completionDump = File(testPathNoExt + ".completion")
+        val completionDump = File("$testPathNoExt.completion")
         if (dumpForCompletion != dumpNormal) {
             KotlinTestUtils.assertEqualsToFile(completionDump, dumpForCompletion)
-        }
-        else {
+        } else {
             Assert.assertFalse(completionDump.exists())
         }
     }
@@ -64,11 +63,11 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
                     selectionModel.selectionEnd,
                     KtExpression::class.java
                 )
-                    ?: error("No JetExpression at selection range")
+                    ?: error("No KtExpression at selection range")
             } else {
                 val offset = editor.caretModel.offset
                 val element = file.findElementAt(offset)!!
-                element.getNonStrictParentOfType<KtSimpleNameExpression>() ?: error("No JetSimpleNameExpression at caret")
+                element.getNonStrictParentOfType<KtSimpleNameExpression>() ?: error("No KtSimpleNameExpression at caret")
             }
 
             val resolutionFacade = file.getResolutionFacade()
