@@ -65,10 +65,11 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
         }
     }
 
-    protected fun doPerfTest(testPath: String) {
+    protected fun doPerfTest(unused: String) {
+        val testPath = testPath()
         val testName = getTestName(false)
         innerPerfTest(testName) {
-            myFixture.configureByFile(testPath)
+            myFixture.configureByFile(fileName())
 
             val document = myFixture.editor.document
             val beforeMarkerOffset = document.text.indexOf(BEFORE_MARKER)

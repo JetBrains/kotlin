@@ -62,6 +62,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected open val captureExceptions = true
 
+    protected fun testPath(): String =
+        File(testDataPath, fileName()).toString()
+
     override fun setUp() {
         super.setUp()
         // We do it here to avoid possible initialization problems

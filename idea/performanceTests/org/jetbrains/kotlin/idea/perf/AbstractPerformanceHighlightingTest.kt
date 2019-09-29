@@ -54,10 +54,10 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         }
     }
 
-    protected fun doPerfTest(filePath: String) {
+    protected fun doPerfTest(unused: String) {
         val testName = getTestName(false)
         innerPerfTest(testName) {
-            myFixture.configureByFile(filePath)
+            myFixture.configureByFile(fileName())
 
             val project = myFixture.project
             commitAllDocuments()

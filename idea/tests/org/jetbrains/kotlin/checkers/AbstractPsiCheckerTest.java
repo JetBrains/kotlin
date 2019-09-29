@@ -33,7 +33,7 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
     }
 
     public void doTest(@NotNull String filePath) throws Exception {
-        myFixture.configureByFile(filePath);
+        myFixture.configureByFile(fileName());
         checkHighlighting(true, false, false);
         checkResolveToDescriptor();
     }
@@ -46,7 +46,7 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
 
     public void doTestWithInfos(@NotNull String filePath) throws Exception {
         try {
-            myFixture.configureByFile(filePath);
+            myFixture.configureByFile(fileName());
 
             //noinspection unchecked
             myFixture.enableInspections(SpellCheckingInspection.class);

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.openapi.util.registry.Registry
-import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -37,27 +35,29 @@ abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPast
         super.tearDown()
     }
 
-    fun doTest(path: String) {
-        myFixture.testDataPath = BASE_PATH
-        val testName = getTestName(false)
-        myFixture.configureByFiles(testName + ".java")
+    fun doTest(unused: String) {
+        val path = testPath()
+        val baseName = fileName().replace(".java", "")
+        myFixture.configureByFiles("$baseName.java")
 
         val fileText = myFixture.editor.document.text
         val noConversionExpected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// NO_CONVERSION_EXPECTED").isNotEmpty()
 
         myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
-        configureByDependencyIfExists(testName + ".dependency.kt")
-        configureByDependencyIfExists(testName + ".dependency.java")
+        configureByDependencyIfExists("$baseName.dependency.kt")
+        configureByDependencyIfExists("$baseName.dependency.java")
 
-        configureTargetFile(testName + ".to.kt")
+        configureTargetFile("$baseName.to.kt")
 
         ConvertJavaCopyPasteProcessor.conversionPerformed = false
 
         myFixture.performEditorAction(IdeActions.ACTION_PASTE)
 
-        assertEquals(noConversionExpected, !ConvertJavaCopyPasteProcessor.conversionPerformed,
-                     if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested")
+        assertEquals(
+            noConversionExpected, !ConvertJavaCopyPasteProcessor.conversionPerformed,
+            if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested"
+        )
 
         KotlinTestUtils.assertEqualsToFile(File(path.replace(".java", ".expected.kt")), myFixture.file.text)
     }
