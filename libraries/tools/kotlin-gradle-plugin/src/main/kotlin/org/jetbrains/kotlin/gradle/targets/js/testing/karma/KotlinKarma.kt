@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
@@ -238,10 +239,10 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             val adapterJs = npmProject.dir.resolve("adapter.js")
             adapterJs.printWriter().use { writer ->
                 val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
-                writer.println("require('$karmaRunner')")
+                writer.println("require(${karmaRunner.jsQuoted()})")
 
                 files.forEach { file ->
-                    writer.println("require('$file')")
+                    writer.println("require(${file.jsQuoted()})")
                 }
             }
 

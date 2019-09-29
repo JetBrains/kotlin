@@ -8,10 +8,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
-import com.google.gson.stream.JsonWriter
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
+import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
@@ -127,7 +127,7 @@ data class KotlinWebpackConfig(
     private fun Appendable.appendEvaluatedFileReport() {
         if (reportEvaluatedConfigFile == null) return
 
-        val filePath = jsQuotedString(reportEvaluatedConfigFile.canonicalPath)
+        val filePath = reportEvaluatedConfigFile.canonicalPath.jsQuoted()
 
         //language=JavaScript 1.8
         appendln(
@@ -210,10 +210,10 @@ data class KotlinWebpackConfig(
             """
                 // entry
                 if (!config.entry) config.entry = [];
-                config.entry.push(${jsQuotedString(entry.canonicalPath)});
+                config.entry.push(${entry.canonicalPath.jsQuoted()});
                 config.output = {
-                    path: ${jsQuotedString(outputPath.canonicalPath)},
-                    filename: ${jsQuotedString(outputFileName!!)}
+                    path: ${outputPath.canonicalPath.jsQuoted()},
+                    filename: ${outputFileName!!.jsQuoted()}
                 };
                 
             """.trimIndent()
@@ -232,7 +232,7 @@ data class KotlinWebpackConfig(
                     const handler = (percentage, message, ...args) => {
                         let msg = Math.trunc(percentage * 100) + '% ' + message + ' ' + args.join(' ');
                         ${if (progressReporterPathFilter == null) "" else """
-                            msg = msg.replace(new RegExp(${jsQuotedString(progressReporterPathFilter)}, 'g'), '');
+                            msg = msg.replace(new RegExp(${progressReporterPathFilter.jsQuoted()}, 'g'), '');
                         """.trimIndent()};
                         console.log(msg);
                     };
@@ -246,9 +246,5 @@ data class KotlinWebpackConfig(
 
     private fun json(obj: Any) = StringWriter().also {
         GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
-    }.toString()
-
-    private fun jsQuotedString(str: String) = StringWriter().also {
-        JsonWriter(it).value(str)
     }.toString()
 }
