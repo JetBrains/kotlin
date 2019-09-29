@@ -79,7 +79,6 @@ object CreateTypeParameterUnmatchedTypeArgumentActionFactory :
         return QuickFixWithDelegateFactory factory@{
             val originalElement = originalElementPointer.element ?: return@factory null
             val data = quickFixDataFactory() ?: return@factory null
-            if (!data.declaration.isWritable) return@factory null
             CreateTypeParameterFromUsageFix(originalElement, data, false)
         }.let(::listOf)
     }
