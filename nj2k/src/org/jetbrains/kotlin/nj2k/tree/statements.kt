@@ -88,6 +88,8 @@ class JKKtConvertedFromForLoopSyntheticWhileStatement(
 ) : JKStatement() {
     var variableDeclaration: JKStatement by child(variableDeclaration)
     var whileStatement: JKWhileStatement by child(whileStatement)
+    // For the use in ContinueStatementConverter
+    var forLoopUpdaters: List<JKStatement> = listOf()
     override fun accept(visitor: JKVisitor) = visitor.visitKtConvertedFromForLoopSyntheticWhileStatement(this)
 }
 

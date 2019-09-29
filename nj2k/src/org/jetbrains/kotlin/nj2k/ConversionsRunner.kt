@@ -58,7 +58,6 @@ object ConversionsRunner {
         SwitchStatementConversion(context),
         LiteralConversion(context),
         ForConversion(context),
-        LabeledStatementConversion(context),
         ArrayOperationsConversion(context),
         EqualsOperatorConversion(context),
         TypeMappingConversion(context),
@@ -80,7 +79,9 @@ object ConversionsRunner {
         RemoveRedundantQualifiersForCallsConversion(context),
         FilterImportsConversion(context),
         MoveInitBlocksToTheEndConversion(context),
-        AddElementsInfoConversion(context)
+        AddElementsInfoConversion(context),
+        ContinueStatementConversion(context),
+        LabeledStatementConversion(context)
     )
 
     fun doApply(trees: List<JKTreeRoot>, context: NewJ2kConverterContext) {
