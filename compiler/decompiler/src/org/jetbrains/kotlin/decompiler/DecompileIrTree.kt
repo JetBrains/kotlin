@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.decompiler
 
 import org.jetbrains.kotlin.decompiler.util.DecompilerIrElementVisitor
+import org.jetbrains.kotlin.decompiler.util.name
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -70,7 +72,8 @@ class DecompileIrTreeVisitor(
 
 
     override fun visitReturn(expression: IrReturn, data: String) {
-        printer.println("${expression.accept(elementDecompiler, null)} ${expression.value.accept(elementDecompiler, null)}")
+        printer.print("${expression.accept(elementDecompiler, null)} ")
+        expression.value.accept(this, "return")
     }
 
     private fun IrElement.decompile(): String {
@@ -125,14 +128,20 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitProperty(declaration: IrProperty, data: String) {
-        printer.println(declaration.decompile())
-        indented {
-            declaration.getter?.decompile()
-            declaration.setter?.decompile()
+        if (declaration.backingField != null) {
+            printer.println(declaration.decompile())
+            indented {
+                declaration.getter?.decompile()
+                declaration.setter?.decompile()
+            }
+        } else {
+            throw UnsupportedOperationException("The property ${declaration.name.asString()} has no backing field!")
         }
     }
 
-    override fun visitField(declaration: IrField, data: String) = TODO()
+    override fun visitField(declaration: IrField, data: String) {
+        printer.println(declaration.decompile())
+    }
 
     private fun List<IrElement>.decompileElements() {
         forEach { it.accept(this@DecompileIrTreeVisitor, "") }
@@ -172,10 +181,32 @@ class DecompileIrTreeVisitor(
         printer.println(expression.decompile())
     }
 
+    override fun visitCall(expression: IrCall, data: String) {
+        if (data == "return") {
+            printer.printlnWithNoIndent(expression.decompile())
+        } else {
+            printer.println(expression.decompile())
+        }
+    }
+
+    override fun <T> visitConst(expression: IrConst<T>, data: String) {
+        if (data == "return") {
+            printer.printlnWithNoIndent(expression.decompile())
+        } else {
+            printer.println(expression.decompile())
+        }
+    }
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: String) = TODO()
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) = TODO()
-    override fun visitGetValue(expression: IrGetValue, data: String) = TODO()
+    override fun visitGetValue(expression: IrGetValue, data: String) {
+        if (data == "return") {
+            printer.printlnWithNoIndent(expression.decompile())
+        } else {
+            printer.printWithNoIndent(expression.decompile())
+        }
+    }
+
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: String) = TODO()
     override fun visitConstructorCall(expression: IrConstructorCall, data: String) = TODO()
     override fun visitGetField(expression: IrGetField, data: String) = TODO()
@@ -202,9 +233,43 @@ class DecompileIrTreeVisitor(
         expression.statements.decompileElements()
     }
 
+    override fun visitThrow(expression: IrThrow, data: String) {
+        printer.println("throw ${expression.value.decompile()}")
+    }
 
-    override fun visitTry(aTry: IrTry, data: String) = TODO()
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) = TODO()
+
+    override fun visitTry(aTry: IrTry, data: String) {
+        if (data == "return") {
+            printer.printWithNoIndent("try ")
+        } else {
+            printer.print("try ")
+        }
+        withBraces {
+            aTry.tryResult.accept(this, "")
+        }
+        aTry.catches.decompileElements()
+        if (aTry.finallyExpression != null) {
+            printer.print("finally ")
+            withBraces {
+                aTry.finallyExpression!!.accept(this, "")
+            }
+        }
+    }
+
+    override fun visitCatch(aCatch: IrCatch, data: String) {
+        printer.print("catch (${aCatch.catchParameter.decompile()}) ")
+        withBraces {
+            aCatch.result.accept(this, "")
+        }
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) {
+        when (expression.operator) {
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression.argument.accept(this, "")
+            else -> TODO()
+        }
+    }
+
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: String) = TODO()
 
     private inline fun IrElement.generatesSourcesForElement(body: () -> Unit) {

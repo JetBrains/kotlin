@@ -1,6 +1,6 @@
 class CustomGetPropClass(val idx: Int) {
-    val simple_prop = 42
-    val customGetProp: Int
+    val simple_prop: Int = 42
+    var customGetProp: Int
         get() = 666
 }
 

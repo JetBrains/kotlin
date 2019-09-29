@@ -51,14 +51,37 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/classes/classes_instance_ctor.kt");
         }
 
-        @TestMetadata("classes_instance_property.kt")
-        public void testClasses_instance_property() throws Exception {
-            runTest("compiler/testData/decompiler/box/classes/classes_instance_property.kt");
+        @TestMetadata("classes_instance_different_ctors.kt")
+        public void testClasses_instance_different_ctors() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_instance_different_ctors.kt");
         }
 
         @TestMetadata("classes_simple.kt")
         public void testClasses_simple() throws Exception {
             runTest("compiler/testData/decompiler/box/classes/classes_simple.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/decompiler/box/expressions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Expressions extends AbstractIrDecompilerBlackBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInExpressions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/expressions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("return_try_catch.kt")
+        public void testReturn_try_catch() throws Exception {
+            runTest("compiler/testData/decompiler/box/expressions/return_try_catch.kt");
+        }
+
+        @TestMetadata("try_catch.kt")
+        public void testTry_catch() throws Exception {
+            runTest("compiler/testData/decompiler/box/expressions/try_catch.kt");
         }
     }
 

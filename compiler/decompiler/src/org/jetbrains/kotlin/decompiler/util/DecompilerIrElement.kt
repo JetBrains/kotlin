@@ -171,14 +171,19 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
-            renderSimpleFunctionFlags() +
-                    (if (modality == Modality.FINAL) "" else modality.name.toLowerCase() + " ") +
-                    (if (visibility == Visibilities.PUBLIC) "" else visibility.name.toLowerCase() + " ") +
-                    "fun $name" +
-                    renderTypeParameters() +
-                    renderValueParameterTypes() +
-                    ": ${returnType.toKotlinType()} "
+            when (origin) {
+                // Выражения типа this.prop = 42 разворачиваются в вызов, тут вытаскиваем только имя для связывания с this/other
+                IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR -> correspondingPropertySymbol!!.owner.name()
+                else -> renderSimpleFunctionFlags() +
+                        (if (modality == Modality.FINAL) "" else modality.name.toLowerCase() + " ") +
+                        (if (visibility == Visibilities.PUBLIC) "" else visibility.name.toLowerCase() + " ") +
+                        "fun $name" +
+                        renderTypeParameters() +
+                        renderValueParameterTypes() +
+                        ": ${returnType.toKotlinType()} "
+            }
         }
+
 
     private fun renderFlagsList(vararg flags: String?) =
         flags.filterNotNull().run {
@@ -223,7 +228,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 append("${declaration.modality.name.toLowerCase()} ")
             }
             append(declaration.renderPropertyFlags())
-            append(declaration.name())
+            append(declaration.backingField?.accept(this@DecompilerIrElementVisitor, null))
         }
 
 
@@ -240,7 +245,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
         buildTrimEnd {
             append("${declaration.name()}: ${declaration.type.toKotlinType()} ")
             if (declaration.initializer != null) {
-                append(declaration.initializer?.accept(this@DecompilerIrElementVisitor, null))
+                append("= ${declaration.initializer?.accept(this@DecompilerIrElementVisitor, null)}")
             }
         }
 
@@ -281,9 +286,13 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         declaration.runTrimEnd {
-            val mutability = if (isVar) "var" else "val"
-            return "${mutability} ${name()}: ${type.toKotlinType().toString()} = " +
-                    "${initializer?.accept(this@DecompilerIrElementVisitor, null)}"
+            if (origin == IrDeclarationOrigin.CATCH_PARAMETER) {
+                return "${name()}: ${type.toKotlinType()}"
+            } else {
+                val mutability = if (isVar) "var" else "val"
+                return "${mutability} ${name()}: ${type.toKotlinType()} = " +
+                        "${initializer?.accept(this@DecompilerIrElementVisitor, null)}"
+            }
         }
 
     private fun IrVariable.renderVariableFlags(): String =
@@ -330,8 +339,8 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
         when (expression.kind) {
-            IrConstKind.String -> "\"" + expression.value as String + "\""
-            IrConstKind.Char -> "\'" + expression.value as String + "\'"
+            IrConstKind.String -> "\"${expression.value as String}\""
+            IrConstKind.Char -> "\'${expression.value as String}\'"
             IrConstKind.Null -> "null"
             else -> expression.value.toString()
         }
@@ -400,6 +409,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     append(" == ")
                     append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
                 }
+
                 IrStatementOrigin.GT -> {
                     append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
                     append(" > ")
@@ -421,12 +431,61 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
                 }
 
+                IrStatementOrigin.EXCLEQ -> {
+                    if (expression.symbol.owner.name().toLowerCase() != "not") {
+                        append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                        append(" == ")
+                        append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
+                    } else {
+                        append("(${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}).")
+                        append(expression.symbol.owner.name())
+                        append(
+                            ArrayList<String?>().apply {
+                                (0 until expression.valueArgumentsCount).mapTo(this) {
+                                    expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
+                                }
+                            }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
+                        )
+                    }
+                }
 
+                IrStatementOrigin.GET_PROPERTY -> {
+                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                    append(".")
+                    val fullName = expression.symbol.owner.name()
+                    if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+                        val regex = """<get-(.+)>""".toRegex()
+                        val matchResult = regex.find(fullName)
+                        val propName = matchResult!!.groups[1]!!.value
+                        append(propName)
+                    } else {
+                        append(fullName)
+                    }
+                }
+
+                // Для присваивания свойстам в конструкторах
+                IrStatementOrigin.EQ -> {
+                    with(expression) {
+                        append(dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
+                        append(".")
+                        append(symbol.owner.accept(this@DecompilerIrElementVisitor, null))
+                        append(" = ")
+                        append(expression.getValueArgument(0)?.accept(this@DecompilerIrElementVisitor, null))
+                    }
+                }
                 else -> {
+                    // Обнаружил, что для != в when генерится origin EXCLEQ и на верхнем уровне, и у вложения (есть скрин),
+                    // поэтому воткнул такой костыль пока
+
                     if (expression.dispatchReceiver != null) {
                         append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
                     }
-                    append(expression.symbol.owner.name.asString())
+
+//                    if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+//                        append(expression.symbol.owner.name())
+//                    } else {
+                    append(expression.symbol.owner.name())
+//                }
                     append(
                         ArrayList<String?>().apply {
                             (0 until expression.valueArgumentsCount).mapTo(this) {
@@ -456,9 +515,11 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
         with(expression) {
-            if (origin != IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
-                symbol.owner.name()
-            } else ""
+            when {
+                origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER -> ""
+                symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER -> "this"
+                else -> symbol.owner.name()
+            }
         }
 
 
@@ -517,7 +578,8 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String = TODO()
 
 
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String = TODO()
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String =
+        TODO()
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): String = TODO()
 
@@ -547,7 +609,7 @@ fun IrElement.render() =
 
 
 internal fun IrDeclaration.name(): String =
-    descriptor.name.toString()
+    descriptor.name.asString()
 
 internal fun IrClassifierSymbol.renderClassifierFqn(): String =
     if (isBound)
