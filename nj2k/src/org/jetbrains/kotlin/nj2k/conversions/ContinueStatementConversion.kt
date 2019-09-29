@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
 
 // This conversion is for converting 'continue' keywords to labeled ones. If the 'continue' keywords in 'switch'
-// is allowed by the kotlin syntax, convertForInStatement and convertWhileStatement in this class can be removed.
+// is allowed by the kotlin syntax, ContinueStatementConverter, convertForInStatement and convertWhileStatement
+// in this file can be removed.
 class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
-    private val loop = JKNameIdentifier("loop")
-
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKKtConvertedFromForLoopSyntheticWhileStatement) {
             return recurse(convertSyntheticWhileStatement(element))
@@ -31,24 +30,9 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
     }
 
     private fun convertForInStatement(loopStatement: JKForInStatement): JKStatement? {
-        var needLabel = false
-        val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
-            override fun applyToElement(element: JKTreeElement): JKTreeElement {
-                if (element !is JKContinueStatement) return recurse(element)
-                val elementPsi = element.psi<PsiContinueStatement>()!!
-                val loopPsi = loopStatement.psi<PsiWhileStatement>()
-                    ?: loopStatement.psi<PsiForStatement>()
-                    ?: loopStatement.psi<PsiForeachStatement>()
-                if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopPsi) return recurse(element)
-                if (element.parentIsWhenCase() && element.label is JKLabelEmpty) {
-                    element.label = JKLabelText(loop.copyTreeAndDetach())
-                    needLabel = true
-                }
-                return element
-            }
-        }
-        val body = continueStatementConverter.applyToElement(loopStatement::body.detached())
-        if (!needLabel || body !is JKStatement) {
+        val continueStatementConverter = ContinueStatementConverter(loopStatement, context)
+        val body = continueStatementConverter.apply(loopStatement::body.detached())
+        if (!continueStatementConverter.needLabel || body !is JKStatement) {
             return null
         }
         return JKLabeledExpression(
@@ -65,22 +49,9 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
         if (loopStatement.parent is JKKtConvertedFromForLoopSyntheticWhileStatement) {
             return null
         }
-        var needLabel = false
-        val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
-            override fun applyToElement(element: JKTreeElement): JKTreeElement {
-                if (element !is JKContinueStatement) return recurse(element)
-                val elementPsi = element.psi<PsiContinueStatement>()!!
-                val loopPsi = loopStatement.psi<PsiWhileStatement>() ?: loopStatement.psi<PsiForStatement>()
-                if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopPsi) return recurse(element)
-                if (element.parentIsWhenCase() && element.label is JKLabelEmpty) {
-                    element.label = JKLabelText(loop.copyTreeAndDetach())
-                    needLabel = true
-                }
-                return element
-            }
-        }
-        val body = continueStatementConverter.applyToElement(loopStatement::body.detached())
-        if (!needLabel || body !is JKStatement) {
+        val continueStatementConverter = ContinueStatementConverter(loopStatement, context)
+        val body = continueStatementConverter.apply(loopStatement::body.detached())
+        if (!continueStatementConverter.needLabel || body !is JKStatement) {
             return null
         }
         return JKLabeledExpression(
@@ -134,21 +105,46 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
             )
         )
     }
+}
 
-    private fun JKElement.parentIsWhenCase(): Boolean {
-        return when (this.parent) {
-            is JKKtWhenCase -> true
-            is JKWhileStatement, is JKForInStatement -> false
-            null -> false
-            else -> this.parent?.parent?.parentIsWhenCase() ?: false
+private class ContinueStatementConverter(loopStatement: JKStatement, context: NewJ2kConverterContext) {
+    private val recursiveApplicableConversion = object : RecursiveApplicableConversionBase(context) {
+        override fun applyToElement(element: JKTreeElement): JKTreeElement {
+            if (element !is JKContinueStatement) return recurse(element)
+            val elementPsi = element.psi<PsiContinueStatement>()!!
+            val loopPsi = loopStatement.psi<PsiWhileStatement>()
+                ?: loopStatement.psi<PsiForStatement>()
+                ?: loopStatement.psi<PsiForeachStatement>()
+            if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopPsi) return recurse(element)
+            if (element.parentIsWhenCase() && element.label is JKLabelEmpty) {
+                element.label = JKLabelText(loop.copyTreeAndDetach())
+                needLabel = true
+            }
+            return element
         }
     }
 
-    private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {
-        return when (this) {
-            is PsiLoopStatement -> this
-            is PsiLabeledStatement -> statement?.toContinuedLoop()
-            else -> null
-        }
+    var needLabel = false
+    fun apply(element: JKTreeElement): JKTreeElement {
+        return this.recursiveApplicableConversion.applyToElement(element)
+    }
+}
+
+private val loop = JKNameIdentifier("loop")
+
+private fun JKElement.parentIsWhenCase(): Boolean {
+    return when (this.parent) {
+        is JKKtWhenCase -> true
+        is JKWhileStatement, is JKForInStatement -> false
+        null -> false
+        else -> this.parent?.parent?.parentIsWhenCase() ?: false
+    }
+}
+
+private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {
+    return when (this) {
+        is PsiLoopStatement -> this
+        is PsiLabeledStatement -> statement?.toContinuedLoop()
+        else -> null
     }
 }
