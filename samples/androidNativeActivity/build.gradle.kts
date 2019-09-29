@@ -17,6 +17,8 @@ plugins {
 
 val appDir = buildDir.resolve("Polyhedron")
 val libsDir = appDir.resolve("libs")
+// Set to true to build only for the simulator.
+val simulatorOnly = true
 
 val androidPresets = mapOf(
     "arm32" to ("androidNativeArm32" to "$libsDir/armeabi-v7a"),
@@ -40,7 +42,7 @@ android {
 
     sourceSets {
         val main by getting {
-            setRoot("src/arm32Main")
+            setRoot("src/x86Main")
             jniLibs.srcDir(libsDir)
         }
     }
@@ -63,13 +65,15 @@ kotlin {
     }
 
     sourceSets {
-        val arm32Main by getting
-        val arm64Main by getting
         val x86Main by getting
-        val x64Main by getting
-        arm64Main.dependsOn(arm32Main)
-        x86Main.dependsOn(arm32Main)
-        x64Main.dependsOn(arm32Main)
+        if (!simulatorOnly) {
+          val x64Main by getting
+          val arm32Main by getting
+          val arm64Main by getting
+          arm32Main.dependsOn(x86Main)
+          arm64Main.dependsOn(x86Main)
+          x64Main.dependsOn(x86Main)
+       }
     }
 }
 

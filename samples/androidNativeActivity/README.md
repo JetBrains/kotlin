@@ -12,7 +12,9 @@ We use JniBridge to call vibration service on the Java side for short tremble on
 To build use `ANDROID_HOME=<your path to android sdk> ../gradlew assemble`.
 
 Run `$ANDROID_HOME/platform-tools/adb install -r build/outputs/apk/debug/androidNativeActivity-debug.apk`
-to deploy the apk on the Android device or emulator (note that only ARM-based devices are currently supported).
+to deploy the apk on the Android device or emulator.
+
+Note that "Emulated Performance - Graphics" in AVD manager must be set to "Software - GLES 2.0".
 
 Note: If you are importing project to IDEA for the first time, you might need to put `local.properties` file
 with the following content:

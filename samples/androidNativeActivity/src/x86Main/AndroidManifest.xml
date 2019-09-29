@@ -6,6 +6,7 @@
           android:versionName="1.0">
 
   <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
   <!-- This .apk has no Java code itself, so set hasCode to false. -->
   <application

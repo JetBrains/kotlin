@@ -9,42 +9,7 @@ import kotlinx.cinterop.*
 import platform.android.*
 import platform.egl.*
 import platform.posix.*
-import platform.gles3.*
-import platform.gles.GL_PERSPECTIVE_CORRECTION_HINT
-import platform.gles.GL_SMOOTH
-import platform.gles.GL_PROJECTION
-import platform.gles.glLoadIdentity
-import platform.gles.glFrustumf
-import platform.gles.glMatrixMode
-import platform.gles.GL_MODELVIEW
-import platform.gles.glTranslatef
-import platform.gles.glShadeModel
-import platform.gles.GL_LIGHT0
-import platform.gles.GL_POSITION
-import platform.gles.glMaterialfv
-import platform.gles.GL_DIFFUSE
-import platform.gles.GL_SHININESS
-import platform.gles.glPushMatrix
-import platform.gles.glRotatef
-import platform.gles.glMultMatrixf
-import platform.gles.GL_MODELVIEW_MATRIX
-import platform.gles.glPopMatrix
-import platform.gles.glTexEnvf
-import platform.gles.GL_TEXTURE_ENV
-import platform.gles.GL_TEXTURE_ENV_MODE
-import platform.gles.glLightfv
-import platform.gles.GL_LIGHTING
-import platform.gles.GL_SPECULAR
-import platform.gles.glMaterialf
-import platform.gles.glTexEnvfv
-import platform.gles.glEnableClientState
-import platform.gles.GL_VERTEX_ARRAY
-import platform.gles.GL_NORMAL_ARRAY
-import platform.gles.GL_TEXTURE_COORD_ARRAY
-import platform.gles.glVertexPointer
-import platform.gles.glTexCoordPointer
-import platform.gles.glNormalPointer
-import platform.gles.GL_TEXTURE_ENV_COLOR
+import platform.gles.*
 import sample.androidnative.bmpformat.BMPHeader
 
 class Renderer(val container: DisposableContainer,
@@ -147,24 +112,32 @@ class Renderer(val container: DisposableContainer,
 
             val ratio = width.value.toFloat() / height.value
             glMatrixMode(GL_PROJECTION)
+            checkErrors()
             glLoadIdentity()
             glFrustumf(-ratio, ratio, -1.0f, 1.0f, 1.0f, 10.0f)
 
             glMatrixMode(GL_MODELVIEW)
+            checkErrors()
             glTranslatef(0.0f, 0.0f, -2.0f)
             glLightfv(GL_LIGHT0, GL_POSITION, cValuesOf(1.25f, 1.25f, -2.0f, 0.0f))
             glEnable(GL_LIGHTING)
             glEnable(GL_LIGHT0)
             glEnable(GL_TEXTURE_2D)
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, cValuesOf(0.0f, 1.0f, 1.0f, 1.0f))
-            glMaterialfv(GL_FRONT, GL_SPECULAR, cValuesOf(0.3f, 0.3f, 0.3f, 1.0f))
-            glMaterialf(GL_FRONT, GL_SHININESS, 30.0f)
+            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, cValuesOf(0.0f, 1.0f, 1.0f, 1.0f))
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, cValuesOf(0.3f, 0.3f, 0.3f, 1.0f))
+            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 30.0f)
 
             loadTexture("kotlin_logo.bmp")
 
             initialized = true
             return true
         }
+    }
+
+    fun checkErrors() {
+        val error = glGetError()
+        if (error.toInt() != GL_NO_ERROR)
+            throw Error("OpenGL error 0x${error.toInt().toString(16)}")
     }
 
     fun getState() = matrix to 16 * 4
@@ -180,6 +153,7 @@ class Renderer(val container: DisposableContainer,
 
         glPushMatrix()
         glMatrixMode(GL_MODELVIEW)
+        checkErrors()
         glLoadIdentity()
         glRotatef(angle, x, y, 0.0f)
         glMultMatrixf(matrix)
@@ -191,6 +165,7 @@ class Renderer(val container: DisposableContainer,
     private fun loadTexture(assetName: String): Unit = memScoped {
         val asset = AAssetManager_open(nativeActivity.assetManager, assetName, AASSET_MODE_BUFFER.convert())
                 ?: throw Error("Error opening asset $assetName")
+        println("loading texture $assetName")
         try {
             val length = AAsset_getLength(asset)
             val buffer = allocArray<ByteVar>(length)
@@ -209,6 +184,7 @@ class Renderer(val container: DisposableContainer,
                     data[i] = data[i + 2]
                     data[i + 2] = t
                 }
+                println("loaded texture ${width}x${height}")
                 glBindTexture(GL_TEXTURE_2D, 1)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
@@ -234,6 +210,7 @@ class Renderer(val container: DisposableContainer,
 
         glPushMatrix()
         glMatrixMode(GL_MODELVIEW)
+        checkErrors()
 
         glMultMatrixf(matrix)
 
@@ -294,7 +271,7 @@ class Renderer(val container: DisposableContainer,
     }
 
     fun start() {
-        logInfo("Starting renderer..")
+        logInfo("Starting renderer.")
         if (initialized) {
             if (eglMakeCurrent(display, surface, surface, context) == 0u) {
                 throw Error("eglMakeCurrent() returned error ${eglGetError()}")
