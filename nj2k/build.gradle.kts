@@ -16,8 +16,9 @@ dependencies {
     compileOnly(intellijDep()) { includeJars("platform-api", "platform-impl", rootProject = rootProject) }
 
     Platform[191].orLower {
-        compileOnly(intellijDep()) { includeJars("java-impl") }
+        compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
     }
+
     Platform[192].orHigher {
         compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
         testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
