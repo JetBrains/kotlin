@@ -614,11 +614,10 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 val platforms = compilations.map { it.platform }
                 sourceSet.actualPlatforms.addSimplePlatforms(platforms)
 
-                if (isHMPPEnabled) {
-                    sourceSet.dependsOnSourceSets.mapNotNull { sourceSets[it] }.forEach {
-                        it?.actualPlatforms?.addSimplePlatforms(platforms)
-                    }
+                sourceSet.dependsOnSourceSets.mapNotNull { sourceSets[it] }.forEach {
+                    it?.actualPlatforms?.addSimplePlatforms(platforms)
                 }
+
 
                 sourceSet.isTestModule = compilations.all { it.isTestModule }
             } else {
@@ -632,6 +631,10 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                     sourceSet.isTestModule = true
                     continue
                 }
+            }
+
+            if ((! isHMPPEnabled) && sourceSet.actualPlatforms.platforms.size > 1) {
+                sourceSet.actualPlatforms.addSimplePlatforms(listOf(KotlinPlatform.COMMON))
             }
         }
     }
