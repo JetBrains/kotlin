@@ -1,0 +1,12 @@
+package
+
+public val prop: kotlin.collections.Map<kotlin.String, kotlin.String>
+public fun </*0*/ K, /*1*/ V> mapOf(/*0*/ vararg pairs: Pair<K, V> /*kotlin.Array<out Pair<K, V>>*/): kotlin.collections.Map<K, V>
+public fun </*0*/ A, /*1*/ B> to(/*0*/ a: A, /*1*/ b: B): Pair<A, B>
+
+public final class Pair</*0*/ out A, /*1*/ out B> {
+    public constructor Pair</*0*/ out A, /*1*/ out B>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
