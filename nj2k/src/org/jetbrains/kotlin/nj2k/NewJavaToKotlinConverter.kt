@@ -97,9 +97,8 @@ class NewJavaToKotlinConverter(
 
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         val phaseDescription = "Converting Java code to Kotlin code"
-        val module = targetModule ?: error("Module should not be null for new J2K")
         val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
-        val symbolProvider = JKSymbolProvider(project, module, contextElement)
+        val symbolProvider = JKSymbolProvider(project, targetModule, contextElement)
         val typeFactory = JKTypeFactory(symbolProvider)
         symbolProvider.typeFactory = typeFactory
         symbolProvider.preBuildTree(inputElements)
