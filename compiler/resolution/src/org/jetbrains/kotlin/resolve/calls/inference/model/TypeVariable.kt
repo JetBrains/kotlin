@@ -30,11 +30,12 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 
 class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debugName: String) : TypeConstructor,
-    NewTypeVariableConstructor {
+    NewTypeVariableConstructor, TypeVariableTypeConstructorMarker {
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
     override fun getSupertypes(): Collection<KotlinType> = emptyList()
     override fun isFinal(): Boolean = false
