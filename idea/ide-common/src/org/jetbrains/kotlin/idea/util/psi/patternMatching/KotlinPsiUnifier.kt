@@ -124,7 +124,7 @@ class KotlinPsiUnifier(
         }
 
         private fun matchDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
-            if (DescriptorEquivalenceForOverrides.areEquivalent(d1, d2)) return true
+            if (DescriptorEquivalenceForOverrides.areEquivalent(d1, d2, allowCopiesFromTheSameDeclaration = true)) return true
             if (d2 in declarationPatternsToTargets[d1] || d1 in declarationPatternsToTargets[d2]) return true
             if (d1 == null || d2 == null) return false
 

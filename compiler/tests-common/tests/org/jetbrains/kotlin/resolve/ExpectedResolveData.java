@@ -329,7 +329,7 @@ public abstract class ExpectedResolveData {
     }
 
     private static void assertDescriptorsEqual(String message, DeclarationDescriptor expected, DeclarationDescriptor actual) {
-        if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(expected, actual)) {
+        if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(expected, actual, true)) {
             return;
         }
         String formatted = "";

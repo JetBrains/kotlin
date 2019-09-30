@@ -447,3 +447,6 @@ fun DeclarationDescriptor.isPrimaryConstructorOfInlineClass(): Boolean =
 
 @TypeRefinement
 fun ModuleDescriptor.getKotlinTypeRefiner(): KotlinTypeRefiner = getCapability(REFINER_CAPABILITY)?.value ?: KotlinTypeRefiner.Default
+
+@UseExperimental(TypeRefinement::class)
+fun ModuleDescriptor.isTypeRefinementEnabled(): Boolean = getCapability(REFINER_CAPABILITY)?.value != null
