@@ -74,7 +74,7 @@ internal fun ObjCExportCodeGenerator.generateBlockToKotlinFunctionConverter(
     return generateFunction(
             codegen,
             functionType(codegen.kObjHeaderPtr, false, int8TypePtr, codegen.kObjHeaderPtrPtr),
-            ""
+            "convertBlock${bridge.nameSuffix}"
     ) {
         val blockPtr = param(0)
         ifThen(icmpEq(blockPtr, kNullInt8Ptr)) {

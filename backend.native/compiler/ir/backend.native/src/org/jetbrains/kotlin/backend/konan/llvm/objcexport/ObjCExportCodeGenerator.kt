@@ -542,7 +542,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         methodBridge: MethodBridge,
         genBody: FunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
-    val result = LLVMAddFunction(context.llvmModule, "", objCFunctionType(context, methodBridge))!!
+    val result = LLVMAddFunction(context.llvmModule, "objc2kotlin", objCFunctionType(context, methodBridge))!!
 
     generateFunction(codegen, result) {
         genBody()
@@ -720,7 +720,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
     val functionType = codegen.getLlvmFunctionType(irFunction)
 
-    val result = generateFunction(codegen, functionType, "") {
+    val result = generateFunction(codegen, functionType, "kotlin2objc") {
         var errorOutPtr: LLVMValueRef? = null
         var kotlinResultOutPtr: LLVMValueRef? = null
         lateinit var kotlinResultOutBridge: TypeBridge
@@ -1167,7 +1167,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
     )
 
     val encoding = getEncoding(methodBridge)
-    val imp = generateFunction(codegen, objCFunctionType(context, methodBridge), "") {
+    val imp = generateFunction(codegen, objCFunctionType(context, methodBridge), "objc2kotlin") {
         block()
     }
 
