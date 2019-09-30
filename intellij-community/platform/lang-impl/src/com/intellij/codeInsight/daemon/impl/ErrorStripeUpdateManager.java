@@ -53,7 +53,7 @@ public class ErrorStripeUpdateManager {
       TrafficLightRenderer tlr = (TrafficLightRenderer) renderer;
       EditorMarkupModelImpl markupModelImpl = (EditorMarkupModelImpl) editorMarkupModel;
       tlr.refresh(markupModelImpl);
-      markupModelImpl.repaintVerticalScrollBar();
+      markupModelImpl.repaintTrafficLightIcon();
       if (tlr.isValid()) return;
     }
     Editor editor = editorMarkupModel.getEditor();
