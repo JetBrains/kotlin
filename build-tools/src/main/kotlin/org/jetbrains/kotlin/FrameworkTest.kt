@@ -134,18 +134,21 @@ open class FrameworkTest : DefaultTask() {
         )
     }
 
-    private fun runTest(testExecutable: Path) {
+    private fun runTest(testExecutable: Path, args: List<String> = emptyList()) {
         val executor = (project.convention.plugins["executor"] as? ExecutorService)
                 ?: throw RuntimeException("Executor wasn't found")
         val (stdOut, stdErr, exitCode) = runProcess(
                 executor = executor.add(Action { it.environment = buildEnvironment() })::execute,
-                executable = testExecutable.toString())
+                executable = testExecutable.toString(),
+                args = args)
 
+        val testExecName = testExecutable.fileName
         println("""
+            |$testExecName
             |stdout: $stdOut
             |stderr: $stdErr
             """.trimMargin())
-        check(exitCode == 0) { "Execution failed with exit code: $exitCode " }
+        check(exitCode == 0) { "Execution of $testExecName failed with exit code: $exitCode " }
     }
 
     private fun validateBitcodeEmbedding(frameworkBinary: String) {
@@ -156,7 +159,7 @@ open class FrameworkTest : DefaultTask() {
         val testTarget = project.testTarget
         val configurables = project.platformManager.platform(testTarget).configurables as AppleConfigurables
 
-        val bitcodeBuildTool = "${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool"
+        val bitcodeBuildTool = Paths.get("${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool")
         val ldPath = "${configurables.absoluteTargetToolchain}/usr/bin/ld"
         val sdk = when (testTarget) {
             KonanTarget.IOS_X64,
@@ -172,14 +175,6 @@ open class FrameworkTest : DefaultTask() {
             else -> error("Cannot validate bitcode for test target $testTarget")
         }
 
-        val args = listOf("--sdk", sdk, "-v", "-t", ldPath, frameworkBinary)
-        val (stdOut, stdErr, exitCode) = runProcess(executor = localExecutor(project), executable = bitcodeBuildTool, args = args)
-        check(exitCode == 0) {
-            """
-            |bitcode-build-tool failed:
-            |stdout: $stdOut
-            |stderr: $stdErr
-            """.trimMargin()
-        }
+        runTest(bitcodeBuildTool, args = listOf("--sdk", sdk, "-v", "-t", ldPath, frameworkBinary))
     }
 }
