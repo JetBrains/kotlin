@@ -17,7 +17,7 @@ import java.nio.charset.*
 public inline fun charset(charsetName: String): Charset = Charset.forName(charsetName)
 
 /**
- * Constant definitions for the standard [charsets](Charset). These
+ * Constant definitions for the standard [charsets][Charset]. These
  * charsets are guaranteed to be available on every implementation of the Java
  * platform.
  */
