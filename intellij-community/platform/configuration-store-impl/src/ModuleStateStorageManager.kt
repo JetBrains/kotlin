@@ -11,11 +11,13 @@ import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.project.isExternalStorageEnabled
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import org.jdom.Element
+import org.jetbrains.annotations.ApiStatus
 import java.io.FileNotFoundException
 import java.nio.file.Path
 import java.nio.file.Paths
 
-internal class ModuleStateStorageManager(macroSubstitutor: TrackingPathMacroSubstitutor, module: Module) : StateStorageManagerImpl("module", macroSubstitutor, module) {
+@ApiStatus.Internal
+open class ModuleStateStorageManager(macroSubstitutor: TrackingPathMacroSubstitutor, module: Module?) : StateStorageManagerImpl("module", macroSubstitutor, module) {
   override fun getOldStorageSpec(component: Any, componentName: String, operation: StateStorageOperation) = StoragePathMacros.MODULE_FILE
 
   override fun pathRenamed(oldPath: String, newPath: String, event: VFileEvent?) {
@@ -63,7 +65,7 @@ internal class ModuleStateStorageManager(macroSubstitutor: TrackingPathMacroSubs
   }
 
   override val isExternalSystemStorageEnabled: Boolean
-    get() = (componentManager as Module).project.isExternalStorageEnabled
+    get() = (componentManager as Module?)?.project?.isExternalStorageEnabled ?: false
 
   override fun createFileBasedStorage(path: String, collapsedPath: String, roamingType: RoamingType, rootTagName: String?): StateStorage {
     return ModuleFileStorage(this, Paths.get(path), collapsedPath, rootTagName, roamingType, getMacroSubstitutor(collapsedPath), if (roamingType == RoamingType.DISABLED) null else compoundStreamProvider)
