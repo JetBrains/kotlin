@@ -147,7 +147,7 @@ public class ConsoleExecutionEditor implements Disposable {
 
   public void setEditable(boolean editable) {
     myConsoleEditor.setRendererMode(!editable);
-    setPromptInner(editable ? getPrompt() : "");
+    myConsolePromptDecorator.update();
   }
 
   public boolean isEditable() {
