@@ -19,6 +19,9 @@ internal fun createKType(
 ) =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
 
+@JsName("createDynamicKType")
+internal fun createDynamicKType(): KType = DynamicKType
+
 @JsName("markKTypeNullable")
 internal fun markKTypeNullable(kType: KType) = KTypeImpl(kType.classifier!!, kType.arguments, true)
 

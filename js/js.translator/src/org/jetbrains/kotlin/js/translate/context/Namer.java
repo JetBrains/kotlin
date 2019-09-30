@@ -76,6 +76,7 @@ public final class Namer {
     public static final String GET_KCLASS_FROM_EXPRESSION = "getKClassFromExpression";
 
     public static final String CREATE_KTYPE = "createKType";
+    public static final String CREATE_DYNAMIC_KTYPE = "createDynamicKType";
     public static final String MARK_KTYPE_NULLABLE = "markKTypeNullable";
     public static final String CREATE_KTYPE_PARAMETER = "createKTypeParameter";
     public static final String CREATE_REIFIED_KTYPE_PARAMETER = "getReifiedTypeParameterKType";

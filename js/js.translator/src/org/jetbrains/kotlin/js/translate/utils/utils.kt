@@ -129,9 +129,7 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
 
 fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression =
     getReferenceToJsClass(type.constructor.declarationDescriptor, context).also {
-        if (type is SimpleType) {
-            it.kType = KTypeConstructor(context).createKType(type)
-        }
+        it.kType = KTypeConstructor(context).createKType(type)
     }
 
 fun getReferenceToJsClass(classifierDescriptor: ClassifierDescriptor?, context: TranslationContext): JsExpression {
