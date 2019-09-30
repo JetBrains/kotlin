@@ -80,7 +80,6 @@ class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePaint
   fun update() {
     UIUtil.invokeLaterIfNeeded {
       myEditorEx.gutterComponentEx.revalidate()
-      myEditorEx.gutterComponentEx.repaint()
     }
   }
 
