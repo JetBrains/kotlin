@@ -651,8 +651,8 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
     @Override
     public void beforeMove(@NotNull Editor editor, @NotNull MoveInfo info, boolean down) {
         if (parametersOrArgsToMove != null) {
-            PsiElement element1 = parametersOrArgsToMove.first;
-            PsiElement element2 = parametersOrArgsToMove.second;
+            PsiElement element1 = getLastSiblingOfSameTypeInLine(parametersOrArgsToMove.first, editor);
+            PsiElement element2 = getLastSiblingOfSameTypeInLine(parametersOrArgsToMove.second, editor);
 
             fixCommaIfNeeded(element1, down && isLastOfItsKind(element2, true));
             fixCommaIfNeeded(element2, !down && isLastOfItsKind(element1, true));
@@ -660,5 +660,21 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
             //noinspection ConstantConditions
             PsiDocumentManager.getInstance(editor.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument());
         }
+    }
+
+    @NotNull
+    private static PsiElement getLastSiblingOfSameTypeInLine(@NotNull PsiElement element, @NotNull Editor editor) {
+        PsiElement lastElement = element;
+        int lineNumber = getElementLine(element, editor, true);
+        while (true) {
+            PsiElement nextElement = PsiTreeUtil.getNextSiblingOfType(lastElement, lastElement.getClass());
+            if (nextElement != null && getElementLine(nextElement, editor, true) == lineNumber) {
+                lastElement = nextElement;
+            }
+            else {
+                break;
+            }
+        }
+        return lastElement;
     }
 }

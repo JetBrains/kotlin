@@ -1247,6 +1247,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs6.kt");
         }
 
+        @TestMetadata("callArgs7.kt")
+        public void testCallArgs7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs7.kt");
+        }
+
+        @TestMetadata("callArgs8.kt")
+        public void testCallArgs8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs8.kt");
+        }
+
         @TestMetadata("classParams1.kt")
         public void testClassParams1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams1.kt");
@@ -1277,6 +1287,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams6.kt");
         }
 
+        @TestMetadata("classParams7.kt")
+        public void testClassParams7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams7.kt");
+        }
+
+        @TestMetadata("classParams8.kt")
+        public void testClassParams8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams8.kt");
+        }
+
         @TestMetadata("funParams1.kt")
         public void testFunParams1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams1.kt");
@@ -1305,6 +1325,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         @TestMetadata("funParams6.kt")
         public void testFunParams6() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams6.kt");
+        }
+
+        @TestMetadata("funParams7.kt")
+        public void testFunParams7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams7.kt");
+        }
+
+        @TestMetadata("funParams8.kt")
+        public void testFunParams8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams8.kt");
         }
     }
 }
