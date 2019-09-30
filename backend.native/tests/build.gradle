@@ -3756,7 +3756,7 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
 
 standaloneTest("coverage_basic_program") {
 
-    disabled = PlatformInfo.getTarget(project).name != "ios_x64" && PlatformInfo.getTarget(project).name != "macos_x64"
+    disabled = !UtilsKt.testTargetSupportsCodeCoverage(project)
 
     description = "Test that `-Xcoverage` generates correct __llvm_coverage information"
 
@@ -3783,7 +3783,7 @@ standaloneTest("coverage_basic_program") {
 
 standaloneTest("coverage_basic_library") {
 
-    disabled = PlatformInfo.getTarget(project).name != "ios_x64" && PlatformInfo.getTarget(project).name != "macos_x64"
+    disabled = !UtilsKt.testTargetSupportsCodeCoverage(project)
 
     description = "Test that `-Xlibrary-to-cover` generates correct __llvm_coverage information"
 

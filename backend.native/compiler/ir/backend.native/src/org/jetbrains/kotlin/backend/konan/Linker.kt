@@ -79,6 +79,8 @@ internal class Linker(val context: Context) {
             executable = dylibPath.absolutePath
         }
 
+        val needsProfileLibrary = context.coverage.enabled
+
         try {
             File(executable).delete()
             linker.linkCommands(objectFiles = objectFiles, executable = executable,
@@ -87,7 +89,8 @@ internal class Linker(val context: Context) {
                             BitcodeEmbedding.getLinkerOptions(context.config) +
                             libraryProvidedLinkerFlags + frameworkLinkerArgs,
                     optimize = optimize, debug = debug, kind = linkerOutput,
-                    outputDsymBundle = context.config.outputFile + ".dSYM").forEach {
+                    outputDsymBundle = context.config.outputFile + ".dSYM",
+                    needsProfileLibrary = needsProfileLibrary).forEach {
                 it.logWith(context::log)
                 it.execute()
             }

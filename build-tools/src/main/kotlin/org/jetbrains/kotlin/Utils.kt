@@ -7,10 +7,7 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.jetbrains.kotlin.konan.target.AppleConfigurables
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.*
 import java.io.FileInputStream
 import java.io.IOException
 import java.io.File
@@ -53,6 +50,9 @@ val Project.globalTestArgs: List<String>
 
 fun Project.platformManager() = findProperty("platformManager") as PlatformManager
 fun Project.testTarget() = findProperty("target") as KonanTarget
+
+fun Project.testTargetSupportsCodeCoverage(): Boolean =
+        this.testTarget.supportsCodeCoverage()
 
 /**
  * Ad-hoc signing of the specified path.

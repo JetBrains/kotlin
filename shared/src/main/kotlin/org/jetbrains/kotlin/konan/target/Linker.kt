@@ -75,10 +75,12 @@ abstract class LinkerFlags(val configurables: Configurables)
 
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
+    // TODO: Number of arguments is quite big. Better to pass args via object.
     abstract fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                               libraries: List<String>, linkerArgs: List<String>,
                               optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String): List<Command>
+                              kind: LinkerOutputKind, outputDsymBundle: String,
+                              needsProfileLibrary: Boolean): List<Command>
 
     abstract fun filterStaticLibraries(binaries: List<String>): List<String>
 
@@ -86,6 +88,16 @@ abstract class LinkerFlags(val configurables: Configurables)
         val libraries = filterStaticLibraries(binaries)
         // Let's just pass them as absolute paths.
         return libraries
+    }
+
+    protected open fun provideCompilerRtLibrary(libraryName: String): String? {
+        System.err.println("Can't provide $libraryName.")
+        return null
+    }
+
+    // Code coverage requires this library.
+    protected val profileLibrary: String? by lazy {
+        provideCompilerRtLibrary("profile")
     }
 }
 
@@ -107,7 +119,8 @@ open class AndroidLinker(targetProperties: AndroidConfigurables)
     override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                               libraries: List<String>, linkerArgs: List<String>,
                               optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String): List<Command> {
+                              kind: LinkerOutputKind, outputDsymBundle: String,
+                              needsProfileLibrary: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -153,7 +166,7 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
         get() = this == KonanTarget.TVOS_X64 || this == KonanTarget.IOS_X64 ||
                 this == KonanTarget.WATCHOS_X86 || this == KonanTarget.WATCHOS_X64
 
-    private fun provideCompilerRtLibrary(libraryName: String): String? {
+    override fun provideCompilerRtLibrary(libraryName: String): String? {
         val prefix = when (target.family) {
             Family.IOS -> "ios"
             Family.WATCHOS -> "watchos"
@@ -173,15 +186,6 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
         return if (dir != null) "$dir/lib/darwin/libclang_rt.$mangledLibraryName$prefix$suffix.a" else null
     }
 
-    private val compilerRtLibrary: String? by lazy {
-        provideCompilerRtLibrary("")
-    }
-
-    // Code coverage requires this library.
-    private val profileLibrary: String? by lazy {
-        provideCompilerRtLibrary("profile")
-    }
-
     private val osVersionMinFlags: List<String> by lazy {
         listOf(osVersionMinFlagLd, osVersionMin + ".0")
     }
@@ -191,7 +195,8 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
     override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                               libraries: List<String>, linkerArgs: List<String>,
                               optimize: Boolean, debug: Boolean, kind: LinkerOutputKind,
-                              outputDsymBundle: String): List<Command> {
+                              outputDsymBundle: String,
+                              needsProfileLibrary: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return listOf(Command(libtool).apply {
                 +"-static"
@@ -214,7 +219,7 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
             if (dynamic) +linkerDynamicFlags
             +linkerKonanFlags
             if (compilerRtLibrary != null) +compilerRtLibrary!!
-            if (profileLibrary != null) +profileLibrary!!
+            if (needsProfileLibrary) +profileLibrary!!
             +libraries
             +linkerArgs
             +rpath(dynamic)
@@ -229,6 +234,10 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
         }
 
         return result
+    }
+
+    private val compilerRtLibrary: String? by lazy {
+        provideCompilerRtLibrary("")
     }
 
     private fun rpath(dynamic: Boolean): List<String> = listOfNotNull(
@@ -295,12 +304,22 @@ open class LinuxBasedLinker(targetProperties: LinuxBasedConfigurables)
     private val linker = "$absoluteLlvmHome/bin/ld.lld"
     private val specificLibs = abiSpecificLibraries.map { "-L${absoluteTargetSysRoot}/$it" }
 
+    override fun provideCompilerRtLibrary(libraryName: String): String? {
+        val targetSuffix = when (target) {
+            KonanTarget.LINUX_X64 -> "x86_64"
+            else -> error("$target is not supported.")
+        }
+        val dir = File("$absoluteLlvmHome/lib/clang/").listFiles.firstOrNull()?.absolutePath
+        return if (dir != null) "$dir/lib/linux/libclang_rt.$libraryName-$targetSuffix.a" else null
+    }
+
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
 
     override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                               libraries: List<String>, linkerArgs: List<String>,
                               optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String): List<Command> {
+                              kind: LinkerOutputKind, outputDsymBundle: String,
+                              needsProfileLibrary: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -331,6 +350,9 @@ open class LinuxBasedLinker(targetProperties: LinuxBasedConfigurables)
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +objectFiles
+            // See explanation about `-u__llvm_profile_runtime` here:
+            // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
+            if (needsProfileLibrary) +listOf("-u__llvm_profile_runtime", profileLibrary!!)
             +linkerKonanFlags
             +listOf("-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed",
                     "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed")
@@ -352,10 +374,20 @@ open class MingwLinker(targetProperties: MingwConfigurables)
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isWindowsStaticLib || it.isUnixStaticLib }
 
+    override fun provideCompilerRtLibrary(libraryName: String): String? {
+        val targetSuffix = when (target) {
+            KonanTarget.MINGW_X64 -> "x86_64"
+            else -> error("$target is not supported.")
+        }
+        val dir = File("$absoluteLlvmHome/lib/clang/").listFiles.firstOrNull()?.absolutePath
+        return if (dir != null) "$dir/lib/windows/libclang_rt.$libraryName-$targetSuffix.a" else null
+    }
+
     override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                               libraries: List<String>, linkerArgs: List<String>,
                               optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String): List<Command> {
+                              kind: LinkerOutputKind, outputDsymBundle: String,
+                              needsProfileLibrary: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
 
@@ -366,10 +398,14 @@ open class MingwLinker(targetProperties: MingwConfigurables)
         }.apply {
             +listOf("-o", executable)
             +objectFiles
-            if (optimize) +linkerOptimizationFlags
+            // --gc-sections flag may affect profiling.
+            // See https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#drawbacks-and-limitations.
+            // TODO: switching to lld may help.
+            if (optimize && !needsProfileLibrary) +linkerOptimizationFlags
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +libraries
+            if (needsProfileLibrary) +profileLibrary!!
             +linkerArgs
             +linkerKonanFlags
         })
@@ -386,7 +422,8 @@ open class WasmLinker(targetProperties: WasmConfigurables)
     override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                               libraries: List<String>, linkerArgs: List<String>,
                               optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String): List<Command> {
+                              kind: LinkerOutputKind, outputDsymBundle: String,
+                              needsProfileLibrary: Boolean): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
 
         // TODO(horsh): maybe rethink it.
@@ -433,7 +470,8 @@ open class ZephyrLinker(targetProperties: ZephyrConfigurables)
     override fun linkCommands(objectFiles: List<ObjectFile>, executable: ExecutableFile,
                               libraries: List<String>, linkerArgs: List<String>,
                               optimize: Boolean, debug: Boolean,
-                              kind: LinkerOutputKind, outputDsymBundle: String): List<Command> {
+                              kind: LinkerOutputKind, outputDsymBundle: String,
+                              needsProfileLibrary: Boolean): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind: $kind")
         return listOf(Command(linker).apply {
             +listOf("-r", "--gc-sections", "--entry", "main")

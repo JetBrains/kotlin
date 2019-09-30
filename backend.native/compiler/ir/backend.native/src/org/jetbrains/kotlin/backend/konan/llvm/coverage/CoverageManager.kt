@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.supportsCodeCoverage
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 /**
@@ -43,14 +43,14 @@ internal class CoverageManager(val context: Context) {
 
     init {
         if (enabled && !checkRestrictions()) {
-            context.reportCompilationError("Coverage is only supported for macOS and iOS simulator binaries for now.")
+            context.reportCompilationError("Coverage is not supported for ${context.config.target}.")
         }
     }
 
     private fun checkRestrictions(): Boolean  {
         val isKindAllowed = context.config.produce.involvesBitcodeGeneration
         val target = context.config.target
-        val isTargetAllowed = target == KonanTarget.MACOS_X64 || target == KonanTarget.IOS_X64
+        val isTargetAllowed = target.supportsCodeCoverage()
         return isKindAllowed && isTargetAllowed
     }
 
