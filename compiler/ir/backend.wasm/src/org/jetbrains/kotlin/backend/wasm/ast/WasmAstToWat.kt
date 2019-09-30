@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.wasm.ast
 
+import org.jetbrains.kotlin.ir.util.toLowerCase
+
 // TODO: Abstract out S-expression part of dumping?
 
 fun WasmInstruction.toWat(ident: String = ""): String =

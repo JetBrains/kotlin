@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
+import java.util.*
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -614,3 +615,7 @@ val IrFunctionReference.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
 
 val IrFunctionAccessExpression.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
     get() = getTypeSubstitutionMap(symbol.owner)
+
+// Perhaps move to some even more general utilities?
+fun String.toLowerCase() = toLowerCase(Locale.ROOT)
+fun String.toUpperCase() = toUpperCase(Locale.ROOT)
