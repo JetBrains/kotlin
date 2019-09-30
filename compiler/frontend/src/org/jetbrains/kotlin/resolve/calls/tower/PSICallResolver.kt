@@ -69,7 +69,8 @@ class PSICallResolver(
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
-    private val callableReferenceResolver: CallableReferenceResolver
+    private val callableReferenceResolver: CallableReferenceResolver,
+    private val candidateInterceptor: CandidateInterceptor
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
@@ -403,15 +404,10 @@ class PSICallResolver(
         override fun interceptCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
-            initialResults: Collection<FunctionDescriptor>
+            candidates: Collection<FunctionDescriptor>
         ): Collection<FunctionDescriptor> {
-            var interceptedResults: Collection<FunctionDescriptor> = initialResults
             val project = context.call.callElement.project
-            CallResolutionInterceptorExtension.getInstances(project).forEach {
-                interceptedResults = it.interceptCandidates(interceptedResults, this, context, resolutionScope, null, name, location)
-            }
-
-            return interceptedResults
+            return candidateInterceptor.interceptCandidates(candidates, this, context, resolutionScope, null, name, location)
         }
     }
 
