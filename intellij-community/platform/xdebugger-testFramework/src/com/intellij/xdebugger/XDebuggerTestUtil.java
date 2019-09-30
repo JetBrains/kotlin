@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.xdebugger;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -201,30 +201,40 @@ public class XDebuggerTestUtil {
     return Pair.create(all, container.frameToSelect);
   }
 
-  /**
-   * @deprecated use {@link XDebuggerTestUtil#collectChildren(XValueContainer)}
-   */
-  @Deprecated
-  public static List<XValue> collectVariables(XStackFrame frame) {
-    return collectChildren(frame);
-  }
-
+  @NotNull
   public static List<XValue> collectChildren(XValueContainer value) {
     return collectChildren(value, XDebuggerTestUtil::waitFor);
   }
 
+  @NotNull
   public static List<XValue> collectChildren(XValueContainer value, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+    final Pair<List<XValue>, String> childrenWithError = collectChildrenWithError(value, waitFunction);
+    final String error = childrenWithError.second;
+    assertNull("Error getting children: " + error, error);
+    return childrenWithError.first;
+  }
+
+  @NotNull
+  public static Pair<List<XValue>, String> collectChildrenWithError(XValueContainer value) {
+    return collectChildrenWithError(value, XDebuggerTestUtil::waitFor);
+  }
+
+  @NotNull
+  public static Pair<List<XValue>, String> collectChildrenWithError(XValueContainer value,
+                                                                    BiFunction<Semaphore, Long, Boolean> waitFunction) {
     XTestCompositeNode container = new XTestCompositeNode();
     value.computeChildren(container);
 
-    return container.waitFor(TIMEOUT_MS, waitFunction).first;
+    return container.waitFor(TIMEOUT_MS, waitFunction);
   }
 
   public static Pair<XValue, String> evaluate(XDebugSession session, XExpression expression) {
     return evaluate(session, expression, TIMEOUT_MS);
   }
 
-  public static Pair<XValue, String> evaluate(XDebugSession session, XExpression expression, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  public static Pair<XValue, String> evaluate(XDebugSession session,
+                                              XExpression expression,
+                                              BiFunction<Semaphore, Long, Boolean> waitFunction) {
     return evaluate(session, expression, TIMEOUT_MS, waitFunction);
   }
 
