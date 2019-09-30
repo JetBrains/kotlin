@@ -71,7 +71,7 @@ import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
-import com.intellij.util.indexing.snapshot.ContentHashesSupport;
+import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
 import com.intellij.util.indexing.snapshot.UpdatableSnapshotInputMappingIndex;
 import com.intellij.util.io.DataOutputStream;
@@ -398,7 +398,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     for (int attempt = 0; attempt < 2; attempt++) {
       try {
         if (extension.hasSnapshotMapping()) {
-          ContentHashesSupport.initContentHashesEnumerator();
+          IndexedHashesSupport.initContentHashesEnumerator();
           contentHashesEnumeratorOk = true;
         }
 
@@ -557,7 +557,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
           }
         }
 
-        ContentHashesSupport.flushContentHashes();
+        IndexedHashesSupport.flushContentHashes();
         SharedIndicesData.flushData();
         myConnection.disconnect();
       }
@@ -649,7 +649,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       }
     }
 
-    ContentHashesSupport.flushContentHashes();
+    IndexedHashesSupport.flushContentHashes();
     SharedIndicesData.flushData();
   }
 
@@ -1629,7 +1629,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     final VirtualFile file = content.getVirtualFile();
     Ref<Boolean> setIndexedStatus = Ref.create(Boolean.TRUE);
     getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
-      final FileType fileType = file.getFileType();
       final Project finalProject = project == null ? ProjectUtil.guessProjectForFile(file) : project;
       PsiFile psiFile = null;
       FileContentImpl fc = null;
@@ -1651,13 +1650,12 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
             }
             fc = new FileContentImpl(file, currentBytes);
 
-            if (FileBasedIndex.ourSnapshotMappingsEnabled) {
-              FileType substituteFileType = SubstitutedFileType.substituteFileType(file, fileType, finalProject);
-              fc.setHash(ContentHashesSupport.calculateHash(currentBytes, fc.getCharset(), fileType, substituteFileType));
-            }
-
             psiFile = content.getUserData(IndexingDataKeys.PSI_FILE);
             initFileContent(fc, finalProject, psiFile);
+
+            if (FileBasedIndex.ourSnapshotMappingsEnabled) {
+              IndexedHashesSupport.initIndexedHash(fc);
+            }
           }
 
           try {

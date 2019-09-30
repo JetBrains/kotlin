@@ -11,7 +11,7 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.MapIndexStorage;
 import com.intellij.util.indexing.impl.MapReduceIndex;
-import com.intellij.util.indexing.snapshot.ContentHashesSupport;
+import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -147,8 +147,8 @@ public class HashBasedIndexGenerator<K, V> {
   protected void indexFile(@NotNull VirtualFile f) {
     try {
       FileContentImpl fc = new FileContentImpl(f, f.contentsToByteArray());
-      byte[] hash = ContentHashesSupport.calculateHash(fc.getContent(), fc.getCharset(), f.getFileType(), fc.getFileType());
-      int hashId = myHashEnumerator.enumerate(hash);
+      IndexedHashesSupport.initIndexedHash(fc);
+      int hashId = myHashEnumerator.enumerate(fc.getHash(false));
       if (!myIndex.update(hashId, fc).compute()) {
         throw new RuntimeException();
       }

@@ -60,7 +60,7 @@ public class FileContentHashIndexExtension extends FileBasedIndexExtension<Integ
   @Override
   public DataIndexer<Integer, Void, FileContent> getIndexer() {
     return fc -> {
-      byte[] hash = ((FileContentImpl)fc).getHash();
+      byte[] hash = ((FileContentImpl)fc).getHash(false);
       LOG.assertTrue(hash != null);
       try {
         int id;
