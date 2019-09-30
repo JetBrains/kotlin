@@ -104,12 +104,13 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         result.add(KotlinTestUtils.getAnnotationsJar());
         result.addAll(getExtraClasspath());
 
-        boolean loadAndroidAnnotations = InTextDirectivesUtils.isDirectiveDefined(
-                FilesKt.readText(file, Charsets.UTF_8), "ANDROID_ANNOTATIONS"
-        );
+        String fileText = FilesKt.readText(file, Charsets.UTF_8);
 
-        if (loadAndroidAnnotations) {
+        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "ANDROID_ANNOTATIONS")) {
             result.add(ForTestCompileRuntime.androidAnnotationsForTests());
+        }
+        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
+            result.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8());
         }
 
         return result;
