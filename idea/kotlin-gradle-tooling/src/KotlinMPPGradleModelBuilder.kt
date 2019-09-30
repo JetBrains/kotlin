@@ -341,8 +341,14 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             if (testRuns != null) {
                 val testReports = testRuns.mapNotNull { (it.javaClass.getMethodOrNull("getExecutionTask")?.invoke(it) as? TaskProvider<Task>)?.get() }
                 val testTasks = testReports.flatMap {
-                    ((it.javaClass.getMethodOrNull("getTestTasks")?.invoke(it) as? Collection<Provider<Task>>)?.map { it.get() })
-                        ?: listOf(it)
+                    ((it.javaClass.getMethodOrNull("getTestTasks")?.invoke(it) as? Collection<Any>)?.mapNotNull {
+                        when {
+                            //TODO(auskov): getTestTasks should return collection of TaskProviders without mixing with Tasks
+                            it is Provider<*> -> it.get() as? Task
+                            it is Task -> it
+                            else -> null
+                        }
+                    }) ?: listOf(it)
                 }
                 return testTasks.mapNotNull {
                     val name = it.name
