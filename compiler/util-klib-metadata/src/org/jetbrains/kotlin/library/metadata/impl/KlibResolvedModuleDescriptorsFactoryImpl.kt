@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.PackageAccessedHandler
+import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -45,12 +45,12 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         var builtIns = builtIns
 
         // Build module descriptors.
-        resolvedLibraries.forEach { library, packageAccessedHandler ->
+        resolvedLibraries.forEach { library, packageAccessHandler ->
             profile("Loading ${library.libraryName}") {
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = createDescriptorOptionalBuiltsIns(
-                    library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler
+                    library, languageVersionSettings, storageManager, builtIns, packageAccessHandler
                 )
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
@@ -114,17 +114,17 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
             languageVersionSettings: LanguageVersionSettings,
             storageManager: StorageManager,
             builtIns: KotlinBuiltIns?,
-            packageAccessedHandler: PackageAccessedHandler?
+            packageAccessHandler: PackageAccessHandler?
     ) = if (builtIns != null)
-        moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler)
+        moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessHandler)
     else
-        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager, packageAccessedHandler)
+        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager, packageAccessHandler)
 }
 
 /**
  * Package fragment which creates descriptors for forward declarations on demand.
  */
-private class ForwardDeclarationsPackageFragmentDescriptor(
+class ForwardDeclarationsPackageFragmentDescriptor(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         fqName: FqName,

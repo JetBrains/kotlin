@@ -27,6 +27,7 @@ dependencies {
     compile(project(":kotlin-native:kotlin-native-utils"))
     compile(project(":kotlin-util-io"))
     compile(project(":kotlin-util-klib"))
+    compile(project(":kotlin-util-klib-metadata"))
 
     testCompile(commonDep("junit:junit"))
 }

@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.library.resolver.impl
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
+import org.jetbrains.kotlin.metadata.ProtoBuf
 
 class KotlinResolvedLibraryImpl(override val library: KotlinLibrary): KotlinResolvedLibrary {
 
@@ -20,11 +22,16 @@ class KotlinResolvedLibraryImpl(override val library: KotlinLibrary): KotlinReso
     override val isDefault: Boolean
         get() = library.isDefault
 
-    override fun markPackageAccessed(fqName: String) {
+    override fun loadPackageFragment(
+        library: KotlinLibrary,
+        packageFqName: String,
+        partName: String
+    ): ProtoBuf.PackageFragment {
         if (!isNeededForLink // fast path
-                && !_emptyPackages.contains(fqName)) {
+            && !_emptyPackages.contains(packageFqName)) {
             isNeededForLink = true
         }
+        return parsePackageFragment(library.packageMetadata(packageFqName, partName))
     }
 
     override fun toString() = "library=$library, dependsOn=${_resolvedDependencies.joinToString { it.library.toString() }}"

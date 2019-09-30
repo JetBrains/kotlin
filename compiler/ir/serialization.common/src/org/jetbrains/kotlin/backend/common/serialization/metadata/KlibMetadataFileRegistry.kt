@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataPackageFragment
 import org.jetbrains.kotlin.backend.common.serialization.metadata.extractFileId
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile

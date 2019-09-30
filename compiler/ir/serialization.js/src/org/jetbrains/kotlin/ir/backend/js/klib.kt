@@ -259,7 +259,7 @@ private class ModulesStructure(
             languageVersionSettings,
             storageManager,
             runtimeModule?.builtIns,
-            packageAccessedHandler = null // TODO: This is a speed optimization used by Native. Don't bother for now.
+            packageAccessHandler = null // TODO: This is a speed optimization used by Native. Don't bother for now.
         )
         if (isBuiltIns) runtimeModule = md
 

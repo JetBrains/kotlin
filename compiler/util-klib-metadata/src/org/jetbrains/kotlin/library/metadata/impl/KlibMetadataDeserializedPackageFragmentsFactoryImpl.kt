@@ -1,13 +1,14 @@
 package org.jetbrains.kotlin.backend.common.serialization.metadata.impl
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataDeserializedPackageFragmentsFactory
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataPackageFragment
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
+import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -27,7 +28,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl: KlibMetadataDese
         library: KotlinLibrary,
         packageFragmentNames: List<String>,
         moduleDescriptor: ModuleDescriptor,
-        packageAccessedHandler: PackageAccessedHandler?,
+        packageAccessedHandler: PackageAccessHandler?,
         storageManager: StorageManager
     ) = packageFragmentNames.flatMap {
         val fqName = FqName(it)
@@ -67,7 +68,6 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl: KlibMetadataDese
     }
 
 }
-
 
 /**
  * The package fragment to export forward declarations from interop package namespace, i.e.

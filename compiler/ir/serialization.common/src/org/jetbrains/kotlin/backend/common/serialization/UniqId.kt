@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-//import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataProtoBuf
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
@@ -52,6 +51,3 @@ object DeserializedDescriptorUniqIdAware : DescriptorUniqIdAware {
 
 fun newDescriptorUniqId(index: Long): KlibMetadataProtoBuf.DescriptorUniqId =
     KlibMetadataProtoBuf.DescriptorUniqId.newBuilder().setIndex(index).build()
-
-
-//val UniqId.declarationFileName: String get() = "$index${if (isLocal) "L" else "G"}.kjd"

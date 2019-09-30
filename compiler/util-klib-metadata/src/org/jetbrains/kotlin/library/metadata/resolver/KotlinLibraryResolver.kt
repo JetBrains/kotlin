@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.library.resolver
 
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
+import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 
 interface KotlinLibraryResolver<L: KotlinLibrary> {
 
@@ -25,7 +25,7 @@ interface KotlinLibraryResolveResult {
 
     fun getFullList(order: LibraryOrder? = null): List<KotlinLibrary>
 
-    fun forEach(action: (KotlinLibrary, PackageAccessedHandler) -> Unit)
+    fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit)
 }
 
 

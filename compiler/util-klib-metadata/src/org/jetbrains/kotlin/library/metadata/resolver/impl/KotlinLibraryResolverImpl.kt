@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.library.resolver.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
@@ -145,7 +146,7 @@ class KotlinLibraryResolverResultImpl(
 
     override fun getFullList(order: LibraryOrder?) = (order?.invoke(all) ?: all).asPlain()
 
-    override fun forEach(action: (KotlinLibrary, PackageAccessedHandler) -> Unit) {
+    override fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit) {
         all.forEach { action(it.library, it) }
     }
 

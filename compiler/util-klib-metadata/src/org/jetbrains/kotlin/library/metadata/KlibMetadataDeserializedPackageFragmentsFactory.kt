@@ -3,7 +3,8 @@ package org.jetbrains.kotlin.backend.common.serialization.metadata
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.PackageAccessedHandler
+import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
+import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.storage.StorageManager
 
 interface KlibMetadataDeserializedPackageFragmentsFactory {
@@ -11,7 +12,7 @@ interface KlibMetadataDeserializedPackageFragmentsFactory {
         library: KotlinLibrary,
         packageFragmentNames: List<String>,
         moduleDescriptor: ModuleDescriptor,
-        packageAccessedHandler: PackageAccessedHandler?,
+        packageAccessedHandler: PackageAccessHandler?,
         storageManager: StorageManager
     ): List<KlibMetadataPackageFragment>
 

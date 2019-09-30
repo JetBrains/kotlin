@@ -3,15 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization.metadata
+package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.PackageAccessedHandler
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -24,10 +22,10 @@ import org.jetbrains.kotlin.storage.StorageManager
 class KlibMetadataPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
-    private val packageAccessedHandler: PackageAccessedHandler?,
+    private val packageAccessHandler: PackageAccessHandler?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
-    partName: String
+    private val partName: String
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
 
     lateinit var components: DeserializationComponents
@@ -39,11 +37,12 @@ class KlibMetadataPackageFragment(
     // The proto field is lazy so that we can load only needed
     // packages from the library.
     private val protoForNames: ProtoBuf.PackageFragment by lazy {
-        parsePackageFragment(library.packageMetadata(fqName.asString(), partName))
+        (packageAccessHandler ?: SimplePackageAccessHandler).loadPackageFragment(library, fqName.asString(), partName)
     }
 
+    // TODO: Do we really need both 'protoForNames' and 'proto' today?
     val proto: ProtoBuf.PackageFragment
-        get() = protoForNames.also { packageAccessedHandler?.markPackageAccessed(fqName.asString()) }
+        get() = protoForNames
 
     private val nameResolver by lazy {
         NameResolverImpl(protoForNames.strings, protoForNames.qualifiedNames)

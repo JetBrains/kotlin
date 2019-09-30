@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization.metadata
+package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
