@@ -35,6 +35,7 @@ fun box(): String {
     assertEquals("Short?", get1<Short>().toString())
     assertEquals("Map<in Short?, Array<Short>>?", get2<Short>().toString())
     assertEquals("Map<in List<Short>?, Array<List<Short>>>?", get2<List<Short>>().toString())
+    assertEquals("Map<in List<dynamic>?, Array<List<dynamic>>>?", get2<List<dynamic>>().toString())
 
     return "OK"
 }

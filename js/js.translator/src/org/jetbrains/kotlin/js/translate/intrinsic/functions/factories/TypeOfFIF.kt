@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 
 object TypeOfFIF : FunctionIntrinsicFactory {
     override fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? =
@@ -28,7 +26,7 @@ object TypeOfFIF : FunctionIntrinsicFactory {
 
     object Intrinsic : FunctionIntrinsic() {
         override fun apply(callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
-            val type = callInfo.resolvedCall.typeArguments.values.single() as SimpleType
+            val type = callInfo.resolvedCall.typeArguments.values.single()
             return KTypeConstructor(context).createKType(type)
         }
     }
@@ -38,7 +36,20 @@ class KTypeConstructor(val context: TranslationContext) {
     fun callHelperFunction(name: String, vararg arguments: JsExpression) =
         JsInvocation(context.getReferenceToIntrinsic(name), *arguments)
 
-    fun createKType(type: SimpleType): JsExpression {
+    fun createKType(type: KotlinType): JsExpression {
+        val unwrappedType = type.unwrap()
+        if (unwrappedType is SimpleType)
+            return createSimpleKType(unwrappedType)
+        if (unwrappedType is DynamicType)
+            return createDynamicType()
+        error("Unexpected type $type")
+    }
+
+    private fun createDynamicType(): JsExpression {
+        return callHelperFunction(Namer.CREATE_DYNAMIC_KTYPE)
+    }
+
+    private fun createSimpleKType(type: SimpleType): JsExpression {
         val classifier: ClassifierDescriptor = type.constructor.declarationDescriptor!!
 
         if (classifier is TypeParameterDescriptor && classifier.isReified) {
@@ -75,7 +86,7 @@ class KTypeConstructor(val context: TranslationContext) {
             Variance.OUT_VARIANCE -> Namer.CREATE_COVARIANT_KTYPE_PROJECTION
         }
 
-        val kType = createKType(tp.type as SimpleType)
+        val kType = createKType(tp.type)
         return callHelperFunction(factoryName, kType)
 
     }
@@ -88,7 +99,7 @@ class KTypeConstructor(val context: TranslationContext) {
 
     fun createKTypeParameter(typeParameter: TypeParameterDescriptor): JsExpression {
         val name = JsStringLiteral(typeParameter.name.asString())
-        val upperBounds = JsArrayLiteral(typeParameter.upperBounds.map { createKType(it as SimpleType) })
+        val upperBounds = JsArrayLiteral(typeParameter.upperBounds.map { createKType(it) })
         val variance = when (typeParameter.variance) {
             Variance.INVARIANT -> JsStringLiteral("invariant")
             Variance.IN_VARIANCE -> JsStringLiteral("in")
