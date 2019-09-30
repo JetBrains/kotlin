@@ -508,7 +508,7 @@ internal open class TCServiceMessagesClient(
                     if (currentLeaf is TestNode) {
                         currentTest = currentLeaf
                         output.append(currentLeaf.allOutput)
-                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null))
+                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null as Throwable?))
                     }
 
                     close(ts, currentLeaf.localId)

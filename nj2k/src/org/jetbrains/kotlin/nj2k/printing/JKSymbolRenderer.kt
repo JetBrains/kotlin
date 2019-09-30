@@ -77,7 +77,7 @@ private class CanBeShortenedCache(project: Project) {
     }
 
     fun canBeShortened(symbol: JKClassSymbol): Boolean = canBeShortenedCache.getOrPut(symbol.name) {
-        !shortNameCache.processClassesWithName(symbol.name, Processor.FALSE, searchScope, null)
+        !shortNameCache.processClassesWithName(symbol.name, { false }, searchScope, null)
     }
 
     companion object {

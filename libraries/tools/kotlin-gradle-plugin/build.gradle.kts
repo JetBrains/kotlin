@@ -65,15 +65,32 @@ dependencies {
     runtime(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {
-        includeJars("asm-all", "serviceMessages", "gson", rootProject = rootProject)
+        includeJars("asm-all", "gson", rootProject = rootProject)
     })
+
+    jarContents(compileOnly(intellijDep()) {
+        if (Platform.P193.orHigher()) {
+            includeJars("teamcity-service-messages", rootProject = rootProject)
+        } else {
+            includeJars("serviceMessages", rootProject = rootProject)
+        }
+    })
+
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:builder-model:3.0.0") { isTransitive = false }
 
-    testCompile(intellijDep()) { includeJars("serviceMessages", "junit", rootProject = rootProject) }
+    testCompile(intellijDep()) { includeJars( "junit", rootProject = rootProject) }
+    testCompile(intellijDep()) {
+        if (Platform.P193.orHigher()) {
+            includeJars("teamcity-service-messages", rootProject = rootProject)
+        } else {
+            includeJars("serviceMessages", rootProject = rootProject)
+        }
+    }
+
     testCompileOnly(project(":compiler"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(project(":kotlin-android-extensions"))
