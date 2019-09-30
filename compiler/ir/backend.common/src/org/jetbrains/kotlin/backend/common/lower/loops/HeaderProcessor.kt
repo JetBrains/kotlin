@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.FqName
@@ -43,12 +44,16 @@ internal data class LoopReplacement(
 internal sealed class ForLoopHeader(
     protected open val headerInfo: HeaderInfo,
     val inductionVariable: IrVariable,
-    val lastExpression: IrExpression,
+    lastExpression: IrExpression,
     val step: IrVariable,
     var loopVariable: IrVariable? = null,
     val isLastInclusive: Boolean,
     val declarations: List<IrVariable>
 ) {
+    val lastExpression: IrExpression = lastExpression
+        // Always copy `lastExpression` is it may be used in multiple conditions.
+        get() = field.deepCopyWithSymbols()
+
     /** Expression used to initialize the loop variable at the beginning of the loop. */
     abstract fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder): IrExpression
 
