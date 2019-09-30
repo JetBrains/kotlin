@@ -85,11 +85,17 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
           return NavBarUIManager.getUI().getWrapperPanelInsets(super.getInsets());
         }
       };
-      myWrapperPanel.add(buildNavBarPanel(), BorderLayout.CENTER);
+
+      addNavigationBarPanel(myWrapperPanel);
+
       toggleRunPanel(!UISettings.getInstance().getShowMainToolbar() && !UISettings.getInstance().getPresentationMode());
     }
 
     return myWrapperPanel;
+  }
+
+  protected void addNavigationBarPanel(JComponent wrapperPanel) {
+    wrapperPanel.add(buildNavBarPanel(), BorderLayout.CENTER);
   }
 
   public static class NavBarWrapperPanel extends JPanel {
@@ -104,7 +110,7 @@ public class NavBarRootPaneExtension extends IdeRootPaneNorthExtension {
     }
   }
 
-  private static void alignVertically(Container container) {
+  protected static void alignVertically(Container container) {
     if (container.getComponentCount() == 1) {
       Component c = container.getComponent(0);
       Insets insets = container.getInsets();
