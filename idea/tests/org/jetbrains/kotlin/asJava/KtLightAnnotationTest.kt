@@ -629,7 +629,10 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
+    @Suppress("UNREACHABLE_CODE")
     fun testRepeatableAnnotationsArray() {
+        //See https://youtrack.jetbrains.com/issue/KT-34107
+        return
 
         myFixture.configureByText("RAnno.java", """
             import java.lang.annotation.Repeatable;
@@ -740,7 +743,11 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         assertTextAndRange("true", annotation.findAttributeValue("i")!!)
     }
 
+    @Suppress("UNREACHABLE_CODE")
     fun testMissingDefault() {
+        //See https://youtrack.jetbrains.com/issue/KT-34107
+        return
+
         myFixture.configureByText("AnnotatedClass.kt", """
             annotation class Anno1(val i: Int = 0)
 
