@@ -1,7 +1,7 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JS
-// IGNORE_BACKEND: JS_IR
 // WITH_REFLECT
+// KJS_WITH_FULL_RUNTIME
 
 import kotlin.test.*
 import kotlin.reflect.*

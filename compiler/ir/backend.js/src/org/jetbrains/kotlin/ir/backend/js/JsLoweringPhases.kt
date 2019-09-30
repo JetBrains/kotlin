@@ -98,7 +98,7 @@ private val arrayConstructorPhase = makeJsModulePhase(
 
 private val functionInliningPhase = makeCustomJsModulePhase(
     { context, module ->
-        FunctionInlining(context, false).inline(module)
+        FunctionInlining(context).inline(module)
         module.patchDeclarationParents()
     },
     name = "FunctionInliningPhase",
