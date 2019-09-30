@@ -56,7 +56,6 @@ abstract class Launcher {
                 } else {
                     printStderr("$message")
                 }
-
             }
         }
     }

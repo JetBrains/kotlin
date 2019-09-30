@@ -4,7 +4,7 @@
  */
 
 import Foundation
-import CityMap
+import benchmark
 
 var runner = BenchmarksRunner()
 let args = KotlinArray(size: Int32(CommandLine.arguments.count - 1), init: {index in
@@ -14,9 +14,7 @@ let args = KotlinArray(size: Int32(CommandLine.arguments.count - 1), init: {inde
 let companion = BenchmarkEntryWithInit.Companion()
 
 var swiftLauncher = SwiftLauncher()
-
-runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [BenchmarkResult] in
-    swiftLauncher.add(name: "createMultigraphOfInt", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+swiftLauncher.add(name: "createMultigraphOfInt", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).createMultigraphOfInt() }))
     swiftLauncher.add(name: "fillCityMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).fillCityMap() }))
@@ -38,6 +36,7 @@ runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [Benc
         lambda: { ($0 as! SwiftInteropBenchmarks).stringInterop() }))
     swiftLauncher.add(name: "simpleFunction", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).simpleFunction() }))
+runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [BenchmarkResult] in
     if arguments is BaseBenchmarkArguments {
         let argumentsList: BaseBenchmarkArguments = arguments as! BaseBenchmarkArguments
         return swiftLauncher.launch(numWarmIterations: argumentsList.warmup,

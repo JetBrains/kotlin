@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -14,7 +15,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
-open class RunKotlinNativeTask @Inject constructor(private val linkTask: KotlinNativeLink,
+open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
+                                                   private val executable: String,
                                                    private val outputFileName: String
 ) : DefaultTask() {
     @Input
@@ -48,7 +50,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: KotlinN
     fun run() {
         var output = ByteArrayOutputStream()
         project.exec {
-            it.executable = linkTask.binary.outputFile.absolutePath
+            it.executable = executable
             it.args("list")
             it.standardOutput = output
         }
@@ -63,7 +65,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: KotlinN
         val results = benchmarksToRun.map { benchmark ->
             output = ByteArrayOutputStream()
             project.exec {
-                it.executable = linkTask.binary.outputFile.absolutePath
+                it.executable = executable
                 it.args(argumentsList)
                 it.args("-f", benchmark)
                 if (verbose) {

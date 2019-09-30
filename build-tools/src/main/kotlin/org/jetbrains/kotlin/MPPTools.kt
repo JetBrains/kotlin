@@ -159,21 +159,11 @@ fun sendUploadRequest(url: String, fileName: String, username: String? = null, p
 fun createRunTask(
         subproject: Project,
         name: String,
-        linkTask: KotlinNativeLink,
+        linkTask: Task,
+        executable: String,
         outputFileName: String
 ): Task {
-    return subproject.tasks.create(name, RunKotlinNativeTask::class.java, linkTask, outputFileName)
-}
-
-@JvmOverloads
-fun createBenchmarksRunTask(
-        subproject: Project,
-        name: String,
-        configureClosure: Closure<Any>? = null
-): Task {
-    val task = subproject.tasks.create(name, RunBenchmarksExecutableTask::class.java)
-    task.configure(configureClosure ?: task.emptyConfigureClosure())
-    return task
+    return subproject.tasks.create(name, RunKotlinNativeTask::class.java, linkTask, executable, outputFileName)
 }
 
 fun getJvmCompileTime(programName: String): BenchmarkResult =

@@ -4,7 +4,7 @@
  */
 
 import Foundation
-import CityMap
+import benchmark
 
 class SimpleCost: Cost {
     let value: Int
