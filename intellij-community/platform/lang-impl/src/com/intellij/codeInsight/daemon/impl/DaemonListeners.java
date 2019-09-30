@@ -4,6 +4,7 @@ package com.intellij.codeInsight.daemon.impl;
 import com.intellij.ProjectTopics;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.daemon.LineMarkerProviders;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.folding.impl.FoldingUtil;
 import com.intellij.codeInsight.hint.TooltipController;
@@ -21,7 +22,6 @@ import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.todo.TodoConfiguration;
 import com.intellij.lang.LanguageAnnotators;
-import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
@@ -42,6 +42,7 @@ import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
 import com.intellij.openapi.editor.markup.MarkupModel;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.extensions.ExtensionPointAdapter;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -354,12 +355,8 @@ public final class DaemonListeners implements Disposable {
       }
     });
 
-    LanguageAnnotators.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<KeyedLazyInstance<Annotator>>() {
-      @Override
-      public void extensionListChanged() {
-        stopDaemonAndRestartAllFiles("annotators list changed");
-      }
-    }, this);
+    restartOnExtensionChange(LanguageAnnotators.EP_NAME, "annotators list changed");
+    restartOnExtensionChange(LineMarkerProviders.EP_NAME, "line marker providers list changed");
 
     connection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
@@ -367,6 +364,15 @@ public final class DaemonListeners implements Disposable {
         removeQuickFixesContributedByPlugin(pluginDescriptor);
       }
     });
+  }
+
+  private <T, U extends KeyedLazyInstance<T>> void restartOnExtensionChange(ExtensionPointName<U> name, final String message) {
+    name.addExtensionPointListener(new ExtensionPointAdapter<U>() {
+      @Override
+      public void extensionListChanged() {
+        stopDaemonAndRestartAllFiles(message);
+      }
+    }, this);
   }
 
   private boolean worthBothering(final Document document, Project project) {
