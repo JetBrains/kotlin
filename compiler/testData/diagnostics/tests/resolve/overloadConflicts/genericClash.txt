@@ -1,0 +1,15 @@
+package
+
+public fun bar(/*0*/ x: A<kotlin.String>): kotlin.Unit
+public fun </*0*/ E> baz(/*0*/ x: E, /*1*/ y: kotlin.String): kotlin.Unit
+public fun </*0*/ E> baz(/*0*/ x: kotlin.String, /*1*/ y: E): kotlin.Unit
+
+public interface A</*0*/ T> {
+    public abstract fun </*0*/ E> baz(/*0*/ x: E, /*1*/ y: kotlin.String): kotlin.Unit
+    public abstract fun </*0*/ E> baz(/*0*/ x: kotlin.String, /*1*/ y: E): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(/*0*/ x: T): kotlin.Unit
+    public abstract fun foo(/*0*/ x: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

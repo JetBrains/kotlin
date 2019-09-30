@@ -44,6 +44,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/constructorsOfExpect/");
     }
 
+    @TestMetadata("correctOverloadResolutionAmbiguity")
+    public void testCorrectOverloadResolutionAmbiguity() throws Exception {
+        runTest("idea/testData/multiplatform/correctOverloadResolutionAmbiguity/");
+    }
+
     @TestMetadata("diamondModuleDependency1")
     public void testDiamondModuleDependency1() throws Exception {
         runTest("idea/testData/multiplatform/diamondModuleDependency1/");

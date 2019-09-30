@@ -18088,6 +18088,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
                 runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/extensionReceiverAndVarargs.kt");
             }
 
+            @TestMetadata("genericClash.kt")
+            public void testGenericClash() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/genericClash.kt");
+            }
+
             @TestMetadata("genericWithProjection.kt")
             public void testGenericWithProjection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/genericWithProjection.kt");

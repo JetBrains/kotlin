@@ -124,8 +124,8 @@ open class OverloadingConflictResolver<C : Any>(
         val result = LinkedHashSet<C>()
         outerLoop@ for (meD in fromSourcesGoesFirst) {
             for (otherD in result) {
-                val me = meD.resultingDescriptor
-                val other = otherD.resultingDescriptor
+                val me = meD.resultingDescriptor.originalIfTypeRefinementEnabled
+                val other = otherD.resultingDescriptor.originalIfTypeRefinementEnabled
                 val ignoreReturnType = isFromSources(me) != isFromSources(other)
                 if (DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(
                         me,
@@ -142,6 +142,8 @@ open class OverloadingConflictResolver<C : Any>(
 
         return result
     }
+
+    private val CallableDescriptor.originalIfTypeRefinementEnabled get() = if (isTypeRefinementEnabled) original else this
 
     private fun Collection<C>.setIfOneOrEmpty() = when (size) {
         0 -> emptySet()
