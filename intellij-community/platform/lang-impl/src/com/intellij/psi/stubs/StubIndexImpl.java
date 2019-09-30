@@ -337,13 +337,18 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     in.readFully(buffer);
     UnsyncByteArrayInputStream indexIs = new UnsyncByteArrayInputStream(buffer);
     DataInputStream indexDis = new DataInputStream(indexIs);
-    Map<K, StubIdList> result = new THashMap<>(getKeyHashingStrategy(stubIndexKey));
+    TObjectHashingStrategy<K> hashingStrategy = getKeyHashingStrategy(stubIndexKey);
+    Map<K, StubIdList> result = new THashMap<>(hashingStrategy);
     while (indexDis.available() > 0) {
       K key = keyDescriptor.read(indexDis);
       StubIdList read = StubIdExternalizer.INSTANCE.read(indexDis);
-      result.put(key, read);
-      if (requestedKey != null && requestedKey.equals(key)) {
-        return result;
+      if (requestedKey != null) {
+        if (hashingStrategy.equals(requestedKey, key)) {
+          result.put(key, read);
+          return result;
+        }
+      } else {
+        result.put(key, read);
       }
     }
     return result;
