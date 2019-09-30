@@ -22,6 +22,10 @@
   url: objc_interop.html
   title: "Objective-C and Swift Interop"
 
+- md: IOS_SYMBOLICATION.md
+  url: ios_symbolication.html
+  title: "Symbolicating iOS crash reports"
+
 - md: COCOAPODS.md
   url: cocoapods.html
   title: "CocoaPods Integration"
