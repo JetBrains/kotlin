@@ -132,6 +132,23 @@ private fun compileImpl(
         }
 }
 
+internal fun registerPackageFragmetProvidersIfNeeded(
+    scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    environment: KotlinCoreEnvironment
+) {
+    scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.forEach { dependency ->
+        if (dependency is JvmDependencyFromClassLoader) {
+            // TODO: consider implementing deduplication
+            PackageFragmentProviderExtension.registerExtension(
+                environment.project,
+                PackageFragmentFromClassLoaderProviderExtension(
+                    dependency.classLoaderGetter, scriptCompilationConfiguration, environment.configuration
+                )
+            )
+        }
+    }
+}
+
 private fun doCompile(
     context: SharedScriptCompilationContext,
     script: SourceCode,
@@ -141,14 +158,7 @@ private fun doCompile(
     getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
 ): ResultWithDiagnostics<KJvmCompiledScript<Any>> {
 
-    context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.forEach { dependency ->
-        if (dependency is JvmDependencyFromClassLoader) {
-            PackageFragmentProviderExtension.registerExtension(
-                context.environment.project,
-                PackageFragmentFromClassLoaderProviderExtension(dependency.classLoaderGetter, context.baseScriptCompilationConfiguration)
-            )
-        }
-    }
+    registerPackageFragmetProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
 
     val analysisResult = analyze(sourceFiles, context.environment)
 
