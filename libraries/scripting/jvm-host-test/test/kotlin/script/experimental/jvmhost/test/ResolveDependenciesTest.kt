@@ -52,10 +52,9 @@ class ResolveDependenciesTest : TestCase() {
         runScriptAndCheckResult(classImportScript, configurationWithDependenciesFromClasspath, null, 42)
     }
 
-    @Ignore
     @Test
     // This doesn't work since there is no way to resolve a top-level function/property via reflection now (see #KT-33892)
-    fun ignore_testResolveFunAndValFromClassloader() {
+    fun testResolveFunAndValFromClassloader() {
         runScriptAndCheckResult(funAndValAccessScript, configurationWithDependenciesFromClassloader, null, 42)
         runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }
