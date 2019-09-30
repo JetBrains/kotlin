@@ -14647,6 +14647,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/samConversionToAnonymousObject/labeledReturn_ni.kt");
         }
 
+        @TestMetadata("nestedClass.kt")
+        public void testNestedClass() throws Exception {
+            runTest("idea/testData/intentions/samConversionToAnonymousObject/nestedClass.kt");
+        }
+
         @TestMetadata("notJavaInterface.kt")
         public void testNotJavaInterface() throws Exception {
             runTest("idea/testData/intentions/samConversionToAnonymousObject/notJavaInterface.kt");
