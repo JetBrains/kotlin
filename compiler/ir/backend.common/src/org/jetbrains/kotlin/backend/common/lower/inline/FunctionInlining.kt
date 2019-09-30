@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class FunctionInlining(val context: CommonBackendContext, val dontInlineTypeOf: Boolean = true) : IrElementTransformerVoidWithContext() {
+class FunctionInlining(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
 
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
@@ -47,8 +47,7 @@ class FunctionInlining(val context: CommonBackendContext, val dontInlineTypeOf: 
             return expression
         if (Symbols.isLateinitIsInitializedPropertyGetter(callee.symbol))
             return expression
-        // TODO: Temporary hack till typeOf is unimplemented in K/JS
-        if (dontInlineTypeOf && Symbols.isTypeOfIntrinsic(callee.symbol))
+        if (Symbols.isTypeOfIntrinsic(callee.symbol))
             return expression
 
         val actualCallee = getFunctionDeclaration(callee.symbol)

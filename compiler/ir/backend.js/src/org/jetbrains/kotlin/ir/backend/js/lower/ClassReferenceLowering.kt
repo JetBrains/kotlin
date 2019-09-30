@@ -6,20 +6,27 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isThrowable
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.*
 
 class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val intrinsics = context.intrinsics
@@ -108,23 +115,116 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
         return null
     }
 
-    private fun callGetKClass(returnType: IrType, typeArgument: IrType): IrCall {
+    private fun callGetKClass(
+        returnType: IrType = intrinsics.jsGetKClass.owner.returnType,
+        typeArgument: IrType
+    ): IrCall {
         val primitiveKClass =
             getFinalPrimitiveKClass(returnType, typeArgument) ?: getOpenPrimitiveKClass(returnType, typeArgument)
 
         if (primitiveKClass != null)
             return primitiveKClass
 
-        return JsIrBuilder.buildCall(intrinsics.jsGetKClass, returnType, listOf(typeArgument)).apply {
-            putValueArgument(0, callJsClass(typeArgument))
-        }
+        return JsIrBuilder.buildCall(intrinsics.jsGetKClass, returnType, listOf(typeArgument))
+            .apply {
+                putValueArgument(0, callJsClass(typeArgument))
+            }
     }
 
     private fun callJsClass(type: IrType) =
         JsIrBuilder.buildCall(intrinsics.jsClass, typeArguments = listOf(type))
 
+    private fun buildCall(name: IrSimpleFunctionSymbol, vararg args: IrExpression): IrExpression =
+        JsIrBuilder.buildCall(name).apply {
+            args.forEachIndexed { index, irExpression ->
+                putValueArgument(index, irExpression)
+            }
+        }
+
+    fun createKType(type: IrType): IrExpression {
+        if (type is IrSimpleType)
+            return createSimpleKType(type)
+        if (type is IrDynamicType)
+            return createDynamicType()
+        error("Unexpected type $type")
+    }
+
+    private fun createDynamicType(): IrExpression {
+        return buildCall(context.intrinsics.createDynamicKType!!)
+    }
+
+    private fun createSimpleKType(type: IrSimpleType): IrExpression {
+        val classifier: IrClassifierSymbol = type.classifier
+
+        if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
+            error("Fail")
+        }
+
+        val kClassifier = createKClassifier(classifier)
+        // TODO: Use static array types
+        val arguments = type.arguments.map { createKTypeProjection(it) }.toJsArrayLiteral(
+            context,
+            context.dynamicType,
+            context.dynamicType
+        )
+        val isMarkedNullable = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, type.isMarkedNullable())
+        return buildCall(
+            context.intrinsics.createKType!!,
+            kClassifier,
+            arguments,
+            isMarkedNullable
+        )
+    }
+
+    private fun createKTypeProjection(tp: IrTypeArgument): IrExpression {
+        if (tp !is IrTypeProjection) {
+            return buildCall(context.intrinsics.getStarKTypeProjection!!)
+        }
+
+        val factoryName = when (tp.variance) {
+            Variance.INVARIANT -> context.intrinsics.createInvariantKTypeProjection!!
+            Variance.IN_VARIANCE -> context.intrinsics.createContravariantKTypeProjection!!
+            Variance.OUT_VARIANCE -> context.intrinsics.createCovariantKTypeProjection!!
+        }
+
+        val kType = createKType(tp.type)
+        return buildCall(factoryName, kType)
+
+    }
+
+    private fun createKClassifier(classifier: IrClassifierSymbol): IrExpression =
+        when (classifier) {
+            is IrTypeParameterSymbol -> createKTypeParameter(classifier.owner)
+            else -> callGetKClass(typeArgument = classifier.defaultType)
+        }
+
+    private fun createKTypeParameter(typeParameter: IrTypeParameter): IrExpression {
+        val name = JsIrBuilder.buildString(context.irBuiltIns.stringType, typeParameter.name.asString())
+        val upperBounds = typeParameter.superTypes.map { createKType(it) }.toJsArrayLiteral(
+            context,
+            context.dynamicType,
+            context.dynamicType
+        )
+
+        val variance = when (typeParameter.variance) {
+            Variance.INVARIANT -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "invariant")
+            Variance.IN_VARIANCE -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "in")
+            Variance.OUT_VARIANCE -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "out")
+        }
+        if (typeParameter.isReified) {
+            error("Reified parameter")
+        }
+
+        return buildCall(
+            context.intrinsics.createKTypeParameter!!,
+            name,
+            upperBounds,
+            variance
+        )
+    }
+
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitGetClass(expression: IrGetClass) =
                 callGetKClassFromExpression(
                     returnType = expression.type,
@@ -137,6 +237,13 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
                     returnType = expression.type,
                     typeArgument = expression.classType.makeNotNull()
                 )
+
+            override fun visitCall(expression: IrCall): IrExpression =
+                if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
+                    createKType(expression.getTypeArgument(0)!!)
+                } else {
+                    super.visitCall(expression)
+                }
         })
     }
 }
