@@ -122,7 +122,7 @@ class JavacWrapper(
     }
 
     private val names = Names.instance(context)
-    private val symbols = Symtab.instance(context)
+    private val symbolTable = Symtab.instance(context)
     private val elements = JavacElements.instance(context)
     private val types = JavacTypes.instance(context)
     private val fileObjects = fileManager.getJavaFileObjectsFromFiles(javaFiles).toJavacList()
@@ -137,7 +137,7 @@ class JavacWrapper(
         }
     }.toMap()
 
-    private val javaPackages = compilationUnits
+    private val treeBasedJavaPackages = compilationUnits
         .mapTo(hashSetOf<TreeBasedPackage>()) { unit ->
             unit.packageName?.toString()?.let { packageName ->
                 TreeBasedPackage(packageName, this, unit)
@@ -217,7 +217,7 @@ class JavacWrapper(
     }
 
     fun findPackage(fqName: FqName, scope: GlobalSearchScope = EverythingGlobalScope()): JavaPackage? {
-        javaPackages[fqName]?.let { javaPackage ->
+        treeBasedJavaPackages[fqName]?.let { javaPackage ->
             javaPackage.virtualFile?.let { file ->
                 if (file in scope) return javaPackage
             }
@@ -227,10 +227,10 @@ class JavacWrapper(
     }
 
     fun findSubPackages(fqName: FqName): List<JavaPackage> =
-        symbols.packages
+        symbolTable.packages
             .filterKeys { it.toString().startsWith("$fqName.") }
             .map { SimpleSymbolBasedPackage(it.value, this) } +
-                javaPackages
+                treeBasedJavaPackages
                     .filterKeys { it.isSubpackageOf(fqName) && it != fqName }
                     .map { it.value }
 
@@ -356,7 +356,7 @@ class JavacWrapper(
                         if (className.startsWith(".")) className.substring(1) else className
                     }.let(names::fromString)
 
-                symbols.classes[fqName]?.let { symbols.classes[fqName] = null }
+                symbolTable.classes[fqName]?.let { symbolTable.classes[fqName] = null }
                 val symbol = reader.enterClass(fqName, fileObject)
 
                 (elements.getPackageOf(symbol) as? Symbol.PackageSymbol)?.let { packageSymbol ->
