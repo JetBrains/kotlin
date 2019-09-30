@@ -32,10 +32,10 @@ fun lookupSuperTypes(
 }
 
 class ScopeSession {
-    private val scopes = mutableMapOf<FirClassifierSymbol<*>, MutableMap<ScopeSessionKey<*>, FirScope>>()
+    private val scopes = hashMapOf<FirClassifierSymbol<*>, HashMap<ScopeSessionKey<*>, FirScope>>()
     fun <T : FirScope> getOrBuild(symbol: FirClassifierSymbol<*>, key: ScopeSessionKey<T>, build: () -> T): T {
         return scopes.getOrPut(symbol) {
-            mutableMapOf()
+            hashMapOf()
         }.getOrPut(key) {
             build()
         } as T
