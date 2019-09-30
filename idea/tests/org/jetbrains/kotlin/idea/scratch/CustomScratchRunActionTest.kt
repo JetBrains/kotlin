@@ -39,7 +39,7 @@ class CustomScratchRunActionTest : AbstractScratchRunActionTest() {
         configureScratchByText("scratch_1.kts", fileText)
 
         launchScratch()
-        waitUntilScratchFinishes()
+        waitUntilScratchFinishes(isRepl)
 
         return getFileTextWithInlays()
     }

@@ -144,7 +144,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         if (!KotlinHighlightingUtil.shouldHighlight(myFixture.file)) error("Highlighting for scratch file is switched off")
 
         launchScratch()
-        waitUntilScratchFinishes()
+        waitUntilScratchFinishes(isRepl)
     }
 
     private fun getExpectedFile(fileName: String, isRepl: Boolean, suffix: String): File {
