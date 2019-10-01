@@ -34,7 +34,7 @@ class AndroidProcessHandler : ProcessHandler() {
             val clientDescription = client.clientData.clientDescription
             if (clientDescription != null) {
                 synchronized(this@AndroidProcessHandler) {
-                    if (appId == clientDescription || appId == client.clientData.packageName) {
+                    if ((appId == clientDescription || appId == client.clientData.packageName) && processClient == null) {
                         processClient = client
                         debuggerPort.complete(client.debuggerListenPort)
                         notifyTextAvailable(
