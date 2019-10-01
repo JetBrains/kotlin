@@ -42,7 +42,7 @@ class UnresolvedDependencySyncIssue(dependencyName: String,
                                     projectPath: String,
                                     isOfflineMode: Boolean) : UnresolvedDependencyIssue(dependencyName) {
   override val quickFixes = if (isOfflineMode) listOf<BuildIssueQuickFix>(DisableOfflineAndReimport(projectPath)) else emptyList()
-  override val description: String = buildDescription(failureMessage, isOfflineMode, "Disable offline mode and re-import the project")
+  override val description: String = buildDescription(failureMessage, isOfflineMode, "Disable offline mode and reimport the project")
 
   inner class DisableOfflineAndReimport(private val projectPath: String) : BuildIssueQuickFix {
     override val id = offlineQuickFixId
