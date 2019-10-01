@@ -25,6 +25,7 @@ import com.intellij.openapi.util.IconLoader
 import com.sun.jdi.ClassType
 import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.IconExtensionChooser
+import javaslang.control.Either
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import javax.swing.Icon
 
@@ -37,29 +38,16 @@ class CoroutineData(private val state: CoroutineState) : DescriptorData<Coroutin
         return CoroutineDescriptorImpl(state)
     }
 
-    override fun equals(other: Any?): Boolean {
-        return if (other !is CoroutineData) {
-            false
-        } else state.name == other.state.name
-    }
+    override fun equals(other: Any?) = if (other !is CoroutineData) false else state.name == other.state.name
 
-    override fun hashCode(): Int {
-        return state.name.hashCode()
-    }
+    override fun hashCode() = state.name.hashCode()
 
-    override fun getDisplayKey(): DisplayKey<CoroutineDescriptorImpl> {
-        return SimpleDisplayKey(state.name)
-    }
+    override fun getDisplayKey(): DisplayKey<CoroutineDescriptorImpl> = SimpleDisplayKey(state.name)
 }
 
 class CoroutineDescriptorImpl(val state: CoroutineState) : NodeDescriptorImpl() {
     var suspendContext: SuspendContextImpl? = null
-    val icon: Icon
-        get() = when {
-            state.isSuspended -> AllIcons.Debugger.ThreadSuspended
-            state.state == CoroutineState.State.CREATED -> AllIcons.Debugger.ThreadStates.Idle
-            else -> AllIcons.Debugger.ThreadRunning
-        }
+    lateinit var icon: Icon
 
     override fun getName(): String? {
         return state.name
@@ -76,30 +64,35 @@ class CoroutineDescriptorImpl(val state: CoroutineState) : NodeDescriptorImpl() 
         return state.state != CoroutineState.State.CREATED
     }
 
-    override fun setContext(context: EvaluationContextImpl?) {
+    private fun calcIcon() = when {
+        state.isSuspended -> AllIcons.Debugger.ThreadSuspended
+        state.state == CoroutineState.State.CREATED -> AllIcons.Debugger.ThreadStates.Idle
+        else -> AllIcons.Debugger.ThreadRunning
+    }
 
+    override fun setContext(context: EvaluationContextImpl?) {
+        icon = calcIcon()
     }
 }
 
 class CoroutineStackFrameData private constructor(val state: CoroutineState, private val proxy: StackFrameProxyImpl) :
     DescriptorData<NodeDescriptorImpl>() {
-    private var frame: StackTraceElement? = null
-    private var frameItem: StackFrameItem? = null
+    private lateinit var frame: Either<StackTraceElement, StackFrameItem>
 
     constructor(state: CoroutineState, frame: StackTraceElement, proxy: StackFrameProxyImpl) : this(state, proxy) {
-        this.frame = frame
+        this.frame = Either.left(frame)
     }
 
     constructor(state: CoroutineState, frameItem: StackFrameItem, proxy: StackFrameProxyImpl) : this(state, proxy) {
-        this.frameItem = frameItem
+        this.frame = Either.right(frameItem)
     }
 
-    override fun hashCode() = frame?.hashCode() ?: frameItem.hashCode()
+    override fun hashCode(): Int {
+        return if (frame.isLeft) frame.left.hashCode() else frame.get().hashCode()
+    }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is CoroutineStackFrameData) {
-            other.frame == frame && other.frameItem == frameItem
-        } else false
+        return other is CoroutineStackFrameData && frame == other.frame
     }
 
     /**
@@ -107,12 +100,10 @@ class CoroutineStackFrameData private constructor(val state: CoroutineState, pri
      * or [AsyncStackFrameDescriptor] according to current frame
      */
     override fun createDescriptorImpl(project: Project): NodeDescriptorImpl {
-        val frame = frame ?: return AsyncStackFrameDescriptor(
-            state,
-            frameItem!!,
-            proxy
-        )
+        val isLeft = frame.isLeft
+        if (!isLeft) return AsyncStackFrameDescriptor(state, frame.get(), proxy)
         // check whether last fun is suspend fun
+        val frame = frame.left
         val suspendContext =
             DebuggerManagerEx.getInstanceEx(project).context.suspendContext ?: return EmptyStackFrameDescriptor(
                 frame,
@@ -212,9 +203,7 @@ class EmptyStackFrameDescriptor(val frame: StackTraceElement, proxy: StackFrameP
 }
 
 class CreationFramesDescriptor(val frames: List<StackTraceElement>) : NodeDescriptorImpl() {
-    override fun calcRepresentation(context: EvaluationContextImpl?, labelListener: DescriptorLabelListener?): String {
-        return "Coroutine creation stack trace"
-    }
+    override fun calcRepresentation(context: EvaluationContextImpl?, labelListener: DescriptorLabelListener?) = name
 
     override fun setContext(context: EvaluationContextImpl?) {}
     override fun getName() = "Coroutine creation stack trace"

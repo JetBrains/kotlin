@@ -120,6 +120,7 @@ class CoroutinesPanel(project: Project, stateManager: DebuggerStateManager) : De
         super.dispose()
     }
 
+    // copied from com.intellij.debugger.ui.impl.ThreadsPanel.updateNodeLabels
     private fun updateNodeLabels(from: DebuggerTreeNodeImpl) {
         val children = from.children()
         try {

@@ -61,13 +61,13 @@ class CoroutineState(
             val trace = context.invokeMethod(continuation, getTrace, emptyList()) as? ObjectReference
             if (trace != null)
                 (context.invokeMethod(trace, getClassName, emptyList()) as StringReference).value()
-            else ""
+            else null
         }
         val lineNumber = {
             val trace = context.invokeMethod(continuation, getTrace, emptyList()) as? ObjectReference
             if (trace != null)
                 (context.invokeMethod(trace, getLineNumber, emptyList()) as IntegerValue).value()
-            else -239 // invalid line number (but well-educated)
+            else null
         }
 
         while (continuation.type().isSubtype(baseType)

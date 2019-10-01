@@ -101,8 +101,3 @@ class ExecutionContext(val evaluationContext: EvaluationContextImpl, val framePr
         DebuggerUtilsEx.keep(reference, evaluationContext)
     }
 }
-
-fun DebuggerContextImpl.createExecutionContext(): ExecutionContext? {
-    val context = createEvaluationContext()
-    return ExecutionContext(context ?: return null, frameProxy ?: return null)
-}

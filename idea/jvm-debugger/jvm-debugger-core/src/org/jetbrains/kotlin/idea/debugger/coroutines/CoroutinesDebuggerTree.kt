@@ -41,7 +41,6 @@ import com.sun.jdi.ClassType
 import javaslang.control.Either
 import org.jetbrains.kotlin.idea.debugger.KotlinCoroutinesAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
-import org.jetbrains.kotlin.idea.debugger.evaluate.createExecutionContext
 import java.awt.event.MouseEvent
 import java.lang.ref.WeakReference
 import javax.swing.event.TreeModelEvent
@@ -52,7 +51,7 @@ import javax.swing.event.TreeModelListener
  */
 class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
     private val logger = Logger.getInstance(this::class.java)
-    private var lastSuspendContextDump: Pair<WeakReference<SuspendContextImpl>, Either<Throwable, List<CoroutineState>>>? = null
+    private var lastSuspendContextCache: Cache? = null
 
     override fun createNodeManager(project: Project): NodeManagerImpl {
         return object : NodeManagerImpl(project, this) {
@@ -227,11 +226,13 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
         pos: XSourcePosition
     ): Pair<XExecutionStack, SyntheticStackFrame>? {
         val context = DebuggerManagerEx.getInstanceEx(project).context
-        val proxy = context.suspendContext?.thread ?: return null
-        val executionStack =
-            JavaExecutionStack(proxy, context.debugProcess!!, false)
+        val suspendContext = context.suspendContext ?: return null
+        val proxy = suspendContext.thread ?: return null
+        val executionStack = JavaExecutionStack(proxy, suspendContext.debugProcess, false)
         executionStack.initTopFrame()
-        val execContext = context.createExecutionContext() ?: return null
+        val evalContext = context.createEvaluationContext()
+        val frameProxy = evalContext?.frameProxy ?: return null
+        val execContext = ExecutionContext(evalContext, frameProxy)
         val continuation = descriptor.continuation // guaranteed that it is a BaseContinuationImpl
         val aMethod = (continuation.type() as ClassType).concreteMethodByName(
             "getStackTraceElement",
@@ -255,6 +256,7 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
         descriptor: NodeDescriptorImpl,
         evalContext: EvaluationContextImpl
     ) {
+        val creationStackTraceSeparator = "\b\b\b" // the "\b\b\b" is used for creation stacktrace separator in kotlinx.coroutines
         if (descriptor !is CoroutineDescriptorImpl) {
             if (descriptor is CreationFramesDescriptor) {
                 val threadProxy = debuggerContext.suspendContext?.thread ?: return
@@ -298,7 +300,7 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
                 val proxy = threadProxy.forceFrames().first()
                 // the thread is paused on breakpoint - it has at least one frame
                 for (it in descriptor.state.stackTrace) {
-                    if (it.className.startsWith("\b\b\b")) break
+                    if (it.className.startsWith(creationStackTraceSeparator)) break
                     children.add(createCoroutineFrameDescriptor(descriptor, evalContext, it, proxy))
                 }
             }
@@ -306,7 +308,7 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
             }
         }
         val trace = descriptor.state.stackTrace
-        val index = trace.indexOfFirst { it.className.startsWith("\b\b\b") }
+        val index = trace.indexOfFirst { it.className.startsWith(creationStackTraceSeparator) }
         children.add(myNodeManager.createNode(CreationFramesDescriptor(trace.subList(index + 1, trace.size)), evalContext))
     }
 
@@ -371,7 +373,7 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
 
     override fun isExpandable(node: DebuggerTreeNodeImpl): Boolean {
         val descriptor = node.descriptor
-        return if (descriptor is StackFrameDescriptor) return false else descriptor.isExpandable
+        return if (descriptor is StackFrameDescriptor) false else descriptor.isExpandable
     }
 
     override fun build(context: DebuggerContextImpl) {
@@ -402,11 +404,11 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
             }
             val evaluationContext = EvaluationContextImpl(suspendContext, suspendContext.frameProxy)
             val executionContext = ExecutionContext(evaluationContext, suspendContext.frameProxy ?: return)
-            val cache = lastSuspendContextDump
+            val cache = lastSuspendContextCache
             val states = if (cache != null && cache.first.get() === suspendContext) {
                 cache.second
             } else CoroutinesDebugProbesProxy.dumpCoroutines(executionContext).apply {
-                lastSuspendContextDump = WeakReference(suspendContext) to this
+                lastSuspendContextCache = WeakReference(suspendContext) to this
             }
             // if suspend context hasn't changed - use last dump, else compute new
             if (states.isLeft) {
@@ -442,3 +444,5 @@ class CoroutinesDebuggerTree(project: Project) : DebuggerTree(project) {
     }
 
 }
+
+private typealias Cache = Pair<WeakReference<SuspendContextImpl>, Either<Throwable, List<CoroutineState>>>

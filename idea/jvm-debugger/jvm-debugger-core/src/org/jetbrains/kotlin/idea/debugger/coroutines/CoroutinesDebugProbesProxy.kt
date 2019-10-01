@@ -16,6 +16,7 @@ object CoroutinesDebugProbesProxy {
     private const val DEBUG_PACKAGE = "kotlinx.coroutines.debug"
     private var DebugProcess.references by UserDataProperty(Key.create<ProcessReferences>("COROUTINES_DEBUG_REFERENCES"))
 
+    @Synchronized
     @Suppress("unused")
     fun install(context: ExecutionContext) {
         val debugProbes = context.findClass("$DEBUG_PACKAGE.DebugProbes") as ClassType
@@ -24,6 +25,7 @@ object CoroutinesDebugProbesProxy {
         context.invokeMethod(instance, install, emptyList())
     }
 
+    @Synchronized
     @Suppress("unused")
     fun uninstall(context: ExecutionContext) {
         val debugProbes = context.findClass("$DEBUG_PACKAGE.DebugProbes") as ClassType
@@ -36,6 +38,7 @@ object CoroutinesDebugProbesProxy {
      * Invokes DebugProbes from debugged process's classpath and returns states of coroutines
      * Should be invoked on debugger manager thread
      */
+    @Synchronized
     fun dumpCoroutines(context: ExecutionContext): Either<Throwable, List<CoroutineState>> {
         try {
             if (context.debugProcess.references == null) {
@@ -50,6 +53,7 @@ object CoroutinesDebugProbesProxy {
 
             return Either.right(List(size) {
                 val index = context.vm.mirrorOf(it)
+                // `List<CoroutineInfo>.get(index)`
                 val elem = context.invokeMethod(infoList, refs.getElement, listOf(index)) as ObjectReference
                 val name = getName(context, elem, refs)
                 val state = getState(context, elem, refs)
@@ -73,7 +77,11 @@ object CoroutinesDebugProbesProxy {
         refs: ProcessReferences
     ): String {
         // equals to `coroutineInfo.context.get(CoroutineName).name`
-        val coroutineContextInst = context.invokeMethod(info, refs.getContext, emptyList()) as ObjectReference
+        val coroutineContextInst = context.invokeMethod(
+            info,
+            refs.getContext,
+            emptyList()
+        ) as? ObjectReference ?: throw IllegalArgumentException("Coroutine context must not be null")
         val coroutineName = context.invokeMethod(
             coroutineContextInst,
             refs.getContextElement, listOf(refs.nameKey)
@@ -81,7 +89,8 @@ object CoroutinesDebugProbesProxy {
         // If the coroutine doesn't have a given name, CoroutineContext.get(CoroutineName) returns null
         val name = if (coroutineName != null) (context.invokeMethod(
             coroutineName,
-            refs.getName, emptyList()
+            refs.getName,
+            emptyList()
         ) as StringReferenceImpl).value() else "coroutine"
         val id = (info.getValue(refs.idField) as LongValue).value()
         return "$name#$id"
@@ -92,7 +101,7 @@ object CoroutinesDebugProbesProxy {
         info: ObjectReference, // CoroutineInfo instance
         refs: ProcessReferences
     ): String {
-        //  equals to stringState = coroutineInfo.state.toString()
+        // equals to `stringState = coroutineInfo.state.toString()`
         val state = context.invokeMethod(info, refs.getState, emptyList()) as ObjectReference
         return (context.invokeMethod(state, refs.toString, emptyList()) as StringReferenceImpl).value()
     }
@@ -100,7 +109,7 @@ object CoroutinesDebugProbesProxy {
     private fun getLastObservedThread(
         info: ObjectReference, // CoroutineInfo instance
         threadRef: Field // reference to lastObservedThread
-    ): ThreadReference? = info.getValue(threadRef) as ThreadReference?
+    ): ThreadReference? = info.getValue(threadRef) as? ThreadReference
 
     /**
      * Returns list of stackTraceElements for the given CoroutineInfo's [ObjectReference]
@@ -124,14 +133,12 @@ object CoroutinesDebugProbesProxy {
                 listOf(context.vm.virtualMachine.mirrorOf(it))
             ) as ObjectReference
             val clazz = (frame.getValue(refs.className) as StringReference).value()
-
-//            if (clazz.contains("$DEBUG_PACKAGE.DebugProbes")) break // cut off debug intrinsic stacktrace
             list.add(
                 0, // add in the beginning
                 StackTraceElement(
                     clazz,
-                    (frame.getValue(refs.methodName) as StringReference).value(),
-                    (frame.getValue(refs.fileName) as StringReference?)?.value(),
+                    (frame.getValue(refs.methodName) as? StringReference)?.value(),
+                    (frame.getValue(refs.fileName) as? StringReference)?.value(),
                     (frame.getValue(refs.line) as IntegerValue).value()
                 )
             )
@@ -165,7 +172,7 @@ object CoroutinesDebugProbesProxy {
         val getName: Method = coroutineName.methodsByName("getName").single()
         val nameKey = coroutineName.getValue(coroutineName.fieldByName("Key")) as ObjectReference
         val toString: Method = (context.findClass("java.lang.Object") as ClassType)
-            .methodsByName("toString").single()
+            .concreteMethodByName("toString", "()Ljava/lang/String;")
 
         val threadRef: Field = info.fieldByName("lastObservedThread")
         val continuation: Field = info.fieldByName("lastObservedFrame")

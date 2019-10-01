@@ -80,7 +80,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
             }
         }
 
-        exporterToTextFile = createToFileExporter(project, dump)
+        exporterToTextFile = MyToFileExporter(project, dump)
 
         val filterAction = FilterAction().apply {
             registerCustomShortcutSet(
@@ -92,7 +92,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
             add(filterAction)
             add(CopyToClipboardAction(dump, project))
             add(ActionManager.getInstance().getAction(IdeActions.ACTION_EXPORT_TO_TEXT_FILE))
-            add(MergeStacktracesAction())
+            add(MergeStackTracesAction())
         }
         add(
             ActionManager.getInstance()
@@ -139,7 +139,6 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
         val states = if (UISettings.instance.state.mergeEqualStackTraces) mergedDump else dump
         for (state in states) {
             if (StringUtil.containsIgnoreCase(state.stringStackTrace, text) || StringUtil.containsIgnoreCase(state.name, text)) {
-
                 model.addElement(state)
                 if (selection === state) {
                     selectedIndex = index
@@ -211,9 +210,11 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
         }
     }
 
-    private inner class FilterAction :
-        ToggleAction("Filter", "Show only threads containing a specific string", AllIcons.General.Filter),
-        DumbAware {
+    private inner class FilterAction : ToggleAction(
+        "Filter",
+        "Show only coroutines containing a specific string",
+        AllIcons.General.Filter
+    ), DumbAware {
 
         override fun isSelected(e: AnActionEvent): Boolean {
             return filterPanel.isVisible
@@ -229,14 +230,11 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
         }
     }
 
-    @Suppress("DEPRECATION")
-    private inner class MergeStacktracesAction :
-        ToggleAction(
-            "Merge Identical Stacktraces",
-            "Group coroutines with identical stacktraces",
-            AllIcons.General.CollapseAll
-        ),
-        DumbAware {
+    private inner class MergeStackTracesAction : ToggleAction(
+        "Merge Identical Stacktraces",
+        "Group coroutines with identical stacktraces",
+        AllIcons.Actions.Collapseall
+    ), DumbAware {
 
         override fun isSelected(e: AnActionEvent): Boolean {
             return UISettings.instance.state.mergeEqualStackTraces
@@ -268,32 +266,19 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
         private val group = NotificationGroup.toolWindowGroup("Analyze coroutine dump", ToolWindowId.RUN, false)
     }
 
-    private fun createToFileExporter(project: Project, states: List<CoroutineState>): ExporterToTextFile {
-        return MyToFileExporter(project, states)
-    }
+    private class MyToFileExporter(
+        private val myProject: Project,
+        private val states: List<CoroutineState>
+    ) : ExporterToTextFile {
 
-    private class MyToFileExporter(private val myProject: Project, private val states: List<CoroutineState>) :
-        ExporterToTextFile {
-
-        override fun getReportText(): String {
-            val sb = StringBuilder()
-            for (state in states) {
-                sb.append(state.stringStackTrace).append("\n\n")
-            }
-            return sb.toString()
+        override fun getReportText() = buildString {
+            for (state in states)
+                append(state.stringStackTrace).append("\n\n")
         }
 
-        @Suppress("DEPRECATION")
-        override fun getDefaultFilePath(): String {
-            val baseDir = myProject.baseDir
-            return if (baseDir != null) {
-                baseDir.presentableUrl + File.separator + defaultReportFileName
-            } else ""
-        }
+        override fun getDefaultFilePath() = (myProject.basePath ?: "") + File.separator + defaultReportFileName
 
-        override fun canExport(): Boolean {
-            return states.isNotEmpty()
-        }
+        override fun canExport() = states.isNotEmpty()
 
         private val defaultReportFileName = "coroutines_report.txt"
     }

@@ -40,7 +40,7 @@ class CoroutinesDebugConfigurationExtension : RunConfigurationExtension() {
     private var Project.listenerCreated: Boolean? by UserDataProperty(Key.create("COROUTINES_DEBUG_TAB_CREATE_LISTENER"))
 
     override fun isApplicableFor(configuration: RunConfigurationBase<*>): Boolean {
-        return Registry.`is`("kotlin.debugger" + ".coroutines")
+        return Registry.`is`("kotlin.debugger.coroutines")
     }
 
     override fun <T : RunConfigurationBase<*>?> updateJavaParameters(
@@ -48,7 +48,7 @@ class CoroutinesDebugConfigurationExtension : RunConfigurationExtension() {
         params: JavaParameters?,
         runnerSettings: RunnerSettings?
     ) {
-        if (!Registry.`is`("kotlin.debugger" + ".coroutines")) return
+        if (!Registry.`is`("kotlin.debugger.coroutines")) return
         if (runnerSettings is DebuggingRunnerData && params != null
             && params.classPath != null
             && params.classPath.pathList.isNotEmpty()
@@ -78,8 +78,9 @@ class CoroutinesDebugConfigurationExtension : RunConfigurationExtension() {
             override fun processStarted(debugProcess: XDebugProcess) {
                 DebuggerInvocationUtil.swingInvokeLater(project) {
                     val session = DebuggerManagerEx.getInstanceEx(project).context.debuggerSession
-                    if (session != null)
-                        registerCoroutinesPanel(session.xDebugSession?.ui ?: return@swingInvokeLater, session)
+                    val ui = session?.xDebugSession?.ui
+                    if (ui != null)
+                        registerCoroutinesPanel(ui, session)
                 }
             }
 

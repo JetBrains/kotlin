@@ -25,7 +25,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.text.DateFormatUtil
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
-import org.jetbrains.kotlin.idea.debugger.evaluate.createExecutionContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 @Suppress("ComponentNotRegistered")
 class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
@@ -39,14 +39,16 @@ class CoroutineDumpAction : AnAction(), AnAction.TransparentUpdate {
             val process = context.debugProcess ?: return
             process.managerThread.schedule(object : SuspendContextCommandImpl(context.suspendContext) {
                 override fun contextAction() {
-                    val execContext = context.createExecutionContext() ?: return
+                    val evalContext = context.createEvaluationContext()
+                    val frameProxy = evalContext?.frameProxy ?: return
+                    val execContext = ExecutionContext(evalContext, frameProxy)
                     val states = CoroutinesDebugProbesProxy.dumpCoroutines(execContext)
                     if (states.isLeft) {
                         logger.warn(states.left)
                         XDebuggerManagerImpl.NOTIFICATION_GROUP
                             .createNotification(
                                 "Coroutine dump failed. See log",
-                                MessageType.ERROR
+                                MessageType.WARNING
                             ).notify(project)
                         return
                     }
