@@ -49,9 +49,7 @@ val BaseKotlinLibrary.uniqueName: String
 
 val BaseKotlinLibrary.unresolvedDependencies: List<UnresolvedLibrary>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
-            .map {
-                UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it"))
-            }
+        .map { UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it")) }
 
 interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
 
@@ -60,7 +58,7 @@ val KotlinLibrary.isInterop
     get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
 
 val KotlinLibrary.packageFqName: String?
-    get() = manifestProperties.getProperty(org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE)
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)
 
 val KotlinLibrary.exportForwardDeclarations
     get() = manifestProperties.propertyList(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, escapeInQuotes = true)

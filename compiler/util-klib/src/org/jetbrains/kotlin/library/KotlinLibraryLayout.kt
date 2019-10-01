@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
 
+const val KLIB_MANIFEST_FILE_NAME = "manifest"
+const val KLIB_MODULE_METADATA_FILE_NAME = "module"
+
 /**
  * This scheme describes the Kotlin/Native Library (KLIB) layout.
  */
@@ -27,7 +30,7 @@ interface KotlinLibraryLayout {
     val libraryName: String
         get() = libDir.path
     val manifestFile
-        get() = File(libDir, "manifest")
+        get() = File(libDir, KLIB_MANIFEST_FILE_NAME)
     val resourcesDir
         get() = File(libDir, "resources")
 }
@@ -36,7 +39,7 @@ interface MetadataKotlinLibraryLayout : KotlinLibraryLayout {
     val metadataDir
         get() = File(libDir, "linkdata")
     val moduleHeaderFile
-        get() = File(metadataDir, "module")
+        get() = File(metadataDir, KLIB_MODULE_METADATA_FILE_NAME)
 
     fun packageFragmentsDir(packageName: String) =
         File(metadataDir, if (packageName == "") "root_package" else "package_$packageName")
