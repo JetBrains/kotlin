@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
+import org.jetbrains.kotlin.backend.common.CheckDeclarationParentsVisitor
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.IrValidator
+import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
@@ -118,3 +122,16 @@ fun <Data, Context> dumpToStdout(
     }
 
 val defaultDumper = makeDumpAction(dumpToStdout(::dumpIrElement) + dumpToFile("ir", ::dumpIrElement))
+
+fun <Fragment : IrElement> validationCallback(context: CommonBackendContext, fragment: Fragment) {
+    val validatorConfig = IrValidatorConfig(
+        abortOnError = true,
+        ensureAllNodesAreDifferent = true,
+        checkTypes = false,
+        checkDescriptors = false
+    )
+    fragment.accept(IrValidator(context, validatorConfig), null)
+    fragment.accept(CheckDeclarationParentsVisitor, null)
+}
+
+val validationAction = makeVerifyAction(::validationCallback)

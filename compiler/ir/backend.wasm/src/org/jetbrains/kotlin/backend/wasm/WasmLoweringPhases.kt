@@ -20,19 +20,6 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 
 private fun ClassLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { runOnFilePostfix(it) }
 
-private fun validationCallback(context: WasmBackendContext, module: IrModuleFragment) {
-    val validatorConfig = IrValidatorConfig(
-        abortOnError = true,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = false,
-        checkDescriptors = false
-    )
-    module.accept(IrValidator(context, validatorConfig), null)
-    module.accept(CheckDeclarationParentsVisitor, null)
-}
-
-val validationAction = makeVerifyAction(::validationCallback)
-
 private fun makeWasmModulePhase(
     lowering: (WasmBackendContext) -> FileLoweringPass,
     name: String,

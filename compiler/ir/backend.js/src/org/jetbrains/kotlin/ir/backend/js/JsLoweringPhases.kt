@@ -21,19 +21,6 @@ private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<I
 
 private fun ClassLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { runOnFilePostfix(it) }
 
-private fun validationCallback(context: JsIrBackendContext, module: IrModuleFragment) {
-    val validatorConfig = IrValidatorConfig(
-        abortOnError = true,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = false,
-        checkDescriptors = false
-    )
-    module.accept(IrValidator(context, validatorConfig), null)
-    module.accept(CheckDeclarationParentsVisitor, null)
-}
-
-val validationAction = makeVerifyAction(::validationCallback)
-
 private fun makeJsModulePhase(
     lowering: (JsIrBackendContext) -> FileLoweringPass,
     name: String,

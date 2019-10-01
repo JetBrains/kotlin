@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -54,7 +55,7 @@ fun <Context : CommonBackendContext> namedIrModulePhase(
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     stickyPostconditions: Set<Checker<IrModuleFragment>> = lower.stickyPostconditions,
-    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper),
+    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper, validationAction),
     nlevels: Int = 1
 ) = SameTypeNamedPhaseWrapper(
     name,
@@ -76,7 +77,7 @@ fun <Context : CommonBackendContext> namedIrFilePhase(
     preconditions: Set<Checker<IrFile>> = emptySet(),
     postconditions: Set<Checker<IrFile>> = emptySet(),
     stickyPostconditions: Set<Checker<IrFile>> = lower.stickyPostconditions,
-    actions: Set<Action<IrFile, Context>> = setOf(defaultDumper),
+    actions: Set<Action<IrFile, Context>> = setOf(defaultDumper, validationAction),
     nlevels: Int = 1
 ) = SameTypeNamedPhaseWrapper(
     name,
@@ -88,6 +89,38 @@ fun <Context : CommonBackendContext> namedIrFilePhase(
     stickyPostconditions,
     actions,
     nlevels
+)
+
+fun <Context : CommonBackendContext, Element : IrElement> makeCustomPhase(
+    op: (Context, Element) -> Unit,
+    description: String,
+    name: String,
+    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    preconditions: Set<Checker<Element>> = emptySet(),
+    postconditions: Set<Checker<Element>> = emptySet(),
+    stickyPostconditions: Set<Checker<Element>> = emptySet(),
+    actions: Set<Action<Element, Context>> = setOf(defaultDumper, validationAction),
+    nlevels: Int = 1
+) = SameTypeNamedPhaseWrapper(
+    name,
+    description,
+    prerequisite,
+    preconditions = preconditions,
+    postconditions = postconditions,
+    stickyPostconditions = stickyPostconditions,
+    actions = actions,
+    nlevels = nlevels,
+    lower = object : SameTypeCompilerPhase<Context, Element> {
+        override fun invoke(
+            phaseConfig: PhaseConfig,
+            phaserState: PhaserState<Element>,
+            context: Context,
+            input: Element
+        ): Element {
+            op(context, input)
+            return input
+        }
+    }
 )
 
 fun <Context : CommonBackendContext> namedUnitPhase(
@@ -160,7 +193,7 @@ fun <Context : CommonBackendContext> makeIrFilePhase(
     preconditions: Set<Checker<IrFile>> = emptySet(),
     postconditions: Set<Checker<IrFile>> = emptySet(),
     stickyPostconditions: Set<Checker<IrFile>> = emptySet(),
-    actions: Set<Action<IrFile, Context>> = setOf(defaultDumper)
+    actions: Set<Action<IrFile, Context>> = setOf(defaultDumper, validationAction)
 ) = namedIrFilePhase(
     name, description, prerequisite,
     preconditions = preconditions,
@@ -184,7 +217,7 @@ fun <Context : CommonBackendContext> makeIrModulePhase(
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     stickyPostconditions: Set<Checker<IrModuleFragment>> = emptySet(),
-    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper)
+    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper, validationAction)
 ) = namedIrModulePhase(
     name, description, prerequisite,
     preconditions=preconditions,

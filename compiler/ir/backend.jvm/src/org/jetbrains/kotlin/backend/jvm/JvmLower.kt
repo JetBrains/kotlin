@@ -37,6 +37,18 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     nlevels = 0
 )
 
+private val validateIrBeforeLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
+    { context, module -> validationCallback(context, module) },
+    name = "ValidateIrBeforeLowering",
+    description = "Validate IR before lowering"
+)
+
+private val validateIrAfterLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
+    { context, module -> validationCallback(context, module) },
+    name = "ValidateIrAfterLowering",
+    description = "Validate IR after lowering"
+)
+
 private val stripTypeAliasDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     { StripTypeAliasDeclarationsLowering() },
     name = "StripTypeAliasDeclarations",
@@ -231,10 +243,12 @@ private val jvmFilePhases =
 val jvmPhases = namedIrModulePhase(
     name = "IrLowering",
     description = "IR lowering",
-    lower = expectDeclarationsRemovingPhase then
+    lower = validateIrBeforeLowering then
+            expectDeclarationsRemovingPhase then
             fileClassPhase then
             performByIrFile(lower = jvmFilePhases) then
-            generateMultifileFacadesPhase
+            generateMultifileFacadesPhase then
+            validateIrAfterLowering
 )
 
 class JvmLower(val context: JvmBackendContext) {
