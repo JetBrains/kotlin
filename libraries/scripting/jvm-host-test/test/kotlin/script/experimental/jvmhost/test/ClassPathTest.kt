@@ -52,7 +52,7 @@ class ClassPathTest : TestCase() {
                     + jar.toURI().toURL()).toTypedArray(),
             null
         )
-        val cp = cl.classPathFromTypicalResourceUrls().toList()
+        val cp = cl.classPathFromTypicalResourceUrls().toList().map { it.canonicalFile }
 
         Assert.assertTrue(cp.contains(jar.canonicalFile))
         for (el in emulatedClasspath) {

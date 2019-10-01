@@ -94,10 +94,14 @@ fun tryGetResourcePathForClassByName(name: String, classLoader: ClassLoader): Fi
 
 internal fun URL.toFileOrNull() =
     try {
-        File(toURI().schemeSpecificPart).canonicalFile
+        File(toURI())
+    } catch (e: IllegalArgumentException) {
+        null
     } catch (e: java.net.URISyntaxException) {
+        null
+    } ?: run {
         if (protocol != "file") null
-        else File(file).canonicalFile
+        else File(file)
     }
 
 internal fun URL.toContainingJarOrNull(): File? =
