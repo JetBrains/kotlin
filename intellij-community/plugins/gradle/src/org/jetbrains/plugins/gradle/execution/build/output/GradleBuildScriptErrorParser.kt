@@ -99,10 +99,12 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     val noCachedVersionPrefix = "No cached version of "
     val couldNotFindPrefix = "Could not find "
     val cannotResolvePrefix = "Cannot resolve external dependency "
+    val cannotDownloadPrefix = "Could not download "
     val prefix = when {
                    reason.startsWith(noCachedVersionPrefix) -> noCachedVersionPrefix
                    reason.startsWith(couldNotFindPrefix) -> couldNotFindPrefix
                    reason.startsWith(cannotResolvePrefix) -> cannotResolvePrefix
+                   reason.startsWith(cannotDownloadPrefix) -> cannotDownloadPrefix
                    else -> null
                  } ?: return null
     val indexOfSuffix = reason.indexOf(" available for offline mode")
