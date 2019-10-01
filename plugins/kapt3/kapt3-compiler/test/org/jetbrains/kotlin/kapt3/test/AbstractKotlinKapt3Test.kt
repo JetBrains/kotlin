@@ -113,8 +113,9 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
 
         // Use light analysis mode in tests
         val project = myEnvironment.project
-        AnalysisHandlerExtension.registerExtension(project, PartialAnalysisHandlerExtension())
-        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor())
+        val analysisExtension = PartialAnalysisHandlerExtension()
+        AnalysisHandlerExtension.registerExtension(project, analysisExtension)
+        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor(analysisExtension))
 
         loadMultiFiles(files)
 
