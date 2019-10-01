@@ -248,17 +248,33 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
   public static void assertVariableTypeMatches(@NotNull XValue var,
                                                @Nullable String name,
                                                @Nullable @Language("RegExp") String typePattern) {
-    assertVariableTypeMatches(var, name, typePattern, XDebuggerTestUtil::waitFor);
+    assertVariableTypeMatches(var, name, typePattern, null);
   }
 
   public static void assertVariableTypeMatches(@NotNull XValue var,
                                                @Nullable String name,
                                                @Nullable @Language("RegExp") String typePattern,
+                                               @Nullable String value) {
+    assertVariableTypeMatches(var, name, typePattern, value, null);
+  }
+
+  public static void assertVariableTypeMatches(@NotNull XValue var,
+                                               @Nullable String name,
+                                               @Nullable @Language("RegExp") String typePattern,
+                                               @Nullable String value,
+                                               @Nullable Boolean hasChildren) {
+    assertVariableTypeMatches(var, name, typePattern, value, hasChildren, null, XDebuggerTestUtil::waitFor);
+  }
+
+  public static void assertVariableTypeMatches(@NotNull XValue var,
+                                               @Nullable String name,
+                                               @Nullable @Language("RegExp") String typePattern,
+                                               @Nullable String value,
+                                               @Nullable Boolean hasChildren,
+                                               @Nullable Icon icon,
                                                @NotNull BiFunction<Semaphore, Long, Boolean> waitFunction) {
     XTestValueNode node = computePresentation(var, waitFunction);
-    if (name != null) {
-      assertEquals(name, node.myName);
-    }
+    assertVariable(node, name, null, value, hasChildren, icon);
     if (typePattern != null) {
       assertTrue("Expected type: " + typePattern + " Actual type: " + node.myType,
                  node.myType != null && node.myType.matches(typePattern));
