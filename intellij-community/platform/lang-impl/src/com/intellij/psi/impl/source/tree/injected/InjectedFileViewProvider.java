@@ -6,7 +6,6 @@ import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
@@ -24,9 +23,6 @@ import java.util.List;
  */
 @Deprecated
 public interface InjectedFileViewProvider extends FileViewProvider, FreeThreadedFileViewProvider {
-  Key<Language> LANGUAGE_FOR_INJECTED_COPY_KEY = Key.create("LANGUAGE_FOR_INJECTED_COPY_KEY");
-  ThreadLocal<Boolean> disabledTemporarily = ThreadLocal.withInitial(() -> false);
-
   default void rootChangedImpl(@NotNull PsiFile psiFile) {
     if (!isPhysical()) return; // injected PSI change happened inside reparse; ignore
     if (getPatchingLeaves()) return;
@@ -69,12 +65,12 @@ public interface InjectedFileViewProvider extends FileViewProvider, FreeThreaded
       }
     };
     for (PsiElement current = hostElementCopy; current != null && current != hostPsiFileCopy; current = current.getParent()) {
-      current.putUserData(LANGUAGE_FOR_INJECTED_COPY_KEY, language);
+      current.putUserData(SingleRootInjectedFileViewProvider.LANGUAGE_FOR_INJECTED_COPY_KEY, language);
       try {
         InjectedLanguageManager.getInstance(hostPsiFileCopy.getProject()).enumerateEx(current, hostPsiFileCopy, false, visitor);
       }
       finally {
-        current.putUserData(LANGUAGE_FOR_INJECTED_COPY_KEY, null);
+        current.putUserData(SingleRootInjectedFileViewProvider.LANGUAGE_FOR_INJECTED_COPY_KEY, null);
       }
       if (provider.get() != null) break;
     }
@@ -111,27 +107,16 @@ public interface InjectedFileViewProvider extends FileViewProvider, FreeThreaded
 
   default void performNonPhysically(Runnable runnable) {
     synchronized (getLock()) {
-      disabledTemporarily.set(true);
+      SingleRootInjectedFileViewProvider.disabledTemporarily.set(true);
       try {
         runnable.run();
       }
       finally {
-        disabledTemporarily.set(false);
+        SingleRootInjectedFileViewProvider.disabledTemporarily.set(false);
       }
     }
   }
 
-  default void doNotInterruptMeWhileImPatchingLeaves(@NotNull Runnable runnable) {
-    setPatchingLeaves(true);
-    try {
-      runnable.run();
-    }
-    finally {
-      setPatchingLeaves(false);
-    }
-  }
-
-  void setPatchingLeaves(boolean value);
   boolean getPatchingLeaves();
   void forceCachedPsi(@NotNull PsiFile file);
   Object getLock();
@@ -149,7 +134,7 @@ public interface InjectedFileViewProvider extends FileViewProvider, FreeThreaded
   }
 
   default boolean isEventSystemEnabledImpl() {
-    return !disabledTemporarily.get();
+    return !SingleRootInjectedFileViewProvider.disabledTemporarily.get();
   }
 
   @Override

@@ -18,6 +18,7 @@ package com.intellij.psi.impl.source.tree.injected;
 
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.Language;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
@@ -26,7 +27,9 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class SingleRootInjectedFileViewProvider extends SingleRootFileViewProvider implements InjectedFileViewProvider {
+class SingleRootInjectedFileViewProvider extends SingleRootFileViewProvider implements InjectedFileViewProvider {
+  static final ThreadLocal<Boolean> disabledTemporarily = ThreadLocal.withInitial(() -> false);
+  static Key<Language> LANGUAGE_FOR_INJECTED_COPY_KEY = Key.create("LANGUAGE_FOR_INJECTED_COPY_KEY");
   private final Object myLock = new Object();
   private final DocumentWindowImpl myDocumentWindow;
   private boolean myPatchingLeaves;
@@ -42,11 +45,6 @@ public class SingleRootInjectedFileViewProvider extends SingleRootFileViewProvid
   @Override
   public Object getLock() {
     return myLock;
-  }
-
-  @Override
-  public void setPatchingLeaves(boolean value) {
-    myPatchingLeaves = value;
   }
 
   @Override
@@ -85,5 +83,15 @@ public class SingleRootInjectedFileViewProvider extends SingleRootFileViewProvid
   @Override
   public String toString() {
     return "Single root injected file '"+getVirtualFile().getName()+"' " + (isValid() ? "" : " invalid") + (isPhysical() ? "" : " nonphysical");
+  }
+
+  public void doNotInterruptMeWhileImPatchingLeaves(@NotNull Runnable runnable) {
+    myPatchingLeaves = true;
+    try {
+      runnable.run();
+    }
+    finally {
+      myPatchingLeaves = false;
+    }
   }
 }

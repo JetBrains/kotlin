@@ -213,7 +213,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
       if (placeInfos.isEmpty()) {
         throw new IllegalStateException("Seems you haven't called addPlace()");
       }
-      Language forcedLanguage = myContextElement.getUserData(InjectedFileViewProvider.LANGUAGE_FOR_INJECTED_COPY_KEY);
+      Language forcedLanguage = myContextElement.getUserData(SingleRootInjectedFileViewProvider.LANGUAGE_FOR_INJECTED_COPY_KEY);
       checkForCorrectContextElement(placeInfos, myContextElement, myLanguage, myHostPsiFile, myHostVirtualFile, myHostDocument,
                                     myDocumentManagerBase);
 
@@ -317,10 +317,15 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
                                   @NotNull InjectedFileViewProvider viewProvider,
                                   @NotNull ASTNode parsedNode,
                                   @NotNull CharSequence documentText) throws PatchException {
-    viewProvider.doNotInterruptMeWhileImPatchingLeaves(() -> {
+    Runnable patch = () -> {
       LeafPatcher patcher = new LeafPatcher(placeInfos, parsedNode.getTextLength());
       patcher.patch(parsedNode, placeInfos);
-    });
+    };
+    if (viewProvider instanceof SingleRootInjectedFileViewProvider) {
+      ((SingleRootInjectedFileViewProvider)viewProvider).doNotInterruptMeWhileImPatchingLeaves(patch);
+    } else if (viewProvider instanceof MultipleRootsInjectedFileViewProvider) {
+      ((MultipleRootsInjectedFileViewProvider)viewProvider).doNotInterruptMeWhileImPatchingLeaves(patch);
+    }
     if (!((FileElement)parsedNode).textMatches(documentText)) {
       throw new PatchException("After patch: doc:\n'" + documentText + "'\n---PSI:\n'" + parsedNode.getText());
     }

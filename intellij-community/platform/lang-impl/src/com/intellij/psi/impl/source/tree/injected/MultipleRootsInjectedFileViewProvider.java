@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class MultipleRootsInjectedFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements FreeThreadedFileViewProvider, InjectedFileViewProvider {
+class MultipleRootsInjectedFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements FreeThreadedFileViewProvider, InjectedFileViewProvider {
   private final Object myLock = new Object();
   private final DocumentWindowImpl myDocumentWindow;
   private final Language myLanguage;
@@ -52,11 +52,6 @@ public class MultipleRootsInjectedFileViewProvider extends MultiplePsiFilesPerDo
   @Override
   public Object getLock() {
     return myLock;
-  }
-
-  @Override
-  public void setPatchingLeaves(boolean value) {
-    myPatchingLeaves = value;
   }
 
   @Override
@@ -122,6 +117,16 @@ public class MultipleRootsInjectedFileViewProvider extends MultiplePsiFilesPerDo
   public final void forceCachedPsi(@NotNull PsiFile psiFile) {
     myRoots.put(psiFile.getLanguage(), (PsiFileImpl)psiFile);
     getManager().getFileManager().setViewProvider(getVirtualFile(), this);
+  }
+
+  public void doNotInterruptMeWhileImPatchingLeaves(@NotNull Runnable runnable) {
+    myPatchingLeaves = true;
+    try {
+      runnable.run();
+    }
+    finally {
+      myPatchingLeaves = false;
+    }
   }
 
   static final class Template extends MultipleRootsInjectedFileViewProvider implements TemplateLanguageFileViewProvider {
