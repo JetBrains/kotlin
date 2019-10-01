@@ -19,10 +19,7 @@ import com.intellij.ui.tabs.JBTabPainter;
 import com.intellij.ui.tabs.JBTabs;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
-import com.intellij.ui.tabs.impl.DefaultTabPainterAdapter;
-import com.intellij.ui.tabs.impl.SingleHeightTabs;
-import com.intellij.ui.tabs.impl.TabLabel;
-import com.intellij.ui.tabs.impl.TabPainterAdapter;
+import com.intellij.ui.tabs.impl.*;
 import com.intellij.ui.tabs.impl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.impl.singleRow.SingleRowLayout;
 import com.intellij.util.SmartList;
@@ -453,6 +450,8 @@ public class GridCellImpl implements GridCell {
     private GridCellTabs(ViewContextEx context, GridImpl container) {
       super(context.getProject(), context.getActionManager(), context.getFocusManager(), container);
       myContext = context;
+      JBRunnerTabsBase tabs = ((RunnerContentUi)myContext).myTabs;
+      ((JBTabsImpl)tabs).addNestedTabs(this);
     }
 
     @Override

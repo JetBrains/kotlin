@@ -615,7 +615,6 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     }
 
     List<Content> contents = getPopupContents();
-    final Content selectedContent = myManager.getSelectedContent();
     final SelectContentStep step = new SelectContentStep(contents) {
       @Nullable
       @Override
@@ -635,6 +634,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
         }
       }
     };
+    final Content selectedContent = myManager.getSelectedContent();
     if (selectedContent != null) {
       step.setDefaultOptionIndex(myManager.getIndexOfContent(selectedContent));
     }
@@ -1979,7 +1979,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     }
   }
 
-  public class ShowDebugContentAction extends AnAction implements DumbAware {
+  public static class ShowDebugContentAction extends AnAction implements DumbAware {
     public static final String ACTION_ID = "ShowDebugContent";
 
     private RunnerContentUi myContentUi;
