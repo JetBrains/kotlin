@@ -48,7 +48,7 @@ public class BuildConsoleUtils {
     print(consoleView, notification, text);
   }
 
-  public static void print(BuildTextConsoleView consoleView, BuildIssue buildIssue) {
+  public static void print(@NotNull BuildTextConsoleView consoleView, @NotNull String group, @NotNull BuildIssue buildIssue) {
     Project project = consoleView.getProject();
     Map<String, NotificationListener> listenerMap = new LinkedHashMap<>();
     for (BuildIssueQuickFix quickFix : buildIssue.getQuickFixes()) {
@@ -69,7 +69,8 @@ public class BuildConsoleUtils {
       }
     };
 
-    Notification notification = new Notification("Build issues", "Title",
+    Notification notification = new Notification(group,
+                                                 buildIssue.getTitle(),
                                                  buildIssue.getDescription(),
                                                  NotificationType.WARNING,
                                                  listener);

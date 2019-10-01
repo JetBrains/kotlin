@@ -34,7 +34,7 @@ public class BuildTextConsoleView extends ConsoleViewImpl implements BuildConsol
   @Override
   public void onEvent(@NotNull Object buildId, @NotNull BuildEvent event) {
     if (event instanceof BuildIssueEvent) {
-      BuildConsoleUtils.print(this, ((BuildIssueEvent)event).getIssue());
+      BuildConsoleUtils.print(this, ((BuildIssueEvent)event).getGroup(), ((BuildIssueEvent)event).getIssue());
     }
     else if (event instanceof FileMessageEvent) {
       boolean isStdOut = ((FileMessageEvent)event).getResult().getKind() != MessageEvent.Kind.ERROR;
