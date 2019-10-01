@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInDispatchThread
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.completion.isAfterDot
 import org.jetbrains.kotlin.idea.completion.isArtificialImportAliasedDescriptor
-import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.completion.shortenReferences
 import org.jetbrains.kotlin.idea.core.canAddRootPrefix
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
@@ -83,7 +83,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                 val rangeMarker = document.createRangeMarker(classNameStart, classNameEnd)
                 val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length)
 
-                ShortenReferences.DEFAULT.process(file, classNameStart, classNameEnd)
+                shortenReferences(context, classNameStart, classNameEnd)
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
                 if (rangeMarker.isValid && wholeRangeMarker.isValid) {

@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 tailrec fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
@@ -333,9 +336,22 @@ private open class BaseTypeLookupElement(type: KotlinType, baseLookupElement: Lo
     }
 }
 
-fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
+fun shortenReferences(
+    context: InsertionContext,
+    startOffset: Int,
+    endOffset: Int,
+    shortenReferences: ShortenReferences = ShortenReferences.DEFAULT
+) {
     PsiDocumentManager.getInstance(context.project).commitAllDocuments()
-    ShortenReferences.DEFAULT.process(context.file as KtFile, startOffset, endOffset)
+    val file = context.file as KtFile
+    val element = file.findElementAt(startOffset)?.parentsWithSelf?.find {
+        it.startOffset == startOffset && it.endOffset == endOffset
+    }?.safeAs<KtElement>()
+
+    if (element != null)
+        shortenReferences.process(element)
+    else
+        shortenReferences.process(file, startOffset, endOffset)
 }
 
 infix fun <T> ElementPattern<T>.and(rhs: ElementPattern<T>) = StandardPatterns.and(this, rhs)
