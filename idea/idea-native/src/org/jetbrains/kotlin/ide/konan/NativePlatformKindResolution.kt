@@ -214,6 +214,6 @@ class NativeLibraryInfo(project: Project, library: Library, root: File) : Librar
     override fun toString() = "Native" + super.toString()
 
     companion object {
-        val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinLibrary")
+        val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinNativeLibrary")
     }
 }
