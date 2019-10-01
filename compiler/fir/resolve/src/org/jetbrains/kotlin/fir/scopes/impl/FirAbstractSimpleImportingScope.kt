@@ -50,10 +50,8 @@ abstract class FirAbstractSimpleImportingScope(
         token: TowerScopeLevel.Token<T>,
         processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
-
-
-        val imports = simpleImports[name] ?: return ProcessorAction.NEXT
-        if (imports.isEmpty()) return ProcessorAction.NEXT
+        val imports = simpleImports[name] ?: return ProcessorAction.NONE
+        if (imports.isEmpty()) return ProcessorAction.NONE
 
         for (import in imports) {
             if (processCallables(import, import.importedName!!, token, processor).stop()) {

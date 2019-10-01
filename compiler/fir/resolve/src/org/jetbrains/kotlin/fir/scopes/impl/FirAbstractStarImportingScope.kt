@@ -50,6 +50,9 @@ abstract class FirAbstractStarImportingScope(
         token: TowerScopeLevel.Token<T>,
         processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
+        if (starImports.isEmpty()) {
+            return ProcessorAction.NONE
+        }
         for (import in starImports) {
             if (processCallables(import, name, token, processor).stop()) {
                 return ProcessorAction.STOP

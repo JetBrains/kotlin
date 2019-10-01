@@ -54,15 +54,17 @@ enum class FirPosition(val allowTypeParameters: Boolean = true) {
 
 enum class ProcessorAction {
     STOP,
-    NEXT;
+    NEXT,
+    NONE;
 
     operator fun not(): Boolean {
         return when (this) {
             STOP -> true
             NEXT -> false
+            NONE -> false
         }
     }
 
     fun stop() = this == STOP
-    fun next() = this == NEXT
+    fun next() = this != STOP
 }

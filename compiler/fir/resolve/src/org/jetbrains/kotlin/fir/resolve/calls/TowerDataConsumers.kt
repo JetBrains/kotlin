@@ -92,13 +92,15 @@ class PrioritizedTowerDataConsumer(
         group: Int
     ): ProcessorAction {
         if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
+        var empty = true
         for ((index, consumer) in consumers.withIndex()) {
             val action = consumer.consume(kind, towerScopeLevel, group * consumers.size + index)
-            if (action.stop()) {
-                return ProcessorAction.STOP
+            when (action) {
+                ProcessorAction.STOP -> return action
+                ProcessorAction.NEXT -> empty = false
             }
         }
-        return ProcessorAction.NEXT
+        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
     }
 }
 
@@ -123,16 +125,18 @@ class AccumulatingTowerDataConsumer(
         if (skipGroup(group, resultCollector)) return ProcessorAction.NEXT
         accumulatedTowerData += TowerData(kind, towerScopeLevel, group)
 
-        if (initialConsumer.consume(kind, towerScopeLevel, group).stop()) {
-            return ProcessorAction.STOP
+        var empty = true
+        when (val action = initialConsumer.consume(kind, towerScopeLevel, group)) {
+            ProcessorAction.STOP -> return action
+            ProcessorAction.NEXT -> empty = false
         }
         for (consumer in additionalConsumers) {
-            val action = consumer.consume(kind, towerScopeLevel, group)
-            if (action.stop()) {
-                return ProcessorAction.STOP
+            when (val action = consumer.consume(kind, towerScopeLevel, group)) {
+                ProcessorAction.STOP -> return action
+                ProcessorAction.NEXT -> empty = false
             }
         }
-        return ProcessorAction.NEXT
+        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
     }
 
     fun addConsumer(consumer: TowerDataConsumer): ProcessorAction {

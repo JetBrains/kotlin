@@ -39,7 +39,7 @@ class FirLocalScope : FirScope() {
         if (prop != null) {
             return processor(prop)
         }
-        return ProcessorAction.NEXT
+        return ProcessorAction.NONE
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
@@ -47,6 +47,6 @@ class FirLocalScope : FirScope() {
         if (prop != null) {
             return processor(prop)
         }
-        return ProcessorAction.NEXT
+        return ProcessorAction.NONE
     }
 }
