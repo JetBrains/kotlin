@@ -103,9 +103,18 @@ internal class BitcodeCompiler(val context: Context) {
 
         val profilingFlags = llvmProfilingFlags().map { listOf("-mllvm", it) }.flatten()
 
+        // LLVM we use does not have support for arm64_32.
+        // TODO: fix with LLVM update.
+        val targetTriple = when (context.config.target) {
+            KonanTarget.WATCHOS_ARM64 -> {
+                require(configurables is AppleConfigurables)
+                "arm64_32-apple-watchos${configurables.osVersionMin}"
+            }
+            else -> context.llvm.targetTriple
+        }
         val flags = mutableListOf<String>().apply {
             addNonEmpty(configurables.clangFlags)
-            addNonEmpty(listOf("-triple", context.llvm.targetTriple))
+            addNonEmpty(listOf("-triple", targetTriple))
             addNonEmpty(when {
                 optimize -> configurables.clangOptFlags
                 debug -> configurables.clangDebugFlags

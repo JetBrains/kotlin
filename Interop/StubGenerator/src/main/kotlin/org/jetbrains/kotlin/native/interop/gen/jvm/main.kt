@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
 import kotlinx.cli.ArgParser
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.file.*
@@ -219,6 +220,13 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
 
     val (nativeIndex, compilation) = buildNativeIndex(library, verbose)
 
+    // Our current approach to arm64_32 support is to compile armv7k version of bitcode
+    // for arm64_32. That's the reason for this substitution.
+    // TODO: Add proper support with the next LLVM update.
+    val target = when (tool.target) {
+        KonanTarget.WATCHOS_ARM64 -> KonanTarget.WATCHOS_ARM32
+        else -> tool.target
+    }
     val configuration = InteropConfiguration(
             library = compilation,
             pkgName = outKtPkg,
@@ -229,7 +237,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             noStringConversion = def.config.noStringConversion.toSet(),
             exportForwardDeclarations = def.config.exportForwardDeclarations,
             disableDesignatedInitializerChecks = def.config.disableDesignatedInitializerChecks,
-            target = tool.target
+            target = target
     )
 
     outKtFile.parentFile.mkdirs()

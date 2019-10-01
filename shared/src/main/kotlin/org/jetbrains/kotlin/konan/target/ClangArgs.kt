@@ -97,13 +97,13 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 KonanTarget.TVOS_X64 ->
                     listOf("-stdlib=libc++", "-isysroot", absoluteTargetSysRoot, "-mtvos-simulator-version-min=$osVersionMin")
 
+                KonanTarget.WATCHOS_ARM64,
                 KonanTarget.WATCHOS_ARM32 ->
                     listOf("-stdlib=libc++", "-arch", "armv7k", "-isysroot", absoluteTargetSysRoot, "-mwatchos-version-min=$osVersionMin")
 
                 KonanTarget.WATCHOS_X86 ->
                     listOf("-stdlib=libc++", "-arch", "i386", "-isysroot", absoluteTargetSysRoot, "-mwatchos-simulator-version-min=$osVersionMin")
 
-                KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
                 KonanTarget.WATCHOS_X64 -> TODO("implement me")
 
                 KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
@@ -261,6 +261,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
+            KonanTarget.WATCHOS_ARM64,
             KonanTarget.WATCHOS_ARM32 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
                         "-DKONAN_WATCHOS",
@@ -280,7 +281,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_CORE_SYMBOLICATION=1",
                         "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
-            KonanTarget.WATCHOS_ARM64 -> TODO("implement me")
             KonanTarget.WATCHOS_X64 -> TODO("implement me")
 
             KonanTarget.ANDROID_ARM32 ->
