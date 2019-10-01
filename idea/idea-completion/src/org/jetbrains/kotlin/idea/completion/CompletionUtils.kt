@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion
@@ -52,8 +41,7 @@ import java.util.*
 tailrec fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
     if (this is LookupElementDecorator<*>) {
         getDelegate().putUserDataDeep(key, value)
-    }
-    else {
+    } else {
         putUserData(key, value)
     }
 }
@@ -61,8 +49,7 @@ tailrec fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
 tailrec fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
     return if (this is LookupElementDecorator<*>) {
         getDelegate().getUserDataDeep(key)
-    }
-    else {
+    } else {
         getUserData(key)
     }
 }
@@ -93,7 +80,7 @@ val NOT_IMPORTED_KEY = Key<Unit>("NOT_IMPORTED_KEY")
 fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)
 
 fun LookupElement.withReceiverCast(): LookupElement {
-    return object: LookupElementDecorator<LookupElement>(this) {
+    return object : LookupElementDecorator<LookupElement>(this) {
         override fun handleInsert(context: InsertionContext) {
             super.handleInsert(context)
             CastReceiverInsertHandler.postHandleInsert(context, delegate)
@@ -118,8 +105,7 @@ fun ((String) -> Boolean).toNameFilter(): (Name) -> Boolean {
     return { name -> !name.isSpecial && this(name.identifier) }
 }
 
-infix fun <T> ((T) -> Boolean).or(otherFilter: (T) -> Boolean): (T) -> Boolean
-        = { this(it) || otherFilter(it) }
+infix fun <T> ((T) -> Boolean).or(otherFilter: (T) -> Boolean): (T) -> Boolean = { this(it) || otherFilter(it) }
 
 fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
     val tails = tailFragments
@@ -172,9 +158,14 @@ fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
 class ThisItemLookupObject(val receiverParameter: ReceiverParameterDescriptor, val labelName: Name?) : KeywordLookupObject()
 
 fun ThisItemLookupObject.createLookupElement() = createKeywordElement("this", labelName.labelNameToTail(), lookupObject = this)
-        .withTypeText(BasicLookupElementFactory.SHORT_NAMES_RENDERER.renderType(receiverParameter.type))
+    .withTypeText(BasicLookupElementFactory.SHORT_NAMES_RENDERER.renderType(receiverParameter.type))
 
-fun thisExpressionItems(bindingContext: BindingContext, position: KtExpression, prefix: String, resolutionFacade: ResolutionFacade): Collection<ThisItemLookupObject> {
+fun thisExpressionItems(
+    bindingContext: BindingContext,
+    position: KtExpression,
+    prefix: String,
+    resolutionFacade: ResolutionFacade
+): Collection<ThisItemLookupObject> {
     val scope = position.getResolutionScope(bindingContext, resolutionFacade)
 
     val psiFactory = KtPsiFactory(position)
@@ -183,7 +174,8 @@ fun thisExpressionItems(bindingContext: BindingContext, position: KtExpression, 
     for ((receiver, expressionFactory) in scope.getImplicitReceiversWithInstanceToExpression()) {
         if (expressionFactory == null) continue
         // if prefix does not start with "this@" do not include immediate this in the form with label
-        val expression = expressionFactory.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? KtThisExpression ?: continue
+        val expression =
+            expressionFactory.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? KtThisExpression ?: continue
         result.add(ThisItemLookupObject(receiver, expression.getLabelNameAsName()))
     }
     return result
@@ -204,8 +196,7 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
                 // check if the current function literal is inlined and stop processing outer declarations if it's not
                 val callee = call?.calleeExpression as? KtReferenceExpression ?: break // not inlined
                 if (!InlineUtil.isInline(bindingContext[BindingContext.REFERENCE_TARGET, callee])) break // not inlined
-            }
-            else {
+            } else {
                 if (parent.hasBlockBody()) {
                     result.add(createKeywordElementWithSpace("return", addSpaceAfter = !isUnit))
 
@@ -217,11 +208,12 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
                         if (KotlinBuiltIns.isBooleanOrNullableBoolean(returnType)) {
                             result.add(createKeywordElement("return true"))
                             result.add(createKeywordElement("return false"))
-                        }
-                        else if (KotlinBuiltIns.isCollectionOrNullableCollection(returnType) || KotlinBuiltIns.isListOrNullableList(returnType) || KotlinBuiltIns.isIterableOrNullableIterable(returnType)) {
+                        } else if (KotlinBuiltIns.isCollectionOrNullableCollection(returnType) || KotlinBuiltIns.isListOrNullableList(
+                                returnType
+                            ) || KotlinBuiltIns.isIterableOrNullableIterable(returnType)
+                        ) {
                             result.add(createKeywordElement("return", tail = " emptyList()"))
-                        }
-                        else if (KotlinBuiltIns.isSetOrNullableSet(returnType)) {
+                        } else if (KotlinBuiltIns.isSetOrNullableSet(returnType)) {
                             result.add(createKeywordElement("return", tail = " emptySet()"))
                         }
                     }
@@ -241,28 +233,27 @@ private fun KtDeclarationWithBody.returnType(bindingContext: BindingContext): Ko
 private fun Name?.labelNameToTail(): String = if (this != null) "@" + render() else ""
 
 private fun createKeywordElementWithSpace(
-        keyword: String,
-        tail: String = "",
-        addSpaceAfter: Boolean = false,
-        lookupObject: KeywordLookupObject = KeywordLookupObject()
+    keyword: String,
+    tail: String = "",
+    addSpaceAfter: Boolean = false,
+    lookupObject: KeywordLookupObject = KeywordLookupObject()
 ): LookupElement {
     val element = createKeywordElement(keyword, tail, lookupObject)
     return if (addSpaceAfter) {
-        object: LookupElementDecorator<LookupElement>(element) {
+        object : LookupElementDecorator<LookupElement>(element) {
             override fun handleInsert(context: InsertionContext) {
                 WithTailInsertHandler.SPACE.handleInsert(context, delegate)
             }
         }
-    }
-    else {
+    } else {
         element
     }
 }
 
 private fun createKeywordElement(
-        keyword: String,
-        tail: String = "",
-        lookupObject: KeywordLookupObject = KeywordLookupObject()
+    keyword: String,
+    tail: String = "",
+    lookupObject: KeywordLookupObject = KeywordLookupObject()
 ): LookupElementBuilder {
     var element = LookupElementBuilder.create(lookupObject, keyword + tail)
     element = element.withPresentableText(keyword)
@@ -303,8 +294,7 @@ fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): Look
         val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
         val baseLookupElement = LookupElementBuilder.create(text).withIcon(KotlinIcons.LAMBDA)
         BaseTypeLookupElement(type, baseLookupElement)
-    }
-    else {
+    } else {
         val classifier = type.constructor.declarationDescriptor ?: return null
         val baseLookupElement = createLookupElement(classifier, qualifyNestedClasses = true, includeClassTypeArguments = false)
 
@@ -325,7 +315,8 @@ fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): Look
     }
 }
 
-private open class BaseTypeLookupElement(type: KotlinType, baseLookupElement: LookupElement) : LookupElementDecorator<LookupElement>(baseLookupElement) {
+private open class BaseTypeLookupElement(type: KotlinType, baseLookupElement: LookupElement) :
+    LookupElementDecorator<LookupElement>(baseLookupElement) {
     val fullText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
     override fun equals(other: Any?) = other is BaseTypeLookupElement && fullText == other.fullText
@@ -354,8 +345,8 @@ infix fun <T> ElementPattern<T>.or(rhs: ElementPattern<T>) = StandardPatterns.or
 fun singleCharPattern(char: Char) = StandardPatterns.character().equalTo(char)
 
 fun LookupElement.decorateAsStaticMember(
-        memberDescriptor: DeclarationDescriptor,
-        classNameAsLookupString: Boolean
+    memberDescriptor: DeclarationDescriptor,
+    classNameAsLookupString: Boolean
 ): LookupElement? {
     val container = memberDescriptor.containingDeclaration as? ClassDescriptor ?: return null
     val classDescriptor = if (container.isCompanionObject)
@@ -366,7 +357,7 @@ fun LookupElement.decorateAsStaticMember(
     val containerFqName = container.importableFqName ?: return null
     val qualifierPresentation = classDescriptor.name.asString()
 
-    return object: LookupElementDecorator<LookupElement>(this) {
+    return object : LookupElementDecorator<LookupElement>(this) {
         override fun getAllLookupStrings(): Set<String> {
             return if (classNameAsLookupString) setOf(delegate.lookupString, qualifierPresentation) else super.getAllLookupStrings()
         }
@@ -379,8 +370,7 @@ fun LookupElement.decorateAsStaticMember(
             val tailText = " (" + DescriptorUtils.getFqName(classDescriptor.containingDeclaration) + ")"
             if (memberDescriptor is FunctionDescriptor) {
                 presentation.appendTailText(tailText, true)
-            }
-            else {
+            } else {
                 presentation.setTailText(tailText, true)
             }
 
@@ -409,15 +399,14 @@ fun LookupElement.decorateAsStaticMember(
 fun ImportableFqNameClassifier.isImportableDescriptorImported(descriptor: DeclarationDescriptor): Boolean {
     val classification = classify(descriptor.importableFqName!!, false)
     return classification != ImportableFqNameClassifier.Classification.notImported
-           && classification != ImportableFqNameClassifier.Classification.siblingImported
+            && classification != ImportableFqNameClassifier.Classification.siblingImported
 }
 
 fun OffsetMap.tryGetOffset(key: OffsetKey): Int? {
     try {
         if (!containsOffset(key)) return null
         return getOffset(key).takeIf { it != -1 } // prior to IDEA 2016.3 getOffset() returned -1 if not found, now it throws exception
-    }
-    catch(e: Exception) {
+    } catch (e: Exception) {
         return null
     }
 }
