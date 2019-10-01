@@ -3,11 +3,13 @@
 package com.intellij.execution.actions;
 
 import com.intellij.execution.*;
+import com.intellij.execution.impl.EditConfigurationsDialog;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
@@ -134,6 +136,17 @@ public class RunConfigurationsComboBoxAction extends ComboBoxAction implements D
         Dimension d = super.getPreferredSize();
         d.width = Math.max(d.width, JBUIScale.scale(75));
         return d;
+      }
+
+      @Override
+      protected void doShiftClick() {
+        DataContext context = DataManager.getInstance().getDataContext(this);
+        final Project project = CommonDataKeys.PROJECT.getData(context);
+        if (project != null && !ActionUtil.isDumbMode(project)) {
+          new EditConfigurationsDialog(project).show();
+          return;
+        }
+        super.doShiftClick();
       }
 
       @Override
