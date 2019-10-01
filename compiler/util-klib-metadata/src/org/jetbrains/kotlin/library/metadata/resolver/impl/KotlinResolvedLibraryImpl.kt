@@ -22,16 +22,14 @@ class KotlinResolvedLibraryImpl(override val library: KotlinLibrary): KotlinReso
     override val isDefault: Boolean
         get() = library.isDefault
 
-    override fun loadPackageFragment(
+    override fun markNeededForLink(
         library: KotlinLibrary,
-        packageFqName: String,
-        partName: String
-    ): ProtoBuf.PackageFragment {
+        fqName: String
+    ) {
         if (!isNeededForLink // fast path
-            && !_emptyPackages.contains(packageFqName)) {
+            && !_emptyPackages.contains(fqName)) {
             isNeededForLink = true
         }
-        return parsePackageFragment(library.packageMetadata(packageFqName, partName))
     }
 
     override fun toString() = "library=$library, dependsOn=${_resolvedDependencies.joinToString { it.library.toString() }}"
