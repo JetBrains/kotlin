@@ -540,7 +540,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val usedFunctions = mutableListOf<LLVMValueRef>()
     val usedGlobals = mutableListOf<LLVMValueRef>()
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
-    val staticInitializers = mutableListOf<StaticInitializer>()
+    val irStaticInitializers = mutableListOf<IrStaticInitializer>()
+    val otherStaticInitializers = mutableListOf<LLVMValueRef>()
     val fileInitializers = mutableListOf<IrField>()
     val objects = mutableSetOf<LLVMValueRef>()
     val sharedObjects = mutableSetOf<LLVMValueRef>()
@@ -563,4 +564,4 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val llvmDouble = LLVMDoubleType()!!
 }
 
-class StaticInitializer(val file: IrFile, val initializer: LLVMValueRef)
+class IrStaticInitializer(val file: IrFile, val initializer: LLVMValueRef)

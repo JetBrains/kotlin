@@ -478,7 +478,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             // Create global initialization records.
             val initNode = createInitNode(createInitBody())
-            context.llvm.staticInitializers.add(StaticInitializer(declaration, createInitCtor(initNode)))
+            context.llvm.irStaticInitializers.add(IrStaticInitializer(declaration, createInitCtor(initNode)))
         }
     }
 
@@ -2345,7 +2345,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             mutableListOf<LLVMValueRef>()
         }
 
-        context.llvm.staticInitializers.forEach {
+        context.llvm.irStaticInitializers.forEach {
             val library = it.file.packageFragmentDescriptor.module.konanLibrary
             val initializers = libraryToInitializers[library]
                     ?: error("initializer for not included library ${library?.libraryFile}")
@@ -2366,7 +2366,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val initializers = libraryToInitializers.getValue(library)
 
             if (library == null || context.llvmModuleSpecification.containsLibrary(library)) {
-                appendStaticInitializers(ctorFunction, initializers)
+                val otherInitializers =
+                        context.llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
+
+                appendStaticInitializers(ctorFunction, initializers + otherInitializers)
             } else {
                 check(initializers.isEmpty()) {
                     "found initializer from ${library.libraryFile}, which is not included into compilation"
