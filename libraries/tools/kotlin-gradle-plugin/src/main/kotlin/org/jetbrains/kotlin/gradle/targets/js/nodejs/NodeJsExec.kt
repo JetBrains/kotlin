@@ -33,7 +33,7 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = mutableListOf<RequiredKotlinJsDependency>().also {
             if (sourceMapStackTraces) {
-                it.add(nodeJs.versions.kotlinNodeJsTestRunner)
+                it.add(nodeJs.versions.kotlinJsTestRunner)
             }
         }
 

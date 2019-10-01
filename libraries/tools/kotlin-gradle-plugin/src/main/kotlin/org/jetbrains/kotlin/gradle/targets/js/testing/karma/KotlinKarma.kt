@@ -44,7 +44,10 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private var configDirectory: File? = project.projectDir.resolve("karma.config.d").takeIf { it.isDirectory }
 
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = requiredDependencies.toList()
+        get() = mutableListOf<RequiredKotlinJsDependency>().also {
+            it.add(versions.kotlinJsTestRunner)
+            it.addAll(requiredDependencies)
+        }
 
     override val settingsState: String
         get() = "KotlinKarma($config)"
