@@ -69,7 +69,7 @@ private class LlvmPipelineConfiguration(context: Context) {
         KonanTarget.ANDROID_X86 -> "i686"
         KonanTarget.LINUX_MIPS32 -> "mips32r2"
         KonanTarget.LINUX_MIPSEL32 -> "mips32r2"
-        KonanTarget.WASM32,
+        KonanTarget.WASM32 -> "wasm32"
         is KonanTarget.ZEPHYR -> error("There is no support for ${target.name} target yet.")
     }
 

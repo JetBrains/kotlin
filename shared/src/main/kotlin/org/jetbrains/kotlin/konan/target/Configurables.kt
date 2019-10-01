@@ -26,20 +26,6 @@ interface ClangFlags : TargetableExternalStorage {
     val clangDynamicFlags get() = targetList("clangDynamicFlags")
 }
 
-interface LlcFlags : TargetableExternalStorage {
-    val llcFlags get()      = targetList("llcFlags")
-    val llcNooptFlags get() = targetList("llcNooptFlags")
-    val llcOptFlags get()   = targetList("llcOptFlags")
-    val llcDebugFlags get() = targetList("llcDebugFlags")
-}
-
-interface OptFlags : TargetableExternalStorage {
-    val optFlags get()      = targetList("optFlags")
-    val optNooptFlags get() = targetList("optNooptFlags")
-    val optOptFlags get()   = targetList("optOptFlags")
-    val optDebugFlags get() = targetList("optDebugFlags")
-}
-
 interface LldFlags : TargetableExternalStorage {
     val lldFlags get()      = targetList("lld")
 }
@@ -99,7 +85,7 @@ interface LinuxMIPSConfigurables : LinuxBasedConfigurables
 interface RaspberryPiConfigurables : LinuxBasedConfigurables
 interface AndroidConfigurables : TargetableConfigurables, ClangFlags
 
-interface WasmConfigurables : TargetableConfigurables, OptFlags, LlcFlags, LldFlags
+interface WasmConfigurables : TargetableConfigurables, ClangFlags, LldFlags
 
 // Codegen for Zephyr calls opt and llc with predefined set of flags
 // so there is no need for OptFlags or LlcFlags.

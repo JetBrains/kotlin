@@ -426,12 +426,15 @@ open class WasmLinker(targetProperties: WasmConfigurables)
                               needsProfileLibrary: Boolean): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
 
+        val linkage = Command("$llvmBin/wasm-ld").apply {
+            +objectFiles
+            +listOf("-o", executable)
+            +lldFlags
+        }
+
         // TODO(horsh): maybe rethink it.
-        return listOf(object : Command() {
+        val jsBindingsGeneration = object : Command() {
             override fun execute() {
-                val src = File(objectFiles.single())
-                val dst = File(executable)
-                src.recursiveCopyTo(dst)
                 javaScriptLink(libraries, executable)
             }
 
@@ -454,7 +457,8 @@ open class WasmLinker(targetProperties: WasmConfigurables)
                 linkedJavaScript.appendBytes(linkerFooter.toByteArray())
                 return linkedJavaScript.name
             }
-        })
+        }
+        return listOf(linkage, jsBindingsGeneration)
     }
 }
 

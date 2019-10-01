@@ -75,7 +75,7 @@ private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<St
 }
 
 private fun shouldOptimizeWithLlvmApi(context: Context) =
-        (context.config.target.family != Family.ZEPHYR && context.config.target.family != Family.WASM)
+        context.config.target.family != Family.ZEPHYR
 
 private fun shoudRunClosedWorldCleanUp(context: Context) =
         // GlobalDCE will kill coverage-related globals.

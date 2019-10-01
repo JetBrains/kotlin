@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
 
@@ -21,7 +19,7 @@ internal class BitcodeCompiler(val context: Context) {
     private val debug = context.config.debug
 
     private fun MutableList<String>.addNonEmpty(elements: List<String>) {
-        addAll(elements.filter { !it.isEmpty() })
+        addAll(elements.filter { it.isNotEmpty() })
     }
 
     private fun runTool(vararg command: String) =
@@ -44,46 +42,6 @@ internal class BitcodeCompiler(val context: Context) {
     private fun hostLlvmTool(tool: String, vararg arg: String) {
         val absoluteToolName = "${platform.absoluteLlvmHome}/bin/$tool"
         runTool(absoluteToolName, *arg)
-    }
-
-    private fun opt(optFlags: OptFlags, bitcodeFile: BitcodeFile): BitcodeFile {
-        val flags = (optFlags.optFlags + when {
-            optimize -> optFlags.optOptFlags
-            debug -> optFlags.optDebugFlags
-            else -> optFlags.optNooptFlags
-        } + llvmProfilingFlags()).toTypedArray()
-        val optimizedBc = temporary("opt_output", ".bc")
-        hostLlvmTool("opt", bitcodeFile, "-o", optimizedBc, *flags)
-
-        if (shouldRunLateBitcodePasses(context)) {
-            val module = parseBitcodeFile(optimizedBc)
-            runLateBitcodePasses(context, module)
-            LLVMWriteBitcodeToFile(module, optimizedBc)
-        }
-
-        return optimizedBc
-    }
-
-    private fun llc(llcFlags: LlcFlags, bitcodeFile: BitcodeFile): ObjectFile {
-        val flags = (llcFlags.llcFlags + when {
-            optimize -> llcFlags.llcOptFlags
-            debug -> llcFlags.llcDebugFlags
-            else -> llcFlags.llcNooptFlags
-        } + llvmProfilingFlags()).toTypedArray()
-        val combinedO = temporary("llc_output", ".o")
-        hostLlvmTool("llc", bitcodeFile, "-o", combinedO, *flags, "-filetype=obj")
-        return combinedO
-    }
-
-    private fun bitcodeToWasm(configurables: WasmConfigurables, file: BitcodeFile): String {
-        val optimizedBc = opt(configurables, file)
-        val compiled = llc(configurables, optimizedBc)
-
-        // TODO: should be moved to linker.
-        val linkedWasm = temporary("linked", ".wasm")
-        hostLlvmTool("wasm-ld", compiled, "-o", linkedWasm, *configurables.lldFlags.toTypedArray())
-
-        return linkedWasm
     }
 
     private fun optAndLlc(configurables: ZephyrConfigurables, file: BitcodeFile): String {
@@ -151,8 +109,6 @@ internal class BitcodeCompiler(val context: Context) {
             listOf(when (val configurables = platform.configurables) {
                 is ClangFlags ->
                     clang(configurables, bitcodeFile)
-                is WasmConfigurables ->
-                    bitcodeToWasm(configurables, bitcodeFile)
                 is ZephyrConfigurables ->
                     optAndLlc(configurables, bitcodeFile)
                 else ->
