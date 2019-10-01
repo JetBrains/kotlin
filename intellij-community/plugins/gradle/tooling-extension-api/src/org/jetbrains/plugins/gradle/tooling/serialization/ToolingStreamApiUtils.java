@@ -167,6 +167,18 @@ public class ToolingStreamApiUtils {
     return set;
   }
 
+  public static List<String> readStringList(@NotNull IonReader reader) {
+    List<String> list = new ArrayList<String>();
+    reader.next();
+    reader.stepIn();
+    String nextString;
+    while ((nextString = readString(reader, null)) != null) {
+      list.add(nextString);
+    }
+    reader.stepOut();
+    return list;
+  }
+
   public static void assertFieldName(@NotNull IonReader reader, @Nullable String fieldName) {
     String readerFieldName = reader.getFieldName();
     assert fieldName == null || fieldName.equals(readerFieldName) :

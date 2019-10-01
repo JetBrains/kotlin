@@ -13,6 +13,7 @@ import org.jetbrains.plugins.gradle.model.DefaultExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.DefaultGradleExtensions
 import org.jetbrains.plugins.gradle.model.ExternalTask
 import org.jetbrains.plugins.gradle.model.tests.DefaultExternalTestsModel
+import org.jetbrains.plugins.gradle.tooling.internal.AnnotationProcessingModelImpl
 import org.jetbrains.plugins.gradle.tooling.internal.BuildScriptClasspathModelImpl
 import org.jetbrains.plugins.gradle.tooling.internal.RepositoriesModelImpl
 import org.jetbrains.plugins.gradle.tooling.serialization.internal.IdeaProjectSerializationService
@@ -121,6 +122,12 @@ class ToolingSerializerTest {
     }, serializer)
   }
 
+  @Test
+  @Throws(Exception::class)
+  fun `annotation processing model serialization test`() {
+    doTest(AnnotationProcessingModelImpl::class.java)
+  }
+
   @Throws(IOException::class)
   private fun <T> doTest(modelClazz: Class<T>) {
     doTest(modelClazz, null)
@@ -166,7 +173,7 @@ class ToolingSerializerTest {
       }
       else {
         gradleProject.parent = parentGradleProject
-        gradleProject.setChildren(emptyList());
+        gradleProject.setChildren(emptyList())
       }
     }
 

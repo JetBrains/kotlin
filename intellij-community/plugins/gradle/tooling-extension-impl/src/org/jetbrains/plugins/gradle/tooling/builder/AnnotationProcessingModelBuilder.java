@@ -60,7 +60,11 @@ public class AnnotationProcessingModelBuilder extends AbstractModelBuilderServic
                 annotationProcessorArgs.add(arg);
               }
             }
-            sourceSetConfigs.put(sourceSet.getName(), new AnnotationProcessingConfigImpl(files, annotationProcessorArgs));
+            Set<String> paths = new LinkedHashSet<String>(files.size());
+            for (File file : files) {
+              paths.add(file.getAbsolutePath());
+            }
+            sourceSetConfigs.put(sourceSet.getName(), new AnnotationProcessingConfigImpl(paths, annotationProcessorArgs));
           }
         }
       }
