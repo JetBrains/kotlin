@@ -150,9 +150,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder) as List<KonanLibrary>
     }
 
+    val shouldCoverSources = configuration.getBoolean(KonanConfigKeys.COVERAGE)
+    val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
+
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         add(if (debug) "debug.bc" else "release.bc")
         add(if (memoryModel == MemoryModel.STRICT) "strict.bc" else "relaxed.bc")
+        if (shouldCoverLibraries || shouldCoverSources) add("profileRuntime.bc")
     }.map {
         File(distribution.defaultNatives(target)).child(it).absolutePath
     }
