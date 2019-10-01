@@ -66,7 +66,7 @@ class WhenMappingTransformer(
         val fieldNode = transformationInfo.fieldNode
         classReader.accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
-                classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
+                classBuilder.defineClass(null, maxOf(version, state.classFileVersion), access, name, signature, superName, interfaces)
             }
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {

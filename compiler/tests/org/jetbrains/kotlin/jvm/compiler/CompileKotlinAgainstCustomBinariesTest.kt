@@ -588,6 +588,14 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
+    fun testInlineAnonymousObjectWithDifferentTarget() {
+        val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", "1.6"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8"))
+        val classLoader =
+            URLClassLoader(arrayOf(library.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
+        classLoader.loadClass("SourceKt").getDeclaredMethod("main").invoke(null)
+    }
+
     companion object {
         // compiler before 1.1.4 version  did not include suspension marks into bytecode.
         private fun stripSuspensionMarksToImitateLegacyCompiler(bytes: ByteArray): Pair<ByteArray, Int> {
