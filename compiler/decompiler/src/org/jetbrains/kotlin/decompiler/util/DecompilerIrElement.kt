@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.decompiler.util
 
-import org.jetbrains.kotlin.decompiler.decompile
 import org.jetbrains.kotlin.decompiler.getValueParameterNamesForDebug
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -155,19 +154,20 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String = TODO()
 
+    private inline fun IrDeclarationWithVisibility.renderVisibility(): String =
+        when (visibility) {
+            Visibilities.PUBLIC -> ""
+            else -> "${visibility.name.toLowerCase()} "
+        }
+
+    // Пока обрабатываем все конструкторы как secondary
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
+        "${declaration.renderVisibility()}constructor${declaration.renderValueParameterTypes()}"
 //        if (declaration.isPrimary) {
 //            declaration.runTrimEnd {
 //                renderValueParameterTypes()
 //            }
 //        } else {
-        with(declaration) {
-            when (visibility) {
-                Visibilities.PUBLIC -> ""
-                else -> visibility.name.toLowerCase() + " "
-            } + "constructor" + renderValueParameterTypes() + " "
-        }
-//        }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
@@ -176,7 +176,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR -> correspondingPropertySymbol!!.owner.name()
                 else -> renderSimpleFunctionFlags() +
                         (if (modality == Modality.FINAL) "" else modality.name.toLowerCase() + " ") +
-                        (if (visibility == Visibilities.PUBLIC) "" else visibility.name.toLowerCase() + " ") +
+                        renderVisibility() +
                         "fun $name" +
                         renderTypeParameters() +
                         renderValueParameterTypes() +
@@ -259,7 +259,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 //
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
         buildTrimEnd {
-            if (declaration.visibility != Visibilities.PUBLIC) append("${declaration.visibility.name.toLowerCase()} ")
+            append(declaration.renderVisibility())
             if (declaration.modality != Modality.FINAL && !declaration.isInterface) append("${declaration.modality.name.toLowerCase()} ")
             append(
                 when {
@@ -320,7 +320,12 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String = TODO()
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String = TODO()
+    // TODO TypeParameters (дженерики)
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
+        (declaration.renderTypeAliasFlags()
+                + declaration.renderVisibility()
+                + "typealias " + declaration.name()
+                + " = " + declaration.expandedType.toKotlinType())
 
     private fun IrTypeAlias.renderTypeAliasFlags(): String =
         renderFlagsList(

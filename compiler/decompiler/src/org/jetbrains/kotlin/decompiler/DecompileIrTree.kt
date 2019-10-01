@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.decompiler
 
 import org.jetbrains.kotlin.decompiler.util.DecompilerIrElementVisitor
-import org.jetbrains.kotlin.decompiler.util.name
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -107,7 +103,9 @@ class DecompileIrTreeVisitor(
     }
 
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: String) = TODO()
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: String) {
+        printer.println(declaration.decompile())
+    }
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: String) = TODO()
 
