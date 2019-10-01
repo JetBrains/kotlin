@@ -107,6 +107,9 @@ public class GeneralColorsPage implements ColorSettingsPage, InspectionColorSett
     new AttributesDescriptor(OptionsBundle.message("options.general.color.descriptor.breadcrumbs.current"), EditorColors.BREADCRUMBS_CURRENT),
     new AttributesDescriptor(OptionsBundle.message("options.general.color.descriptor.breadcrumbs.inactive"), EditorColors.BREADCRUMBS_INACTIVE),
 
+    new AttributesDescriptor(OptionsBundle.message("options.general.color.descriptor.tabs.selected.tab"), EditorColors.TAB_SELECTED),
+    new AttributesDescriptor(OptionsBundle.message("options.general.color.descriptor.tabs.selected.tab.inactive"), EditorColors.TAB_SELECTED_INACTIVE),
+
     new AttributesDescriptor(OptionsBundle.message("options.general.color.descriptor.popups.lens"), EditorColors.CODE_LENS_BORDER_COLOR)
   };
 
@@ -120,6 +123,8 @@ public class GeneralColorsPage implements ColorSettingsPage, InspectionColorSett
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.selection.foreground"), EditorColors.SELECTION_FOREGROUND_COLOR, ColorDescriptor.Kind.FOREGROUND),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.scrollbar.thumb.while.scrolling"), EditorColors.SCROLLBAR_THUMB_WHILE_SCROLLING_COLOR, ColorDescriptor.Kind.BACKGROUND_WITH_TRANSPARENCY),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.scrollbar.thumb"), EditorColors.SCROLLBAR_THUMB_COLOR, ColorDescriptor.Kind.BACKGROUND_WITH_TRANSPARENCY),
+    new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.tabs.selected.underline"), EditorColors.TAB_UNDERLINE, ColorDescriptor.Kind.BACKGROUND),
+    new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.tabs.selected.underline.inactive"), EditorColors.TAB_UNDERLINE_INACTIVE, ColorDescriptor.Kind.BACKGROUND),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.caret"), EditorColors.CARET_COLOR, ColorDescriptor.Kind.FOREGROUND),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.caret.row"), EditorColors.CARET_ROW_COLOR, ColorDescriptor.Kind.BACKGROUND),
     new ColorDescriptor(OptionsBundle.message("options.general.color.descriptor.right.margin"), EditorColors.RIGHT_MARGIN_COLOR, ColorDescriptor.Kind.FOREGROUND),
