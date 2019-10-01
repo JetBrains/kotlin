@@ -72,12 +72,47 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     assertPosition(session.getCurrentPosition(), file, line);
   }
 
+  public static void assertVariable(@NotNull Collection<? extends XValue> vars,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value,
+                                    @Nullable Boolean hasChildren) {
+    assertVariable(vars, name, type, value, hasChildren, null);
+  }
+
+  public static void assertVariable(@NotNull Collection<? extends XValue> vars,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value,
+                                    @Nullable Boolean hasChildren,
+                                    @Nullable Icon icon) {
+    assertVariable(findVar(vars, name), name, type, value, hasChildren, icon);
+  }
+
+  public static void assertVariable(@NotNull Pair<XValue, String> varAndErrorMessage,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value,
+                                    @Nullable Boolean hasChildren) {
+    assertVariable(varAndErrorMessage, name, type, value, hasChildren, null);
+  }
+
+  public static void assertVariable(@NotNull Pair<XValue, String> varAndErrorMessage,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value,
+                                    @Nullable Boolean hasChildren,
+                                    @Nullable Icon icon) {
+    assertNull(varAndErrorMessage.second);
+    assertVariable(varAndErrorMessage.first, name, type, value, hasChildren, icon);
+  }
+
   public static void assertVariable(@NotNull XValue var,
                                     @Nullable String name,
                                     @Nullable String type,
                                     @Nullable String value,
                                     @Nullable Boolean hasChildren) {
-    assertVariable(var, name, type, value, hasChildren, XDebuggerTestUtil::waitFor);
+    assertVariable(var, name, type, value, hasChildren, null);
   }
 
   public static void assertVariable(@NotNull XValue var,
@@ -85,6 +120,16 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
                                     @Nullable String type,
                                     @Nullable String value,
                                     @Nullable Boolean hasChildren,
+                                    @Nullable Icon icon) {
+    assertVariable(var, name, type, value, hasChildren, icon, XDebuggerTestUtil::waitFor);
+  }
+
+  public static void assertVariable(@NotNull XValue var,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value,
+                                    @Nullable Boolean hasChildren,
+                                    @Nullable Icon icon,
                                     @NotNull BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     XTestValueNode node = computePresentation(var, waitFunction);
 
@@ -92,10 +137,11 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     if (type != null) assertEquals(type, node.myType);
     if (value != null) assertEquals(value, node.myValue);
     if (hasChildren != null) assertEquals(hasChildren, node.myHasChildren);
+    if (icon != null) assertEquals(icon, node.myIcon);
   }
 
   public static void assertVariableValue(@NotNull XValue var, @Nullable String name, @Nullable String value) {
-    assertVariable(var, name, null, value, null);
+    assertVariable(var, name, null, value, null, null);
   }
 
   public static void assertVariableValue(@NotNull Collection<? extends XValue> vars, @Nullable String name, @Nullable String value) {
@@ -123,6 +169,15 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     assertVariableValueMatches(findVar(vars, name), name, type, valuePattern, hasChildren);
   }
 
+  public static void assertVariableValueMatches(@NotNull Collection<? extends XValue> vars,
+                                                @Nullable String name,
+                                                @Nullable String type,
+                                                @Nullable @Language("RegExp") String valuePattern,
+                                                @Nullable Boolean hasChildren,
+                                                @Nullable Icon icon) {
+    assertVariableValueMatches(findVar(vars, name), name, type, valuePattern, hasChildren, icon);
+  }
+
   public static void assertVariableValueMatches(@NotNull XValue var,
                                                 @Nullable String name,
                                                 @Nullable @Language("RegExp") String valuePattern) {
@@ -141,7 +196,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
                                                 @Nullable String type,
                                                 @Nullable @Language("RegExp") String valuePattern,
                                                 @Nullable Boolean hasChildren) {
-    assertVariableValueMatches(var, name, type, valuePattern, hasChildren, XDebuggerTestUtil::waitFor);
+    assertVariableValueMatches(var, name, type, valuePattern, hasChildren, null);
   }
 
   public static void assertVariableValueMatches(@NotNull XValue var,
@@ -149,6 +204,16 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
                                                 @Nullable String type,
                                                 @Nullable @Language("RegExp") String valuePattern,
                                                 @Nullable Boolean hasChildren,
+                                                @Nullable Icon icon) {
+    assertVariableValueMatches(var, name, type, valuePattern, hasChildren, icon, XDebuggerTestUtil::waitFor);
+  }
+
+  public static void assertVariableValueMatches(@NotNull XValue var,
+                                                @Nullable String name,
+                                                @Nullable String type,
+                                                @Nullable @Language("RegExp") String valuePattern,
+                                                @Nullable Boolean hasChildren,
+                                                @Nullable Icon icon,
                                                 @NotNull BiFunction<Semaphore, Long, Boolean> waitFunction) {
     XTestValueNode node = computePresentation(var, waitFunction);
     if (name != null) assertEquals(name, node.myName);
@@ -157,6 +222,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
       assertTrue("Expected value: " + valuePattern + " Actual value: " + node.myValue, node.myValue.matches(valuePattern));
     }
     if (hasChildren != null) assertEquals(hasChildren, node.myHasChildren);
+    if (icon != null) assertEquals(icon, node.myIcon);
   }
 
   public static void assertVariableTypeMatches(@NotNull Collection<? extends XValue> vars,
@@ -267,23 +333,6 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     assertNotNull(position);
     assertEquals(file, position.getFile());
     assertEquals(line, position.getLine());
-  }
-
-  public static void assertVariable(@NotNull Collection<? extends XValue> vars,
-                                    @Nullable String name,
-                                    @Nullable String type,
-                                    @Nullable String value,
-                                    @Nullable Boolean hasChildren) {
-    assertVariable(findVar(vars, name), name, type, value, hasChildren);
-  }
-
-  public static void assertVariable(@NotNull Pair<XValue, String> varAndErrorMessage,
-                                    @Nullable String name,
-                                    @Nullable String type,
-                                    @Nullable String value,
-                                    @Nullable Boolean hasChildren) {
-    assertNull(varAndErrorMessage.second);
-    assertVariable(varAndErrorMessage.first, name, type, value, hasChildren);
   }
 
   public static String assertVariableExpression(@NotNull XValue desc, String expectedExpression) {
