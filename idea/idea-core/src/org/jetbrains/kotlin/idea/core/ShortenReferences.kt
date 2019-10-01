@@ -226,7 +226,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                         failedToImportDescriptors.add(descriptor)
                     }
                 }
+                if (!anyChange) processors.forEach { it.removeRootPrefixes() }
             }
+
             if (!anyChange) break
         }
 
@@ -249,6 +251,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         var options: Options = Options.DEFAULT
 
         private val elementsToAnalyze = ArrayList<ElementToAnalyze<TElement>>()
+        private val elementsWithRootPrefix = mutableListOf<SmartPsiElementPointer<TElement>>()
 
         private var level = 0
 
@@ -265,7 +268,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
          * Should be invoked by implementors when visiting the PSI tree for those elements that can potentially be shortened
          */
         protected fun addQualifiedElementToAnalyze(element: TElement) {
-            elementsToAnalyze.add(ElementToAnalyze(element, level))
+            if (element.isRootPrefix())
+                elementsWithRootPrefix += element.createSmartPointer()
+            else
+                elementsToAnalyze += ElementToAnalyze(element, level)
         }
 
         override fun visitElement(element: PsiElement) {
@@ -275,6 +281,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
 
         fun getElementsToAnalyze(): List<ElementToAnalyze<TElement>> = elementsToAnalyze
+        fun getElementsWithRootPrefix(): Collection<SmartPsiElementPointer<TElement>> = elementsWithRootPrefix
     }
 
     private abstract class ShorteningProcessor<TElement : KtElement>(
@@ -362,6 +369,13 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
         }
 
+        fun removeRootPrefixes() {
+            for (pointer in collectElementsVisitor.getElementsWithRootPrefix()) {
+                val element = pointer.element ?: continue
+                shortenElement(element, Options.DEFAULT)
+            }
+        }
+
         fun getDescriptorsToImport(): Set<DeclarationDescriptor> = descriptorsToImport
     }
 
@@ -393,40 +407,31 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
 
         override fun analyzeQualifiedElement(element: KtUserType, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
-            fun eval(element: KtUserType, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
-                if (element.qualifier == null) return AnalyzeQualifiedElementResult.Skip
-                val referenceExpression = element.referenceExpression ?: return AnalyzeQualifiedElementResult.Skip
+            if (element.qualifier == null) return AnalyzeQualifiedElementResult.Skip
+            val referenceExpression = element.referenceExpression ?: return AnalyzeQualifiedElementResult.Skip
 
-                val target = referenceExpression.targets(bindingContext).singleOrNull()
-                    ?: return AnalyzeQualifiedElementResult.Skip
+            val target = referenceExpression.targets(bindingContext).singleOrNull()
+                ?: return AnalyzeQualifiedElementResult.Skip
 
-                val scope = element.getResolutionScope(bindingContext, resolutionFacade)
-                val name = target.name
+            val scope = element.getResolutionScope(bindingContext, resolutionFacade)
+            val name = target.name
 
-                val targetByName: DeclarationDescriptor?
-                val isDeprecated: Boolean
+            val targetByName: DeclarationDescriptor?
+            val isDeprecated: Boolean
 
-                if (target is ClassifierDescriptor) {
-                    val classifierWithDeprecation = scope.findFirstClassifierWithDeprecationStatus(name, NoLookupLocation.FROM_IDE)
-                    targetByName = classifierWithDeprecation?.descriptor
-                    isDeprecated = classifierWithDeprecation?.isDeprecated ?: false
-                } else {
-                    targetByName = scope.findPackage(name)
-                    isDeprecated = false
-                }
-
-                val canShortenNow = targetByName?.asString() == target.asString() && !isDeprecated
-                return if (canShortenNow) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.ImportDescriptors(
-                    listOfNotNull(target)
-                )
+            if (target is ClassifierDescriptor) {
+                val classifierWithDeprecation = scope.findFirstClassifierWithDeprecationStatus(name, NoLookupLocation.FROM_IDE)
+                targetByName = classifierWithDeprecation?.descriptor
+                isDeprecated = classifierWithDeprecation?.isDeprecated ?: false
+            } else {
+                targetByName = scope.findPackage(name)
+                isDeprecated = false
             }
 
-            val result = eval(element, bindingContext)
-            if (result is AnalyzeQualifiedElementResult.Skip &&
-                element.qualifier?.text == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
-            ) return AnalyzeQualifiedElementResult.ShortenNow
-
-            return result
+            val canShortenNow = targetByName?.asString() == target.asString() && !isDeprecated
+            return if (canShortenNow) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.ImportDescriptors(
+                listOfNotNull(target)
+            )
         }
 
         override fun shortenElement(element: KtUserType, options: Options): KtElement {
@@ -487,8 +492,6 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             element: KtDotQualifiedExpression,
             bindingContext: BindingContext
         ): AnalyzeQualifiedElementResult {
-            if (element.receiverExpression.text == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) return AnalyzeQualifiedElementResult.ShortenNow
-
             if (PsiTreeUtil.getParentOfType(
                     element,
                     KtImportDirective::class.java, KtPackageDirective::class.java
@@ -745,4 +748,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
         }
     }
+}
+
+private fun PsiElement.isRootPrefix(): Boolean = when (this) {
+    is KtDotQualifiedExpression -> receiverExpression.text == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+    is KtUserType -> qualifier?.text == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+    else -> false
 }
