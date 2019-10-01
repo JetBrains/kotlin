@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.BackgroundTasks
+modules = BackgroundTasks
+
+compilerOpts = -framework BackgroundTasks
+linkerOpts = -framework BackgroundTasks

@@ -1,4 +1,4 @@
-depends = AddressBook ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreLocation CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreLocation CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
 language = Objective-C
 package = platform.EventKit
 modules = EventKit

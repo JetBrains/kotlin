@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.OSLog
+modules.x64 = OSLog
+
+compilerOpts = -framework OSLog
+linkerOpts = -framework OSLog

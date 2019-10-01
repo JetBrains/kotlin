@@ -24,7 +24,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     bank/bank_types.h \
     bsm/libbsm.h \
     os/activity.h os/availability.h os/base.h os/lock.h \
-    os/log.h os/object.h os/overflow.h os/trace.h \
+    os/log.h os/object.h os/overflow.h os/signpost.h os/trace.h \
     simd/simd.h sys/sysctl.h sys/user.h \
     net/if_media.h sys/disk.h sys/kernel_types.h
 
