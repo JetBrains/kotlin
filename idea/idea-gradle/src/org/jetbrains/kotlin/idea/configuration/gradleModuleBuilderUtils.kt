@@ -9,6 +9,7 @@ import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectCoreUtil
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
@@ -16,8 +17,11 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
@@ -27,7 +31,7 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import java.io.File
 
 internal var Module.gradleModuleBuilder: GradleModuleBuilder? by UserDataProperty(Key.create("GRADLE_MODULE_BUILDER"))
-private var Module.settingsScriptBuilder: SettingsScriptBuilder? by UserDataProperty(Key.create("SETTINGS_SCRIPT_BUILDER"))
+private var Module.settingsScriptBuilder: SettingsScriptBuilder<out PsiFile>? by UserDataProperty(Key.create("SETTINGS_SCRIPT_BUILDER"))
 
 internal fun findSettingsGradleFile(module: Module): VirtualFile? {
     val contentEntryPath = module.gradleModuleBuilder?.contentEntryPath ?: return null
@@ -35,10 +39,12 @@ internal fun findSettingsGradleFile(module: Module): VirtualFile? {
     val contentRootDir = File(contentEntryPath)
     val modelContentRootDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(contentRootDir) ?: return null
     return modelContentRootDir.findChild(GradleConstants.SETTINGS_FILE_NAME)
-            ?: module.project.baseDir.findChild(GradleConstants.SETTINGS_FILE_NAME)
+        ?: modelContentRootDir.findChild(GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
+        ?: module.project.baseDir.findChild(GradleConstants.SETTINGS_FILE_NAME)
+        ?: module.project.baseDir.findChild(GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
 }
 
-class SettingsScriptBuilder(scriptFile: GroovyFile) {
+abstract class SettingsScriptBuilder<T: PsiFile>(val scriptFile: T) {
     private val builder = StringBuilder(scriptFile.text)
 
     private fun findBlockBody(blockName: String, startFrom: Int = 0): Int {
@@ -81,7 +87,7 @@ class SettingsScriptBuilder(scriptFile: GroovyFile) {
 
     private fun getOrCreatePluginManagementBody() = getOrPrependTopLevelBlockBody("pluginManagement")
 
-    private fun addPluginRepositoryExpression(expression: String) {
+    protected fun addPluginRepositoryExpression(expression: String) {
         val repositoriesBody = getOrAppendInnerBlockBody("repositories", getOrCreatePluginManagementBody())
         appendExpressionToBlockIfAbsent(expression, repositoriesBody)
     }
@@ -90,9 +96,7 @@ class SettingsScriptBuilder(scriptFile: GroovyFile) {
         addPluginRepositoryExpression("mavenCentral()")
     }
 
-    fun addPluginRepository(repository: RepositoryDescription) {
-        addPluginRepositoryExpression(repository.toGroovyRepositorySnippet())
-    }
+    abstract fun addPluginRepository(repository: RepositoryDescription)
 
     fun addResolutionStrategy(pluginId: String) {
         val resolutionStrategyBody = getOrAppendInnerBlockBody("resolutionStrategy", getOrCreatePluginManagementBody())
@@ -112,16 +116,48 @@ class SettingsScriptBuilder(scriptFile: GroovyFile) {
     }
 
     fun build() = builder.toString()
+
+    abstract fun buildPsiFile(project: Project): T
+}
+
+
+class GroovySettingsScriptBuilder(scriptFile: GroovyFile): SettingsScriptBuilder<GroovyFile>(scriptFile) {
+    override fun addPluginRepository(repository: RepositoryDescription) {
+        addPluginRepositoryExpression(repository.toGroovyRepositorySnippet())
+    }
+
+    override fun buildPsiFile(project: Project): GroovyFile {
+        return GroovyPsiElementFactory
+            .getInstance(project)
+            .createGroovyFile(build(), false, null)
+    }
+}
+class KotlinSettingsScriptBuilder(scriptFile: KtFile): SettingsScriptBuilder<KtFile>(scriptFile) {
+    override fun addPluginRepository(repository: RepositoryDescription) {
+        addPluginRepositoryExpression(repository.toKotlinRepositorySnippet())
+    }
+
+    override fun buildPsiFile(project: Project): KtFile {
+        return KtPsiFactory(project).createFile(build())
+    }
 }
 
 // Circumvent write actions and modify the file directly
 // TODO: Get rid of this hack when IDEA API allows manipulation of settings script similarly to the main script itself
-internal fun updateSettingsScript(module: Module, updater: (SettingsScriptBuilder) -> Unit) {
+internal fun updateSettingsScript(module: Module, updater: (SettingsScriptBuilder<out PsiFile>) -> Unit) {
     val storedSettingsBuilder = module.settingsScriptBuilder
     val settingsBuilder =
         storedSettingsBuilder
-                ?: (findSettingsGradleFile(module)?.toPsiFile(module.project) as? GroovyFile)?.let { SettingsScriptBuilder(it) }
-                ?: return
+            ?: (findSettingsGradleFile(module)?.toPsiFile(module.project))?.let {
+                if (it is KtFile) {
+                    KotlinSettingsScriptBuilder(it)
+                } else if (it is GroovyFile) {
+                    GroovySettingsScriptBuilder(it)
+                } else {
+                    null
+                }
+            }
+            ?: return
     if (storedSettingsBuilder == null) {
         module.settingsScriptBuilder = settingsBuilder
     }
@@ -140,10 +176,7 @@ internal fun flushSettingsGradleCopy(module: Module) {
             // and we will get KT-29333 problem).
             // TODO: get rid of file manipulations until project is opened
             val project = ProjectCoreUtil.theOnlyOpenProject() ?: module.project
-            val tmpFile =
-                GroovyPsiElementFactory
-                .getInstance(project)
-                .createGroovyFile(settingsScriptBuilder.build(), false, null)
+            val tmpFile = settingsScriptBuilder.buildPsiFile(project)
             CodeStyleManager.getInstance(project).reformat(tmpFile)
             VfsUtil.saveText(settingsFile, tmpFile.text)
         }
