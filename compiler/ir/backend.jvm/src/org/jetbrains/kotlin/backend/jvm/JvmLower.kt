@@ -144,6 +144,13 @@ private val defaultArgumentInjectorPhase = makeIrFilePhase(
     prerequisite = setOf(defaultArgumentStubPhase, callableReferencePhase)
 )
 
+private val interfacePhase = makeIrFilePhase(
+    ::InterfaceLowering,
+    name = "Interface",
+    description = "Move default implementations of interface members to DefaultImpls class",
+    prerequisite = setOf(defaultArgumentInjectorPhase)
+)
+
 private val innerClassesPhase = makeIrFilePhase(
     ::InnerClassesLowering,
     name = "InnerClasses",
@@ -156,6 +163,13 @@ private val returnableBlocksPhase = makeIrFilePhase(
     name = "ReturnableBlock",
     description = "Replace returnable blocks with do-while(false) loops",
     prerequisite = setOf(arrayConstructorPhase, assertionPhase)
+)
+
+private val syntheticAccessorPhase = makeIrFilePhase(
+    ::SyntheticAccessorLowering,
+    name = "SyntheticAccessor",
+    description = "Introduce synthetic accessors",
+    prerequisite = setOf(objectClassPhase, staticDefaultFunctionPhase, interfacePhase)
 )
 
 @Suppress("Reformat")
