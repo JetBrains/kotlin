@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 
 open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
-    protected open val analyzePartially: Boolean
+    open val analyzePartially: Boolean
         get() = true
 
     override fun doAnalysis(

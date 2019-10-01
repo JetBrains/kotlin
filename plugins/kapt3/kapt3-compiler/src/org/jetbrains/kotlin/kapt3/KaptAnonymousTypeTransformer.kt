@@ -11,15 +11,23 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.resolve.DeclarationSignatureAnonymousTypeTransformer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
+import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-class KaptAnonymousTypeTransformer : DeclarationSignatureAnonymousTypeTransformer {
+class KaptAnonymousTypeTransformer(
+    private val analysisExtension: PartialAnalysisHandlerExtension
+) : DeclarationSignatureAnonymousTypeTransformer {
     override fun transformAnonymousType(descriptor: DeclarationDescriptorWithVisibility, type: KotlinType): KotlinType? {
-        if (isLocal(descriptor))
+        if (!analysisExtension.analyzePartially) {
+            return null
+        }
+
+        if (isLocal(descriptor)) {
             return type
+        }
 
         return convertPossiblyAnonymousType(type)
     }

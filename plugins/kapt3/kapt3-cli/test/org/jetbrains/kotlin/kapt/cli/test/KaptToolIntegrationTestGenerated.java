@@ -54,6 +54,11 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
         runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationDefaultOutput/");
     }
 
+    @TestMetadata("kt33800")
+    public void testKt33800() throws Exception {
+        runTest("plugins/kapt3/kapt3-cli/testData/integration/kt33800/");
+    }
+
     @TestMetadata("separateStubAptCompilation")
     public void testSeparateStubAptCompilation() throws Exception {
         runTest("plugins/kapt3/kapt3-cli/testData/integration/separateStubAptCompilation/");
