@@ -24,6 +24,9 @@ internal class LlvmModuleSpecificationImpl(
     override fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean =
             cachedLibraries.hasStaticCaches // A bit conservative but still valid.
 
+    override fun importsKotlinDeclarationsFromOtherSharedLibraries(): Boolean =
+            cachedLibraries.hasDynamicCaches // A bit conservative but still valid.
+
     override fun containsLibrary(library: KotlinLibrary): Boolean = if (producingCache) {
         library in librariesToCache
     } else {

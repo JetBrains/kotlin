@@ -315,6 +315,8 @@ __attribute__((weak)) int Kotlin_ObjCExport_sortedClassAdaptersNum = 0;
 __attribute__((weak)) const ObjCTypeAdapter** Kotlin_ObjCExport_sortedProtocolAdapters = nullptr;
 __attribute__((weak)) int Kotlin_ObjCExport_sortedProtocolAdaptersNum = 0;
 
+__attribute__((weak)) bool Kotlin_ObjCExport_initTypeAdapters = false;
+
 static const ObjCTypeAdapter* findClassAdapter(Class clazz) {
   return findAdapterByName(class_getName(clazz),
         Kotlin_ObjCExport_sortedClassAdapters,
@@ -416,7 +418,26 @@ static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd);
 
 static void checkLoadedOnce();
 
+static void initTypeAdaptersFrom(const ObjCTypeAdapter** adapters, int count) {
+  for (int index = 0; index < count; ++index) {
+    const ObjCTypeAdapter* adapter = adapters[index];
+    const TypeInfo* typeInfo = adapter->kotlinTypeInfo;
+    if (typeInfo != nullptr) {
+      typeInfo->writableInfo_->objCExport.typeAdapter = adapter;
+    }
+  }
+}
+
+static void initTypeAdapters() {
+  if (!Kotlin_ObjCExport_initTypeAdapters) return;
+
+  initTypeAdaptersFrom(Kotlin_ObjCExport_sortedClassAdapters, Kotlin_ObjCExport_sortedClassAdaptersNum);
+  initTypeAdaptersFrom(Kotlin_ObjCExport_sortedProtocolAdapters, Kotlin_ObjCExport_sortedProtocolAdaptersNum);
+}
+
 static void initializeObjCExport() {
+  initTypeAdapters();
+
   SEL toKotlinSelector = @selector(toKotlin:);
   Method toKotlinMethod = class_getClassMethod([NSObject class], toKotlinSelector);
   RuntimeAssert(toKotlinMethod != nullptr, "");

@@ -65,4 +65,11 @@ internal class CachedLibraries(
             Cache.Kind.DYNAMIC -> false
         }
     }
+
+    val hasDynamicCaches = allCaches.values.any {
+        when (it.kind) {
+            Cache.Kind.STATIC -> false
+            Cache.Kind.DYNAMIC -> true
+        }
+    }
 }

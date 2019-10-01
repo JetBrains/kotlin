@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 interface LlvmModuleSpecification {
     val isFinal: Boolean
     fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean
+    fun importsKotlinDeclarationsFromOtherSharedLibraries(): Boolean
     fun containsLibrary(library: KotlinLibrary): Boolean
     fun containsModule(module: ModuleDescriptor): Boolean
     fun containsModule(module: IrModuleFragment): Boolean
