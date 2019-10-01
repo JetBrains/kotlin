@@ -144,6 +144,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         runTest("idea/testData/shortenRefs/shortCompanionRefInsideShortenedCall.kt");
     }
 
+    @TestMetadata("TopLevelFunctionImportWithLotsOfFqName.kt")
+    public void testTopLevelFunctionImportWithLotsOfFqName() throws Exception {
+        runTest("idea/testData/shortenRefs/TopLevelFunctionImportWithLotsOfFqName.kt");
+    }
+
     @TestMetadata("UnresolvedOverload.kt")
     public void testUnresolvedOverload() throws Exception {
         runTest("idea/testData/shortenRefs/UnresolvedOverload.kt");
