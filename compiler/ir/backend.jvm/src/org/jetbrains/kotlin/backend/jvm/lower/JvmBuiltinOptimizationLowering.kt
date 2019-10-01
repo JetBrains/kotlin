@@ -272,7 +272,7 @@ class JvmBuiltinOptimizationLowering(val context: JvmBackendContext) : FileLower
                 // initializer with the constant initializer.
                 val variable = expression.symbol.owner
                 return if (isImmutableTemporaryVariableWithConstantValue(variable))
-                    (variable as IrVariable).initializer!!
+                    ((variable as IrVariable).initializer!! as IrConst<*>).copy()
                 else
                     expression
             }
