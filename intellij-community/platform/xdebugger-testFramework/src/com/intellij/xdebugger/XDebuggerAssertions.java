@@ -91,6 +91,19 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
 
   public static void assertVariable(@NotNull Pair<XValue, String> varAndErrorMessage,
                                     @Nullable String name,
+                                    @Nullable String type) {
+    assertVariable(varAndErrorMessage, name, type, null);
+  }
+
+  public static void assertVariable(@NotNull Pair<XValue, String> varAndErrorMessage,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value) {
+    assertVariable(varAndErrorMessage, name, type, value, null);
+  }
+
+  public static void assertVariable(@NotNull Pair<XValue, String> varAndErrorMessage,
+                                    @Nullable String name,
                                     @Nullable String type,
                                     @Nullable String value,
                                     @Nullable Boolean hasChildren) {
@@ -105,6 +118,24 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
                                     @Nullable Icon icon) {
     assertNull(varAndErrorMessage.second);
     assertVariable(varAndErrorMessage.first, name, type, value, hasChildren, icon);
+  }
+
+  public static void assertVariable(@NotNull XValue var,
+                                    @Nullable String name) {
+    assertVariable(var, name, null);
+  }
+
+  public static void assertVariable(@NotNull XValue var,
+                                    @Nullable String name,
+                                    @Nullable String type) {
+    assertVariable(var, name, type, null);
+  }
+
+  public static void assertVariable(@NotNull XValue var,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value) {
+    assertVariable(var, name, type, value, null);
   }
 
   public static void assertVariable(@NotNull XValue var,
