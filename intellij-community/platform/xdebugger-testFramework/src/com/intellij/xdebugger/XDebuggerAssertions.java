@@ -42,13 +42,13 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
   XDebuggerAssertions() {
   }
 
-  public static <B extends XBreakpoint<?>> void assertBreakpointValidity(Project project,
-                                                                         VirtualFile file,
+  public static <B extends XBreakpoint<?>> void assertBreakpointValidity(@NotNull Project project,
+                                                                         @NotNull VirtualFile file,
                                                                          int line,
                                                                          boolean validity,
                                                                          boolean pending,
                                                                          String errorMessage,
-                                                                         Class<? extends XBreakpointType<B, ?>> breakpointType) {
+                                                                         @NotNull Class<? extends XBreakpointType<B, ?>> breakpointType) {
     XLineBreakpointType type = (XLineBreakpointType)XDebuggerUtil.getInstance().findBreakpointType(breakpointType);
     XBreakpointManager manager = XDebuggerManager.getInstance(project).getBreakpointManager();
     XLineBreakpointImpl breakpoint = ReadAction.compute(() -> (XLineBreakpointImpl)manager.findBreakpointAtLine(type, file, line));
@@ -62,17 +62,17 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     assertEquals(errorMessage, breakpoint.getErrorMessage());
   }
 
-  public static void assertPosition(XSourcePosition pos, VirtualFile file, int line) throws IOException {
+  public static void assertPosition(XSourcePosition pos, @NotNull VirtualFile file, int line) throws IOException {
     assertNotNull("No current position", pos);
     assertEquals(new File(file.getPath()).getCanonicalPath(), new File(pos.getFile().getPath()).getCanonicalPath());
     if (line != -1) assertEquals(line, pos.getLine());
   }
 
-  public static void assertCurrentPosition(XDebugSession session, VirtualFile file, int line) throws IOException {
+  public static void assertCurrentPosition(@NotNull XDebugSession session, @NotNull VirtualFile file, int line) throws IOException {
     assertPosition(session.getCurrentPosition(), file, line);
   }
 
-  public static void assertVariable(XValue var,
+  public static void assertVariable(@NotNull XValue var,
                                     @Nullable String name,
                                     @Nullable String type,
                                     @Nullable String value,
@@ -80,12 +80,12 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     assertVariable(var, name, type, value, hasChildren, XDebuggerTestUtil::waitFor);
   }
 
-  public static void assertVariable(XValue var,
+  public static void assertVariable(@NotNull XValue var,
                                     @Nullable String name,
                                     @Nullable String type,
                                     @Nullable String value,
                                     @Nullable Boolean hasChildren,
-                                    BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
+                                    @NotNull BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     XTestValueNode node = computePresentation(var, waitFunction);
 
     if (name != null) assertEquals(name, node.myName);
@@ -94,11 +94,11 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     if (hasChildren != null) assertEquals(hasChildren, node.myHasChildren);
   }
 
-  public static void assertVariableValue(XValue var, @Nullable String name, @Nullable String value) {
+  public static void assertVariableValue(@NotNull XValue var, @Nullable String name, @Nullable String value) {
     assertVariable(var, name, null, value, null);
   }
 
-  public static void assertVariableValue(Collection<? extends XValue> vars, @Nullable String name, @Nullable String value) {
+  public static void assertVariableValue(@NotNull Collection<? extends XValue> vars, @Nullable String name, @Nullable String value) {
     assertVariableValue(findVar(vars, name), name, value);
   }
 
@@ -149,7 +149,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
                                                 @Nullable String type,
                                                 @Nullable @Language("RegExp") String valuePattern,
                                                 @Nullable Boolean hasChildren,
-                                                BiFunction<Semaphore, Long, Boolean> waitFunction) {
+                                                @NotNull BiFunction<Semaphore, Long, Boolean> waitFunction) {
     XTestValueNode node = computePresentation(var, waitFunction);
     if (name != null) assertEquals(name, node.myName);
     if (type != null) assertEquals(type, node.myType);
@@ -221,12 +221,12 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     }
   }
 
-  public static void assertVariableFullValue(Collection<? extends XValue> vars, @Nullable String name, @Nullable String value)
+  public static void assertVariableFullValue(@NotNull Collection<? extends XValue> vars, @Nullable String name, @Nullable String value)
     throws Exception {
     assertVariableFullValue(findVar(vars, name), value);
   }
 
-  public static void assertVariables(List<? extends XValue> vars, String... names) {
+  public static void assertVariables(@NotNull List<? extends XValue> vars, String... names) {
     List<String> expectedNames = new ArrayList<>(Arrays.asList(names));
 
     List<String> actualNames = new ArrayList<>();
@@ -239,7 +239,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     UsefulTestCase.assertOrderedEquals(actualNames, expectedNames);
   }
 
-  public static void assertVariablesContain(List<? extends XValue> vars, String... names) {
+  public static void assertVariablesContain(@NotNull List<? extends XValue> vars, String... names) {
     List<String> expectedNames = new ArrayList<>(Arrays.asList(names));
 
     List<String> actualNames = new ArrayList<>();
@@ -254,7 +254,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     );
   }
 
-  public static void assertSourcePosition(final XValue value, VirtualFile file, int offset) {
+  public static void assertSourcePosition(@NotNull XValue value, @NotNull VirtualFile file, int offset) {
     final XTestNavigatable n = new XTestNavigatable();
     ApplicationManager.getApplication().runReadAction(() -> value.computeSourcePosition(n));
     assertNotNull(n.getPosition());
@@ -262,14 +262,14 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     assertEquals(offset, n.getPosition().getOffset());
   }
 
-  public static void assertSourcePosition(final XStackFrame frame, VirtualFile file, int line) {
+  public static void assertSourcePosition(@NotNull XStackFrame frame, @NotNull VirtualFile file, int line) {
     XSourcePosition position = frame.getSourcePosition();
     assertNotNull(position);
     assertEquals(file, position.getFile());
     assertEquals(line, position.getLine());
   }
 
-  public static void assertVariable(Collection<? extends XValue> vars,
+  public static void assertVariable(@NotNull Collection<? extends XValue> vars,
                                     @Nullable String name,
                                     @Nullable String type,
                                     @Nullable String value,
@@ -277,7 +277,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     assertVariable(findVar(vars, name), name, type, value, hasChildren);
   }
 
-  public static void assertVariable(Pair<XValue, String> varAndErrorMessage,
+  public static void assertVariable(@NotNull Pair<XValue, String> varAndErrorMessage,
                                     @Nullable String name,
                                     @Nullable String type,
                                     @Nullable String value,
@@ -286,7 +286,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
     assertVariable(varAndErrorMessage.first, name, type, value, hasChildren);
   }
 
-  public static String assertVariableExpression(XValue desc, String expectedExpression) {
+  public static String assertVariableExpression(@NotNull XValue desc, String expectedExpression) {
     String expression = desc.getEvaluationExpression();
     assertEquals(expectedExpression, expression);
     return expression;
