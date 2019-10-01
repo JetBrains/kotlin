@@ -756,6 +756,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 runTest("compiler/testData/writeFlags/jvm8/defaults/defaultProperty.kt");
             }
 
+            @TestMetadata("onlyJvmDefaultsOnInterface.kt")
+            public void testOnlyJvmDefaultsOnInterface() throws Exception {
+                runTest("compiler/testData/writeFlags/jvm8/defaults/onlyJvmDefaultsOnInterface.kt");
+            }
+
             @TestMetadata("propertyAnnotation.kt")
             public void testPropertyAnnotation() throws Exception {
                 runTest("compiler/testData/writeFlags/jvm8/defaults/propertyAnnotation.kt");
@@ -771,6 +776,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
 
                 public void testAllFilesPresentInCompatibility() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults/compatibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("defaultImplementations.kt")
+                public void testDefaultImplementations() throws Exception {
+                    runTest("compiler/testData/writeFlags/jvm8/defaults/compatibility/defaultImplementations.kt");
                 }
 
                 @TestMetadata("propertyAccessors.kt")
