@@ -57,15 +57,14 @@ public class XDebuggerTestUtil {
 
   @Nullable
   public static XLineBreakpoint toggleBreakpoint(Project project, VirtualFile file, int line) {
-    final Promise<XLineBreakpoint> breakpointPromise = WriteAction.computeAndWait(() -> ((XDebuggerUtilImpl)XDebuggerUtil.getInstance())
-      .toggleAndReturnLineBreakpoint(project, file, line, false));
+    final XDebuggerUtilImpl debuggerUtil = (XDebuggerUtilImpl)XDebuggerUtil.getInstance();
+    final Promise<XLineBreakpoint> breakpointPromise = WriteAction.computeAndWait(
+      () -> debuggerUtil.toggleAndReturnLineBreakpoint(project, file, line, false));
     try {
-      try {
-        return breakpointPromise.blockingGet(TIMEOUT_MS);
-      }
-      catch (TimeoutException e) {
-        throw new RuntimeException(e);
-      }
+      return breakpointPromise.blockingGet(TIMEOUT_MS);
+    }
+    catch (TimeoutException e) {
+      throw new RuntimeException(e);
     }
     catch (ExecutionException e) {
       throw new RuntimeException(e.getCause());
