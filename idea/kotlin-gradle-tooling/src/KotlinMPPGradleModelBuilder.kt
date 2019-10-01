@@ -41,6 +41,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     override fun buildAll(modelName: String, project: Project): Any? {
+        val projectTargets = project.getTargets() ?: return null
         val dependencyResolver = DependencyResolverImpl(
             project,
             false,
@@ -51,7 +52,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val dependencyMapper = KotlinDependencyMapper()
         val sourceSets = buildSourceSets(dependencyResolver, project, dependencyMapper) ?: return null
         val sourceSetMap = sourceSets.map { it.name to it }.toMap()
-        val targets = buildTargets(sourceSetMap, dependencyResolver, project, dependencyMapper) ?: return null
+        val targets = buildTargets(projectTargets, sourceSetMap, dependencyResolver, project, dependencyMapper) ?: return null
         computeSourceSetsDeferredInfo(sourceSetMap, targets, isHMPPEnabled(project))
         val coroutinesState = getCoroutinesState(project)
         reportUnresolvedDependencies(targets)
@@ -232,12 +233,13 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun buildTargets(
+        projectTargets: Collection<Named>,
         sourceSetMap: Map<String, KotlinSourceSet>,
         dependencyResolver: DependencyResolver,
         project: Project,
         dependencyMapper: KotlinDependencyMapper
     ): Collection<KotlinTarget>? {
-        return project.getTargets()?.mapNotNull { buildTarget(it, sourceSetMap, dependencyResolver, project, dependencyMapper) }
+        return projectTargets.mapNotNull { buildTarget(it, sourceSetMap, dependencyResolver, project, dependencyMapper) }
     }
 
     private operator fun Any?.get(methodName: String, vararg params: Any): Any? {
