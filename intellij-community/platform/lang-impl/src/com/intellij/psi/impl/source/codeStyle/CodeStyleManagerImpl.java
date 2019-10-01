@@ -11,7 +11,6 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -184,7 +183,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     if (ranges.isEmpty()) {
       return;
     }
-    boolean isFullReformat = ranges.isFullReformat(file);
     ApplicationManager.getApplication().assertWriteAccessAllowed();
     PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
 
@@ -729,13 +727,13 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
   }
 
   private static class RangeFormatInfo{
-    private final SmartPsiElementPointer startPointer;
-    private final SmartPsiElementPointer endPointer;
-    private final boolean                fromStart;
-    private final boolean                toEnd;
+    private final SmartPsiElementPointer<?> startPointer;
+    private final SmartPsiElementPointer<?> endPointer;
+    private final boolean                   fromStart;
+    private final boolean                   toEnd;
 
-    RangeFormatInfo(@Nullable SmartPsiElementPointer startPointer,
-                    @Nullable SmartPsiElementPointer endPointer,
+    RangeFormatInfo(@Nullable SmartPsiElementPointer<?> startPointer,
+                    @Nullable SmartPsiElementPointer<?> endPointer,
                     boolean fromStart,
                     boolean toEnd)
     {
