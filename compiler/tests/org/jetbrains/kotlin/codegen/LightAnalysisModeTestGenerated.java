@@ -18626,6 +18626,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/properties/const"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("anotherFile.kt")
+            public void testAnotherFile() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/anotherFile.kt");
+            }
+
             @TestMetadata("constFlags.kt")
             public void testConstFlags() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/const/constFlags.kt");
