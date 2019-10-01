@@ -13,6 +13,7 @@ import com.intellij.util.containers.ConcurrentIntObjectMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.RecentStringInterner;
 import com.intellij.util.io.AbstractStringEnumerator;
+import com.intellij.util.io.DataEnumeratorEx;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.PersistentStringEnumerator;
 import gnu.trove.*;
@@ -28,7 +29,7 @@ import java.util.*;
 class StubSerializationHelper {
   private static final Logger LOG = Logger.getInstance(StubSerializationHelper.class);
 
-  private final PersistentStringEnumerator myNameStorage;
+  private final DataEnumeratorEx<String> myNameStorage;
 
   private final TIntObjectHashMap<String> myIdToName = new TIntObjectHashMap<>();
   private final TObjectIntHashMap<String> myNameToId = new TObjectIntHashMap<>();
