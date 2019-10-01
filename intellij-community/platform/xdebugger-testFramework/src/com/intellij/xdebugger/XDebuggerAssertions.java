@@ -19,7 +19,7 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValue;
 import com.intellij.xdebugger.impl.XDebuggerUtilImpl;
 import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl;
-import org.intellij.lang.annotations.Language;
+import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -198,21 +198,21 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
 
   public static void assertVariableValueMatches(@NotNull Collection<? extends XValue> vars,
                                                 @Nullable String name,
-                                                @Nullable @Language("RegExp") String valuePattern) {
+                                                @Nullable @RegExp String valuePattern) {
     assertVariableValueMatches(findVar(vars, name), name, valuePattern);
   }
 
   public static void assertVariableValueMatches(@NotNull Collection<? extends XValue> vars,
                                                 @Nullable String name,
                                                 @Nullable String type,
-                                                @Nullable @Language("RegExp") String valuePattern) {
+                                                @Nullable @RegExp String valuePattern) {
     assertVariableValueMatches(findVar(vars, name), name, type, valuePattern);
   }
 
   public static void assertVariableValueMatches(@NotNull Collection<? extends XValue> vars,
                                                 @Nullable String name,
                                                 @Nullable String type,
-                                                @Nullable @Language("RegExp") String valuePattern,
+                                                @Nullable @RegExp String valuePattern,
                                                 @Nullable Boolean hasChildren) {
     assertVariableValueMatches(findVar(vars, name), name, type, valuePattern, hasChildren);
   }
@@ -220,7 +220,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
   public static void assertVariableValueMatches(@NotNull Collection<? extends XValue> vars,
                                                 @Nullable String name,
                                                 @Nullable String type,
-                                                @Nullable @Language("RegExp") String valuePattern,
+                                                @Nullable @RegExp String valuePattern,
                                                 @Nullable Boolean hasChildren,
                                                 @Nullable Icon icon) {
     assertVariableValueMatches(findVar(vars, name), name, type, valuePattern, hasChildren, icon);
@@ -228,21 +228,21 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
 
   public static void assertVariableValueMatches(@NotNull XValue var,
                                                 @Nullable String name,
-                                                @Nullable @Language("RegExp") String valuePattern) {
+                                                @Nullable @RegExp String valuePattern) {
     assertVariableValueMatches(var, name, null, valuePattern);
   }
 
   public static void assertVariableValueMatches(@NotNull XValue var,
                                                 @Nullable String name,
                                                 @Nullable String type,
-                                                @Nullable @Language("RegExp") String valuePattern) {
+                                                @Nullable @RegExp String valuePattern) {
     assertVariableValueMatches(var, name, type, valuePattern, null);
   }
 
   public static void assertVariableValueMatches(@NotNull XValue var,
                                                 @Nullable String name,
                                                 @Nullable String type,
-                                                @Nullable @Language("RegExp") String valuePattern,
+                                                @Nullable @RegExp String valuePattern,
                                                 @Nullable Boolean hasChildren) {
     assertVariableValueMatches(var, name, type, valuePattern, hasChildren, null);
   }
@@ -250,7 +250,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
   public static void assertVariableValueMatches(@NotNull XValue var,
                                                 @Nullable String name,
                                                 @Nullable String type,
-                                                @Nullable @Language("RegExp") String valuePattern,
+                                                @Nullable @RegExp String valuePattern,
                                                 @Nullable Boolean hasChildren,
                                                 @Nullable Icon icon) {
     assertVariableValueMatches(var, name, type, valuePattern, hasChildren, icon, XDebuggerTestUtil::waitFor);
@@ -259,7 +259,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
   public static void assertVariableValueMatches(@NotNull XValue var,
                                                 @Nullable String name,
                                                 @Nullable String type,
-                                                @Nullable @Language("RegExp") String valuePattern,
+                                                @Nullable @RegExp String valuePattern,
                                                 @Nullable Boolean hasChildren,
                                                 @Nullable Icon icon,
                                                 @NotNull BiFunction<Semaphore, Long, Boolean> waitFunction) {
@@ -272,26 +272,26 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
 
   public static void assertVariableTypeMatches(@NotNull Collection<? extends XValue> vars,
                                                @Nullable String name,
-                                               @Nullable @Language("RegExp") String typePattern) {
+                                               @Nullable @RegExp String typePattern) {
     assertVariableTypeMatches(findVar(vars, name), name, typePattern);
   }
 
   public static void assertVariableTypeMatches(@NotNull XValue var,
                                                @Nullable String name,
-                                               @Nullable @Language("RegExp") String typePattern) {
+                                               @Nullable @RegExp String typePattern) {
     assertVariableTypeMatches(var, name, typePattern, null);
   }
 
   public static void assertVariableTypeMatches(@NotNull XValue var,
                                                @Nullable String name,
-                                               @Nullable @Language("RegExp") String typePattern,
+                                               @Nullable @RegExp String typePattern,
                                                @Nullable String value) {
     assertVariableTypeMatches(var, name, typePattern, value, null);
   }
 
   public static void assertVariableTypeMatches(@NotNull XValue var,
                                                @Nullable String name,
-                                               @Nullable @Language("RegExp") String typePattern,
+                                               @Nullable @RegExp String typePattern,
                                                @Nullable String value,
                                                @Nullable Boolean hasChildren) {
     assertVariableTypeMatches(var, name, typePattern, value, hasChildren, null, XDebuggerTestUtil::waitFor);
@@ -299,7 +299,7 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
 
   public static void assertVariableTypeMatches(@NotNull XValue var,
                                                @Nullable String name,
-                                               @Nullable @Language("RegExp") String typePattern,
+                                               @Nullable @RegExp String typePattern,
                                                @Nullable String value,
                                                @Nullable Boolean hasChildren,
                                                @Nullable Icon icon,
