@@ -46,7 +46,7 @@ fun collectScriptsCompilationDependencies(
                     collectedClassPath.addAll(refinedConfiguration.dependenciesClassPath)
 
                     val sourceDependenciesRoots = refinedConfiguration.importedScripts.map {
-                        KotlinSourceRoot(it.path, false)
+                        KotlinSourceRoot(it.absolutePath, false)
                     }
                     val sourceDependencies =
                         createSourceFilesFromSourceRoots(
