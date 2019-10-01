@@ -1,6 +1,6 @@
 // My: to be implemented
 // DISABLE-ERRORS
-expect sealed class My private constructor(x: Double) {
+expect sealed class My(x: Double) {
     abstract val num: Int
     open fun isGood(): Boolean
 
