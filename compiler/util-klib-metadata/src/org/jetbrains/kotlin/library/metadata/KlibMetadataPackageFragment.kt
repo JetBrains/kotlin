@@ -40,16 +40,18 @@ class KlibMetadataPackageFragment(
         (packageAccessHandler ?: SimplePackageAccessHandler).loadPackageFragment(library, fqName.asString(), partName)
     }
 
-    // TODO: Do we really need both 'protoForNames' and 'proto' today?
     val proto: ProtoBuf.PackageFragment
-        get() = protoForNames
+        get() {
+            packageAccessHandler?.markNeededForLink(library, fqName.asString())
+            return protoForNames
+        }
 
     private val nameResolver by lazy {
         NameResolverImpl(protoForNames.strings, protoForNames.qualifiedNames)
     }
 
     override val classDataFinder by lazy {
-        KlibMetadataClassDataFinder(proto, nameResolver)
+        KlibMetadataClassDataFinder(protoForNames, nameResolver)
     }
 
     private val _memberScope by lazy {
