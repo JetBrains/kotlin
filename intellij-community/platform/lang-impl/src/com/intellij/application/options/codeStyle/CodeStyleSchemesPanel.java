@@ -20,6 +20,7 @@ package com.intellij.application.options.codeStyle;
 import com.intellij.application.options.schemes.AbstractSchemeActions;
 import com.intellij.application.options.schemes.SchemesModel;
 import com.intellij.application.options.schemes.SimpleSchemesPanel;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.psi.codeStyle.CodeStyleScheme;
@@ -136,9 +137,9 @@ public class CodeStyleSchemesPanel extends SimpleSchemesPanel<CodeStyleScheme> {
   protected JComponent createBottomComponent() {
     myBottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     JLabel iconLabel = new JLabel();
-    iconLabel.setIcon(MessageType.WARNING.getDefaultIcon());
+    iconLabel.setIcon(AllIcons.General.Warning);
     myBottomPanel.add(iconLabel);
-    myBottomPanel.add(Box.createRigidArea(new JBDimension(10,0)));
+    myBottomPanel.add(Box.createRigidArea(new JBDimension(5,0)));
     myBottomLabel = new JLabel();
     myBottomPanel.add(myBottomLabel);
     LinkLabel<Object> disableHyperLink = new LinkLabel<>("Disable", null, new LinkListener<Object>() {
