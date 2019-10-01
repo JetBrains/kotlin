@@ -515,7 +515,6 @@ fun runTest() {
     }
 
     static def excludeList = [
-            "build/external/compiler/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt", // KT-26973
             "build/external/compiler/codegen/boxInline/anonymousObject/kt8133.kt"  // KT-34066
     ]
 
