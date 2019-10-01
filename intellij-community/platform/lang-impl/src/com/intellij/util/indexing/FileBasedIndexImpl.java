@@ -221,6 +221,10 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
           rebuildAllIndices("The following file types were removed/are no longer associated: " + removedFileTypes);
           return;
         }
+        if (event.getAddedFileType() != null) {
+          rebuildAllIndices("The following file type was added: " + event.getAddedFileType());
+          return;
+        }
         for (Map.Entry<FileType, Set<String>> entry : oldTypeToExtensionsMap.entrySet()) {
           FileType fileType = entry.getKey();
           Set<String> strings = entry.getValue();
