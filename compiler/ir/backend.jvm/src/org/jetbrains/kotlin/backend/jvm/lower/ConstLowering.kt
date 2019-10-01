@@ -41,8 +41,7 @@ class ConstLowering(val context: CommonBackendContext) : IrElementTransformerVoi
     override fun visitCall(expression: IrCall): IrExpression {
         val function = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
         val property = function.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
-        if (function != property.getter)
-            return super.visitCall(expression)
+        // If `constantValue` is not null, `function` can only be the getter because the property is immutable.
         return property.backingField?.constantValue() ?: super.visitCall(expression)
     }
 
