@@ -194,11 +194,22 @@ public class XDebuggerTestUtil {
     return collectFramesWithSelected(thread, timeout, XDebuggerTestUtil::waitFor);
   }
 
-  public static Pair<List<XStackFrame>, XStackFrame> collectFramesWithSelected(XExecutionStack thread, long timeout, BiFunction<Semaphore, Long, Boolean> waitFunction) {
+  public static Pair<List<XStackFrame>, XStackFrame> collectFramesWithSelected(XExecutionStack thread,
+                                                                               long timeout,
+                                                                               BiFunction<Semaphore, Long, Boolean> waitFunction) {
     XTestStackFrameContainer container = new XTestStackFrameContainer();
     thread.computeStackFrames(0, container);
     List<XStackFrame> all = container.waitFor(timeout, waitFunction).first;
     return Pair.create(all, container.frameToSelect);
+  }
+
+  public static XStackFrame getFrameAt(@NotNull XDebugSession session, int frameIndex) {
+    final XExecutionStack activeThread = getActiveThread(session);
+    return getFrameAt(activeThread, frameIndex);
+  }
+
+  public static XStackFrame getFrameAt(@NotNull XExecutionStack thread, int frameIndex) {
+    return frameIndex == 0 ? thread.getTopFrame() : collectFrames(thread).get(frameIndex);
   }
 
   @NotNull
