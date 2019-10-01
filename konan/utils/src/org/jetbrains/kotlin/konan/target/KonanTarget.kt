@@ -203,6 +203,8 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             ANDROID_X64,
             ANDROID_ARM32,
             ANDROID_ARM64,
+            MINGW_X86,
+            MINGW_X64,
             WASM32
         ),
         MINGW_X64 to setOf(
@@ -235,14 +237,16 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             ANDROID_X64,
             ANDROID_ARM32,
             ANDROID_ARM64,
+            MINGW_X86,
+            MINGW_X64,
             WASM32
         )
     )
 
     val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
-        LINUX_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
-        MACOS_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
-        MINGW_X64 to setOf<KonanTarget>() + zephyrSubtargets
+        LINUX_X64 to zephyrSubtargets,
+        MACOS_X64 to zephyrSubtargets,
+        MINGW_X64 to zephyrSubtargets
     )
 
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> by lazy {
