@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.konan.library.lite
 
-import org.jetbrains.kotlin.konan.library.KLIB_DIR_NAME
-import org.jetbrains.kotlin.konan.library.KONAN_COMMON_LIBS_DIR_NAME
-import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_DIR_NAME
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.junit.Assert.*
 import org.junit.Test
@@ -71,8 +71,8 @@ class LiteKonanLibraryFacadeTests {
     private fun getPotentialLibraryPathsOnLocalFS(): List<File> {
         val roots = mutableListOf(externalLibsDir)
 
-        roots += klibDir.resolve(KONAN_COMMON_LIBS_DIR_NAME)
-        roots += klibDir.resolve(KONAN_PLATFORM_LIBS_DIR_NAME).listFiles(FileFilter { it.isDirectory }).toList()
+        roots += klibDir.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
+        roots += klibDir.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).listFiles(FileFilter { it.isDirectory }).toList()
 
         return roots.flatMap { it.listFiles().toList() }
     }
@@ -81,10 +81,10 @@ class LiteKonanLibraryFacadeTests {
         getPotentialLibraryPathsOnLocalFS().mapNotNull { libraryProvider.getLibrary(it) }.toLibraryMap()
 
     private fun librariesExpectedInDistribution(): Map<File, FakeLibraryForTest> = listOf(
-        FakeLibraryForTest(klibDir.resolve(KONAN_COMMON_LIBS_DIR_NAME, KONAN_STDLIB_NAME)),
-        FakeLibraryForTest(klibDir.resolve(KONAN_PLATFORM_LIBS_DIR_NAME, "macos_x64", "foo"), platform = "macos_x64"),
-        FakeLibraryForTest(klibDir.resolve(KONAN_PLATFORM_LIBS_DIR_NAME, "macos_x64", "bar"), platform = "macos_x64"),
-        FakeLibraryForTest(klibDir.resolve(KONAN_PLATFORM_LIBS_DIR_NAME, "macos_x64", "baz"), platform = "macos_x64")
+        FakeLibraryForTest(klibDir.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR, KONAN_STDLIB_NAME)),
+        FakeLibraryForTest(klibDir.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR, "macos_x64", "foo"), platform = "macos_x64"),
+        FakeLibraryForTest(klibDir.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR, "macos_x64", "bar"), platform = "macos_x64"),
+        FakeLibraryForTest(klibDir.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR, "macos_x64", "baz"), platform = "macos_x64")
     ).toLibraryMap()
 
     private fun librariesExpectedInExternalDir(): Map<File, FakeLibraryForTest> = listOf(
@@ -107,7 +107,7 @@ class LiteKonanLibraryFacadeTests {
     }
 
     private companion object {
-        val klibDir = konanHomeDir.resolve(KLIB_DIR_NAME)
+        val klibDir = konanHomeDir.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
         val externalLibsDir = testDataDir.resolve("external-libs")
 
         fun <T : LiteKonanLibrary> List<T>.toLibraryMap() = map { it.path to it }.toMap()

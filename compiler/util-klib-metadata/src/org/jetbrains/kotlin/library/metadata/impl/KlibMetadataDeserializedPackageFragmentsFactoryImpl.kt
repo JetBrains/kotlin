@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-// FIXME(ddol): decouple and move interop-specific logic back to Kotlin/Native.
-open class KlibMetadataDeserializedPackageFragmentsFactoryImpl: KlibMetadataDeserializedPackageFragmentsFactory {
+// TODO decouple and move interop-specific logic back to Kotlin/Native.
+open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDeserializedPackageFragmentsFactory {
 
     override fun createDeserializedPackageFragments(
         library: KotlinLibrary,
