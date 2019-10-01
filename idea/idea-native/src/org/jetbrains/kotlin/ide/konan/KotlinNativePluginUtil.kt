@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.impl.BaseKotlinLibraryImpl
-import org.jetbrains.kotlin.library.impl.MetadataLibraryImpl
+import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -67,12 +66,12 @@ internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
         get() = KotlinNativeLoadingMetadataCache.getInstance()
 
     private val KotlinLibrary.moduleHeaderFile
-        get() = (this as MetadataLibraryImpl).access.layout.moduleHeaderFile
+        get() = (this as KotlinLibraryImpl).metadata.access.layout.moduleHeaderFile
 
     private fun KotlinLibrary.packageFragmentFile(packageFqName: String, partName: String) =
-        (this as MetadataLibraryImpl).access.layout.packageFragmentFile(packageFqName, partName)
+        (this as KotlinLibraryImpl).metadata.access.layout.packageFragmentFile(packageFqName, partName)
 
     private val KotlinLibrary.isZipped
-        get() = (this as BaseKotlinLibraryImpl).access.layout.isZipped
+        get() = (this as KotlinLibraryImpl).base.access.layout.isZipped
 }
 
