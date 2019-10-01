@@ -403,7 +403,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                               .range(psiElement, textRange.getStartOffset(), textRange.getEndOffset())
                               .description(message)
                               .severity(severity)
-                              .inspectionGroupKey(tool.getGroupKey());
+                              .inspectionToolId(tool.getID());
     if (toolTip != null) b.escapedToolTip(toolTip);
     if (HighlightSeverity.INFORMATION.equals(severity) && attributes == null && toolTip == null && !quickFixes.isEmpty()) {
       // Hack to avoid filtering this info out in HighlightInfoFilterImpl even though its attributes are empty.
