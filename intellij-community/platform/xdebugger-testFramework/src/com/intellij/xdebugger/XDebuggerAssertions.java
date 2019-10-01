@@ -132,12 +132,29 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
                                     @Nullable Icon icon,
                                     @NotNull BiFunction<? super Semaphore, ? super Long, Boolean> waitFunction) {
     XTestValueNode node = computePresentation(var, waitFunction);
+    assertVariable(node, name, type, value, hasChildren, icon);
+  }
 
-    if (name != null) assertEquals(name, node.myName);
-    if (type != null) assertEquals(type, node.myType);
-    if (value != null) assertEquals(value, node.myValue);
-    if (hasChildren != null) assertEquals(hasChildren, node.myHasChildren);
-    if (icon != null) assertEquals(icon, node.myIcon);
+  public static void assertVariable(@NotNull XTestValueNode node,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value,
+                                    @Nullable Boolean hasChildren) {
+    assertVariable(node, name, type, value, hasChildren, null);
+  }
+
+  public static void assertVariable(@NotNull XTestValueNode node,
+                                    @Nullable String name,
+                                    @Nullable String type,
+                                    @Nullable String value,
+                                    @Nullable Boolean hasChildren,
+                                    @Nullable Icon icon) {
+    final String message = node.toString();
+    if (name != null) assertEquals(message, name, node.myName);
+    if (type != null) assertEquals(message, type, node.myType);
+    if (value != null) assertEquals(message, value, node.myValue);
+    if (hasChildren != null) assertEquals(message, hasChildren, node.myHasChildren);
+    if (icon != null) assertEquals(message, icon, node.myIcon);
   }
 
   public static void assertVariableValue(@NotNull XValue var, @Nullable String name, @Nullable String value) {
@@ -216,13 +233,10 @@ public class XDebuggerAssertions extends XDebuggerTestUtil {
                                                 @Nullable Icon icon,
                                                 @NotNull BiFunction<Semaphore, Long, Boolean> waitFunction) {
     XTestValueNode node = computePresentation(var, waitFunction);
-    if (name != null) assertEquals(name, node.myName);
-    if (type != null) assertEquals(type, node.myType);
+    assertVariable(node, name, type, null, hasChildren, icon);
     if (valuePattern != null) {
       assertTrue("Expected value: " + valuePattern + " Actual value: " + node.myValue, node.myValue.matches(valuePattern));
     }
-    if (hasChildren != null) assertEquals(hasChildren, node.myHasChildren);
-    if (icon != null) assertEquals(icon, node.myIcon);
   }
 
   public static void assertVariableTypeMatches(@NotNull Collection<? extends XValue> vars,
