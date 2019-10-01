@@ -112,20 +112,12 @@ internal val cKeywords = setOf(
         "xor_eq"
 )
 
-private fun KotlinType.isGeneric() =
-        constructor.declarationDescriptor is TypeParameterDescriptor
-
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
     if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal || descriptor.isExpect)
         return false
     if (descriptor.isSuspend)
         return false
-    descriptor.allParameters.forEach {
-        if (it.type.isGeneric()) return false
-    }
-    val returnType = descriptor.returnType
-    if (returnType == null) return true
-    return !returnType.isGeneric()
+    return !descriptor.typeParameters.any()
 }
 
 private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
