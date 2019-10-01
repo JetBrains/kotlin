@@ -9,10 +9,12 @@ import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.structureView.impl.StructureViewComposite;
 import com.intellij.ide.structureView.newStructureView.StructureViewComponent;
+import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointAdapter;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
@@ -41,6 +43,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.*;
 import com.intellij.util.BitUtil;
+import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
@@ -151,6 +154,17 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
       }
     });
     Disposer.register(myToolWindow.getContentManager(), this);
+
+    PsiStructureViewFactory.EP_NAME.addExtensionPointListener(new ExtensionPointAdapter<KeyedLazyInstance<PsiStructureViewFactory>>() {
+      @Override
+      public void extensionListChanged() {
+        StructureViewComponent.clearStructureViewState(myProject);
+        if (myStructureView != null) {
+          myStructureView.disableStoreState();
+        }
+        rebuild();
+      }
+    }, this);
   }
 
   private void checkUpdate() {
@@ -322,7 +336,6 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
           myStructureView = structureViewBuilder.createStructureView(editor, myProject);
           myFileEditor = editor;
           Disposer.register(this, myStructureView);
-          updateHeaderActions(myStructureView);
 
           if (myStructureView instanceof StructureView.Scrollable) {
             ((StructureView.Scrollable)myStructureView).setReferenceSizeWhileInitializing(referenceSize);
@@ -347,6 +360,8 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
         }
       }
     }
+
+    updateHeaderActions(myStructureView);
 
     if (myModuleStructureComponent == null && myStructureView == null) {
       JBPanelWithEmptyText panel = new JBPanelWithEmptyText() {
@@ -380,7 +395,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
     }
   }
 
-  private void updateHeaderActions(StructureView structureView) {
+  private void updateHeaderActions(@Nullable StructureView structureView) {
     AnAction[] titleActions = AnAction.EMPTY_ARRAY;
     if (structureView instanceof StructureViewComponent) {
       JTree tree = ((StructureViewComponent)structureView).getTree();

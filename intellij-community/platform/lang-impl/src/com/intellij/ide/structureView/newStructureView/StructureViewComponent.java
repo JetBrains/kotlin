@@ -1,8 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.structureView.newStructureView;
 
-import com.intellij.concurrency.SensitiveProgressWrapper;
 import com.intellij.ide.CopyPasteDelegator;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.PsiCopyPasteManager;
@@ -25,13 +24,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.keymap.impl.IdeMouseEventDispatcher;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
-import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -76,7 +75,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
 public class StructureViewComponent extends SimpleToolWindowPanel implements TreeActionsOwner, DataProvider, StructureView.Scrollable {
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.structureView.newStructureView.StructureViewComponent");
@@ -102,6 +100,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
 
   private boolean myAutoscrollFeedback;
   private volatile boolean myDisposed;
+  private boolean myStoreStateDisabled;
 
   private final Alarm myAutoscrollAlarm = new Alarm(this);
 
@@ -308,7 +307,7 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
 
   @Override
   public void storeState() {
-    if (isDisposed() || !myProject.isOpen()) return;
+    if (isDisposed() || !myProject.isOpen() || myStoreStateDisabled) return;
     Object root = myTree.getModel().getRoot();
     if (root == null) return;
     TreeState state = TreeState.createOn(myTree, new TreePath(root));
@@ -316,6 +315,11 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
       myFileEditor.putUserData(STRUCTURE_VIEW_STATE_KEY, state);
     }
     UIUtil.putClientProperty(myTree, STRUCTURE_VIEW_STATE_RESTORED_KEY, null);
+  }
+
+  @Override
+  public void disableStoreState() {
+    myStoreStateDisabled = true;
   }
 
   @Override
@@ -566,6 +570,12 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
   @Override
   public boolean isActionActive(String name) {
     return !myProject.isDisposed() && StructureViewFactoryEx.getInstanceEx(myProject).isActionActive(name);
+  }
+
+  public static void clearStructureViewState(Project project) {
+    for (FileEditor editor : FileEditorManager.getInstance(project).getAllEditors()) {
+      editor.putUserData(STRUCTURE_VIEW_STATE_KEY, null);
+    }
   }
 
   private final class MyAutoScrollToSourceHandler extends AutoScrollToSourceHandler {
