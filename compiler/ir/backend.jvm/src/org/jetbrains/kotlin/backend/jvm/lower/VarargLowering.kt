@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 val varargPhase = makeIrFilePhase(
     ::VarargLowering,
@@ -97,7 +98,7 @@ private class VarargLowering(val context: JvmBackendContext) : FileLoweringPass,
     companion object {
         private val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
             (PrimitiveType.values().map { type -> type.name } + UnsignedType.values().map { type -> type.typeName.asString() })
-                .map { name -> name.toLowerCase() + "ArrayOf" }.toSet()
+                .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
 
         private val IrFunction.isPrimitiveArrayOf: Boolean
             get() {

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun IrElement.render() =
@@ -206,7 +207,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 append(' ')
 
                 if (declaration is IrSimpleFunction) {
-                    append(declaration.modality.toString().toLowerCase())
+                    append(declaration.modality.toString().toLowerCaseAsciiOnly())
                     append(' ')
                 }
 
@@ -262,7 +263,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             buildTrimEnd {
                 append(declaration.visibility)
                 append(' ')
-                append(declaration.modality.toString().toLowerCase())
+                append(declaration.modality.toString().toLowerCaseAsciiOnly())
                 append(' ')
 
                 append(declaration.name.asString())

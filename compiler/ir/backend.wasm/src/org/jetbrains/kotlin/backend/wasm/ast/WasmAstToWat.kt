@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ast
 
-import org.jetbrains.kotlin.ir.util.toLowerCase
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 // TODO: Abstract out S-expression part of dumping?
 
@@ -16,7 +16,7 @@ fun WasmImmediate.toWat(): String = when (this) {
     WasmImmediate.None -> ""
     is WasmImmediate.DeclarationReference -> " $$name"
     // SpiderMonkey jsshell won't parse Uppercase letters in literals
-    is WasmImmediate.LiteralValue<*> -> " $value".toLowerCase()
+    is WasmImmediate.LiteralValue<*> -> " $value".toLowerCaseAsciiOnly()
 }
 
 fun wasmModuleToWat(module: WasmModule): String =
