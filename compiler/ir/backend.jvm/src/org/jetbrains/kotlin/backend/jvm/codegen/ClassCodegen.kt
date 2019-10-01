@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
@@ -51,19 +52,25 @@ open class ClassCodegen protected constructor(
     val typeMapper = context.typeMapper
     val methodSignatureMapper = context.methodSignatureMapper
 
-    val descriptor = irClass.descriptor
-
     val type: Type = typeMapper.mapClass(irClass)
 
     val visitor: ClassBuilder = createClassBuilder()
 
     val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
 
-    open fun createClassBuilder() = state.factory.newVisitor(
-        OtherOrigin(descriptor.psiElement, descriptor),
-        type,
-        irClass.fileParent.loadSourceFilesInfo()
-    )
+    open fun createClassBuilder(): ClassBuilder {
+        // The descriptor associated with an IrClass is never modified in lowerings, so it
+        // doesn't reflect the state of the lowered class. To make the diagnostics work we
+        // pass in a wrapped descriptor instead.
+        // TODO: Migrate class builders away from descriptors
+        val descriptor = WrappedClassDescriptor()
+        descriptor.bind(irClass)
+        return state.factory.newVisitor(
+            OtherOrigin(descriptor.psiElement, descriptor),
+            type,
+            irClass.fileParent.loadSourceFilesInfo()
+        )
+    }
 
     private var sourceMapper: DefaultSourceMapper? = null
 
@@ -83,7 +90,7 @@ open class ClassCodegen protected constructor(
         val signature = getSignature(irClass, type, superClassInfo, typeMapper)
 
         visitor.defineClass(
-            descriptor.psiElement,
+            irClass.descriptor.psiElement,
             state.classFileVersion,
             irClass.flags,
             signature.name,
