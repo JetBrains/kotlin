@@ -723,7 +723,8 @@ internal class DescriptorRendererImpl(
 
     private fun renderConstructor(constructor: ConstructorDescriptor, builder: StringBuilder) {
         builder.renderAnnotations(constructor)
-        val visibilityRendered = renderVisibility(constructor.visibility, builder)
+        val visibilityRendered = (options.renderDefaultVisibility || constructor.constructedClass.modality != Modality.SEALED)
+                && renderVisibility(constructor.visibility, builder)
         renderMemberKind(constructor, builder)
 
         val constructorKeywordRendered = renderConstructorKeyword || !constructor.isPrimary || visibilityRendered
