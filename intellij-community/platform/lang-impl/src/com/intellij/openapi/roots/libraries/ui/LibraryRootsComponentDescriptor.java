@@ -17,6 +17,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.ui.impl.LibraryRootsDetectorImpl;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,6 +76,19 @@ public abstract class LibraryRootsComponentDescriptor {
   }
 
   /**
+   * Creates a instance which will be notified when a root is removed in the library editor.
+   */
+  @NotNull
+  public RootRemovalHandler createRootRemovalHandler() {
+    return new RootRemovalHandler() {
+      @Override
+      public void onRootRemoved(@NotNull String rootUrl, @NotNull OrderRootType rootType, @NotNull LibraryEditor libraryEditor) {
+      }
+    };
+  }
+
+
+  /**
    * @return descriptors for additional 'Attach' buttons in the library roots editor
    */
   @NotNull
@@ -90,5 +104,9 @@ public abstract class LibraryRootsComponentDescriptor {
 
   public String getAttachFilesActionName() {
     return ProjectBundle.message("button.text.attach.files");
+  }
+
+  public interface RootRemovalHandler {
+    void onRootRemoved(@NotNull String rootUrl, @NotNull OrderRootType rootType, @NotNull LibraryEditor libraryEditor);
   }
 }
