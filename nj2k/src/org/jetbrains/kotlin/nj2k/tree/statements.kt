@@ -29,10 +29,10 @@ class JKDoWhileStatement(body: JKStatement, condition: JKExpression) : JKLoopSta
     override fun accept(visitor: JKVisitor) = visitor.visitDoWhileStatement(this)
 }
 
-class JKForInStatement(declaration: JKDeclaration, iterationExpression: JKExpression, body: JKStatement) : JKStatement() {
+class JKForInStatement(declaration: JKDeclaration, iterationExpression: JKExpression, body: JKStatement) : JKLoopStatement() {
     var declaration: JKDeclaration by child(declaration)
     var iterationExpression: JKExpression by child(iterationExpression)
-    var body: JKStatement by child(body)
+    override var body by child(body)
     override fun accept(visitor: JKVisitor) = visitor.visitForInStatement(this)
 }
 
@@ -84,12 +84,22 @@ class JKKtWhenStatement(
 
 class JKKtConvertedFromForLoopSyntheticWhileStatement(
     variableDeclaration: JKStatement,
-    whileStatement: JKWhileStatement
-) : JKStatement() {
+    whileStatement: JKWhileStatement,
+    forLoopUpdaters: List<JKStatement>
+) : JKLoopStatement() {
     var variableDeclaration: JKStatement by child(variableDeclaration)
     var whileStatement: JKWhileStatement by child(whileStatement)
     // For the use in ContinueStatementConverter
-    var forLoopUpdaters: List<JKStatement> = listOf()
+    var forLoopUpdaters: List<JKStatement> by children(forLoopUpdaters)
+
+    // No child check because the parent of whileStatement.body is whileStatement
+    // and check will fail.
+    override var body: JKStatement
+        get() = whileStatement.body
+        set(v) {
+            whileStatement.body = v
+        }
+
     override fun accept(visitor: JKVisitor) = visitor.visitKtConvertedFromForLoopSyntheticWhileStatement(this)
 }
 

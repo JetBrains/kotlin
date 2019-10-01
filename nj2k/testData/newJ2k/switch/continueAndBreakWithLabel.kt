@@ -1,7 +1,7 @@
 fun foo() {
-    Loop@ loop@ while (true) {
+    Loop@ while (true) {
         when (take()) {
-            1 -> continue@loop
+            1 -> continue@Loop
             2 -> {
                 println("2")
                 return

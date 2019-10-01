@@ -48,11 +48,10 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         val convertedFromForLoopSyntheticWhileStatement =
             JKKtConvertedFromForLoopSyntheticWhileStatement(
                 loopStatement::initializer.detached(),
-                whileStatement
+                whileStatement,
+                // To use updaters information in ContinueStatementConversion later.
+                loopStatement.updaters.map { it.copyTreeAndDetach() }
             )
-
-        // To use updaters information in ContinueStatementConversion later.
-        convertedFromForLoopSyntheticWhileStatement.forLoopUpdaters = loopStatement.updaters.map { it.copyTreeAndDetach() }
 
         val notNeedParentBlock = loopStatement.parent is JKBlock
                 || loopStatement.parent is JKLabeledExpression && loopStatement.parent?.parent is JKBlock
