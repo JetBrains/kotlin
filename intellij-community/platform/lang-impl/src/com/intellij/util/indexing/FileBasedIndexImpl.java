@@ -204,6 +204,13 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       public void fileTypesChanged(@NotNull final FileTypeEvent event) {
         final Map<FileType, Set<String>> oldTypeToExtensionsMap = myTypeToExtensionMap;
         myTypeToExtensionMap = null;
+
+        // file type added
+        if (event.getAddedFileType() != null) {
+          rebuildAllIndices("The following file type was added: " + event.getAddedFileType());
+          return;
+        }
+
         if (oldTypeToExtensionsMap == null) {
           return;
         }
@@ -213,16 +220,11 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
         for (FileType type : fileTypeManager.getRegisteredFileTypes()) {
           newTypeToExtensionsMap.put(type, getExtensions(type, fileTypeManager));
         }
-        // we are interested only in extension changes or removals.
-        // addition of an extension is handled separately by RootsChanged event
+        // file type changes and removals
         if (!newTypeToExtensionsMap.keySet().containsAll(oldTypeToExtensionsMap.keySet())) {
           Set<FileType> removedFileTypes = new HashSet<>(oldTypeToExtensionsMap.keySet());
           removedFileTypes.removeAll(newTypeToExtensionsMap.keySet());
           rebuildAllIndices("The following file types were removed/are no longer associated: " + removedFileTypes);
-          return;
-        }
-        if (event.getAddedFileType() != null) {
-          rebuildAllIndices("The following file type was added: " + event.getAddedFileType());
           return;
         }
         for (Map.Entry<FileType, Set<String>> entry : oldTypeToExtensionsMap.entrySet()) {
