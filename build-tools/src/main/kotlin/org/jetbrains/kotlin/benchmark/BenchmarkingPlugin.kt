@@ -10,7 +10,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
 import org.jetbrains.kotlin.konan.target.HostManager
 import javax.inject.Inject
 import kotlin.reflect.KClass
@@ -107,10 +107,10 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
     protected val mingwPath: String = System.getenv("MINGW64_DIR") ?: "c:/msys64/mingw64"
 
-    protected open fun Project.determinePreset(): KotlinNativeTargetPreset =
+    protected open fun Project.determinePreset(): AbstractKotlinNativeTargetPreset<*> =
         defaultHostPreset(this).also { preset ->
             logger.quiet("$project has been configured for ${preset.name} platform.")
-        } as KotlinNativeTargetPreset
+        } as AbstractKotlinNativeTargetPreset<*>
 
     protected abstract fun NamedDomainObjectContainer<KotlinSourceSet>.configureSources(project: Project)
 
@@ -158,7 +158,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         }
     }
 
-    protected open fun Project.configureNativeTarget(hostPreset: KotlinNativeTargetPreset) {
+    protected fun Project.configureNativeTarget(hostPreset: AbstractKotlinNativeTargetPreset<*>) {
         kotlin.targetFromPreset(hostPreset, NATIVE_TARGET_NAME) {
             compilations.getByName("main").kotlinOptions.freeCompilerArgs = project.compilerArgs
             compilations.getByName("main").enableEndorsedLibs = true

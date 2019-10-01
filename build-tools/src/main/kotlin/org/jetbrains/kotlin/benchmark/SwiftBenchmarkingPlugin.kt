@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import java.io.File
 import javax.inject.Inject
@@ -64,7 +64,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         }
     }
 
-    override fun Project.determinePreset(): KotlinNativeTargetPreset = kotlin.presets.macosX64 as KotlinNativeTargetPreset
+    override fun Project.determinePreset(): AbstractKotlinNativeTargetPreset<*> = kotlin.presets.macosX64 as AbstractKotlinNativeTargetPreset<*>
 
     override fun KotlinNativeTarget.configureNativeOutput(project: Project) {
         binaries.framework(nativeFrameworkName, listOf(RELEASE)) {
