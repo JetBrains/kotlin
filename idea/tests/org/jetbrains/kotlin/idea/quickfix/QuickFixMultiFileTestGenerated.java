@@ -3036,6 +3036,54 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/makePrivateAndOverrideMember")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MakePrivateAndOverrideMember extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMakePrivateAndOverrideMember() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makePrivateAndOverrideMember"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("parameter.before.Main.kt")
+        public void testParameter() throws Exception {
+            runTest("idea/testData/quickfix/makePrivateAndOverrideMember/parameter.before.Main.kt");
+        }
+
+        @TestMetadata("parameterHasInternal.before.Main.kt")
+        public void testParameterHasInternal() throws Exception {
+            runTest("idea/testData/quickfix/makePrivateAndOverrideMember/parameterHasInternal.before.Main.kt");
+        }
+
+        @TestMetadata("parameterHasPrivate.before.Main.kt")
+        public void testParameterHasPrivate() throws Exception {
+            runTest("idea/testData/quickfix/makePrivateAndOverrideMember/parameterHasPrivate.before.Main.kt");
+        }
+
+        @TestMetadata("parameterHasProtected.before.Main.kt")
+        public void testParameterHasProtected() throws Exception {
+            runTest("idea/testData/quickfix/makePrivateAndOverrideMember/parameterHasProtected.before.Main.kt");
+        }
+
+        @TestMetadata("parameterHasPublic.before.Main.kt")
+        public void testParameterHasPublic() throws Exception {
+            runTest("idea/testData/quickfix/makePrivateAndOverrideMember/parameterHasPublic.before.Main.kt");
+        }
+
+        @TestMetadata("property.before.Main.kt")
+        public void testProperty() throws Exception {
+            runTest("idea/testData/quickfix/makePrivateAndOverrideMember/property.before.Main.kt");
+        }
+
+        @TestMetadata("setter.before.Main.kt")
+        public void testSetter() throws Exception {
+            runTest("idea/testData/quickfix/makePrivateAndOverrideMember/setter.before.Main.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/makeTypeParameterReified")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
