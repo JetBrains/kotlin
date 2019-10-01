@@ -159,7 +159,7 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
       // delay calling event.getFile() until background to avoid expensive VFileCreateEvent.getFile() in EDT
       VirtualFile dir = getFile(event);
       final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
-      if (dir != null && fileIndex.isInContent(dir) && !ProjectUtil.isProjectOrWorkspaceFile(dir)) {
+      if (dir != null && ReadAction.compute(() -> fileIndex.isInContent(dir)) && !ProjectUtil.isProjectOrWorkspaceFile(dir)) {
         doPushRecursively(dir, pushers, fileIndex);
       }
     };
