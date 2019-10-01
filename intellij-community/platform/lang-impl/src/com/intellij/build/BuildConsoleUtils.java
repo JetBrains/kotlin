@@ -10,6 +10,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.IJSwingUtilities;
@@ -130,6 +131,29 @@ public class BuildConsoleUtils {
       message = message.substring(0, sepIndex);
     }
     return StringUtil.trimEnd(message, '.');
+  }
+
+  @ApiStatus.Experimental
+  @NotNull
+  public static DataProvider getDataProvider(@NotNull Object buildId, @NotNull AbstractViewManager buildListener) {
+    BuildView buildView = buildListener.getBuildView(buildId);
+    return (buildView != null) ? buildView : dataId -> null;
+  }
+
+  @ApiStatus.Experimental
+  @NotNull
+  public static DataProvider getDataProvider(@NotNull Object buildId, @NotNull BuildProgressListener buildListener) {
+    DataProvider provider;
+    if (buildListener instanceof BuildView) {
+      provider = (BuildView)buildListener;
+    }
+    else if (buildListener instanceof AbstractViewManager) {
+      provider = getDataProvider(buildId, (AbstractViewManager)buildListener);
+    }
+    else {
+      provider = dataId -> null;
+    }
+    return provider;
   }
 
 

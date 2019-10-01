@@ -1,9 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.notification;
 
-import com.intellij.build.AbstractViewManager;
-import com.intellij.build.BuildProgressListener;
-import com.intellij.build.BuildView;
 import com.intellij.build.issue.BuildIssue;
 import com.intellij.build.issue.BuildIssueQuickFix;
 import com.intellij.execution.rmi.RemoteUtil;
@@ -101,7 +98,7 @@ public class ExternalSystemNotificationManager implements Disposable {
                                              @NotNull Throwable error,
                                              @NotNull ProjectSystemId externalSystemId,
                                              @NotNull Project project,
-                                             @NotNull BuildProgressListener progressListener) {
+                                             @NotNull DataProvider dataProvider) {
     if (isInternalError(error, externalSystemId)) {
       return null;
     }
@@ -129,8 +126,7 @@ public class ExternalSystemNotificationManager implements Disposable {
       BuildIssue buildIssue = ((BuildIssueException)unwrapped).getBuildIssue();
       for (BuildIssueQuickFix quickFix : buildIssue.getQuickFixes()) {
         notificationData.setListener(quickFix.getId(), (notification, event) -> {
-          DataProvider provider = getDataProvider(externalSystemId, progressListener);
-          quickFix.runQuickFix(project, provider);
+          quickFix.runQuickFix(project, dataProvider);
         });
       }
       return notificationData;
@@ -144,25 +140,6 @@ public class ExternalSystemNotificationManager implements Disposable {
       extension.customize(notificationData, project, error);
     }
     return notificationData;
-  }
-
-  @NotNull
-  private static DataProvider getDataProvider(@NotNull ProjectSystemId externalSystemId,
-                                              @NotNull BuildProgressListener progressListener) {
-    DataProvider provider = dataId -> null;
-    if (progressListener instanceof BuildView) {
-      provider = (BuildView)progressListener;
-    }
-    else if (progressListener instanceof AbstractViewManager) {
-      BuildView buildView = ((AbstractViewManager)progressListener).getBuildView(externalSystemId);
-      if (buildView != null) {
-        provider = buildView;
-      }
-    }
-    else {
-      provider = dataId -> null;
-    }
-    return provider;
   }
 
   private static boolean isInternalError(@NotNull Throwable error,
