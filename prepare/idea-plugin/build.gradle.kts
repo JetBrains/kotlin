@@ -102,6 +102,7 @@ val libraryProjects = listOf(
     ":kotlin-scripting-jvm",
     ":kotlin-util-io",
     ":kotlin-util-klib",
+    ":kotlin-util-klib-metadata",
     ":kotlin-allopen-compiler-plugin",
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
