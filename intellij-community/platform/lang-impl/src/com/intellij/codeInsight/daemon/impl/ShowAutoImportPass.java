@@ -2,6 +2,7 @@
 
 package com.intellij.codeInsight.daemon.impl;
 
+import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -40,6 +41,7 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
 
   private final int myStartOffset;
   private final int myEndOffset;
+  private final boolean hasDirtyTextRange;
 
   ShowAutoImportPass(@NotNull Project project, @NotNull final PsiFile file, @NotNull Editor editor) {
     super(project, editor.getDocument(), false);
@@ -52,6 +54,8 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
     myEndOffset = range.getEndOffset();
 
     myFile = file;
+
+    hasDirtyTextRange = FileStatusMap.getDirtyTextRange(editor, Pass.UPDATE_ALL) != null;
   }
 
   @Override
@@ -72,7 +76,7 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
 
     int caretOffset = myEditor.getCaretModel().getOffset();
     importUnambiguousImports(caretOffset);
-    List<HighlightInfo> visibleHighlights = getVisibleHighlights(myStartOffset, myEndOffset, myProject, myEditor);
+    List<HighlightInfo> visibleHighlights = getVisibleHighlights(myStartOffset, myEndOffset, myProject, myEditor, hasDirtyTextRange);
 
     for (int i = visibleHighlights.size() - 1; i >= 0; i--) {
       HighlightInfo info = visibleHighlights.get(i);
@@ -115,9 +119,15 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
   private static List<HighlightInfo> getVisibleHighlights(final int startOffset,
                                                           final int endOffset,
                                                           @NotNull Project project,
-                                                          @NotNull Editor editor) {
+                                                          @NotNull Editor editor,
+                                                          boolean isDirty) {
     final List<HighlightInfo> highlights = new ArrayList<>();
+    int offset = editor.getCaretModel().getOffset();
     DaemonCodeAnalyzerEx.processHighlights(editor.getDocument(), project, null, startOffset, endOffset, info -> {
+      //no changes after escape => suggest imports under caret only
+      if (!isDirty && !info.getFixTextRange().contains(offset)) {
+        return true;
+      }
       if (info.hasHint() && !editor.getFoldingModel().isOffsetCollapsed(info.startOffset)) {
         highlights.add(info);
       }
