@@ -877,7 +877,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
         };
 
         window.addComponentListener(windowListener);
-        Disposer.register(this, () -> editorComponent.removeComponentListener(windowListener));
+        Disposer.register(this, () -> window.removeComponentListener(windowListener));
       }
     }
 
