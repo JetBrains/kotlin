@@ -108,17 +108,17 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
 
     if (suppressedScopes.values().isEmpty()) return ProblemDescriptor.EMPTY_ARRAY;
     // have to visit all file from scratch since inspections can be written in any pervasive way including checkFile() overriding
-    Map<InspectionToolWrapper, String> suppressedTools = new THashMap<>();
-    InspectionToolWrapper[] toolWrappers = getInspectionTools(psiElement, manager);
+    Map<InspectionToolWrapper<?, ?>, String> suppressedTools = new THashMap<>();
+    InspectionToolWrapper<?, ?>[] toolWrappers = getInspectionTools(psiElement, manager);
     for (Collection<String> ids : suppressedScopes.values()) {
       for (Iterator<String> iterator = ids.iterator(); iterator.hasNext(); ) {
         String suppressId = iterator.next().trim();
-        List<InspectionToolWrapper> reportingWrappers = findReportingTools(toolWrappers, suppressId);
+        List<InspectionToolWrapper<?, ?>> reportingWrappers = findReportingTools(toolWrappers, suppressId);
         if (reportingWrappers.isEmpty()) {
           iterator.remove();
         }
         else {
-          for (InspectionToolWrapper toolWrapper : reportingWrappers) {
+          for (InspectionToolWrapper<?, ?> toolWrapper : reportingWrappers) {
             suppressedTools.put(toolWrapper, suppressId);
           }
         }
@@ -135,7 +135,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     final List<ProblemDescriptor> result;
     try {
       result = new ArrayList<>();
-      for (InspectionToolWrapper toolWrapper : suppressedTools.keySet()) {
+      for (InspectionToolWrapper<?, ?> toolWrapper : suppressedTools.keySet()) {
         String toolId = suppressedTools.get(toolWrapper);
         toolWrapper.initialize(globalContext);
         final Collection<CommonProblemDescriptor> descriptors;
@@ -203,10 +203,10 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
     return result.toArray(ProblemDescriptor.EMPTY_ARRAY);
   }
 
-  private static List<InspectionToolWrapper> findReportingTools(InspectionToolWrapper[] toolWrappers, String suppressedId) {
-    List<InspectionToolWrapper> wrappers = Collections.emptyList();
+  private static List<InspectionToolWrapper<?, ?>> findReportingTools(InspectionToolWrapper<?, ?>[] toolWrappers, String suppressedId) {
+    List<InspectionToolWrapper<?, ?>> wrappers = Collections.emptyList();
     String mergedToolName = InspectionElementsMerger.getMergedToolName(suppressedId);
-    for (InspectionToolWrapper toolWrapper : toolWrappers) {
+    for (InspectionToolWrapper<?, ?> toolWrapper : toolWrappers) {
       String toolWrapperShortName = toolWrapper.getShortName();
       String alternativeID = toolWrapper.getTool().getAlternativeID();
       if (toolWrapper instanceof LocalInspectionToolWrapper &&
@@ -275,7 +275,7 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
   }
 
   @NotNull
-  protected InspectionToolWrapper[] getInspectionTools(PsiElement psiElement, @NotNull InspectionManager manager) {
+  protected InspectionToolWrapper<?, ?>[] getInspectionTools(PsiElement psiElement, @NotNull InspectionManager manager) {
     String currentProfileName = ((InspectionManagerBase)manager).getCurrentProfile();
     InspectionProjectProfileManager profileManager = InspectionProjectProfileManager.getInstance(manager.getProject());
     InspectionProfileImpl usedProfile = profileManager.getProfile(currentProfileName, false);
