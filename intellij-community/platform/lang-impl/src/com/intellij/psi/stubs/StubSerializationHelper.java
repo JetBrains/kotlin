@@ -41,7 +41,7 @@ class StubSerializationHelper {
   private final boolean myUnmodifiable;
   private final RecentStringInterner myStringInterner;
 
-  StubSerializationHelper(@NotNull PersistentStringEnumerator nameStorage, boolean unmodifiable, @NotNull Disposable parentDisposable) {
+  StubSerializationHelper(@NotNull DataEnumeratorEx<String> nameStorage, boolean unmodifiable, @NotNull Disposable parentDisposable) {
     myNameStorage = nameStorage;
     myUnmodifiable = unmodifiable;
     myStringInterner = new RecentStringInterner(parentDisposable);
