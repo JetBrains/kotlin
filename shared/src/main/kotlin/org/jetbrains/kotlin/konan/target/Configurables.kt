@@ -39,7 +39,6 @@ interface Configurables : TargetableExternalStorage {
     val libffiDir get() = hostString("libffiDir")
 
     // TODO: Delegate to a map?
-    val entrySelector get() = targetList("entrySelector")
     val linkerOptimizationFlags get() = targetList("linkerOptimizationFlags")
     val linkerKonanFlags get() = targetList("linkerKonanFlags")
     val linkerNoDebugFlags get() = targetList("linkerNoDebugFlags")
@@ -87,8 +86,8 @@ interface AndroidConfigurables : TargetableConfigurables, ClangFlags
 
 interface WasmConfigurables : TargetableConfigurables, ClangFlags, LldFlags
 
-// Codegen for Zephyr calls opt and llc with predefined set of flags
-// so there is no need for OptFlags or LlcFlags.
-interface ZephyrConfigurables : TargetableConfigurables {
+interface ZephyrConfigurables : TargetableConfigurables, ClangFlags {
     val boardSpecificClangFlags get() = targetList("boardSpecificClangFlags")
+    val targetCpu get() = targetString("targetCpu")
+    val targetAbi get() = targetString("targetAbi")
 }

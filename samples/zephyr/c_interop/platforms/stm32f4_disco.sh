@@ -26,9 +26,9 @@ cinterop -def $DIR/c_interop/platforms/$BOARD.def \
         -compilerOpts -I$ZEPHYR_BASE/include \
         -compilerOpts -I$ZEPHYR_BASE/include/drivers \
         -compilerOpts -I$ZEPHYR_BASE/ext/hal/cmsis/Include \
-        -compilerOpts -I$ZEPHYR_BASE/ext/hal/st/stm32cube/stm32f4xx/soc \
-        -compilerOpts -I$ZEPHYR_BASE/ext/hal/st/stm32cube/stm32f4xx/drivers/include \
-        -compilerOpts -I$ZEPHYR_BASE/ext/hal/st/stm32cube/stm32f4xx/drivers/include/Legacy \
+        -compilerOpts -IZEPHYR_MODULES_DIR/hal/stm32/stm32cube/stm32f4xx/soc \
+        -compilerOpts -IZEPHYR_MODULES_DIR/hal/stm32/stm32cube/stm32f4xx/drivers/include \
+        -compilerOpts -IZEPHYR_MODULES_DIR/hal/stm32/stm32cube/stm32f4xx/drivers/include/Legacy \
         -compilerOpts -I$ZEPHYR_BASE/drivers \
         -compilerOpts -I$DIR/build/zephyr/include/generated \
         -compilerOpts -I$DIR/build/zephyr/include/generated/syscalls \

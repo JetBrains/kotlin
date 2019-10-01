@@ -74,19 +74,6 @@ private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<St
     }
 }
 
-private fun shouldOptimizeWithLlvmApi(context: Context) =
-        context.config.target.family != Family.ZEPHYR
-
-private fun shoudRunClosedWorldCleanUp(context: Context) =
-        // GlobalDCE will kill coverage-related globals.
-        !context.coverage.enabled
-
-private fun runLlvmPipeline(context: Context) = when {
-    shouldOptimizeWithLlvmApi(context) -> runLlvmOptimizationPipeline(context)
-    shoudRunClosedWorldCleanUp(context) -> runClosedWorldCleanup(context)
-    else -> {}
-}
-
 private fun insertAliasToEntryPoint(context: Context) {
     val nomain = context.config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (context.config.produce != CompilerOutputKind.PROGRAM || nomain)
@@ -124,7 +111,7 @@ internal fun produceOutput(context: Context) {
                 embedAppleLinkerOptionsToBitcode(context.llvm, context.config)
             }
             linkAllDependencies(context, generatedBitcodeFiles)
-            runLlvmPipeline(context)
+            runLlvmOptimizationPipeline(context)
             // Insert `_main` after pipeline so we won't worry about optimizations
             // corrupting entry point.
             insertAliasToEntryPoint(context)

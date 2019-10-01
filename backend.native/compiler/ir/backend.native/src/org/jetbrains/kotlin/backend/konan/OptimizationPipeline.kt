@@ -5,7 +5,9 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import llvm.*
+import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.ZephyrConfigurables
 
 private fun initializeLlvmGlobalPassRegistry() {
     val passRegistry = LLVMGetGlobalPassRegistry()
@@ -38,6 +40,7 @@ internal fun runLateBitcodePasses(context: Context, llvmModule: LLVMModuleRef) {
 private class LlvmPipelineConfiguration(context: Context) {
 
     private val target = context.config.target
+    private val configurables: Configurables = context.config.platform.configurables
 
     val targetTriple: String = context.llvm.targetTriple
 
@@ -69,8 +72,11 @@ private class LlvmPipelineConfiguration(context: Context) {
         KonanTarget.ANDROID_X86 -> "i686"
         KonanTarget.LINUX_MIPS32 -> "mips32r2"
         KonanTarget.LINUX_MIPSEL32 -> "mips32r2"
-        KonanTarget.WASM32 -> "wasm32"
-        is KonanTarget.ZEPHYR -> error("There is no support for ${target.name} target yet.")
+        KonanTarget.WASM32 -> "generic"
+        is KonanTarget.ZEPHYR -> (configurables as ZephyrConfigurables).targetCpu ?: run {
+            context.reportCompilationWarning("targetCpu for target $target was not set. Targeting `generic` cpu.")
+            "generic"
+        }
     }
 
     val cpuFeatures: String = when (target) {
@@ -92,6 +98,8 @@ private class LlvmPipelineConfiguration(context: Context) {
     }
 
     val sizeLevel: Int = when {
+        target is KonanTarget.ZEPHYR ||
+        target == KonanTarget.WASM32 -> 3
         context.shouldOptimize() -> 0
         context.shouldContainDebugInfo() -> 0
         else -> 0
@@ -106,20 +114,6 @@ private class LlvmPipelineConfiguration(context: Context) {
     val relocMode: LLVMRelocMode = LLVMRelocMode.LLVMRelocDefault
 
     val codeModel: LLVMCodeModel = LLVMCodeModel.LLVMCodeModelDefault
-}
-
-// Since we are in a "closed world" internalization and global dce
-// can be safely used to reduce size of a bitcode.
-internal fun runClosedWorldCleanup(context: Context) {
-    initializeLlvmGlobalPassRegistry()
-    val llvmModule = context.llvmModule!!
-    val modulePasses = LLVMCreatePassManager()
-    if (context.llvmModuleSpecification.isFinal) {
-        LLVMAddInternalizePass(modulePasses, 0)
-    }
-    LLVMAddGlobalDCEPass(modulePasses)
-    LLVMRunPassManager(modulePasses, llvmModule)
-    LLVMDisposePassManager(modulePasses)
 }
 
 internal fun runLlvmOptimizationPipeline(context: Context) {

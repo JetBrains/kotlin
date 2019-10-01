@@ -1558,7 +1558,7 @@ void garbageCollect(MemoryState* state, bool force) {
   size_t beforeDecrements = state->toRelease->size();
   decrementStack(state);
   size_t afterDecrements = state->toRelease->size();
-  ssize_t stackReferences = afterDecrements - beforeDecrements;
+  long stackReferences = afterDecrements - beforeDecrements;
   if (state->gcErgonomics && stackReferences * 5 > state->gcThreshold) {
     increaseGcThreshold(state);
     GC_LOG("||| GC: too many stack references, increased threshold to \n", state->gcThreshold);

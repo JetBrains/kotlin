@@ -44,18 +44,6 @@ internal class BitcodeCompiler(val context: Context) {
         runTool(absoluteToolName, *arg)
     }
 
-    private fun optAndLlc(configurables: ZephyrConfigurables, file: BitcodeFile): String {
-        val optimizedBc = temporary("optimized", ".bc")
-        val optFlags = llvmProfilingFlags() + listOf("-O3", "-internalize", "-globaldce")
-        hostLlvmTool("opt", file, "-o=$optimizedBc", *optFlags.toTypedArray())
-
-        val combinedO = temporary("combined", ".o")
-        val llcFlags = llvmProfilingFlags() + listOf("-function-sections", "-data-sections")
-        hostLlvmTool("llc", optimizedBc, "-filetype=obj", "-o", combinedO, *llcFlags.toTypedArray())
-
-        return combinedO
-    }
-
     private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
         val objectFile = temporary("result", ".o")
 
@@ -73,6 +61,9 @@ internal class BitcodeCompiler(val context: Context) {
         val flags = mutableListOf<String>().apply {
             addNonEmpty(configurables.clangFlags)
             addNonEmpty(listOf("-triple", targetTriple))
+            if (configurables is ZephyrConfigurables) {
+                addNonEmpty(configurables.constructClangCC1Args())
+            }
             addNonEmpty(when {
                 optimize -> configurables.clangOptFlags
                 debug -> configurables.clangDebugFlags
@@ -92,8 +83,6 @@ internal class BitcodeCompiler(val context: Context) {
         return objectFile
     }
 
-    // llvm-lto, opt and llc share same profiling flags, so we can
-    // reuse this function.
     private fun llvmProfilingFlags(): List<String> {
         val flags = mutableListOf<String>()
         if (context.shouldProfilePhases()) {
@@ -107,11 +96,7 @@ internal class BitcodeCompiler(val context: Context) {
 
     fun makeObjectFiles(bitcodeFile: BitcodeFile): List<ObjectFile> =
             listOf(when (val configurables = platform.configurables) {
-                is ClangFlags ->
-                    clang(configurables, bitcodeFile)
-                is ZephyrConfigurables ->
-                    optAndLlc(configurables, bitcodeFile)
-                else ->
-                    error("Unsupported configurables kind: ${configurables::class.simpleName}!")
+                is ClangFlags -> clang(configurables, bitcodeFile)
+                else -> error("Unsupported configurables kind: ${configurables::class.simpleName}!")
             })
 }

@@ -2,6 +2,8 @@
 
 BOARD=stm32f4_disco
 export ZEPHYR_BASE="PLEASE_SET_ZEPHYR_BASE"
+# By default `modules` directory is installed alongside ZEPHYR_BASE
+export ZEPHYR_MODULES_DIR="PLEASE_SET_ZEPHYR_MODULES_TOO"
 
 if [ "$ZEPHYR_BASE" == "PLEASE_SET_ZEPHYR_BASE" ] ; then
     echo "Please set ZEPHYR_BASE in this build.sh."

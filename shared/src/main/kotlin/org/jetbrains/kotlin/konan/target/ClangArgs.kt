@@ -151,7 +151,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-isystem$absoluteTargetSysRoot/include/libcxx",
                         "-isystem$absoluteTargetSysRoot/include/libc"
                         ) +
-                    (configurables as ZephyrConfigurables).boardSpecificClangFlags
+                    (configurables as ZephyrConfigurables).constructClangArgs()
             }
             return result
         }

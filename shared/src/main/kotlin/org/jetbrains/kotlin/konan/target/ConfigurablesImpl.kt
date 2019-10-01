@@ -37,7 +37,7 @@ class ZephyrConfigurablesImpl(target: KonanTarget, properties: Properties, baseD
     : ZephyrConfigurables, KonanPropertiesLoader(target, properties, baseDir)
 
 
-fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: String?) = when (target)  {
+fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: String?): Configurables = when (target)  {
         KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM32_HFP, KonanTarget.LINUX_ARM64 ->
             LinuxConfigurablesImpl(target, properties, baseDir)
 
