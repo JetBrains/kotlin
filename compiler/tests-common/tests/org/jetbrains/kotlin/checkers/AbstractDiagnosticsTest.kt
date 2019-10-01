@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import junit.framework.AssertionFailedError
 import junit.framework.TestCase
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
@@ -70,6 +71,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         try {
             analyzeAndCheckUnhandled(testDataFile, files)
         } catch (t: AssertionError) {
+            throw t
+        } catch (t: AssertionFailedError) {
             throw t
         } catch (t: Throwable) {
             throw TestsCompilerError(t)
