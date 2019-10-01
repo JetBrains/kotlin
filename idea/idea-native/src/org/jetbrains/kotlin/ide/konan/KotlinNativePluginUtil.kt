@@ -40,18 +40,12 @@ fun createFileStub(project: Project, text: String): PsiFileStub<*> {
 fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
 
 internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
-    override fun loadModuleHeader(
-        library: KotlinLibrary
-    ): KlibMetadataProtoBuf.Header {
+    override fun loadModuleHeader(library: KotlinLibrary): KlibMetadataProtoBuf.Header {
         val virtualFile = getVirtualFile(library, library.moduleHeaderFile)
         return cache.getCachedModuleHeader(virtualFile)
     }
 
-    override fun loadPackageFragment(
-        library: KotlinLibrary,
-        packageFqName: String,
-        partName: String
-    ): ProtoBuf.PackageFragment {
+    override fun loadPackageFragment(library: KotlinLibrary, packageFqName: String, partName: String): ProtoBuf.PackageFragment {
         val virtualFile = getVirtualFile(library, library.packageFragmentFile(packageFqName, partName))
         return cache.getCachedPackageFragment(virtualFile)
     }
@@ -72,15 +66,13 @@ internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
     private val cache
         get() = KotlinNativeLoadingMetadataCache.getInstance()
 
-
-    private val KotlinLibrary.moduleHeaderFile get() =
-        (this as MetadataLibraryImpl).access.layout.moduleHeaderFile
+    private val KotlinLibrary.moduleHeaderFile
+        get() = (this as MetadataLibraryImpl).access.layout.moduleHeaderFile
 
     private fun KotlinLibrary.packageFragmentFile(packageFqName: String, partName: String) =
         (this as MetadataLibraryImpl).access.layout.packageFragmentFile(packageFqName, partName)
 
-    private val KotlinLibrary.isZipped get() =
-        (this as BaseKotlinLibraryImpl).access.layout.isZipped
-
+    private val KotlinLibrary.isZipped
+        get() = (this as BaseKotlinLibraryImpl).access.layout.isZipped
 }
 

@@ -15,10 +15,6 @@ const val KLIB_METADATA_FILE_EXTENSION_WITH_DOT = ".$KLIB_METADATA_FILE_EXTENSIO
 
 const val KDEFINITIONS_FILE_EXTENSION = "def"
 
-const val KLIB_MODULE_METADATA_FILE_NAME = "module"
-
-const val KLIB_MANIFEST_FILE_NAME = "manifest"
-
 const val KONAN_STDLIB_NAME = "stdlib"
 
 const val KLIB_DIR_NAME = "klib"
