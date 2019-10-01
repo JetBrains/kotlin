@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -30,7 +31,7 @@ fun IrField.constantValue(implicitConst: Boolean = false): IrConst<*>? {
     // Kotlin fields are only inlined if explicitly `const` to avoid making the values part of the ABI.
     val inline = correspondingPropertySymbol?.owner?.isConst == true ||
             (isStatic && isFinal && (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB || implicitConst))
-    return if (inline) initializer?.expression as? IrConst<*> else null
+    return if (inline) (initializer?.expression as? IrConst<*>)?.copy() else null
 }
 
 class ConstLowering(val context: CommonBackendContext) : IrElementTransformerVoid(), FileLoweringPass {

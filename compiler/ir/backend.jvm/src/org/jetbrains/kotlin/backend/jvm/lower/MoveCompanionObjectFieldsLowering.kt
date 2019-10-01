@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -224,7 +225,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         if (oldInitializer != null) {
             field.initializer = oldInitializer
                 .replaceThisByStaticReference(context, propertyParent, propertyParent.thisReceiver!!)
-                .patchDeclarationParents(field) as IrExpressionBody
+                .deepCopyWithSymbols(field) as IrExpressionBody
         }
 
         return field
