@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 // TODO: eliminate Native specifics.
 class KlibResolvedModuleDescriptorsFactoryImpl(
-        override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
+    override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 ): KlibResolvedModuleDescriptorsFactory {
 
     override fun createResolved(
@@ -169,7 +169,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
     override fun getMemberScope(): MemberScope = memberScope
 }
 
-// FIXME(ddol): decouple and move interop-specific logic back to Kotlin/Native.
+// TODO decouple and move interop-specific logic back to Kotlin/Native.
 internal object ForwardDeclarationsFqNames {
 
     val packageName = FqName("kotlinx.cinterop")
