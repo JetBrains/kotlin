@@ -1,13 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.issue.quickfix
 
+import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.ide.actions.ShowSettingsUtilImpl
+import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.ex.ConfigurableVisitor
 import com.intellij.openapi.options.newEditor.SettingsDialogFactory
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.ApiStatus
-import com.intellij.build.issue.BuildIssueQuickFix
 import org.jetbrains.plugins.gradle.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import org.jetbrains.plugins.gradle.service.settings.GradleConfigurable
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -25,7 +26,7 @@ class GradleSettingsQuickFix(private val myProjectPath: String, private val myRe
 
   override val id: String = "fix_gradle_settings"
 
-  override fun runQuickFix(project: Project): CompletableFuture<*> {
+  override fun runQuickFix(project: Project, dataProvider: DataProvider): CompletableFuture<*> {
     val projectSettings = GradleSettings.getInstance(project).getLinkedProjectSettings(myProjectPath)
                           ?: return CompletableFuture.completedFuture(false)
     val future = CompletableFuture<Boolean>()

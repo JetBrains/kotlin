@@ -5,9 +5,12 @@ import com.intellij.build.*
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.replaceService
+import com.intellij.testFramework.runInEdtAndGet
 import com.intellij.util.concurrency.Semaphore
+import com.intellij.util.ui.tree.TreeUtil
 import junit.framework.TestCase
 import org.assertj.core.api.Assertions
+import javax.swing.tree.DefaultMutableTreeNode
 
 abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
 
@@ -42,23 +45,31 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
     assertExecutionTree(buildViewManager, executionTree, true)
   }
 
+  protected fun assertSyncViewSelectedNode(nodeText: String, consoleText: String) {
+    assertExecutionTreeNode(syncViewManager, nodeText, consoleText, true)
+  }
+
+  protected fun assertBuildViewSelectedNode(nodeText: String, consoleText: String) {
+    assertExecutionTreeNode(buildViewManager, nodeText, consoleText, true)
+  }
+
   private fun assertExecutionTree(viewManager: TestViewManager, expected: String, ignoreTasksOrder: Boolean) {
     Assertions.assertThat(viewManager.getBuildsMap()).hasSize(1)
     val buildView = viewManager.getBuildsMap().values.first()
     val eventView = buildView.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
     eventView!!.addFilter { true }
     viewManager.waitForPendingBuilds()
-    edt {
+    val treeStringPresentation = runInEdtAndGet {
       val tree = eventView.tree
       PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
       PlatformTestUtil.waitWhileBusy(tree)
-      val treeStringPresentation = PlatformTestUtil.print(tree, false)
-      if (ignoreTasksOrder) {
-        assertSameElements(buildTasksNodesAsList(treeStringPresentation.trim()), buildTasksNodesAsList(expected.trim()))
-      }
-      else {
-        assertEquals(expected.trim(), treeStringPresentation.trim())
-      }
+      return@runInEdtAndGet PlatformTestUtil.print(tree, false)
+    }
+    if (ignoreTasksOrder) {
+      assertSameElements(buildTasksNodesAsList(treeStringPresentation.trim()), buildTasksNodesAsList(expected.trim()))
+    }
+    else {
+      assertEquals(expected.trim(), treeStringPresentation.trim())
     }
   }
 
@@ -76,6 +87,37 @@ abstract class BuildViewMessagesImportingTestCase : GradleImportingTestCase() {
       list.add(buffer.toString())
     }
     return list
+  }
+
+  private fun assertExecutionTreeNode(viewManager: TestViewManager, nodeText: String, consoleText: String, assertSelected: Boolean) {
+    Assertions.assertThat(viewManager.getBuildsMap()).hasSize(1)
+    val buildView = viewManager.getBuildsMap().values.first()
+    val eventView = buildView.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
+    eventView!!.addFilter { true }
+    viewManager.waitForPendingBuilds()
+
+    val tree = eventView.tree
+    val node = runInEdtAndGet {
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+      PlatformTestUtil.waitWhileBusy(tree)
+
+      TreeUtil.findNode(tree.model.root as DefaultMutableTreeNode) {
+        val userObject = it.userObject
+        userObject is ExecutionNode && userObject.name == nodeText
+      }
+    }
+    if (!assertSelected && node != tree.selectionPath!!.lastPathComponent) {
+      edt {
+        TreeUtil.selectNode(tree, node)
+        PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+        PlatformTestUtil.waitWhileBusy(tree)
+      }
+    }
+    val selectedPathComponent = tree.selectionPath!!.lastPathComponent
+    if (node != selectedPathComponent) {
+      assertEquals(node.toString(), selectedPathComponent.toString())
+    }
+    assertEquals(consoleText, eventView.selectedNodeConsoleText)
   }
 
   interface TestViewManager : ViewManager {

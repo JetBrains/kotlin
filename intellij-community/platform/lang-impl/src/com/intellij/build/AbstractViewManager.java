@@ -106,17 +106,31 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
       buildsView = myBuildsViewValue.getValue();
     }
     else {
-      buildsView = myBuildsViewValue.getValue();
-      if (!buildsView.shouldConsume(buildId, event)) {
-        Object finalBuildId = buildId;
-        buildsView = myPinnedViews.stream()
-          .filter(pinnedView -> pinnedView.shouldConsume(finalBuildId, event))
-          .findFirst().orElse(null);
-      }
+      buildsView = getMultipleBuildsView(buildId);
     }
     if (buildsView != null) {
       buildsView.onEvent(buildId, event);
     }
+  }
+
+  @Nullable
+  private MultipleBuildsView getMultipleBuildsView(@NotNull Object buildId) {
+    MultipleBuildsView buildsView = myBuildsViewValue.getValue();
+    if (!buildsView.shouldConsume(buildId)) {
+      buildsView = myPinnedViews.stream()
+        .filter(pinnedView -> pinnedView.shouldConsume(buildId))
+        .findFirst().orElse(null);
+    }
+    return buildsView;
+  }
+
+  @ApiStatus.Internal
+  @Nullable
+  public BuildView getBuildView(@NotNull Object buildId) {
+    MultipleBuildsView buildsView = getMultipleBuildsView(buildId);
+    if (buildsView == null) return null;
+
+    return buildsView.getBuildView(buildId);
   }
 
   void configureToolbar(@NotNull DefaultActionGroup toolbarActions,

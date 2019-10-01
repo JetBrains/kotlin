@@ -37,7 +37,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -73,9 +72,9 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static com.intellij.build.BuildConsoleUtils.getMessageTitle;
 import static com.intellij.build.BuildView.CONSOLE_VIEW_NAME;
 import static com.intellij.openapi.util.text.StringUtil.isEmpty;
-import static com.intellij.openapi.util.text.StringUtil.stripHtml;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 import static com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES;
 import static com.intellij.util.ObjectUtils.chooseNotNull;
@@ -362,6 +361,17 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     scheduleUpdate(currentNode);
   }
 
+  @ApiStatus.Internal
+  @TestOnly
+  @Nullable
+  public String getSelectedNodeConsoleText() {
+    ExecutionConsole console = myConsoleViewHandler.getCurrentConsole();
+    if (console instanceof ConsoleViewImpl) {
+      return ((ConsoleViewImpl)console).getText();
+    }
+    return null;
+  }
+
   private static EventResult calculateDerivedResult(DerivedResult result, ExecutionNode node) {
     if (node.getResult() != null) {
       return node.getResult(); // if another thread set result for child
@@ -456,15 +466,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     if (text == null) {
       text = defaultFailureMessage;
     }
-    text = stripHtml(text, true);
-    int sepIndex = text.indexOf(". ");
-    if (sepIndex < 0) {
-      sepIndex = text.indexOf("\n");
-    }
-    if (sepIndex > 0) {
-      text = text.substring(0, sepIndex);
-    }
-    String failureNodeName = StringUtil.trimEnd(text, '.');
+    String failureNodeName = getMessageTitle(text);
     ExecutionNode failureNode = parentNode.findFirstChild(executionNode -> failureNodeName.equals(executionNode.getName()));
     if (failureNode == null) {
       failureNode = new ExecutionNode(myProject, parentNode);

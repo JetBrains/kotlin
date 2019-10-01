@@ -5,11 +5,13 @@ import com.intellij.build.FilePosition
 import com.intellij.build.events.BuildEvent
 import com.intellij.build.events.DuplicateMessageAware
 import com.intellij.build.events.MessageEvent
+import com.intellij.build.events.impl.BuildIssueEventImpl
 import com.intellij.build.events.impl.FileMessageEventImpl
 import com.intellij.build.events.impl.MessageEventImpl
 import com.intellij.build.output.BuildOutputInstantReader
 import com.intellij.build.output.BuildOutputParser
 import org.jetbrains.plugins.gradle.execution.GradleConsoleFilter
+import org.jetbrains.plugins.gradle.issue.UnresolvedDependencyBuildIssue
 import java.io.File
 import java.util.function.Consumer
 
@@ -81,11 +83,32 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
       )
     }
     else {
-      messageConsumer.accept(object : MessageEventImpl(
-        parentId, MessageEvent.Kind.ERROR, null, reason, description.toString()), DuplicateMessageAware {}
-      )
+      val unresolvedMessageEvent = checkUnresolvedDependencyError(reason, description, parentId)
+      if (unresolvedMessageEvent != null) {
+        messageConsumer.accept(unresolvedMessageEvent)
+      }
+      else {
+        messageConsumer.accept(object : MessageEventImpl(parentId, MessageEvent.Kind.ERROR, null, reason,
+                                                         description.toString()), DuplicateMessageAware {})
+      }
     }
     return true
+  }
+
+  private fun checkUnresolvedDependencyError(reason: String, description: StringBuilder, parentId: Any): BuildEvent? {
+    val noCachedVersionPrefix = "No cached version of "
+    val couldNotFindPrefix = "Could not find "
+    val cannotResolvePrefix = "Cannot resolve external dependency "
+    val prefix = when {
+                   reason.startsWith(noCachedVersionPrefix) -> noCachedVersionPrefix
+                   reason.startsWith(couldNotFindPrefix) -> couldNotFindPrefix
+                   reason.startsWith(cannotResolvePrefix) -> cannotResolvePrefix
+                   else -> null
+                 } ?: return null
+    val indexOfSuffix = reason.indexOf(" available for offline mode")
+    val dependencyName = if (indexOfSuffix > 0) reason.substring(prefix.length, indexOfSuffix) else reason.substring(prefix.length)
+    val unresolvedDependencyIssue = UnresolvedDependencyBuildIssue(dependencyName, description.toString(), indexOfSuffix > 0)
+    return BuildIssueEventImpl(parentId, unresolvedDependencyIssue, MessageEvent.Kind.ERROR)
   }
 }
 

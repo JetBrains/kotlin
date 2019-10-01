@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.issue
 
+import com.intellij.build.BuildConsoleUtils.getMessageTitle
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -118,8 +119,11 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       issueDescription.append(" - Use Java 8 as Gradle JVM: <a href=\"${gradleSettingsFix.id}\">Open Gradle settings</a> \n")
     }
 
+    val description = issueDescription.toString()
+    val title = getMessageTitle(description)
     return object : BuildIssue {
-      override val description: String = issueDescription.toString()
+      override val title: String = title
+      override val description: String = description
       override val quickFixes = quickFixes
     }
   }

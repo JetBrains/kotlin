@@ -3,6 +3,8 @@ package org.jetbrains.plugins.gradle.service.project;
 
 import com.amazon.ion.IonType;
 import com.google.gson.GsonBuilder;
+import com.intellij.build.events.MessageEvent;
+import com.intellij.build.issue.BuildIssue;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -14,7 +16,6 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
-import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerConfiguration;
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemNotificationManager;
 import com.intellij.openapi.externalSystem.service.notification.NotificationCategory;
 import com.intellij.openapi.externalSystem.service.notification.NotificationData;
@@ -28,7 +29,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
@@ -36,9 +36,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.net.HttpConfigurable;
-import com.intellij.util.text.CharArrayUtil;
 import gnu.trove.THash;
 import gnu.trove.THashSet;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
@@ -53,6 +51,7 @@ import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.issue.UnresolvedDependencySyncIssue;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.model.tests.ExternalTestSourceMapping;
@@ -65,18 +64,17 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.util.containers.ContainerUtil.newLinkedHashSet;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.CONFIGURATION_ARTIFACTS;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.MODULES_OUTPUTS;
@@ -235,7 +233,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   protected String[] getIdeModuleGroup(String moduleName, IdeaModule gradleModule) {
     final String gradlePath = gradleModule.getGradleProject().getPath();
     final String rootName = gradleModule.getProject().getName();
-    if (StringUtil.isEmpty(gradlePath) || ":".equals(gradlePath)) {
+    if (isEmpty(gradlePath) || ":".equals(gradlePath)) {
       return rootName.equals(moduleName) ? new String[]{moduleName} : new String[]{rootName, moduleName};
     }
     else {
@@ -655,7 +653,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       Project project = taskId.findProject();
       if (project != null) {
         String msg =
-          "Can't find the following module" + (orphanModules.size() > 1 ? "s" : "") + ": " + StringUtil.join(orphanModules, ", ")
+          "Can't find the following module" + (orphanModules.size() > 1 ? "s" : "") + ": " + join(orphanModules, ", ")
           + "\nIt can be caused by composite build configuration inside your *.gradle scripts with Gradle version older than 3.3." +
           "\nTry Gradle 3.3 or better or enable 'Create separate module per source set' option";
         NotificationData notification = new NotificationData(
@@ -791,15 +789,15 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       final List<Pair<String, String>> extraJvmArgs = new ArrayList<>();
 
       final HttpConfigurable httpConfigurable = HttpConfigurable.getInstance();
-      if (!StringUtil.isEmpty(httpConfigurable.PROXY_EXCEPTIONS)) {
-        List<String> hosts = StringUtil.split(httpConfigurable.PROXY_EXCEPTIONS, ",");
+      if (!isEmpty(httpConfigurable.PROXY_EXCEPTIONS)) {
+        List<String> hosts = split(httpConfigurable.PROXY_EXCEPTIONS, ",");
         if (!hosts.isEmpty()) {
-          final String nonProxyHosts = StringUtil.join(hosts, StringUtil.TRIMMER, "|");
+          final String nonProxyHosts = join(hosts, TRIMMER, "|");
           extraJvmArgs.add(pair("http.nonProxyHosts", nonProxyHosts));
           extraJvmArgs.add(pair("https.nonProxyHosts", nonProxyHosts));
         }
       }
-      if (httpConfigurable.USE_HTTP_PROXY && StringUtil.isNotEmpty(httpConfigurable.getProxyLogin())) {
+      if (httpConfigurable.USE_HTTP_PROXY && isNotEmpty(httpConfigurable.getProxyLogin())) {
         extraJvmArgs.add(pair("http.proxyUser", httpConfigurable.getProxyLogin()));
         extraJvmArgs.add(pair("https.proxyUser", httpConfigurable.getProxyLogin()));
         final String plainProxyPassword = httpConfigurable.getPlainProxyPassword();
@@ -861,7 +859,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       lines.addAll(extension.initializationCode(dispatchPort, debugOptions));
     }
 
-    final String script = StringUtil.join(lines, SystemProperties.getLineSeparator());
+    final String script = join(lines, SystemProperties.getLineSeparator());
     initScriptConsumer.consume(script);
   }
 
@@ -1077,18 +1075,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       if (unresolved) {
         // Gradle uses names like 'unresolved dependency - commons-collections commons-collections 3.2' for unresolved dependencies.
         libraryName = binaryPath.getName().substring(UNRESOLVED_DEPENDENCY_PREFIX.length());
-        int i = libraryName.indexOf(' ');
-        if (i >= 0) {
-          i = CharArrayUtil.shiftForward(libraryName, i + 1, " ");
-        }
-
-        if (i >= 0 && i < libraryName.length()) {
-          int dependencyNameIndex = i;
-          i = libraryName.indexOf(' ', dependencyNameIndex);
-          if (i > 0) {
-            libraryName = String.format("%s-%s", libraryName.substring(dependencyNameIndex, i), libraryName.substring(i + 1));
-          }
-        }
+        libraryName = join(split(libraryName, " "), ":");
       }
     }
     else {
@@ -1105,7 +1092,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
             libraryName += (":" + classifier);
           }
           else {
-            final String artifactId = StringUtil.trimEnd(StringUtil.trimEnd(libraryFileName, moduleVersion.getVersion()), "-");
+            final String artifactId = trimEnd(trimEnd(libraryFileName, moduleVersion.getVersion()), "-");
             libraryName = String.format("%s:%s:%s",
                                         moduleVersion.getGroup(),
                                         artifactId,
@@ -1116,7 +1103,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
     }
 
     // add packaging type to distinguish different artifact dependencies with same groupId:artifactId:version
-    if (StringUtil.isNotEmpty(libraryName) && !FileUtilRt.extensionEquals(binaryPath.getName(), "jar")) {
+    if (!unresolved && isNotEmpty(libraryName) && !FileUtilRt.extensionEquals(binaryPath.getName(), "jar")) {
       libraryName += (":" + FileUtilRt.getExtension(binaryPath.getName()));
     }
 
@@ -1129,6 +1116,12 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
     if (!unresolved) {
       library.addPath(LibraryPathType.BINARY, binaryPath.getAbsolutePath());
+    }
+    else {
+      boolean isOfflineWork = resolverCtx.getSettings() != null && resolverCtx.getSettings().isOfflineWork();
+      String message = String.format("Could not resolve %s.", libraryName);
+      BuildIssue buildIssue = new UnresolvedDependencySyncIssue(libraryName, message, resolverCtx.getProjectPath(), isOfflineWork);
+      resolverCtx.report(MessageEvent.Kind.ERROR, buildIssue);
     }
 
     File sourcePath = dependency.getSource();

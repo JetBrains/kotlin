@@ -6,6 +6,7 @@ import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.ide.actions.RevealFileAction
 import com.intellij.ide.actions.ShowLogAction
+import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
@@ -50,7 +51,7 @@ class GradleVersionQuickFix(private val projectPath: String,
 
   override val id: String = "fix_gradle_version_in_wrapper"
 
-  override fun runQuickFix(project: Project): CompletableFuture<*> {
+  override fun runQuickFix(project: Project, dataProvider: DataProvider): CompletableFuture<*> {
     return updateOrCreateWrapper()
       .exceptionally {
         LOG.warn(it)

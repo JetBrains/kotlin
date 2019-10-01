@@ -51,7 +51,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 
 import static com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.DEBUG_FORK_SOCKET_PARAM;
-import static com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.JVM_DEBUG_SETUP_PREFIX;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUtil.convert;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemUtil.getConsoleManagerFor;
 import static com.intellij.openapi.util.text.StringUtil.nullize;
@@ -204,7 +203,7 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
           @Override
           public void onFailure(@NotNull ExternalSystemTaskId id, @NotNull Exception e) {
             FailureResult failureResult =
-              ExternalSystemUtil.createFailureResult(executionName + " failed", e, id.getProjectSystemId(), myProject);
+              ExternalSystemUtil.createFailureResult(executionName + " failed", e, id.getProjectSystemId(), myProject, progressListener);
             eventDispatcher.onEvent(id, new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "failed", failureResult));
             processHandler.notifyProcessTerminated(1);
           }

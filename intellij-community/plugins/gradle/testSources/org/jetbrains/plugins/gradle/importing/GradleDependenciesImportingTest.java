@@ -460,9 +460,9 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
 
     assertModuleLibDep("project", depName, depJar.getUrl());
     assertMergedModuleCompileLibDepScope("project", depName);
-    assertMergedModuleCompileLibDepScope("project", "Gradle: unresolvable-lib-0.1:1");
+    assertMergedModuleCompileLibDepScope("project", "Gradle: some:unresolvable-lib:0.1");
 
-    unresolvableDep = getModuleLibDeps("project", "Gradle: unresolvable-lib-0.1:1");
+    unresolvableDep = getModuleLibDeps("project", "Gradle: some:unresolvable-lib:0.1");
     if (isGradleOlderThen_3_4() || isGradleNewerThen_4_5()) {
       assertEquals(1, unresolvableDep.size());
       unresolvableEntry = unresolvableDep.iterator().next();

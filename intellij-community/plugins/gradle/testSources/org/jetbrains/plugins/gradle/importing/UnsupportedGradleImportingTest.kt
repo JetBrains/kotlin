@@ -27,7 +27,7 @@ class UnsupportedGradleImportingTest : BuildViewMessagesImportingTestCase() {
         " -failed\n" +
         "  Cannot determine classpath for resource 'java/sql/SQLException.class' from location 'jrt:/java.sql/java/sql/SQLException.class'"
       else -> expectedExecutionTree = "-\n" +
-                                      " successful"
+                                      " finished"
     }
 
     assertSyncViewTreeEquals(expectedExecutionTree)

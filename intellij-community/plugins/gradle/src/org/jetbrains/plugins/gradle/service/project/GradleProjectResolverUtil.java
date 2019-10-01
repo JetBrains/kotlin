@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
+import com.intellij.build.events.MessageEvent;
+import com.intellij.build.issue.BuildIssue;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.Key;
@@ -34,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.ExternalDependencyId;
+import org.jetbrains.plugins.gradle.issue.UnresolvedDependencySyncIssue;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionWorkspace;
@@ -688,6 +691,11 @@ public class GradleProjectResolverUtil {
         if (failureMessage != null) {
           library.addPath(LibraryPathType.BINARY, failureMessage);
         }
+
+        boolean isOfflineWork = resolverCtx.getSettings() != null && resolverCtx.getSettings().isOfflineWork();
+        BuildIssue buildIssue = new UnresolvedDependencySyncIssue(libraryName, failureMessage, resolverCtx.getProjectPath(), isOfflineWork);
+        resolverCtx.report(MessageEvent.Kind.ERROR, buildIssue);
+
         LibraryLevel level = linkProjectLibrary(resolverCtx, ideProject, library) ? LibraryLevel.PROJECT : LibraryLevel.MODULE;
         LibraryDependencyData libraryDependencyData = new LibraryDependencyData(ownerModule, library, level);
         libraryDependencyData.setScope(dependencyScope);
