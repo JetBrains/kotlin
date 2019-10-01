@@ -62,7 +62,7 @@ class DetectAndAdjustIndentOptionsTask {
   }
 
   @NotNull
-  private Runnable performInReadAction(@NotNull ProgressIndicator indicator) {
+  private Runnable calcIndentAdjuster(@NotNull ProgressIndicator indicator) {
     PsiFile file = getFile();
     IndentOptionsAdjuster adjuster = file == null ? null : new IndentOptionsDetectorImpl(file, indicator).getIndentOptionsAdjuster();
     return adjuster != null ? () -> adjustOptions(adjuster) : EmptyRunnable.INSTANCE;
@@ -95,18 +95,18 @@ class DetectAndAdjustIndentOptionsTask {
   void scheduleInBackgroundForCommittedDocument() {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       PsiDocumentManager.getInstance(myProject).commitDocument(myDocument);
-      performInReadAction(new DumbProgressIndicator()).run();
+      calcIndentAdjuster(new DumbProgressIndicator()).run();
     }
     else {
       ReadAction
         .nonBlocking(() -> {
-          Runnable resultInTime = ProgressIndicatorUtils.withTimeout(INDENT_COMPUTATION_TIMEOUT, () ->
-            performInReadAction(Objects.requireNonNull(ProgressIndicatorProvider.getGlobalProgressIndicator())));
-          if (resultInTime == null) {
+          Runnable indentAdjuster = ProgressIndicatorUtils.withTimeout(INDENT_COMPUTATION_TIMEOUT, () ->
+            calcIndentAdjuster(Objects.requireNonNull(ProgressIndicatorProvider.getGlobalProgressIndicator())));
+          if (indentAdjuster == null) {
             logTooLongComputation();
             return EmptyRunnable.INSTANCE;
           }
-          return resultInTime;
+          return indentAdjuster;
         })
         .finishOnUiThread(ModalityState.defaultModalityState(), Runnable::run)
         .withDocumentsCommitted(myProject)
