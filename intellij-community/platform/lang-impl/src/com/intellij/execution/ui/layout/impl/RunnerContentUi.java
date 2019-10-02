@@ -23,7 +23,6 @@ import com.intellij.openapi.ui.AbstractPainter;
 import com.intellij.openapi.ui.ShadowAction;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.ActiveRunnable;
 import com.intellij.openapi.util.Disposer;
@@ -32,7 +31,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.*;
 import com.intellij.openapi.wm.impl.ToolWindowsPane;
 import com.intellij.openapi.wm.impl.content.SelectContentStep;
-import com.intellij.openapi.wm.impl.content.SelectContentTabStep;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.awt.RelativeRectangle;
@@ -615,27 +613,7 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
     }
 
     List<Content> contents = getPopupContents();
-    final SelectContentStep step = new SelectContentStep(contents) {
-      @Nullable
-      @Override
-      public PopupStep<?> onChosen(@NotNull Content value, boolean finalChoice) {
-        boolean isMultiTabbed = value instanceof TabbedContent && ((TabbedContent)value).hasMultipleTabs();
-        if (!isMultiTabbed) {
-          ContentManager manager = value.getManager();
-          if (manager != null) {
-            ApplicationManager.getApplication().invokeLater(() -> {
-              IdeFocusManager.getInstance(getProject()).doWhenFocusSettlesDown(() -> {
-                manager.setSelectedContentCB(value, true, true);
-              });
-            });
-          }
-          return PopupStep.FINAL_CHOICE;
-        }
-        else {
-          return new SelectContentTabStep((TabbedContent)value);
-        }
-      }
-    };
+    final SelectContentStep step = new SelectContentStep(contents);
     final Content selectedContent = myManager.getSelectedContent();
     if (selectedContent != null) {
       step.setDefaultOptionIndex(myManager.getIndexOfContent(selectedContent));
