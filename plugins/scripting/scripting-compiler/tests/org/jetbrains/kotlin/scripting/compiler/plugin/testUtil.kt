@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import junit.framework.Assert
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -12,6 +14,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
+import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -150,4 +153,23 @@ internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
     }
     return Triple(outStream.toString().trim(), errStream.toString().trim(), ret)
 }
+
+internal fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R) {
+    val tempDir = Files.createTempDirectory(keyName).toFile()
+    try {
+        body(tempDir)
+    } finally {
+        tempDir.deleteRecursively()
+    }
+}
+
+internal fun <R> withDisposable(body: (Disposable) -> R) {
+    val disposable = Disposer.newDisposable()
+    try {
+        body(disposable)
+    } finally {
+        Disposer.dispose(disposable)
+    }
+}
+
 
