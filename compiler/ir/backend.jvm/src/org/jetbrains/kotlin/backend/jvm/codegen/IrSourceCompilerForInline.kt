@@ -70,23 +70,21 @@ class IrSourceCompilerForInline(
     override val lazySourceMapper: DefaultSourceMapper
         get() = codegen.classCodegen.getOrCreateSourceMapper()
 
-    private fun makeInlineNode(function: IrFunction, classCodegen: ClassCodegen, marker: CallSiteMarker?): SMAPAndMethodNode {
+    private fun makeInlineNode(function: IrFunction, classCodegen: ClassCodegen, isLambda: Boolean): SMAPAndMethodNode {
         var node: MethodNode? = null
-        val functionCodegen = object : FunctionCodegen(function, classCodegen, isInlineLambda = marker == null) {
+        val functionCodegen = object : FunctionCodegen(function, classCodegen, isLambda) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
                 val asmMethod = signature.asmMethod
                 node = MethodNode(Opcodes.API_VERSION, flags, asmMethod.name, asmMethod.descriptor, signature.genericsSignature, null)
                 return wrapWithMaxLocalCalc(node!!)
             }
         }
-        lazySourceMapper.callSiteMarker = marker
         functionCodegen.generate()
-        lazySourceMapper.callSiteMarker = null
         return SMAPAndMethodNode(node!!, SMAP(classCodegen.getOrCreateSourceMapper().resultMappings))
     }
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
-        makeInlineNode((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, null)
+        makeInlineNode((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, true)
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
@@ -98,7 +96,10 @@ class IrSourceCompilerForInline(
         assert(codegen.lastLineNumber >= 0) { "lastLineNumber shall be not negative, but is ${codegen.lastLineNumber}" }
 
         val irFunction = getFunctionToInline(jvmSignature, callDefault)
-        return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), CallSiteMarker(codegen.lastLineNumber))
+        lazySourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
+        val nodeAndSmap = makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), false)
+        lazySourceMapper.callSiteMarker = null
+        return nodeAndSmap
     }
 
     private fun getFunctionToInline(jvmSignature: JvmMethodSignature, callDefault: Boolean): IrFunction {
