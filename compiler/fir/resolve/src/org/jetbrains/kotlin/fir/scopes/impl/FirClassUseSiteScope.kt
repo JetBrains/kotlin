@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirClassUseSiteScope(
     session: FirSession,
-    private val superTypesScope: FirScope,
+    private val superTypesScope: FirSuperTypeScope,
     private val declaredMemberScope: FirScope
 ) : AbstractFirOverrideScope(session) {
 

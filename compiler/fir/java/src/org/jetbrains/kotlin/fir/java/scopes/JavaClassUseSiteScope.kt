@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractProviderBasedScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 class JavaClassUseSiteScope(
     klass: FirRegularClass,
     session: FirSession,
-    private val superTypesScope: FirScope,
+    private val superTypesScope: FirSuperTypeScope,
     private val declaredMemberScope: FirScope
 ) : FirAbstractProviderBasedScope(session, lookupInFir = true) {
     internal val symbol = klass.symbol
