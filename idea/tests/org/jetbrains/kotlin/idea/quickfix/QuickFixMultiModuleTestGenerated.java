@@ -553,6 +553,21 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createExpect/function2/");
         }
 
+        @TestMetadata("functionInInterface")
+        public void testFunctionInInterface() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/functionInInterface/");
+        }
+
+        @TestMetadata("functionWithImplementationInInterface")
+        public void testFunctionWithImplementationInInterface() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/functionWithImplementationInInterface/");
+        }
+
+        @TestMetadata("functionWithImplementationInInterface2")
+        public void testFunctionWithImplementationInInterface2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/functionWithImplementationInInterface2/");
+        }
+
         @TestMetadata("inlineClass")
         public void testInlineClass() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/inlineClass/");
