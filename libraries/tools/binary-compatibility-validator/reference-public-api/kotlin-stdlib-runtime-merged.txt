@@ -2445,6 +2445,7 @@ public final class kotlin/collections/MapsKt {
 	public static final fun putAll (Ljava/util/Map;Ljava/lang/Iterable;)V
 	public static final fun putAll (Ljava/util/Map;Lkotlin/sequences/Sequence;)V
 	public static final fun putAll (Ljava/util/Map;[Lkotlin/Pair;)V
+	public static final fun sortedMapOf (Ljava/util/Comparator;[Lkotlin/Pair;)Ljava/util/SortedMap;
 	public static final fun sortedMapOf ([Lkotlin/Pair;)Ljava/util/SortedMap;
 	public static final fun toList (Ljava/util/Map;)Ljava/util/List;
 	public static final fun toMap (Ljava/lang/Iterable;)Ljava/util/Map;
