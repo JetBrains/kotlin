@@ -32,6 +32,7 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
 import com.intellij.util.ui.accessibility.ScreenReader;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -134,11 +135,22 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
     return myModel;
   }
 
+  /**
+   * @deprecated use {@link #getFilterModel()} instead
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Override
   public LogContentPreprocessor getContentPreprocessor() {
     return myContentPreprocessor;
   }
 
+  /**
+   * @deprecated use {@link #setFilterModel(LogFilterModel)} instead and
+   *             customize log entry in {@link LogFilterModel#processLine(String)}
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @Override
   public void setContentPreprocessor(final LogContentPreprocessor contentPreprocessor) {
     myContentPreprocessor = contentPreprocessor;
