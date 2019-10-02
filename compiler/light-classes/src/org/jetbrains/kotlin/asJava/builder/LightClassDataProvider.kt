@@ -170,7 +170,7 @@ private class ClassFilterForClassOrObject(private val classOrObject: KtClassOrOb
         if (classOrObject === processingClassOrObject) return true
 
         // process all children
-        if (classOrObject.isAncestor(processingClassOrObject, true) || processingClassOrObject.isAncestor(classOrObject, true)) {
+        if (classOrObject.isAncestor(processingClassOrObject, true)) {
             return true
         }
 
@@ -196,8 +196,9 @@ private class ClassFilterForClassOrObject(private val classOrObject: KtClassOrOb
         return false
     }
 
-    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) =
-        shouldGenerateClassMembers(processingClassOrObject)
+    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject)
+            // generate outer classes but not their members
+            = shouldGenerateClassMembers(processingClassOrObject) || processingClassOrObject.isAncestor(classOrObject, true)
 
     override fun shouldGenerateScript(script: KtScript) = PsiTreeUtil.isAncestor(script, classOrObject, false)
     override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false

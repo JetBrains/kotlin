@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.cast
@@ -49,7 +50,8 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
     }
 
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
-        val lightClassDataHolder = KtLightClassForSourceDeclaration.getLightClassDataHolder(ktClassOrObject)
+        val outermostClass = getOutermostClassOrObject(ktClassOrObject)
+        val lightClassDataHolder = KtLightClassForSourceDeclaration.getLightClassDataHolder(outermostClass)
         if (lightClassDataHolder is InvalidLightClassDataHolder) {
             return Diagnostics.EMPTY
         }
