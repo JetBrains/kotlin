@@ -34,7 +34,7 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
 
   @Override
   public int getVersion() {
-    return 2;
+    return 3;
   }
 
   @NotNull
