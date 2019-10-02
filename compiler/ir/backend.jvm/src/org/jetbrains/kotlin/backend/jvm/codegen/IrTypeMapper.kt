@@ -46,9 +46,26 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
                 error("Unknown descriptor: $classifier")
         }
 
-    fun classInternalName(irClass: IrClass): String =
-        context.getLocalClassInfo(irClass)?.internalName
-            ?: JvmCodegenUtil.sanitizeNameIfNeeded(computeInternalName(irClass), context.state.languageVersionSettings)
+    fun classInternalName(irClass: IrClass): String {
+        context.getLocalClassInfo(irClass)?.internalName?.let { return it }
+        val className = SpecialNames.safeIdentifier(irClass.name).identifier
+        val internalName = when (val parent = irClass.parent) {
+            is IrPackageFragment -> {
+                val fqName = parent.fqName
+                val prefix = if (fqName.isRoot) "" else fqName.asString().replace('.', '/') + "/"
+                prefix + className
+            }
+            is IrClass -> {
+                classInternalName(parent) + "$" + className
+            }
+            else -> error(
+                "Local class should have its name computed in InventNamesForLocalClasses: ${irClass.fqNameWhenAvailable}\n" +
+                        "Ensure that any lowering that transforms elements with local class info (classes, function references) " +
+                        "invokes `copyAttributes` on the transformed element."
+            )
+        }
+        return JvmCodegenUtil.sanitizeNameIfNeeded(internalName, context.state.languageVersionSettings)
+    }
 
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) {
         if (sw.skipGenericSignature()) return
@@ -145,25 +162,6 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
             }
 
             else -> throw UnsupportedOperationException("Unknown type $type")
-        }
-    }
-
-    private fun computeInternalName(klass: IrClass): String {
-        val className = SpecialNames.safeIdentifier(klass.name).identifier
-        return when (val parent = klass.parent) {
-            is IrPackageFragment -> {
-                val fqName = parent.fqName
-                val prefix = if (fqName.isRoot) "" else fqName.asString().replace('.', '/') + "/"
-                prefix + className
-            }
-            is IrClass -> {
-                computeInternalName(parent) + "$" + className
-            }
-            else -> error(
-                "Local class should have its name computed in InventNamesForLocalClasses: ${klass.fqNameWhenAvailable}\n" +
-                        "Ensure that any lowering that transforms elements with local class info (classes, function references) " +
-                        "invokes `copyAttributes` on the transformed element."
-            )
         }
     }
 
