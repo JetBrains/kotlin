@@ -1325,7 +1325,54 @@ private val TypeBridge.objCEncoding: String get() = when (this) {
     is ValueTypeBridge -> this.objCValueType.encoding
 }
 
-internal fun Context.is64BitNSInteger(): Boolean = this.config.target.let {
-    // We work with watchos_arm64 the same as we work with watchos_arm32.
-    it.architecture.bitness == 64 && it != KonanTarget.WATCHOS_ARM64
+internal fun Context.is64BitNSInteger(): Boolean = when (val target = this.config.target) {
+    KonanTarget.IOS_X64,
+    KonanTarget.IOS_ARM64,
+    KonanTarget.TVOS_ARM64,
+    KonanTarget.TVOS_X64,
+    KonanTarget.MACOS_X64 -> true
+    KonanTarget.WATCHOS_ARM64,
+    KonanTarget.WATCHOS_ARM32,
+    KonanTarget.WATCHOS_X86,
+    KonanTarget.IOS_ARM32 -> false
+    KonanTarget.ANDROID_X64,
+    KonanTarget.ANDROID_X86,
+    KonanTarget.ANDROID_ARM32,
+    KonanTarget.ANDROID_ARM64,
+    KonanTarget.LINUX_X64,
+    KonanTarget.MINGW_X86,
+    KonanTarget.MINGW_X64,
+    KonanTarget.LINUX_ARM64,
+    KonanTarget.LINUX_ARM32_HFP,
+    KonanTarget.LINUX_MIPS32,
+    KonanTarget.LINUX_MIPSEL32,
+    KonanTarget.WASM32,
+    is KonanTarget.ZEPHYR -> error("Target $target has no support for NSInteger type.")
+    KonanTarget.WATCHOS_X64 -> error("Target $target is not supported.")
+}
+
+internal fun Context.is64BitLong(): Boolean = when (val target = this.config.target) {
+    KonanTarget.IOS_X64,
+    KonanTarget.IOS_ARM64,
+    KonanTarget.TVOS_ARM64,
+    KonanTarget.TVOS_X64,
+    KonanTarget.ANDROID_X64,
+    KonanTarget.ANDROID_ARM64,
+    KonanTarget.LINUX_ARM64,
+    KonanTarget.MINGW_X64,
+    KonanTarget.LINUX_X64,
+    KonanTarget.MACOS_X64 -> true
+    KonanTarget.WATCHOS_ARM64,
+    KonanTarget.WATCHOS_ARM32,
+    KonanTarget.ANDROID_X86,
+    KonanTarget.ANDROID_ARM32,
+    KonanTarget.WATCHOS_X86,
+    KonanTarget.MINGW_X86,
+    KonanTarget.LINUX_ARM32_HFP,
+    KonanTarget.LINUX_MIPS32,
+    KonanTarget.LINUX_MIPSEL32,
+    KonanTarget.WASM32,
+    is KonanTarget.ZEPHYR,
+    KonanTarget.IOS_ARM32 -> false
+    KonanTarget.WATCHOS_X64 -> error("Target $target is not supported.")
 }

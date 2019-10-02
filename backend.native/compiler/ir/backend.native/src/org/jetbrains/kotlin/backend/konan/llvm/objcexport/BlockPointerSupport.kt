@@ -188,7 +188,7 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
     }
 
     fun org.jetbrains.kotlin.backend.konan.Context.LongInt(value: Long) =
-            if (is64BitNSInteger()) Int64(value) else Int32(value.toInt())
+            if (is64BitLong()) Int64(value) else Int32(value.toInt())
 
     private fun generateDescriptorForBlockAdapterToFunction(bridge: BlockPointerBridge): ConstValue {
         val numberOfParameters = bridge.numberOfParameters
