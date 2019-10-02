@@ -56,17 +56,8 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     myIndexId = indexId;
   }
 
-  @NotNull
-  public IndexStorage<Key, Value> getBackendStorage() {
-    return myBackendStorage;
-  }
-
   public void addBufferingStateListener(@NotNull BufferingStateListener listener) {
     myListeners.add(listener);
-  }
-
-  public void removeBufferingStateListener(@NotNull BufferingStateListener listener) {
-    myListeners.remove(listener);
   }
 
   public void setBufferingEnabled(boolean enabled) {
@@ -77,10 +68,6 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     for (BufferingStateListener listener : myListeners) {
       listener.bufferingStateChanged(enabled);
     }
-  }
-
-  public boolean isBufferingEnabled() {
-    return myBufferingEnabled;
   }
 
   public void clearMemoryMap() {
