@@ -1,19 +1,29 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.externalSystem.importing.ImportSpec
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.externalSystem.view.ExternalProjectsViewImpl
 import com.intellij.openapi.externalSystem.view.ExternalSystemNode
 import com.intellij.openapi.externalSystem.view.ProjectNode
+import com.intellij.openapi.module.JavaModuleType
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.ToolWindowHeadlessManagerImpl
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
 class GradleToolWindowTest extends GradleImportingTestCase {
-  private ToolWindowHeadlessManagerImpl.MockToolWindow toolWindow
-  private ExternalProjectsViewImpl view
+  ToolWindowHeadlessManagerImpl.MockToolWindow toolWindow
+  ExternalProjectsViewImpl view
+  boolean isPreview
 
   @Override
   void setUp() throws Exception {
@@ -22,6 +32,7 @@ class GradleToolWindowTest extends GradleImportingTestCase {
     view = new ExternalProjectsViewImpl(myProject, toolWindow, getExternalSystemId())
     ExternalProjectsManagerImpl.getInstance(myProject).registerView(view)
     view.initStructure()
+    isPreview = false
   }
 
   @Test
@@ -52,6 +63,70 @@ version '1.0-SNAPSHOT'
 
   @Test
   @TargetVersions("5.0")
+  void testDotInModuleName() {
+    createSettingsFile("""
+rootProject.name='rooot'
+include ':child1'
+include ':child2'
+include ':child2:dot.child'
+"""
+    )
+
+    createProjectSubFile "build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+
+    createProjectSubFile "../child1/build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+    createProjectSubFile "../child2/build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+
+    createProjectSubFile "../child2/dot.child/build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+
+    doTest()
+  }
+
+  @Test
+  @TargetVersions("5.0")
+  void testBuildSrc() {
+    createSettingsFile("""
+rootProject.name='rooot'
+include ':child1'
+"""
+    )
+
+    createProjectSubFile "build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+
+    createProjectSubFile "../child1/build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+def foo = new testBuildSrcClassesUsages.BuildSrcClass().sayHello()
+"""
+
+    createProjectSubFile "buildSrc/src/main/groovy/testBuildSrcClassesUsages/BuildSrcClass.groovy", """
+package testBuildSrcClassesUsages;
+public class BuildSrcClass {   
+  public String sayHello() { 'Hello!' }
+}
+"""
+
+    doTest()
+  }
+
+
+  @Test
+  @TargetVersions("5.0")
   void testSimpleBuildWithoutGrouping() {
     createSettingsFile("""
 rootProject.name='rooot'
@@ -74,6 +149,49 @@ version '1.0-SNAPSHOT'
 """
     view.setGroupModules(false)
     doTest()
+  }
+
+
+  @Test
+  @TargetVersions("5.0")
+  void testWithExistedRootModule() {
+    createMainModule("project")
+
+    createSettingsFile("""
+rootProject.name='rooot'
+include ':child1'
+include ':child2'"""
+    )
+
+    createProjectSubFile "build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+
+    createProjectSubFile "../child1/build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+    createProjectSubFile "../child2/build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+    isPreview = true
+    importProject()
+    isPreview = false
+
+    doTest()
+    assert ModuleManager.getInstance(myProject).getModules().length == 3
+  }
+
+  Module createMainModule(String name) {
+    Module module = null
+    WriteAction.runAndWait {
+      VirtualFile f = createProjectSubFile(name + ".iml")
+      module = ModuleManager.getInstance(myProject).newModule(f.getPath(), JavaModuleType.getModuleType().getName())
+      PsiTestUtil.addContentRoot(module, f.getParent())
+    }
+    return module
   }
 
   @Test
@@ -125,10 +243,23 @@ project(':string-utils') {
     doTest()
   }
 
+  @Override
+  protected ImportSpec createImportSpec() {
+    ImportSpecBuilder importSpecBuilder = new ImportSpecBuilder(myProject, getExternalSystemId())
+      .use(ProgressExecutionMode.MODAL_SYNC)
+
+      .forceWhenUptodate();
+    if (isPreview) {
+      importSpecBuilder.usePreviewMode()
+    }
+    return importSpecBuilder.build()
+  }
+
   def doTest() {
     importProject()
     checkToolWindowState()
   }
+
 
   private void checkToolWindowState() {
     def data = ProjectDataManager.getInstance().getExternalProjectsData(myProject, getExternalSystemId()).collect {
@@ -144,7 +275,10 @@ project(':string-utils') {
     def writer = new PrintWriter(sw)
     tree.print(writer)
 
-    assertSameLinesWithFile(getPath(), sw.toString())
+    String path = getPath()
+    assert new File(path).exists(), "File $path doesn't exist"
+
+    assertSameLinesWithFile(path, sw.toString())
   }
 
   private String getPath() {
@@ -152,7 +286,7 @@ project(':string-utils') {
     def testName = getTestName(true)
     testName = testName.substring(0, testName.indexOf("_"))
     testName = getTestName(testName, true)
-    return "$communityPath/plugins/gradle/testData/toolWindow/${testName}.test"
+    return "$communityPath/plugins/gradle/java/testData/toolWindow/${testName}.test"
   }
 
   static Node buildTree(String name, List<ExternalSystemNode<?>> nodes, Node parent) {
