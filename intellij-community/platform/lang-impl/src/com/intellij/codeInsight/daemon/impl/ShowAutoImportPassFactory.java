@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeHighlighting.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -17,6 +18,8 @@ final class ShowAutoImportPassFactory implements TextEditorHighlightingPassFacto
   @Override
   @Nullable
   public TextEditorHighlightingPass createHighlightingPass(@NotNull PsiFile file, @NotNull final Editor editor) {
-    return DaemonListeners.canChangeFileSilently(file) ? new ShowAutoImportPass(file.getProject(), file, editor) : null;
+    return ApplicationManager.getApplication().isUnitTestMode() || DaemonListeners.canChangeFileSilently(file)
+           ? new ShowAutoImportPass(file.getProject(), file, editor)
+           : null;
   }
 }
