@@ -234,7 +234,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
     final String gradlePath = gradleModule.getGradleProject().getPath();
     final String rootName = gradleModule.getProject().getName();
     if (isEmpty(gradlePath) || ":".equals(gradlePath)) {
-      return rootName.equals(moduleName) ? new String[]{moduleName} : new String[]{rootName, moduleName};
+      return new String[]{moduleName};
     }
     else {
       return (rootName + gradlePath).split(":");
