@@ -42,14 +42,14 @@ internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinComp
     }
 }
 
-internal class PropertiesProvider(private val project: Project) {
-    private val localProperties = Properties()
-
-    init {
-        val localPropertiesFile = project.rootProject.file("local.properties")
-        if (localPropertiesFile.isFile) {
-            localPropertiesFile.inputStream().use {
-                localProperties.load(it)
+internal class PropertiesProvider private constructor(private val project: Project) {
+    private val localProperties: Properties by lazy {
+        Properties().apply {
+            val localPropertiesFile = project.rootProject.file("local.properties")
+            if (localPropertiesFile.isFile) {
+                localPropertiesFile.inputStream().use {
+                    load(it)
+                }
             }
         }
     }
@@ -172,5 +172,16 @@ internal class PropertiesProvider(private val project: Project) {
 
     companion object {
         internal const val KOTLIN_NATIVE_HOME = "kotlin.native.home"
+
+        private const val CACHED_PROVIDER_EXT_NAME = "kotlin.properties.provider"
+
+        operator fun invoke(project: Project): PropertiesProvider =
+            with(project.extensions.extraProperties) {
+                if (!has(CACHED_PROVIDER_EXT_NAME)) {
+                    set(CACHED_PROVIDER_EXT_NAME, PropertiesProvider(project))
+                }
+                return get(CACHED_PROVIDER_EXT_NAME) as? PropertiesProvider
+                    ?: PropertiesProvider(project) // Fallback if multiple class loaders are involved
+            }
     }
 }
