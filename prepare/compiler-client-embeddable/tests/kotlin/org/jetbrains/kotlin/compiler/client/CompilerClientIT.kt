@@ -38,12 +38,11 @@ class CompilerClientIT {
     val workingDir = TemporaryFolder()
 
     private val compilerClasspath: List<File> by lazy {
-        listOf(fileFromProp("compilerJar", "kotlin-compiler.jar"))
+        filesFromProp("compilerClasspath", "kotlin-compiler.jar", "kotlin-daemon.jar")
     }
 
     private val compilationClasspath: List<File> by lazy {
-        listOf(fileFromProp("stdlibJar", "kotlin-stdlib.jar"),
-               fileFromProp("scriptRuntimeJar", "kotlin-script-runtime.jar"))
+        filesFromProp("compilationClasspath", "kotlin-stdlib.jar", "kotlin-script-runtime.jar")
     }
 
     private val clientAliveFile by lazy {
@@ -52,11 +51,11 @@ class CompilerClientIT {
         }
     }
 
-    private fun fileFromProp(propName: String, defaultPath: String) =
-            File((System.getProperty(propName) ?: defaultPath)).apply {
-                if (!exists())
-                    throw FileNotFoundException("cannot find $defaultPath ($this)")
-            }
+    private fun filesFromProp(propName: String, vararg defaultPaths: String): List<File> =
+        (System.getProperty(propName)?.split(File.pathSeparator) ?: defaultPaths.asList()).map {
+            File(it).takeIf(File::exists)
+                ?: throw FileNotFoundException("cannot find ($it)")
+        }
 
     private val compilerService: CompileService by lazy {
         val compilerId = CompilerId.makeCompilerId(compilerClasspath)
@@ -75,7 +74,7 @@ class CompilerClientIT {
     fun testSimpleScript() {
         val (out, code) = runCompiler(
                 "-cp", compilationClasspath.joinToString(File.pathSeparator) { it.canonicalPath },
-                File("../src/test/resources/scripts/simpleHelloWorld.kts").canonicalPath)
+                File("testData/scripts/simpleHelloWorld.kts").canonicalPath)
         assertEquals(0, code, "compilation failed:\n" + out + "\n")
     }
 
