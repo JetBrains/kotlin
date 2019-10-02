@@ -340,7 +340,7 @@ public class JoinLinesHandler extends EditorActionHandler {
         RangeMarker marker = markers.get(i);
         if (!marker.isValid()) continue;
         int end = StringUtil.skipWhitespaceForward(text, marker.getStartOffset());
-        int spacesToCreate = text.charAt(end) == '\n' ? 0 :
+        int spacesToCreate = end == text.length() || text.charAt(end) == '\n' ? 0 :
                              model == null ? 1 : formatter.getSpacingForBlockAtOffset(model, end);
         spacesToAdd[i] = spacesToCreate < 0 ? 1 : spacesToCreate;
       }
