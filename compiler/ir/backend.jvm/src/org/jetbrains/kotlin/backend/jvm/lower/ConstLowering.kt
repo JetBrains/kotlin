@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val constPhase = makeIrFilePhase(
     ::ConstLowering,
@@ -34,9 +33,17 @@ fun IrField.constantValue(implicitConst: Boolean = false): IrConst<*>? {
     return if (inline) (initializer?.expression as? IrConst<*>)?.copy() else null
 }
 
-class ConstLowering(val context: CommonBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
+class ConstLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+
+    private fun IrExpression.lowerConstRead(field: IrField?): IrExpression? {
+        val value = field?.constantValue()
+            ?: return null
+
+        return if (context.state.shouldInlineConstVals)
+            value
+        else
+            IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type)
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -44,9 +51,9 @@ class ConstLowering(val context: CommonBackendContext) : IrElementTransformerVoi
         val property = function.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
         if (function != property.getter)
             return super.visitCall(expression)
-        return property.backingField?.constantValue() ?: super.visitCall(expression)
+        return expression.lowerConstRead(property.backingField) ?: super.visitCall(expression)
     }
 
     override fun visitGetField(expression: IrGetField): IrExpression =
-        expression.symbol.owner.constantValue() ?: super.visitGetField(expression)
+        expression.lowerConstRead(expression.symbol.owner) ?: super.visitGetField(expression)
 }
