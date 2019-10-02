@@ -30,11 +30,13 @@ import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
@@ -386,6 +388,11 @@ fun KtNamedDeclaration.isAlwaysActual(): Boolean = safeAs<KtParameter>()?.parent
 fun TypeAccessibilityChecker.isCorrectAndHaveNonPrivateModifier(declaration: KtNamedDeclaration, showErrorHint: Boolean = false): Boolean {
     if (declaration.hasPrivateModifier()) {
         if (showErrorHint) showInaccessibleDeclarationError(declaration, "The declaration has a private modifier")
+        return false
+    }
+
+    if (declaration is KtFunction && declaration.hasBody() && declaration.containingClassOrObject?.isInterfaceClass() == true) {
+        if (showErrorHint) showInaccessibleDeclarationError(declaration, "The function declaration shouldn't have a default implementation")
         return false
     }
 
