@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.resolve.konan.platform
 
 import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -15,6 +16,7 @@ object KonanPlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(SuperCallWithDefaultArgumentsChecker())
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
+        container.useInstance(NativeInliningRule)
     }
 }
 
