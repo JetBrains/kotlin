@@ -19,9 +19,8 @@ import com.jetbrains.cidr.execution.debugger.CidrLocalDebugProcess
 import com.jetbrains.cidr.execution.debugger.CidrSuspensionCause
 import com.jetbrains.cidr.execution.debugger.backend.LLFrame
 import com.jetbrains.cidr.execution.debugger.backend.LLThread
-import kotlin.collections.HashMap
 
-class KonanLocalDebugProcess(
+open class KonanLocalDebugProcess(
     parameters: RunParameters,
     session: XDebugSession,
     consoleBuilder: TextConsoleBuilder,
@@ -37,7 +36,7 @@ class KonanLocalDebugProcess(
         current: Boolean,
         cause: CidrSuspensionCause?
     ): XExecutionStack {
-        return KonanExecutionStack(thread, frame, cause, this@KonanLocalDebugProcess)
+        return KonanExecutionStack(thread, frame, cause, this)
     }
 
     fun resolveFile(originalFullName: String): VirtualFile? {

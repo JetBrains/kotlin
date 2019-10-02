@@ -16,10 +16,10 @@ versions.clion=192.6262.62
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform192_CIDR_CLion_PublicInstallers
 
-versions.nativeDebug=192.5728.12
-versions.nativeDebug.repo=ijplatform_IjPlatform192_Idea_InstallersForEapRelease
+versions.nativeDebug=193.4099.13
+versions.nativeDebug.repo=ijplatform_master_Idea_InstallersForEapRelease
 
-versions.lldbFrontend.hash=a04617bf697726124f958411e2dd401e4aced0b6
+versions.lldbFrontend.hash=06fd59c633549c0f325e0fd6cf0aa31b60dcc721
 versions.lldbFrontend.macos.artifact=LLDBFrontend
 versions.lldbFrontend.macos.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendOsX
 versions.lldbFrontend.windows.artifact=lldb-frontend.zip!x64/bin/LLDBFrontend.exe

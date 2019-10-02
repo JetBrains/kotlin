@@ -1,0 +1,89 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package com.jetbrains.konan.debugger
+
+import com.intellij.execution.ExecutionException
+import com.intellij.execution.RunManager
+import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.openapi.externalSystem.debugger.DebuggerBackendExtension
+import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
+import com.intellij.openapi.project.Project
+import com.jetbrains.konan.IdeaKonanRunConfiguration
+import com.jetbrains.konan.IdeaKonanRunConfigurationType
+import com.jetbrains.konan.IdeaKonanWorkspace
+import com.jetbrains.konan.KonanExecutable
+
+class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
+    override fun id() = "Gradle LLDB"
+
+    private fun debuggerSetupArgs(serverArgs: List<String>): String {
+        return buildString {
+            for (arg in serverArgs) {
+                append("'$arg', ")
+            }
+            append("'127.0.0.1:' + debugPort, '--', task.executable")
+        }
+    }
+
+    override fun initializationCode(dispatchPort: String, sertializedParams: String): List<String> {
+        val params = splitParameters(sertializedParams)
+        val debugServerPath = params[DEBUG_SERVER_PATH_KEY] ?: throw ExecutionException("Executable for debug server is not specified")
+        val debugServerArgs = params[DEBUG_SERVER_ARGS_KEY]?.split(":") ?: emptyList()
+
+        return listOf(
+            "gradle.taskGraph.beforeTask { Task task ->",
+            "  if (task instanceof Exec) {",
+            "    def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '', $dispatchPort)",
+            "    task.args = [" + debuggerSetupArgs(debugServerArgs) + "] + task.args",
+            "    task.executable = '$debugServerPath'",
+            "  }",
+            "}",
+            "gradle.taskGraph.afterTask { Task task ->",
+            "  if (task instanceof Exec) {",
+            "    ForkedDebuggerHelper.signalizeFinish('${id()}', task.path, $dispatchPort)",
+            "  }",
+            "}"
+        )
+    }
+
+    private fun findKonanConfiguration(runManager: RunManager, konanExecutable: KonanExecutable): IdeaKonanRunConfiguration {
+        val result = runManager.allSettings.firstOrNull {
+            (it.configuration as? IdeaKonanRunConfiguration)?.executable == konanExecutable
+        } ?: throw ExecutionException("No configuration for executable=${konanExecutable.base}")
+
+        return result.configuration as IdeaKonanRunConfiguration
+    }
+
+    override fun debugConfigurationSettings(
+        project: Project,
+        processName: String,
+        processParameters: String
+    ): RunnerAndConfigurationSettings {
+        val workspace = IdeaKonanWorkspace.getInstance(project)
+        val runManager = RunManager.getInstance(project)
+
+        val executableId = processName.removePrefix(":run")
+        val executable = workspace.executables.find {
+            it.executionTargets.any { t -> t.gradleTask.contains(executableId) }
+        } ?: throw ExecutionException("No executable for executableId=$executableId")
+
+        val params = splitParameters(processParameters)
+
+        val settings = runManager.createConfiguration(processName, IdeaKonanRunConfigurationType.instance.factory)
+        with(settings.configuration as IdeaKonanRunConfiguration) {
+            copyFrom(findKonanConfiguration(runManager, executable))
+            debugPort = params[ForkedDebuggerHelper.DEBUG_SERVER_PORT_KEY]?.toInt()
+        }
+
+        settings.isActivateToolWindowBeforeRun = false
+        return settings
+    }
+
+    companion object {
+        const val DEBUG_SERVER_PATH_KEY = "DEBUG_SERVER_PATH"
+        const val DEBUG_SERVER_ARGS_KEY = "DEBUG_SERVER_ARGS"
+    }
+}

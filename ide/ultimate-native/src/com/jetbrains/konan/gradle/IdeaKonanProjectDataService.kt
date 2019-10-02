@@ -59,7 +59,7 @@ class IdeaKonanProjectDataService : AbstractProjectDataService<KotlinTargetData,
                 val executable = KonanExecutableBase.constructFrom(artifact, targetName) ?: return@forEach
                 val runProfile = IdeaKonanExecutionTarget.constructFrom(artifact, executable.name) ?: return@forEach
                 executionTargets.getOrPut(executable) { ArrayList() } += runProfile
-                artifact.runConfiguration?.let { runConfigurations.put(executable, it) }
+                artifact.runConfiguration.let { runConfigurations.put(executable, it) }
             }
         }
 

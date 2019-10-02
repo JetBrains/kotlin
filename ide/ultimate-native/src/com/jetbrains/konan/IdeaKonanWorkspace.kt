@@ -5,22 +5,22 @@
 
 package com.jetbrains.konan
 
-import com.intellij.execution.ExecutionTarget
-import com.intellij.execution.ExecutionTargetListener
-import com.intellij.execution.ExecutionTargetManager
-import com.intellij.execution.RunManager
+import com.intellij.execution.*
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import org.jdom.Element
-import org.jetbrains.kotlin.gradle.KonanArtifactModel
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.KonanVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
-import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
+import java.util.*
+import kotlin.collections.HashSet
 
 private val DEBUG_INTRODUCED = KonanVersionImpl(MetaVersion.DEV, 1, 3, 50, -1)
+private val DEBUG_UPDATE_1 = KonanVersionImpl(MetaVersion.DEV, 1, 3, 60, -1)
 
 fun compare(lhs: KonanVersion, rhs: KonanVersion): Int {
     if (lhs.major != rhs.major) return lhs.major - rhs.major
@@ -36,6 +36,25 @@ class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Elemen
     private val basePath = File(project.basePath!!)
     var konanHome: String? = null
 
+    val lldbHome: File
+        get() {
+            val propertiesPath = "$konanHome/konan/konan.properties"
+            val hostDependenciesKey = "dependencies.${HostManager.host}"
+
+            val propertiesFile = File(propertiesPath).apply {
+                if (!exists()) throw ExecutionException("Kotlin/Native properties file is absent at $propertiesPath")
+            }
+
+            val hostDependencies = Properties().apply {
+                propertiesFile.inputStream().use(::load)
+            }.getProperty(hostDependenciesKey) ?: throw ExecutionException("No property $hostDependenciesKey at $propertiesPath")
+
+            val lldbRelative = hostDependencies.split(" ").firstOrNull { it.startsWith("lldb-") }
+                ?: throw ExecutionException("Property $hostDependenciesKey at $propertiesPath does not specify lldb")
+
+            return DependencyDirectories.defaultDependenciesRoot.resolve(lldbRelative)
+        }
+
     var konanVersion: KonanVersion? = null
         set(value) {
             value?.let {
@@ -44,6 +63,12 @@ class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Elemen
                         KonanBundle.message("warning.versionPrior1_3_50", it),
                         NotificationType.WARNING
                     ).notify(project)
+                } else if (compare(it, DEBUG_UPDATE_1) < 0) {
+                    KonanLog.MESSAGES.createNotification(
+                        KonanBundle.message("warning.versionPrior1_3_60", it),
+                        NotificationType.WARNING
+                    ).notify(project)
+
                 }
             }
             field = value

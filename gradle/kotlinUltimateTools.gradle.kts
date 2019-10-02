@@ -160,10 +160,10 @@ fun addCidrDeps(project: Project) = with(project) {
     dependencies {
         val cidrUnscrambledJarDir: File? by rootProject.extra
         val nativeDebugPluginDir: File? by rootProject.extra
-        if (cidrUnscrambledJarDir?.exists() == true) { // CIDR build
-            add("compile", fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
-        } else if (nativeDebugPluginDir?.exists() == true) { // Idea Ultimate build
+        if (nativeDebugPluginDir?.exists() == true) { // Idea Ultimate build
             add("compile", fileTree(nativeDebugPluginDir) { include("**/*.jar") })
+        } else if (cidrUnscrambledJarDir?.exists() == true) { // CIDR build
+            add("compile", fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
         }
     }
 }

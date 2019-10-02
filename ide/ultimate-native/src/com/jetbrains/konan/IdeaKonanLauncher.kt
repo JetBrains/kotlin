@@ -10,17 +10,11 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.PtyCommandLine
-import com.intellij.execution.configurations.SimpleProgramParameters
 import com.intellij.execution.filters.DefaultConsoleFiltersProvider
 import com.intellij.execution.process.ProcessHandler
-import com.intellij.execution.util.ProgramParametersConfigurator
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl
-import com.jetbrains.cidr.execution.RunParameters
-import com.jetbrains.cidr.execution.TrivialInstaller
 import com.jetbrains.cidr.execution.TrivialRunParameters
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
 import com.jetbrains.cidr.system.LocalHost
@@ -34,7 +28,11 @@ class IdeaKonanLauncher(
     private val runFile: File
 ) {
     @Throws(ExecutionException::class)
-    fun startProcess(state: CommandLineState) = createProcess(state)
+    fun startProcess(state: CommandLineState): ProcessHandler {
+        val usePty = usePty()
+        val cl = createCommandLine(usePty)
+        return LocalHost.INSTANCE.createProcess(cl, true, usePty)
+    }
 
     private fun usePty(): Boolean {
         val application = ApplicationManager.getApplication()
@@ -45,54 +43,24 @@ class IdeaKonanLauncher(
     private fun createCommandLine(usePty: Boolean): GeneralCommandLine {
         return ApplicationManager.getApplication().runReadAction(ThrowableComputable<GeneralCommandLine, ExecutionException> {
             val cl: GeneralCommandLine = if (usePty) PtyCommandLine() else GeneralCommandLine()
-            cl.exePath = runFile.toString()
-            val configurator = KonanCommandLineConfigurator(getParameters(runFile.parent.toString()))
-            configurator.configureCommandLine(cl)
+            KonanLLDBInstaller(runFile, configuration).configureCommandLine(cl)
             cl
         })
     }
 
     @Throws(ExecutionException::class)
-    fun createProcess(state: CommandLineState): ProcessHandler {
-        val usePty = usePty()
-        val cl = createCommandLine(usePty)
-        return LocalHost.INSTANCE.createProcess(cl, true, usePty)
-    }
-
-    @Throws(ExecutionException::class)
     fun startDebugProcess(state: CommandLineState, session: XDebugSession): CidrDebugProcess {
-        val result = createDebugProcess(state, session)
-        result.start()
-        return result
-    }
-
-    @Throws(ExecutionException::class)
-    private fun getDebugParameters(cl: GeneralCommandLine): RunParameters {
-        val installer = TrivialInstaller(cl)
         val workspace = IdeaKonanWorkspace.getInstance(configuration.project)
-        return TrivialRunParameters(KonanLLDBDriverConfiguration(workspace.konanHome!!), installer)
-    }
-
-    @Throws(ExecutionException::class)
-    fun createDebugProcess(state: CommandLineState, session: XDebugSession): CidrDebugProcess {
-        val cl = createCommandLine(false)
-        val parameters = getDebugParameters(cl)
-        return KonanLocalDebugProcess(
-            parameters,
+        val installer = KonanLLDBInstaller(runFile, configuration)
+        val lldbConfiguration = KonanLLDBDriverConfiguration(workspace.lldbHome)
+        val result = KonanLocalDebugProcess(
+            TrivialRunParameters(lldbConfiguration, installer),
             session,
             state.consoleBuilder,
             DefaultConsoleFiltersProvider()
         )
+        result.start()
+        return result
     }
 
-    private fun getParameters(defaultWorkingDir: String): SimpleProgramParameters {
-        val params = SimpleProgramParameters()
-        val configurator = object : ProgramParametersConfigurator() {
-            override fun getDefaultWorkingDir(project: Project): String {
-                return defaultWorkingDir
-            }
-        }
-        configurator.configureConfiguration(params, configuration)
-        return params
-    }
 }

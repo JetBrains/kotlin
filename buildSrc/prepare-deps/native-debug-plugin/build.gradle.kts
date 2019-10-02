@@ -1,6 +1,5 @@
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
-import java.io.File
 
 plugins {
     base
@@ -32,7 +31,15 @@ if (rootProject.extra.has("nativeDebugRepo") && rootProject.hasProperty("pluginV
 
 
     dependencies {
-        nativeDebugPluginZip(tc("$nativeDebugRepo:$nativeDebugVersion:IU-plugins/nativeDebug-plugin.zip"))
+        var urlPath = "IU-plugins/auto-uploading/nativeDebug-plugin.zip"
+
+        for (version in listOf("183", "191", "192")) {
+            if (nativeDebugVersion.startsWith(version)) {
+                urlPath = "IU-plugins/nativeDebug-plugin.zip"
+            }
+        }
+
+        nativeDebugPluginZip(tc("$nativeDebugRepo:$nativeDebugVersion:$urlPath"))
     }
 
     val downloadNativeDebugPlugin: Task by downloading(

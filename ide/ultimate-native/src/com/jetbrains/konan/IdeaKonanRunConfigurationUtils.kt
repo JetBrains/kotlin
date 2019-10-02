@@ -11,13 +11,14 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.ui.CommonProgramParametersPanel
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.options.SettingsEditor
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfigurationEditor
 import com.intellij.openapi.project.Project
 import com.intellij.ui.PanelWithAnchor
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.GridBag
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.JComboBox
@@ -43,7 +44,7 @@ class IdeaKonanRunConfigurationType : ConfigurationTypeBase(
         addFactory(factory)
     }
 
-    fun createEditor(project: Project): SettingsEditor<out IdeaKonanRunConfiguration> {
+    fun createEditor(project: Project): IdeaKonanRunConfigurationSettingsEditor {
         return IdeaKonanRunConfigurationSettingsEditor(project)
     }
 
@@ -61,7 +62,8 @@ class ComboBox : JComboBox<String>() {
 }
 
 
-class IdeaKonanRunConfigurationSettingsEditor(val project: Project) : SettingsEditor<IdeaKonanRunConfiguration>(),
+class IdeaKonanRunConfigurationSettingsEditor(val project: Project) :
+    ExternalSystemRunConfigurationEditor(project, GradleConstants.SYSTEM_ID),
     PanelWithAnchor {
 
     private val availableExecutables = IdeaKonanWorkspace.getInstance(project).executables
@@ -72,7 +74,7 @@ class IdeaKonanRunConfigurationSettingsEditor(val project: Project) : SettingsEd
     private var executableLabel: JBLabel? = null
     private var executableCombo: JComboBox<String>? = null
 
-    override fun resetEditorFrom(runConfiguration: IdeaKonanRunConfiguration) {
+    fun resetEditorFrom(runConfiguration: IdeaKonanRunConfiguration) {
         commonProgramParameters?.reset(runConfiguration)
         executableCombo?.selectedItem = runConfiguration.executable?.base?.name
     }
@@ -116,7 +118,7 @@ class IdeaKonanRunConfigurationSettingsEditor(val project: Project) : SettingsEd
         executableLabel?.labelFor = executableCombo
     }
 
-    override fun applyEditorTo(runConfiguration: IdeaKonanRunConfiguration) {
+    fun applyEditorTo(runConfiguration: IdeaKonanRunConfiguration) {
         runConfiguration.apply {
             executable = availableExecutables.firstOrNull { it.base.name == executableCombo?.selectedItem } ?: executable
         }

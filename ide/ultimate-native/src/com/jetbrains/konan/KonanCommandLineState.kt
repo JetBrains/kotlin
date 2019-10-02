@@ -12,8 +12,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugSession
 
-class KonanCommandLineState(environment: ExecutionEnvironment, val launcher: IdeaKonanLauncher) : CommandLineState(environment) {
-
+class KonanCommandLineState(env: ExecutionEnvironment, private val launcher: IdeaKonanLauncher) : CommandLineState(env) {
     @Throws(ExecutionException::class)
     fun startDebugProcess(session: XDebugSession): XDebugProcess {
         return launcher.startDebugProcess(this, session)
