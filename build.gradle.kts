@@ -502,6 +502,13 @@ tasks {
         dependsOn(":plugins:jvm-abi-gen:test")
     }
 
+    register("jvmCompilerIntegrationTest") {
+        dependsOn(
+            ":kotlin-compiler-embeddable:test",
+            ":kotlin-compiler-client-embeddable:test"
+        )
+    }
+
     register("jsCompilerTest") {
         dependsOn(":js:js.tests:test")
         dependsOn(":js:js.tests:runMocha")
@@ -544,6 +551,8 @@ tasks {
         dependsOn(":kotlin-build-common:test")
         dependsOn(":compiler:incremental-compilation-impl:test")
         dependsOn(":core:descriptors.runtime:test")
+
+        dependsOn("jvmCompilerIntegrationTest")
     }
 
     register("toolsTest") {
