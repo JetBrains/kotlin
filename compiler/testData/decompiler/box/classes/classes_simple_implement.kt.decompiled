@@ -1,0 +1,30 @@
+interface MyInterface {
+    abstract fun blaBlaBla(bla: Int): String
+}
+class Implemented : MyInterface {
+    constructor() {
+    }
+    override fun blaBlaBla(bla: Int): String  {
+        var result: String = ""
+        val tmp0_iterator: IntIterator = 0.rangeTo(bla).iterator()
+        while (tmp0_iterator.hasNext())  {
+            val i: Int = tmp0_iterator.next()
+            result += "_${i}"
+        }
+        return result
+    }
+
+}
+fun box(): String  {
+    val implemented: Implemented = Implemented()
+    val res: String = implemented.blaBlaBla(5)
+    val tmp0_subject: String = res
+    when  {
+        tmp0_subject == "_0_1_2_3_4_5" ->  {
+            return "OK"
+        }
+        else ->  {
+            return "FAIL"
+        }
+    }
+}

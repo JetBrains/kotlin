@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.isTypeAliasParameter
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
@@ -175,12 +178,14 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 // Выражения типа this.prop = 42 разворачиваются в вызов, тут вытаскиваем только имя для связывания с this/other
                 IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR -> correspondingPropertySymbol!!.owner.name()
                 else -> renderSimpleFunctionFlags() +
-                        (if (modality == Modality.FINAL) "" else modality.name.toLowerCase() + " ") +
+                        (if (overriddenSymbols.isEmpty() || !overriddenSymbols.map { it.owner.name() }.contains(name())) {
+                            (if (modality == Modality.FINAL) "" else modality.name.toLowerCase() + " ")
+                        } else "override ") +
                         renderVisibility() +
                         "fun $name" +
                         renderTypeParameters() +
                         renderValueParameterTypes() +
-                        ": ${returnType.toKotlinType()} "
+                        returnType.toKotlinType().takeIf { !it.isUnit() }.let { ": ${returnType.toKotlinType()} " }
             }
         }
 
@@ -270,6 +275,8 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 }
             )
             append(declaration.name.asString())
+            val filteredSuperTypes = declaration.superTypes.filter { !it.isAny() }
+            append(if (filteredSuperTypes.isEmpty()) "" else filteredSuperTypes.map { it.toKotlinType() }.joinToString(", ", " : "))
         }
 
     private fun IrClass.renderClassFlags() =
@@ -483,7 +490,11 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     // поэтому воткнул такой костыль пока
 
                     if (expression.dispatchReceiver != null) {
-                        append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
+                        if (expression.superQualifierSymbol != null) {
+                            append("super.")
+                        } else {
+                            append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
+                        }
                     }
 
 //                    if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
@@ -522,7 +533,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
         with(expression) {
             when {
                 origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER -> ""
-                symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER -> "this"
+                symbol.owner.name() == "<this>" || symbol.owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER -> "this"
                 else -> symbol.owner.name()
             }
         }
@@ -548,7 +559,15 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String = TODO()
 
-    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String = TODO()
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
+        expression.arguments.joinToString("", "\"", "\"") {
+            when (it) {
+                is IrGetValue -> "$" + "{" + it.symbol.owner.name() + "}"
+                is IrConst<*> -> it.value?.toString().orEmpty()
+                else -> it.render().orEmpty()
+            }
+        }
+
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String =
         buildTrimEnd {

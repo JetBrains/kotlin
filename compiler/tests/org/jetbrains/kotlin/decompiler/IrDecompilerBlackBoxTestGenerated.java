@@ -76,10 +76,26 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/classes/classes_simple.kt");
         }
 
-        @TestMetadata("classes_simple.decompiled.kt")
-        public void testClasses_simple_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/classes/classes_simple.decompiled.kt");
+        @TestMetadata("classes_simple_implement.kt")
+        public void testClasses_simple_implement() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_simple_implement.kt");
         }
+
+        @TestMetadata("classes_multiple_implement.kt")
+        public void testClasses_multiple_implement() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_multiple_implement.kt");
+        }
+
+        @TestMetadata("classes_super_this_calls.kt")
+        public void testСlasses_super_this_calls() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_super_this_calls.kt");
+        }
+
+        @TestMetadata("classes_init_section.kt")
+        public void testСlasses_init_section() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_init_section.kt");
+        }
+
     }
 
     @TestMetadata("compiler/testData/decompiler/box/expressions")

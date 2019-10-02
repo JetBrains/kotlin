@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -56,10 +57,15 @@ class DecompileIrTreeVisitor(
     override fun visitBlockBody(body: IrBlockBody, data: String) {
         withBraces {
             body.statements
+                //Вызовы родительского конструктора, в каких случаях явно оставлять?
                 .filterNot { it is IrDelegatingConstructorCall }
                 .filterNot { it is IrInstanceInitializerCall }
                 .decompileElements()
         }
+    }
+
+    override fun visitBody(body: IrBody, data: String) {
+        body.statements.decompileElements()
     }
 
     override fun visitBlock(expression: IrBlock, data: String) {
@@ -77,7 +83,7 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitClass(declaration: IrClass, data: String) {
-        printer.print(declaration.accept(elementDecompiler, null))
+        printer.print(declaration.decompile())
         if (declaration.kind == ClassKind.CLASS) {
 //            printer.print(declaration.primaryConstructor?.decompile())
             withBraces {
@@ -98,7 +104,7 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
-        printer.print(declaration.accept(elementDecompiler, null))
+        printer.print(declaration.decompile())
         declaration.body?.accept(this, "")
     }
 
@@ -151,6 +157,13 @@ class DecompileIrTreeVisitor(
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: String) {
         printer.println(expression.decompile())
+    }
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: String) {
+        printer.println("init")
+        withBraces {
+            declaration.body.accept(this, "")
+        }
     }
 
     override fun visitWhen(expression: IrWhen, data: String) {
@@ -276,7 +289,7 @@ class DecompileIrTreeVisitor(
     }
 
     private inline fun withBraces(body: () -> Unit) {
-        printer.printlnWithNoIndent("{")
+        printer.printlnWithNoIndent(" {")
         indented(body)
         printer.println("} ")
     }

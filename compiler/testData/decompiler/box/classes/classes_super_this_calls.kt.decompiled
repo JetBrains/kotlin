@@ -1,0 +1,35 @@
+open class MyParentClass {
+    constructor() {
+    }
+    open fun blaBlaBla(bla: Int): Int  {
+        return bla * 2
+    }
+
+}
+class MyChildClass : MyParentClass {
+    constructor() {
+    }
+    override fun blaBlaBla(bla: Int): Int  {
+        val superCall: Int = super.blaBlaBla(bla)
+        val thisCall: Int = this.inverse(superCall)
+        return thisCall * 2
+    }
+
+    fun inverse(value: Int): Int  {
+        return -value
+    }
+
+}
+fun box(): String  {
+    val myChildClass: MyChildClass = MyChildClass()
+    val res: Int = myChildClass.blaBlaBla(3)
+    val tmp0_subject: Int = res
+    when  {
+        tmp0_subject == -12 ->  {
+            return "OK"
+        }
+        else ->  {
+            return "FAIL"
+        }
+    }
+}
