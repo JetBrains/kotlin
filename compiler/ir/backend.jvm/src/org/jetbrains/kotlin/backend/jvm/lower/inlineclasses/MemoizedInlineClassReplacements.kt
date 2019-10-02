@@ -47,7 +47,10 @@ class MemoizedInlineClassReplacements {
     val getReplacementFunction: (IrFunction) -> IrReplacementFunction? =
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
-                !it.hasMangledParameters || it.isSyntheticInlineClassMember || it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> null
+                !it.hasMangledParameters ||
+                        it.isSyntheticInlineClassMember ||
+                        it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
+                        it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR -> null
                 it.hasMethodReplacement -> createMethodReplacement(it)
                 it.hasStaticReplacement -> createStaticReplacement(it)
                 else -> null
