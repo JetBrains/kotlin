@@ -68,7 +68,7 @@ fun buildLightClass(
 
         val javaFileStub = classBuilderFactory.result()
 
-        ServiceManager.getService(project, StubComputationTracker::class.java)?.onStubComputed(javaFileStub, context)
+        project.getComponent(StubComputationTracker::class.java)?.onStubComputed(javaFileStub, context)
         return LightClassBuilderResult(javaFileStub, context.bindingContext, state.collectedExtraJvmDiagnostics)
     }
     catch (e: ProcessCanceledException) {
