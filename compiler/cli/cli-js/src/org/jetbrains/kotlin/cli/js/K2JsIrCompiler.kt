@@ -153,10 +153,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             // TODO: pass logger attached to message collector here.
         ).libraryResolver()
         val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true, true)
-        val friendDependencies = resolvedLibraries.getFullList()
-            .filter {
-                it.moduleName in friendLibraries
-            }
+
+        val friendAbsolutePaths = friendLibraries.map { File(it).absolutePath }
+        val friendDependencies = resolvedLibraries.getFullList().filter {
+            it.libraryFile.absolutePath in friendAbsolutePaths
+        }
 
         val produceKind = produceMap[arguments.irProduceOnly]
         if (produceKind == null) {
