@@ -66,12 +66,8 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
   }
 
   private final Map<StubIndexKey<?, ?>, CachedValue<Map<CompositeKey, StubIdList>>> myCachedStubIds = FactoryMap.createMap(k -> {
-    UpdatableIndex<Integer, SerializedStubTree, FileContent> index =
-      ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
-    ModificationTracker tracker = () -> {
-
-      return index.getModificationStamp();
-    };
+    UpdatableIndex<Integer, SerializedStubTree, FileContent> index = getStubUpdatingIndex();
+    ModificationTracker tracker = index::getModificationStamp;
     return new CachedValueImpl<>(() -> new CachedValueProvider.Result<>(ContainerUtil.newConcurrentMap(), tracker));
   }, ContainerUtil::newConcurrentMap);
 
@@ -195,9 +191,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     } else {
       registrationResultSink.registerIndexAsUptoDate(indexKey);
     }
-    FileBasedIndexImpl fileBasedIndexManager = (FileBasedIndexImpl)FileBasedIndex.getInstance();
-    UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex =
-      fileBasedIndexManager.getIndex(StubUpdatingIndex.INDEX_ID);
+    UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = getStubUpdatingIndex();
     ReadWriteLock lock = stubUpdatingIndex.getLock();
 
     for (int attempt = 0; attempt < 2; attempt++) {
@@ -375,30 +369,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     in.skipBytes(bufferSize);
   }
 
-  private static class CompositeKey<K> {
-    private final K key;
-    private final int fileId;
-
-    private CompositeKey(K key, int id) {
-      this.key = key;
-      fileId = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      CompositeKey<?> key1 = (CompositeKey<?>)o;
-      return fileId == key1.fileId &&
-             Objects.equals(key, key1.key);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(key, fileId);
-    }
-  }
-
   @Override
   public <Key, Psi extends PsiElement> boolean processElements(@NotNull final StubIndexKey<Key, Psi> indexKey,
                                                                @NotNull final Key key,
@@ -408,8 +378,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
                                                                @NotNull final Class<Psi> requiredClass,
                                                                @NotNull final Processor<? super Psi> processor) {
     IdIterator ids = getContainingIds(indexKey, key, project, idFilter, scope);
-    final FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
-    UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = fileBasedIndex.getIndex(StubUpdatingIndex.INDEX_ID);
+    UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = getStubUpdatingIndex();
     if (stubUpdatingIndex == null) return true;
     PersistentFS fs = (PersistentFS)ManagingFS.getInstance();
     // already ensured up-to-date in getContainingIds() method
@@ -648,8 +617,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
   }
 
   void cleanupMemoryStorage() {
-    UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex =
-      ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
+    UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = getStubUpdatingIndex();
     stubUpdatingIndex.getWriteLock().lock();
 
     try {
@@ -780,6 +748,33 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
 
       myInitialized = true;
       return state;
+    }
+  }
+
+  private static UpdatableIndex<Integer, SerializedStubTree, FileContent> getStubUpdatingIndex() {
+    return ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
+  }
+
+  private static class CompositeKey<K> {
+    private final K key;
+    private final int fileId;
+
+    private CompositeKey(K key, int id) {
+      this.key = key;
+      fileId = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      CompositeKey<?> key1 = (CompositeKey<?>)o;
+      return fileId == key1.fileId && Objects.equals(key, key1.key);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(key, fileId);
     }
   }
 }
