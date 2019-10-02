@@ -248,7 +248,7 @@ private fun smartSelectElement(
 }
 
 fun getExpressionShortText(element: KtElement): String {
-    val text = element.renderTrimmed()
+    val text = element.renderTrimmed().trimStart()
     val firstNewLinePos = text.indexOf('\n')
     var trimmedText = text.substring(0, if (firstNewLinePos != -1) firstNewLinePos else min(100, text.length))
     if (trimmedText.length != text.length) trimmedText += " ..."

@@ -11,7 +11,7 @@ actual class <caret>My {
     }
 
     // Here we will have an error (lateinit is not supported on both sides)
-    actual lateinit var some: Boolean
+    lateinit var some: Boolean
 
     @CommonAnnotation
     actual fun initialize() {
