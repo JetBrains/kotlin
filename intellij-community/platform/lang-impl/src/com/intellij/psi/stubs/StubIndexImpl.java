@@ -152,11 +152,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
       }
 
       @Override
-      public boolean keyIsUniqueForIndexedFile() {
-        return false;
-      }
-
-      @Override
       public boolean traceKeyHashToVirtualFileMapping() {
         return extension instanceof StringStubIndexExtension && ((StringStubIndexExtension)extension).traceKeyHashToVirtualFileMapping();
       }
