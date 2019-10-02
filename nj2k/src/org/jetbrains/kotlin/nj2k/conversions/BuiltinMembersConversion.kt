@@ -225,6 +225,43 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             Method("java.lang.Double.parseDouble") convertTo ExtensionMethod("kotlin.text.toDouble")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
 
+            Field("java.lang.Byte.MIN_VALUE") convertTo Field("kotlin.Byte.Companion.MIN_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Byte.MAX_VALUE") convertTo Field("kotlin.Byte.Companion.MAX_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Short.MIN_VALUE") convertTo Field("kotlin.Short.Companion.MIN_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Short.MAX_VALUE") convertTo Field("kotlin.Short.Companion.MAX_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Integer.MIN_VALUE") convertTo Field("kotlin.Int.Companion.MIN_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Integer.MAX_VALUE") convertTo Field("kotlin.Int.Companion.MAX_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Long.MIN_VALUE") convertTo Field("kotlin.Long.Companion.MIN_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Long.MAX_VALUE") convertTo Field("kotlin.Long.Companion.MAX_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Float.MIN_VALUE") convertTo Field("kotlin.Float.Companion.MIN_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Float.MAX_VALUE") convertTo Field("kotlin.Float.Companion.MAX_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Float.POSITIVE_INFINITY") convertTo Field("kotlin.Float.Companion.POSITIVE_INFINITY")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Float.NEGATIVE_INFINITY") convertTo Field("kotlin.Float.Companion.NEGATIVE_INFINITY")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Float.NaN") convertTo Field("kotlin.Float.Companion.NaN")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Double.MIN_VALUE") convertTo Field("kotlin.Double.Companion.MIN_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Double.MAX_VALUE") convertTo Field("kotlin.Double.Companion.MAX_VALUE")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Double.POSITIVE_INFINITY") convertTo Field("kotlin.Double.Companion.POSITIVE_INFINITY")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Double.NEGATIVE_INFINITY") convertTo Field("kotlin.Double.Companion.NEGATIVE_INFINITY")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Field("java.lang.Double.NaN") convertTo Field("kotlin.Double.Companion.NaN")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+
             Method("java.io.PrintStream.println") convertTo Method("kotlin.io.println")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
                     withFilter ::isSystemOutCall,
