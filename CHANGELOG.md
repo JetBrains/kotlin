@@ -2,7 +2,7 @@
   * Support XCode 11
   * Switch to LLVM 8.0
   * New compiler targets:
-    * watchOS targets, watchos_x86 and watchos_arm32 (GH-3323, GH-3344)
+    * watchOS targets, watchos_x86, watchos_arm64 and watchos_arm32 (GH-3323, GH-3404, GH-3344)
     * tvOS targets tvos_x64 and tvos_arm64 (GH-3303, GH-3363)
     * native Android targets android_x86 and android_x64 (GH-3306, GH-3314)
   * Standard CLI library kotlinx.cli is shipped with the compiler distribution (GH-3215)
