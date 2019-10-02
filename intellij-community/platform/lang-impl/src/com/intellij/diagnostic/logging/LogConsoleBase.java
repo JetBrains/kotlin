@@ -47,6 +47,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -298,9 +299,22 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
       else {
         try {
           final BufferedReader reader = readerThread.myReader;
+          List<String> lines = new ArrayList<>();
           while (reader.ready()) {
-            //ensure have read lock before requiring for sync, otherwise dispose() under write action would lead to deadlock
-            ReadAction.run(() -> addMessage(reader.readLine()));
+            lines.add(reader.readLine());
+          }
+          if (!lines.isEmpty()) {
+            // If another thread holds the write lock and waits for the process termination
+            // (i.e. inside `processHandler.waitFor()`), then acquiring the read lock inside
+            // `ProcessListener.processTerminated` listener method will lead to a deadlock (IDEA-216297).
+            ApplicationManager.getApplication().executeOnPooledThread(() -> {
+              //ensure have read lock before requiring for sync, otherwise dispose() under write action would lead to deadlock
+              ReadAction.run(() -> {
+                for (String line : lines) {
+                  addMessage(line);
+                }
+              });
+            });
           }
         }
         catch (IOException ignore) {}
