@@ -134,19 +134,6 @@ class CallResolver(
             }
         }
 
-        // Top-level extensions via implicit receiver
-        // fun Foo.bar() {}
-        // class Foo {
-        //     fun test() { bar() }
-        // }
-        for (scope in topLevelScopes) {
-            towerDataConsumer.consume(
-                TOWER_LEVEL,
-                ScopeTowerLevel(session, components, scope, implicitExtensionReceiver = implicitReceiverValue),
-                group++
-            )
-        }
-
         return group
     }
 
@@ -206,10 +193,25 @@ class CallResolver(
             }
         }
 
-        // Member of top-level scope & importing scope
-        // val x = 0
-        // fun test() { x }
-        for (scope in topLevelScopes) {
+        topLevelScopeLoop@ for (scope in topLevelScopes) {
+            // Top-level extensions via implicit receiver
+            // fun Foo.bar() {}
+            // class Foo {
+            //     fun test() { bar() }
+            // }
+            for (implicitReceiverValue in implicitReceiverValues) {
+                if (towerDataConsumer.consume(
+                        TOWER_LEVEL,
+                        ScopeTowerLevel(session, components, scope, implicitExtensionReceiver = implicitReceiverValue),
+                        group++
+                    ) == NONE
+                ) {
+                    continue@topLevelScopeLoop
+                }
+            }
+            // Member of top-level scope & importing scope
+            // val x = 0
+            // fun test() { x }
             towerDataConsumer.consume(TOWER_LEVEL, ScopeTowerLevel(session, components, scope), group++)
         }
 
