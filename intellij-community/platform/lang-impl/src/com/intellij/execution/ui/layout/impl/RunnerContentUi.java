@@ -624,7 +624,9 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
           ContentManager manager = value.getManager();
           if (manager != null) {
             ApplicationManager.getApplication().invokeLater(() -> {
-              manager.setSelectedContentCB(value, true, true);
+              IdeFocusManager.getInstance(getProject()).doWhenFocusSettlesDown(() -> {
+                manager.setSelectedContentCB(value, true, true);
+              });
             });
           }
           return PopupStep.FINAL_CHOICE;
