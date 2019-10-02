@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -248,10 +247,6 @@ public abstract class LogConsoleBase extends AdditionalTabComponent implements L
     else if (!isActive() && readerThread.myRunning) {
       readerThread.stopRunning();
     }
-  }
-
-  public void stateChanged(final ChangeEvent e) {
-    activate();
   }
 
   @NotNull
