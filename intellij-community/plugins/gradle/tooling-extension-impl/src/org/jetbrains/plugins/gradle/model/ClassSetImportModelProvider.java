@@ -7,6 +7,7 @@ import org.gradle.tooling.model.gradle.GradleBuild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public final class ClassSetImportModelProvider implements ProjectImportModelProvider {
@@ -14,8 +15,8 @@ public final class ClassSetImportModelProvider implements ProjectImportModelProv
   @NotNull private final Set<Class> buildModelClasses;
 
   public ClassSetImportModelProvider(@NotNull Set<Class> projectModelClasses, @NotNull Set<Class> buildModelClasses) {
-    this.projectModelClasses = projectModelClasses;
-    this.buildModelClasses = buildModelClasses;
+    this.projectModelClasses = new LinkedHashSet<Class>(projectModelClasses);
+    this.buildModelClasses = new LinkedHashSet<Class>(buildModelClasses);
   }
 
   @Override
