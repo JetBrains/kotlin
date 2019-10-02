@@ -2,8 +2,10 @@
 description = "Kotlin Compiler (embeddable)"
 
 plugins {
-    `java`
+    kotlin("jvm")
 }
+
+val testCompilationClasspath by configurations.creating
 
 dependencies {
     runtime(kotlinStdlib())
@@ -11,6 +13,14 @@ dependencies {
     runtime(project(":kotlin-reflect"))
     runtime(project(":kotlin-daemon-embeddable"))
     runtime(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    testCompile(commonDep("junit:junit"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testCompilationClasspath(kotlinStdlib())
+}
+
+sourceSets {
+    "main" {}
+    "test" { projectDefault() }
 }
 
 publish()
@@ -22,7 +32,7 @@ compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
     classifier = "dummy"
 })
 
-runtimeJar(embeddableCompiler()) {
+val runtimeJar = runtimeJar(embeddableCompiler()) {
     exclude("com/sun/jna/**")
     exclude("org/jetbrains/annotations/**")
     mergeServiceFiles()
@@ -30,4 +40,15 @@ runtimeJar(embeddableCompiler()) {
 
 sourcesJar()
 javadocJar()
+
+projectTest {
+    dependsOn(runtimeJar)
+    doFirst {
+        val runtimeJarConfig = configurations["runtimeJar"]
+        val runtimeConfig = configurations["runtime"]
+        systemProperty("compilerClasspath", "${runtimeJarConfig.allArtifacts.files.files.first().path}${File.pathSeparator}${runtimeConfig.asPath}")
+        systemProperty("compilationClasspath", testCompilationClasspath.asPath)
+    }
+}
+
 

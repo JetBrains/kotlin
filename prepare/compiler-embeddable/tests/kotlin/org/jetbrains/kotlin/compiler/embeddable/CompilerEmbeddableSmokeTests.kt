@@ -36,16 +36,23 @@ public class CompilerSmokeTest {
 
     private val javaExecutable = File( File(System.getProperty("java.home"), "bin"), "java")
 
-    private val embeddableJar: File by lazy {
-        val f = File(System.getProperty("compilerJar") ?: "kotlin-compiler-embeddable.jar")
-        if (!f.exists())
-            throw FileNotFoundException("cannot find kotlin-compiler-embeddable.jar ($f)")
-        f
+    private val compilerClasspath: List<File> by lazy {
+        filesFromProp("compilerClasspath", "kotlin-compiler-embeddable.jar")
     }
+
+    private val compilationClasspath: List<File> by lazy {
+        filesFromProp("compilationClasspath", "kotlin-stdlib.jar", "kotlin-script-runtime.jar")
+    }
+
+    private fun filesFromProp(propName: String, vararg defaultPaths: String): List<File> =
+        (System.getProperty(propName)?.split(File.pathSeparator) ?: defaultPaths.asList()).map {
+            File(it).takeIf(File::exists)
+                ?: throw FileNotFoundException("cannot find ($it)")
+        }
 
     @Test
     fun testSmoke() {
-        val (out, code) = runCompiler(File("../test/resources/projects/smoke/Smoke.kt").absolutePath)
+        val (out, code) = runCompiler(File("testData/projects/smoke/Smoke.kt").absolutePath)
         assertEquals(0, code, "compilation failed:\n" + out)
     }
 
@@ -58,12 +65,15 @@ public class CompilerSmokeTest {
     }
 
     private fun runCompiler(vararg arguments: String): Pair<String, Int> {
-        val cmd = listOf(javaExecutable.absolutePath,
-                "-Djava.awt.headless=true",
-                "-cp",
-                embeddableJar.absolutePath,
-                COMPILER_CLASS_FQN) +
-                arguments
+        val cmd = listOf(
+            javaExecutable.absolutePath,
+            "-Djava.awt.headless=true",
+            "-cp",
+            compilerClasspath.joinToString(File.pathSeparator),
+            COMPILER_CLASS_FQN,
+            "-cp",
+            compilationClasspath.joinToString(File.pathSeparator)
+        ) + arguments
         val proc = createProcess(cmd, _workingDir.root)
         return readOutput(proc)
     }
