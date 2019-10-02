@@ -466,7 +466,7 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
       editor = EditorFactory.getInstance().createEditor(document, myProject);
       final EditorHighlighter highlighter = HighlighterFactory.createHighlighter(myProject, file);
       Language language = TextEditorImpl.getDocumentLanguage(editor);
-      editor.getSettings().setLanguage(language);
+      editor.getSettings().setLanguageSupplier(() -> language);
       ((EditorEx) editor).setHighlighter(highlighter);
       ((EditorEx) editor).setFile(file);
 
