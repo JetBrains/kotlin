@@ -6,20 +6,16 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.NamedConfigurable
-import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.PopupStep
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.TitledSeparator
-import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.labels.DropDownLink
 import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.ui.layout.*
 import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import java.awt.event.MouseEvent
 import javax.swing.Icon
 import javax.swing.JComponent
+import javax.swing.JLabel
 import javax.swing.JPanel
 
 internal class RemoteTargetDetailsConfigurable(private val project: Project, private val config: RemoteTargetConfiguration)
@@ -80,32 +76,18 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
     }
   }
 
-  private fun createAddRuntimeHyperlink(): HyperlinkLabel {
-    val result = HyperlinkLabel()
-    result.setHyperlinkText("Add language runtime")
-    result.addHyperlinkListener { e ->
-      val types = LanguageRuntimeType.allTypes()
-      val popup = JBPopupFactory.getInstance().createListPopup(
-        object : BaseListPopupStep<LanguageRuntimeType<*>>("Choose runtime type", types, emptyArray()) {
-          override fun getTextFor(runtime: LanguageRuntimeType<*>?) = runtime!!.displayName
-
-          override fun onChosen(selectedValue: LanguageRuntimeType<*>?, finalChoice: Boolean): PopupStep<*>? = doFinalStep {
-            selectedValue?.also {
-              val newRuntime = it.createDefaultConfig()
-              config.runtimes.addConfig(newRuntime)
-              forceRefreshUI()
-            }
-          }
-        }
-      )
-      if (e.inputEvent is MouseEvent) {
-        popup.show(RelativePoint(e.inputEvent as MouseEvent))
-      }
-      else {
-        popup.showInCenterOf(result)
+  private fun createAddRuntimeHyperlink(): JLabel {
+    class Item(val type: LanguageRuntimeType<*>?) {
+      override fun toString(): String {
+        return type?.displayName ?: "Add language runtime"
       }
     }
-    return result
+
+    return DropDownLink<Item>(Item(null), LanguageRuntimeType.allTypes().map { Item(it) }, {
+      val newRuntime = it.type?.createDefaultConfig() ?: return@DropDownLink
+      config.runtimes.addConfig(newRuntime)
+      forceRefreshUI()
+    }, false)
   }
 
   private fun allConfigurables() = sequenceOf(targetConfigurable) + runtimeConfigurables.asSequence()
