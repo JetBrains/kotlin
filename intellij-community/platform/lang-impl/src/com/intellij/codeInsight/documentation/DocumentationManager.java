@@ -71,14 +71,14 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.DateFormatUtil;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.nio.file.Files;
@@ -174,8 +174,8 @@ public final class DocumentationManager extends DockablePopupManager<Documentati
     super.restorePopupBehavior();
     Component previouslyFocused = SoftReference.dereference(myFocusedBeforePopup);
     if (previouslyFocused != null && previouslyFocused.isShowing()) {
+      UIUtil.runWhenFocused(previouslyFocused, () -> updateComponent(true));
       IdeFocusManager.getInstance(myProject).requestFocus(previouslyFocused, true);
-      updateComponent(true);
     }
   }
 
