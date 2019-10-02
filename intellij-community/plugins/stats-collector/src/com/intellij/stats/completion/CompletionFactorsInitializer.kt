@@ -4,6 +4,7 @@ package com.intellij.stats.completion
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.completion.tracker.PositionTrackingListener
 import com.intellij.lang.Language
+import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
 import com.intellij.stats.personalization.UserFactorsManager
@@ -13,6 +14,7 @@ import com.intellij.stats.storage.factors.MutableLookupStorage
 
 class CompletionFactorsInitializer : LookupTracker() {
   override fun lookupCreated(language: Language?, lookup: LookupImpl) {
+    if (isUnitTestMode() && !CompletionTrackerInitializer.isEnabledInTests) return
     if (language == null) return
     val lookupStorage = MutableLookupStorage.initLookupStorage(lookup, language)
 
