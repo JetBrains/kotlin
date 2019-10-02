@@ -36,4 +36,18 @@ public final class ClassSetBuildImportModelProvider implements ProjectImportMode
                                     @NotNull ProjectModelConsumer modelConsumer) {
     // Do nothing, this provider only works on the build model level
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ClassSetBuildImportModelProvider provider = (ClassSetBuildImportModelProvider)o;
+    if (!classSet.equals(provider.classSet)) return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return classSet.hashCode();
+  }
 }

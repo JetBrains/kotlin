@@ -41,4 +41,22 @@ public final class ClassSetImportModelProvider implements ProjectImportModelProv
       }
     }
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ClassSetImportModelProvider provider = (ClassSetImportModelProvider)o;
+    if (!projectModelClasses.equals(provider.projectModelClasses)) return false;
+    if (!buildModelClasses.equals(provider.buildModelClasses)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = projectModelClasses.hashCode();
+    result = 31 * result + buildModelClasses.hashCode();
+    return result;
+  }
 }
