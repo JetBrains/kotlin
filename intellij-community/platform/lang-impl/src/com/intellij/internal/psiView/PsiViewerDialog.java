@@ -539,9 +539,9 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
     if (source instanceof LanguageFileType) {
       final Language baseLang = ((LanguageFileType)source).getLanguage();
       items.add(baseLang);
-      Language[] dialects = LanguageUtil.getLanguageDialects(baseLang);
-      Arrays.sort(dialects, LanguageUtil.LANGUAGE_COMPARATOR);
-      items.addAll(Arrays.asList(dialects));
+      List<Language> dialects = new ArrayList<>(baseLang.getDialects());
+      Collections.sort(dialects, LanguageUtil.LANGUAGE_COMPARATOR);
+      items.addAll(dialects);
     }
     myDialectComboBox.setModel(new CollectionComboBoxModel<>(items));
 
