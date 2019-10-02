@@ -62,16 +62,20 @@ import java.util.concurrent.ConcurrentMap
 
 class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
 
-    private inner class KtUltraLightSupportImpl(private val element: KtElement, private val module: Module) : KtUltraLightSupport {
+    private inner class KtUltraLightSupportImpl(private val element: KtElement) : KtUltraLightSupport {
+
+        private val module = ModuleUtilCore.findModuleForPsiElement(element)
 
         override val isReleasedCoroutine
-            get() = module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+            get() = module?.languageVersionSettings?.supportsFeature(LanguageFeature.ReleaseCoroutines) ?: true
 
         private fun KtDeclaration.mayBeModifiedByCompilerPlugins(): Boolean {
 
-            val facet = KotlinFacet.get(module)
-            val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
-            if (pluginClasspaths.isNullOrEmpty()) return false
+            module?.let {
+                val facet = KotlinFacet.get(it)
+                val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
+                if (pluginClasspaths.isNullOrEmpty()) return false
+            }
 
             val resolvedDescriptor = lazy(LazyThreadSafetyMode.NONE) {
                 resolveToDescriptorIfAny(
@@ -157,8 +161,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         if (files.any { it.isScript() }) return null
 
         val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
-            val module = ModuleUtilCore.findModuleForPsiElement(it) ?: return null
-            it to KtUltraLightSupportImpl(it, module)
+            it to KtUltraLightSupportImpl(it)
         }
 
         return KtUltraLightClassForFacade(
@@ -178,9 +181,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             return null
         }
 
-        val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
-
-        return KtUltraLightSupportImpl(element, module).let { support ->
+        return KtUltraLightSupportImpl(element).let { support ->
             when {
                 element is KtObjectDeclaration && element.isObjectLiteral() ->
                     KtUltraLightClassForAnonymousDeclaration(element, support)
