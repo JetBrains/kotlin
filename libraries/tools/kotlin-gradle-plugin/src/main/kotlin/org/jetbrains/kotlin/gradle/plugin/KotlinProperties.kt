@@ -141,6 +141,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = propertyWithDeprecatedVariant("kotlin.native.jvmArgs", "org.jetbrains.kotlin.native.jvmArgs")
 
     /**
+     * Forces to run a compilation in a separate JVM.
+     */
+    val nativeDisableCompilerDaemon: Boolean?
+        get() = booleanProperty("kotlin.native.disableCompilerDaemon")
+
+    /**
      * Generate kotlin/js external declarations from all .d.ts files found in npm modules
      */
     val jsGenerateExternals: Boolean?
