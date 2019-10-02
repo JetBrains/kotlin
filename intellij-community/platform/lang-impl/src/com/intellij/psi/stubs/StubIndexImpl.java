@@ -13,6 +13,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.FileUtil;
@@ -23,10 +24,15 @@ import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.provided.StubProvidedIndexExtension;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.CachedValueImpl;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.Processors;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
@@ -58,6 +64,16 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     private final Map<StubIndexKey<?, ?>, TObjectHashingStrategy<?>> myKeyHashingStrategies = new THashMap<>();
     private final TObjectIntHashMap<ID<?, ?>> myIndexIdToVersionMap = new TObjectIntHashMap<>();
   }
+
+  private final Map<StubIndexKey<?, ?>, CachedValue<Map<CompositeKey, StubIdList>>> myCachedStubIds = FactoryMap.createMap(k -> {
+    UpdatableIndex<Integer, SerializedStubTree, FileContent> index =
+      ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
+    ModificationTracker tracker = () -> {
+
+      return index.getModificationStamp();
+    };
+    return new CachedValueImpl<>(() -> new CachedValueProvider.Result<>(ContainerUtil.newConcurrentMap(), tracker));
+  }, ContainerUtil::newConcurrentMap);
 
   private final StubProcessingHelper myStubProcessingHelper;
   private final IndexAccessValidator myAccessValidator = new IndexAccessValidator();
@@ -359,6 +375,30 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     in.skipBytes(bufferSize);
   }
 
+  private static class CompositeKey<K> {
+    private final K key;
+    private final int fileId;
+
+    private CompositeKey(K key, int id) {
+      this.key = key;
+      fileId = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      CompositeKey<?> key1 = (CompositeKey<?>)o;
+      return fileId == key1.fileId &&
+             Objects.equals(key, key1.key);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(key, fileId);
+    }
+  }
+
   @Override
   public <Key, Psi extends PsiElement> boolean processElements(@NotNull final StubIndexKey<Key, Psi> indexKey,
                                                                @NotNull final Key key,
@@ -382,10 +422,18 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
           continue;
         }
 
-        Map<Integer, SerializedStubTree> data = stubUpdatingIndex.getIndexedFileData(id);
-        LOG.assertTrue(data.size() == 1);
-        SerializedStubTree tree = data.values().iterator().next();
-        StubIdList list = tree.restoreIndexedStubs(StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE, indexKey, key);
+        StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey(key, id), __ -> {
+          try {
+            Map<Integer, SerializedStubTree> data = stubUpdatingIndex.getIndexedFileData(id);
+            LOG.assertTrue(data.size() == 1);
+            SerializedStubTree tree = data.values().iterator().next();
+            return tree.restoreIndexedStubs(StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE, indexKey, key);
+          }
+          catch (StorageException | IOException e) {
+            forceRebuild(e);
+            return null;
+          }
+        });
         if (list == null) {
           LOG.error("StubUpdatingIndex & " + indexKey + " stub index mismatch. No stub index key is present");
           return true;
@@ -394,8 +442,6 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
           return false;
         }
       }
-    } catch (StorageException | IOException e) {
-      forceRebuild(e);
     }
     catch (RuntimeException e) {
       final Throwable cause = FileBasedIndexImpl.getCauseToRebuildIndex(e);
