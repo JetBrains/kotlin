@@ -98,7 +98,8 @@ public class GradleAttachSourcesProvider implements AttachSourcesProvider {
         String initScript = "allprojects {\n" +
                             "  afterEvaluate { project ->\n" +
                             "    if(project.path == '" + gradlePath + "') {\n" +
-                            "        project.tasks.create(name: '" + taskName + "', overwrite: true) {\n" +
+                            "        def overwrite = project.tasks.findByName('" + taskName + "') != null" +
+                            "        project.tasks.create(name: '" + taskName + "', overwrite: overwrite) {\n" +
                             "        doLast {\n" +
                             "          def configuration = null\n" +
                             "          def repository = project.repositories.toList().find {\n" +
