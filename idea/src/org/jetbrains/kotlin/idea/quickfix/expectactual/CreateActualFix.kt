@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 
 sealed class CreateActualFix<D : KtNamedDeclaration>(
@@ -92,7 +91,7 @@ class CreateActualClassFix(
     actualPlatform: TargetPlatform
 ) : CreateActualFix<KtClassOrObject>(klass, actualModule, actualPlatform, block@{ project, checker, element ->
     checker.findAndApplyExistingClasses(element.collectDeclarationsForAddActualModifier().toList())
-    if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
+    if (!checker.isCorrectAndHaveAccessibleModifiers(element, true)) return@block null
 
     generateClassOrObject(project, false, element, checker = checker)
 })
@@ -102,7 +101,7 @@ class CreateActualCallableMemberFix(
     actualModule: Module,
     actualPlatform: TargetPlatform
 ) : CreateActualFix<KtCallableDeclaration>(declaration, actualModule, actualPlatform, block@{ project, checker, element ->
-    if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
+    if (!checker.isCorrectAndHaveAccessibleModifiers(element, true)) return@block null
 
     val descriptor = element.toDescriptor() as? CallableMemberDescriptor
     descriptor?.let { generateCallable(project, false, element, descriptor, checker = checker) }

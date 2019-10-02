@@ -543,6 +543,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createExpect/funWithJdk/");
         }
 
+        @TestMetadata("funWithPrivateModifier")
+        public void testFunWithPrivateModifier() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithPrivateModifier/");
+        }
+
         @TestMetadata("function")
         public void testFunction() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/function/");
@@ -631,6 +636,21 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         @TestMetadata("propertyInConstructor")
         public void testPropertyInConstructor() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/propertyInConstructor/");
+        }
+
+        @TestMetadata("propertyWithConstModifier")
+        public void testPropertyWithConstModifier() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/propertyWithConstModifier/");
+        }
+
+        @TestMetadata("propertyWithLateinitModifier")
+        public void testPropertyWithLateinitModifier() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/propertyWithLateinitModifier/");
+        }
+
+        @TestMetadata("propertyWithPrivateModifier")
+        public void testPropertyWithPrivateModifier() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/propertyWithPrivateModifier/");
         }
 
         @TestMetadata("sealedClass")

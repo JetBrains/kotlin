@@ -5,4 +5,7 @@ interface Some
 
 actual class A {
     fun <caret>a(): Some = TODO()
+    private fun b() = "string"
+    lateinit var c: Int
+    const val d = "const"
 }

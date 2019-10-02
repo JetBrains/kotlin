@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -115,10 +114,10 @@ class CreateExpectedClassFix(
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, checker, element ->
     val originalElements = element.collectDeclarationsForAddActualModifier(withSelf = false).toList()
     val existingClasses = checker.findAndApplyExistingClasses(originalElements + klass)
-    if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
+    if (!checker.isCorrectAndHaveAccessibleModifiers(element, true)) return@block null
 
     val (members, declarationsWithNonExistentClasses) = originalElements.partition {
-        checker.isCorrectAndHaveNonPrivateModifier(it)
+        checker.isCorrectAndHaveAccessibleModifiers(it)
     }
 
     if (!showUnknownTypeInDeclarationDialog(project, declarationsWithNonExistentClasses)) return@block null
@@ -138,10 +137,10 @@ class CreateExpectedClassFix(
 
     val selectedClasses = checker.findAndApplyExistingClasses(selectedElements)
     val resultDeclarations = if (selectedClasses != existingClasses) {
-        if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
+        if (!checker.isCorrectAndHaveAccessibleModifiers(element, true)) return@block null
 
         val (resultDeclarations, withErrors) = selectedElements.partition {
-            checker.isCorrectAndHaveNonPrivateModifier(it)
+            checker.isCorrectAndHaveAccessibleModifiers(it)
         }
         if (!showUnknownTypeInDeclarationDialog(project, withErrors)) return@block null
         resultDeclarations
@@ -179,7 +178,6 @@ private fun showUnknownTypeInDeclarationDialog(
 private fun KtDeclaration.canAddActualModifier() = when (this) {
     is KtEnumEntry, is KtClassInitializer -> false
     is KtParameter -> hasValOrVar()
-    is KtProperty -> !hasModifier(KtTokens.LATEINIT_KEYWORD) && !hasModifier(KtTokens.CONST_KEYWORD)
     else -> true
 }
 
@@ -270,7 +268,7 @@ class CreateExpectedCallableMemberFix(
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module
 ) : CreateExpectedFix<KtNamedDeclaration>(declaration, targetExpectedClass, commonModule, block@{ project, checker, element ->
-    if (!checker.isCorrectAndHaveNonPrivateModifier(element, true)) return@block null
+    if (!checker.isCorrectAndHaveAccessibleModifiers(element, true)) return@block null
     val descriptor = element.toDescriptor() as? CallableMemberDescriptor
     checker.existingTypeNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
     descriptor?.let {
