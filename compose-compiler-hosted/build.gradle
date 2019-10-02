@@ -50,7 +50,8 @@ tasks.withType(KotlinCompile).configureEach {
 
 androidx {
     name = "AndroidX Compose Hosted Compiler Plugin"
-    publish = Publish.SNAPSHOT_AND_RELEASE
+    // Nobody should ever get this artifact from maven; just from studio or from source
+    publish = Publish.NONE
     toolingProject = true
     mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.COMPOSE
