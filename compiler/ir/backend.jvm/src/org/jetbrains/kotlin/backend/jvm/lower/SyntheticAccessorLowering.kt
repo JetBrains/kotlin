@@ -45,8 +45,10 @@ internal val syntheticAccessorPhase = makeIrFilePhase(
 
 private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
+    private val inlineLambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
 
     override fun lower(irFile: IrFile) {
+        inlineLambdaToCallSite.putAll(InlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
         irFile.transformChildrenVoid(this)
         pendingTransformations.forEach { it() }
     }
@@ -437,6 +439,16 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
                 this == JavaVisibilities.PROTECTED_AND_PACKAGE ||
                 this == JavaVisibilities.PROTECTED_STATIC_VISIBILITY
 
+    private fun IrDeclaration.getAccessContext(withSuper: Boolean): IrDeclarationContainer? = when {
+        this is IrDeclarationContainer -> this
+        // Accesses from public inline functions can actually be anywhere. For protected inline functions
+        // calling methods on `super` we need an accessor to satisfy INVOKESPECIAL constraints.
+        this is IrFunction && isInline && !visibility.isPrivate && (withSuper || !visibility.isProtected) -> null
+        // For inline lambdas, we can navigate to the only call site directly.
+        this in inlineLambdaToCallSite -> inlineLambdaToCallSite[this]?.getAccessContext(withSuper)
+        else -> (parent as? IrDeclaration)?.getAccessContext(withSuper)
+    }
+
     private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
         /// We assume that IR code that reaches us has been checked for correctness at the frontend.
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
@@ -454,15 +466,9 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
+        val contextDeclarationContainer = (currentScope!!.irElement as IrDeclaration).getAccessContext(withSuper) ?: return false
 
-        // Within inline functions, we have to assume the worst.
-        val function = currentFunction?.irElement as IrFunction?
-        if (function?.isInline == true && !function.visibility.isPrivate && (withSuper || !function.visibility.isProtected))
-            return false
-
-        val contextDeclarationContainer = allScopes.lastOrNull { it.irElement is IrDeclarationContainer }?.irElement
-
-        val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer?.getPackageFragment()?.fqName
+        val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer.getPackageFragment()?.fqName
         return when {
             declaration.visibility.isPrivate && symbolDeclarationContainer != contextDeclarationContainer -> false
             declaration.visibility.isProtected && !samePackage &&

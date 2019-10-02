@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -33,10 +35,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal val callableReferencePhase = makeIrFilePhase(
     ::CallableReferenceLowering,
@@ -44,18 +46,19 @@ internal val callableReferencePhase = makeIrFilePhase(
     description = "Handle callable references"
 )
 
-// Originally copied from K/Native
-internal class CallableReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    // This pass ignores suspend function references and function references used in inline arguments to inline functions.
-    private val ignoredFunctionReferences = mutableSetOf<IrFunctionReference>()
+private val IrStatementOrigin?.isLambda
+    get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
-    private val IrFunctionReference.isIgnored: Boolean
-        get() = !type.isFunctionOrKFunction() || ignoredFunctionReferences.contains(this)
+internal class InlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitorVoidWithContext() {
+    val inlineReferences = mutableSetOf<IrFunctionReference>()
 
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
+    // For crossinline lambdas, the call site is null as it's probably in a separate class somewhere.
+    // All other lambdas are guaranteed to be inlined into the scope they are declared in.
+    val lambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
 
-    // Mark function references appearing as inlined arguments to inline functions.
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
+    override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.valueParameters) {
@@ -66,14 +69,39 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                 if (!isInlineIrExpression(valueArgument))
                     continue
 
-                if (valueArgument is IrFunctionReference) {
-                    ignoredFunctionReferences.add(valueArgument)
-                } else if (valueArgument is IrBlock) {
-                    ignoredFunctionReferences.addIfNotNull(valueArgument.statements.filterIsInstance<IrFunctionReference>().singleOrNull())
+                val reference = when (valueArgument) {
+                    is IrFunctionReference -> valueArgument
+                    is IrBlock -> valueArgument.statements.filterIsInstance<IrFunctionReference>().singleOrNull()
+                    else -> null
+                } ?: continue
+
+                inlineReferences.add(reference)
+                if (valueArgument is IrBlock && valueArgument.origin.isLambda) {
+                    lambdaToCallSite[reference.symbol.owner] =
+                        if (parameter.isCrossinline) null else currentScope!!.irElement as IrDeclaration
                 }
             }
         }
         return super.visitFunctionAccess(expression)
+    }
+
+    companion object {
+        fun scan(context: JvmBackendContext, element: IrElement) =
+            InlineReferenceLocator(context).apply { element.accept(this, null) }
+    }
+}
+
+// Originally copied from K/Native
+internal class CallableReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+    // This pass ignores suspend function references and function references used in inline arguments to inline functions.
+    private val ignoredFunctionReferences = mutableSetOf<IrFunctionReference>()
+
+    private val IrFunctionReference.isIgnored: Boolean
+        get() = !type.isFunctionOrKFunction() || ignoredFunctionReferences.contains(this)
+
+    override fun lower(irFile: IrFile) {
+        ignoredFunctionReferences.addAll(InlineReferenceLocator.scan(context, irFile).inlineReferences)
+        irFile.transformChildrenVoid(this)
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {
@@ -402,9 +430,6 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             }
         }
     }
-
-    private val IrStatementOrigin?.isLambda
-        get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
     private val currentDeclarationParent
         get() = allScopes.last { it.irElement is IrDeclarationParent }.irElement as IrDeclarationParent
