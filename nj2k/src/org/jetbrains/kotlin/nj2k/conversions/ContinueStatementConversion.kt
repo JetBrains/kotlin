@@ -44,7 +44,7 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
         val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
             override fun applyToElement(element: JKTreeElement): JKTreeElement {
                 if (element !is JKContinueStatement) return recurse(element)
-                val elementPsi = element.psi<PsiContinueStatement>()!!
+                val elementPsi = element.psi<PsiContinueStatement>() ?: return recurse(element)
                 if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi) return recurse(element)
                 if (element.parentIsWhenCase() && element.label is JKLabelEmpty) {
                     element.label = JKLabelText(JKNameIdentifier(loopLabel))
@@ -62,16 +62,58 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
             }
         }
 
-        loopStatement.body = continueStatementConverter.applyToElement(loopStatement.body.copyTreeAndDetach()) as JKStatement
+        fun convertContinue(element: JKTreeElement): JKTreeElement {
+            if (element !is JKContinueStatement) return applyRecursive(element, ::convertContinue)
+            val elementPsi = element.psi<PsiContinueStatement>() ?: return applyRecursive(element, ::convertContinue)
+            if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi) return applyRecursive(
+                element,
+                ::convertContinue
+            )
+            if (element.parentIsWhenCase() && element.label is JKLabelEmpty) {
+                element.label = JKLabelText(JKNameIdentifier(loopLabel))
+                if (!labelChanged) {
+                    needLabel = true
+                }
+            }
+            if (loopStatement !is JKKtConvertedFromForLoopSyntheticWhileStatement) {
+                return applyRecursive(element, ::convertContinue)
+            }
+            val statements = loopStatement.forLoopUpdaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
+            return if (element.parent is JKBlock)
+                JKBlockStatementWithoutBrackets(statements)
+            else JKBlockStatement(JKBlockImpl(statements))
+        }
+
+        val body = convertContinue(loopStatement.body)
+        if (!needLabel || body !is JKStatement) {
+            return null
+        }
+
+        loopStatement.body = body
 
         if (!needLabel) {
             return loopStatement
         }
 
-        return JKLabeledExpression(
-            loopStatement.copyTreeAndDetach(),
-            listOf(JKNameIdentifier(loopLabel))
-        ).asStatement()
+        if (loopStatement !is JKKtConvertedFromForLoopSyntheticWhileStatement) {
+            return JKLabeledExpression(
+                loopStatement.copyTreeAndDetach(),
+                listOf(JKNameIdentifier(loopLabel))
+            ).asStatement()
+        }
+
+        return JKBlockStatementWithoutBrackets(
+            listOf(
+                loopStatement::variableDeclaration.detached(),
+                JKLabeledExpression(
+                    JKWhileStatement(
+                        loopStatement::condition.detached(),
+                        loopStatement::body.detached()
+                    ),
+                    listOf(JKNameIdentifier(loopLabel))
+                ).asStatement()
+            )
+        )
     }
 
     private fun JKElement.parentIsWhenCase(): Boolean {

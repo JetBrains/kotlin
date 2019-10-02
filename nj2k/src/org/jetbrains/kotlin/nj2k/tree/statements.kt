@@ -84,21 +84,15 @@ class JKKtWhenStatement(
 
 class JKKtConvertedFromForLoopSyntheticWhileStatement(
     variableDeclaration: JKStatement,
-    whileStatement: JKWhileStatement,
+    condition: JKExpression,
+    body: JKStatement,
     forLoopUpdaters: List<JKStatement>
 ) : JKLoopStatement() {
     var variableDeclaration: JKStatement by child(variableDeclaration)
-    var whileStatement: JKWhileStatement by child(whileStatement)
+    var condition by child(condition)
+    override var body by child(body)
     // For the use in ContinueStatementConverter
     var forLoopUpdaters: List<JKStatement> by children(forLoopUpdaters)
-
-    // No child check because the parent of whileStatement.body is whileStatement
-    // and check will fail.
-    override var body: JKStatement
-        get() = whileStatement.body
-        set(v) {
-            whileStatement.body = v
-        }
 
     override fun accept(visitor: JKVisitor) = visitor.visitKtConvertedFromForLoopSyntheticWhileStatement(this)
 }

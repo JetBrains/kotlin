@@ -38,20 +38,24 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         val condition =
             if (loopStatement.condition !is JKStubExpression) loopStatement::condition.detached()
             else JKLiteralExpression("true", JKLiteralExpression.LiteralType.BOOLEAN)
-        val whileStatement = JKWhileStatement(condition, whileBody)
+
+        if (loopStatement.initializer is JKEmptyStatement) {
+            val whileStatement = JKWhileStatement(condition, whileBody)
+            // To use psi information in ContinueStatementConversion later.
+            whileStatement.psi = loopStatement.psi<PsiForStatement>()!!
+            return whileStatement
+        }
+
+        val convertedFromForLoopSyntheticWhileStatement = JKKtConvertedFromForLoopSyntheticWhileStatement(
+            loopStatement::initializer.detached(),
+            condition,
+            whileBody,
+            // To use updaters information in ContinueStatementConversion later.
+            loopStatement.updaters.map { it.copyTreeAndDetach() }
+        )
 
         // To use psi information in ContinueStatementConversion later.
-        whileStatement.psi = loopStatement.psi<PsiForStatement>()!!
-
-        if (loopStatement.initializer is JKEmptyStatement) return whileStatement
-
-        val convertedFromForLoopSyntheticWhileStatement =
-            JKKtConvertedFromForLoopSyntheticWhileStatement(
-                loopStatement::initializer.detached(),
-                whileStatement,
-                // To use updaters information in ContinueStatementConversion later.
-                loopStatement.updaters.map { it.copyTreeAndDetach() }
-            )
+        convertedFromForLoopSyntheticWhileStatement.psi = loopStatement.psi<PsiForStatement>()!!
 
         val notNeedParentBlock = loopStatement.parent is JKBlock
                 || loopStatement.parent is JKLabeledExpression && loopStatement.parent?.parent is JKBlock

@@ -556,13 +556,26 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         override fun visitWhileStatementRaw(whileStatement: JKWhileStatement) {
+            printWhile(printer, whileStatement.condition, whileStatement.body)
+        }
+
+        override fun visitKtConvertedFromForLoopSyntheticWhileStatementRaw(
+            ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement
+        ) {
+            ktConvertedFromForLoopSyntheticWhileStatement.variableDeclaration.accept(this)
+            printer.printlnWithNoIndent()
+            printWhile(printer, ktConvertedFromForLoopSyntheticWhileStatement.condition, ktConvertedFromForLoopSyntheticWhileStatement.body)
+
+        }
+
+        private fun printWhile(printer: JKPrinter, condition: JKExpression, body: JKStatement) {
             printer.print("while(")
-            whileStatement.condition.accept(this)
+            condition.accept(this)
             printer.printWithNoIndent(")")
-            if (whileStatement.body.isEmpty()) {
+            if (body.isEmpty()) {
                 printer.printWithNoIndent(";")
             } else {
-                whileStatement.body.accept(this)
+                body.accept(this)
             }
         }
 
@@ -587,14 +600,6 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         override fun visitStubExpressionRaw(stubExpression: JKStubExpression) {
-        }
-
-        override fun visitKtConvertedFromForLoopSyntheticWhileStatementRaw(
-            ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement
-        ) {
-            ktConvertedFromForLoopSyntheticWhileStatement.variableDeclaration.accept(this)
-            printer.printlnWithNoIndent()
-            ktConvertedFromForLoopSyntheticWhileStatement.whileStatement.accept(this)
         }
 
         override fun visitNewExpressionRaw(newExpression: JKNewExpression) {

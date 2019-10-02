@@ -29,7 +29,10 @@ class LabeledStatementConversion(context : NewJ2kConverterContext) : RecursiveAp
                 listOf(
                     convertedFromForLoopSyntheticWhileStatement::variableDeclaration.detached(),
                     JKLabeledExpression(
-                        convertedFromForLoopSyntheticWhileStatement::whileStatement.detached(),
+                        JKWhileStatement(
+                            convertedFromForLoopSyntheticWhileStatement::condition.detached(),
+                            convertedFromForLoopSyntheticWhileStatement::body.detached()
+                        ),
                         labeledStatement::labels.detached()
                     ).asStatement()
                 )
