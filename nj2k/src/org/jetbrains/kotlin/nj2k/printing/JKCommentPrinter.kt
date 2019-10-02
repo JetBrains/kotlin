@@ -19,7 +19,11 @@ internal class JKCommentPrinter(val printer: JKPrinter) {
     private fun JKComment.createText() =
         if (this !in printedTokens) {
             printedTokens += this
-            text
+
+            // hack till #KT-16845 is fixed
+            if (!isSingleline && text.endsWith("/*/")) {
+                text.replaceRange(text.length - "/*/".length, text.length, "/ */")
+            } else text
         } else null
 
 

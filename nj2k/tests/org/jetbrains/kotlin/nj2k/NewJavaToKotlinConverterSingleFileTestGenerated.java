@@ -1045,6 +1045,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         public void testRemoveNoInspectionComment() throws Exception {
             runTest("nj2k/testData/newJ2k/comments/removeNoInspectionComment.java");
         }
+
+        @TestMetadata("shashBeforeEndOfMultilineComment.java")
+        public void testShashBeforeEndOfMultilineComment() throws Exception {
+            runTest("nj2k/testData/newJ2k/comments/shashBeforeEndOfMultilineComment.java");
+        }
     }
 
     @TestMetadata("nj2k/testData/newJ2k/conditionalExpression")
