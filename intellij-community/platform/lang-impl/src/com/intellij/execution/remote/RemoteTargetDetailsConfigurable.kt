@@ -7,6 +7,7 @@ import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.NamedConfigurable
 import com.intellij.ui.TitledSeparator
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.labels.DropDownLink
 import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.ui.layout.*
@@ -46,16 +47,18 @@ internal class RemoteTargetDetailsConfigurable(private val project: Project, pri
   override fun getEditableObject() = config
 
   override fun createOptionsPanel(): JComponent {
-    val result = JPanel(VerticalLayout(JBUIScale.scale(UIUtil.DEFAULT_VGAP)))
-    result.border = JBUI.Borders.empty(0, 10, 0, 10)
+    val panel = JPanel(VerticalLayout(JBUIScale.scale(UIUtil.DEFAULT_VGAP)))
+    panel.border = JBUI.Borders.empty(0, 10, 10, 10)
 
-    result.add(targetConfigurable.createComponent() ?: throw IllegalStateException())
+    panel.add(targetConfigurable.createComponent() ?: throw IllegalStateException())
 
     config.runtimes.resolvedConfigs().forEach {
-      result.add(createRuntimePanel(it))
+      panel.add(createRuntimePanel(it))
     }
-    result.add(createAddRuntimeHyperlink())
-    return result
+    panel.add(createAddRuntimeHyperlink())
+    return JBScrollPane(panel).also {
+      it.border = JBUI.Borders.empty()
+    }
   }
 
   private fun createRuntimePanel(runtime: LanguageRuntimeConfiguration): JPanel {
