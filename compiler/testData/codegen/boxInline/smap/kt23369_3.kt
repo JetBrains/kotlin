@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+
 // FILE: + a.kt
 
 package test

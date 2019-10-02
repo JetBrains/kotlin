@@ -3,7 +3,6 @@
 final class InlineWithoutStateMachine_irKt$$complexSuspend$Continuation {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
-    field L$2: java.lang.Object
     field label: int
     @org.jetbrains.annotations.NotNull field result: java.lang.Object
     public method <init>(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): void
@@ -14,8 +13,6 @@ final class InlineWithoutStateMachine_irKt$$complexSuspend$Continuation {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 final class InlineWithoutStateMachine_irKt$$suspendHere$Continuation {
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
-    field L$2: java.lang.Object
     field label: int
     @org.jetbrains.annotations.NotNull field result: java.lang.Object
     public method <init>(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): void
