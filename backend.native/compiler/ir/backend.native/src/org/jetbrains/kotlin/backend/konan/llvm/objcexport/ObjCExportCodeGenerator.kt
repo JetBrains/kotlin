@@ -1325,7 +1325,7 @@ private val TypeBridge.objCEncoding: String get() = when (this) {
     is ValueTypeBridge -> this.objCValueType.encoding
 }
 
-internal fun Context.is64BitNSInteger(): Boolean = when (val target = this.config.target) {
+private fun Context.is64BitNSInteger(): Boolean = when (val target = this.config.target) {
     KonanTarget.IOS_X64,
     KonanTarget.IOS_ARM64,
     KonanTarget.TVOS_ARM64,
