@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.isNonScript
 
-class ScriptChangesNotifier(
+internal class ScriptChangesNotifier(
     private val project: Project,
-    private val scriptsManager: DefaultScriptConfigurationManager
+    private val updater: ScriptConfigurationUpdater,
+    private val listeners: List<ScriptChangeListener>
 ) {
     private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
     private val scriptChangesListenerDelay = 1400
@@ -47,7 +48,7 @@ class ScriptChangesNotifier(
             private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
                 val ktFile = getKtFileToStartConfigurationUpdate(file) ?: return
 
-                scriptsManager.updateConfigurationsIfNotCached(listOf(ktFile))
+                listeners.first { it.editorActivated(ktFile, updater) }
             }
         })
 
@@ -60,7 +61,7 @@ class ScriptChangesNotifier(
                 scriptsQueue.cancelAllRequests()
 
                 scriptsQueue.addRequest(
-                    { scriptsManager.updateConfigurationsIfNotCached(listOf(ktFile)) },
+                    { listeners.first { it.documentChanged(ktFile, updater) } },
                     scriptChangesListenerDelay,
                     true
                 )

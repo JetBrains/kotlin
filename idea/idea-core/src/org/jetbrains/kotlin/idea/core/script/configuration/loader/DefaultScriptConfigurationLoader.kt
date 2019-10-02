@@ -5,37 +5,56 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.loader
 
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
+import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 
-class DefaultScriptConfigurationLoader internal constructor() :
-    ScriptConfigurationLoader {
-    override fun isAsync(file: KtFile, scriptDefinition: ScriptDefinition): Boolean {
-        return scriptDefinition.asLegacyOrNull<KotlinScriptDefinition>()?.dependencyResolver?.let {
-            it is AsyncDependenciesResolver || it is LegacyResolverWrapper
-        } ?: false
-    }
+open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfigurationLoader {
+    override fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean =
+        scriptDefinition
+            .asLegacyOrNull<KotlinScriptDefinition>()
+            ?.dependencyResolver
+            ?.let { it is AsyncDependenciesResolver || it is LegacyResolverWrapper }
+            ?: false
 
     override fun loadDependencies(
-        firstLoad: Boolean,
-        file: KtFile,
-        scriptDefinition: ScriptDefinition
-    ): ScriptCompilationConfigurationResult? {
+        isFirstLoad: Boolean,
+        virtualFile: VirtualFile,
+        scriptDefinition: ScriptDefinition,
+        context: ScriptConfigurationLoadingContext
+    ): Boolean {
+        val file = project.getKtFile(virtualFile) ?: return false
+
         debug(file) { "start dependencies loading" }
 
-        val result = refineScriptCompilationConfiguration(KtFileScriptSource(file), scriptDefinition, file.project)
+        val inputs = getInputsStamp(file)
+        val scriptingApiResult = refineScriptCompilationConfiguration(
+            KtFileScriptSource(file), scriptDefinition, file.project
+        )
+
+        val result = LoadedScriptConfiguration(
+            inputs,
+            scriptingApiResult.reports,
+            scriptingApiResult.valueOrNull()
+        )
+
+        context.suggestNewConfiguration(virtualFile, result)
 
         debug(file) { "finish dependencies loading" }
 
-        return result
+        return true
     }
+
+    protected open fun getInputsStamp(file: KtFile): CachedConfigurationInputs =
+        CachedConfigurationInputs.PsiModificationStamp(file.modificationStamp)
 }
-
-

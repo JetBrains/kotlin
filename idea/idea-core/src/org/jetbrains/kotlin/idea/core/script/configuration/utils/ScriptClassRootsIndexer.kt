@@ -12,41 +12,32 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Utility for postponing indexing of new roots at the end of some bulk operation.
+ * Utility for postponing indexing of new roots to the end of some bulk operation.
  */
 internal class ScriptClassRootsIndexer(val project: Project) {
     private var newRootsPresent: Boolean = false
     private val concurrentTransactions = AtomicInteger()
 
-    fun checkNonCachedRoots(
-        cache: ScriptConfigurationMemoryCache,
-        file: VirtualFile,
-        configuration: ScriptCompilationConfigurationWrapper
-    ) {
+    @Synchronized
+    fun markNewRoot(file: VirtualFile, configuration: ScriptCompilationConfigurationWrapper) {
+        debug(file) { "new class roots found: $configuration" }
         checkInTransaction()
-        if (cache.hasNotCachedRoots(configuration)) {
-            synchronized(this) {
-                debug(file) { "new class roots found: $configuration" }
-                checkInTransaction()
-                newRootsPresent = true
-            }
-        }
+        newRootsPresent = true
     }
 
-    private fun checkInTransaction() {
-        check(concurrentTransactions.get() > 0) { "Transaction is not started" }
+    fun checkInTransaction() {
+        check(concurrentTransactions.get() > 0)
     }
 
-    inline fun transaction(body: () -> Unit) {
+    inline fun <T> transaction(body: () -> T): T {
         startTransaction()
-        try {
+        return try {
             body()
         } finally {
             commit()
@@ -77,8 +68,7 @@ internal class ScriptClassRootsIndexer(val project: Project) {
                 debug { "roots change event" }
 
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
-                ScriptDependenciesModificationTracker.getInstance(project)
-                    .incModificationCount()
+                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
             }
         }
 

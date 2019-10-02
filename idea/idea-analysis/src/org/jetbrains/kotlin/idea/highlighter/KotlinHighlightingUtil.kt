@@ -72,7 +72,7 @@ object KotlinHighlightingUtil {
     @Suppress("DEPRECATION")
     private fun shouldHighlightScript(ktFile: KtFile): Boolean {
         if (isRunningInCidrIde) return false // There is no Java support in CIDR. So do not highlight errors in KTS if running in CIDR.
-        if (!ScriptConfigurationManager.getInstance(ktFile.project).isConfigurationCached(ktFile)) return false
+        if (!ScriptConfigurationManager.getInstance(ktFile.project).hasConfiguration(ktFile)) return false
         if (IdeScriptReportSink.getReports(ktFile).any { it.severity == ScriptDiagnostic.Severity.FATAL }) {
             return false
         }

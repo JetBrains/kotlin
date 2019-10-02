@@ -5,47 +5,56 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.cache
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.LoadedScriptConfiguration
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.*
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper.FromCompilationConfiguration
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper.FromLegacy
 import java.io.*
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-class ScriptConfigurationFileAttributeCache :
-    ScriptConfigurationLoader {
-    operator fun contains(file: VirtualFile): Boolean =
-        file.scriptDependencies != null || file.scriptCompilationConfiguration != null
-
-    override val skipSaveToAttributes: Boolean
-        get() = true
-
-    override val skipNotification: Boolean
-        get() = true
-
+internal class ScriptConfigurationFileAttributeCache(
+    val project: Project
+) : ScriptConfigurationLoader {
+    /**
+     * todo(KT-34444): this should be changed to storing all roots in the persistent file cache
+     */
     override fun loadDependencies(
-        firstLoad: Boolean,
-        file: KtFile,
-        scriptDefinition: ScriptDefinition
-    ): ScriptCompilationConfigurationResult? {
-        if (!firstLoad) return null
+        isFirstLoad: Boolean,
+        virtualFile: VirtualFile,
+        scriptDefinition: ScriptDefinition,
+        context: ScriptConfigurationLoadingContext
+    ): Boolean {
+        if (!isFirstLoad) return false
 
-        val virtualFile = file.originalFile.virtualFile
+        val fromFs = load(virtualFile) ?: return false
+        // todo(KT-34444): save inputs to fs
+        val result = LoadedScriptConfiguration(CachedConfigurationInputs.OutOfDate, listOf(), fromFs)
+        context.saveNewConfiguration(virtualFile, result)
+        return true
+    }
+
+    private fun load(
+        virtualFile: VirtualFile
+    ): ScriptCompilationConfigurationWrapper? {
+        val ktFile = project.getKtFile(virtualFile) ?: return null
+        val scriptSource = KtFileScriptSource(ktFile)
 
         val configurationFromAttributes =
             virtualFile.scriptCompilationConfiguration?.let {
-                FromCompilationConfiguration(KtFileScriptSource(file), it)
+                FromCompilationConfiguration(scriptSource, it)
             } ?: virtualFile.scriptDependencies?.let {
-                FromLegacy(KtFileScriptSource(file), it, scriptDefinition)
+                FromLegacy(scriptSource, it, ktFile.findScriptDefinition())
             } ?: return null
 
 
@@ -56,7 +65,7 @@ class ScriptConfigurationFileAttributeCache :
             return null
         }
 
-        return configurationFromAttributes.asSuccess()
+        return configurationFromAttributes
     }
 
     private fun areDependenciesValid(file: VirtualFile, configuration: ScriptCompilationConfigurationWrapper): Boolean {
@@ -78,7 +87,7 @@ class ScriptConfigurationFileAttributeCache :
             file.scriptDependencies = null
             file.scriptCompilationConfiguration = null
         } else {
-            if (value is FromLegacy) {
+            if (value is ScriptCompilationConfigurationWrapper.FromLegacy) {
                 file.scriptDependencies = value.legacyDependencies
             } else {
                 if (file.scriptDependencies != null) file.scriptDependencies = null

@@ -5,23 +5,26 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.loader
 
-import org.jetbrains.kotlin.psi.KtFile
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 
-// TODO: rename - this is not only about dependencies anymore
+/**
+ * Provides the way to loading and saving script configuration.
+ *
+ * @see [org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManager] for more details.
+ */
 internal interface ScriptConfigurationLoader {
-    fun isAsync(file: KtFile, scriptDefinition: ScriptDefinition) = false
+    fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean = false
 
-    val skipSaveToAttributes: Boolean
-        get() = false
-
-    val skipNotification: Boolean
-        get() = false
-
+    /**
+     * Implementation should load configuration and call `context.suggestNewConfiguration` or `saveNewConfiguration`.
+     *
+     * @return true when this loader is applicable.
+     */
     fun loadDependencies(
-        firstLoad: Boolean,
-        file: KtFile,
-        scriptDefinition: ScriptDefinition
-    ): ScriptCompilationConfigurationResult?
+        isFirstLoad: Boolean,
+        virtualFile: VirtualFile,
+        scriptDefinition: ScriptDefinition,
+        context: ScriptConfigurationLoadingContext
+    ): Boolean
 }

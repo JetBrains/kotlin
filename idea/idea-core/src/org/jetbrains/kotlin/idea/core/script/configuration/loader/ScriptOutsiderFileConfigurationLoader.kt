@@ -5,32 +5,35 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.loader
 
-import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.highlighter.OutsidersPsiFileSupportUtils
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import kotlin.script.experimental.api.asSuccess
 
-class ScriptOutsiderFileConfigurationLoader(private val manager: DefaultScriptConfigurationManager) :
+internal class ScriptOutsiderFileConfigurationLoader(val project: Project) :
     ScriptConfigurationLoader {
-    override val skipSaveToAttributes: Boolean
-        get() = true
-
-    override val skipNotification: Boolean
-        get() = true
-
     override fun loadDependencies(
-        firstLoad: Boolean,
-        file: KtFile,
-        scriptDefinition: ScriptDefinition
-    ): ScriptCompilationConfigurationResult? {
-        val virtualFile = file.virtualFile ?: return null
-        val project = file.project
+        isFirstLoad: Boolean,
+        virtualFile: VirtualFile,
+        scriptDefinition: ScriptDefinition,
+        context: ScriptConfigurationLoadingContext
+    ): Boolean {
+        if (!isFirstLoad) return false
 
-        val fileOrigin = OutsidersPsiFileSupportUtils.getOutsiderFileOrigin(project, virtualFile) ?: return null
-        val psiFileOrigin = PsiManager.getInstance(project).findFile(fileOrigin) as? KtFile ?: return null
-        return manager.getConfiguration(psiFileOrigin)?.asSuccess()
+        val fileOrigin = OutsidersPsiFileSupportUtils.getOutsiderFileOrigin(
+            project,
+            virtualFile
+        ) ?: return false
+
+        val original = context.getCachedConfiguration(fileOrigin)
+        if (original != null) {
+            context.saveNewConfiguration(virtualFile, LoadedScriptConfiguration(original.inputs, listOf(), original.configuration))
+        }
+
+        // todo(KT-34615): initiate loading configuration for original file and subscribe to it's result?
+        //                 should we show "new context" notification for both files?
+
+        return true
     }
 }

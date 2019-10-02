@@ -28,7 +28,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
-import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.configuration.AbstractScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationSnapshot
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.LoadedScriptConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
@@ -58,48 +61,58 @@ class IdeScriptDependenciesProvider(project: Project) : ScriptDependenciesProvid
 /**
  * Facade for loading and caching Kotlin script files configuration.
  *
- * Loaded configuration will be cached in [memoryCache] and [fileAttributesCache].
  * This service also starts indexing of new dependency roots and runs highlighting
- * of opened files.
+ * of opened files when configuration will be loaded or updated.
  */
 interface ScriptConfigurationManager {
+    /**
+     * Get cached configuration for [file] or load it.
+     * May return null even configuration was loaded but was not yet applied.
+     */
+    fun getConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper?
+
+    @Deprecated("Use getScriptClasspath(KtFile) instead")
+    fun getScriptClasspath(file: VirtualFile): List<VirtualFile>
+
+    /**
+     * @see [getConfiguration]
+     */
+    fun getScriptClasspath(file: KtFile): List<VirtualFile>
+
+    /**
+     * Check if configuration is already cached for [file] (in cache or FileAttributes).
+     * The result may be true, even cached configuration is considered out-of-date.
+     *
+     * Supposed to be used to switch highlighting off for scripts without configuration
+     * to avoid all file being highlighted in red.
+     */
+    fun hasConfiguration(file: KtFile): Boolean
+
+    /**
+     * See [ScriptConfigurationUpdater].
+     */
+    val updater: ScriptConfigurationUpdater
+
+    /**
+     * Clear all caches and re-highlighting opened scripts
+     */
+    fun clearConfigurationCachesAndRehighlight()
+
     /**
      * Save configurations into cache.
      * Start indexing for new class/source roots.
      * Re-highlight opened scripts with changed configuration.
      */
-    fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, ScriptCompilationConfigurationResult>>)
+    fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, LoadedScriptConfiguration>>)
 
-    /**
-     * Start configuration update for files if configuration isn't up to date.
-     * Start indexing for new class/source roots.
-     *
-     * @return true if update was started for any file, false if all configurations are cached
-     */
-    fun updateConfigurationsIfNotCached(files: List<KtFile>): Boolean
+    ///////////////
+    // classpath roots info:
 
-    /**
-     * Check if configuration is already cached for [file] (in cache or FileAttributes).
-     * Don't check if file was changed after the last update.
-     * Supposed to be used to switch highlighting off for scripts without configuration.
-     * to avoid all file being highlighted in red.
-     */
-    fun isConfigurationCached(file: KtFile): Boolean
-
-    /**
-     * Clear configuration caches
-     * Start re-highlighting for opened scripts
-     */
-    fun clearConfigurationCachesAndRehighlight()
-
-    @Deprecated("Use getScriptClasspath(KtFile) instead")
-    fun getScriptClasspath(file: VirtualFile): List<VirtualFile>
-
-    fun getScriptClasspath(file: KtFile): List<VirtualFile>
-    fun getConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper?
-    fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope
     fun getScriptSdk(file: VirtualFile): Sdk?
     fun getFirstScriptsSdk(): Sdk?
+
+    fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope
+
     fun getAllScriptsDependenciesClassFilesScope(): GlobalSearchScope
     fun getAllScriptDependenciesSourcesScope(): GlobalSearchScope
     fun getAllScriptsDependenciesClassFiles(): List<VirtualFile>
@@ -146,7 +159,7 @@ interface ScriptConfigurationManager {
 
         @TestOnly
         fun updateScriptDependenciesSynchronously(file: PsiFile, project: Project) {
-            (getInstance(project) as DefaultScriptConfigurationManager).updateScriptDependenciesSynchronously(file)
+            (getInstance(project) as AbstractScriptConfigurationManager).updateScriptDependenciesSynchronously(file)
         }
     }
 }
