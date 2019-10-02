@@ -97,7 +97,7 @@ class IrSourceCompilerForInline(
         assert(codegen.lastLineNumber >= 0) { "lastLineNumber shall be not negative, but is ${codegen.lastLineNumber}" }
 
         val irFunction = getFunctionToInline(jvmSignature, callDefault)
-        val classCodegen = FakeClassCodegen(irFunction, codegen.classCodegen, codegen.irFunction.isInline || codegen.inlinedInto != null)
+        val classCodegen = FakeClassCodegen(irFunction, codegen.classCodegen, codegen.irFunction.isInline)
         lazySourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
         val nodeAndSMAP = makeInlineNode(irFunction, classCodegen, false)
         lazySourceMapper.callSiteMarker = null
