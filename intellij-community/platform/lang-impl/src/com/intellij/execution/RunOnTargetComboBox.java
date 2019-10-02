@@ -170,8 +170,6 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
       if (value instanceof Separator) {
         SeparatorWithText separator = new SeparatorWithText();
         separator.setCaption(value.getDisplayName());
-        separator.setCaptionCentered(false);
-        setFont(getFont().deriveFont(Font.PLAIN));
         return separator;
       }
       return super.getListCellRendererComponent(list, value, index, selected, hasFocus);
