@@ -106,6 +106,7 @@ import java.util.stream.Stream;
  */
 public final class FileBasedIndexImpl extends FileBasedIndex {
   private static final ThreadLocal<VirtualFile> ourIndexedFile = new ThreadLocal<>();
+  private static final ThreadLocal<VirtualFile> ourFileToBeIndexed = new ThreadLocal<>();
   static final Logger LOG = Logger.getInstance("#com.intellij.util.indexing.FileBasedIndexImpl");
   private static final String CORRUPTION_MARKER_NAME = "corruption.marker";
   private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("Indexing", NotificationDisplayType.BALLOON, false);
@@ -1725,7 +1726,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
   @Override
   public VirtualFile getFileBeingCurrentlyIndexed() {
-    return ourIndexedFile.get();
+    VirtualFile file = ourIndexedFile.get();
+    return file != null ? file : ourFileToBeIndexed.get();
   }
 
   private class VirtualFileUpdateTask extends UpdateTask<VirtualFile> {
@@ -1878,28 +1880,33 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
         getChangedFilesCollector().removeScheduledFileFromUpdate(file);
       }
       else {
-        getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
-          final List<ID<?, ?>> candidates = getAffectedIndexCandidates(file);
+        ourFileToBeIndexed.set(file);
+        try {
+          getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
+            final List<ID<?, ?>> candidates = getAffectedIndexCandidates(file);
 
-          boolean scheduleForUpdate = false;
+            boolean scheduleForUpdate = false;
 
-          //noinspection ForLoopReplaceableByForEach
-          for (int i = 0, size = candidates.size(); i < size; ++i) {
-            final ID<?, ?> indexId = candidates.get(i);
-            if (needsFileContentLoading(indexId) && getInputFilter(indexId).acceptInput(file)) {
-              getIndex(indexId).resetIndexedStateForFile(fileId);
-              scheduleForUpdate = true;
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0, size = candidates.size(); i < size; ++i) {
+              final ID<?, ?> indexId = candidates.get(i);
+              if (needsFileContentLoading(indexId) && getInputFilter(indexId).acceptInput(file)) {
+                getIndex(indexId).resetIndexedStateForFile(fileId);
+                scheduleForUpdate = true;
+              }
             }
-          }
 
-          if (scheduleForUpdate) {
-            IndexingStamp.flushCache(fileId);
-            getChangedFilesCollector().scheduleForUpdate(file);
-          }
-          else if (file instanceof VirtualFileSystemEntry) {
-            ((VirtualFileSystemEntry)file).setFileIndexed(true);
-          }
-        });
+            if (scheduleForUpdate) {
+              IndexingStamp.flushCache(fileId);
+              getChangedFilesCollector().scheduleForUpdate(file);
+            }
+            else if (file instanceof VirtualFileSystemEntry) {
+              ((VirtualFileSystemEntry)file).setFileIndexed(true);
+            }
+          });
+        } finally {
+          ourFileToBeIndexed.remove();
+        }
       }
     }
   }
