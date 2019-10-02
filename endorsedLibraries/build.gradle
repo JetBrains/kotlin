@@ -33,3 +33,31 @@ targetList.each { target ->
         }
     }
 }
+
+endorsedLibrariesList.each { library ->
+    task("${toTaskName(library)}CommonSources", type: Zip) {
+        destinationDirectory = file("${rootProject.projectDir}/dist/sources")
+        archiveFileName = "${library.replaceAll("\\.", "-")}-common-sources.zip"
+
+        includeEmptyDirs = false
+        include('**/*.kt')
+
+        from(project(":endorsedLibraries:${library}").file('src/main/kotlin'))
+    }
+    task("${toTaskName(library)}NativeSources", type: Zip) {
+        destinationDirectory = file("${rootProject.projectDir}/dist/sources")
+        archiveFileName = "${library.replaceAll("\\.", "-")}-native-sources.zip"
+
+        includeEmptyDirs = false
+        include('**/*.kt')
+
+        from(project(":endorsedLibraries:${library}").file('src/main/kotlin-native'))
+    }
+}
+
+task endorsedLibsSources {
+    endorsedLibrariesList.each { library ->
+        dependsOn "${toTaskName(library)}CommonSources"
+        dependsOn "${toTaskName(library)}NativeSources"
+    }
+}

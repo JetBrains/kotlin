@@ -216,9 +216,14 @@ task distNativeSources(type: Zip) {
     }
 }
 
+task distEndorsedSources {
+    dependsOn(':endorsedLibraries:endorsedLibsSources')
+}
+
 task distSources {
     dependsOn(distCommonSources)
     dependsOn(distNativeSources)
+    dependsOn(distEndorsedSources)
 }
 
 task distCompiler(type: Copy) {
