@@ -11,6 +11,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.IJSwingUtilities;
@@ -34,6 +35,7 @@ import static com.intellij.openapi.util.text.StringUtil.stripHtml;
  * @author Vladislav.Soroka
  */
 public class BuildConsoleUtils {
+  private static final Logger LOG = Logger.getInstance(BuildConsoleUtils.class);
   private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]*>");
   private static final Pattern A_PATTERN = Pattern.compile("<a ([^>]* )?href=[\"']([^>]*)[\"'][^>]*>");
   private static final String A_CLOSING = "</a>";
@@ -151,6 +153,7 @@ public class BuildConsoleUtils {
       provider = getDataProvider(buildId, (AbstractViewManager)buildListener);
     }
     else {
+      LOG.error("BuildView or AbstractViewManager expected to obtain proper DataProvider for build console quick fixes");
       provider = dataId -> null;
     }
     return provider;
