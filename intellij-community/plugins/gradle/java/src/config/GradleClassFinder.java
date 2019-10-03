@@ -19,28 +19,27 @@ import org.jetbrains.plugins.gradle.service.GradleBuildClasspathManager;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author peter
  */
 public final class GradleClassFinder extends NonClasspathClassFinder {
-  @NotNull private final GradleBuildClasspathManager myBuildClasspathManager;
 
   public GradleClassFinder(@NotNull Project project) {
     super(project, JavaFileType.DEFAULT_EXTENSION, GroovyFileType.DEFAULT_EXTENSION);
-    myBuildClasspathManager = GradleBuildClasspathManager.getInstance(project);
   }
 
   @Override
   protected List<VirtualFile> calcClassRoots() {
-    return myBuildClasspathManager.getAllClasspathEntries();
+    return GradleBuildClasspathManager.getInstance(myProject).getAllClasspathEntries();
   }
 
   @NotNull
   @Override
   protected PackageDirectoryCache getCache(@Nullable GlobalSearchScope scope) {
     if (scope instanceof ExternalModuleBuildGlobalSearchScope) {
-      return myBuildClasspathManager.getClassFinderCache().get(((ExternalModuleBuildGlobalSearchScope)scope).getExternalModulePath());
+      return GradleBuildClasspathManager.getInstance(myProject).getClassFinderCache().get(((ExternalModuleBuildGlobalSearchScope)scope).getExternalModulePath());
     }
     return super.getCache(scope);
   }
@@ -48,7 +47,9 @@ public final class GradleClassFinder extends NonClasspathClassFinder {
   @Override
   public void clearCache() {
     super.clearCache();
-    myBuildClasspathManager.getClassFinderCache().clear();
+    GradleBuildClasspathManager buildClasspathManager = GradleBuildClasspathManager.getInstance(myProject);
+    Map<String, PackageDirectoryCache> classFinderCache = buildClasspathManager.getClassFinderCache();
+    classFinderCache.clear();
   }
 
   @Override

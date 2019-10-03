@@ -35,6 +35,7 @@ public class GradleBuildClasspathManager {
   private final AtomicReference<Map<String/*module path*/, List<VirtualFile> /*module build classpath*/>> myClasspathMap
     = new AtomicReference<>(new HashMap<>());
 
+  @NotNull
   private final Map<String, PackageDirectoryCache> myClassFinderCache = ConcurrentFactoryMap
     .createMap(path -> PackageDirectoryCache.createCache(getModuleClasspathEntries(path)));
 
@@ -90,6 +91,7 @@ public class GradleBuildClasspathManager {
     myClassFinderCache.clear();
   }
 
+  @NotNull
   public Map<String, PackageDirectoryCache> getClassFinderCache() {
     return myClassFinderCache;
   }
