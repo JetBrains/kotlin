@@ -15,34 +15,7 @@ interface TypeResolutionInterceptorExtension {
     companion object : ProjectExtensionDescriptor<TypeResolutionInterceptorExtension>(
         "org.jetbrains.kotlin.typeResolutionInterceptorExtension",
         TypeResolutionInterceptorExtension::class.java
-    ) {
-        fun interceptFunctionLiteralDescriptor(
-            expression: KtLambdaExpression,
-            context: ExpressionTypingContext,
-            descriptor: AnonymousFunctionDescriptor
-        ): AnonymousFunctionDescriptor {
-            var resultDescriptor = descriptor
-            for (extension in TypeResolutionInterceptorExtension.getInstances(expression.getProject())) {
-                resultDescriptor = extension.interceptFunctionLiteralDescriptor(
-                    expression,
-                    context,
-                    descriptor
-                )
-            }
-            return resultDescriptor
-        }
-
-        fun interceptType(
-            element: KtElement,
-            context: ExpressionTypingContext,
-            resultType: KotlinType): KotlinType {
-            var type = resultType
-            for (extension in TypeResolutionInterceptorExtension.getInstances(element.getProject())) {
-                type = extension.interceptType(element, context, type)
-            }
-            return type
-        }
-    }
+    )
 
     fun interceptFunctionLiteralDescriptor(
         expression: KtLambdaExpression,

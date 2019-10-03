@@ -1636,10 +1636,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (baseExpression == null) {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
-        KotlinType newExpectedType = TypeResolutionInterceptorExtension.Companion.interceptType(baseExpression, context, context.expectedType);
+        TypeResolutionInterceptor resolutionInterceptor = new TypeResolutionInterceptor(expression.getProject());
+        KotlinType newExpectedType = resolutionInterceptor.interceptType(baseExpression, context, context.expectedType);
         KotlinTypeInfo resultTypeInfo = facade.getTypeInfo(baseExpression, newExpectedType == context.expectedType ? context : context.replaceExpectedType(newExpectedType), isStatement);
-        KotlinType newResultType = TypeResolutionInterceptorExtension.Companion.interceptType(baseExpression, context, resultTypeInfo.getType());
-        components.dataFlowAnalyzer.checkType(newResultType, expression, context);
+        KotlinType newResultType = resolutionInterceptor.interceptType(baseExpression, context, resultTypeInfo.getType());
+        if(!resolutionInterceptor.isEmpty()) components.dataFlowAnalyzer.checkType(newResultType, expression, context);
         return resultTypeInfo.getType() == newResultType ? resultTypeInfo : resultTypeInfo.replaceType(newResultType);
     }
 
