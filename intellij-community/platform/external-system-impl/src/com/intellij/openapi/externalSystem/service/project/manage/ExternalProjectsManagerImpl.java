@@ -76,7 +76,6 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
     myTaskActivator = new ExternalSystemTaskActivator(project);
     myRunManagerListener = new ExternalSystemRunManagerListener(this);
     myWatcher = new ExternalSystemProjectsWatcherImpl(myProject);
-    Disposer.register(this, myWatcher);
   }
 
   public static ExternalProjectsManagerImpl getInstance(@NotNull Project project) {
@@ -342,10 +341,5 @@ public class ExternalProjectsManagerImpl implements ExternalProjectsManager, Per
     TaskActivationState getTasksActivation(@NotNull ProjectSystemId systemId, @NotNull String projectPath);
 
     Map<String, TaskActivationState> getProjectsTasksActivationMap(@NotNull ProjectSystemId systemId);
-  }
-
-  public static void disableProjectWatcherAutoUpdate(@NotNull Project project) {
-    ExternalProjectsManagerImpl projectsManager = getInstance(project);
-    projectsManager.myWatcher.disableAutoUpdate();
   }
 }

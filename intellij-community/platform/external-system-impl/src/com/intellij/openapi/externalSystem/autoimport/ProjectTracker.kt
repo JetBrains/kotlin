@@ -7,19 +7,19 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.CANCEL
-import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.FAILURE
+import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
 import com.intellij.openapi.externalSystem.util.CompoundParallelOperationTrace
 import com.intellij.openapi.externalSystem.util.properties.BooleanProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.LocalTimeCounter.currentTime
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.MergingUpdateQueue.ANY_COMPONENT
 import com.intellij.util.ui.update.Update
+import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 
 @State(name = "ExternalSystemProjectTracker")
 class ProjectTracker(private val project: Project) : ExternalSystemProjectTracker, PersistentStateComponent<ProjectTracker.State> {
@@ -28,12 +28,10 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private val projectStates = ConcurrentHashMap<State.Id, State.Project>()
   private val projectDataMap = ConcurrentHashMap<ExternalSystemProjectId, ProjectData>()
-  private val disableProperty = BooleanProperty(false)
+  private val initializationProperty = BooleanProperty(false)
   private val projectChangeOperation = CompoundParallelOperationTrace<Nothing?>()
   private val projectRefreshOperation = CompoundParallelOperationTrace<Long>()
-  private val dispatcher = MergingUpdateQueue("project tracker", 500, true, ANY_COMPONENT, this)
-
-  override var isDisabled by disableProperty
+  private val dispatcher = MergingUpdateQueue("project tracker", 500, false, ANY_COMPONENT, this)
 
   private fun createProjectChangesListener() =
     object : ProjectBatchFileChangeListener(project) {
@@ -55,7 +53,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
       }
 
       override fun afterProjectRefresh(status: ExternalSystemRefreshStatus) {
-        if (status == FAILURE || status == CANCEL) {
+        if (status != SUCCESS || !projectData.status.isSynchronized()) {
           projectData.status.markDirty(currentTime())
         }
         projectRefreshOperation.finishTask(id)
@@ -67,7 +65,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     dispatcher.queue(object : Update("update") {
       override fun run() {
         LOG.debug("Dispatch project refresh")
-        if (isDisabled || !projectChangeOperation.isOperationCompleted()) return
+        if (!projectChangeOperation.isOperationCompleted()) return
         for (projectData in projectDataMap.values) {
           if (!projectData.status.isUpToDate()) {
             projectData.projectAware.refreshProject()
@@ -77,13 +75,13 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     })
   }
 
-  override fun scheduleProjectNotificationUpdate() {
+  fun scheduleProjectNotificationUpdate() {
     LOG.debug("Schedule notification status update")
     dispatcher.queue(object : Update("notify") {
       override fun run() {
         LOG.debug("Dispatch notification status update")
-        if (isDisabled || !projectChangeOperation.isOperationCompleted()) return
-        val notificationAware = ExternalSystemProjectNotificationAware.getInstance(project)
+        if (!projectChangeOperation.isOperationCompleted()) return
+        val notificationAware = ProjectNotificationAware.getInstance(project)
         for ((projectId, data) in projectDataMap) {
           when (data.status.isUpToDate()) {
             true -> notificationAware.notificationExpire(projectId)
@@ -98,23 +96,17 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     val projectId = projectAware.projectId
     val projectStatus = ProjectStatus(debugName = projectId.readableName)
     val parentDisposable = Disposer.newDisposable(projectId.toString())
-    val settingsTracker = ProjectSettingsTracker(project, projectStatus, projectAware, parentDisposable)
+    val settingsTracker = ProjectSettingsTracker(this, projectStatus, projectAware, parentDisposable)
     val projectData = ProjectData(projectStatus, projectAware, settingsTracker, parentDisposable)
-    val notificationAware = ExternalSystemProjectNotificationAware.getInstance(project)
+    val notificationAware = ProjectNotificationAware.getInstance(project)
 
     projectDataMap[projectId] = projectData
 
     Disposer.register(this, parentDisposable)
-    VirtualFileManager.getInstance().addAsyncFileListener(settingsTracker, this)
     projectAware.subscribe(createProjectRefreshListener(projectData), parentDisposable)
     Disposer.register(parentDisposable, Disposable { notificationAware.notificationExpire(projectId) })
 
-    val projectState = projectStates.remove(projectId.getState())
-    when (val state = projectState?.settingsTracker) {
-      null -> projectStatus.markDirty(currentTime())
-      else -> settingsTracker.loadState(state)
-    }
-    scheduleProjectRefresh()
+    loadState(projectId, projectData)
   }
 
   override fun remove(id: ExternalSystemProjectId) {
@@ -148,19 +140,50 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   override fun loadState(state: State) {
     projectStates.putAll(state.projectSettingsTrackerStates)
+    projectDataMap.forEach { (id, data) -> loadState(id, data) }
+    initializationProperty.set()
+  }
+
+  private fun loadState(projectId: ExternalSystemProjectId, projectData: ProjectData) {
+    val projectState = projectStates.remove(projectId.getState())
+    val settingsTrackerState = projectState?.settingsTracker
+    when (settingsTrackerState == null || projectState.isDirty) {
+      true -> {
+        projectData.status.markDirty(currentTime())
+        scheduleProjectRefresh()
+      }
+      else -> projectData.settingsTracker.loadState(settingsTrackerState)
+    }
+  }
+
+  private fun initialize() {
+    LOG.debug("Project tracker initialization")
+    val connections = ApplicationManager.getApplication().messageBus.connect(this)
+    connections.subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
+    dispatcher.activate()
   }
 
   private fun reset() {
+    LOG.debug("Reset project tracker")
     projectDataMap.values.forEach {
       it.settingsTracker.applyChanges()
       it.status.markSynchronized(currentTime())
     }
   }
 
+  @TestOnly
+  fun isInitialized() = initializationProperty.get()
+
+  @TestOnly
+  fun waitForAsyncTasksCompletion(timeout: Long, timeUnit: TimeUnit) {
+    for (data in projectDataMap.values) {
+      data.settingsTracker.waitForAsyncTasksCompletion(timeout, timeUnit)
+    }
+  }
+
   init {
-    val connections = ApplicationManager.getApplication().messageBus.connect(this)
-    connections.subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
-    val notificationAware = ExternalSystemProjectNotificationAware.getInstance(project)
+    dispatcher.usePassThroughInUnitTestMode()
+    val notificationAware = ProjectNotificationAware.getInstance(project)
     projectRefreshOperation.beforeOperation { LOG.debug("Project refresh started") }
     projectRefreshOperation.beforeOperation { notificationAware.notificationExpire() }
     projectRefreshOperation.afterOperation { scheduleProjectNotificationUpdate() }
@@ -169,17 +192,14 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     projectChangeOperation.beforeOperation { notificationAware.notificationExpire() }
     projectChangeOperation.afterOperation { scheduleProjectRefresh() }
     projectChangeOperation.afterOperation { LOG.debug("Project change finished") }
-    disableProperty.afterSet { LOG.debug("Project tracker is disabled") }
-    disableProperty.afterReset { LOG.debug("Project tracker is enabled") }
-    disableProperty.afterReset { reset() }
+    initializationProperty.afterSet { initialize() }
+    projectRefreshOperation.afterOperation {
+      initializationProperty.afterSet { reset() }
+      initializationProperty.set()
+    }
   }
 
-  fun <Id> CompoundParallelOperationTrace<Id>.startOperation(taskId: Id) {
-    startOperation()
-    startTask(taskId)
-  }
-
-  private fun ProjectData.getState() = State.Project(status.isDirty() || isDisabled, settingsTracker.getState())
+  private fun ProjectData.getState() = State.Project(status.isDirty(), settingsTracker.getState())
 
   private fun ExternalSystemProjectId.getState() = State.Id(systemId.id, externalProjectPath)
 
@@ -193,5 +213,12 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   data class State(var projectSettingsTrackerStates: Map<Id, Project> = emptyMap()) {
     data class Id(var systemId: String? = null, var externalProjectPath: String? = null)
     data class Project(var isDirty: Boolean = false, var settingsTracker: ProjectSettingsTracker.State? = null)
+  }
+
+  companion object {
+    private fun <Id> CompoundParallelOperationTrace<Id>.startOperation(taskId: Id) {
+      startOperation()
+      startTask(taskId)
+    }
   }
 }

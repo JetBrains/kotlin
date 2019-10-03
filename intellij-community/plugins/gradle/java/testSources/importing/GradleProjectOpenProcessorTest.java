@@ -5,7 +5,6 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.ex.InspectionProfileImpl;
 import com.intellij.codeInspection.ex.ScopeToolState;
 import com.intellij.ide.impl.ProjectUtil;
-import com.intellij.idea.Bombed;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
@@ -26,10 +25,10 @@ import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.testFramework.EdtTestUtilKt;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.settings.TestRunner;
@@ -40,7 +39,6 @@ import org.junit.runners.Parameterized;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -106,8 +104,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
   }
 
   @Test
-  @Bombed(user = "Sergey.Vorobyov", year=2019, month = Calendar.DECEMBER, day = 1, description = "Should be enabled when https://youtrack.jetbrains.com/issue/IJP-485 will be implemented")
-  public void testGradleSettingsFileModification() throws IOException {
+  public void testGradleSettingsFileModification() throws Exception {
     VirtualFile foo = createProjectSubDir("foo");
     createProjectSubFile("foo/build.gradle", "apply plugin: 'java'");
     createProjectSubFile("foo/.idea/modules.xml",
@@ -142,9 +139,9 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
       edt(() -> UIUtil.dispatchAllInvocationEvents());
       assertModules(fooProject, "foo", "bar");
 
-      Semaphore semaphore = new Semaphore(1);
+      AsyncPromise<?> promise = new AsyncPromise<>();
       final MessageBusConnection myBusConnection = fooProject.getMessageBus().connect();
-      myBusConnection.subscribe(ProjectDataImportListener.TOPIC, path -> semaphore.up());
+      myBusConnection.subscribe(ProjectDataImportListener.TOPIC, path -> promise.setResult(null));
       createProjectSubFile("foo/.idea/gradle.xml",
                            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                            "<project version=\"4\">\n" +
@@ -166,7 +163,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
                            "</project>");
       edt(() -> UIUtil.dispatchAllInvocationEvents());
       edt(() -> PlatformTestUtil.saveProject(fooProject));
-      assert semaphore.waitFor(TimeUnit.SECONDS.toMillis(10));
+      edt(() -> PlatformTestUtil.waitForPromise(promise, TimeUnit.MINUTES.toMillis(1)));
       assertTrue("The module has not been linked",
                  ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, getModule(fooProject, "foo")));
     }

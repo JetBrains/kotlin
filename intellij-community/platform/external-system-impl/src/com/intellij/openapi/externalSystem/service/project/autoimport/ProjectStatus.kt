@@ -13,6 +13,8 @@ class ProjectStatus(private val debugName: String? = null) {
 
   private var state = AtomicReference(Synchronized(-1) as ProjectState)
 
+  fun isSynchronized() = state.get() is Synchronized
+
   fun isDirty() = state.get() is Dirty
 
   fun isUpToDate() = when (state.get()) {

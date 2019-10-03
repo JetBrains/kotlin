@@ -2,110 +2,140 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.service.project.autoimport.AsyncFileChangeListenerBase
-import com.intellij.openapi.externalSystem.service.project.autoimport.ConfigurationFileCrcFactory
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
-import com.intellij.openapi.externalSystem.util.properties.Property.Companion.property
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.LocalTimeCounter.currentTime
-import com.intellij.util.ui.update.MergingUpdateQueue
-import com.intellij.util.ui.update.Update
+import com.intellij.util.concurrency.AppExecutorUtil
+import com.intellij.util.concurrency.Semaphore
+import com.intellij.util.ui.UIUtil
+import org.jetbrains.annotations.TestOnly
+import java.io.File
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class ProjectSettingsTracker(
-  private val project: Project,
+  private val projectTracker: ProjectTracker,
   private val projectStatus: ProjectStatus,
   private val projectAware: ExternalSystemProjectAware,
-  parentDisposable: Disposable
-) : AsyncFileChangeListenerBase() {
+  private val parentDisposable: Disposable
+) {
 
   private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
-  private val changesMutex = Any()
-  private var settingsFiles: Map<String, Long> = LinkedHashMap()
+  private var settingsFilesCRC: Map<String, Long> = LinkedHashMap()
 
-  private val hasRelevantChanges = property { false }
-  private val settingsFilesLatch = property { projectAware.settingsFiles + settingsFiles.keys }
-  private val dispatcher = MergingUpdateQueue("project tracker", 0, true, MergingUpdateQueue.ANY_COMPONENT, parentDisposable, null, false)
-
-  override fun isRelevant(path: String) = path in settingsFilesLatch.get()
-
-  override fun prepareFileDeletion(file: VirtualFile) {
-    hasRelevantChanges.set(true)
-    logModificationAsDebug(file)
-    projectStatus.markModified(currentTime())
+  fun hasChanges(): Boolean {
+    val oldSettingsFilesCRC = settingsFilesCRC
+    val newSettingsFilesCRC = getSettingsFilesCRC()
+    if (newSettingsFilesCRC.size != oldSettingsFilesCRC.size) return true
+    return newSettingsFilesCRC.any { it.value != oldSettingsFilesCRC[it.key] }
   }
 
-  override fun updateFile(file: VirtualFile, event: VFileEvent) {
-    hasRelevantChanges.set(true)
-    logModificationAsDebug(file)
-    projectStatus.markModified(currentTime())
-  }
-
-  override fun reset() {
-    hasRelevantChanges.reset()
-    settingsFilesLatch.reset()
-  }
-
-  override fun afterVfsChange() {
-    if (hasRelevantChanges.get()) {
-      scheduleProjectNotificationUpdate()
+  /**
+   * Usually all crc hashes must be previously calculated
+   *  => this apply will be fast
+   *  => collisions is a rare thing
+   */
+  fun applyChanges() {
+    afterSettingsFilesRefresh {
+      runNonBlocking {
+        settingsFilesCRC = getSettingsFilesCRC()
+      }
     }
-    reset()
   }
 
-  fun hasChanges() = synchronized(changesMutex) {
-    val settingsFiles = getSettingsFiles()
-    val intersect = settingsFiles.map { it.path }.intersect(this.settingsFiles.keys)
-    if (intersect.size != this.settingsFiles.size) return true
-    if (intersect.size != settingsFiles.size) return true
-    settingsFiles.any { it.calculateCrc() != this.settingsFiles[it.path] }
-  }
+  fun getState() = State(settingsFilesCRC.toMap())
 
-  private fun scheduleProjectNotificationUpdate() = dispatcher.queue(object : Update("notification") {
-    override fun run() {
-      if (!hasChanges()) projectStatus.markReverted(currentTime())
-      val projectTracker = ExternalSystemProjectTracker.getInstance(project)
-      projectTracker.scheduleProjectNotificationUpdate()
+  fun loadState(state: State) {
+    settingsFilesCRC = state.settingsFiles.toMap()
+    afterSettingsFilesRefresh {
+      runNonBlocking {
+        when (hasChanges()) {
+          true -> projectStatus.markDirty(currentTime())
+          else -> projectStatus.markReverted(currentTime())
+        }
+        projectTracker.scheduleProjectRefresh()
+      }
     }
-  })
+  }
 
-  fun applyChanges() = synchronized(changesMutex) {
-    settingsFiles = getSettingsFiles()
+  private fun afterSettingsFilesRefresh(action: () -> Unit) {
+    val localFileSystem = LocalFileSystem.getInstance()
+    val settingsFiles = projectAware.settingsFiles.map { File(it) }
+    localFileSystem.refreshIoFiles(settingsFiles, true, false, makeAsyncAction(action))
+  }
+
+  private fun getSettingsFilesCRC(): Map<String, Long> {
+    val localFileSystem = LocalFileSystem.getInstance()
+    return projectAware.settingsFiles
+      .mapNotNull { localFileSystem.findFileByPath(it) }
       .map { it.path to it.calculateCrc() }
       .toMap()
   }
 
-  fun getState() = synchronized(changesMutex) {
-    State(settingsFiles.toMap())
+  private fun runNonBlocking(action: () -> Unit) {
+    ReadAction.nonBlocking(makeAsyncAction(action))
+      .expireWith(parentDisposable)
+      .submit(AppExecutorUtil.getAppExecutorService())
   }
 
-  fun loadState(state: State) = synchronized(changesMutex) {
-    settingsFiles = state.settingsFiles.toMap()
-  }
-
-  private fun VirtualFile.calculateCrc(): Long {
-    return ConfigurationFileCrcFactory(this).create()
-  }
-
-  private fun getSettingsFiles(): Set<VirtualFile> {
-    val localFileSystem = LocalFileSystem.getInstance()
-    return projectAware.settingsFiles
-      .mapNotNull { localFileSystem.refreshAndFindFileByPath(it) }
-      .toSet()
-  }
-
-  private fun logModificationAsDebug(file: VirtualFile) {
-    if (LOG.isDebugEnabled) {
-      val projectPath = projectAware.projectId.externalProjectPath
-      val relativePath = FileUtil.getRelativePath(projectPath, file.path, '/')
-      LOG.debug("File $relativePath is modified at ${file.modificationStamp}")
+  private fun invokeLater(action: () -> Unit) {
+    val transactionGuard = TransactionGuard.getInstance()
+    if (!isAsyncAllowed()) {
+      transactionGuard.submitTransactionAndWait(Runnable { action() })
+    }
+    else {
+      transactionGuard.submitTransactionLater(parentDisposable, Runnable { action() })
     }
   }
 
+  init {
+    val settingsListener = ProjectSettingsListener()
+    val fileManager = VirtualFileManager.getInstance()
+    fileManager.addAsyncFileListener(settingsListener, parentDisposable)
+  }
+
   data class State(var settingsFiles: Map<String, Long> = emptyMap())
+
+  private inner class ProjectSettingsListener : AsyncFileChangeListenerBase() {
+    private var hasRelevantChanges: Boolean = false
+    private var settingsFilesSnapshot: Set<String> = emptySet()
+
+    override fun isRelevant(path: String) = path in settingsFilesSnapshot
+
+    override fun updateFile(file: VirtualFile) {
+      hasRelevantChanges = true
+      logModificationAsDebug(file)
+      projectStatus.markModified(currentTime())
+    }
+
+    override fun init() {
+      hasRelevantChanges = false
+      settingsFilesSnapshot = projectAware.settingsFiles + settingsFilesCRC.keys
+    }
+
+    override fun apply() {
+      if (hasRelevantChanges) {
+        runNonBlocking {
+          if (!hasChanges()) projectStatus.markReverted(currentTime())
+          projectTracker.scheduleProjectNotificationUpdate()
+        }
+      }
+    }
+
+    private fun logModificationAsDebug(file: VirtualFile) {
+      if (LOG.isDebugEnabled) {
+        val projectPath = projectAware.projectId.externalProjectPath
+        val relativePath = FileUtil.getRelativePath(projectPath, file.path, '/') ?: file.path
+        LOG.debug("File $relativePath is modified at ${file.modificationStamp}")
+      }
+    }
+  }
 }

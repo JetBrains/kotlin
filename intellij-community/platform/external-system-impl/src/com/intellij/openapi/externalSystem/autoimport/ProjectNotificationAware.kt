@@ -2,42 +2,38 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.notification.*
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 
-class ProjectNotificationAware(private val project: Project) : ExternalSystemProjectNotificationAware {
+class ProjectNotificationAware(private val project: Project) : Disposable {
 
   private var notification: Notification? = null
 
-  private val projectAwareMap = LinkedHashMap<ExternalSystemProjectId, ExternalSystemProjectAware>()
+  private val projectsWithNotification = LinkedHashSet<ExternalSystemProjectId>()
 
   private val content: String
-    get() = projectAwareMap.keys.map { it.systemId.readableName }.toSet().joinToString() + " project need to be imported"
+    get() = projectsWithNotification.map { it.systemId.readableName }.toSet().joinToString() + " project need to be imported"
 
-  override fun notificationNotify(projectAware: ExternalSystemProjectAware) {
+  fun notificationNotify(projectAware: ExternalSystemProjectAware) {
     val projectId = projectAware.projectId
     LOG.debug("${projectId.readableName}: Notify notification")
-    synchronized(this) {
-      projectAwareMap[projectId] = projectAware
-      notificationUpdate()
-    }
+    projectsWithNotification.add(projectId)
+    notificationUpdate()
   }
 
-  override fun notificationExpire(projectId: ExternalSystemProjectId) {
+  fun notificationExpire(projectId: ExternalSystemProjectId) {
     LOG.debug("${projectId.readableName}: Expire notification")
-    synchronized(this) {
-      projectAwareMap.remove(projectId)
-      notificationUpdate()
-    }
+    projectsWithNotification.remove(projectId)
+    notificationUpdate()
   }
 
-  override fun notificationExpire() {
+  fun notificationExpire() {
     LOG.debug("Expire notification")
-    synchronized(this) {
-      projectAwareMap.clear()
-      notificationUpdate()
-    }
+    projectsWithNotification.clear()
+    notificationUpdate()
   }
 
   override fun dispose() {
@@ -46,13 +42,11 @@ class ProjectNotificationAware(private val project: Project) : ExternalSystemPro
 
   @TestOnly
   fun isNotificationNotified(vararg projects: ExternalSystemProjectId) =
-    synchronized(this) {
-      notification != null && projectAwareMap.keys.containsAll(projects.toList())
-    }
+    notification != null && projectsWithNotification.containsAll(projects.toList())
 
   private fun notificationUpdate() {
     when {
-      projectAwareMap.isEmpty() -> {
+      projectsWithNotification.isEmpty() -> {
         notification?.expire()
         notification = null
         LOG.debug("Notification expired")
@@ -77,5 +71,9 @@ class ProjectNotificationAware(private val project: Project) : ExternalSystemPro
     private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
     private val NOTIFICATION_GROUP = NotificationGroup("External System Update", NotificationDisplayType.STICKY_BALLOON, true)
+
+    fun getInstance(project: Project): ProjectNotificationAware {
+      return ServiceManager.getService(project, ProjectNotificationAware::class.java)
+    }
   }
 }

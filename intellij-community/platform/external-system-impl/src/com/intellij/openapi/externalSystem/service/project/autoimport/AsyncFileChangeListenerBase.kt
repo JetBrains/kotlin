@@ -1,125 +1,105 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.openapi.externalSystem.service.project.autoimport;
+package com.intellij.openapi.externalSystem.service.project.autoimport
 
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.vfs.AsyncFileListener;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
-import com.intellij.openapi.vfs.newvfs.events.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.vfs.AsyncFileListener
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.openapi.vfs.newvfs.NewVirtualFile
+import com.intellij.openapi.vfs.newvfs.events.*
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+abstract class AsyncFileChangeListenerBase : AsyncFileListener {
 
-public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
-  protected boolean isRelevant(String path) { return true; }
+  protected abstract fun init()
 
-  protected void prepareFileDeletion(@NotNull VirtualFile file) {}
+  protected abstract fun apply()
 
-  protected void updateFile(@NotNull VirtualFile file, @NotNull VFileEvent event) {}
+  protected abstract fun isRelevant(path: String): Boolean
 
-  protected void reset() {}
+  protected abstract fun updateFile(file: VirtualFile)
 
-  protected void apply() {}
+  override fun prepareChange(events: List<VFileEvent>): AsyncFileListener.ChangeApplier {
+    val separator = ChangeSeparator()
+    separator.processChangeEvents(events)
+    return object : AsyncFileListener.ChangeApplier {
+      override fun beforeVfsChange() {
+        init()
+        separator.applyBefore()
+      }
 
-  protected void beforeVfsChange() {}
+      override fun afterVfsChange() {
+        separator.applyAfter()
+        apply()
+      }
+    }
+  }
 
-  protected void afterVfsChange() {}
-
-  @Nullable
-  @Override
-  public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
-    beforeVfsChange();
-    List<VFileEvent> relevantEvents = new ArrayList<>();
-    try {
-      for (VFileEvent each : events) {
-        ProgressManager.checkCanceled();
-
-        if (each instanceof VFileDeleteEvent) {
-          deleteRecursively(each.getFile());
+  private fun updateRecursively(f: VirtualFile) {
+    VfsUtilCore.visitChildrenRecursively(f, object : VirtualFileVisitor<Void>() {
+      override fun visitFile(f: VirtualFile): Boolean {
+        if (isRelevant(f.path)) {
+          updateFile(f)
         }
-        else {
-          if (!isRelevant(each.getPath())) continue;
+        return true
+      }
 
-          relevantEvents.add(each);
+      override fun getChildrenIterable(f: VirtualFile): Iterable<VirtualFile>? {
+        return if (f.isDirectory && f is NewVirtualFile) f.iterInDbChildren() else null
+      }
+    })
+  }
 
-          if (each instanceof VFilePropertyChangeEvent && ((VFilePropertyChangeEvent)each).isRename()) {
-            deleteRecursively(each.getFile());
+  private fun ChangeSeparator.processChangeEvents(events: List<VFileEvent>) {
+    for (each in events) {
+      ProgressManager.checkCanceled()
+
+      when (each) {
+        is VFilePropertyChangeEvent -> if (each.isRename) {
+          val oldFile = each.file
+          val parent = oldFile.parent
+          before {
+            updateRecursively(oldFile)
           }
-          else if (each instanceof VFileMoveEvent) {
-            VFileMoveEvent moveEvent = (VFileMoveEvent)each;
-            String newPath = moveEvent.getNewParent().getPath() + "/" + moveEvent.getFile().getName();
-            if (!isRelevant(newPath)) {
-              deleteRecursively(moveEvent.getFile());
-            }
+          after {
+            val newName = each.newValue as String
+            val newFile = parent?.findChild(newName)
+            if (newFile != null) updateRecursively(newFile)
           }
         }
-      }
-    }
-    catch (ProcessCanceledException e) {
-      reset();
-      throw e;
-    }
-
-    return new ChangeApplier() {
-      @Override
-      public void beforeVfsChange() {
-        apply();
-      }
-
-      @Override
-      public void afterVfsChange() {
-        after(relevantEvents);
-        AsyncFileChangeListenerBase.this.afterVfsChange();
-      }
-    };
-  }
-
-  private void deleteRecursively(VirtualFile f) {
-    VfsUtilCore.visitChildrenRecursively(f, new VirtualFileVisitor<Void>() {
-      @Override
-      public boolean visitFile(@NotNull VirtualFile f) {
-        if (isRelevant(f.getPath())) {
-          prepareFileDeletion(f);
+        is VFileMoveEvent -> {
+          val oldFile = each.file
+          val name = oldFile.name
+          before {
+            updateRecursively(oldFile)
+          }
+          after {
+            val newFile = each.newParent.findChild(name)
+            if (newFile != null) updateRecursively(newFile)
+          }
         }
-        return true;
-      }
-
-      @Nullable
-      @Override
-      public Iterable<VirtualFile> getChildrenIterable(@NotNull VirtualFile f) {
-        return f.isDirectory() && f instanceof NewVirtualFile ? ((NewVirtualFile)f).iterInDbChildren() : null;
-      }
-    });
-  }
-
-  private void after(@NotNull List<? extends VFileEvent> relevantEvents) {
-    for (VFileEvent each : relevantEvents) {
-      if (each instanceof VFileCreateEvent) {
-        VirtualFile newChild = each.getFile();
-        if (newChild != null) {
-          updateFile(newChild, each);
+        is VFileCopyEvent -> after {
+          val newFile = each.newParent.findChild(each.newChildName)
+          if (newFile != null) updateRecursively(newFile)
+        }
+        is VFileCreateEvent, is VFileDeleteEvent, is VFileContentChangeEvent -> before {
+          val file = each.file
+          if (file != null) updateRecursively(file)
         }
       }
-      else if (each instanceof VFileCopyEvent) {
-        VFileCopyEvent copyEvent = (VFileCopyEvent)each;
-        VirtualFile newChild = copyEvent.getNewParent().findChild(copyEvent.getNewChildName());
-        if (newChild != null) {
-          updateFile(newChild, each);
-        }
-      }
-      else if (each instanceof VFileContentChangeEvent ||
-               each instanceof VFileMoveEvent ||
-               each instanceof VFilePropertyChangeEvent && ((VFilePropertyChangeEvent)each).isRename()) {
-        updateFile(Objects.requireNonNull(each.getFile()), each);
-      }
     }
-    apply();
   }
 
+  private class ChangeSeparator {
+    private val beforeAppliers = ArrayList<() -> Unit>()
+    private val afterAppliers = ArrayList<() -> Unit>()
+
+    fun before(action: () -> Unit) = beforeAppliers.add(action)
+
+    fun after(action: () -> Unit) = afterAppliers.add(action)
+
+    fun applyBefore() = beforeAppliers.forEach { it() }
+
+    fun applyAfter() = afterAppliers.forEach { it() }
+  }
 }
