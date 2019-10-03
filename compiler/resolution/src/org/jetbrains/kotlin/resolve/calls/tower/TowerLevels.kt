@@ -371,10 +371,19 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(
     location: LookupLocation,
     scopeTower: ImplicitScopeTower
 ): Collection<FunctionDescriptor> {
-    return scopeTower.getContributedFunctionsAndConstructors(this, name, location)
+    val result = ArrayList<FunctionDescriptor>(getContributedFunctions(name, location))
+
+    getContributedClassifier(name, location)?.let {
+        result.addAll(getConstructorsOfClassifier(it))
+    }
+
+    result.addAll(scopeTower.syntheticScopes.collectSyntheticStaticFunctions(this, name, location))
+    result.addAll(scopeTower.syntheticScopes.collectSyntheticConstructors(this, name, location))
+
+    return scopeTower.interceptCandidates(this, name, result).toList()
 }
 
-fun getConstructorsOfClassifier(classifier: ClassifierDescriptor?): List<ConstructorDescriptor> {
+private fun getConstructorsOfClassifier(classifier: ClassifierDescriptor?): List<ConstructorDescriptor> {
     val callableConstructors = when (classifier) {
         is TypeAliasDescriptor -> if (classifier.canHaveCallableConstructors) classifier.constructors else emptyList()
         is ClassDescriptor -> if (classifier.canHaveCallableConstructors) classifier.constructors else emptyList()

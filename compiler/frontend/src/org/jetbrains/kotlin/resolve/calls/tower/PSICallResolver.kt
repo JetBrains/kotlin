@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -399,12 +400,18 @@ class PSICallResolver(
             }
         }
 
-        override fun getContributedFunctionsAndConstructors(
+        override fun interceptCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
-            location: LookupLocation
+            initialResults: Collection<FunctionDescriptor>
         ): Collection<FunctionDescriptor> {
-            return getContributedFunctionsAndConstructors(context, resolutionScope, null, name, location)
+            var interceptedResults: Collection<FunctionDescriptor> = initialResults
+            val project = context.call.callElement.project
+            CallResolutionInterceptorExtension.getInstances(project).forEach {
+                interceptedResults = it.interceptCandidates(interceptedResults, this, context, resolutionScope, null, name, location)
+            }
+
+            return interceptedResults
         }
     }
 

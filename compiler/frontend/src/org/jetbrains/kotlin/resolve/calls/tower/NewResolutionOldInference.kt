@@ -384,12 +384,18 @@ class NewResolutionOldInference(
         override val isNewInferenceEnabled: Boolean
             get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
-        override fun getContributedFunctionsAndConstructors(
+        override fun interceptCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
-            location: LookupLocation
+            initialResults: Collection<FunctionDescriptor>
         ): Collection<FunctionDescriptor> {
-            return getContributedFunctionsAndConstructors(resolutionContext, resolutionScope, callResolver, name, location)
+            var interceptedResults: Collection<FunctionDescriptor> = initialResults
+            val project = resolutionContext.call.callElement.project
+            CallResolutionInterceptorExtension.getInstances(project).forEach {
+                interceptedResults = it.interceptCandidates(interceptedResults, this, resolutionContext, resolutionScope, callResolver, name, location)
+            }
+
+            return interceptedResults
         }
     }
 
@@ -569,32 +575,6 @@ class NewResolutionOldInference(
 
     }
 
-}
-
-fun ImplicitScopeTower.getContributedFunctionsAndConstructors(
-    resolutionContext: BasicCallResolutionContext,
-    resolutionScope: ResolutionScope,
-    callResolver: CallResolver?,
-    name: Name,
-    location: LookupLocation
-): Collection<FunctionDescriptor> {
-
-    val initialResults = ArrayList<FunctionDescriptor>(resolutionScope.getContributedFunctions(name, location))
-
-    resolutionScope.getContributedClassifier(name, location)?.let {
-        initialResults.addAll(getConstructorsOfClassifier(it))
-    }
-
-    initialResults.addAll(syntheticScopes.collectSyntheticStaticFunctions(resolutionScope, name, location))
-    initialResults.addAll(syntheticScopes.collectSyntheticConstructors(resolutionScope, name, location))
-
-    var interceptedResults: Collection<FunctionDescriptor> = initialResults
-    val project = resolutionContext.call.callElement.project
-    CallResolutionInterceptorExtension.getInstances(project).forEach {
-        interceptedResults = it.interceptCandidates(interceptedResults, this, resolutionContext, resolutionScope, callResolver, name, location)
-    }
-
-    return interceptedResults
 }
 
 fun ResolutionContext<*>.transformToReceiverWithSmartCastInfo(receiver: ReceiverValue) =

@@ -44,10 +44,10 @@ interface ImplicitScopeTower {
 
     val typeApproximator: TypeApproximator
 
-    fun getContributedFunctionsAndConstructors(
+    fun interceptCandidates(
         resolutionScope: ResolutionScope,
         name: Name,
-        location: LookupLocation
+        initialResults: Collection<FunctionDescriptor>
     ): Collection<FunctionDescriptor>
 }
 
