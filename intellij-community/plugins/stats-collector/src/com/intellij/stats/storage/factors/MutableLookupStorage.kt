@@ -20,8 +20,8 @@ class MutableLookupStorage(
   override val language: Language,
   override val model: RankingModelWrapper)
   : LookupStorage {
-  private var _userFactors: Map<String, String?>? = null
-  override val userFactors: Map<String, String?>
+  private var _userFactors: Map<String, String>? = null
+  override val userFactors: Map<String, String>
     get() = _userFactors ?: emptyMap()
 
   @Volatile
@@ -64,11 +64,14 @@ class MutableLookupStorage(
       LOG.error("User factors should be initialized only once")
     }
     else {
+      val userFactorValues = mutableMapOf<String, String>()
       val userFactors = UserFactorsManager.getInstance().getAllFactors()
-      val userFactorValues = mutableMapOf<String, String?>()
-      userFactors.associateTo(userFactorValues) { "${it.id}:App" to it.compute(UserFactorStorage.getInstance()) }
-      userFactors.associateTo(userFactorValues) { "${it.id}:Project" to it.compute(UserFactorStorage.getInstance(project)) }
-
+      val applicationStorage: UserFactorStorage = UserFactorStorage.getInstance()
+      val projectStorage: UserFactorStorage = UserFactorStorage.getInstance(project)
+      for (factor in userFactors) {
+        factor.compute(applicationStorage)?.let { userFactorValues["${factor.id}:App"] = it }
+        factor.compute(projectStorage)?.let { userFactorValues["${factor.id}:Project"] = it }
+      }
       _userFactors = userFactorValues
     }
   }

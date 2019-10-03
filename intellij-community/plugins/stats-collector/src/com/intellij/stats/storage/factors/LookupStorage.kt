@@ -15,7 +15,7 @@ interface LookupStorage {
   val language: Language
   val startedTimestamp: Long
   val sessionFactors: LookupSessionFactorsStorage
-  val userFactors: Map<String, String?>
-  val contextFactors: Map<String, String>?
+  val userFactors: Map<String, String>
+  val contextFactors: Map<String, String>
   fun getItemStorage(id: String): LookupElementStorage
 }

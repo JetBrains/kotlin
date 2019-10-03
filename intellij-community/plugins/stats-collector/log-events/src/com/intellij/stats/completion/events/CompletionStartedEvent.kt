@@ -17,7 +17,7 @@ class CompletionStartedEvent(
         @JvmField var performExperiment: Boolean,
         @JvmField var experimentVersion: Int,
         lookupState: LookupState,
-        @JvmField var userFactors: Map<String, String?>,
+        @JvmField var userFactors: Map<String, String>,
         @JvmField var queryLength: Int,
         timestamp: Long)
 
