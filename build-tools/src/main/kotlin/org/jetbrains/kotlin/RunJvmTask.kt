@@ -11,8 +11,6 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import javax.inject.Inject
 import java.io.File
 
 open class RunJvmTask : JavaExec() {

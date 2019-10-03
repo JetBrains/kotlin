@@ -155,7 +155,6 @@ open class EulerBenchmark {
 
     data class Children(val left: Int, val right: Int)
 
-    
     //Benchmark
     fun problem14(): List<Int> {
         // Simplified problem is solved here: it's not allowed to leave the interval [0..BENCHMARK_SIZE) inside a number chain

@@ -70,7 +70,6 @@ class RingLauncher : Launcher() {
                     "ClassStream.countFiltered" to BenchmarkEntryWithInit.create(::ClassStreamBenchmark, { countFiltered() }),
                     "ClassStream.reduce" to BenchmarkEntryWithInit.create(::ClassStreamBenchmark, { reduce() }),
                     "CompanionObject.invokeRegularFunction" to BenchmarkEntryWithInit.create(::CompanionObjectBenchmark, { invokeRegularFunction() }),
-                    "CompanionObject.invokeJvmStaticFunction" to BenchmarkEntryWithInit.create(::CompanionObjectBenchmark, { invokeJvmStaticFunction() }),
                     "DefaultArgument.testOneOfTwo" to BenchmarkEntryWithInit.create(::DefaultArgumentBenchmark, { testOneOfTwo() }),
                     "DefaultArgument.testTwoOfTwo" to BenchmarkEntryWithInit.create(::DefaultArgumentBenchmark, { testTwoOfTwo() }),
                     "DefaultArgument.testOneOfFour" to BenchmarkEntryWithInit.create(::DefaultArgumentBenchmark, { testOneOfFour() }),

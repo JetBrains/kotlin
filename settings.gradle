@@ -41,6 +41,10 @@ include ':performance:framework'
 if (System.getProperty("os.name") == "Mac OS X") {
     include ':performance:objcinterop'
     include ':performance:swiftinterop'
+    if (hasProperty("runExcludedBenchmarks")) {
+        include ':performance:KotlinVsSwift'
+        include ':performance:KotlinVsSwift:ring'
+    }
 }
 
 include ':platformLibs'

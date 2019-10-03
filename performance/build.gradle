@@ -229,3 +229,8 @@ task videoplayer {
     dependsOn 'clean'
     dependsOn 'videoplayer:konanRun'
 }
+
+task KotlinVsSwift {
+    dependsOn 'clean'
+    dependsOn 'KotlinVsSwift:konanRun'
+}

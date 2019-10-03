@@ -22,17 +22,8 @@ open class CompanionObjectBenchmark {
         regularCompanionObjectFunction("")
     }
 
-    //Benchmark
-    fun invokeJvmStaticFunction() {
-        staticCompanionObjectFunction("")
-    }
-
     companion object {
         fun regularCompanionObjectFunction(o: Any): Any {
-            return o
-        }
-
-        fun staticCompanionObjectFunction(o: Any): Any {
             return o
         }
     }
