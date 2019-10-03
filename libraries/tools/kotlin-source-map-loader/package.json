@@ -1,0 +1,17 @@
+{
+  "name": "@kotlin/source-map-loader",
+  "version": "0.0.1",
+  "description": "Modern source-map-loader with additional features",
+  "main": "lib/kotlin-source-map-loader.js",
+  "files": [
+    "lib/**/*"
+  ],
+  "scripts": {
+    "build": "cpx \"kotlin-source-map-loader.js\" lib"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "cpx": "^1.5.0"
+  }
+}

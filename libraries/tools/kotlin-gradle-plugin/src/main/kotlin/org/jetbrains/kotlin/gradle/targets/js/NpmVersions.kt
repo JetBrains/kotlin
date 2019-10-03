@@ -20,6 +20,9 @@ class NpmVersions {
     val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.3.2")
     val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.3.1")
 
+    // Temporarily use our own source-map-loader, while original source-map-loader is not updated
+    //  https://github.com/webpack-contrib/source-map-loader/pull/91
+    val kotlinSourceMapLoader = KotlinGradleNpmPackage("source-map-loader")
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "0.2.4")
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.12")
 
