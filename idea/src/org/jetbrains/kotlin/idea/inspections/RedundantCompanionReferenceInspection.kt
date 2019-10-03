@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -29,6 +31,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -60,11 +64,24 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             val containingClass = objectDeclaration.containingClass() ?: return false
             if (reference.containingClass() != containingClass && reference == parent.receiverExpression) return false
             val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return false
-            val selectorDescriptor = selectorExpression?.getResolvedCall(context)?.resultingDescriptor
-            when (selectorDescriptor) {
+            when (val selectorDescriptor = selectorExpression?.getResolvedCall(context)?.resultingDescriptor) {
                 is PropertyDescriptor -> {
                     val name = selectorDescriptor.name
                     if (containingClassDescriptor.findMemberVariable(name) != null) return false
+
+                    val type = selectorDescriptor.type
+                    val javaGetter = containingClassDescriptor.findMemberFunction(
+                        Name.identifier(JvmAbi.getterName(name.asString()))
+                    ) as? JavaMethodDescriptor
+                    if (javaGetter?.valueParameters?.isEmpty() == true && javaGetter.returnType?.makeNotNullable() == type) return false
+
+                    val javaSetter = containingClassDescriptor.findMemberFunction(
+                        Name.identifier(JvmAbi.setterName(name.asString()))
+                    ) as? JavaMethodDescriptor
+                    if (javaSetter?.valueParameters?.singleOrNull()?.type?.makeNotNullable() == type
+                        && javaSetter.returnType?.makeNotNullable()?.isUnit() == true
+                    ) return false
+
                     val variable = reference.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
                     if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return false
                 }
