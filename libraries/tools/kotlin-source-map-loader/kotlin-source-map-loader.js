@@ -7,6 +7,8 @@ var path = require("path");
 var async = require("async");
 var loaderUtils = require("loader-utils");
 
+var separatorRegex = /[/\\]/;
+
 // Matches only the last occurrence of sourceMappingURL
 var baseRegex = "\\s*[@#]\\s*sourceMappingURL\\s*=\\s*([^\\s]*)(?![\\S\\s]*sourceMappingURL)",
     // Matches /* ... */ comments
@@ -96,6 +98,12 @@ module.exports = function (input, inputMap) {
             if (!sourceContent) {
                 sourcesWithoutContent.push({source: map.sources[i], index: i})
             }
+            else {
+                var source = map.sources[i];
+                if (separatorRegex.test(source) && !path.isAbsolute(source)) {
+                    map.sources[i] = path.resolve(context, source);
+                }
+            }
         });
 
         if (sourcesWithoutContent.length == 0) {
@@ -111,7 +119,9 @@ module.exports = function (input, inputMap) {
                 delete map.sourceRoot;
                 resolve(context, loaderUtils.urlToRequest(source, true), function (err, result) {
                     if (err) {
-                        emitWarning("Cannot find source file '" + source + "': " + err);
+                        // TODO(ilgonmic): Not all JS files have sources content, and we don't extract sources from jar,
+                        //  so there is no content for these files
+                        // emitWarning("Cannot find source file '" + source + "': " + err);
                         return callback(null, null);
                     }
                     addDependency(result);
