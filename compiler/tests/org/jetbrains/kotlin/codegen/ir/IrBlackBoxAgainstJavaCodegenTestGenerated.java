@@ -676,6 +676,11 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
             runTest("compiler/testData/codegen/boxAgainstJava/sam/kt4753_2.kt");
         }
 
+        @TestMetadata("propertyReference.kt")
+        public void testPropertyReference() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/sam/propertyReference.kt");
+        }
+
         @TestMetadata("samConstructorGenericSignature.kt")
         public void testSamConstructorGenericSignature() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/sam/samConstructorGenericSignature.kt");

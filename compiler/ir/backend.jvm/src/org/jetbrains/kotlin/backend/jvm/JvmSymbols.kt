@@ -316,6 +316,13 @@ class JvmSymbols(
                 }
             }
 
+            // invoke redirects to get
+            klass.addFunction("invoke", irBuiltIns.anyNType, Modality.FINAL).apply {
+                for (i in 0 until n) {
+                    addValueParameter("receiver$i", irBuiltIns.anyNType)
+                }
+            }
+
             if (mutable) {
                 klass.addFunction("set", irBuiltIns.unitType, Modality.ABSTRACT).apply {
                     for (i in 0 until n) {
