@@ -13106,6 +13106,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/incWithNullabilityAssertionOnExtensionReceiver_lv12.kt");
             }
 
+            @TestMetadata("localEntities.kt")
+            public void testLocalEntities() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/localEntities.kt");
+            }
+
             @TestMetadata("mapPut.kt")
             public void testMapPut() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/mapPut.kt");
