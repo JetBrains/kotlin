@@ -22,6 +22,7 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultHighlightInfoProcessor extends HighlightInfoProcessor {
@@ -38,23 +39,23 @@ public class DefaultHighlightInfoProcessor extends HighlightInfoProcessor {
     if (document == null) return;
     final long modificationStamp = document.getModificationStamp();
     final TextRange priorityIntersection = priorityRange.intersection(restrictRange);
-
-    ShowAutoImportPassFactory autoImportPassFactory = TextEditorHighlightingPassRegistrarImpl.EP_NAME.findExtensionOrFail(ShowAutoImportPassFactory.class);
+    List<? extends HighlightInfo> infoCopy = new ArrayList<>(infos);
     ((HighlightingSessionImpl)session).applyInEDT(() -> {
       if (modificationStamp != document.getModificationStamp()) return;
       if (priorityIntersection != null) {
         MarkupModel markupModel = DocumentMarkupModel.forDocument(document, project, true);
 
         EditorColorsScheme scheme = session.getColorsScheme();
-        UpdateHighlightersUtil.setHighlightersInRange(project, document, priorityIntersection, scheme, infos,
-                                                      (MarkupModelEx)markupModel, groupId);
+        UpdateHighlightersUtil.setHighlightersInRange(project, document, priorityIntersection, scheme, infoCopy, (MarkupModelEx)markupModel, groupId);
       }
       if (editor != null && !editor.isDisposed()) {
         // usability: show auto import popup as soon as possible
         if (!DumbService.isDumb(project)) {
-          TextEditorHighlightingPass highlightingPass = autoImportPassFactory.createHighlightingPass(psiFile, editor);
-          if (highlightingPass != null)
+          ShowAutoImportPassFactory siFactory = TextEditorHighlightingPassRegistrarImpl.EP_NAME.findExtensionOrFail(ShowAutoImportPassFactory.class);
+          TextEditorHighlightingPass highlightingPass = siFactory.createHighlightingPass(psiFile, editor);
+          if (highlightingPass != null) {
             highlightingPass.doApplyInformationToEditor();
+          }
         }
 
         repaintErrorStripeAndIcon(editor, project);
