@@ -23,8 +23,8 @@ abstract class AbstractUsageHighlightingTest : KotlinLightCodeInsightFixtureTest
         const val CARET_TAG = "~"
     }
 
-    protected fun doTest(filePath: String) {
-        myFixture.configureByFile(filePath)
+    protected fun doTest(unused: String) {
+        myFixture.configureByFile(fileName())
         val document = myFixture.editor.document
         val data = ExpectedHighlightingData(document, false, false, true, false, myFixture.file)
         data.init()
@@ -65,5 +65,4 @@ abstract class AbstractUsageHighlightingTest : KotlinLightCodeInsightFixtureTest
     }
 
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
-    override fun getTestDataPath() = ""
 }

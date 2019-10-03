@@ -17,29 +17,17 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListenerKt;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
-import java.io.File;
 import java.io.IOException;
 
 public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCodeInsightFixtureTestCase {
-    @Override
-    public void setUp() {
-        super.setUp();
-        myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/outOfBlock");
-    }
 
-    @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/outOfBlock";
-    }
-
-    protected void doTest(String path) throws IOException {
-        myFixture.configureByFile(path);
+    protected void doTest(String unused) throws IOException {
+        myFixture.configureByFile(fileName());
 
         boolean expectedOutOfBlock = getExpectedOutOfBlockResult();
         boolean isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), "SKIP_ANALYZE_CHECK");
@@ -67,7 +55,8 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
 
         assertTrue("Modification tracker should always be changed after type", modificationCountBeforeType != modificationCountAfterType);
 
-        assertEquals("Result for out of block test is differs from expected on element in file:\n" + FileUtil.loadFile(new File(path)),
+        assertEquals("Result for out of block test is differs from expected on element in file:\n"
+                 + FileUtil.loadFile(testDataFile()),
                      expectedOutOfBlock, oobBeforeType != oobAfterCount);
 
         if (!isSkipCheckDefined) {

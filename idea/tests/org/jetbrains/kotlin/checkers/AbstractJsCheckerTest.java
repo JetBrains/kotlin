@@ -17,8 +17,8 @@ public abstract class AbstractJsCheckerTest extends KotlinLightCodeInsightFixtur
         return KotlinStdJSProjectDescriptor.INSTANCE;
     }
 
-    public void doTest(String filePath) {
-        myFixture.configureByFile(filePath);
+    public void doTest(String unused) {
+        myFixture.configureByFile(fileName());
         myFixture.checkHighlighting(true, false, false);
     }
 }

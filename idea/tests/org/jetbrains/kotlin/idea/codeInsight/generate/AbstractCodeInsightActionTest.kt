@@ -50,7 +50,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
     }
 
     protected open fun doTest(path: String) {
-        val fileText = FileUtil.loadFile(File(path), true)
+        val fileText = FileUtil.loadFile(testDataFile(), true)
 
         val conflictFile = File("$path.messages")
         val afterFile = File("$path.after")
@@ -60,19 +60,19 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         try {
             ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
-            val mainFile = File(path)
+            val mainFile = testDataFile()
             val mainFileName = mainFile.name
             val fileNameBase = mainFile.nameWithoutExtension + "."
             val rootDir = mainFile.parentFile
             rootDir
-                    .list { _, name ->
-                        name.startsWith(fileNameBase) && name != mainFileName && (name.endsWith(".kt") || name.endsWith(".java"))
-                    }
-                    .forEach {
-                        myFixture.configureByFile(File(rootDir, it).path.replace(File.separator, "/"))
-                    }
+                .list { _, name ->
+                    name.startsWith(fileNameBase) && name != mainFileName && (name.endsWith(".kt") || name.endsWith(".java"))
+                }
+                .forEach {
+                    myFixture.configureByFile(it)
+                }
 
-            configure(path, fileText)
+            configure(fileName(), fileText)
             mainPsiFile = myFixture.file as KtFile
 
             val targetPlatformName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PLATFORM: ")

@@ -14,37 +14,23 @@ import org.jetbrains.kotlin.idea.debugger.breakpoints.*
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
 
 abstract class AbstractBreakpointApplicabilityTest : KotlinLightCodeInsightFixtureTestCase() {
     private companion object {
         private const val COMMENT = "///"
     }
 
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/debugger/breakpointApplicability/"
-    }
-
-    override fun setUp() {
-        super.setUp()
-        myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase()
-    }
-
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
     }
 
-    protected fun doTest(path: String) {
-        myFixture.configureByFile(getPath(path))
-
-        val file = File(path)
-        val ktFile = project.allKotlinFiles().single()
+    protected fun doTest(unused: String) {
+        val ktFile = myFixture.configureByFile(fileName()) as KtFile
 
         val actualContents = checkBreakpoints(ktFile, BreakpointChecker())
-        KotlinTestUtils.assertEqualsToFile(file, actualContents)
+        KotlinTestUtils.assertEqualsToFile(testDataFile(), actualContents)
     }
 
     private fun checkBreakpoints(file: KtFile, checker: BreakpointChecker): String {

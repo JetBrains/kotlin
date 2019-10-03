@@ -9,13 +9,12 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import java.io.File
 
 abstract class AbstractGenerateHashCodeAndEqualsActionTest : AbstractCodeInsightActionTest() {
     override fun createAction(fileText: String) = KotlinGenerateEqualsAndHashcodeAction()
 
     override fun doTest(path: String) {
-        val fileText = FileUtil.loadFile(File(path), true)
+        val fileText = FileUtil.loadFile(testDataFile(), true)
 
         val codeInsightSettings = CodeInsightSettings.getInstance()
         val useInstanceOfOnEqualsParameterOld = codeInsightSettings.USE_INSTANCEOF_ON_EQUALS_PARAMETER

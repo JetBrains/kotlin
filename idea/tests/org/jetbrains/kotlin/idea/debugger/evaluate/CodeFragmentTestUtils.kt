@@ -36,7 +36,7 @@ internal fun KtCodeFragment.checkImports(testPath: String) {
 }
 
 internal fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String) {
-    configureByFile(filePath)
+    configureByFile(File(filePath).name)
 
     val elementAt = file?.findElementAt(caretOffset)
     val file = createCodeFragment(filePath, elementAt!!)

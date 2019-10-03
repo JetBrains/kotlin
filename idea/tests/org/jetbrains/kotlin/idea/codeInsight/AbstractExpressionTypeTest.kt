@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractExpressionTypeTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getBasePath() = PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE + "/codeInsight/expressionType"
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected fun doTest(path: String) {
-        myFixture.configureByFile(path)
+        myFixture.configureByFile(fileName())
         val expressionTypeProvider = KotlinExpressionTypeProvider()
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!
         val expressions = expressionTypeProvider.getExpressionsAt(elementAtCaret)

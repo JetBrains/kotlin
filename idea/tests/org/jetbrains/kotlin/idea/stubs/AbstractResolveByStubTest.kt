@@ -22,16 +22,17 @@ import java.io.File
 
 abstract class AbstractResolveByStubTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(testFileName: String) {
-        if (InTextDirectivesUtils.isDirectiveDefined(File(testFileName).readText(), "NO_CHECK_SOURCE_VS_BINARY")) {
+        if (InTextDirectivesUtils.isDirectiveDefined(testDataFile().readText(), "NO_CHECK_SOURCE_VS_BINARY")) {
             // If NO_CHECK_SOURCE_VS_BINARY is enabled, source vs binary descriptors differ, which means that we should not run this test:
             // it would compare descriptors resolved from sources (by stubs) with .txt, which describes binary descriptors
             return
         }
 
-        myFixture.configureByFile(testFileName)
+        val fileName = fileName()
+        myFixture.configureByFile(fileName)
         val shouldFail = getTestName(false) == "ClassWithConstVal"
         AstAccessControl.testWithControlledAccessToAst(shouldFail, project, testRootDisposable) {
-            performTest(testFileName)
+            performTest(testPath())
         }
     }
 
