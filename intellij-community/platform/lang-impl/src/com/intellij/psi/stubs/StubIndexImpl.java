@@ -13,6 +13,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
@@ -35,9 +36,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.hash.MergedInvertedIndex;
-import com.intellij.util.indexing.impl.InputDataDiffBuilder;
-import com.intellij.util.indexing.impl.MapInputDataDiffBuilder;
-import com.intellij.util.indexing.impl.UpdateData;
+import com.intellij.util.indexing.impl.*;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.io.*;
 import com.intellij.util.io.DataOutputStream;
@@ -682,13 +681,35 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
     try {
       final UpdatableIndex<K, Void, FileContent> index = getIndex(key);
       if (index == null) return;
+      index.updateWithMap(new AbstractUpdateData<K, Void>(fileId) {
+        @Override
+        protected boolean iterateKeys(@NotNull KeyValueUpdateProcessor<? super K, ? super Void> addProcessor,
+                                      @NotNull KeyValueUpdateProcessor<? super K, ? super Void> updateProcessor,
+                                      @NotNull RemovedKeyProcessor<? super K> removeProcessor) throws StorageException {
+          boolean modified = false;
 
-      Map<K, Void> oldKeys = Maps.asMap(oldInputData.keySet(), x -> null);
-      Map<K, Void> newKeys = Maps.asMap(newInputData.keySet(), x -> null);
+          for (K oldKey : oldInputData.keySet()) {
+            if (!newInputData.containsKey(oldKey)) {
+              removeProcessor.process(oldKey, fileId);
+              if (!modified) modified = true;
+            }
+          }
 
-      final ThrowableComputable<InputDataDiffBuilder<K, Void>, IOException>
-        oldMapGetter = () -> new MapInputDataDiffBuilder<>(fileId, oldKeys);
-      index.updateWithMap(new UpdateData<K, Void>(fileId, newKeys, oldMapGetter, (IndexId)key, null));
+          for (K oldKey : newInputData.keySet()) {
+            if (!oldInputData.containsKey(oldKey)) {
+              addProcessor.process(oldKey, null, fileId);
+              if (!modified) modified = true;
+            }
+          }
+
+          return modified;
+        }
+
+        @Override
+        public boolean newDataIsEmpty() {
+          return newInputData.isEmpty();
+        }
+      });
     }
     catch (StorageException e) {
       LOG.info(e);

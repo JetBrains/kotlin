@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.*;
+import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.UpdateData;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +65,7 @@ public class MergedInvertedIndex<Key, Value> implements UpdatableIndex<Key, Valu
 
 
   @Override
-  public void updateWithMap(@NotNull UpdateData<Key, Value> updateData) throws StorageException {
+  public void updateWithMap(@NotNull AbstractUpdateData<Key, Value> updateData) throws StorageException {
     int fileId = updateData.getInputId();
     if (myHashIndex.getHashId(fileId) != 0) {
       return;

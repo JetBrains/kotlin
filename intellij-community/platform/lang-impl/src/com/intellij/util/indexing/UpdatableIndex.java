@@ -19,6 +19,7 @@ package com.intellij.util.indexing;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
+import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.UpdateData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +63,7 @@ public interface UpdatableIndex<Key, Value, Input> extends InvertedIndex<Key,Val
   @NotNull
   IndexExtension<Key, Value, Input> getExtension();
 
-  void updateWithMap(@NotNull UpdateData<Key, Value> updateData) throws StorageException;
+  void updateWithMap(@NotNull AbstractUpdateData<Key, Value> updateData) throws StorageException;
 
   void setBufferingEnabled(boolean enabled);
 

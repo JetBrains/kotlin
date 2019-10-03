@@ -4,9 +4,8 @@ package com.intellij.util.indexing.hash;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.IntIntFunction;
 import com.intellij.util.indexing.*;
+import com.intellij.util.indexing.impl.AbstractUpdateData;
 import com.intellij.util.indexing.impl.IndexStorage;
-import com.intellij.util.indexing.impl.MapIndexStorage;
-import com.intellij.util.indexing.impl.UpdateData;
 import com.intellij.util.indexing.impl.forward.MapForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +23,8 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Integer, Void, 
 
   @NotNull
   @Override
-  protected Computable<Boolean> createIndexUpdateComputation(@NotNull UpdateData<Integer, Void> updateData) {
-    return new HashIndexUpdateComputable(super.createIndexUpdateComputation(updateData), updateData.getNewData().isEmpty());
+  protected Computable<Boolean> createIndexUpdateComputation(@NotNull AbstractUpdateData<Integer, Void> updateData) {
+    return new HashIndexUpdateComputable(super.createIndexUpdateComputation(updateData), updateData.newDataIsEmpty());
   }
 
   public int getHashId(int fileId) throws StorageException {
