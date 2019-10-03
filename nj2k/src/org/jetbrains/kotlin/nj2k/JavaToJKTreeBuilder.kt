@@ -736,25 +736,26 @@ class JavaToJKTreeBuilder constructor(
 
         fun <T : PsiModifierListOwner> T.annotationList(docCommentOwner: PsiDocCommentOwner?): Pair<JKAnnotationList, JKAnnotationList> {
             val deprecatedAnnotation = docCommentOwner?.docComment?.deprecatedAnnotation()
-            val (plainAnnotations, typeUseAnnotations) = annotations.mapNotNull { annotation ->
-                when {
-                    annotation !is PsiAnnotation -> null
-                    annotation.qualifiedName == DEPRECATED_ANNOTAION_FQ_NAME && deprecatedAnnotation != null -> null
-                    else -> annotation.toJK()
+            val (plainAnnotations, typeUseAnnotations) = annotations
+                .mapNotNull { annotation ->
+                    when {
+                        annotation !is PsiAnnotation -> null
+                        annotation.qualifiedName == DEPRECATED_ANNOTAION_FQ_NAME && deprecatedAnnotation != null -> null
+                        else -> annotation
+                    }
                 }
-            }.partition { !it.isTypeUseTargetAnnotation() }
+                .partition { !it.isTypeUseTargetAnnotation() }
+                .let { (plain, typeUse) -> plain.map { it.toJK() } to typeUse.map { it.toJK() } }
             return JKAnnotationList(plainAnnotations + listOfNotNull(deprecatedAnnotation)) to JKAnnotationList(typeUseAnnotations)
         }
 
-        private fun JKAnnotation.isTypeUseTargetAnnotation(): Boolean {
-            val annotationClass = (this as? JKAnnotation)?.classSymbol?.target as? PsiClassImpl ?: return false
-            return annotationClass.annotations.any {
-                if (it.qualifiedName != "java.lang.annotation.Target") return@any false
-                val value = (it.attributes.singleOrNull() as? PsiNameValuePair)?.value
-                val reference = (value as? PsiReferenceExpression)
-                    ?: (value as? PsiArrayInitializerMemberValueImpl)?.initializers?.singleOrNull() as? PsiReferenceExpression
-                reference?.referenceName == "TYPE_USE"
-            }
+        private fun PsiAnnotation.isTypeUseTargetAnnotation(): Boolean {
+            val annotationClass = this.nameReferenceElement?.reference?.resolve() as? PsiClassImpl ?: return false
+            val annotation = annotationClass.getAnnotation("java.lang.annotation.Target") ?: return false
+            val value = annotation.findAttributeValue("value") ?: return false
+            val valueReference = (value as? PsiReferenceExpression)
+                ?: (value as? PsiArrayInitializerMemberValueImpl)?.initializers?.singleOrNull() as? PsiReferenceExpression
+            return valueReference?.referenceName == "TYPE_USE"
         }
 
         fun PsiAnnotation.toJK(): JKAnnotation =
