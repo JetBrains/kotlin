@@ -46,6 +46,23 @@ tasks {
         outputs.dir("lib")
     }
 
+    register<YarnTask>("yarnTest") {
+        group = "verification"
+
+        dependsOn("yarn")
+        setWorkingDir(projectDir)
+        args = listOf("test")
+
+        inputs.dir(
+            "test"
+        )
+        inputs.files(
+            "kotlin-source-map-loader.js",
+            "package.json",
+            "yarn.lock"
+        )
+    }
+
     register<Delete>("cleanYarn") {
         group = "build"
 
@@ -58,6 +75,10 @@ tasks {
 
     named("clean") {
         dependsOn("cleanYarn")
+    }
+
+    named("check") {
+        dependsOn("yarnTest")
     }
 }
 
