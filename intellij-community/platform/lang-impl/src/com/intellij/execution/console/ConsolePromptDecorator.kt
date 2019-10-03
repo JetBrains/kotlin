@@ -77,6 +77,8 @@ class ConsolePromptDecorator(private val myEditorEx: EditorEx) : EditorLinePaint
 
   override fun gutterClosed() {}
 
+  override fun useMargin(): Boolean = false
+
   fun update() {
     UIUtil.invokeLaterIfNeeded {
       myEditorEx.gutterComponentEx.revalidateMarkup()
