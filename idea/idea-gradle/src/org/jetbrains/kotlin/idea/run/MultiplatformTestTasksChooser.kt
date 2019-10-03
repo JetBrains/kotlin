@@ -18,6 +18,12 @@ import java.util.*
 import java.util.function.Consumer
 
 class MultiplatformTestTasksChooser : TestTasksChooser() {
+    companion object {
+        fun createContext(context: DataContext, locationName: String?): DataContext {
+            return contextWithLocationName(context, locationName)
+        }
+    }
+
     fun multiplatformChooseTasks(
         project: Project,
         dataContext: DataContext,
