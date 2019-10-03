@@ -184,6 +184,35 @@ version '1.0-SNAPSHOT'
     assert ModuleManager.getInstance(myProject).getModules().length == 3
   }
 
+  @Test
+  @TargetVersions("5.0")
+  void testWithExistedRootModuleWithoutPreviewImport() {
+    createMainModule("project")
+
+    createSettingsFile("""
+rootProject.name='rooot'
+include ':child1'
+include ':child2'"""
+    )
+
+    createProjectSubFile "build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+
+    createProjectSubFile "../child1/build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+    createProjectSubFile "../child2/build.gradle", """
+group 'test'
+version '1.0-SNAPSHOT'
+"""
+
+    doTest()
+    assert ModuleManager.getInstance(myProject).getModules().length == 3
+  }
+
   Module createMainModule(String name) {
     Module module = null
     WriteAction.runAndWait {

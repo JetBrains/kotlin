@@ -14,6 +14,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
+import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider;
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider;
@@ -164,12 +165,36 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
         if (unloadedModuleDescription == null) {
           result.add(node);
         }
+        markExistedModulesWithSameRoot(node, modelsProvider);
       }
       else {
         node.putUserData(MODULE_KEY, module);
       }
     }
     return result;
+  }
+
+  private void markExistedModulesWithSameRoot(DataNode<E> node,
+                                              IdeModifiableModelsProvider modelsProvider) {
+    ModuleData moduleData = node.getData();
+    ProjectSystemId projectSystemId = moduleData.getOwner();
+    Arrays.stream(modelsProvider.getModules())
+      .filter(ideModule -> isModulePointsSameRoot(moduleData, ideModule))
+      .filter(module -> !ExternalSystemApiUtil.isExternalSystemAwareModule(projectSystemId, module))
+      .forEach(module -> {
+        ExternalSystemModulePropertyManager.getInstance(module)
+          .setExternalOptions(projectSystemId, moduleData, node.getData(ProjectKeys.PROJECT));
+      });
+
+  }
+
+  private static boolean isModulePointsSameRoot(ModuleData moduleData, Module ideModule) {
+    for (VirtualFile root: ModuleRootManager.getInstance(ideModule).getContentRoots()) {
+      if (FileUtil.pathsEqual(root.getPath(), moduleData.getLinkedExternalProjectPath())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static void syncPaths(@NotNull Module module, @NotNull ModifiableRootModel modifiableModel, @NotNull ModuleData data) {
