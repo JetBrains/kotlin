@@ -14,7 +14,7 @@ object LogEventFixtures {
     private val NO_NEW_ITEMS_TEST_STATE = TEST_STATE.withoutNewItems()
 
     val completion_started_3_items_shown = CompletionStartedEvent("", "", "", userId, sessionId, "Java", true, 1, Fixtures.initialState,
-                                                                  Fixtures.userFactors, 0, System.currentTimeMillis())
+                                                                  Fixtures.userFactors, Fixtures.contextFactors, 0, System.currentTimeMillis())
 
     val completion_cancelled = CompletionCancelledEvent(userId, sessionId, System.currentTimeMillis())
 

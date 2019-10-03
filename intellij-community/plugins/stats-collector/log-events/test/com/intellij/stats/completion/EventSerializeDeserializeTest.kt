@@ -43,8 +43,13 @@ object Fixtures {
             "explicitSelectCountToday" to "100"
     )
 
+    val contextFactors: Map<String, String> = mapOf(
+      "line_number" to "10",
+      "is_line_beginning" to "true"
+    )
+
     val history = mapOf(10 to ElementPositionHistory(listOf(StagePosition(0, 1))))
-    
+
 }
 
 class EventSerializeDeserializeTest {
@@ -59,7 +64,7 @@ class EventSerializeDeserializeTest {
     fun `completion started event`() {
         val event = CompletionStartedEvent("", "", "", Fixtures.userId,
                                            "xx", "Java", true, 1, Fixtures.initialState,
-                                           Fixtures.userFactors, 0, System.currentTimeMillis())
+                                           Fixtures.userFactors, Fixtures.contextFactors, 0, System.currentTimeMillis())
         serializeDeserializeAndCheck(event)
     }
 

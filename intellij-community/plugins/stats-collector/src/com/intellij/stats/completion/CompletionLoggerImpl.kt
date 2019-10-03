@@ -27,13 +27,14 @@ class CompletionFileLogger(private val installationUID: String,
         val mlRankingVersion = lookupStorage?.model?.version() ?: "NONE"
 
         val userFactors = lookupStorage?.userFactors ?: emptyMap()
+        val contextFactors = lookupStorage?.contextFactors?: emptyMap()
 
         val event = CompletionStartedEvent(
                 ideVersion, pluginVersion, mlRankingVersion,
                 installationUID, completionUID,
                 language?.displayName,
                 isExperimentPerformed, experimentVersion,
-                state, userFactors,
+                state, userFactors, contextFactors,
                 queryLength = lookup.prefixLength(),
                 timestamp = lookupStorage?.startedTimestamp ?: timestamp)
 
