@@ -270,11 +270,8 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
       //noinspection unchecked
       settings.linkProject(gradleProjectSettings);
 
-      ImportSpec importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-        .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
-        .useDefaultCallback()
-        .build();
-      ExternalSystemUtil.refreshProject(gradleProjectSettings.getExternalProjectPath(), importSpec);
+      ExternalSystemUtil.refreshProject(gradleProjectSettings.getExternalProjectPath(),
+                                        new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).build());
     };
     ExternalProjectsManagerImpl.getInstance(project)
       .runWhenInitialized(

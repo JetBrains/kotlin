@@ -24,7 +24,6 @@ import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.internal.InternalExternalProjectInfo;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.project.ProjectId;
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl;
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalModuleBuilder;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
@@ -63,7 +62,10 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.intellij.ide.util.newProjectWizard.AbstractProjectWizard.getNewProjectJdk;
 import static com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject;
@@ -258,9 +260,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
         }
 
         ImportSpec importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-          .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
           .createDirectoriesForEmptyContentRoots()
-          .useDefaultCallback()
           .build();
         ExternalSystemUtil.refreshProject(rootProjectPath, importSpec);
 

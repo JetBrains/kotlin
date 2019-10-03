@@ -247,7 +247,6 @@ project(':string-utils') {
   protected ImportSpec createImportSpec() {
     ImportSpecBuilder importSpecBuilder = new ImportSpecBuilder(myProject, getExternalSystemId())
       .use(ProgressExecutionMode.MODAL_SYNC)
-
       .forceWhenUptodate();
     if (isPreview) {
       importSpecBuilder.usePreviewMode()

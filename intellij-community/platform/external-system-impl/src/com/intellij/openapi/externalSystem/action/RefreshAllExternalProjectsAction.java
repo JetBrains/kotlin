@@ -9,7 +9,6 @@ import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.service.internal.ExternalSystemProcessingManager;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl;
 import com.intellij.openapi.externalSystem.statistics.ExternalSystemActionsCollector;
@@ -78,11 +77,7 @@ public class RefreshAllExternalProjectsAction extends AnAction implements AnActi
     ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project);
     for (ProjectSystemId externalSystemId : systemIds) {
       ExternalSystemActionsCollector.trigger(project, externalSystemId, this, e);
-      ExternalSystemUtil.refreshProjects(
-        new ImportSpecBuilder(project, externalSystemId)
-          .forceWhenUptodate(true)
-          .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
-      );
+      ExternalSystemUtil.refreshProjects(new ImportSpecBuilder(project, externalSystemId).forceWhenUptodate(true));
     }
   }
 

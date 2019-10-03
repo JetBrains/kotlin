@@ -8,7 +8,6 @@ import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.AbstractExternalEntityData;
 import com.intellij.openapi.externalSystem.model.project.ExternalConfigPathAware;
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
@@ -69,8 +68,6 @@ public class GradleRefreshProjectDependenciesAction extends RefreshExternalProje
 
     ExternalSystemUtil.refreshProject(externalProjectPath,
                                       new ImportSpecBuilder(project, projectSystemId)
-                                        .useDefaultCallback()
-                                        .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
                                         .withArguments("--refresh-dependencies")
                                         .build());
   }
