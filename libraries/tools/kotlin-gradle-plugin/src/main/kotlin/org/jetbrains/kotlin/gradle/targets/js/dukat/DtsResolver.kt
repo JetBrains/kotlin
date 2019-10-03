@@ -11,7 +11,8 @@ import java.io.File
 
 class DtsResolver(val npmProject: NpmProject) {
     private val typeModules = npmProject.modules.copy(
-        packageJsonEntries = listOf("types"),
+        // https://www.typescriptlang.org/docs/handbook/declaration-files/publishing.html
+        packageJsonEntries = listOf("types", "typings"),
         indexFileSuffixes = listOf(".d.ts")
     )
 
