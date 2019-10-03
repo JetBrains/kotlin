@@ -24,11 +24,17 @@ abstract class FirAbstractStarImportingScope(
 
     protected abstract val starImports: List<FirResolvedImport>
 
+    private val absentClassifierNames = mutableSetOf<Name>()
+
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
         processor: (FirClassifierSymbol<*>) -> Boolean
     ): Boolean {
+        if (starImports.isEmpty() || name in absentClassifierNames) {
+            return true
+        }
+        var empty = true
         for (import in starImports) {
             val relativeClassName = import.relativeClassName
             val classId = when {
@@ -37,9 +43,13 @@ abstract class FirAbstractStarImportingScope(
                 else -> ClassId(import.packageFqName, relativeClassName.child(name), false)
             }
             val symbol = provider.getClassLikeSymbolByFqName(classId) ?: continue
+            empty = false
             if (!processor(symbol)) {
                 return false
             }
+        }
+        if (empty) {
+            absentClassifierNames += name
         }
         return true
     }
