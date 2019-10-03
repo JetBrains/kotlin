@@ -2,6 +2,7 @@
 package com.intellij.configurationStore.statistic.eventLog
 
 import com.intellij.concurrency.JobScheduler
+import com.intellij.configurationStore.ComponentInfo
 import com.intellij.configurationStore.ComponentStoreImpl
 import com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEvents.logConfigurationState
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
@@ -13,7 +14,6 @@ import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import com.intellij.util.ArrayUtilRt
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
@@ -23,6 +23,8 @@ private val LOG = logger<FeatureUsageSettingsEventScheduler>()
 
 private const val PERIOD_DELAY = 24 * 60
 private const val INITIAL_DELAY = PERIOD_DELAY
+
+private val EDT_EXECUTOR = Executor { ApplicationManager.getApplication().invokeLater(it) }
 
 internal class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracker {
   override fun initialize() {
@@ -41,7 +43,7 @@ internal class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracke
       return
     }
 
-    logInitializedComponents(ApplicationManager.getApplication())
+    logInitializedProjectComponents(ApplicationManager.getApplication())
 
     val projectManager = ProjectManagerEx.getInstanceEx()
     val projects = ArrayDeque(projectManager.openProjects.toList())
@@ -57,32 +59,50 @@ internal class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracke
       return CompletableFuture.completedFuture(null)
     }
     else {
-      return logInitializedComponents(project)
+      return logInitializedProjectComponents(project)
         .thenCompose {
           logProjectInitializedComponentsAndContinue(projects)
         }
     }
   }
 
-  private fun logInitializedComponents(componentManager: ComponentManager): CompletableFuture<Void?> {
+  private fun logInitializedProjectComponents(componentManager: ComponentManager): CompletableFuture<Void?> {
     val stateStore = (componentManager.stateStore as? ComponentStoreImpl) ?: return CompletableFuture.completedFuture(null)
-    return CompletableFuture.runAsync(Runnable {
-      val components = stateStore.getComponents()
-      for (name in ArrayUtilRt.toStringArray(components.keys)) {
-        val info = components[name]
-        val component = info?.component ?: continue
-        try {
-          if (component is PersistentStateComponent<*>) {
-            val stateSpec = info.stateSpec ?: continue
-            val componentState = component.state ?: continue
-            logConfigurationState(name, stateSpec, componentState, componentManager as? Project)
+    val components = stateStore.getComponents()
+    return logInitializedComponentsAndContinue(componentManager as? Project, components, ArrayDeque(components.keys))
+  }
+
+  private fun logInitializedComponentsAndContinue(project: Project?, components: Map<String, ComponentInfo>,
+                                                  names: ArrayDeque<String>): CompletableFuture<Void?> {
+    val nextComponent = names.pollFirst()
+    if (nextComponent == null) {
+      return CompletableFuture.completedFuture(null)
+    }
+    else {
+      return logInitializedComponent(project, components, nextComponent)
+        .thenCompose {
+          logInitializedComponentsAndContinue(project, components, names)
+        }
+    }
+  }
+
+  private fun logInitializedComponent(project: Project?, components: Map<String, ComponentInfo>, name: String): CompletableFuture<Void?> {
+    val info = components[name]
+    val component = info?.component
+    if (component is PersistentStateComponent<*>) {
+      val stateSpec = info.stateSpec
+      if (stateSpec != null && stateSpec.reportStatistic) {
+        return CompletableFuture.runAsync(Runnable {
+          try {
+            component.state?.let { logConfigurationState(name, stateSpec, it, project) }
           }
-        }
-        catch (e: Exception) {
-          LOG.warn("Error during configuration recording", e)
-        }
+          catch (e: Exception) {
+            LOG.warn("Error during configuration recording", e)
+          }
+        }, EDT_EXECUTOR)
       }
-    }, Executor { ApplicationManager.getApplication().invokeLater(it) })
+    }
+    return CompletableFuture.completedFuture(null)
   }
 }
 
