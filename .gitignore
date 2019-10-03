@@ -52,4 +52,5 @@ kotlin-ultimate/
 node_modules/
 .rpt2_cache/
 libraries/tools/kotlin-test-js-runner/lib/
+libraries/tools/kotlin-source-map-loader/lib/
 local.properties

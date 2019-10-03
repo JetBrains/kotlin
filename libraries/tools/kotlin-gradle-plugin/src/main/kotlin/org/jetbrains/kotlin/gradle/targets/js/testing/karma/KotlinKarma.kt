@@ -35,7 +35,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private val versions = nodeJs.versions
 
     private val config: KarmaConfig = KarmaConfig()
-    private val requiredDependencies = mutableSetOf<NpmPackageVersion>()
+    private val requiredDependencies = mutableSetOf<RequiredKotlinJsDependency>()
 
     private val configurators = mutableListOf<(KotlinJsTest) -> Unit>()
     private val envJsCollector = mutableMapOf<String, String>()
@@ -44,15 +44,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private var configDirectory: File? = project.projectDir.resolve("karma.config.d").takeIf { it.isDirectory }
 
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
-        get() = mutableListOf<RequiredKotlinJsDependency>().also {
-            it.add(versions.kotlinJsTestRunner)
-            it.addAll(requiredDependencies)
-        }
+        get() = requiredDependencies.toList()
 
     override val settingsState: String
         get() = "KotlinKarma($config)"
 
     init {
+        requiredDependencies.add(versions.kotlinJsTestRunner)
         requiredDependencies.add(versions.karma)
 
         useKotlinReporter()
@@ -176,7 +174,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         requiredDependencies.add(versions.webpack)
         requiredDependencies.add(versions.webpackCli)
-        requiredDependencies.add(versions.sourceMapLoader)
+        requiredDependencies.add(versions.kotlinSourceMapLoader)
         requiredDependencies.add(versions.sourceMapSupport)
     }
 

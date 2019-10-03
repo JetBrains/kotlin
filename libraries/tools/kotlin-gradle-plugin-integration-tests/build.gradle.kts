@@ -111,7 +111,8 @@ tasks.withType<Test> {
         ":kotlin-scripting-common:install",
         ":kotlin-scripting-jvm:install",
         ":kotlin-scripting-compiler-embeddable:install",
-        ":kotlin-test-js-runner:install"
+        ":kotlin-test-js-runner:install",
+        ":kotlin-source-map-loader:install"
     )
 
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"

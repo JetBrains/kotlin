@@ -8,8 +8,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import java.io.File
@@ -33,22 +33,23 @@ data class KotlinWebpackConfig(
     val progressReporter: Boolean = false,
     val progressReporterPathFilter: String? = null
 ) {
-    fun getRequiredDependencies(versions: NpmVersions) = mutableListOf<NpmPackageVersion>().also {
-        it.add(versions.webpack)
-        it.add(versions.webpackCli)
+    fun getRequiredDependencies(versions: NpmVersions) =
+        mutableListOf<RequiredKotlinJsDependency>().also {
+            it.add(versions.webpack)
+            it.add(versions.webpackCli)
 
-        if (bundleAnalyzerReportDir != null) {
-            it.add(versions.webpackBundleAnalyzer)
-        }
+            if (bundleAnalyzerReportDir != null) {
+                it.add(versions.webpackBundleAnalyzer)
+            }
 
-        if (sourceMaps) {
-            it.add(versions.sourceMapLoader)
-        }
+            if (sourceMaps) {
+                it.add(versions.kotlinSourceMapLoader)
+            }
 
-        if (devServer != null) {
-            it.add(versions.webpackDevServer)
+            if (devServer != null) {
+                it.add(versions.webpackDevServer)
+            }
         }
-    }
 
     enum class Mode(val code: String) {
         DEVELOPMENT("development"),
@@ -193,7 +194,7 @@ data class KotlinWebpackConfig(
                 // source maps
                 config.module.rules.push({
                         test: /\.js${'$'}/,
-                        use: ["source-map-loader"],
+                        use: ["kotlin-source-map-loader"],
                         enforce: "pre"
                 });
                 config.devtool = '${devtool.code}';
