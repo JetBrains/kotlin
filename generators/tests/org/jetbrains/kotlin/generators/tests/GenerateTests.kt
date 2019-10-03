@@ -843,6 +843,16 @@ fun main(args: Array<String>) {
             model("slicer/inflow", singleClass = true)
         }
 
+        testClass<AbstractFirMultiModuleResolveTest> {
+            model("fir/multiModule", recursive = false, extension = null)
+        }
+
+        testClass<AbstractFirLazyResolveTest> {
+            model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
+        }
+    }
+
+    testGroup("idea/scripting-support/test", "idea/scripting-support/testData") {
         testClass<AbstractScratchRunActionTest> {
             model(
                 "scratch",
@@ -887,14 +897,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractScratchLineMarkersTest> {
             model("scratch/lineMarker", testMethod = "doScratchTest", pattern = KT_OR_KTS)
-        }
-
-        testClass<AbstractFirMultiModuleResolveTest> {
-            model("fir/multiModule", recursive = false, extension = null)
-        }
-
-        testClass<AbstractFirLazyResolveTest> {
-            model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
         }
     }
 

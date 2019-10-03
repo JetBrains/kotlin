@@ -276,7 +276,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     }
 
     protected fun testScratchText(): String {
-        return File(testDataPath, "idea/testData/scratch/custom/test_scratch.kts").readText()
+        return File(testDataPath, "idea/scripting-support/testData/scratch/custom/test_scratch.kts").readText()
     }
 
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()

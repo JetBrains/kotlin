@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest {
-    @TestMetadata("idea/testData/scratch")
+    @TestMetadata("idea/scripting-support/testData/scratch")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ScratchCompiling extends AbstractScratchRunActionTest {
@@ -28,86 +28,86 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInScratchCompiling() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("for.kts")
         public void testFor() throws Exception {
-            runTest("idea/testData/scratch/for.kts");
+            runTest("idea/scripting-support/testData/scratch/for.kts");
         }
 
         @TestMetadata("generics.kts")
         public void testGenerics() throws Exception {
-            runTest("idea/testData/scratch/generics.kts");
+            runTest("idea/scripting-support/testData/scratch/generics.kts");
         }
 
         @TestMetadata("klass.kts")
         public void testKlass() throws Exception {
-            runTest("idea/testData/scratch/klass.kts");
+            runTest("idea/scripting-support/testData/scratch/klass.kts");
         }
 
         @TestMetadata("libraryDepWithKotlinTest.kts")
         public void testLibraryDepWithKotlinTest() throws Exception {
-            runTest("idea/testData/scratch/libraryDepWithKotlinTest.kts");
+            runTest("idea/scripting-support/testData/scratch/libraryDepWithKotlinTest.kts");
         }
 
         @TestMetadata("simple.kts")
         public void testSimple() throws Exception {
-            runTest("idea/testData/scratch/simple.kts");
+            runTest("idea/scripting-support/testData/scratch/simple.kts");
         }
 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
-            runTest("idea/testData/scratch/simpleFun.kts");
+            runTest("idea/scripting-support/testData/scratch/simpleFun.kts");
         }
 
         @TestMetadata("simpleNoRuntime.kts")
         public void testSimpleNoRuntime() throws Exception {
-            runTest("idea/testData/scratch/simpleNoRuntime.kts");
+            runTest("idea/scripting-support/testData/scratch/simpleNoRuntime.kts");
         }
 
         @TestMetadata("spacesAtLineStart.kts")
         public void testSpacesAtLineStart() throws Exception {
-            runTest("idea/testData/scratch/spacesAtLineStart.kts");
+            runTest("idea/scripting-support/testData/scratch/spacesAtLineStart.kts");
         }
 
         @TestMetadata("stdlibFun.kts")
         public void testStdlibFun() throws Exception {
-            runTest("idea/testData/scratch/stdlibFun.kts");
+            runTest("idea/scripting-support/testData/scratch/stdlibFun.kts");
         }
 
         @TestMetadata("unresolved.kts")
         public void testUnresolved() throws Exception {
-            runTest("idea/testData/scratch/unresolved.kts");
+            runTest("idea/scripting-support/testData/scratch/unresolved.kts");
         }
 
         @TestMetadata("unresolvedMultiline.kts")
         public void testUnresolvedMultiline() throws Exception {
-            runTest("idea/testData/scratch/unresolvedMultiline.kts");
+            runTest("idea/scripting-support/testData/scratch/unresolvedMultiline.kts");
         }
 
         @TestMetadata("userOutput.kts")
         public void testUserOutput() throws Exception {
-            runTest("idea/testData/scratch/userOutput.kts");
+            runTest("idea/scripting-support/testData/scratch/userOutput.kts");
         }
 
         @TestMetadata("var.kts")
         public void testVar() throws Exception {
-            runTest("idea/testData/scratch/var.kts");
+            runTest("idea/scripting-support/testData/scratch/var.kts");
         }
 
         @TestMetadata("veryLongOutput.kts")
         public void testVeryLongOutput() throws Exception {
-            runTest("idea/testData/scratch/veryLongOutput.kts");
+            runTest("idea/scripting-support/testData/scratch/veryLongOutput.kts");
         }
 
         @TestMetadata("when.kts")
         public void testWhen() throws Exception {
-            runTest("idea/testData/scratch/when.kts");
+            runTest("idea/scripting-support/testData/scratch/when.kts");
         }
     }
 
-    @TestMetadata("idea/testData/scratch")
+    @TestMetadata("idea/scripting-support/testData/scratch")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ScratchRepl extends AbstractScratchRunActionTest {
@@ -116,86 +116,86 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInScratchRepl() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("for.kts")
         public void testFor() throws Exception {
-            runTest("idea/testData/scratch/for.kts");
+            runTest("idea/scripting-support/testData/scratch/for.kts");
         }
 
         @TestMetadata("generics.kts")
         public void testGenerics() throws Exception {
-            runTest("idea/testData/scratch/generics.kts");
+            runTest("idea/scripting-support/testData/scratch/generics.kts");
         }
 
         @TestMetadata("klass.kts")
         public void testKlass() throws Exception {
-            runTest("idea/testData/scratch/klass.kts");
+            runTest("idea/scripting-support/testData/scratch/klass.kts");
         }
 
         @TestMetadata("libraryDepWithKotlinTest.kts")
         public void testLibraryDepWithKotlinTest() throws Exception {
-            runTest("idea/testData/scratch/libraryDepWithKotlinTest.kts");
+            runTest("idea/scripting-support/testData/scratch/libraryDepWithKotlinTest.kts");
         }
 
         @TestMetadata("simple.kts")
         public void testSimple() throws Exception {
-            runTest("idea/testData/scratch/simple.kts");
+            runTest("idea/scripting-support/testData/scratch/simple.kts");
         }
 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
-            runTest("idea/testData/scratch/simpleFun.kts");
+            runTest("idea/scripting-support/testData/scratch/simpleFun.kts");
         }
 
         @TestMetadata("simpleNoRuntime.kts")
         public void testSimpleNoRuntime() throws Exception {
-            runTest("idea/testData/scratch/simpleNoRuntime.kts");
+            runTest("idea/scripting-support/testData/scratch/simpleNoRuntime.kts");
         }
 
         @TestMetadata("spacesAtLineStart.kts")
         public void testSpacesAtLineStart() throws Exception {
-            runTest("idea/testData/scratch/spacesAtLineStart.kts");
+            runTest("idea/scripting-support/testData/scratch/spacesAtLineStart.kts");
         }
 
         @TestMetadata("stdlibFun.kts")
         public void testStdlibFun() throws Exception {
-            runTest("idea/testData/scratch/stdlibFun.kts");
+            runTest("idea/scripting-support/testData/scratch/stdlibFun.kts");
         }
 
         @TestMetadata("unresolved.kts")
         public void testUnresolved() throws Exception {
-            runTest("idea/testData/scratch/unresolved.kts");
+            runTest("idea/scripting-support/testData/scratch/unresolved.kts");
         }
 
         @TestMetadata("unresolvedMultiline.kts")
         public void testUnresolvedMultiline() throws Exception {
-            runTest("idea/testData/scratch/unresolvedMultiline.kts");
+            runTest("idea/scripting-support/testData/scratch/unresolvedMultiline.kts");
         }
 
         @TestMetadata("userOutput.kts")
         public void testUserOutput() throws Exception {
-            runTest("idea/testData/scratch/userOutput.kts");
+            runTest("idea/scripting-support/testData/scratch/userOutput.kts");
         }
 
         @TestMetadata("var.kts")
         public void testVar() throws Exception {
-            runTest("idea/testData/scratch/var.kts");
+            runTest("idea/scripting-support/testData/scratch/var.kts");
         }
 
         @TestMetadata("veryLongOutput.kts")
         public void testVeryLongOutput() throws Exception {
-            runTest("idea/testData/scratch/veryLongOutput.kts");
+            runTest("idea/scripting-support/testData/scratch/veryLongOutput.kts");
         }
 
         @TestMetadata("when.kts")
         public void testWhen() throws Exception {
-            runTest("idea/testData/scratch/when.kts");
+            runTest("idea/scripting-support/testData/scratch/when.kts");
         }
     }
 
-    @TestMetadata("idea/testData/scratch/multiFile")
+    @TestMetadata("idea/scripting-support/testData/scratch/multiFile")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ScratchMultiFile extends AbstractScratchRunActionTest {
@@ -204,21 +204,21 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInScratchMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("inlineFun")
         public void testInlineFun() throws Exception {
-            runTest("idea/testData/scratch/multiFile/inlineFun/");
+            runTest("idea/scripting-support/testData/scratch/multiFile/inlineFun/");
         }
 
         @TestMetadata("javaDep")
         public void testJavaDep() throws Exception {
-            runTest("idea/testData/scratch/multiFile/javaDep/");
+            runTest("idea/scripting-support/testData/scratch/multiFile/javaDep/");
         }
     }
 
-    @TestMetadata("idea/testData/worksheet")
+    @TestMetadata("idea/scripting-support/testData/worksheet")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WorksheetCompiling extends AbstractScratchRunActionTest {
@@ -227,16 +227,16 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInWorksheetCompiling() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("simpleScriptRuntime.ws.kts")
         public void testSimpleScriptRuntime() throws Exception {
-            runTest("idea/testData/worksheet/simpleScriptRuntime.ws.kts");
+            runTest("idea/scripting-support/testData/worksheet/simpleScriptRuntime.ws.kts");
         }
     }
 
-    @TestMetadata("idea/testData/worksheet")
+    @TestMetadata("idea/scripting-support/testData/worksheet")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WorksheetRepl extends AbstractScratchRunActionTest {
@@ -245,16 +245,16 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInWorksheetRepl() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("simpleScriptRuntime.ws.kts")
         public void testSimpleScriptRuntime() throws Exception {
-            runTest("idea/testData/worksheet/simpleScriptRuntime.ws.kts");
+            runTest("idea/scripting-support/testData/worksheet/simpleScriptRuntime.ws.kts");
         }
     }
 
-    @TestMetadata("idea/testData/worksheet/multiFile")
+    @TestMetadata("idea/scripting-support/testData/worksheet/multiFile")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WorksheetMultiFile extends AbstractScratchRunActionTest {
@@ -263,21 +263,21 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInWorksheetMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/worksheet/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("inlineFunScriptRuntime")
         public void testInlineFunScriptRuntime() throws Exception {
-            runTest("idea/testData/worksheet/multiFile/inlineFunScriptRuntime/");
+            runTest("idea/scripting-support/testData/worksheet/multiFile/inlineFunScriptRuntime/");
         }
 
         @TestMetadata("javaDepScriptRuntime")
         public void testJavaDepScriptRuntime() throws Exception {
-            runTest("idea/testData/worksheet/multiFile/javaDepScriptRuntime/");
+            runTest("idea/scripting-support/testData/worksheet/multiFile/javaDepScriptRuntime/");
         }
     }
 
-    @TestMetadata("idea/testData/scratch/rightPanelOutput")
+    @TestMetadata("idea/scripting-support/testData/scratch/rightPanelOutput")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ScratchRightPanelOutput extends AbstractScratchRunActionTest {
@@ -286,22 +286,22 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         }
 
         public void testAllFilesPresentInScratchRightPanelOutput() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch/rightPanelOutput"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/rightPanelOutput"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("bigSequentialOutputs.kts")
         public void testBigSequentialOutputs() throws Exception {
-            runTest("idea/testData/scratch/rightPanelOutput/bigSequentialOutputs.kts");
+            runTest("idea/scripting-support/testData/scratch/rightPanelOutput/bigSequentialOutputs.kts");
         }
 
         @TestMetadata("shortExpression.longOutput.singleTop.kts")
         public void testShortExpression_longOutput_singleTop() throws Exception {
-            runTest("idea/testData/scratch/rightPanelOutput/shortExpression.longOutput.singleTop.kts");
+            runTest("idea/scripting-support/testData/scratch/rightPanelOutput/shortExpression.longOutput.singleTop.kts");
         }
 
         @TestMetadata("shortExpression.shortOutput.singleTop.kts")
         public void testShortExpression_shortOutput_singleTop() throws Exception {
-            runTest("idea/testData/scratch/rightPanelOutput/shortExpression.shortOutput.singleTop.kts");
+            runTest("idea/scripting-support/testData/scratch/rightPanelOutput/shortExpression.shortOutput.singleTop.kts");
         }
     }
 }
