@@ -86,7 +86,7 @@ fun waitForAllEditorsFinallyLoaded(project: Project) {
 }
 
 fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementationClass: String, toImplementationClass: String) {
-    val pointName = ExtensionPointName.create<LanguageExtensionPoint<Annotator>>(LanguageAnnotators.EP_NAME)
+    val pointName = ExtensionPointName.create<LanguageExtensionPoint<Annotator>>(LanguageAnnotators.EP_NAME.name)
     val extensionPoint = pointName.getPoint(null)
 
     val point = LanguageExtensionPoint<Annotator>()
