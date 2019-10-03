@@ -241,40 +241,6 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
   }
 
   @Test
-  @TargetVersions("5.2+")
-  public void testGeneratedSourcesOutput() throws Exception {
-    createDefaultDirs();
-    createProjectSubFile("settings.gradle", "include('processor')");
-    createProjectSubFile("processor/build.gradle", "apply plugin:'java'");
-    createProjectSubFile("build/generated/sources/annotationProcessor/java/main/Generated.java");
-    importProject("" +
-                  "apply plugin: 'java'\n" +
-                  "dependencies {\n" +
-                  "   annotationProcessor project('processor')\n" +
-                  "}");
-    assertSources("project.main",
-                  "build/generated/sources/annotationProcessor/java/main",
-                  "src/main/java");
-    assertGeneratedSources("project.main", "build/generated/sources/annotationProcessor/java/main");
-  }
-
-  @Test
-  @TargetVersions("5.2+")
-  public void testMissingAnnotationProcessor() throws Exception {
-    createDefaultDirs();
-    createProjectSubFile("settings.gradle", "include('processor')");
-    createProjectSubFile("processor/build.gradle", "apply plugin:'java'");
-    importProject("" +
-                  "apply plugin: 'java'\n" +
-                  "dependencies {\n" +
-                  "   annotationProcessor 'not.exist:processor:1.0'\n" +
-                  "}");
-    assertSources("project.main",
-                  "java");
-    assertGeneratedSources("project.main");
-  }
-
-  @Test
   public void testCustomSourceSetsAreImported() throws Exception {
     createDefaultDirs();
     createProjectSubFile("src/generated/java/G.java");

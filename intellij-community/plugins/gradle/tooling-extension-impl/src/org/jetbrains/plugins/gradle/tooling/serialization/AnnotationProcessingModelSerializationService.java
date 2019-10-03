@@ -16,7 +16,6 @@ import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap;
 import org.jetbrains.plugins.gradle.tooling.util.ObjectCollector;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +96,8 @@ public class AnnotationProcessingModelSerializationService implements Serializat
         if (isAdded) {
           writeStrings(writer, "args", config.getAnnotationProcessorArguments());
           writeStrings(writer, "paths", config.getAnnotationProcessorPath());
+          writeString(writer, "output", config.getProcessorOutput());
+          writeBoolean(writer, "isTestSources", config.isTestSources());
         }
         writer.stepOut();
       }
@@ -144,7 +145,9 @@ public class AnnotationProcessingModelSerializationService implements Serializat
           public AnnotationProcessingConfigImpl create() {
             List<String> args = readStringList(reader);
             Set<String> files = readStringSet(reader);
-            return new AnnotationProcessingConfigImpl(files, args);
+            String output = readString(reader, "output");
+            boolean isTest = readBoolean(reader,"isTestSources");
+            return new AnnotationProcessingConfigImpl(files, args, output, isTest);
           }
         });
     reader.stepOut();

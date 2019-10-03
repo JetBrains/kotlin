@@ -306,15 +306,9 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
 
       DefaultExternalSourceDirectorySet generatedDirectorySet = null
       def hasExplicitlyDefinedGeneratedSources = generatedSourceDirs && !generatedSourceDirs.isEmpty()
-      FileCollection generatedSourcesOutput = sourceSet.output.hasProperty("generatedSourcesDirs") ?
-                                              sourceSet.output.generatedSourcesDirs : null
-      def hasAnnotationProcessorClasspath = sourceSet.hasProperty("annotationProcessorPath") && !isEmpty(sourceSet.annotationProcessorPath)
-      if (hasExplicitlyDefinedGeneratedSources || hasAnnotationProcessorClasspath) {
+      if (hasExplicitlyDefinedGeneratedSources) {
 
         def files = new HashSet<File>()
-        if (hasAnnotationProcessorClasspath && generatedSourcesOutput != null) {
-          files.addAll(generatedSourcesOutput.files)
-        }
         for (File file : generatedSourceDirs) {
           if (javaDirectorySet.srcDirs.contains(file)) {
             files.add(file)

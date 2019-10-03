@@ -3,6 +3,7 @@ package org.jetbrains.plugins.gradle.service.project.data
 
 import com.intellij.compiler.CompilerConfiguration
 import com.intellij.compiler.CompilerConfigurationImpl
+import com.intellij.ide.projectView.actions.MarkRootActionBase
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.Key
@@ -10,18 +11,36 @@ import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
+import com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManager
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants
 import com.intellij.openapi.externalSystem.util.Order
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ContentEntry
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.SourceFolder
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFileManager
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.java.compiler.ProcessorConfigProfile
 import org.jetbrains.jps.model.java.impl.compiler.ProcessorConfigProfileImpl
 import org.jetbrains.plugins.gradle.model.data.AnnotationProcessingData
+import org.jetbrains.plugins.gradle.settings.GradleSettings
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Order(ExternalSystemConstants.UNORDERED)
 class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationProcessingData, ProcessorConfigProfile>() {
+
+  private lateinit var sourceFolderManager: SourceFolderManager
+  private lateinit var modelsProvider: IdeModifiableModelsProvider
+
   override fun getTargetDataKey(): Key<AnnotationProcessingData> {
     return AnnotationProcessingData.KEY
   }
@@ -29,9 +48,11 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
   override fun importData(toImport: Collection<DataNode<AnnotationProcessingData>>,
                           projectData: ProjectData?,
                           project: Project,
-                          modelsProvider: IdeModifiableModelsProvider) {
+                          modifiableModelsProvider: IdeModifiableModelsProvider) {
     val importedData = mutableSetOf<AnnotationProcessingData>()
     val config = CompilerConfiguration.getInstance(project) as CompilerConfigurationImpl
+    sourceFolderManager = SourceFolderManager.getInstance(project)
+    modelsProvider = modifiableModelsProvider
     for (node in toImport) {
       val moduleData = node.parent?.data as? ModuleData
       if (moduleData == null) {
@@ -46,8 +67,125 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
       }
 
       config.configureAnnotationProcessing(ideModule, node.data, importedData)
+
+      if (projectData != null) {
+        val isDelegatedBuild = GradleSettings.getInstance(project).getLinkedProjectSettings(
+          projectData.linkedExternalProjectPath)?.delegatedBuild ?: true
+
+        clearGeneratedSourceFolders(ideModule, node)
+        addGeneratedSourceFolders(ideModule, node, isDelegatedBuild)
+      }
     }
   }
+
+  private fun clearGeneratedSourceFolders(ideModule: Module,
+                                          node: DataNode<AnnotationProcessingData>) {
+    val gradleOutputs = ExternalSystemApiUtil.findAll(node, AnnotationProcessingData.OUTPUT_KEY)
+
+    val pathsToRemove =
+      (gradleOutputs
+         .map { it.data.outputPath } +
+       listOf(
+         getAnnotationProcessorGenerationPath(ideModule, false),
+         getAnnotationProcessorGenerationPath(ideModule, true)
+       ))
+        .filterNotNull()
+
+    pathsToRemove.forEach { path ->
+      val url = VfsUtilCore.pathToUrl(path)
+      val modifiableRootModel = modelsProvider.getModifiableRootModel(ideModule)
+
+      val (entry, folder) = findContentEntryOrFolder(modifiableRootModel, url)
+
+      if (entry != null) {
+        if (folder != null) {
+          entry.removeSourceFolder(folder)
+        }
+
+        if (entry.sourceFolders.isEmpty()) {
+          modifiableRootModel.removeContentEntry(entry)
+        }
+      }
+    }
+  }
+
+  private fun addGeneratedSourceFolders(ideModule: Module,
+                                        node: DataNode<AnnotationProcessingData>,
+                                        delegatedBuild: Boolean) {
+
+    if (delegatedBuild) {
+      val outputs = ExternalSystemApiUtil.findAll(node, AnnotationProcessingData.OUTPUT_KEY)
+      outputs.forEach {
+        val outputPath = it.data.outputPath
+        val isTestSource = it.data.isTestSources
+        addGeneratedSourceFolder(ideModule, outputPath, isTestSource)
+      }
+    }
+    else {
+      val outputPath = getAnnotationProcessorGenerationPath(ideModule, false)
+      if (outputPath != null) {
+        addGeneratedSourceFolder(ideModule, outputPath, false)
+      }
+
+      val testOutputPath = getAnnotationProcessorGenerationPath(ideModule, true)
+      if (testOutputPath != null) {
+        addGeneratedSourceFolder(ideModule, testOutputPath, true)
+      }
+    }
+  }
+
+
+  private fun addGeneratedSourceFolder(ideModule: Module,
+                                       path: String,
+                                       isTest: Boolean) {
+    val type = if (isTest) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE
+    val url = VfsUtilCore.pathToUrl(path)
+    val vf = LocalFileSystem.getInstance().refreshAndFindFileByPath(path)
+    if (vf == null || !vf.exists()) {
+      sourceFolderManager.addSourceFolder(ideModule, url, type)
+      sourceFolderManager.setSourceFolderGenerated(url, true)
+    } else {
+      val modifiableRootModel = modelsProvider.getModifiableRootModel(ideModule)
+      val contentEntry = MarkRootActionBase.findContentEntry(modifiableRootModel, vf)
+                         ?: modifiableRootModel.addContentEntry(url)
+      val properties = JpsJavaExtensionService.getInstance().createSourceRootProperties("", true)
+      contentEntry.addSourceFolder(url, type, properties)
+    }
+  }
+
+  private fun findContentEntryOrFolder(modifiableRootModel: ModifiableRootModel,
+                                       url: String): Pair<ContentEntry?, SourceFolder?> {
+    var entryVar: ContentEntry? = null
+    var folderVar: SourceFolder? = null
+    modifiableRootModel.contentEntries.forEach search@{ ce ->
+      ce.sourceFolders.forEach { sf ->
+        if (sf.url == url) {
+          entryVar = ce
+          folderVar = sf
+          return@search
+        }
+      }
+      if (ce.url == url) {
+        entryVar = ce
+      }
+    }
+    return entryVar to folderVar
+  }
+
+  private fun getAnnotationProcessorGenerationPath(ideModule: Module, forTests: Boolean): String? {
+    val config = CompilerConfiguration.getInstance(ideModule.project).getAnnotationProcessingConfiguration(ideModule)
+    val sourceDirName = config.getGeneratedSourcesDirectoryName(forTests)
+      val roots = modelsProvider.getModifiableRootModel(ideModule).contentRootUrls
+      if (roots.isEmpty()) {
+        return null
+      }
+      if (roots.size > 1) {
+        Arrays.sort(roots)
+      }
+      return if (StringUtil.isEmpty(sourceDirName)) VirtualFileManager.extractPath(roots[0])
+      else VirtualFileManager.extractPath(roots[0]) + "/" + sourceDirName
+  }
+
 
   override fun computeOrphanData(toImport: MutableCollection<DataNode<AnnotationProcessingData>>,
                                  projectData: ProjectData,
@@ -94,6 +232,7 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
     with(profile) {
       isEnabled = true
       isObtainProcessorsFromClasspath = false
+      isOutputRelativeToContentRoot = true
       addModuleName(ideModule.name)
     }
   }

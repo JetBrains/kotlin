@@ -89,14 +89,36 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
     }
     if (!resolverCtx.isResolveModulePerSourceSet()) {
       final AnnotationProcessingData apData = getMergedAnnotationProcessingData(apModel);
-      ideModule.createChild(AnnotationProcessingData.KEY, apData);
+      DataNode<AnnotationProcessingData> dataNode = ideModule.createChild(AnnotationProcessingData.KEY, apData);
+      populateAnnotationProcessingOutput(dataNode, apModel);
     } else {
       Collection<DataNode<GradleSourceSetData>> all = ExternalSystemApiUtil.findAll(ideModule, GradleSourceSetData.KEY);
       for (DataNode<GradleSourceSetData> node : all) {
         final AnnotationProcessingData apData = getAnnotationProcessingData(apModel, node.getData().getModuleName());
         if (apData != null) {
-          node.createChild(AnnotationProcessingData.KEY, apData);
+          DataNode<AnnotationProcessingData> dataNode = node.createChild(AnnotationProcessingData.KEY, apData);
+          populateAnnotationProcessorOutput(dataNode, apModel, node.getData().getModuleName());
         }
+      }
+    }
+  }
+
+  private static void populateAnnotationProcessorOutput(@NotNull DataNode<AnnotationProcessingData> parent,
+                                                        @NotNull AnnotationProcessingModel apModel,
+                                                        @NotNull String sourceSetName) {
+    AnnotationProcessingConfig config = apModel.bySourceSetName(sourceSetName);
+    if (config != null && config.getProcessorOutput() != null) {
+      parent.createChild(AnnotationProcessingData.OUTPUT_KEY,
+                         new AnnotationProcessingData.AnnotationProcessorOutput(config.getProcessorOutput(), config.isTestSources()));
+    }
+  }
+
+  private static void populateAnnotationProcessingOutput(@NotNull DataNode<AnnotationProcessingData> parent,
+                                                         @NotNull AnnotationProcessingModel apModel) {
+    for (AnnotationProcessingConfig config : apModel.allConfigs().values()) {
+      if (config.getProcessorOutput() != null) {
+        parent.createChild(AnnotationProcessingData.OUTPUT_KEY,
+                           new AnnotationProcessingData.AnnotationProcessorOutput(config.getProcessorOutput(), config.isTestSources()));
       }
     }
   }

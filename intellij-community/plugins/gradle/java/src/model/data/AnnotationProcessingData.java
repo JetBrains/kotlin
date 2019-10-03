@@ -14,6 +14,8 @@ import static com.intellij.util.containers.ContainerUtil.immutableList;
 
 public class AnnotationProcessingData {
   public static final Key<AnnotationProcessingData> KEY = Key.create(AnnotationProcessingData.class, ExternalSystemConstants.UNORDERED);
+  public static final Key<AnnotationProcessorOutput> OUTPUT_KEY =
+    Key.create(AnnotationProcessorOutput.class, ExternalSystemConstants.UNORDERED);
 
   private static final WeakInterner<AnnotationProcessingData> ourInterner = new WeakInterner<>();
 
@@ -46,5 +48,25 @@ public class AnnotationProcessingData {
    */
   public Collection<String> getPath() {
     return path;
+  }
+
+  public static class AnnotationProcessorOutput {
+    private final String outputPath;
+    private final boolean testSources;
+
+    @PropertyMapping({"outputPath", "testSources"})
+    public AnnotationProcessorOutput(@NotNull String path, boolean isTestSources) {
+      outputPath = path;
+      testSources = isTestSources;
+    }
+
+    @NotNull
+    public String getOutputPath() {
+      return outputPath;
+    }
+
+    public boolean isTestSources() {
+      return testSources;
+    }
   }
 }
