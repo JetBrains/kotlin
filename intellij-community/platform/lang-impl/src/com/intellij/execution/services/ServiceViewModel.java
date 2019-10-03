@@ -168,7 +168,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
                                       @NotNull ServiceModel model,
                                       @NotNull ServiceModelFilter modelFilter,
                                       @Nullable ServiceViewFilter parentFilter) {
-    if (contributor != null) {
+    if (contributor != null && items.size() > 1) {
       ServiceViewItem contributorRoot = null;
       for (ServiceViewItem root : model.getRoots()) {
         if (contributor == root.getContributor()) {
