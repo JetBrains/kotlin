@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
-import org.jetbrains.plugins.gradle.execution.test.runner.TestTasksChooser
 import org.jetbrains.plugins.gradle.execution.test.runner.applyTestConfiguration
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -74,7 +73,7 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
         psiMethod: PsiMethod,
         vararg classes: PsiClass
     ) {
-        val dataContext = TestTasksChooser.contextWithLocationName(context.dataContext, psiMethod.name)
+        val dataContext = MultiplatformTestTasksChooser.createContext(context.dataContext, psiMethod.name)
 
         mppTestTasksChooser.multiplatformChooseTasks(context.project, dataContext, classes.asList()) { tasks ->
             val configuration = fromContext.configuration as ExternalSystemRunConfiguration
