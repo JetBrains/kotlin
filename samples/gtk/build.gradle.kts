@@ -36,6 +36,7 @@ kotlin {
                                 "$it/atk-1.0",
                                 "$it/gdk-pixbuf-2.0",
                                 "$it/cairo",
+                                "$it/harfbuzz",                                
                                 "$it/pango-1.0",
                                 "$it/gtk-3.0",
                                 "$it/glib-2.0"
