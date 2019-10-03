@@ -128,8 +128,19 @@ public abstract class FileTemplateManager{
   @NotNull 
   public abstract FileTemplate[] getInternalTemplates();
 
+  /**
+   * @param templateName template name
+   * @return a template by name
+   * @throws IllegalStateException if template is not found
+   */
   @NotNull
   public abstract FileTemplate getJ2eeTemplate(@NotNull @NonNls String templateName);
+
+  /**
+   * @param templateName template name
+   * @return a template by name
+   * @throws IllegalStateException if template is not found
+   */
   @NotNull
   public abstract FileTemplate getCodeTemplate(@NotNull @NonNls String templateName);
 
