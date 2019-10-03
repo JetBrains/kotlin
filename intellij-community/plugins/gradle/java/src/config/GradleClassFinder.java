@@ -39,7 +39,9 @@ public final class GradleClassFinder extends NonClasspathClassFinder {
   @Override
   protected PackageDirectoryCache getCache(@Nullable GlobalSearchScope scope) {
     if (scope instanceof ExternalModuleBuildGlobalSearchScope) {
-      return GradleBuildClasspathManager.getInstance(myProject).getClassFinderCache().get(((ExternalModuleBuildGlobalSearchScope)scope).getExternalModulePath());
+      GradleBuildClasspathManager buildClasspathManager = GradleBuildClasspathManager.getInstance(myProject);
+      Map<String, PackageDirectoryCache> classFinderCache = buildClasspathManager.getClassFinderCache();
+      return classFinderCache.get(((ExternalModuleBuildGlobalSearchScope)scope).getExternalModulePath());
     }
     return super.getCache(scope);
   }
