@@ -115,7 +115,7 @@ open class FrameworkTest : DefaultTask() {
         }
         // Use default path from toolchain if we cannot get `bundlePath` for target.
         // It may be the case for simulators if Xcode/macOS is old.
-        return simulatorPath ?: configs.absoluteTargetToolchain + "/usr/lib/swift/$swiftPlatform"
+        return simulatorPath ?: configs.absoluteTargetToolchain + "/usr/lib/swift-5.0/$swiftPlatform"
     }
 
     private fun buildEnvironment(): Map<String, String> {
