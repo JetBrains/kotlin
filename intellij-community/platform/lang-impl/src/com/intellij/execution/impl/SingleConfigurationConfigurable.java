@@ -12,13 +12,12 @@ import com.intellij.execution.remote.RemoteTargetsManager;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
-import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorListener;
-import com.intellij.openapi.options.ex.SingleConfigurableEditor;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -562,8 +561,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
           public void actionPerformed(@NotNull AnActionEvent e) {
             String selectedName = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
             RemoteTargetsListConfigurable configurable = new RemoteTargetsListConfigurable(myProject, selectedName);
-            if (new SingleConfigurableEditor(myWholePanel, configurable, ShowSettingsUtilImpl.createDimensionKey(configurable), false)
-              .showAndGet()) {
+            if (ShowSettingsUtil.getInstance().editConfigurable(myWholePanel, configurable)) {
               resetRunOnComboBox(selectedName);
             }
           }

@@ -40,7 +40,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
 
   override fun isModified(): Boolean =
     allTargets().size != getConfiguredTargets().size ||
-    !deletedTargets().isEmpty() ||
+    deletedTargets().isNotEmpty() ||
     super.isModified()
 
   override fun createActions(fromPopup: Boolean): List<AnAction> = mutableListOf(
