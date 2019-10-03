@@ -10,8 +10,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-
 /**
  * @author Vladislav.Soroka
  */
@@ -19,22 +17,13 @@ import java.util.function.Function;
 public class BuildIssueEventImpl extends AbstractBuildEvent implements BuildIssueEvent {
   private final BuildIssue myIssue;
   private final Kind myKind;
-  private final Function<Project, Navigatable> myNavigatable;
 
   public BuildIssueEventImpl(@NotNull Object parentId,
                              @NotNull BuildIssue buildIssue,
                              @NotNull Kind kind) {
-    this(parentId, buildIssue, kind, project -> null);
-  }
-
-  public BuildIssueEventImpl(@NotNull Object parentId,
-                             @NotNull BuildIssue buildIssue,
-                             @NotNull Kind kind,
-                             @NotNull Function<Project, Navigatable> navigatableProvider) {
     super(new Object(), parentId, System.currentTimeMillis(), buildIssue.getTitle());
     myIssue = buildIssue;
     myKind = kind;
-    myNavigatable = navigatableProvider;
   }
 
   @NotNull
@@ -64,7 +53,7 @@ public class BuildIssueEventImpl extends AbstractBuildEvent implements BuildIssu
   @Nullable
   @Override
   public Navigatable getNavigatable(@NotNull Project project) {
-    return myNavigatable.apply(project);
+    return myIssue.getNavigatable(project);
   }
 
   @Override

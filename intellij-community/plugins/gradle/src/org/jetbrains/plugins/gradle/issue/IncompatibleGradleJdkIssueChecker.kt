@@ -5,6 +5,8 @@ import com.intellij.build.BuildConsoleUtils.getMessageTitle
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.project.Project
+import com.intellij.pom.Navigatable
 import com.intellij.util.PlatformUtils.getPlatformPrefix
 import com.intellij.util.lang.JavaVersion
 import org.gradle.util.GradleVersion
@@ -125,6 +127,7 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       override val title: String = title
       override val description: String = description
       override val quickFixes = quickFixes
+      override fun getNavigatable(project: Project): Navigatable? = null
     }
   }
 

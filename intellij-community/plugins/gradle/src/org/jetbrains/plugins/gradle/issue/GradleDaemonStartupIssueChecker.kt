@@ -5,6 +5,8 @@ import com.intellij.build.BuildConsoleUtils.getMessageTitle
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.build.issue.quickfix.OpenFileQuickFix
+import com.intellij.openapi.project.Project
+import com.intellij.pom.Navigatable
 import com.intellij.util.PlatformUtils
 import com.intellij.util.io.isFile
 import org.gradle.initialization.BuildLayoutParameters
@@ -78,6 +80,7 @@ class GradleDaemonStartupIssueChecker : GradleIssueChecker {
       override val title: String = title
       override val description: String = description
       override val quickFixes = quickFixes
+      override fun getNavigatable(project: Project): Navigatable? = null
     }
   }
 }

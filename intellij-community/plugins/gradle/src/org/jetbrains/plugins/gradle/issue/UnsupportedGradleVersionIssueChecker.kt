@@ -4,6 +4,8 @@ package org.jetbrains.plugins.gradle.issue
 import com.intellij.build.BuildConsoleUtils.getMessageTitle
 import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
+import com.intellij.openapi.project.Project
+import com.intellij.pom.Navigatable
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleVersionQuickFix
@@ -84,6 +86,7 @@ class UnsupportedGradleVersionIssueChecker : GradleIssueChecker {
       override val title: String = title
       override val description: String = description
       override val quickFixes = quickFixes
+      override fun getNavigatable(project: Project): Navigatable? = null
     }
   }
 }

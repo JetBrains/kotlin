@@ -7,6 +7,7 @@ import com.intellij.execution.runners.ExecutionUtil
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.project.Project
+import com.intellij.pom.Navigatable
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.issue.quickfix.ReimportQuickFix.Companion.requestImport
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -15,6 +16,7 @@ import java.util.concurrent.CompletableFuture
 @ApiStatus.Internal
 abstract class UnresolvedDependencyIssue(dependencyName: String) : BuildIssue {
   override val title: String = "Could not resolve $dependencyName"
+  override fun getNavigatable(project: Project): Navigatable? = null
 
   fun buildDescription(failureMessage: String?, isOfflineMode: Boolean, offlineModeQuickFixText: String): String {
     val issueDescription = StringBuilder(failureMessage?.trim())
