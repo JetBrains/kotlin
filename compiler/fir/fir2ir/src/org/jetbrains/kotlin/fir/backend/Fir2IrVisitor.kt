@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -142,6 +141,7 @@ class Fir2IrVisitor(
             sourceManager.getOrCreateFileEntry(file.psi as KtFile),
             moduleDescriptor.findPackageFragmentForFile(file)
         ).withParent {
+            declarationStorage.registerFile(file, this)
             file.declarations.forEach {
                 val irDeclaration = it.toIrDeclaration() ?: return@forEach
                 declarations += irDeclaration

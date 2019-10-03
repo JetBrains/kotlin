@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.service
@@ -44,7 +45,11 @@ class Fir2IrDeclarationStorage(
 ) {
     private val firSymbolProvider = session.service<FirSymbolProvider>()
 
+    private val firProvider = session.service<FirProvider>()
+
     private val fragmentCache = mutableMapOf<FqName, IrExternalPackageFragment>()
+
+    private val fileCache = mutableMapOf<FirFile, IrFile>()
 
     private val classCache = mutableMapOf<FirRegularClass, IrClass>()
 
@@ -61,6 +66,10 @@ class Fir2IrDeclarationStorage(
     private val localStorage = Fir2IrLocalStorage()
 
     private val unitType = session.builtinTypes.unitType.toIrType(session, this)
+
+    fun registerFile(firFile: FirFile, irFile: IrFile) {
+        fileCache[firFile] = irFile
+    }
 
     fun enterScope(descriptor: DeclarationDescriptor) {
         irSymbolTable.enterScope(descriptor)
@@ -219,8 +228,13 @@ class Fir2IrDeclarationStorage(
                 null
             }
         } else {
-            val packageFqName = callableId.packageName
-            getIrExternalPackageFragment(packageFqName)
+            val containerFile = firProvider.getFirCallableContainerFile(firBasedSymbol)
+            if (containerFile != null) {
+                fileCache[containerFile]
+            } else {
+                val packageFqName = callableId.packageName
+                getIrExternalPackageFragment(packageFqName)
+            }
         }
     }
 
