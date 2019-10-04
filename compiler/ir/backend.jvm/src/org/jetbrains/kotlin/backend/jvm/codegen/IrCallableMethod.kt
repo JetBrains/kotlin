@@ -20,7 +20,7 @@ class IrCallableMethod(
     val asmMethod: Method = signature.asmMethod
 
     val valueParameterTypes: List<Type> =
-        signature.valueParameters.filter { it.kind == JvmMethodParameterKind.VALUE }.map { it.asmType }
+        signature.valueParameters.filter { it.kind != JvmMethodParameterKind.RECEIVER }.map { it.asmType }
 
     override fun toString(): String =
         "${Printer.OPCODES[invokeOpcode]} $owner.$asmMethod" + (if (isInterfaceMethod) " (itf)" else "")

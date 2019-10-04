@@ -224,8 +224,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         for (parameter in function.valueParameters) {
+            val kind = when (parameter.origin) {
+                JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> JvmMethodParameterKind.OUTER
+                else -> JvmMethodParameterKind.VALUE
+            }
             val type = if (forceSingleValueParameterBoxing(function.descriptor)) parameter.type.makeNullable() else parameter.type
-            writeParameter(sw, JvmMethodParameterKind.VALUE, type, function)
+            writeParameter(sw, kind, type, function)
         }
 
         sw.writeReturnType()
