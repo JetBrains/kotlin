@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
@@ -42,7 +43,7 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
             null
         }
 
-    fun tryResolveAsQualifier(): FirStatement? {
+    fun tryResolveAsQualifier(): FirResolvedQualifier? {
         val symbolProvider = session.service<FirSymbolProvider>()
         var qualifierParts = qualifierStack.asReversed().map { it.asString() }
         var resolved: PackageOrClass?
