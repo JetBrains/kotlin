@@ -59,6 +59,15 @@ class KarmaStackTraceProcessorKtTest {
     }
 
     @Test
+    fun notProcessShortPah() {
+        val line = "at Foo.bar(../Foo.kt)"
+        assertEquals(
+            line,
+            processWebpackName(line)
+        )
+    }
+
+    @Test
     fun notProcessMessage() {
         val line = "AssertionError: Expected value to be true."
         assertEquals(

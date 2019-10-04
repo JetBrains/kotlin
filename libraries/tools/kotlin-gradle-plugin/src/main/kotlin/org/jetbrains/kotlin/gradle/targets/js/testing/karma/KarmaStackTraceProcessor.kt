@@ -9,7 +9,7 @@ private const val WEBPACK_PROTOCOL = "webpack://"
 private const val KARMA_SOURCE_MAP_DELIMITER = " <-"
 
 private const val STACK_TRACE_DELIMITER = "at "
-private const val WEBPACK_LOCAL_DELIMITER = ".."
+private const val WEBPACK_LOCAL_DELIMITER = "../"
 
 fun processKarmaStackTrace(stackTrace: String): String {
     return stackTrace.lines()
@@ -28,24 +28,29 @@ fun processKarmaStackTrace(stackTrace: String): String {
 fun processWebpackName(line: String): String {
     // example: "at MyTest../kotlin/check-js-test-test.js.MyTest.foo (/src/test/kotlin/MyTest.kt:7:8)"
     // should be "at MyTest.foo (/src/test/kotlin/MyTest.kt:7:8)"
-    val stackTraceDelimiter = line.indexOf(STACK_TRACE_DELIMITER)
-    val webpackLocalDelimiter = line.indexOf(WEBPACK_LOCAL_DELIMITER)
-    if (stackTraceDelimiter == -1 || webpackLocalDelimiter == -1) {
+    val stackTraceDelimiterIndex = line.indexOf(STACK_TRACE_DELIMITER)
+    val webpackLocalDelimiterIndex = line.indexOf(WEBPACK_LOCAL_DELIMITER)
+    if (stackTraceDelimiterIndex == -1 || webpackLocalDelimiterIndex == -1) {
         return line
     }
 
-    val traceStartIndex = stackTraceDelimiter + STACK_TRACE_DELIMITER.length
+    val traceStartIndex = stackTraceDelimiterIndex + STACK_TRACE_DELIMITER.length
     val name = line.substring(
         traceStartIndex,
-        webpackLocalDelimiter
+        webpackLocalDelimiterIndex
     ) // MyTest
-    val fileStart = line.indexOf("(")
-    val fullJsName = line.substring(webpackLocalDelimiter, fileStart) // ../kotlin/check-js-test-test.js.MyTest.foo
+    val fileStartIndex = line.indexOf("(")
+
+    if (webpackLocalDelimiterIndex > fileStartIndex) {
+        return line
+    }
+
+    val fullJsName = line.substring(webpackLocalDelimiterIndex, fileStartIndex) // ../kotlin/check-js-test-test.js.MyTest.foo
 
     val nameIndex = fullJsName.indexOf(name)
     if (nameIndex == -1) {
         return line
     }
 
-    return line.replaceRange(traceStartIndex, fileStart, fullJsName.substring(nameIndex))
+    return line.replaceRange(traceStartIndex, fileStartIndex, fullJsName.substring(nameIndex))
 }
