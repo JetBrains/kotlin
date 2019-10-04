@@ -158,7 +158,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="c9623" class="com.intellij.ui.components.labels.ActionLink" binding="myManageTargetsActionLink" custom-create="true" default-binding="true">
+              <component id="292eb" class="javax.swing.JLabel" binding="myManageTargetsLabel" custom-create="true" default-binding="true">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="115" height="16"/>

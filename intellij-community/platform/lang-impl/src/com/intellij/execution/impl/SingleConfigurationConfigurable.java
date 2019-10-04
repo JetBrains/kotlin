@@ -18,7 +18,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorListener;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
@@ -35,7 +34,7 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.ui.components.labels.ActionLink;
+import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
@@ -358,7 +357,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     private JPanel myCbStoreProjectConfigurationPanel;
 
     private ComboBox myRunOnComboBox;
-    private ActionLink myManageTargetsActionLink;
+    private JLabel myManageTargetsLabel;
     private JPanel myRunOnPanel;
     private JPanel myRunOnPanelInner;
 
@@ -555,16 +554,12 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     private void createUIComponents() {
       myComponentPlace = new NonOpaquePanel();
       myRunOnComboBox = new RunOnTargetComboBox(myProject);
-      myManageTargetsActionLink =
-        new ActionLink(ExecutionBundle.message("edit.run.configuration.run.configuration.manage.targets.label"), new DumbAwareAction() {
-          @Override
-          public void actionPerformed(@NotNull AnActionEvent e) {
+      myManageTargetsLabel = LinkLabel.create(ExecutionBundle.message("edit.run.configuration.run.configuration.manage.targets.label"), () -> {
             String selectedName = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
             RemoteTargetsListConfigurable configurable = new RemoteTargetsListConfigurable(myProject, selectedName);
             if (ShowSettingsUtil.getInstance().editConfigurable(myWholePanel, configurable)) {
               resetRunOnComboBox(selectedName);
             }
-          }
         });
       myJBScrollPane = new JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER) {
         @Override
