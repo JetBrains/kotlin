@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.serialization.konan.impl
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.*
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataDeserializedPackageFragmentsFactory
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataModuleDescriptorFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -28,15 +29,14 @@ import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 
-val ModuleDescriptorImpl.isStdlibModule
-    get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)
-                ?.library?.unresolvedDependencies?.isEmpty() ?: false
+private val ModuleDescriptorImpl.isStdlibModule
+    get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library?.unresolvedDependencies?.isEmpty() ?: false
 
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
     override val flexibleTypeDeserializer: FlexibleTypeDeserializer
-): KlibMetadataModuleDescriptorFactory {
+) : KlibMetadataModuleDescriptorFactory {
 
     override fun createDescriptorOptionalBuiltIns(
         library: KotlinLibrary,
@@ -89,11 +89,13 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     ): PackageFragmentProvider {
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
-            library, packageFragmentNames, moduleDescriptor, packageAccessHandler, storageManager)
+            library, packageFragmentNames, moduleDescriptor, packageAccessHandler, storageManager
+        )
 
         // TODO: this is native specific. Move to a child class.
         val syntheticPackageFragments = packageFragmentsFactory.createSyntheticPackageFragments(
-            library, deserializedPackageFragments, moduleDescriptor)
+            library, deserializedPackageFragments, moduleDescriptor
+        )
 
         val provider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments)
 
@@ -119,21 +121,22 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             emptyList(),
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
-            extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry)
+            extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry
+        )
 
         for (packageFragment in deserializedPackageFragments) {
             packageFragment.initialize(components)
         }
 
-        return compositePackageFragmentAddend ?.let {
+        return compositePackageFragmentAddend?.let {
             CompositePackageFragmentProvider(listOf(it, provider))
         } ?: provider
     }
 
     fun createForwardDeclarationHackPackagePartProvider(
-                storageManager: StorageManager,
-                module: ModuleDescriptorImpl
-            ): PackageFragmentProviderImpl {
+        storageManager: StorageManager,
+        module: ModuleDescriptorImpl
+    ): PackageFragmentProviderImpl {
         fun createPackage(fqName: FqName, supertypeName: String, classKind: ClassKind) =
             ForwardDeclarationsPackageFragmentDescriptor(
                 storageManager,
