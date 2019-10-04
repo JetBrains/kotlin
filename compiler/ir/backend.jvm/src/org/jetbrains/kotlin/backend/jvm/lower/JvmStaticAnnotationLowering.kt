@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFunctionDescriptorWithContainerSource
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 internal val jvmStaticAnnotationPhase = makeIrFilePhase(
     ::JvmStaticAnnotationLowering,
@@ -221,7 +223,9 @@ private class MakeCallsStatic(
     }
 
     private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction {
-        val newDescriptor = WrappedSimpleFunctionDescriptor(descriptor)
+        val newDescriptor = (descriptor as? DescriptorWithContainerSource)?.let {
+            WrappedFunctionDescriptorWithContainerSource(it.containerSource)
+        } ?: WrappedSimpleFunctionDescriptor(descriptor)
         return IrFunctionImpl(
             startOffset, endOffset, origin,
             IrSimpleFunctionSymbolImpl(newDescriptor),
