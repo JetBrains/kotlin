@@ -1151,7 +1151,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
         super.hide();
 
         Disposer.dispose(this);
-
+        ToolTipManager.sharedInstance().unregisterComponent(myList);
         assert myDisposed;
       }
       catch (Throwable e) {
