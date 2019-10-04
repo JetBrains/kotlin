@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.analyzer.getCapability
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ProjectContext
@@ -167,6 +168,7 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
         CompositePackageFragmentProvider(
             listOf(
                 stdlibFragmentProvider,
+                functionInterfacePackageFragmentProvider(storageManager, builtInsModule),
                 (KonanFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
                     .createForwardDeclarationHackPackagePartProvider(storageManager, builtInsModule)
             )
